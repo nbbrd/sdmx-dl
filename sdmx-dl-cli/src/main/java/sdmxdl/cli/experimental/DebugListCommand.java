@@ -28,9 +28,9 @@ import picocli.CommandLine.Spec;
 import sdmxdl.Feature;
 import sdmxdl.Flow;
 import sdmxdl.KeyRequest;
-import sdmxdl.cli.protobuf.Features;
-import sdmxdl.cli.protobuf.Flows;
-import sdmxdl.cli.protobuf.Sources;
+import sdmxdl.cli.protobuf.FeaturesDto;
+import sdmxdl.cli.protobuf.FlowsDto;
+import sdmxdl.cli.protobuf.SourcesDto;
 import sdmxdl.format.protobuf.ProtoApi;
 import sdmxdl.format.protobuf.ProtoWeb;
 import sdmxdl.web.WebSource;
@@ -61,8 +61,8 @@ public final class DebugListCommand implements Callable<Void> {
         nonNull(out).dumpAll(fromWebSources(web.loadManager().getSources().values()));
     }
 
-    private static Sources fromWebSources(Collection<WebSource> value) {
-        return Sources
+    private static SourcesDto fromWebSources(Collection<WebSource> value) {
+        return SourcesDto
                 .newBuilder()
                 .addAllSources(value.stream().map(ProtoWeb::fromWebSource).collect(Collectors.toList()))
                 .build();
@@ -73,8 +73,8 @@ public final class DebugListCommand implements Callable<Void> {
         nonNull(out).dumpAll(fromDataflows(web.loadManager().using(web.getSource()).getFlows(web.toDatabaseRequest())));
     }
 
-    private static Flows fromDataflows(Collection<Flow> value) {
-        return Flows
+    private static FlowsDto fromDataflows(Collection<Flow> value) {
+        return FlowsDto
                 .newBuilder()
                 .addAllFlows(value.stream().map(ProtoApi::fromDataflow).collect(Collectors.toList()))
                 .build();
@@ -91,8 +91,8 @@ public final class DebugListCommand implements Callable<Void> {
         nonNull(out).dumpAll(fromFeatures(web.loadManager().using(web.getSource()).getSupportedFeatures(web.toSourceRequest())));
     }
 
-    private static Features fromFeatures(Collection<Feature> value) {
-        return Features
+    private static FeaturesDto fromFeatures(Collection<Feature> value) {
+        return FeaturesDto
                 .newBuilder()
                 .addAllFeatures(value.stream().map(ProtoApi::fromFeature).collect(Collectors.toList()))
                 .build();

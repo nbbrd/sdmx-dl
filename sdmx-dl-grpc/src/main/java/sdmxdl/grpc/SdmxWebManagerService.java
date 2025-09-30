@@ -16,18 +16,13 @@ import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import sdmxdl.*;
-import sdmxdl.Confidentiality;
 import sdmxdl.format.protobuf.*;
-import sdmxdl.format.protobuf.About;
-import sdmxdl.format.protobuf.DataSet;
-import sdmxdl.format.protobuf.Database;
-import sdmxdl.format.protobuf.Flow;
-import sdmxdl.format.protobuf.MetaSet;
-import sdmxdl.format.protobuf.Series;
-import sdmxdl.format.protobuf.web.MonitorReport;
-import sdmxdl.format.protobuf.web.WebSource;
-import sdmxdl.format.protobuf.web.WebSources;
+import sdmxdl.format.protobuf.web.MonitorReportDto;
+import sdmxdl.format.protobuf.web.WebSourceDto;
+import sdmxdl.format.protobuf.web.WebSourcesDto;
 import sdmxdl.web.SdmxWebManager;
+import sdmxdl.web.WebSource;
+import sdmxdl.web.WebSources;
 
 import java.io.IOException;
 import java.util.List;
@@ -77,7 +72,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     @POST
     @Path("/monitorReport")
     @Override
-    public Uni<MonitorReport> getMonitorReport(SourceRequest request) {
+    public Uni<MonitorReportDto> getMonitorReport(SourceRequestDto request) {
         try {
             return Uni.createFrom()
                     .item(manager.getMonitorReport(request.getSource()))
@@ -102,7 +97,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     @POST
     @Path("/databases")
     @Override
-    public Multi<Database> getDatabases(SourceRequest request) {
+    public Multi<DatabaseDto> getDatabases(SourceRequestDto request) {
         try {
             return Multi.createFrom()
                     .iterable(manager.using(request.getSource()).getDatabases(ProtoGrpc.toSourceRequest(request)))
@@ -128,7 +123,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     @POST
     @Path("/meta")
     @Override
-    public Uni<MetaSet> getMeta(FlowRequest request) {
+    public Uni<MetaSetDto> getMeta(FlowRequestDto request) {
         try {
             return Uni.createFrom()
                     .item(manager.using(request.getSource()).getMeta(ProtoGrpc.toFlowRequest(request)))
@@ -155,7 +150,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     @POST
     @Path("/data")
     @Override
-    public Uni<DataSet> getData(KeyRequest request) {
+    public Uni<DataSetDto> getData(KeyRequestDto request) {
         try {
             return Uni.createFrom()
                     .item(manager.using(request.getSource()).getData(ProtoGrpc.toKeyRequest(request)))
@@ -168,13 +163,13 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     @POST
     @Path("/about")
     @Override
-    public Uni<About> getAbout(Empty request) {
+    public Uni<AboutDto> getAbout(Empty request) {
         return Uni.createFrom()
                 .item(ProtoApi.fromAbout());
     }
 
-    private sdmxdl.web.WebSource getPublicSourceForMcp(String source) {
-        sdmxdl.web.WebSource webSource = manager.getSources().get(source);
+    private WebSource getPublicSourceForMcp(String source) {
+        WebSource webSource = manager.getSources().get(source);
         if (webSource == null || !Confidentiality.PUBLIC.isAllowedIn(webSource)) {
             throw new IllegalArgumentException("Cannot find source: " + source);
         }
@@ -187,7 +182,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
                 .values()
                 .stream()
                 .filter(Confidentiality.PUBLIC::isAllowedIn)
-                .map(sdmxdl.web.WebSource::getId)
+                .map(WebSource::getId)
                 .map(PromptMessage::withUserRole)
                 .toList()
         );
@@ -201,13 +196,13 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     private static final String DETAIL_ARG = "Amount of information to retrieve (FULL, DATA_ONLY, SERIES_KEYS_ONLY, NO_DATA)";
 
     @Tool(description = "Get description of SDMX-DL.")
-    public About mcpAbout() {
+    public AboutDto mcpAbout() {
         return ProtoApi.fromAbout();
     }
 
     @Tool(description = "List SDMX sources.")
-    public WebSources mcpSources() {
-        return ProtoWeb.fromWebSources(sdmxdl.web.WebSources.builder().sources(
+    public WebSourcesDto mcpSources() {
+        return ProtoWeb.fromWebSources(WebSources.builder().sources(
                 manager.getSources()
                         .values()
                         .stream()
@@ -217,12 +212,12 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     }
 
     @Tool(description = "List SDMX databases.")
-    public List<Database> mcpDatabases(
+    public List<DatabaseDto> mcpDatabases(
             @ToolArg(description = SOURCE_ARG) String source,
             @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = ANY_KEYWORD) String languages
     ) throws IOException {
         return manager.using(getPublicSourceForMcp(source))
-                .getDatabases(sdmxdl.SourceRequest
+                .getDatabases(SourceRequest
                         .builder()
                         .languagesOf(languages)
                         .build())
@@ -232,14 +227,14 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     }
 
     @Tool(description = "List SDMX data flows.")
-    public List<Flow> mcpFlows(
+    public List<FlowDto> mcpFlows(
             @ToolArg(description = SOURCE_ARG) String source,
             @ToolArg(description = DATABASE_ARG, required = false, defaultValue = NO_DATABASE_KEYWORD) String database,
             @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = ANY_KEYWORD) String languages
     ) throws IOException {
         return manager
                 .using(getPublicSourceForMcp(source))
-                .getFlows(sdmxdl.DatabaseRequest
+                .getFlows(DatabaseRequest
                         .builder()
                         .databaseOf(database)
                         .languagesOf(languages)
@@ -250,7 +245,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     }
 
     @Tool(description = "Get SDMX metadata such as flow and structure.")
-    public MetaSet mcpMeta(
+    public MetaSetDto mcpMeta(
             @ToolArg(description = SOURCE_ARG) String source,
             @ToolArg(description = FLOW_ARG) String flow,
             @ToolArg(description = DATABASE_ARG, required = false, defaultValue = NO_DATABASE_KEYWORD) String database,
@@ -258,7 +253,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     ) throws IOException {
         return ProtoApi.fromMetaSet(manager
                 .using(getPublicSourceForMcp(source))
-                .getMeta(sdmxdl.FlowRequest
+                .getMeta(FlowRequest
                         .builder()
                         .flowOf(flow)
                         .databaseOf(database)
@@ -268,7 +263,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     }
 
     @Tool(description = "Get SDMX data series alongside their flow reference and the query used to get them.")
-    public DataSet mcpData(
+    public DataSetDto mcpData(
             @ToolArg(description = SOURCE_ARG) String source,
             @ToolArg(description = FLOW_ARG) String flow,
             @ToolArg(description = KEY_ARG) String key,
@@ -278,7 +273,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     ) throws IOException {
         return ProtoApi.fromDataSet(manager
                 .using(getPublicSourceForMcp(source))
-                .getData(sdmxdl.KeyRequest
+                .getData(KeyRequest
                         .builder()
                         .flowOf(flow)
                         .keyOf(key)
@@ -292,7 +287,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     @POST
     @Path("/sources")
     @Override
-    public Multi<WebSource> getSources(Empty request) {
+    public Multi<WebSourceDto> getSources(Empty request) {
         return Multi.createFrom().items(manager.getSources()
                 .values()
                 .stream()
@@ -314,7 +309,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     @POST
     @Path("/flows")
     @Override
-    public Multi<Flow> getFlows(DatabaseRequest request) {
+    public Multi<FlowDto> getFlows(DatabaseRequestDto request) {
         try {
             return Multi.createFrom()
                     .iterable(manager.using(request.getSource()).getFlows(ProtoGrpc.toDatabaseRequest(request)))
@@ -341,7 +336,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     @POST
     @Path("/dataStream")
     @Override
-    public Multi<Series> getDataStream(KeyRequest request) {
+    public Multi<SeriesDto> getDataStream(KeyRequestDto request) {
         try {
             return Multi.createFrom()
                     .iterable(manager.using(request.getSource()).getData(ProtoGrpc.toKeyRequest(request)))
@@ -369,7 +364,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     @POST
     @Path("/availability")
     @Override
-    public Multi<DimensionCodes> getAvailability(KeyDimensionRequest request) {
+    public Multi<DimensionCodesDto> getAvailability(KeyDimensionRequestDto request) {
         DatabaseRef databaseRef = request.hasDatabase() ? DatabaseRef.parse(request.getDatabase()) : DatabaseRef.NO_DATABASE;
         FlowRef flowRef = FlowRef.parse(request.getFlow());
         Key key = Key.parse(request.getKey());
@@ -377,10 +372,9 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
         try (Connection connection = manager.getConnection(request.getSource(), languages)) {
             return Multi.createFrom()
                     .items(connection.getAvailableDimensionCodes(databaseRef, flowRef, key, request.getDimension()))
-                    .map(codes -> DimensionCodes.newBuilder().addAllCodes(codes).build());
+                    .map(codes -> DimensionCodesDto.newBuilder().addAllCodes(codes).build());
         } catch (IOException ex) {
             return Multi.createFrom().failure(ex);
         }
     }
 }
-

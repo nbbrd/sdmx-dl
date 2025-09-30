@@ -2,6 +2,7 @@ package sdmxdl.format.protobuf;
 
 
 import sdmxdl.format.protobuf.web.*;
+import sdmxdl.web.*;
 
 import java.util.stream.Collectors;
 
@@ -11,8 +12,8 @@ import static sdmxdl.format.protobuf.WellKnownTypes.fromInstant;
 @lombok.experimental.UtilityClass
 public class ProtoWeb {
 
-    public static WebSource fromWebSource(sdmxdl.web.WebSource value) {
-        WebSource.Builder result = WebSource.newBuilder();
+    public static WebSourceDto fromWebSource(WebSource value) {
+        WebSourceDto.Builder result = WebSourceDto.newBuilder();
         result.setId(value.getId());
         result.putAllNames(value.getNames());
         result.setDriver(value.getDriver());
@@ -26,8 +27,8 @@ public class ProtoWeb {
         return result.build();
     }
 
-    public static sdmxdl.web.WebSource toWebSource(WebSource value) {
-        return sdmxdl.web.WebSource
+    public static WebSource toWebSource(WebSourceDto value) {
+        return WebSource
                 .builder()
                 .id(value.getId())
                 .names(value.getNamesMap())
@@ -42,21 +43,21 @@ public class ProtoWeb {
                 .build();
     }
 
-    public static WebSources fromWebSources(sdmxdl.web.WebSources value) {
-        WebSources.Builder result = WebSources.newBuilder();
+    public static WebSourcesDto fromWebSources(WebSources value) {
+        WebSourcesDto.Builder result = WebSourcesDto.newBuilder();
         result.addAllWebSources(value.getSources().stream().map(ProtoWeb::fromWebSource).collect(toList()));
         return result.build();
     }
 
-    public static sdmxdl.web.WebSources toWebSources(WebSources value) {
-        return sdmxdl.web.WebSources
+    public static WebSources toWebSources(WebSourcesDto value) {
+        return WebSources
                 .builder()
                 .sources(value.getWebSourcesList().stream().map(ProtoWeb::toWebSource).collect(toList()))
                 .build();
     }
 
-    public static MonitorReports fromMonitorReports(sdmxdl.web.MonitorReports value) {
-        return MonitorReports
+    public static MonitorReportsDto fromMonitorReports(MonitorReports value) {
+        return MonitorReportsDto
                 .newBuilder()
                 .setUriScheme(value.getUriScheme())
                 .addAllReports(value.getReports().stream().map(ProtoWeb::fromMonitorReport)::iterator)
@@ -65,8 +66,8 @@ public class ProtoWeb {
                 .build();
     }
 
-    public static sdmxdl.web.MonitorReports toMonitorReports(MonitorReports value) {
-        return sdmxdl.web.MonitorReports
+    public static MonitorReports toMonitorReports(MonitorReportsDto value) {
+        return MonitorReports
                 .builder()
                 .uriScheme(value.getUriScheme())
                 .reports(value.getReportsList().stream().map(ProtoWeb::toMonitorReport).collect(Collectors.toList()))
@@ -75,8 +76,8 @@ public class ProtoWeb {
                 .build();
     }
 
-    public static MonitorReport fromMonitorReport(sdmxdl.web.MonitorReport value) {
-        MonitorReport.Builder result = MonitorReport
+    public static MonitorReportDto fromMonitorReport(MonitorReport value) {
+        MonitorReportDto.Builder result = MonitorReportDto
                 .newBuilder()
                 .setSource(value.getSource())
                 .setStatus(fromMonitorStatus(value.getStatus()));
@@ -85,8 +86,8 @@ public class ProtoWeb {
         return result.build();
     }
 
-    public static sdmxdl.web.MonitorReport toMonitorReport(MonitorReport value) {
-        sdmxdl.web.MonitorReport.Builder result = sdmxdl.web.MonitorReport
+    public static MonitorReport toMonitorReport(MonitorReportDto value) {
+        MonitorReport.Builder result = MonitorReport
                 .builder()
                 .source(value.getSource())
                 .status(toMonitorStatus(value.getStatus()));
@@ -95,11 +96,11 @@ public class ProtoWeb {
         return result.build();
     }
 
-    public static MonitorStatus fromMonitorStatus(sdmxdl.web.MonitorStatus value) {
-        return MonitorStatus.valueOf(value.name());
+    public static MonitorStatusDto fromMonitorStatus(MonitorStatus value) {
+        return MonitorStatusDto.valueOf(value.name());
     }
 
-    public static sdmxdl.web.MonitorStatus toMonitorStatus(MonitorStatus value) {
-        return sdmxdl.web.MonitorStatus.valueOf(value.name());
+    public static MonitorStatus toMonitorStatus(MonitorStatusDto value) {
+        return MonitorStatus.valueOf(value.name());
     }
 }

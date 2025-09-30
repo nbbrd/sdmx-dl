@@ -8,47 +8,47 @@ import "sdmxdl_web.proto";
 
 service SdmxWebManager {
 
-  rpc GetAbout(Empty) returns (sdmxdl.format.protobuf.About);
+  rpc GetAbout(Empty) returns (sdmxdl.format.protobuf.AboutDto);
 
-  rpc GetSources(Empty) returns (stream sdmxdl.format.protobuf.web.WebSource);
+  rpc GetSources(Empty) returns (stream sdmxdl.format.protobuf.web.WebSourceDto);
 
-  rpc GetMonitorReport(SourceRequest) returns (sdmxdl.format.protobuf.web.MonitorReport);
+  rpc GetMonitorReport(SourceRequestDto) returns (sdmxdl.format.protobuf.web.MonitorReportDto);
 
-  rpc GetDatabases(SourceRequest) returns (stream sdmxdl.format.protobuf.Database);
+  rpc GetDatabases(SourceRequestDto) returns (stream sdmxdl.format.protobuf.DatabaseDto);
 
-  rpc GetFlows(DatabaseRequest) returns (stream sdmxdl.format.protobuf.Flow);
+  rpc GetFlows(DatabaseRequestDto) returns (stream sdmxdl.format.protobuf.FlowDto);
 
-  rpc GetMeta(FlowRequest) returns (sdmxdl.format.protobuf.MetaSet);
+  rpc GetMeta(FlowRequestDto) returns (sdmxdl.format.protobuf.MetaSetDto);
 
-  rpc GetData(KeyRequest) returns (sdmxdl.format.protobuf.DataSet);
+  rpc GetData(KeyRequestDto) returns (sdmxdl.format.protobuf.DataSetDto);
 
-  rpc GetDataStream(KeyRequest) returns (stream sdmxdl.format.protobuf.Series);
+  rpc GetDataStream(KeyRequestDto) returns (stream sdmxdl.format.protobuf.SeriesDto);
 
-  rpc GetAvailability(KeyDimensionRequest) returns (stream DimensionCodes);
+  rpc GetAvailability(KeyDimensionRequestDto) returns (stream DimensionCodesDto);
 }
 
 message Empty {
 }
 
-message SourceRequest {
+message SourceRequestDto {
   string source = 1;
   optional string languages = 2;
 }
 
-message DatabaseRequest {
+message DatabaseRequestDto {
   string source = 1;
   optional string database = 2;
   optional string languages = 3;
 }
 
-message FlowRequest {
+message FlowRequestDto {
   string source = 1;
   string flow = 2;
   optional string database = 3;
   optional string languages = 4;
 }
 
-message KeyRequest {
+message KeyRequestDto {
   string source = 1;
   string flow = 2;
   string key = 3;
@@ -56,7 +56,7 @@ message KeyRequest {
   optional string languages = 5;
 }
 
-message KeyDimensionRequest {
+message KeyDimensionRequestDto {
   string source = 1;
   string flow = 2;
   string key = 3;
@@ -65,6 +65,6 @@ message KeyDimensionRequest {
   optional string languages = 6;
 }
 
-message DimensionCodes {
+message DimensionCodesDto {
   repeated string codes = 1;
 }

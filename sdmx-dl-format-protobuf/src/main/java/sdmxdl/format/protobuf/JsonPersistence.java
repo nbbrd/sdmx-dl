@@ -3,11 +3,15 @@ package sdmxdl.format.protobuf;
 import com.google.protobuf.util.JsonFormat;
 import nbbrd.design.DirectImpl;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.DataRepository;
 import sdmxdl.HasPersistence;
 import sdmxdl.ext.FileFormat;
 import sdmxdl.ext.Persistence;
 import sdmxdl.format.FileFormatSupport;
 import sdmxdl.format.PersistenceSupport;
+import sdmxdl.format.protobuf.web.WebSourcesDto;
+import sdmxdl.web.MonitorReports;
+import sdmxdl.web.WebSources;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -29,33 +33,33 @@ public final class JsonPersistence implements Persistence {
             .builder()
             .id("JSON")
             .rank(200)
-            .type(sdmxdl.DataRepository.class)
-            .type(sdmxdl.web.MonitorReports.class)
-            .type(sdmxdl.web.WebSources.class)
+            .type(DataRepository.class)
+            .type(MonitorReports.class)
+            .type(WebSources.class)
             .factory(this::create)
             .build();
 
     @SuppressWarnings("unchecked")
     private <T extends HasPersistence> FileFormat<T> create(Class<T> type) {
-        if (sdmxdl.DataRepository.class.equals(type)) {
+        if (DataRepository.class.equals(type)) {
             return (FileFormat<T>) FileFormatSupport
-                    .builder(sdmxdl.DataRepository.class)
+                    .builder(DataRepository.class)
                     .parser(onParsingReader(this::parseJsonRepository).andThen(ProtoApi::toDataRepository).asFileParser(UTF_8))
                     .formatter(onFormattingWriter(formatter::appendTo).compose(ProtoApi::fromDataRepository).asFileFormatter(UTF_8))
                     .extension(".json")
                     .build();
         }
-        if (sdmxdl.web.MonitorReports.class.equals(type)) {
+        if (MonitorReports.class.equals(type)) {
             return (FileFormat<T>) FileFormatSupport
-                    .builder(sdmxdl.web.MonitorReports.class)
+                    .builder(MonitorReports.class)
                     .parser(onParsingReader(this::parseJsonReports).andThen(ProtoWeb::toMonitorReports).asFileParser(UTF_8))
                     .formatter(onFormattingWriter(formatter::appendTo).compose(ProtoWeb::fromMonitorReports).asFileFormatter(UTF_8))
                     .extension(".json")
                     .build();
         }
-        if (sdmxdl.web.WebSources.class.equals(type)) {
+        if (WebSources.class.equals(type)) {
             return (FileFormat<T>) FileFormatSupport
-                    .builder(sdmxdl.web.WebSources.class)
+                    .builder(WebSources.class)
                     .parser(onParsingReader(this::parseJsonSources).andThen(ProtoWeb::toWebSources).asFileParser(UTF_8))
                     .formatter(onFormattingWriter(formatter::appendTo).compose(ProtoWeb::fromWebSources).asFileFormatter(UTF_8))
                     .extension(".json")
@@ -64,20 +68,20 @@ public final class JsonPersistence implements Persistence {
         return FileFormat.noOp();
     }
 
-    private sdmxdl.format.protobuf.web.MonitorReports parseJsonReports(Reader reader) throws IOException {
-        sdmxdl.format.protobuf.web.MonitorReports.Builder builder = sdmxdl.format.protobuf.web.MonitorReports.newBuilder();
+    private sdmxdl.format.protobuf.web.MonitorReportsDto parseJsonReports(Reader reader) throws IOException {
+        sdmxdl.format.protobuf.web.MonitorReportsDto.Builder builder = sdmxdl.format.protobuf.web.MonitorReportsDto.newBuilder();
         parser.merge(reader, builder);
         return builder.build();
     }
 
-    private sdmxdl.format.protobuf.DataRepository parseJsonRepository(Reader reader) throws IOException {
-        sdmxdl.format.protobuf.DataRepository.Builder builder = sdmxdl.format.protobuf.DataRepository.newBuilder();
+    private DataRepositoryDto parseJsonRepository(Reader reader) throws IOException {
+        DataRepositoryDto.Builder builder = DataRepositoryDto.newBuilder();
         parser.merge(reader, builder);
         return builder.build();
     }
 
-    private sdmxdl.format.protobuf.web.WebSources parseJsonSources(Reader reader) throws IOException {
-        sdmxdl.format.protobuf.web.WebSources.Builder builder = sdmxdl.format.protobuf.web.WebSources.newBuilder();
+    private WebSourcesDto parseJsonSources(Reader reader) throws IOException {
+        WebSourcesDto.Builder builder = WebSourcesDto.newBuilder();
         parser.merge(reader, builder);
         return builder.build();
     }

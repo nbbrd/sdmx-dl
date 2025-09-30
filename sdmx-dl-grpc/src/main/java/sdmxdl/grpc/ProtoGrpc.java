@@ -1,43 +1,45 @@
 package sdmxdl.grpc;
 
-import sdmxdl.DatabaseRef;
-import sdmxdl.Languages;
+import sdmxdl.*;
+
+import static sdmxdl.DatabaseRef.NO_DATABASE_KEYWORD;
+import static sdmxdl.Languages.ANY_KEYWORD;
 
 @lombok.experimental.UtilityClass
 public class ProtoGrpc {
 
-    public static SourceRequest fromSourceRequest(String source, sdmxdl.SourceRequest value) {
-        SourceRequest.Builder result = SourceRequest.newBuilder();
+    public static SourceRequestDto fromSourceRequest(String source, SourceRequest value) {
+        SourceRequestDto.Builder result = SourceRequestDto.newBuilder();
         result.setSource(source);
         result.setLanguages(value.getLanguages().toString());
         return result.build();
     }
 
-    public static sdmxdl.SourceRequest toSourceRequest(SourceRequest value) {
-        return sdmxdl.SourceRequest
+    public static SourceRequest toSourceRequest(SourceRequestDto value) {
+        return SourceRequest
                 .builder()
-                .languagesOf(value.hasLanguages() ? value.getLanguages() : "")
+                .languagesOf(value.hasLanguages() ? value.getLanguages() : ANY_KEYWORD)
                 .build();
     }
 
-    public static DatabaseRequest fromDatabaseRequest(String source, sdmxdl.DatabaseRequest value) {
-        DatabaseRequest.Builder result = DatabaseRequest.newBuilder();
+    public static DatabaseRequestDto fromDatabaseRequest(String source, DatabaseRequest value) {
+        DatabaseRequestDto.Builder result = DatabaseRequestDto.newBuilder();
         result.setSource(source);
         result.setDatabase(value.getDatabase().toString());
         result.setLanguages(value.getLanguages().toString());
         return result.build();
     }
 
-    public static sdmxdl.DatabaseRequest toDatabaseRequest(DatabaseRequest value) {
-        return sdmxdl.DatabaseRequest
+    public static DatabaseRequest toDatabaseRequest(DatabaseRequestDto value) {
+        return DatabaseRequest
                 .builder()
-                .databaseOf(value.hasDatabase() ? value.getDatabase() : "")
-                .languagesOf(value.hasLanguages() ? value.getLanguages() : "")
+                .databaseOf(value.hasDatabase() ? value.getDatabase() : NO_DATABASE_KEYWORD)
+                .languagesOf(value.hasLanguages() ? value.getLanguages() : ANY_KEYWORD)
                 .build();
     }
 
-    public static FlowRequest fromFlowRequest(String source, sdmxdl.FlowRequest value) {
-        FlowRequest.Builder result = FlowRequest.newBuilder();
+    public static FlowRequestDto fromFlowRequest(String source, FlowRequest value) {
+        FlowRequestDto.Builder result = FlowRequestDto.newBuilder();
         result.setSource(source);
         result.setDatabase(value.getDatabase().toString());
         result.setFlow(value.getFlow().toString());
@@ -45,17 +47,17 @@ public class ProtoGrpc {
         return result.build();
     }
 
-    public static sdmxdl.FlowRequest toFlowRequest(FlowRequest value) {
-        return sdmxdl.FlowRequest
+    public static FlowRequest toFlowRequest(FlowRequestDto value) {
+        return FlowRequest
                 .builder()
-                .databaseOf(value.hasDatabase() ? value.getDatabase() : "")
+                .databaseOf(value.hasDatabase() ? value.getDatabase() : NO_DATABASE_KEYWORD)
                 .flowOf(value.getFlow())
-                .languagesOf(value.hasLanguages() ? value.getLanguages() : "")
+                .languagesOf(value.hasLanguages() ? value.getLanguages() : ANY_KEYWORD)
                 .build();
     }
 
-    public static KeyRequest fromKeyRequest(String source, sdmxdl.KeyRequest value) {
-        KeyRequest.Builder result = KeyRequest.newBuilder();
+    public static KeyRequestDto fromKeyRequest(String source, KeyRequest value) {
+        KeyRequestDto.Builder result = KeyRequestDto.newBuilder();
         result.setSource(source);
         result.setDatabase(value.getDatabase().toString());
         result.setFlow(value.getFlow().toString());
@@ -64,13 +66,13 @@ public class ProtoGrpc {
         return result.build();
     }
 
-    public static sdmxdl.KeyRequest toKeyRequest(KeyRequest value) {
-        return sdmxdl.KeyRequest
+    public static KeyRequest toKeyRequest(KeyRequestDto value) {
+        return KeyRequest
                 .builder()
-                .databaseOf(value.hasDatabase() ? value.getDatabase() : DatabaseRef.NO_DATABASE_KEYWORD)
+                .databaseOf(value.hasDatabase() ? value.getDatabase() : NO_DATABASE_KEYWORD)
                 .flowOf(value.getFlow())
                 .keyOf(value.getKey())
-                .languagesOf(value.hasLanguages() ? value.getLanguages() : Languages.ANY_KEYWORD)
+                .languagesOf(value.hasLanguages() ? value.getLanguages() : ANY_KEYWORD)
                 .build();
     }
 }

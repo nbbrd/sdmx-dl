@@ -6,25 +6,25 @@ import "sdmxdl_web.proto";
 
 package sdmxdl.cli.protobuf;
 
-message ConsoleInfo {
+message ConsoleInfoDto {
   string std_in_encoding = 1;
   string std_out_encoding = 2;
   int32 columns = 3;
   int32 rows = 4;
 }
 
-message Sources {
-  repeated sdmxdl.format.protobuf.web.WebSource sources = 1;
+message SourcesDto {
+  repeated sdmxdl.format.protobuf.web.WebSourceDto sources = 1;
 }
 
-message Flows {
-  repeated sdmxdl.format.protobuf.Flow flows = 1;
+message FlowsDto {
+  repeated sdmxdl.format.protobuf.FlowDto flows = 1;
 }
 
-message Features {
-  repeated sdmxdl.format.protobuf.Feature features = 1;
+message FeaturesDto {
+  repeated sdmxdl.format.protobuf.FeatureDto features = 1;
 }
 
-message Context {
+message ContextDto {
   map<string, string> items = 1;
 }

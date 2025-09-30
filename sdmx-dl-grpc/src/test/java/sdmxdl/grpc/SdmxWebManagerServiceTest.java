@@ -12,8 +12,8 @@ import org.junit.jupiter.api.Test;
 import sdmxdl.Confidentiality;
 import sdmxdl.format.protobuf.ProtoApi;
 import sdmxdl.format.protobuf.ProtoWeb;
-import sdmxdl.format.protobuf.web.WebSource;
-import sdmxdl.format.protobuf.web.WebSources;
+import sdmxdl.format.protobuf.web.WebSourceDto;
+import sdmxdl.format.protobuf.web.WebSourcesDto;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -33,10 +33,10 @@ public class SdmxWebManagerServiceTest {
     @Test
     public void testGetSources() {
         Empty request = Empty.newBuilder().build();
-        List<WebSource> response = grpc.getSources(request).collect().asList().await().atMost(Duration.ofSeconds(5));
+        List<WebSourceDto> response = grpc.getSources(request).collect().asList().await().atMost(Duration.ofSeconds(5));
         assertThat(response)
                 .hasSizeGreaterThanOrEqualTo(34)
-                .extracting(WebSource::getId)
+                .extracting(WebSourceDto::getId)
                 .contains("ECB");
     }
 
@@ -66,7 +66,7 @@ public class SdmxWebManagerServiceTest {
                             .extracting(ToolResponse::content, list(Content.class))
                             .hasSize(1)
                             .element(0)
-                            .extracting(content -> fromJson(WebSources.class, getText(content)))
+                            .extracting(content -> fromJson(WebSourcesDto.class, getText(content)))
                             .extracting(ProtoWeb::toWebSources)
                             .extracting(sdmxdl.web.WebSources::getSources, list(sdmxdl.web.WebSource.class))
                             .allMatch(source -> source.getConfidentiality().equals(Confidentiality.PUBLIC));
