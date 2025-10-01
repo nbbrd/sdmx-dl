@@ -3,10 +3,7 @@ package sdmxdl.provider.ri.readers;
 import nbbrd.design.DirectImpl;
 import lombok.NonNull;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.Connection;
-import sdmxdl.StructureRef;
-import sdmxdl.Flow;
-import sdmxdl.Languages;
+import sdmxdl.*;
 import sdmxdl.file.FileSource;
 import sdmxdl.file.spi.FileContext;
 import sdmxdl.file.spi.Reader;
@@ -56,12 +53,13 @@ public final class XmlReader implements Reader {
     }
 
     private FileClient getClient(FileSource source, Languages languages, FileContext context) throws IOException {
+        EventListener eventListener = context.getEventListener(source);
         FileClient client = new XmlFileClient(
                 source,
                 languages,
-                new XmlDecoder(context.getOnEvent()),
+                new XmlDecoder(eventListener),
                 ObsParser::newDefault,
-                context.getOnEvent()
+                eventListener
         );
         return CachedFileClient.of(client, context.getReaderCache(source), source, languages);
     }

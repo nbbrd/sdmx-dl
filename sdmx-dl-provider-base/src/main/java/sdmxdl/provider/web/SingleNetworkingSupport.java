@@ -75,8 +75,8 @@ public final class SingleNetworkingSupport implements Networking {
     @Override
     public @NonNull Network getNetwork(
             @NonNull WebSource source,
-            @Nullable EventListener<? super WebSource> onEvent,
-            @Nullable ErrorListener<? super WebSource> onError) {
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError) {
         return getSingleNetwork();
     }
 

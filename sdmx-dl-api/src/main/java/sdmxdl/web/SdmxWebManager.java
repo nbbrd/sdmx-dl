@@ -32,8 +32,6 @@ import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
@@ -87,10 +85,10 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
     WebCaching caching = WebCaching.noOp();
 
     @Nullable
-    EventListener<? super WebSource> onEvent;
+    Function<? super WebSource, EventListener> onEvent;
 
     @Nullable
-    ErrorListener<? super WebSource> onError;
+    Function<? super WebSource, ErrorListener> onError;
 
     @lombok.Singular
     @NonNull
@@ -105,10 +103,10 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
     Registry registry = Registry.noOp();
 
     @Nullable
-    Consumer<CharSequence> onRegistryEvent;
+    EventListener onRegistryEvent;
 
     @Nullable
-    BiConsumer<CharSequence, IOException> onRegistryError;
+    ErrorListener onRegistryError;
 
     @lombok.Getter(lazy = true)
     @NonNull
@@ -202,7 +200,7 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
                 .build();
     }
 
-    private static List<WebSource> initLazyCustomSources(Registry registry, List<Persistence> persistences, Consumer<CharSequence> onEvent, BiConsumer<CharSequence, IOException> onError) {
+    private static List<WebSource> initLazyCustomSources(Registry registry, List<Persistence> persistences, EventListener onEvent, ErrorListener onError) {
         return registry.getSources(persistences, onEvent, onError).getSources();
     }
 

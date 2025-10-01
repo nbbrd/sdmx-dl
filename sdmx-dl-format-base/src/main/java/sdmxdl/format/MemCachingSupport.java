@@ -66,8 +66,8 @@ public final class MemCachingSupport implements FileCaching, WebCaching {
     public @NonNull Cache<DataRepository> getReaderCache(
             @NonNull FileSource source,
             @NonNull List<Persistence> persistences,
-            @Nullable EventListener<? super FileSource> onEvent,
-            @Nullable ErrorListener<? super FileSource> onError) {
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError) {
         return MemCache
                 .<DataRepository>builder()
                 .map(repositories.get())
@@ -79,8 +79,8 @@ public final class MemCachingSupport implements FileCaching, WebCaching {
     public @NonNull Cache<DataRepository> getDriverCache(
             @NonNull WebSource source,
             @NonNull List<Persistence> persistences,
-            @Nullable EventListener<? super WebSource> onEvent,
-            @Nullable ErrorListener<? super WebSource> onError) {
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError) {
         return MemCache
                 .<DataRepository>builder()
                 .map(repositories.get())
@@ -92,8 +92,8 @@ public final class MemCachingSupport implements FileCaching, WebCaching {
     public @NonNull Cache<MonitorReports> getMonitorCache(
             @NonNull WebSource source,
             @NonNull List<Persistence> persistences,
-            @Nullable EventListener<? super WebSource> onEvent,
-            @Nullable ErrorListener<? super WebSource> onError) {
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError) {
         return MemCache
                 .<MonitorReports>builder()
                 .map(webMonitors.get())

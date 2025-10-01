@@ -58,7 +58,7 @@ public class XmlFileClient implements FileClient {
     @Nullable
     private final Supplier<ObsParser> obsFactory;
 
-    private final @Nullable EventListener<? super FileSource> listener;
+    private final @Nullable EventListener listener;
 
     @Override
     public @NonNull Marker getMarker() {
@@ -83,7 +83,7 @@ public class XmlFileClient implements FileClient {
     @Override
     public @NonNull Stream<Series> loadData(@NonNull FileInfo info, @NonNull DataRef dataRef) throws IOException {
         if (listener != null) {
-            listener.accept(source, MARKER, "Loading data from file '" + source.getData() + "'");
+            listener.accept(MARKER, "Loading data from file '" + source.getData() + "'");
         }
         return dataRef.getQuery().execute(
                 getDataSupplier(info.getDataType(), info.getStructure())

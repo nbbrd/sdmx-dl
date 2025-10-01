@@ -27,8 +27,8 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.io.text.BaseProperty;
 import org.jspecify.annotations.Nullable;
-import sdmxdl.EventListener;
 import sdmxdl.*;
+import sdmxdl.EventListener;
 import sdmxdl.format.ObsParser;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.HasMarker;
@@ -218,7 +218,8 @@ public final class ConnectorsRestClient implements RestClient {
         client.setSslSocketFactory(sslFactory.getSSLSocketFactory());
         client.setHostnameVerifier(sslFactory.getHostnameVerifier());
         client.setMaxRedirects(MAX_REDIRECTS_PROPERTY.get(source.getProperties()));
-        RestSdmxEventListener eventListener = new DefaultRestSdmxEventListener(source, context.getOnEvent(), client.getName());
+        EventListener contextOnEvent = context.getEventListener(source);
+        RestSdmxEventListener eventListener = new DefaultRestSdmxEventListener(contextOnEvent, client.getName());
         client.setRedirectionEventListener(eventListener);
         client.setOpenEventListener(eventListener);
     }
@@ -226,10 +227,7 @@ public final class ConnectorsRestClient implements RestClient {
     @lombok.AllArgsConstructor
     private static final class DefaultRestSdmxEventListener implements RestSdmxEventListener {
 
-        @NonNull
-        private final WebSource source;
-
-        private final @Nullable EventListener<? super WebSource> listener;
+        private final @Nullable EventListener listener;
 
         @NonNull
         private final String marker;
@@ -239,10 +237,10 @@ public final class ConnectorsRestClient implements RestClient {
             if (listener != null) {
                 if (event instanceof RedirectionEvent) {
                     RedirectionEvent redirectionEvent = (RedirectionEvent) event;
-                    listener.accept(source, marker, WebEvents.onRedirection(redirectionEvent.getUrl(), redirectionEvent.getRedirection()));
+                    listener.accept(marker, WebEvents.onRedirection(redirectionEvent.getUrl(), redirectionEvent.getRedirection()));
                 } else if (event instanceof OpenEvent) {
                     OpenEvent openEvent = (OpenEvent) event;
-                    listener.accept(source, marker, WebEvents.onQuery(openEvent.getUrl(), openEvent.getProxy()));
+                    listener.accept(marker, WebEvents.onQuery(openEvent.getUrl(), openEvent.getProxy()));
                 }
             }
         }

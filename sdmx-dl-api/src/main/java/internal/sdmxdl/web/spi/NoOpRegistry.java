@@ -2,16 +2,15 @@ package internal.sdmxdl.web.spi;
 
 import lombok.NonNull;
 import org.jspecify.annotations.Nullable;
+import sdmxdl.ErrorListener;
+import sdmxdl.EventListener;
 import sdmxdl.ext.Persistence;
 import sdmxdl.web.WebSources;
 import sdmxdl.web.spi.Registry;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public enum NoOpRegistry implements Registry {
 
@@ -30,8 +29,8 @@ public enum NoOpRegistry implements Registry {
     @Override
     public @NonNull WebSources getSources(
             @NonNull List<Persistence> persistences,
-            @Nullable Consumer<CharSequence> onEvent,
-            @Nullable BiConsumer<CharSequence, IOException> onError) {
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError) {
         return WebSources.EMPTY;
     }
 

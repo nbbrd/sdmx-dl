@@ -83,10 +83,10 @@ public final class RiNetworking implements Networking {
     @Override
     public @NonNull Network getNetwork(
             @NonNull WebSource source,
-            @Nullable EventListener<? super WebSource> onEvent,
-            @Nullable ErrorListener<? super WebSource> onError) {
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError) {
         RiNetwork result = getNetwork(PropertiesSupport.asFunction(source));
-        if (onEvent != null) onEvent.accept(source, getNetworkingId(), "Using " + result);
+        if (onEvent != null) onEvent.accept(getNetworkingId(), "Using " + result);
         return result;
     }
 

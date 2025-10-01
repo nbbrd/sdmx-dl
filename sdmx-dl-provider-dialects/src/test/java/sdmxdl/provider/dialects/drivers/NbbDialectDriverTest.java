@@ -141,6 +141,6 @@ public class NbbDialectDriverTest {
             .builder()
             .caching(MemCachingSupport.builder().id("local").build())
             .networking(new RiNetworking())
-            .onEvent(DriverAssert.eventOf(System.out::println))
+            .onEvent(source -> DriverAssert.eventOf(source, System.out::println))
             .build();
 }

@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.util.function.BiConsumer;
 
 @FunctionalInterface
-public interface ErrorListener<S extends Source> {
+public interface ErrorListener {
 
-    void accept(@NonNull S source, @NonNull String marker, @NonNull CharSequence message, @NonNull IOException error);
+    void accept(@NonNull String marker, @NonNull CharSequence message, @NonNull IOException error);
 
-    default @NonNull BiConsumer<CharSequence, IOException> asBiConsumer(@NonNull S source, @NonNull String marker) {
-        return (message, error) -> accept(source, marker, message, error);
+    default @NonNull BiConsumer<CharSequence, IOException> asBiConsumer(@NonNull String marker) {
+        return (message, error) -> accept(marker, message, error);
     }
 }

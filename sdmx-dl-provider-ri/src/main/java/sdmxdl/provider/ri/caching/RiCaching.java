@@ -108,17 +108,17 @@ public final class RiCaching implements FileCaching, WebCaching {
     public @NonNull Cache<DataRepository> getDriverCache(
             @NonNull WebSource source,
             @NonNull List<Persistence> persistences,
-            @Nullable EventListener<? super WebSource> onEvent,
-            @Nullable ErrorListener<? super WebSource> onError) {
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError) {
 
         Function<? super String, ? extends CharSequence> properties = PropertiesSupport.asFunction(source);
 
         if (isNoCache(properties)) {
-            return noCache(source, onEvent);
+            return noCache(onEvent);
         }
 
         if (isForbidden(properties, source.getConfidentiality())) {
-            return forbiddenCache(source, onEvent);
+            return forbiddenCache(onEvent);
         }
 
         return getDiskCaching(properties)
@@ -129,17 +129,17 @@ public final class RiCaching implements FileCaching, WebCaching {
     public @NonNull Cache<MonitorReports> getMonitorCache(
             @NonNull WebSource source,
             @NonNull List<Persistence> persistences,
-            @Nullable EventListener<? super WebSource> onEvent,
-            @Nullable ErrorListener<? super WebSource> onError) {
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError) {
 
         Function<? super String, ? extends CharSequence> properties = PropertiesSupport.asFunction(source);
 
         if (isNoCache(properties)) {
-            return noCache(source, onEvent);
+            return noCache(onEvent);
         }
 
         if (isForbidden(properties, source.getConfidentiality())) {
-            return forbiddenCache(source, onEvent);
+            return forbiddenCache(onEvent);
         }
 
         return getDiskCaching(properties)
@@ -150,26 +150,26 @@ public final class RiCaching implements FileCaching, WebCaching {
     public @NonNull Cache<DataRepository> getReaderCache(
             @NonNull FileSource source,
             @NonNull List<Persistence> persistences,
-            @Nullable EventListener<? super FileSource> onEvent,
-            @Nullable ErrorListener<? super FileSource> onError) {
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError) {
 
         Function<? super String, ? extends CharSequence> properties = PropertiesSupport.asFunction(source);
 
         if (isNoCache(properties)) {
-            return noCache(source, onEvent);
+            return noCache(onEvent);
         }
 
         return getDiskCaching(properties)
                 .getReaderCache(source, persistences, onEvent, onError);
     }
 
-    private <V extends HasExpiration, T extends Source> Cache<V> noCache(T source, EventListener<? super T> onEvent) {
-        if (onEvent != null) onEvent.accept(source, ID, "Cache disabled");
+    private <V extends HasExpiration> Cache<V> noCache(EventListener onEvent) {
+        if (onEvent != null) onEvent.accept(ID, "Cache disabled");
         return Cache.noOp();
     }
 
-    private static <V extends HasExpiration, T extends Source> Cache<V> forbiddenCache(T source, EventListener<? super T> onEvent) {
-        if (onEvent != null) onEvent.accept(source, ID, "Cache forbidden");
+    private static <V extends HasExpiration> Cache<V> forbiddenCache(EventListener onEvent) {
+        if (onEvent != null) onEvent.accept(ID, "Cache forbidden");
         return MemCache.<V>builder().build();
     }
 

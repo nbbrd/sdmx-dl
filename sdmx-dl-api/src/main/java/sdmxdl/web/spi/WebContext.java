@@ -27,6 +27,7 @@ import sdmxdl.web.MonitorReports;
 import sdmxdl.web.WebSource;
 
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * @author Philippe Charles
@@ -36,30 +37,44 @@ import java.util.List;
 public class WebContext {
 
     @lombok.Builder.Default
-    @NonNull WebCaching caching = WebCaching.noOp();
+    @NonNull
+    WebCaching caching = WebCaching.noOp();
 
-    @Nullable EventListener<? super WebSource> onEvent;
+    @Nullable
+    Function<? super WebSource, EventListener> onEvent;
 
-    @Nullable ErrorListener<? super WebSource> onError;
+    @Nullable
+    Function<? super WebSource, ErrorListener> onError;
 
     @lombok.Singular
-    @NonNull List<Persistence> persistences;
+    @NonNull
+    List<Persistence> persistences;
 
     @lombok.Singular
-    @NonNull List<Authenticator> authenticators;
+    @NonNull
+    List<Authenticator> authenticators;
 
     @lombok.Builder.Default
-    @NonNull Networking networking = Networking.getDefault();
+    @NonNull
+    Networking networking = Networking.getDefault();
+
+    public @Nullable EventListener getEventListener(@NonNull WebSource source) {
+        return onEvent != null ? onEvent.apply(source) : null;
+    }
+
+    public @Nullable ErrorListener getErrorListener(@NonNull WebSource source) {
+        return onError != null ? onError.apply(source) : null;
+    }
 
     public @NonNull Cache<DataRepository> getDriverCache(@NonNull WebSource source) {
-        return caching.getDriverCache(source, persistences, onEvent, onError);
+        return caching.getDriverCache(source, persistences, getEventListener(source), getErrorListener(source));
     }
 
     public @NonNull Cache<MonitorReports> getMonitorCache(@NonNull WebSource source) {
-        return caching.getMonitorCache(source, persistences, onEvent, onError);
+        return caching.getMonitorCache(source, persistences, getEventListener(source), getErrorListener(source));
     }
 
     public @NonNull Network getNetwork(@NonNull WebSource source) {
-        return networking.getNetwork(source, onEvent, onError);
+        return networking.getNetwork(source, getEventListener(source), getErrorListener(source));
     }
 }

@@ -34,8 +34,8 @@ public interface FileCaching {
     @NonNull Cache<DataRepository> getReaderCache(
             @NonNull FileSource source,
             @NonNull List<Persistence> persistences,
-            @Nullable EventListener<? super FileSource> onEvent,
-            @Nullable ErrorListener<? super FileSource> onError);
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError);
 
     @NonNull Collection<String> getFileCachingProperties();
 

@@ -225,7 +225,7 @@ public class StatCanDialectDriverTest {
             .builder()
             .caching(MemCachingSupport.builder().id("local").build())
             .networking(new RiNetworking())
-            .onEvent(DriverAssert.eventOf(System.out::println))
+            .onEvent(source -> DriverAssert.eventOf(source, System.out::println))
             .build();
 
     private static TimeInterval periodOf(String localDate, String duration) {

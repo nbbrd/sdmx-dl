@@ -19,6 +19,8 @@ package internal.sdmxdl.cli;
 import lombok.NonNull;
 import org.jspecify.annotations.Nullable;
 import picocli.CommandLine;
+import sdmxdl.ErrorListener;
+import sdmxdl.EventListener;
 import sdmxdl.ext.Persistence;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
@@ -31,8 +33,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.SortedMap;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import static java.util.stream.Collectors.toList;
 
@@ -98,7 +98,7 @@ public class WebNetOptions extends WebOptions {
         }
 
         @Override
-        public @NonNull WebSources getSources(@NonNull List<Persistence> persistences, @Nullable Consumer<CharSequence> onEvent, @Nullable BiConsumer<CharSequence, IOException> onError) {
+        public @NonNull WebSources getSources(@NonNull List<Persistence> persistences, @Nullable EventListener onEvent, @Nullable ErrorListener onError) {
             return sources;
         }
 

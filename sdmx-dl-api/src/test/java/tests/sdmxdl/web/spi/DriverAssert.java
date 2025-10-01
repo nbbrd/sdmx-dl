@@ -119,8 +119,8 @@ public class DriverAssert {
     }
 
     //    @MightBePromoted
-    public static <W extends WebSource> EventListener<W> eventOf(Consumer<String> consumer) {
-        return (W source, String marker, CharSequence message) -> consumer.accept(source.getId() + " " + marker + " " + message);
+    public static <W extends WebSource> EventListener eventOf(W source, Consumer<String> consumer) {
+        return (String marker, CharSequence message) -> consumer.accept(source.getId() + " " + marker + " " + message);
     }
 
     @lombok.Value

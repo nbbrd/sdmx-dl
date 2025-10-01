@@ -91,6 +91,7 @@ public class RiHttpUtils {
 
     public static @NonNull HttpContext newContext(@NonNull WebSource source, @NonNull WebContext context) {
         Network network = context.getNetwork(source);
+        EventListener eventListener = context.getEventListener(source);
         return HttpContext
                 .builder()
                 .readTimeout(READ_TIMEOUT_PROPERTY.get(source.getProperties()))
@@ -101,8 +102,8 @@ public class RiHttpUtils {
                 .sslSocketFactory(() -> network.getSSLFactory().getSSLSocketFactory())
                 .hostnameVerifier(() -> network.getSSLFactory().getHostnameVerifier())
                 .urlConnectionFactory(() -> network.getURLConnectionFactory()::openConnection)
-                .listener(context.getOnEvent() != null ? new RiHttpEventListener(context.getOnEvent().asConsumer(source, "RI_HTTP")) : HttpEventListener.noOp())
-                .authenticator(new RiHttpAuthenticator(source, context.getAuthenticators(), context.getOnEvent()))
+                .listener(eventListener != null ? new RiHttpEventListener(eventListener.asConsumer("RI_HTTP")) : HttpEventListener.noOp())
+                .authenticator(new RiHttpAuthenticator(source, context.getAuthenticators(), eventListener))
                 .userAgent(USER_AGENT_PROPERTY.get(source.getProperties()))
                 .build();
     }
@@ -155,7 +156,7 @@ public class RiHttpUtils {
         @lombok.NonNull
         private final List<Authenticator> authenticators;
 
-        private final @Nullable EventListener<? super WebSource> listener;
+        private final @Nullable EventListener listener;
 
         @Override
         public @Nullable PasswordAuthentication getPasswordAuthentication(URL url) {
@@ -187,7 +188,7 @@ public class RiHttpUtils {
                 return authenticator.getPasswordAuthenticationOrNull(source);
             } catch (IOException ex) {
                 if (listener != null) {
-                    listener.accept(source, authenticator.getAuthenticatorId(), "Failed to get password authentication: " + ex.getMessage());
+                    listener.accept(authenticator.getAuthenticatorId(), "Failed to get password authentication: " + ex.getMessage());
                 }
                 return null;
             }
@@ -198,7 +199,7 @@ public class RiHttpUtils {
                 authenticator.invalidateAuthentication(source);
             } catch (IOException ex) {
                 if (listener != null) {
-                    listener.accept(source, authenticator.getAuthenticatorId(), "Failed to invalidate password authentication: " + ex.getMessage());
+                    listener.accept(authenticator.getAuthenticatorId(), "Failed to invalidate password authentication: " + ex.getMessage());
                 }
             }
         }

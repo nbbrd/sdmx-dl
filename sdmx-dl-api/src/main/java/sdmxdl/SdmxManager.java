@@ -26,6 +26,7 @@ import sdmxdl.web.SdmxWebManager;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * @author Philippe Charles
@@ -43,9 +44,9 @@ public abstract class SdmxManager<SOURCE extends Source> {
 
     public abstract @NonNull Connection getConnection(@NonNull SOURCE source, @NonNull Languages languages) throws IOException;
 
-    public abstract @Nullable EventListener<? super SOURCE> getOnEvent();
+    public abstract @Nullable Function<? super SOURCE, EventListener> getOnEvent();
 
-    public abstract @Nullable ErrorListener<? super SOURCE> getOnError();
+    public abstract @Nullable Function<? super SOURCE, ErrorListener> getOnError();
 
     @lombok.AllArgsConstructor
     private static final class DefaultProvider<SOURCE extends Source> implements Provider {

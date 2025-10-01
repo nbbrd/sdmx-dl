@@ -67,47 +67,47 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
     }
 
     @Override
-    public @NonNull Cache<DataRepository> getReaderCache(@NonNull FileSource source, @NonNull List<Persistence> persistences, @Nullable EventListener<? super FileSource> onEvent, @Nullable ErrorListener<? super FileSource> onError) {
+    public @NonNull Cache<DataRepository> getReaderCache(@NonNull FileSource source, @NonNull List<Persistence> persistences, @Nullable EventListener onEvent, @Nullable ErrorListener onError) {
         FileFormat<DataRepository> repository = lookupFileFormat(DataRepository.class, persistences);
-        logConfig(source, onEvent, repository);
+        logConfig(onEvent, repository);
         return decorateCache(DiskCache
                 .<DataRepository>builder()
                 .root(root)
                 .format(decorateFormat(repository))
                 .namePrefix("R")
                 .clock(clock)
-                .onRead(onEvent != null ? onEvent.asConsumer(source, id) : null)
-                .onError(onError != null ? onError.asBiConsumer(source, id) : null)
+                .onRead(onEvent != null ? onEvent.asConsumer(id) : null)
+                .onError(onError != null ? onError.asBiConsumer(id) : null)
                 .build());
     }
 
     @Override
-    public @NonNull Cache<DataRepository> getDriverCache(@NonNull WebSource source, @NonNull List<Persistence> persistences, @Nullable EventListener<? super WebSource> onEvent, @Nullable ErrorListener<? super WebSource> onError) {
+    public @NonNull Cache<DataRepository> getDriverCache(@NonNull WebSource source, @NonNull List<Persistence> persistences, @Nullable EventListener onEvent, @Nullable ErrorListener onError) {
         FileFormat<DataRepository> repository = lookupFileFormat(DataRepository.class, persistences);
-        logConfig(source, onEvent, repository);
+        logConfig(onEvent, repository);
         return decorateCache(DiskCache
                 .<DataRepository>builder()
                 .root(root)
                 .format(decorateFormat(repository))
                 .namePrefix("D")
                 .clock(clock)
-                .onRead(onEvent != null ? onEvent.asConsumer(source, id) : null)
-                .onError(onError != null ? onError.asBiConsumer(source, id) : null)
+                .onRead(onEvent != null ? onEvent.asConsumer(id) : null)
+                .onError(onError != null ? onError.asBiConsumer(id) : null)
                 .build());
     }
 
     @Override
-    public @NonNull Cache<MonitorReports> getMonitorCache(@NonNull WebSource source, @NonNull List<Persistence> persistences, @Nullable EventListener<? super WebSource> onEvent, @Nullable ErrorListener<? super WebSource> onError) {
+    public @NonNull Cache<MonitorReports> getMonitorCache(@NonNull WebSource source, @NonNull List<Persistence> persistences, @Nullable EventListener onEvent, @Nullable ErrorListener onError) {
         FileFormat<MonitorReports> monitor = lookupFileFormat(MonitorReports.class, persistences);
-        logConfig(source, onEvent, monitor);
+        logConfig(onEvent, monitor);
         return decorateCache(DiskCache
                 .<MonitorReports>builder()
                 .root(root)
                 .format(decorateFormat(monitor))
                 .namePrefix("M")
                 .clock(clock)
-                .onRead(onEvent != null ? onEvent.asConsumer(source, id) : null)
-                .onError(onError != null ? onError.asBiConsumer(source, id) : null)
+                .onRead(onEvent != null ? onEvent.asConsumer(id) : null)
+                .onError(onError != null ? onError.asBiConsumer(id) : null)
                 .build());
     }
 
@@ -152,8 +152,8 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
         );
     }
 
-    private <T extends Source> void logConfig(T source, EventListener<? super T> onEvent, FileFormat<?> format) {
+    private void logConfig(EventListener onEvent, FileFormat<?> format) {
         if (onEvent != null)
-            onEvent.accept(source, id, "Using cache folder " + root.toUri() + " with format '" + format.getFileExtension() + "'");
+            onEvent.accept(id, "Using cache folder " + root.toUri() + " with format '" + format.getFileExtension() + "'");
     }
 }

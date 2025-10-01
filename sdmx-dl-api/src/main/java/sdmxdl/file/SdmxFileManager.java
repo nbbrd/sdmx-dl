@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * @author Philippe Charles
@@ -61,10 +62,10 @@ public class SdmxFileManager extends SdmxManager<FileSource> {
     FileCaching caching = FileCaching.noOp();
 
     @Nullable
-    EventListener<? super FileSource> onEvent;
+    Function<? super FileSource, EventListener> onEvent;
 
     @Nullable
-    ErrorListener<? super FileSource> onError;
+    Function<? super FileSource, ErrorListener> onError;
 
     @lombok.Singular
     @NonNull

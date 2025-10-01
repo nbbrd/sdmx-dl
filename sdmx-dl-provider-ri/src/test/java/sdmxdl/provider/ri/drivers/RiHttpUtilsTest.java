@@ -54,7 +54,7 @@ public class RiHttpUtilsTest {
 
         WebContext webContext = WebContext
                 .builder()
-                .onEvent(events::onSourceEvent)
+                .onEvent(source -> (marker, message) -> events.onSourceEvent(source, marker, message))
                 .build();
 
         HttpEventListener x = RiHttpUtils.newContext(source, webContext).getListener();

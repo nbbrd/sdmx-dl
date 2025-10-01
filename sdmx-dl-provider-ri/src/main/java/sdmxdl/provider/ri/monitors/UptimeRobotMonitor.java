@@ -8,6 +8,7 @@ import nbbrd.io.text.Parser;
 import nbbrd.io.xml.Stax;
 import nbbrd.io.xml.Xml;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.EventListener;
 import sdmxdl.provider.web.WebEvents;
 import sdmxdl.provider.web.WebMonitors;
 import sdmxdl.web.MonitorReport;
@@ -112,8 +113,9 @@ public final class UptimeRobotMonitor implements Monitor {
         Network network = context.getNetwork(source);
         Proxy proxy = network.getProxySelector().select(toURI(url)).stream().findFirst().orElse(Proxy.NO_PROXY);
 
-        if (context.getOnEvent() != null) {
-            context.getOnEvent().accept(source, monitorId, WebEvents.onQuery(url, proxy));
+        EventListener eventListener = context.getEventListener(source);
+        if (eventListener != null) {
+            eventListener.accept(monitorId, WebEvents.onQuery(url, proxy));
         }
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
