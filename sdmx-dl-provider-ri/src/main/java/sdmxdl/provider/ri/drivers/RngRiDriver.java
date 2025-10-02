@@ -129,14 +129,9 @@ public final class RngRiDriver implements Driver {
         }
 
         @Override
-        public @NonNull Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException {
-            return ConnectionSupport.getFlowFromFlows(database, flowRef, this, this);
-        }
-
-        @Override
-        public @NonNull Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException {
-            Flow flow = getFlow(database, flowRef);
-            return Structure
+        public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
+            Flow flow = ConnectionSupport.getFlowFromFlows(database, flowRef, this, this);
+            Structure dsd = Structure
                     .builder()
                     .ref(flow.getStructureRef())
                     .dimension(Dimension
@@ -167,6 +162,11 @@ public final class RngRiDriver implements Driver {
                     .timeDimensionId("TIME_PERIOD")
                     .primaryMeasureId("OBS_VALUE")
                     .name("RNG")
+                    .build();
+            return MetaSet
+                    .builder()
+                    .flow(flow)
+                    .structure(dsd)
                     .build();
         }
 

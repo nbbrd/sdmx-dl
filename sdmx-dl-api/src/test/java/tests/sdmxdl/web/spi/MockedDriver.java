@@ -122,29 +122,32 @@ public final class MockedDriver implements Driver {
         }
 
         @Override
-        public @NonNull Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException {
+        public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
             checkState();
             checkDataflowRef(flowRef);
-            return repo
+
+            Flow flow = repo
                     .getFlow(flowRef)
                     .orElseThrow(() -> missingFlow(repo.getName(), flowRef));
-        }
 
-        @Override
-        public @NonNull Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException {
-            checkState();
-            checkDataflowRef(flowRef);
-            StructureRef structRef = getFlow(database, flowRef).getStructureRef();
-            return repo
+            StructureRef structRef = flow.getStructureRef();
+
+            Structure structure = repo
                     .getStructure(structRef)
                     .orElseThrow(() -> missingStructure(repo.getName(), structRef));
+
+            return MetaSet
+                    .builder()
+                    .flow(flow)
+                    .structure(structure)
+                    .build();
         }
 
         @Override
         public @NonNull DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
             checkState();
             checkDataflowRef(flowRef);
-            checkKey(query.getKey(), getStructure(database, flowRef));
+            checkKey(query.getKey(), getMeta(database, flowRef).getStructure());
             return repo
                     .getDataSet(flowRef)
                     .map(dataSet -> dataSet.getData(query))
@@ -155,7 +158,7 @@ public final class MockedDriver implements Driver {
         public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
             checkState();
             checkDataflowRef(flowRef);
-            checkKey(query.getKey(), getStructure(database, flowRef));
+            checkKey(query.getKey(), getMeta(database, flowRef).getStructure());
             return repo
                     .getDataSet(flowRef)
                     .map(dataSet -> dataSet.getDataStream(query))
@@ -166,10 +169,6 @@ public final class MockedDriver implements Driver {
         public @NonNull Collection<String> getAvailableDimensionCodes(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, @NonNegative int dimensionIndex) throws IOException, IllegalArgumentException {
             checkState();
             checkDataflowRef(flowRef);
-            StructureRef structRef = getFlow(database, flowRef).getStructureRef();
-            Structure dsd = repo
-                    .getStructure(structRef)
-                    .orElseThrow(() -> missingStructure(repo.getName(), structRef));
             if (supportedFeatures.contains(Feature.DATA_QUERY_DETAIL)) {
                 return repo
                         .getDataSet(flowRef)
@@ -179,7 +178,8 @@ public final class MockedDriver implements Driver {
                         .distinct()
                         .collect(toList());
             } else {
-                return dsd
+                return getMeta(database, flowRef)
+                        .getStructure()
                         .getDimensionList()
                         .get(dimensionIndex)
                         .getCodes()

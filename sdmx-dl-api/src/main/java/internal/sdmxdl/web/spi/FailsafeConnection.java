@@ -94,38 +94,19 @@ final class FailsafeConnection implements Connection {
     }
 
     @Override
-    public @NonNull Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException {
-        Flow result;
+    public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
+        MetaSet result;
 
         try {
-            result = delegate.getFlow(database, flowRef);
+            result = delegate.getMeta(database, flowRef);
         } catch (IllegalArgumentException ex) {
             throw ex;
         } catch (RuntimeException ex) {
-            throw unexpectedError(ex, "while getting flow");
+            throw unexpectedError(ex, "while getting meta");
         }
 
         if (result == null) {
-            throw unexpectedNull("flow");
-        }
-
-        return result;
-    }
-
-    @Override
-    public @NonNull Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException {
-        Structure result;
-
-        try {
-            result = delegate.getStructure(database, flowRef);
-        } catch (IllegalArgumentException ex) {
-            throw ex;
-        } catch (RuntimeException ex) {
-            throw unexpectedError(ex, "while getting structure");
-        }
-
-        if (result == null) {
-            throw unexpectedNull("structure");
+            throw unexpectedNull("meta");
         }
 
         return result;

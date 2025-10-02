@@ -38,13 +38,10 @@ public interface Connection extends Closeable {
     Collection<Database> getDatabases() throws IOException;
 
     @NonNull
-    Collection<Flow> getFlows(@NonNull DatabaseRef database) throws IOException;
+    Collection<Flow> getFlows(@NonNull DatabaseRef database) throws IOException, IllegalArgumentException;
 
     @NonNull
-    Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException;
-
-    @NonNull
-    Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException;
+    MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException;
 
     @NonNull
     DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException;

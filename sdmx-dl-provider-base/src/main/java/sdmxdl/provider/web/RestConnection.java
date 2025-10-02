@@ -60,17 +60,15 @@ final class RestConnection implements Connection {
     }
 
     @Override
-    public @NonNull Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException {
+    public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
         checkState();
         checkDatabase(database);
-        return lookupFlow(database, flowRef);
-    }
-
-    @Override
-    public @NonNull Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException {
-        checkState();
-        checkDatabase(database);
-        return client.getStructure(lookupFlow(database, flowRef).getStructureRef());
+        Flow flow = lookupFlow(database, flowRef);
+        return MetaSet
+                .builder()
+                .flow(flow)
+                .structure(client.getStructure(flow.getStructureRef()))
+                .build();
     }
 
     @Override
@@ -81,16 +79,13 @@ final class RestConnection implements Connection {
 
     @Override
     public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
-        checkState();
-        checkDatabase(database);
+        MetaSet meta = getMeta(database, flowRef);
 
-        Flow flow = lookupFlow(database, flowRef);
-        Structure dsd = client.getStructure(flow.getStructureRef());
-        checkKey(query.getKey(), dsd);
+        checkKey(query.getKey(), meta.getStructure());
 
-        Query realQuery = deriveDataQuery(query, getSupportedFeatures(), dsd);
+        Query realQuery = deriveDataQuery(query, getSupportedFeatures(), meta.getStructure());
 
-        Stream<Series> result = client.getData(DataRef.of(flow.getRef(), realQuery), dsd);
+        Stream<Series> result = client.getData(DataRef.of(meta.getFlow().getRef(), realQuery), meta.getStructure());
 
         return realQuery.equals(query) ? result : query.execute(result);
     }

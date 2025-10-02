@@ -158,15 +158,13 @@ public final class PxWebDriver implements Driver {
         }
 
         @Override
-        public @NonNull Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
+        public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
             checkDatabase(database);
-            return ConnectionSupport.getFlowFromFlows(database, flowRef, this, client);
-        }
-
-        @Override
-        public @NonNull Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
-            checkDatabase(database);
-            return client.getMeta(database.getId(), flowRef.getId());
+            return MetaSet
+                    .builder()
+                    .flow(ConnectionSupport.getFlowFromFlows(database, flowRef, this, client))
+                    .structure(client.getMeta(database.getId(), flowRef.getId()))
+                    .build();
         }
 
         @Override

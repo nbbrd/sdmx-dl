@@ -72,7 +72,7 @@ public final class FetchExtraCommand implements Callable<Void> {
         SdmxWebManager manager = web.loadManager();
 
         try (Connection conn = manager.getConnection(web.getSource(), web.getLangs())) {
-            Structure dsd = conn.getStructure(web.getDatabase(), web.getFlow());
+            Structure dsd = conn.getMeta(web.getDatabase(), web.getFlow()).getStructure();
 
             SeriesMetaFactory factory = SeriesMetaFactory.getDefault(dsd);
 

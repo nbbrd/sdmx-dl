@@ -81,11 +81,7 @@ public abstract class SdmxManager<SOURCE extends Source> {
         @Override
         public @NonNull MetaSet getMeta(@NonNull FlowRequest request) throws IOException {
             try (Connection connection = manager.getConnection(source, request.getLanguages())) {
-                return MetaSet
-                        .builder()
-                        .flow(connection.getFlow(request.getDatabase(), request.getFlow()))
-                        .structure(connection.getStructure(request.getDatabase(), request.getFlow()))
-                        .build();
+                return connection.getMeta(request.getDatabase(), request.getFlow());
             }
         }
 

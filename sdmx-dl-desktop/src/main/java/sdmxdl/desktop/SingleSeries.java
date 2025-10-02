@@ -44,7 +44,7 @@ public class SingleSeries {
             FlowRef flowRef = ref.getDataSourceRef().toFlowRef();
             return new SingleSeries(
                     ref, conn.getFlows(database),
-                    conn.getStructure(database, flowRef),
+                    conn.getMeta(database, flowRef).getStructure(),
                     conn.getDataStream(database, flowRef, Query.builder().key(ref.getKey()).build())
                             .findFirst()
                             .orElseGet(() -> Series.builder().key(ref.getKey()).build()),

@@ -74,8 +74,7 @@ public class ConnectionAssert {
 
         assertState(s, supplier, o -> o.getData(NO_DATABASE, sample.validFlow, Query.ALL), "getData(DataflowRef, DataQuery)");
         assertState(s, supplier, o -> o.getDataStream(NO_DATABASE, sample.validFlow, Query.ALL), "getDataStream(DataflowRef, DataQuery)");
-        assertState(s, supplier, o -> o.getStructure(NO_DATABASE, sample.validFlow), "getStructure(DataflowRef)");
-        assertState(s, supplier, o -> o.getFlow(NO_DATABASE, sample.validFlow), "getFlow(DataflowRef)");
+        assertState(s, supplier, o -> o.getMeta(NO_DATABASE, sample.validFlow), "getMeta(DataflowRef)");
         assertState(s, supplier, o -> o.getFlows(NO_DATABASE), "getFlows()");
         assertState(s, supplier, o -> o.getAvailableDimensionCodes(NO_DATABASE, sample.validFlow, Key.ALL, 0), "getAvailableDimensionValues(DataflowRef,Key,int)");
     }
@@ -100,10 +99,10 @@ public class ConnectionAssert {
                 .are(validFlow(true))
                 .anyMatch(sample.validFlow::containsRef);
 
-        s.assertThat(conn.getFlow(NO_DATABASE, sample.validFlow))
+        s.assertThat(conn.getMeta(NO_DATABASE, sample.validFlow).getFlow())
                 .is(validFlow(true));
 
-        Structure dsd = conn.getStructure(NO_DATABASE, sample.validFlow);
+        Structure dsd = conn.getMeta(NO_DATABASE, sample.validFlow).getStructure();
         s.assertThat(dsd).has(validName());
         s.assertThat(dsd.getAttributes()).are(validAttribute());
         s.assertThat(dsd.getDimensions()).are(validDimension());
@@ -138,10 +137,7 @@ public class ConnectionAssert {
             s.assertThatThrownBy(() -> conn.getDataStream(NO_DATABASE, sample.invalidFlow, validQuery))
                     .isInstanceOf(IOException.class);
 
-            s.assertThatThrownBy(() -> conn.getFlow(NO_DATABASE, sample.invalidFlow))
-                    .isInstanceOf(IOException.class);
-
-            s.assertThatThrownBy(() -> conn.getStructure(NO_DATABASE, sample.invalidFlow))
+            s.assertThatThrownBy(() -> conn.getMeta(NO_DATABASE, sample.invalidFlow))
                     .isInstanceOf(IOException.class);
 
             s.assertThatThrownBy(() -> conn.getAvailableDimensionCodes(NO_DATABASE, sample.invalidFlow, sample.validKey, 0))
@@ -167,12 +163,8 @@ public class ConnectionAssert {
                 .as(nullDescriptionOf("getDataStream(DataflowRef, DataQuery)", "query"))
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThatThrownBy(() -> conn.getStructure(NO_DATABASE, null))
-                .as(nullDescriptionOf("getStructure(DataflowRef)", "flowRef"))
-                .isInstanceOf(NullPointerException.class);
-
-        s.assertThatThrownBy(() -> conn.getFlow(NO_DATABASE, null))
-                .as(nullDescriptionOf("getFlow(DataflowRef)", "flowRef"))
+        s.assertThatThrownBy(() -> conn.getMeta(NO_DATABASE, null))
+                .as(nullDescriptionOf("getMeta(DataflowRef)", "flowRef"))
                 .isInstanceOf(NullPointerException.class);
 
         s.assertThatThrownBy(() -> conn.getAvailableDimensionCodes(NO_DATABASE, null, Key.ALL, 0))

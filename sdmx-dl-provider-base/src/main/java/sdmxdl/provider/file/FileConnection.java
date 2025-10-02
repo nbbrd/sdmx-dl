@@ -64,17 +64,14 @@ public final class FileConnection implements Connection {
     }
 
     @Override
-    public @NonNull Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
+    public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
         checkState();
         checkFlowRef(flowRef);
-        return flow;
-    }
-
-    @Override
-    public @NonNull Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
-        checkState();
-        checkFlowRef(flowRef);
-        return client.decode().getStructure();
+        return MetaSet
+                .builder()
+                .flow(flow)
+                .structure(client.decode().getStructure())
+                .build();
     }
 
     @Override

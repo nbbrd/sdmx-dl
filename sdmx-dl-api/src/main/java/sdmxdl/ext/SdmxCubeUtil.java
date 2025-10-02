@@ -113,13 +113,13 @@ public class SdmxCubeUtil {
     }
 
     private Stream<Series> computeKeys(Connection conn, @NonNull DatabaseRef database, FlowRef flow, Key key) throws IOException {
-        return computeAllPossibleSeries(conn.getStructure(database, flow), key)
+        return computeAllPossibleSeries(conn.getMeta(database, flow).getStructure(), key)
                 .map(SdmxCubeUtil::emptySeriesOf);
     }
 
     private Stream<Series> computeKeysAndRequestData(Connection conn, @NonNull DatabaseRef database, FlowRef flow, Key key) throws IOException {
         Map<Key, Series> dataByKey = dataByKey(conn, database, flow, key);
-        return computeAllPossibleSeries(conn.getStructure(database, flow), key)
+        return computeAllPossibleSeries(conn.getMeta(database, flow).getStructure(), key)
                 .map(seriesKey -> dataByKey.computeIfAbsent(seriesKey, SdmxCubeUtil::emptySeriesOf));
     }
 

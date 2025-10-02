@@ -32,7 +32,7 @@ public class ConnectionSupport {
     }
 
     public static @NonNull Collection<String> getAvailableDimensionCodes(@NonNull Connection connection, @NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, @NonNegative int dimensionIndex) throws IOException, IllegalArgumentException {
-        Structure dsd = connection.getStructure(database, flowRef);
+        Structure dsd = connection.getMeta(database, flowRef).getStructure();
         int size = dsd.getDimensions().size();
 
         if (dimensionIndex < 0 || dimensionIndex >= size) {

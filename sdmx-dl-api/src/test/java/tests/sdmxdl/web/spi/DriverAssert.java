@@ -83,15 +83,15 @@ public class DriverAssert {
                     .hasSizeGreaterThanOrEqualTo(query.getMinFlowCount());
 
             FlowRef flowRef = query.getKeyRequest().getFlow();
-            assertThat(connection.getFlow(database, flowRef))
+            MetaSet meta = connection.getMeta(database, flowRef);
+            assertThat(meta.getFlow())
                     .describedAs("Flow %s/%s/%s", webSource.getId(), database, flowRef)
                     .is(validFlow(query.isNoDescription()))
                     .is(new Condition<>(flowRef::containsRef, "valid flow ref"));
 
-            StructureRef structureRef = connection.getFlow(database, flowRef).getStructureRef();
-            assertThat(connection.getStructure(database, flowRef))
+            assertThat(meta.getStructure())
                     .is(validStructure())
-                    .is(new Condition<>(structureRef::containsRef, "valid structure ref"))
+                    .is(new Condition<>(meta.getFlow().getStructureRef()::containsRef, "valid structure ref"))
                     .satisfies(structure -> {
                         assertThat(structure.getDimensions())
                                 .describedAs("Dimensions of %s/%s/%s", webSource.getId(), database, flowRef)

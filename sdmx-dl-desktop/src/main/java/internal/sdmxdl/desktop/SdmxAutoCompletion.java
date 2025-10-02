@@ -19,6 +19,7 @@ package internal.sdmxdl.desktop;
 import ec.util.completion.AutoCompletionSource;
 import ec.util.completion.ExtAutoCompletionSource;
 import ec.util.completion.swing.CustomListCellRenderer;
+import lombok.NonNull;
 import nbbrd.desktop.favicon.DomainName;
 import nbbrd.desktop.favicon.FaviconRef;
 import nbbrd.desktop.favicon.FaviconSupport;
@@ -61,25 +62,25 @@ public abstract class SdmxAutoCompletion {
 
     public abstract AutoCompletionSource getSource();
 
-    public abstract ListCellRenderer getRenderer();
+    public abstract ListCellRenderer<?> getRenderer();
 
     public static SdmxAutoCompletion onWebSource(SdmxWebManager manager, Languages languages) {
         return new WebSourceCompletion(manager, languages);
     }
 
-    public static <S extends Source> SdmxAutoCompletion onDatabase(SdmxManager<S> manager, Languages languages, Supplier<S> source, ConcurrentMap cache) {
+    public static <S extends Source> SdmxAutoCompletion onDatabase(SdmxManager<S> manager, Languages languages, Supplier<S> source, ConcurrentMap<?, ?> cache) {
         return new DatabaseCompletion<>(manager, languages, source, cache);
     }
 
-    public static <S extends Source> SdmxAutoCompletion onDataflow(SdmxManager<S> manager, Languages languages, Supplier<S> source, Supplier<DatabaseRef> database, ConcurrentMap cache) {
+    public static <S extends Source> SdmxAutoCompletion onDataflow(SdmxManager<S> manager, Languages languages, Supplier<S> source, Supplier<DatabaseRef> database, ConcurrentMap<?, ?> cache) {
         return new DataflowCompletion<>(manager, languages, source, database, cache);
     }
 
-    public static <S extends Source> SdmxAutoCompletion onDimension(SdmxManager<S> manager, Languages languages, Supplier<S> source, Supplier<DatabaseRef> database, Supplier<FlowRef> flowRef, ConcurrentMap cache) {
+    public static <S extends Source> SdmxAutoCompletion onDimension(SdmxManager<S> manager, Languages languages, Supplier<S> source, Supplier<DatabaseRef> database, Supplier<FlowRef> flowRef, ConcurrentMap<?, ?> cache) {
         return new DimensionCompletion<>(manager, languages, source, database, flowRef, cache);
     }
 
-    public static <S extends Source> SdmxAutoCompletion onAttribute(SdmxManager<S> manager, Languages languages, Supplier<S> source, Supplier<DatabaseRef> database, Supplier<FlowRef> flowRef, ConcurrentMap cache) {
+    public static <S extends Source> SdmxAutoCompletion onAttribute(SdmxManager<S> manager, Languages languages, Supplier<S> source, Supplier<DatabaseRef> database, Supplier<FlowRef> flowRef, ConcurrentMap<?, ?> cache) {
         return new AttributeCompletion<>(manager, languages, source, database, flowRef, cache);
     }
 
@@ -103,10 +104,10 @@ public abstract class SdmxAutoCompletion {
         }
 
         @Override
-        public ListCellRenderer getRenderer() {
+        public ListCellRenderer<?> getRenderer() {
             return new CustomListCellRenderer<WebSource>() {
                 @Override
-                protected String getValueAsString(WebSource value) {
+                protected @NonNull String getValueAsString(@NonNull WebSource value) {
                     return value.getId() + ": " + languages.select(value.getNames());
                 }
 
@@ -151,7 +152,11 @@ public abstract class SdmxAutoCompletion {
         private final Supplier<S> source;
 
         @lombok.NonNull
-        private final ConcurrentMap cache;
+        private final ConcurrentMap<?, ?> cache;
+
+        private SourceRequest toRequest() {
+            return SourceRequest.builder().languages(languages).build();
+        }
 
         @Override
         public AutoCompletionSource getSource() {
@@ -165,24 +170,17 @@ public abstract class SdmxAutoCompletion {
         }
 
         @Override
-        public ListCellRenderer getRenderer() {
+        public ListCellRenderer<?> getRenderer() {
             return new CustomListCellRenderer<Database>() {
                 @Override
-                protected String getValueAsString(Database value) {
+                protected @NonNull String getValueAsString(@NonNull Database value) {
                     return value.getRef() + ": " + value.getName();
-                }
-
-                @Override
-                protected Icon toIcon(String term, JList list, Database value, int index, boolean isSelected, boolean cellHasFocus) {
-                    return null;
                 }
             };
         }
 
         private List<Database> load(String term) throws IOException {
-            try (Connection c = manager.getConnection(source.get(), languages)) {
-                return new ArrayList<>(c.getDatabases());
-            }
+            return new ArrayList<>(manager.using(source.get()).getDatabases(toRequest()));
         }
 
         private List<Database> filterAndSort(List<Database> list, String term) {
@@ -216,7 +214,15 @@ public abstract class SdmxAutoCompletion {
         private final Supplier<DatabaseRef> database;
 
         @lombok.NonNull
-        private final ConcurrentMap cache;
+        private final ConcurrentMap<?, ?> cache;
+
+        private DatabaseRequest toRequest() {
+            return DatabaseRequest
+                    .builder()
+                    .languages(languages)
+                    .database(database.get())
+                    .build();
+        }
 
         @Override
         public AutoCompletionSource getSource() {
@@ -230,14 +236,12 @@ public abstract class SdmxAutoCompletion {
         }
 
         @Override
-        public ListCellRenderer getRenderer() {
+        public ListCellRenderer<?> getRenderer() {
             return CustomListCellRenderer.<Flow>of(flow -> flow.getRef() + "<br><i>" + flow.getName(), flow -> flow.getRef().toString());
         }
 
         private List<Flow> load(String term) throws Exception {
-            try (Connection c = manager.getConnection(source.get(), languages)) {
-                return new ArrayList<>(c.getFlows(database.get()));
-            }
+            return new ArrayList<>(manager.using(source.get()).getFlows(toRequest()));
         }
 
         private AutoCompletionSource.Behavior getBehavior(String term) {
@@ -276,7 +280,16 @@ public abstract class SdmxAutoCompletion {
         private final Supplier<FlowRef> flowRef;
 
         @lombok.NonNull
-        private final ConcurrentMap cache;
+        private final ConcurrentMap<?, ?> cache;
+
+        private FlowRequest toRequest() {
+            return FlowRequest
+                    .builder()
+                    .languages(languages)
+                    .database(database.get())
+                    .flow(flowRef.get())
+                    .build();
+        }
 
         @Override
         public AutoCompletionSource getSource() {
@@ -290,14 +303,12 @@ public abstract class SdmxAutoCompletion {
         }
 
         @Override
-        public ListCellRenderer getRenderer() {
+        public ListCellRenderer<?> getRenderer() {
             return CustomListCellRenderer.of(Dimension::getId, Dimension::getName);
         }
 
         private List<Dimension> load(String term) throws Exception {
-            try (Connection c = manager.getConnection(source.get(), languages)) {
-                return c.getStructure(database.get(), flowRef.get()).getDimensionList();
-            }
+            return manager.using(source.get()).getMeta(toRequest()).getStructure().getDimensionList();
         }
 
         private AutoCompletionSource.Behavior getBehavior(String term) {
@@ -336,12 +347,21 @@ public abstract class SdmxAutoCompletion {
         private final Supplier<FlowRef> flowRef;
 
         @lombok.NonNull
-        private final ConcurrentMap cache;
+        private final ConcurrentMap<?, ?> cache;
+
+        private FlowRequest toRequest() {
+            return FlowRequest
+                    .builder()
+                    .languages(languages)
+                    .database(database.get())
+                    .flow(flowRef.get())
+                    .build();
+        }
 
         @Override
         public AutoCompletionSource getSource() {
             return ExtAutoCompletionSource
-                    .builder(o -> load(o))
+                    .builder(this::load)
                     .behavior(this::getBehavior)
                     .postProcessor(this::filterAndSort)
                     .valueToString(Attribute::getId)
@@ -350,14 +370,12 @@ public abstract class SdmxAutoCompletion {
         }
 
         @Override
-        public ListCellRenderer getRenderer() {
+        public ListCellRenderer<?> getRenderer() {
             return CustomListCellRenderer.of(Attribute::getId, Attribute::getName);
         }
 
         private List<Attribute> load(String term) throws Exception {
-            try (Connection c = manager.getConnection(source.get(), languages)) {
-                return new ArrayList<>(c.getStructure(database.get(), flowRef.get()).getAttributes());
-            }
+            return new ArrayList<>(manager.using(source.get()).getMeta(toRequest()).getStructure().getAttributes());
         }
 
         private AutoCompletionSource.Behavior getBehavior(String term) {
@@ -414,7 +432,7 @@ public abstract class SdmxAutoCompletion {
     private static final class ClientOverCustomNetwork implements URLConnectionFactory {
 
         @Override
-        public URLConnection openConnection(URL url) throws IOException {
+        public @NonNull URLConnection openConnection(@NonNull URL url) throws IOException {
             Network network = getNetwork();
             Proxy proxy = selectProxy(network, url);
             URLConnection result = network.getURLConnectionFactory().openConnection(url, proxy);

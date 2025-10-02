@@ -116,18 +116,21 @@ public final class StatCanDialectDriver implements Driver {
         }
 
         @Override
-        public @NonNull Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException {
+        public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
             Converter.DATAFLOW_REF_VALIDATOR.checkValidity(flowRef);
-            return ConnectionSupport.getFlowFromFlows(database, flowRef, this, client);
-        }
+            Flow flow = ConnectionSupport.getFlowFromFlows(database, flowRef, this, client);
 
-        @Override
-        public @NonNull Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException {
             int productId = Converter.fromDataflowRef(flowRef);
             StructureRef dsdRef = Converter.toDataStructureRef(productId);
-            return client.getStructAndData(productId)
+            Structure structure = client.getStructAndData(productId)
                     .getStructure(dsdRef)
                     .orElseThrow(() -> CommonSdmxExceptions.missingStructure(client, dsdRef));
+
+            return MetaSet
+                    .builder()
+                    .flow(flow)
+                    .structure(structure)
+                    .build();
         }
 
         private Optional<DataSet> getDataSet(FlowRef ref) throws IOException {

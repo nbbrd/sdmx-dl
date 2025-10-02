@@ -69,6 +69,12 @@ public class RepoSamples {
             .name("structName")
             .build();
 
+    public static final MetaSet META_SET = MetaSet
+            .builder()
+            .flow(FLOW)
+            .structure(STRUCT)
+            .build();
+
     public static final Obs OBS1 = Obs.builder().period(periodOf(2010, 1)).value(Math.PI).build();
     public static final Obs OBS2 = Obs.builder().period(periodOf(2010, 2)).value(Math.E).build();
 

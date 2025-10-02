@@ -48,11 +48,7 @@ public class StatCanDialectDriverTest {
             String msg = "Expecting DataflowRef id 'F_10100001' to match pattern 'DF_\\d+'";
 
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> connection.getFlow(NO_DATABASE, badFlowRef))
-                    .withMessageContaining(msg);
-
-            assertThatIllegalArgumentException()
-                    .isThrownBy(() -> connection.getStructure(NO_DATABASE, badFlowRef))
+                    .isThrownBy(() -> connection.getMeta(NO_DATABASE, badFlowRef))
                     .withMessageContaining(msg);
 
             assertThatIllegalArgumentException()

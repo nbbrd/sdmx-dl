@@ -23,7 +23,7 @@ public class WebDemo2 {
 
         try (Connection ecb = manager.getConnection("ECB", ANY)) {
             FlowRef exr = FlowRef.parse("EXR");
-            printFlow(ecb.getFlow(NO_DATABASE, exr));
+            printFlow(ecb.getMeta(NO_DATABASE, exr).getFlow());
 
             Key chf = Key.parse("M.CHF.EUR.SP00.A");
             Query chfData = Query.builder().key(chf).detail(DATA_ONLY).build();
