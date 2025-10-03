@@ -1,15 +1,10 @@
 package sdmxdl.desktop;
 
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.FilterList;
-import ca.odell.glazedlists.TextFilterator;
-import ca.odell.glazedlists.gui.TableFormat;
-import ca.odell.glazedlists.matchers.MatcherEditor;
-import ca.odell.glazedlists.swing.AdvancedTableModel;
-import ca.odell.glazedlists.swing.GlazedListsSwing;
-import ca.odell.glazedlists.swing.TextComponentMatcherEditor;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.FlatIconColors;
+import ec.util.completion.AutoCompletionSource;
+import ec.util.completion.AutoCompletionSources;
+import ec.util.completion.swing.JAutoCompletion;
 import ec.util.list.swing.JLists;
 import ec.util.table.swing.JTables;
 import ec.util.various.swing.JCommand;
@@ -34,6 +29,8 @@ import sdmxdl.web.spi.*;
 import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
@@ -43,13 +40,18 @@ import java.beans.PropertyChangeEvent;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 import java.util.prefs.Preferences;
+import java.util.stream.Stream;
 
 import static internal.sdmxdl.desktop.Collectors2.getSingle;
 import static internal.sdmxdl.desktop.util.Actions.hideWhenDisabled;
 import static internal.sdmxdl.desktop.util.Actions.onActionPerformed;
+import static internal.sdmxdl.desktop.util.Documents.documentListenerOf;
+import static internal.sdmxdl.desktop.util.Documents.getText;
 import static internal.sdmxdl.desktop.util.JTrees.toDefaultMutableTreeNode;
 import static internal.sdmxdl.desktop.util.MouseListeners.onDoubleClick;
 import static java.awt.event.KeyEvent.VK_ENTER;
@@ -173,32 +175,51 @@ public final class MainComponent extends JComponent {
 
             @Override
             public Component getComponent(String s, JEditorTabs source) {
-                EventList<Event> sortedIssues = Sdmxdl.INSTANCE.getEventList();
+                JTable view = new JTable(new EventListTableModel(Sdmxdl.INSTANCE.getEventList()));
 
-                JTextField filterEdit = new JTextField(10);
-                TextFilterator<Event> filterator = (baseList, event) -> {
-                    baseList.add(event.getSource());
-                    baseList.add(event.getMarker());
-                    baseList.add(event.getMessage());
-                };
-                MatcherEditor<Event> matcherEditor = new TextComponentMatcherEditor<>(filterEdit, filterator);
-                FilterList<Event> filterList = new FilterList<>(sortedIssues, matcherEditor);
+                TableRowSorter<TableModel> sorter = new TableRowSorter<>(view.getModel());
+                view.setRowSorter(sorter);
 
-                AdvancedTableModel<Event> tableModel = GlazedListsSwing.eventTableModelWithThreadProxyList(
-                        filterList, new EventTableFormat());
-                JTable table = new JTable(tableModel);
-                JTables.setWidthAsPercentages(table, .15, .2, .65);
+                JTextField filterField = new JTextField(10);
+                filterField.getDocument().addDocumentListener(documentListenerOf(e -> sorter.setRowFilter(TokensRowFilter.of(getText(e)))));
 
-                JPanel panel = new JPanel(new GridBagLayout());
-                JScrollPane issuesTableScrollPane = new JScrollPane(table);
-                panel.add(new JLabel("Filter: "), new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+                JAutoCompletion autoCompletion = new JAutoCompletion(filterField);
+                autoCompletion.setSeparator(" ");
+                autoCompletion.setSource(new AutoCompletionSource() {
+                    @Override
+                    public @NonNull Behavior getBehavior(@NonNull String term) {
+                        return Behavior.SYNC;
+                    }
+
+                    @Override
+                    public @NonNull String toString(@NonNull Object value) {
+                        return Objects.toString(value);
+                    }
+
+                    @Override
+                    public @NonNull List<?> getValues(@NonNull String term) throws Exception {
+                        String normalizedTerm = AutoCompletionSources.normalize(term);
+                        return JLists.stream(Sdmxdl.INSTANCE.getEventList())
+                                .flatMap(event -> Stream.of(event.getSource(), event.getMarker()))
+                                .distinct()
+                                .filter(item -> AutoCompletionSources.normalize(item).contains(normalizedTerm))
+                                .sorted()
+                                .limit(10)
+                                .collect(toList());
+                    }
+                });
+
+                JTables.setWidthAsPercentages(view, .15, .2, .65);
+
+                JPanel result = new JPanel(new GridBagLayout());
+                result.add(new JLabel("Filter: "), new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
                         GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
-                panel.add(filterEdit, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0,
+                result.add(filterField, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0,
                         GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
-                panel.add(issuesTableScrollPane, new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0,
+                result.add(new JScrollPane(view), new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0,
                         GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
-                panel.setPreferredSize(new Dimension(200, 200));
-                return panel;
+                result.setPreferredSize(new Dimension(200, 200));
+                return result;
             }
 
             @Override
@@ -206,40 +227,6 @@ public final class MainComponent extends JComponent {
                 return s;
             }
         });
-    }
-
-    private static class EventTableFormat implements TableFormat<Event> {
-
-        @Override
-        public int getColumnCount() {
-            return 3;
-        }
-
-        @Override
-        public String getColumnName(int column) {
-            switch (column) {
-                case 0:
-                    return "Source";
-                case 1:
-                    return "Marker";
-                case 2:
-                    return "Message";
-            }
-            throw new IllegalStateException("Unexpected column: " + column);
-        }
-
-        @Override
-        public Object getColumnValue(Event event, int column) {
-            switch (column) {
-                case 0:
-                    return event.getSource();
-                case 1:
-                    return event.getMarker();
-                case 2:
-                    return event.getMessage();
-            }
-            throw new IllegalStateException("Unexpected column: " + column);
-        }
     }
 
     private void addTool(JToolWindowBar toolToolBar, String name, Ikon ikon, Component component, JToolBar toolBar) {
@@ -672,4 +659,44 @@ public final class MainComponent extends JComponent {
     }
 
     private static final Preferences PREFERENCES = Preferences.userNodeForPackage(MainComponent.class).node(MainComponent.class.getSimpleName());
+
+    private static final class EventListTableModel extends AbstractListTableModel<Event> {
+
+        public EventListTableModel(ListModel<Event> list) {
+            super(list);
+        }
+
+        @Override
+        public int getColumnCount() {
+            return 3;
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            switch (column) {
+                case 0:
+                    return "Source";
+                case 1:
+                    return "Marker";
+                case 2:
+                    return "Message";
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public Object getColumnValue(Event row, int columnIndex) {
+            switch (columnIndex) {
+                case 0:
+                    return row.getSource();
+                case 1:
+                    return row.getMarker();
+                case 2:
+                    return row.getMessage();
+                default:
+                    return null;
+            }
+        }
+    }
 }

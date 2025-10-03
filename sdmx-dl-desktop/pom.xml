@@ -114,11 +114,6 @@
             <groupId>com.github.nbbrd.java-io-util</groupId>
             <artifactId>java-io-xml-bind</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.glazedlists</groupId>
-            <artifactId>glazedlists</artifactId>
-            <version>1.11.0</version>
-        </dependency>
 
         <!-- runtime only -->
         <dependency>

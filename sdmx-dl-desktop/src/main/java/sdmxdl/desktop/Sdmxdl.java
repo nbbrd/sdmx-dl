@@ -1,8 +1,5 @@
 package sdmxdl.desktop;
 
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.GlazedLists;
 import internal.sdmxdl.desktop.SdmxIconSupport;
 import internal.sdmxdl.desktop.util.AsyncSupport;
 import lombok.Getter;
@@ -13,10 +10,12 @@ import sdmxdl.MetaSet;
 import sdmxdl.ext.FileFormat;
 import sdmxdl.web.SdmxWebManager;
 
+import javax.swing.*;
 import java.beans.PropertyChangeSupport;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -41,7 +40,7 @@ public enum Sdmxdl implements HasSdmxProperties<SdmxWebManager> {
     }
 
     @Getter
-    private final EventList<Event> eventList = GlazedLists.threadSafeList(new BasicEventList<>());
+    private final DefaultListModel<Event> eventList = new DefaultListModel<>();
 
     @Getter
     private final SdmxIconSupport iconSupport = SdmxIconSupport.of(this);
