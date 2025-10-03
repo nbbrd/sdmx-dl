@@ -86,7 +86,10 @@ public class Main {
     }
 
     private static EventListener printEvent(WebSource source) {
-        return (marker, message) -> System.err.println("[" + source.getId() + "] (" + marker + ") " + message);
+        return (marker, message) -> {
+            Sdmxdl.INSTANCE.getEventList().add(new Event(source.getId(), marker, message.toString()));
+            System.out.println("[" + source.getId() + "] (" + marker + ") " + message);
+        };
     }
 
     private static ErrorListener printError(WebSource source) {

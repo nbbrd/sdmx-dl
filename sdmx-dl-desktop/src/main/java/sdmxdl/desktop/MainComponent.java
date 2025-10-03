@@ -1,8 +1,17 @@
 package sdmxdl.desktop;
 
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.FilterList;
+import ca.odell.glazedlists.TextFilterator;
+import ca.odell.glazedlists.gui.TableFormat;
+import ca.odell.glazedlists.matchers.MatcherEditor;
+import ca.odell.glazedlists.swing.AdvancedTableModel;
+import ca.odell.glazedlists.swing.GlazedListsSwing;
+import ca.odell.glazedlists.swing.TextComponentMatcherEditor;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.FlatIconColors;
 import ec.util.list.swing.JLists;
+import ec.util.table.swing.JTables;
 import ec.util.various.swing.JCommand;
 import internal.sdmxdl.desktop.SdmxCommand;
 import internal.sdmxdl.desktop.SdmxUri;
@@ -151,6 +160,86 @@ public final class MainComponent extends JComponent {
         addPropertyChangeListener(DATA_SOURCES_PROPERTY, this::onDataSourcesChange);
 
         onSdmxWebManagerChange(null);
+        main.addIfAbsent("Events", new JEditorTabs.TabFactory<String>() {
+            @Override
+            public String getTitle(String s, JEditorTabs source) {
+                return s;
+            }
+
+            @Override
+            public Icon getIcon(String s, JEditorTabs source) {
+                return null;
+            }
+
+            @Override
+            public Component getComponent(String s, JEditorTabs source) {
+                EventList<Event> sortedIssues = Sdmxdl.INSTANCE.getEventList();
+
+                JTextField filterEdit = new JTextField(10);
+                TextFilterator<Event> filterator = (baseList, event) -> {
+                    baseList.add(event.getSource());
+                    baseList.add(event.getMarker());
+                    baseList.add(event.getMessage());
+                };
+                MatcherEditor<Event> matcherEditor = new TextComponentMatcherEditor<>(filterEdit, filterator);
+                FilterList<Event> filterList = new FilterList<>(sortedIssues, matcherEditor);
+
+                AdvancedTableModel<Event> tableModel = GlazedListsSwing.eventTableModelWithThreadProxyList(
+                        filterList, new EventTableFormat());
+                JTable table = new JTable(tableModel);
+                JTables.setWidthAsPercentages(table, .15, .2, .65);
+
+                JPanel panel = new JPanel(new GridBagLayout());
+                JScrollPane issuesTableScrollPane = new JScrollPane(table);
+                panel.add(new JLabel("Filter: "), new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+                panel.add(filterEdit, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+                panel.add(issuesTableScrollPane, new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+                panel.setPreferredSize(new Dimension(200, 200));
+                return panel;
+            }
+
+            @Override
+            public String getTip(String s, JEditorTabs source) {
+                return s;
+            }
+        });
+    }
+
+    private static class EventTableFormat implements TableFormat<Event> {
+
+        @Override
+        public int getColumnCount() {
+            return 3;
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            switch (column) {
+                case 0:
+                    return "Source";
+                case 1:
+                    return "Marker";
+                case 2:
+                    return "Message";
+            }
+            throw new IllegalStateException("Unexpected column: " + column);
+        }
+
+        @Override
+        public Object getColumnValue(Event event, int column) {
+            switch (column) {
+                case 0:
+                    return event.getSource();
+                case 1:
+                    return event.getMarker();
+                case 2:
+                    return event.getMessage();
+            }
+            throw new IllegalStateException("Unexpected column: " + column);
+        }
     }
 
     private void addTool(JToolWindowBar toolToolBar, String name, Ikon ikon, Component component, JToolBar toolBar) {
