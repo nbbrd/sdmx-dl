@@ -17,7 +17,6 @@
 package sdmxdl.provider.dialects.drivers;
 
 import nbbrd.design.DirectImpl;
-import sdmxdl.Confidentiality;
 import sdmxdl.provider.ri.drivers.RiRestClient;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.Feature;
@@ -34,6 +33,7 @@ import java.io.IOException;
 import java.util.EnumSet;
 import java.util.Set;
 
+import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 import static sdmxdl.provider.SdmxFix.Category.ENDPOINT;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
@@ -60,7 +60,7 @@ public final class DotStatDialectDriver implements Driver {
                     .name("en", "Statistics Estonia")
                     .name("et", "Statistikaameti")
                     .driver(DIALECTS_DOTSTAT)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("http://andmebaas.stat.ee/restsdmx/sdmx.ashx")
                     .websiteOf("http://andmebaas.stat.ee")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/SE")
@@ -72,7 +72,7 @@ public final class DotStatDialectDriver implements Driver {
                     .name("en", "Unesco Institute for Statistics")
                     .name("fr", "Unesco Institut de statistique")
                     .driver(DIALECTS_DOTSTAT)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf(UIS_ENDPOINT)
                     .websiteOf("http://data.uis.unesco.org")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/UIS")
@@ -83,7 +83,7 @@ public final class DotStatDialectDriver implements Driver {
                     .id("UKDS")
                     .name("en", "UK Data Service")
                     .driver(DIALECTS_DOTSTAT)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://stats2.digitalresources.jisc.ac.uk/restsdmx/sdmx.ashx")
                     .websiteOf("https://stats2.digitalresources.jisc.ac.uk/")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/UKDS")

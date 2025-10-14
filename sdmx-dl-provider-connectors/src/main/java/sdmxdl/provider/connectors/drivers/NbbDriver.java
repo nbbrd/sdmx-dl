@@ -19,12 +19,12 @@ package sdmxdl.provider.connectors.drivers;
 import nbbrd.design.DirectImpl;
 import it.bancaditalia.oss.sdmx.client.custom.NBB;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.Confidentiality;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestConnector;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 
+import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.provider.connectors.drivers.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
 
 /**
@@ -48,7 +48,7 @@ public final class NbbDriver implements Driver {
                     .id("NBB")
                     .name("en", "National Bank of Belgium")
                     .driver(CONNECTORS_NBB)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://stat.nbb.be/restsdmx/sdmx.ashx")
                     .websiteOf("https://stat.nbb.be")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/NBB")

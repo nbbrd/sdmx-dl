@@ -18,12 +18,11 @@ package sdmxdl.provider.ri.drivers;
 
 import nbbrd.design.DirectImpl;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.Confidentiality;
 import sdmxdl.Feature;
 import sdmxdl.Languages;
+import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestClient;
 import sdmxdl.provider.web.RestConnector;
-import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
@@ -32,6 +31,7 @@ import java.io.IOException;
 import java.util.EnumSet;
 import java.util.Set;
 
+import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 import static sdmxdl.provider.web.DriverProperties.DETAIL_SUPPORTED_PROPERTY;
 import static sdmxdl.provider.web.DriverProperties.TRAILING_SLASH_PROPERTY;
@@ -59,7 +59,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .id("ABS")
                     .name("en", "Australian Bureau of Statistics")
                     .driver(RI_SDMX_21)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://data.api.abs.gov.au/rest")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://explore.data.abs.gov.au")
@@ -71,7 +71,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .id("BIS")
                     .name("en", "Bank for International Settlements")
                     .driver(RI_SDMX_21)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://stats.bis.org/api/v1")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://stats.bis.org/statx/toc/LBS.html")
@@ -84,7 +84,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .name("en", "National Institute of Statistics of Cambodia")
                     .name("km", " វិទ្យាស្ថានជាតិស្ថិតិ")
                     .driver(RI_SDMX_21)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://nsiws-stable-camstat-live.officialstatistics.org/rest")
                     .websiteOf("http://camstat.nis.gov.kh/?locale=en&start=0")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/CAMSTAT")
@@ -95,7 +95,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .id("ECB")
                     .name("en", "European Central Bank")
                     .driver(RI_SDMX_21)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://data-api.ecb.europa.eu/service")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://data.ecb.europa.eu/")
@@ -107,7 +107,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .id("ESCAP")
                     .name("en", "Economic and Social Commission for Asia and the Pacific")
                     .driver(RI_SDMX_21)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://api-dataexplorer.unescap.org/rest")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://dataexplorer.unescap.org/")
@@ -121,7 +121,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .name("es", "Organzación Internacional de Trabajo")
                     .name("fr", "Organisation Internationale du Travail")
                     .driver(RI_SDMX_21)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://sdmx.ilo.org/rest/")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://data.ilo.org/")
@@ -134,7 +134,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .name("en", "International Monetary Fund (SDMX Central)")
                     .name("fr", "Fonds monétaire international (SDMX Central)")
                     .driver(RI_SDMX_21)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://sdmxcentral.imf.org/ws/public/sdmxapi/rest")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://data.imf.org")
@@ -147,7 +147,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .name("en", "National Institute of Statistics, Geography and Informatics")
                     .name("es", "Instituto Nacional de Estadística, Geografía e Informática")
                     .driver(RI_SDMX_21)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://sdmx.snieg.mx/ServiceV6/rest")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .propertyOf(TRAILING_SLASH_PROPERTY, true)
@@ -161,7 +161,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .name("en", "Italian National Institute of Statistics")
                     .name("it", "Istituto Nazionale di Statistica")
                     .driver(RI_SDMX_21)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://esploradati.istat.it/SDMXWS/rest")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://esploradati.istat.it/databrowser/")
@@ -174,7 +174,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .name("en", "Norges Bank")
                     .name("no", "Norges Bank")
                     .driver(RI_SDMX_21)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://data.norges-bank.no/api")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://www.norges-bank.no/en/topics/Statistics/")
@@ -189,7 +189,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .name("fr", "Organisation de coopération et de développement économiques")
                     .name("it", "Organizzazione per la Cooperazione e lo Sviluppo Economico")
                     .driver(RI_SDMX_21)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://sdmx.oecd.org/public/rest")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://data-explorer.oecd.org/")
@@ -201,7 +201,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .id("SGR")
                     .name("en", "SDMX Global Registry")
                     .driver(RI_SDMX_21)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://registry.sdmx.org/ws/rest")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://registry.sdmx.org/overview.html")
@@ -214,7 +214,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .name("en", "El Salvador Labor Market Information System")
                     .name("es", "Sistema de Información del Mercado Laboral")
                     .driver(RI_SDMX_21)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://disseminatesimel.mtps.gob.sv/rest")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://datasimel.mtps.gob.sv/")
@@ -227,7 +227,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .name("en", "Pacific Data Hub")
                     .name("fr", "Pacific Data Hub")
                     .driver(RI_SDMX_21)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://stats-nsi-stable.pacificdata.org/rest")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://stats.pacificdata.org/?locale=en")
@@ -240,7 +240,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .name("en", "National Institute of statistics and economic studies of the Grand Duchy of Luxembourg")
                     .name("fr", "Institut national de la statistique et des études économiques du Grand-Duché de Luxembourg")
                     .driver(RI_SDMX_21)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://lustat.statec.lu/rest")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://lustat.statec.lu")
@@ -265,7 +265,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .id("UNDATA")
                     .name("en", "Data access system to UN databases")
                     .driver(RI_SDMX_21)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://data.un.org/WS/rest")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://data.un.org/SdmxBrowser/start")
@@ -277,7 +277,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .id("UNICEF")
                     .name("en", "UN International Children's Emergency Fund")
                     .driver(RI_SDMX_21)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://sdmx.data.unicef.org/ws/public/sdmxapi/rest")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://data.unicef.org/")
@@ -291,7 +291,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .name("es", "Banco Mundial")
                     .name("fr", "Banque Mondiale")
                     .driver(RI_SDMX_21)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://api.worldbank.org/v2/sdmx/rest")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .propertyOf(TRAILING_SLASH_PROPERTY, true)
@@ -305,7 +305,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .name("en", "World Integrated Trade Solution")
                     .name("es", "Solución Comercial Integrada Mundial")
                     .driver(RI_SDMX_21)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://wits.worldbank.org/API/V1/SDMX/V21/rest")
                     .propertyOf(TRAILING_SLASH_PROPERTY, true)
                     .websiteOf("https://wits.worldbank.org")

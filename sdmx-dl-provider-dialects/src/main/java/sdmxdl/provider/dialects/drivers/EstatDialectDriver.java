@@ -16,20 +16,19 @@
  */
 package sdmxdl.provider.dialects.drivers;
 
+import lombok.NonNull;
+import nbbrd.design.DirectImpl;
+import nbbrd.io.Resource;
 import nbbrd.io.http.HttpClient;
 import nbbrd.io.http.HttpRequest;
 import nbbrd.io.http.HttpResponse;
 import nbbrd.io.http.HttpResponseException;
 import nbbrd.io.http.ext.InterceptingClient;
-import lombok.NonNull;
-import nbbrd.design.DirectImpl;
-import nbbrd.io.Resource;
 import nbbrd.io.net.MediaType;
 import nbbrd.io.text.IntProperty;
 import nbbrd.io.text.LongProperty;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.Confidentiality;
 import sdmxdl.Feature;
 import sdmxdl.Languages;
 import sdmxdl.format.MessageFooter;
@@ -58,6 +57,7 @@ import java.util.Set;
 import java.util.zip.ZipInputStream;
 
 import static java.util.Collections.singletonList;
+import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.Languages.ANY;
 import static sdmxdl.provider.SdmxFix.Category.PROTOCOL;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
@@ -98,7 +98,7 @@ public final class EstatDialectDriver implements Driver {
                     .name("de", "Eurostat")
                     .name("fr", "Eurostat")
                     .driver(DIALECTS_ESTAT)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1")
                     .websiteOf("https://ec.europa.eu/eurostat/data/database")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ESTAT")
@@ -109,7 +109,7 @@ public final class EstatDialectDriver implements Driver {
                     .id("ESTAT_COMEXT")
                     .name("en", "Eurostat - International trade in goods statistics (ITGS)")
                     .driver(DIALECTS_ESTAT)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://ec.europa.eu/eurostat/api/comext/dissemination/sdmx/2.1")
                     .websiteOf("https://ec.europa.eu/eurostat/web/international-trade-in-goods/overview")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ESTAT_COMEXT")
@@ -120,7 +120,7 @@ public final class EstatDialectDriver implements Driver {
                     .id("EC_DG_COMP")
                     .name("en", "European Commission - Directorate General for Competition")
                     .driver(DIALECTS_ESTAT)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://webgate.ec.europa.eu/comp/redisstat/api/dissemination/sdmx/2.1")
                     .websiteOf("https://data.europa.eu/data/datasets?catalog=comp")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/EC_DG_COMP")
@@ -131,7 +131,7 @@ public final class EstatDialectDriver implements Driver {
                     .id("EC_DG_EMPL")
                     .name("en", "European Commission - Directorate General for Employment, Social Affairs and inclusion")
                     .driver(DIALECTS_ESTAT)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://webgate.ec.europa.eu/empl/redisstat/api/dissemination/sdmx/2.1")
                     .websiteOf("https://data.europa.eu/data/datasets?catalog=empl")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/EC_DG_EMPL")
@@ -142,7 +142,7 @@ public final class EstatDialectDriver implements Driver {
                     .id("EC_DG_GROW")
                     .name("en", "European Commission - Directorate General for Internal Market, Industry, Entrepreneurship and SMEs")
                     .driver(DIALECTS_ESTAT)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://webgate.ec.europa.eu/grow/redisstat/api/dissemination/sdmx/2.1")
                     .websiteOf("https://data.europa.eu/data/datasets?catalog=grow")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/EC_DG_GROW")

@@ -36,6 +36,7 @@ import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
+import static sdmxdl.Confidentiality.PUBLIC;
 
 @DirectImpl
 @ServiceProvider
@@ -59,7 +60,7 @@ public final class RngRiDriver implements Driver {
                     .id("RNG")
                     .name("en", "Random number generator")
                     .driver(RI_RNG)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("rng:3:4:0:2010-01-01")
                     .build())
             .build();

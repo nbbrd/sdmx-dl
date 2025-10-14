@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.util.EnumSet;
 import java.util.function.Supplier;
 
+import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.format.time.TimeFormats.IGNORE_ERROR;
 import static sdmxdl.provider.SdmxFix.Category.CONTENT;
 import static sdmxdl.provider.SdmxFix.Category.MEDIA_TYPE;
@@ -71,7 +72,7 @@ public final class InseeDialectDriver implements Driver {
                     .name("en", "National Institute of Statistics and Economic Studies")
                     .name("fr", "Institut national de la statistique et des études économiques")
                     .driver(DIALECTS_INSEE)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://bdm.insee.fr/series/sdmx")
                     .websiteOf("https://www.insee.fr/fr/statistiques")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/INSEE")

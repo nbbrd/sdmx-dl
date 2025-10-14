@@ -47,6 +47,7 @@ import static java.util.Arrays.asList;
 import static java.util.function.Function.identity;
 import static java.util.regex.Pattern.compile;
 import static java.util.stream.Collectors.toMap;
+import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.DataSet.toDataSet;
 import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 import static sdmxdl.provider.ri.drivers.RiHttpUtils.newClient;
@@ -73,7 +74,7 @@ public final class StatCanDialectDriver implements Driver {
                     .name("en", "Statistics Canada")
                     .name("fr", "Statistique Canada")
                     .driver(DIALECTS_STATCAN)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://www150.statcan.gc.ca/t1/wds/rest")
                     .websiteOf("https://www150.statcan.gc.ca/n1/en/type/data?MM=1")
                     .propertyOf(CACHE_TTL_PROPERTY, Long.toString(Duration.ofHours(1).toMillis()))

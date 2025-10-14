@@ -16,10 +16,9 @@
  */
 package sdmxdl.provider.connectors.drivers;
 
-import nbbrd.design.DirectImpl;
 import it.bancaditalia.oss.sdmx.client.custom.DotStat;
+import nbbrd.design.DirectImpl;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.Confidentiality;
 import sdmxdl.provider.SdmxFix;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestConnector;
@@ -29,6 +28,7 @@ import sdmxdl.web.spi.Driver;
 import java.net.URI;
 import java.util.Map;
 
+import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.provider.SdmxFix.Category.ENDPOINT;
 
 /**
@@ -52,7 +52,7 @@ public final class UisDriver implements Driver {
                     .id("UIS")
                     .name("en", "Unesco Institute for Statistics")
                     .driver(CONNECTORS_UIS)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf(FALLBACK_ENDPOINT)
                     .websiteOf("http://data.uis.unesco.org")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/UIS")

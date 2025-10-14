@@ -16,7 +16,6 @@
  */
 package sdmxdl.web;
 
-import lombok.Builder;
 import lombok.NonNull;
 import org.jspecify.annotations.Nullable;
 import sdmxdl.Confidentiality;

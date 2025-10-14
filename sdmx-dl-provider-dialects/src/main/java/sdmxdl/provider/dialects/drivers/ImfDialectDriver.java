@@ -16,11 +16,10 @@
  */
 package sdmxdl.provider.dialects.drivers;
 
-import nbbrd.design.DirectImpl;
-import sdmxdl.provider.ri.drivers.RiRestClient;
-import nbbrd.io.http.URLQueryBuilder;
 import lombok.NonNull;
+import nbbrd.design.DirectImpl;
 import nbbrd.io.FileParser;
+import nbbrd.io.http.URLQueryBuilder;
 import nbbrd.io.net.MediaType;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
@@ -29,6 +28,7 @@ import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.SdmxFix;
+import sdmxdl.provider.ri.drivers.RiRestClient;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestClient;
 import sdmxdl.provider.web.RestConnector;
@@ -43,8 +43,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
+import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
+import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 
 /**
  * @author Philippe Charles
@@ -67,7 +68,7 @@ public final class ImfDialectDriver implements Driver {
                     .id("IMF")
                     .name("en", "International Monetary Fund")
                     .driver(DIALECTS_IMF)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("http://dataservices.imf.org/REST/SDMX_XML.svc")
                     .websiteOf("https://data.imf.org")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/IMF")

@@ -16,20 +16,19 @@
  */
 package sdmxdl.provider.dialects.drivers;
 
+import lombok.NonNull;
+import nbbrd.design.DirectImpl;
+import nbbrd.design.VisibleForTesting;
 import nbbrd.io.http.HttpClient;
 import nbbrd.io.http.HttpResponse;
 import nbbrd.io.http.HttpResponseException;
 import nbbrd.io.http.URLQueryBuilder;
 import nbbrd.io.http.ext.InterceptingClient;
-import lombok.NonNull;
-import nbbrd.design.DirectImpl;
-import nbbrd.design.VisibleForTesting;
 import nbbrd.io.net.MediaType;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.Confidentiality;
-import sdmxdl.StructureRef;
 import sdmxdl.Feature;
 import sdmxdl.Languages;
+import sdmxdl.StructureRef;
 import sdmxdl.format.ObsParser;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.HasMarker;
@@ -49,6 +48,7 @@ import java.net.URL;
 import java.util.EnumSet;
 
 import static java.net.HttpURLConnection.HTTP_UNAVAILABLE;
+import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.provider.SdmxFix.Category.PROTOCOL;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
 import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
@@ -77,7 +77,7 @@ public final class NbbDialectDriver implements Driver {
                     .name("fr", "Banque Nationale de Belgique")
                     .name("nl", "Nationale Bank van België")
                     .driver(DIALECTS_NBB)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://stat.nbb.be/restsdmx/sdmx.ashx")
                     .websiteOf("https://stat.nbb.be")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/NBB")
