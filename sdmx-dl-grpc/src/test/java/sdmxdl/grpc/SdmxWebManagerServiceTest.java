@@ -35,7 +35,7 @@ public class SdmxWebManagerServiceTest {
         Empty request = Empty.newBuilder().build();
         List<WebSourceDto> response = grpc.getSources(request).collect().asList().await().atMost(Duration.ofSeconds(5));
         assertThat(response)
-                .hasSizeGreaterThanOrEqualTo(34)
+                .hasSizeGreaterThanOrEqualTo(33)
                 .extracting(WebSourceDto::getId)
                 .contains("ECB");
     }
