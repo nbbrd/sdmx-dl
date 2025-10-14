@@ -60,7 +60,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .name("en", "Australian Bureau of Statistics")
                     .driver(RI_SDMX_21)
                     .confidentiality(Confidentiality.PUBLIC)
-                    .endpointOf("https://api.data.abs.gov.au")
+                    .endpointOf("https://data.api.abs.gov.au/rest")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://explore.data.abs.gov.au")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ABS")

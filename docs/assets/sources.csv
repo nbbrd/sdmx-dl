@@ -1,5 +1,5 @@
 Name,Description,Aliases,Driver,Confidentiality,Endpoint,Properties,Website,Monitor,MonitorWebsite,Languages
-ABS,Australian Bureau of Statistics,,RI_SDMX21,PUBLIC,https://api.data.abs.gov.au,sdmxdl.driver.detailSupported=true,https://explore.data.abs.gov.au,upptime:/nbbrd/sdmx-upptime/ABS,https://nbbrd.github.io/sdmx-upptime/history/abs,en
+ABS,Australian Bureau of Statistics,,RI_SDMX21,PUBLIC,https://data.api.abs.gov.au/rest,sdmxdl.driver.detailSupported=true,https://explore.data.abs.gov.au,upptime:/nbbrd/sdmx-upptime/ABS,https://nbbrd.github.io/sdmx-upptime/history/abs,en
 BBK,Deutsche Bundesbank,,DIALECTS_BBK,PUBLIC,https://api.statistiken.bundesbank.de/rest,,https://www.bundesbank.de/en/statistics/time-series-databases,upptime:/nbbrd/sdmx-upptime/BBK,https://nbbrd.github.io/sdmx-upptime/history/bbk,"en,de"
 BIS,Bank for International Settlements,,RI_SDMX21,PUBLIC,https://stats.bis.org/api/v1,sdmxdl.driver.detailSupported=true,https://stats.bis.org/statx/toc/LBS.html,upptime:/nbbrd/sdmx-upptime/BIS,https://nbbrd.github.io/sdmx-upptime/history/bis,en
 CAMSTAT,National Institute of Statistics of Cambodia,,RI_SDMX21,PUBLIC,https://nsiws-stable-camstat-live.officialstatistics.org/rest,,http://camstat.nis.gov.kh/?locale=en&start=0,upptime:/nbbrd/sdmx-upptime/CAMSTAT,https://nbbrd.github.io/sdmx-upptime/history/camstat,"en,km"
