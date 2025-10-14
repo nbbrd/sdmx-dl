@@ -19,6 +19,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![API] Modify TimeInterval to closely follow ISO-8601
 - ![API] Simplify listeners
 - ![SOURCE] Update ABS endpoint [#1037](https://github.com/nbbrd/sdmx-dl/issues/1037)
+- ![SOURCE] Remove TNSO source [#1036](https://github.com/nbbrd/sdmx-dl/issues/1036)
 - ![FORMAT] Migrate protobuf-maven-plugin from org.xolstice.maven.plugins to io.github.ascopes
 - ![FORMAT] Apply dto naming convention to protocol buffer messages [#1034](https://github.com/nbbrd/sdmx-dl/issues/1034)
 - ![PROVIDER] Increase default cache TTL [#964](https://github.com/nbbrd/sdmx-dl/issues/964)
