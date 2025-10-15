@@ -16,7 +16,7 @@
  */
 package sdmxdl.provider.ext;
 
-import java.time.temporal.TemporalAmount;
+import sdmxdl.Duration;
 
 @lombok.Value
 @lombok.Builder
@@ -24,7 +24,7 @@ public class SeriesMeta {
 
     public static final SeriesMeta EMPTY = SeriesMeta.builder().build();
 
-    TemporalAmount timeUnit;
+    Duration timeUnit;
     String valueUnit;
     String decimals;
     String name;

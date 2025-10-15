@@ -58,21 +58,23 @@ public class TimeInterval {
      * @return a non-null string
      */
     public @NonNull String getStartAsShortString() {
-        if (start.getNano() != 0) {
-            return start.toString();
+        return getAsShortString(start, duration.getMinChronoUnit());
+    }
+
+    private static String getAsShortString(LocalDateTime temporal, ChronoUnit precision) {
+        if (temporal.getNano() != 0) {
+            return temporal.toString();
         }
 
-        int year = start.getYear();
-        int month = start.getMonthValue();
-        int day = start.getDayOfMonth();
-        int hour = start.getHour();
-        int minute = start.getMinute();
-        int second = start.getSecond();
+        int year = temporal.getYear();
+        int month = temporal.getMonthValue();
+        int day = temporal.getDayOfMonth();
+        int hour = temporal.getHour();
+        int minute = temporal.getMinute();
+        int second = temporal.getSecond();
 
         ChronoUnit startUnit = getMinChronoUnit(second, minute, hour, day, month);
-        ChronoUnit durationUnit = duration.getMinChronoUnit();
-
-        ChronoUnit min = min(startUnit, durationUnit);
+        ChronoUnit min = min(startUnit, precision);
 
         switch (min) {
             case SECONDS:
@@ -103,7 +105,7 @@ public class TimeInterval {
             case YEARS:
                 return String.valueOf(year);
             default:
-                return toIsoString(start);
+                return toIsoString(temporal);
         }
     }
 

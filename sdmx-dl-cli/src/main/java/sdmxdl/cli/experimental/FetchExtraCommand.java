@@ -28,7 +28,6 @@ import sdmxdl.provider.ext.SeriesMetaFactory;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
-import java.time.temporal.TemporalAmount;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
@@ -98,7 +97,7 @@ public final class FetchExtraCommand implements Callable<Void> {
     @lombok.Value
     private static class Extra {
         Key key;
-        TemporalAmount timeUnit;
+        Duration timeUnit;
         String valueUnit;
         String decimals;
         String name;

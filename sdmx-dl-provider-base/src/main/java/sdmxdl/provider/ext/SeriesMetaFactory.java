@@ -21,9 +21,6 @@ import nbbrd.io.text.Parser;
 import sdmxdl.*;
 import sdmxdl.format.SeriesMetaUtil;
 
-import java.time.Duration;
-import java.time.Period;
-import java.time.temporal.TemporalAmount;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -38,7 +35,7 @@ import java.util.stream.IntStream;
 public final class SeriesMetaFactory {
 
     @lombok.NonNull
-    private final Function<Series, TemporalAmount> timeUnit;
+    private final Function<Series, Duration> timeUnit;
 
     @lombok.NonNull
     private final Function<Series, String> valueUnit;
@@ -102,11 +99,11 @@ public final class SeriesMetaFactory {
             return timeUnit(series -> series.getObs().stream().map(obs -> obs.getPeriod().getDuration()).distinct().findFirst().orElse(null));
         }
 
-        public Builder byAttribute(@NonNull String attributeName, Parser<TemporalAmount> timeUnitParser) {
+        public Builder byAttribute(@NonNull String attributeName, Parser<Duration> timeUnitParser) {
             return timeUnit(series -> timeUnitParser.parse(series.getMeta().get(attributeName)));
         }
 
-        public Builder byDimension(int dimensionIndex, Parser<TemporalAmount> timeUnitParser) {
+        public Builder byDimension(int dimensionIndex, Parser<Duration> timeUnitParser) {
             return timeUnit(
                     dimensionIndex != NO_FREQUENCY_CODE_ID_INDEX
                             ? series -> timeUnitParser.parse(series.getKey().get(dimensionIndex))
@@ -179,14 +176,4 @@ public final class SeriesMetaFactory {
     private static final Comparator<Component> BY_LENGTH_ID
             = Comparator.<Component>comparingInt(o -> o.getId().length()).thenComparing(Component::getId);
 
-    public static final TemporalAmount ANNUAL = Period.parse("P1Y");
-    public static final TemporalAmount HALF_YEARLY = Period.parse("P6M");
-    public static final TemporalAmount QUARTERLY = Period.parse("P3M");
-    public static final TemporalAmount MONTHLY = Period.parse("P1M");
-    public static final TemporalAmount WEEKLY = Period.parse("P7D");
-    public static final TemporalAmount DAILY = Period.parse("P1D");
-    public static final TemporalAmount DAILY_BUSINESS = Period.parse("P1D");
-    public static final TemporalAmount HOURLY = Duration.parse("PT1H");
-    public static final TemporalAmount MINUTELY = Duration.parse("PT1M");
-    public static final TemporalAmount UNDEFINED = null;
 }
