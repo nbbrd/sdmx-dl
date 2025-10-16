@@ -19,10 +19,13 @@ package sdmxdl;
 import lombok.NonNull;
 import nbbrd.design.NonNegative;
 import nbbrd.design.NotThreadSafe;
+import org.jspecify.annotations.Nullable;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -32,7 +35,8 @@ import java.util.stream.Stream;
 @NotThreadSafe
 public interface Connection extends Closeable {
 
-    void testConnection() throws IOException;
+    @NonNull
+    Optional<URI> testConnection() throws IOException;
 
     @NonNull
     Collection<Database> getDatabases() throws IOException;

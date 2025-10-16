@@ -1,13 +1,15 @@
 package _test.sdmxdl.util;
 
 import lombok.NonNull;
-import sdmxdl.provider.Marker;
 import sdmxdl.Series;
 import sdmxdl.provider.DataRef;
+import sdmxdl.provider.Marker;
 import sdmxdl.provider.file.FileClient;
 import sdmxdl.provider.file.FileInfo;
 
 import java.io.IOException;
+import java.net.URI;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
@@ -25,9 +27,10 @@ public final class XCountingFileClient implements FileClient {
         return delegate.getMarker();
     }
 
+    @NonNull
     @Override
-    public void testClient() throws IOException {
-        delegate.testClient();
+    public Optional<URI> testClient() throws IOException {
+        return delegate.testClient();
     }
 
     @Override

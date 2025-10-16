@@ -8,6 +8,7 @@ import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -106,7 +107,8 @@ public final class MockedDriver implements Driver {
         private boolean closed = false;
 
         @Override
-        public void testConnection() throws IOException {
+        public @NonNull Optional<URI> testConnection() throws IOException {
+            return Optional.empty();
         }
 
         @Override

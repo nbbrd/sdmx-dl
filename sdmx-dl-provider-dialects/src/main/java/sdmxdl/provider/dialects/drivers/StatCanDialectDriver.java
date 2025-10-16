@@ -30,13 +30,12 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.time.Clock;
 import java.time.Duration;
-import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -169,8 +168,12 @@ public final class StatCanDialectDriver implements Driver {
         }
 
         @Override
-        public void testConnection() throws IOException {
-            client.ping();
+        public @NonNull Optional<URI> testConnection() throws IOException {
+            try {
+                return Optional.of(client.ping().toURI());
+            } catch (URISyntaxException e) {
+                throw new IOException(e);
+            }
         }
 
         @Override
@@ -188,7 +191,7 @@ public final class StatCanDialectDriver implements Driver {
         DataRepository getStructAndData(int productId) throws IOException;
 
         @NonNull
-        Duration ping() throws IOException;
+        URL ping() throws IOException;
     }
 
     @VisibleForTesting
@@ -220,11 +223,19 @@ public final class StatCanDialectDriver implements Driver {
         }
 
         @Override
-        public @NonNull Duration ping() throws IOException {
-            Clock clock = Clock.systemDefaultZone();
-            Instant start = clock.instant();
-            getAllCubesListLite();
-            return Duration.between(start, clock.instant());
+        public @NonNull URL ping() throws IOException {
+            HttpRequest request = HttpRequest
+                    .builder()
+                    .query(URLQueryBuilder
+                            .of(endpoint)
+                            .path("getAllCubesListLite")
+                            .build())
+                    .mediaType(JSON_TYPE)
+                    .build();
+
+            try (HttpResponse ignore = client.send(request)) {
+                return request.getQuery();
+            }
         }
 
         private DataTable[] getAllCubesListLite() throws IOException {
@@ -329,17 +340,17 @@ public final class StatCanDialectDriver implements Driver {
         }
 
         @Override
-        public List<Flow> getFlows() throws IOException {
+        public @NonNull List<Flow> getFlows() throws IOException {
             return getIdOfFlows().load(cache, delegate::getFlows, o -> ttl);
         }
 
         @Override
-        public DataRepository getStructAndData(int productId) throws IOException {
+        public @NonNull DataRepository getStructAndData(int productId) throws IOException {
             return getIdOfRepo().with(productId).load(cache, () -> delegate.getStructAndData(productId), o -> ttl);
         }
 
         @Override
-        public @NonNull Duration ping() throws IOException {
+        public @NonNull URL ping() throws IOException {
             return delegate.ping();
         }
     }

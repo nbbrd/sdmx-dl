@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -151,13 +152,14 @@ final class CachedRestClient implements RestClient {
     }
 
     @Override
-    public Set<Feature> getSupportedFeatures() throws IOException {
+    public @NonNull Set<Feature> getSupportedFeatures() throws IOException {
         return delegate.getSupportedFeatures();
     }
 
+    @NonNull
     @Override
-    public void testClient() throws IOException {
-        delegate.testClient();
+    public Optional<URI> testClient() throws IOException {
+        return delegate.testClient();
     }
 
     private List<Flow> loadDataflowsWithCache() throws IOException {

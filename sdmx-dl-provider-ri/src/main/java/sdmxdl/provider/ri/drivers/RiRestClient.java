@@ -16,11 +16,11 @@
  */
 package sdmxdl.provider.ri.drivers;
 
+import lombok.NonNull;
 import nbbrd.io.http.HttpClient;
 import nbbrd.io.http.HttpRequest;
 import nbbrd.io.http.HttpResponse;
 import nbbrd.io.http.HttpResponseException;
-import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.format.ObsParser;
 import sdmxdl.provider.DataRef;
@@ -31,9 +31,12 @@ import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.WebContext;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -102,9 +105,19 @@ public class RiRestClient implements RestClient {
         return supportedFeatures;
     }
 
+    @NonNull
     @Override
-    public void testClient() throws IOException {
-        getFlows();
+    public Optional<URI> testClient() throws IOException {
+        HttpRequest request = RiHttpUtils.newRequest(getFlowsQuery(), parsers.getFlowsTypes(), langs);
+        try {
+            try (HttpResponse ignore = httpClient.send(request)) {
+                return Optional.of(request.getQuery().toURI());
+            } catch (HttpResponseException ex) {
+                return Optional.of(request.getQuery().toURI());
+            }
+        } catch (URISyntaxException e) {
+            throw new IOException(e);
+        }
     }
 
     @NonNull

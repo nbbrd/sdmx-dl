@@ -180,13 +180,15 @@ public final class ConnectorsRestClient implements RestClient {
                 : EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD);
     }
 
+    @NonNull
     @Override
-    public void testClient() throws IOException {
+    public Optional<URI> testClient() throws IOException {
         try {
             connector.getDataflows();
         } catch (SdmxException ex) {
             throw wrap(ex, "Failed to ping '%s' : '%s'", marker, ex.getMessage());
         }
+        return Optional.empty();
     }
 
     public static final List<String> CONNECTORS_CONNECTION_PROPERTIES = BaseProperty.keysOf(

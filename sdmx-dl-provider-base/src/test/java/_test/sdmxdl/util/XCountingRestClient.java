@@ -23,7 +23,9 @@ import sdmxdl.provider.Marker;
 import sdmxdl.provider.web.RestClient;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
@@ -76,12 +78,13 @@ public final class XCountingRestClient implements RestClient {
     }
 
     @Override
-    public Set<Feature> getSupportedFeatures() throws IOException {
+    public @NonNull Set<Feature> getSupportedFeatures() throws IOException {
         return delegate.getSupportedFeatures();
     }
 
+    @NonNull
     @Override
-    public void testClient() throws IOException {
-        delegate.testClient();
+    public Optional<URI> testClient() throws IOException {
+        return delegate.testClient();
     }
 }

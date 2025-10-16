@@ -20,10 +20,10 @@ import lombok.NonNull;
 import nbbrd.io.net.MediaType;
 import nbbrd.io.xml.Xml;
 import org.jspecify.annotations.Nullable;
-import sdmxdl.Structure;
 import sdmxdl.EventListener;
 import sdmxdl.Languages;
 import sdmxdl.Series;
+import sdmxdl.Structure;
 import sdmxdl.file.FileSource;
 import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
@@ -37,6 +37,8 @@ import sdmxdl.provider.file.FileInfo;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -65,14 +67,16 @@ public class XmlFileClient implements FileClient {
         return HasMarker.of(source);
     }
 
+    @NonNull
     @Override
-    public void testClient() throws IOException {
+    public Optional<URI> testClient() throws IOException {
         if (!source.getData().exists()) {
             throw new FileNotFoundException(source.getData().toString());
         }
         if (source.getStructure() != null && !source.getStructure().exists()) {
             throw new FileNotFoundException(source.getStructure().toString());
         }
+        return Optional.of(source.getData().toPath().toUri());
     }
 
     @Override

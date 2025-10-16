@@ -26,10 +26,7 @@ import java.time.Month;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -116,7 +113,8 @@ public final class RngRiDriver implements Driver {
         private final RngDriverId config;
 
         @Override
-        public void testConnection() {
+        public @NonNull Optional<URI> testConnection() {
+            return Optional.empty();
         }
 
         @Override

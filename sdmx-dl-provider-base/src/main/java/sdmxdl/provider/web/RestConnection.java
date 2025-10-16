@@ -25,8 +25,10 @@ import sdmxdl.provider.DataRef;
 import sdmxdl.provider.Validator;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -113,9 +115,9 @@ final class RestConnection implements Connection {
     }
 
     @Override
-    public void testConnection() throws IOException {
+    public @NonNull Optional<URI> testConnection() throws IOException {
         checkState();
-        client.testClient();
+        return client.testClient();
     }
 
     @Override

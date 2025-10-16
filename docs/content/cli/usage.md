@@ -663,8 +663,9 @@ Other options:
 CSV columns:
 1. [`Source:source`](../datatypes#source)
 2. [`Accessible:enum`](../datatypes#enum)
-3. [`DurationInMillis:int`](../datatypes#int)
-4. [`ErrorMessage:string`](../datatypes#string)
+3. [`URI:uri`](../datatypes#uri)
+4. [`DurationInMillis:int`](../datatypes#int)
+5. [`ErrorMessage:string`](../datatypes#string)
 
 {{< /tab >}}
 {{< /tabs >}}

@@ -1,3 +1,3 @@
-| Source | Accessible | DurationInMillis | ErrorMessage |
-|--------|------------|------------------|--------------|
-| ECB    | YES        | 726              |              |
+| Source | Accessible | URI                                                            | DurationInMillis | ErrorMessage |
+|--------|------------|----------------------------------------------------------------|------------------|--------------|
+| ECB    | YES        | https://data-api.ecb.europa.eu/service/dataflow/all/all/latest | 726              |              |

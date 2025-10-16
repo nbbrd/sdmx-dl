@@ -3,14 +3,16 @@ package _test.sdmxdl.util;
 import lombok.NonNull;
 import nbbrd.io.net.MediaType;
 import sdmxdl.DataRepository;
-import sdmxdl.provider.Marker;
 import sdmxdl.Series;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.HasMarker;
+import sdmxdl.provider.Marker;
 import sdmxdl.provider.file.FileClient;
 import sdmxdl.provider.file.FileInfo;
 
 import java.io.IOException;
+import java.net.URI;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @lombok.RequiredArgsConstructor
@@ -24,8 +26,10 @@ public final class XRepoFileClient implements FileClient {
         return HasMarker.of(repository);
     }
 
+    @NonNull
     @Override
-    public void testClient() {
+    public Optional<URI> testClient() {
+        return Optional.empty();
     }
 
     @Override

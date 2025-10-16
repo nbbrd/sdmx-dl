@@ -7,8 +7,10 @@ import sdmxdl.*;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -61,7 +63,8 @@ class ConnectionSupportTest {
         private final Supplier<Stream<Series>> streamSupplier;
 
         @Override
-        public void testConnection() throws IOException {
+        public @NonNull Optional<URI> testConnection() throws IOException {
+            return Optional.empty();
         }
 
         @Override

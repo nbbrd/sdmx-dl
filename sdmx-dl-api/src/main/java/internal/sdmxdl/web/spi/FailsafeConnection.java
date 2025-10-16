@@ -22,7 +22,9 @@ import nbbrd.design.NonNegative;
 import sdmxdl.*;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -50,13 +52,22 @@ final class FailsafeConnection implements Connection {
     @lombok.NonNull
     private final Consumer<? super String> onUnexpectedNull;
 
+    @SuppressWarnings("OptionalAssignedToNull")
     @Override
-    public void testConnection() throws IOException {
+    public @NonNull Optional<URI> testConnection() throws IOException {
+        Optional<URI> result;
+
         try {
-            delegate.testConnection();
+            result = delegate.testConnection();
         } catch (RuntimeException ex) {
             throw unexpectedError(ex, "while testing connection");
         }
+
+        if (result == null) {
+            throw unexpectedNull("testConnection");
+        }
+
+        return result;
     }
 
     @Override

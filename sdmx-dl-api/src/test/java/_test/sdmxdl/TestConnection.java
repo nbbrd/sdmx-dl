@@ -22,8 +22,10 @@ import sdmxdl.*;
 import tests.sdmxdl.api.RepoSamples;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -36,7 +38,8 @@ import static java.util.stream.Collectors.toList;
 public enum TestConnection implements Connection {
     TEST_VALID {
         @Override
-        public void testConnection() {
+        public @NonNull Optional<URI> testConnection() {
+            return Optional.of(URI.create("http://localhost"));
         }
 
         @Override
@@ -80,7 +83,7 @@ public enum TestConnection implements Connection {
     },
     TEST_FAILING {
         @Override
-        public void testConnection() {
+        public @NonNull Optional<URI> testConnection() {
             throw new CustomException();
         }
 
@@ -126,7 +129,8 @@ public enum TestConnection implements Connection {
     },
     TEST_NULL {
         @Override
-        public void testConnection() {
+        public @NonNull Optional<URI> testConnection() {
+            return null;
         }
 
         @Override

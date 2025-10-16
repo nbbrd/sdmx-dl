@@ -26,7 +26,7 @@ import java.io.IOException;
 /**
  * @author Philippe Charles
  */
-public class SdmxFileConnectionTest {
+public class FileConnectionTest {
 
     @Test
     public void testCompliance() throws IOException {

@@ -142,8 +142,12 @@ public final class PxWebDriver implements Driver {
         private final PxWebClient client;
 
         @Override
-        public void testConnection() throws IOException {
-            client.getConfig();
+        public @NonNull Optional<URI> testConnection() throws IOException {
+            try {
+                return Optional.of(client.ping().toURI());
+            } catch (URISyntaxException e) {
+                throw new IOException(e);
+            }
         }
 
         @Override
@@ -205,6 +209,9 @@ public final class PxWebDriver implements Driver {
     private interface PxWebClient extends HasMarker {
 
         @NonNull
+        URL ping() throws IOException;
+
+        @NonNull
         Config getConfig() throws IOException;
 
         @NonNull
@@ -244,6 +251,18 @@ public final class PxWebDriver implements Driver {
 
         @lombok.NonNull
         private final HttpClient client;
+
+        @Override
+        public @NonNull URL ping() throws IOException {
+            HttpRequest request = HttpRequest
+                    .builder()
+                    .query(URLQueryBuilder.of(baseURL).param("config").build())
+                    .build();
+
+            try (HttpResponse ignore = client.send(request)) {
+                return request.getQuery();
+            }
+        }
 
         @Override
         public @NonNull Config getConfig() throws IOException {
@@ -401,6 +420,11 @@ public final class PxWebDriver implements Driver {
         @Override
         public @NonNull Marker getMarker() {
             return delegate.getMarker();
+        }
+
+        @Override
+        public @NonNull URL ping() throws IOException {
+            return delegate.ping();
         }
 
         @Override

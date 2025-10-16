@@ -25,8 +25,10 @@ import sdmxdl.provider.Marker;
 import sdmxdl.provider.web.RestClient;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -80,11 +82,13 @@ public final class XRepoRestClient implements RestClient {
     }
 
     @Override
-    public Set<Feature> getSupportedFeatures() {
+    public @NonNull Set<Feature> getSupportedFeatures() {
         return EnumSet.allOf(Feature.class);
     }
 
+    @NonNull
     @Override
-    public void testClient() {
+    public Optional<URI> testClient() {
+        return Optional.empty();
     }
 }
