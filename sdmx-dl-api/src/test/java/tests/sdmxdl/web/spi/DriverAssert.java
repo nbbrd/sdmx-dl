@@ -73,7 +73,7 @@ public class DriverAssert {
                 .stream()
                 .filter(item -> item.getId().equals(query.getSource()))
                 .findFirst()
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(() -> new RuntimeException("Cannot find source '" + query.getSource() + "'"));
 
         try (Connection connection = driver.connect(webSource, query.getKeyRequest().getLanguages(), context)) {
             DatabaseRef database = query.getKeyRequest().getDatabase();

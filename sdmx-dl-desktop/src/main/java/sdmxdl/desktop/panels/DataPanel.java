@@ -161,7 +161,11 @@ public final class DataPanel extends JComponent {
         result.setXPosition(TimePeriodAnchor.MIDDLE);
         TimeSeries ts = new TimeSeries(item.getSeries().getKey().toString());
         for (Obs obs : item.getSeries().getObs()) {
-            ts.add(new TimeSeriesDataItem(new FixedMillisecond(Timestamp.valueOf(obs.getPeriod().getStart())), obs.getValue()));
+            RegularTimePeriod newPeriod = new Millisecond(Timestamp.valueOf(obs.getPeriod().getStart()));
+            TimeSeriesDataItem oldValue = ts.addOrUpdate(new TimeSeriesDataItem(newPeriod, obs.getValue()));
+            if (oldValue != null) {
+                System.err.println("Duplicate period: " + obs.getPeriod());
+            }
         }
         result.addSeries(ts);
         return result;
@@ -223,7 +227,7 @@ public final class DataPanel extends JComponent {
                     return new SimpleDateFormat("yyyy", locale);
             }
         }
-        return SimpleDateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, locale);
+        return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", locale);
     }
 
     private static NumberFormat getNumberFormat(SeriesMeta meta) {
