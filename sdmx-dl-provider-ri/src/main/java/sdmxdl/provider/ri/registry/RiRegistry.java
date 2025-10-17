@@ -63,11 +63,11 @@ public final class RiRegistry implements Registry {
         try {
             WebSources result = loadCustomSources(sourcesFile, persistences);
             if (onEvent != null)
-                onEvent.accept(getRegistryId(), "Using " + result.getSources().size() + " custom sources from file '" + sourcesFile + "'");
+                onEvent.accept(getRegistryId(), "Using " + result.getSources().size() + " custom sources from file " + sourcesFile.toPath().toUri());
             return result;
         } catch (IOException ex) {
             if (onError != null)
-                onError.accept(getRegistryId(), "Failed to load source file '" + sourcesFile + "'", ex);
+                onError.accept(getRegistryId(), "Failed to load source file " + sourcesFile.toPath().toUri(), ex);
             return WebSources.EMPTY;
         }
     }
