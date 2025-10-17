@@ -9,7 +9,7 @@
 <meta name="referrer" content="no-referrer" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="color-scheme" content="light dark" />
-<meta name="generator" content="Hugo 0.151.0">
+<meta name="generator" content="Hugo 0.151.2">
 
 
   <meta name="description" content="By default, all commands print the result on the standard output.
@@ -53,7 +53,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
 <meta property="article:section" content="CLI" />
     <meta
       property="article:modified_time"
-      content="2025-02-21T11:45:31+01:00"
+      content="2025-10-16T16:25:08+02:00"
     />
 
 
@@ -75,7 +75,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
       "url" : "https://nbbrd.github.io/sdmx-dl/docs/develop/cli/usage/",
       "headline": "Usage",
       "description": "By default, all commands print the result on the standard output.\nMost commands produce RFC4180 compliant CSV content.\nCommand arguments are composed of options and positional parameters. Options have a name, positional parameters are usually the values that follow the options, but they may be mixed. The general pattern is:\nsdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters options All commands share the following options:\n-h, --help - Show an help message and exit. -v, --verbose - Enable verbose mode. Commands summary The commands follow a verb\u002bnoun hierarchy.",
-      "wordCount" : "1467",
+      "wordCount" : "1470",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -86,7 +86,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
       "copyrightYear" : "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2025-02-21T11:45:31.00Z",
+      "dateModified": "2025-10-16T16:25:08.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -3192,6 +3192,10 @@ flowchart TB
 ><code>Accessible:enum</code></a></li>
 <li><a
   class="gdoc-markdown__link--code"
+  href="../datatypes#uri"
+><code>URI:uri</code></a></li>
+<li><a
+  class="gdoc-markdown__link--code"
   href="../datatypes#int"
 ><code>DurationInMillis:int</code></a></li>
 <li><a
@@ -3204,11 +3208,11 @@ flowchart TB
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="893b7bef-47">
+  <label class="gdoc-expand__head flex justify-between" for="cc5b73aa-47">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="893b7bef-47" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="cc5b73aa-47" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -3216,6 +3220,7 @@ flowchart TB
       <tr>
           <th>Source</th>
           <th>Accessible</th>
+          <th>URI</th>
           <th>DurationInMillis</th>
           <th>ErrorMessage</th>
       </tr>
@@ -3224,6 +3229,10 @@ flowchart TB
       <tr>
           <td>ECB</td>
           <td>YES</td>
+          <td><a
+  class="gdoc-markdown__link"
+  href="https://data-api.ecb.europa.eu/service/dataflow/all/all/latest"
+>https://data-api.ecb.europa.eu/service/dataflow/all/all/latest</a></td>
           <td>726</td>
           <td></td>
       </tr>
