@@ -56,18 +56,6 @@ public final class DotStatDialectDriver implements Driver {
             .properties(RI_CONNECTION_PROPERTIES)
             .source(WebSource
                     .builder()
-                    .id("SE")
-                    .name("en", "Statistics Estonia")
-                    .name("et", "Statistikaameti")
-                    .driver(DIALECTS_DOTSTAT)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("http://andmebaas.stat.ee/restsdmx/sdmx.ashx")
-                    .websiteOf("http://andmebaas.stat.ee")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/SE")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/se")
-                    .build())
-            .source(WebSource
-                    .builder()
                     .id("UIS")
                     .name("en", "Unesco Institute for Statistics")
                     .name("fr", "Unesco Institut de statistique")

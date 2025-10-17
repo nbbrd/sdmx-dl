@@ -23,6 +23,5 @@ module sdmxdl.provider.connectors {
             OecdDriver,
             Sdmx20Driver,
             Sdmx21Driver,
-            SeDriver,
             UisDriver;
 }

@@ -23,6 +23,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![API] Retrieve testing connection URI for external usage [#1058](https://github.com/nbbrd/sdmx-dl/issues/1058)
 - ![SOURCE] Update ABS endpoint [#1037](https://github.com/nbbrd/sdmx-dl/issues/1037)
 - ![SOURCE] Remove TNSO source [#1036](https://github.com/nbbrd/sdmx-dl/issues/1036)
+- ![SOURCE] Remove SE source [#1057](https://github.com/nbbrd/sdmx-dl/issues/1057)
 - ![FORMAT] Migrate protobuf-maven-plugin from org.xolstice.maven.plugins to io.github.ascopes
 - ![FORMAT] Apply dto naming convention to protocol buffer messages [#1034](https://github.com/nbbrd/sdmx-dl/issues/1034)
 - ![PROVIDER] Increase default cache TTL [#964](https://github.com/nbbrd/sdmx-dl/issues/964)
