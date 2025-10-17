@@ -73,6 +73,7 @@ public final class CheckAccessCommand implements Callable<Void> {
 
     private Stream<Access> getRows() throws IOException {
         SdmxWebManager manager = web.loadManager();
+        web.warmup(manager);
         Stream<String> sources = web.isAllSources() ? WebSourcesOptions.getAllSourceNames(manager) : web.getSources().stream();
         return sort.applySort(web.applyParallel(sources).map(sourceName -> Access.of(manager, web.getLangs(), sourceName)), BY_SOURCE);
     }

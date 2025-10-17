@@ -16,6 +16,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![SOURCE] Add source from Canadian Census Profile Data [#1056](https://github.com/nbbrd/sdmx-dl/issues/1056)
 - ![GRPC] Add dimension code availability in protobuf service [#912](https://github.com/nbbrd/sdmx-dl/issues/912)
 
+### Fixed
+
+- ![CLI] Fix network warmup in check access duration
+
 ### Changed
 
 - ![API] Modify TimeInterval to closely follow ISO-8601

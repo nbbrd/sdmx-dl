@@ -16,6 +16,7 @@
  */
 package internal.sdmxdl.cli;
 
+import internal.sdmxdl.cli.ext.Anchor;
 import lombok.NonNull;
 import org.jspecify.annotations.Nullable;
 import picocli.CommandLine;
@@ -25,6 +26,7 @@ import sdmxdl.ext.Persistence;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.WebSources;
+import sdmxdl.web.spi.Networking;
 import sdmxdl.web.spi.Registry;
 
 import java.io.IOException;
@@ -65,6 +67,12 @@ public class WebNetOptions extends WebOptions {
                 .authenticators(context.getAuthOptions().getAuthenticators())
                 .registry(getForcedSslSources(defaultManager))
                 .build();
+    }
+
+    public void warmup(SdmxWebManager manager) {
+        Networking networking = manager.getNetworking();
+        getVerboseOptions().reportToErrorStream(Anchor.CFG, networking.getNetworkingId() + ": Warming up network");
+        networking.warmupNetwork();
     }
 
     private Registry getForcedSslSources(SdmxWebManager manager) {
