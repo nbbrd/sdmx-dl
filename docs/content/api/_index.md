@@ -9,8 +9,9 @@ weight: 1
 
 Web example:
 ```java
-SdmxWebManager.ofServiceLoader()
-    .using("ECB")
+SdmxWebManager
+    .ofServiceLoader()
+    .usingName("ECB")
     .getData(KeyRequest
         .builder()
         .flowOf("EXR")
@@ -21,8 +22,9 @@ SdmxWebManager.ofServiceLoader()
 
 File example:
 ```java
-SdmxFileManager.ofServiceLoader()
-    .using(dataFile())
+SdmxFileManager
+    .ofServiceLoader()
+    .usingFile(dataFile())
     .getData(KeyRequest
         .builder()
         .flowOf("data")

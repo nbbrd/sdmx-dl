@@ -15,7 +15,6 @@ import java.beans.PropertyChangeSupport;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -46,7 +45,7 @@ public enum Sdmxdl implements HasSdmxProperties<SdmxWebManager> {
     private final SdmxIconSupport iconSupport = SdmxIconSupport.of(this);
 
     @Getter
-    private final AsyncSupport<DataSourceRef, MetaSet> metaSetAsyncSupport = AsyncSupport.of(ref -> this.getSdmxManager().using(ref.getSource()).getMeta(ref.toFlowRequest()));
+    private final AsyncSupport<DataSourceRef, MetaSet> metaSetAsyncSupport = AsyncSupport.of(ref -> this.getSdmxManager().usingName(ref.getSource()).getMeta(ref.toFlowRequest()));
 
     public <T extends HasPersistence> String formatAsJson(Class<T> type, T value) {
         Optional<FileFormat<T>> dsdFormat = getSdmxManager()

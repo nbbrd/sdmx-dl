@@ -38,7 +38,7 @@ public final class DebugStructCommand implements Callable<Void> {
 
     @Override
     public Void call() throws Exception {
-        output.dumpAll(ProtoApi.fromDataStructure(web.loadManager().using(web.getSource()).getMeta(web.toFlowRequest()).getStructure()));
+        output.dumpAll(ProtoApi.fromDataStructure(web.loadManager().usingName(web.getSource()).getMeta(web.toFlowRequest()).getStructure()));
         return null;
     }
 }

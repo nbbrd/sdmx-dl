@@ -62,7 +62,7 @@ public final class ListAttributesCommand implements Callable<Void> {
     }
 
     private Stream<Attribute> getRows() throws IOException {
-        return getAttributes(web.loadManager().using(web.getSource()).getMeta(web.toFlowRequest()).getStructure());
+        return getAttributes(web.loadManager().usingName(web.getSource()).getMeta(web.toFlowRequest()).getStructure());
     }
 
     private Stream<Attribute> getAttributes(Structure dsd) {

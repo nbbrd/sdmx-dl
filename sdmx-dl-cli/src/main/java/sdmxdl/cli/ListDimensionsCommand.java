@@ -64,7 +64,7 @@ public final class ListDimensionsCommand implements Callable<Void> {
     }
 
     private Stream<IndexedComponent> getRows() throws IOException {
-        return getDimensions(web.loadManager().using(web.getSource()).getMeta(web.toFlowRequest()).getStructure());
+        return getDimensions(web.loadManager().usingName(web.getSource()).getMeta(web.toFlowRequest()).getStructure());
     }
 
     private Stream<IndexedComponent> getDimensions(Structure dsd) {

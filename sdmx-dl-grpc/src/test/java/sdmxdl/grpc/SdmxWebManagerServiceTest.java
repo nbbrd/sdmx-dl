@@ -32,7 +32,7 @@ public class SdmxWebManagerServiceTest {
 
     @Test
     public void testGetSources() {
-        Empty request = Empty.newBuilder().build();
+        EmptyDto request = EmptyDto.newBuilder().build();
         List<WebSourceDto> response = grpc.getSources(request).collect().asList().await().atMost(Duration.ofSeconds(5));
         assertThat(response)
                 .hasSizeGreaterThanOrEqualTo(33)

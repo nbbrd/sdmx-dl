@@ -8,9 +8,9 @@ import "sdmxdl_web.proto";
 
 service SdmxWebManager {
 
-  rpc GetAbout(Empty) returns (sdmxdl.format.protobuf.AboutDto);
+  rpc GetAbout(EmptyDto) returns (sdmxdl.format.protobuf.AboutDto);
 
-  rpc GetSources(Empty) returns (stream sdmxdl.format.protobuf.web.WebSourceDto);
+  rpc GetSources(EmptyDto) returns (stream sdmxdl.format.protobuf.web.WebSourceDto);
 
   rpc GetMonitorReport(SourceRequestDto) returns (sdmxdl.format.protobuf.web.MonitorReportDto);
 
@@ -27,7 +27,7 @@ service SdmxWebManager {
   rpc GetAvailability(KeyDimensionRequestDto) returns (stream DimensionCodesDto);
 }
 
-message Empty {
+message EmptyDto {
 }
 
 message SourceRequestDto {

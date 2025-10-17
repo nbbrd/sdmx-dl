@@ -60,6 +60,6 @@ public final class ListDatabasesCommand implements Callable<Void> {
     }
 
     private Stream<Database> getRows() throws IOException {
-        return web.loadManager().using(web.getSource()).getDatabases(web.toSourceRequest()).stream();
+        return web.loadManager().usingName(web.getSource()).getDatabases(web.toSourceRequest()).stream();
     }
 }

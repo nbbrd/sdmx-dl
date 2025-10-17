@@ -15,7 +15,7 @@ public class FileDemo1 {
     public static void main(String[] args) throws IOException {
 
         SdmxFileManager.ofServiceLoader()
-                .using(dataFile())
+                .usingFile(dataFile())
                 .getData(KeyRequest
                         .builder()
                         .flowOf("data")

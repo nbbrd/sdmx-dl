@@ -12,7 +12,7 @@ public class WebDemo1 {
     public static void main(String[] args) throws IOException {
 
         SdmxWebManager.ofServiceLoader()
-                .using("ECB")
+                .usingName("ECB")
                 .getData(KeyRequest
                         .builder()
                         .flowOf("EXR")

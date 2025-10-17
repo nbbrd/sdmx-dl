@@ -70,7 +70,7 @@ public final class DebugListCommand implements Callable<Void> {
 
     @Command
     public void flows(@Mixin WebSourceOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out) throws Exception {
-        nonNull(out).dumpAll(fromDataflows(web.loadManager().using(web.getSource()).getFlows(web.toDatabaseRequest())));
+        nonNull(out).dumpAll(fromDataflows(web.loadManager().usingName(web.getSource()).getFlows(web.toDatabaseRequest())));
     }
 
     private static FlowsDto fromDataflows(Collection<Flow> value) {
@@ -83,12 +83,12 @@ public final class DebugListCommand implements Callable<Void> {
     @Command
     public void keys(@Mixin WebFlowOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out) throws Exception {
         KeyRequest request = KeyRequest.builderOf(web.toFlowRequest()).detail(SERIES_KEYS_ONLY).build();
-        nonNull(out).dumpAll(ProtoApi.fromDataSet(web.loadManager().using(web.getSource()).getData(request)));
+        nonNull(out).dumpAll(ProtoApi.fromDataSet(web.loadManager().usingName(web.getSource()).getData(request)));
     }
 
     @Command
     public void features(@Mixin WebSourceOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out) throws Exception {
-        nonNull(out).dumpAll(fromFeatures(web.loadManager().using(web.getSource()).getSupportedFeatures(web.toSourceRequest())));
+        nonNull(out).dumpAll(fromFeatures(web.loadManager().usingName(web.getSource()).getSupportedFeatures(web.toSourceRequest())));
     }
 
     private static FeaturesDto fromFeatures(Collection<Feature> value) {
