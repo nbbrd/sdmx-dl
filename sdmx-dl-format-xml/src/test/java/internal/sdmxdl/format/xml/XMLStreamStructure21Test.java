@@ -23,9 +23,12 @@ import sdmxdl.format.xml.SdmxXmlStreams;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
 
 import javax.xml.stream.XMLStreamException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static nbbrd.io.text.TextResource.newBufferedReader;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIOException;
 
@@ -70,5 +73,24 @@ public class XMLStreamStructure21Test {
                 .isThrownBy(() -> parser.parseReader(SdmxXmlSources.NBB_DATA_STRUCTURE::openReader))
                 .withCauseInstanceOf(XMLStreamException.class)
                 .withMessageContaining("Invalid namespace");
+    }
+
+    @Test
+    public void testCoreRepresentation() throws IOException {
+        Xml.Parser<List<Structure>> parser = SdmxXmlStreams.struct21(Languages.ANY);
+
+        assertThat(parser.parseReader(() -> newBufferedReader(SdmxXmlSources.class, "other/CoreRepresentation21.xml", UTF_8))).singleElement().satisfies(o -> {
+            assertThat(o.getName()).isEqualTo("Asia and Pacific Regional Economic Outlook (APDREO)");
+            assertThat(o.getPrimaryMeasureId()).isEqualTo("OBS_VALUE");
+            assertThat(o.getTimeDimensionId()).isEqualTo("TIME_PERIOD");
+            assertThat(o.getRef()).isEqualTo(StructureRef.of("IMF.APD", "DSD_APDREO", "6.0.0"));
+            assertThat(o.getDimensions()).hasSize(3).element(0).satisfies(x -> {
+                assertThat(x.getId()).isEqualTo("COUNTRY");
+                assertThat(x.getName()).isEqualTo("Country");
+                assertThat(x.getPosition()).isEqualTo(0);
+                assertThat(x.getCodelist().getRef()).isEqualTo(CodelistRef.of("IMF.APD", "CL_APDREO_COUNTRY", "3.0.0"));
+                assertThat(x.getCodelist().getCodes()).hasSize(340).containsEntry("BEL", "Belgium");
+            });
+        });
     }
 }

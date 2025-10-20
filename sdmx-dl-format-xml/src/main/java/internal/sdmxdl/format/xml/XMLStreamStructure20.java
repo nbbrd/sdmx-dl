@@ -23,7 +23,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Philippe Charles
@@ -129,13 +128,13 @@ public final class XMLStreamStructure20 {
         codelist.code(id, label.build(id));
     }
 
-    private void parseConcepts(XMLStreamReader reader, Map<String, String> concepts) throws XMLStreamException {
+    private void parseConcepts(XMLStreamReader reader, List<Concept> concepts) throws XMLStreamException {
         while (XMLStreamUtil.nextTag(reader, CONCEPTS_TAG, CONCEPT_TAG)) {
             parseConcept(reader, concepts);
         }
     }
 
-    private void parseConcept(XMLStreamReader reader, Map<String, String> concepts) throws XMLStreamException {
+    private void parseConcept(XMLStreamReader reader, List<Concept> concepts) throws XMLStreamException {
         String id = reader.getAttributeValue(null, ID_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing Concept id");
 
@@ -143,7 +142,7 @@ public final class XMLStreamStructure20 {
         while (XMLStreamUtil.nextTag(reader, CONCEPT_TAG, NAME_TAG)) {
             parseNameTag(reader, label);
         }
-        concepts.put(id, label.build(id));
+        concepts.add(new Concept(id, label.build(id), null));
     }
 
     private void parseDataStructures(XMLStreamReader reader, List<Structure> result, DsdContext context) throws XMLStreamException {
@@ -207,12 +206,12 @@ public final class XMLStreamStructure20 {
 
         component.id(id);
 
-        String conceptName = context.getConcepts().get(id);
-        component.name(conceptName != null ? conceptName : id);
+        Concept concept = context.getConcept(id).orElse(null);
+        component.name(concept != null ? concept.getName() : id);
 
         CodelistRef ref = CodelistRef.of(null, codelist, null);
 
-        component.codelist(context.getCodelist(ref));
+        component.codelist(context.getCodelist(ref).orElse(Codelist.builder().ref(ref).build()));
     }
 
     private void parseDimension(XMLStreamReader reader, Structure.Builder ds, DsdContext context, int position) throws XMLStreamException {

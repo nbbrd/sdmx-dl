@@ -19,6 +19,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - ![CLI] Fix network warmup in check access duration
+- ![FORMAT] Fix parsing core representation codelist ref in XML structures
 
 ### Changed
 
