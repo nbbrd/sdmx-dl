@@ -1,2 +1,2 @@
 source,flow,key,minFlowCount,dimCount,minSeriesCount,minObsCount,details
-IMF,DS-BOPAGG,A.US.BK_CD_BP6_USD,120,3,1,4,
+IMF,"IMF.APD,APDREO,6.0.0",AUS.BCA_GDP_BP6.A,70,3,1,70,
