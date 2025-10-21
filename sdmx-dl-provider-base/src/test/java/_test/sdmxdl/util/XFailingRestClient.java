@@ -47,11 +47,6 @@ public enum XFailingRestClient implements RestClient {
         }
 
         @Override
-        public @NonNull Flow getFlow(@NonNull FlowRef ref) throws IOException {
-            throw new CustomIOException();
-        }
-
-        @Override
         public @NonNull Structure getStructure(@NonNull StructureRef ref) throws IOException {
             throw new CustomIOException();
         }
@@ -89,11 +84,6 @@ public enum XFailingRestClient implements RestClient {
         }
 
         @Override
-        public @NonNull Flow getFlow(@NonNull FlowRef ref) {
-            throw new CustomRuntimeException();
-        }
-
-        @Override
         public @NonNull Structure getStructure(@NonNull StructureRef ref) {
             throw new CustomRuntimeException();
         }
@@ -127,11 +117,6 @@ public enum XFailingRestClient implements RestClient {
 
         @Override
         public @NonNull List<Flow> getFlows() {
-            return null;
-        }
-
-        @Override
-        public @NonNull Flow getFlow(@NonNull FlowRef ref) {
             return null;
         }
 

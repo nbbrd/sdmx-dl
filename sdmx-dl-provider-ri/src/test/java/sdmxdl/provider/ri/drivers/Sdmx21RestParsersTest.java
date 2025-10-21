@@ -30,18 +30,6 @@ import static sdmxdl.provider.ri.drivers.Sdmx21RestParsers.*;
 public class Sdmx21RestParsersTest {
 
     @Test
-    public void testGetFlowTypes() {
-        testType(DEFAULT_DATAFLOW_TYPES, Sdmx21RestParsers::getFlowTypes);
-    }
-
-    @Test
-    public void testGetFlowParser() throws IOException {
-        BiFunction<Sdmx21RestParsers, MediaType, FileParser<?>> extractor = (x, y) -> x.getFlowParser(y, ANY, RepoSamples.FLOW_REF);
-        testParser(DEFAULT_DATAFLOW_TYPES, extractor);
-        testContent(extractor, XmlMediaTypes.STRUCTURE_21, SdmxXmlSources.ECB_DATAFLOWS);
-    }
-
-    @Test
     public void testGetFlowsTypes() {
         testType(DEFAULT_DATAFLOW_TYPES, Sdmx21RestParsers::getFlowsTypes);
     }

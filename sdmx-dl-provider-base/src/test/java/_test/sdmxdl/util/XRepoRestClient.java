@@ -52,12 +52,6 @@ public final class XRepoRestClient implements RestClient {
     }
 
     @Override
-    public @NonNull Flow getFlow(@NonNull FlowRef ref) throws IOException {
-        return repository.getFlow(ref)
-                .orElseThrow(() -> CommonSdmxExceptions.missingFlow(this, ref));
-    }
-
-    @Override
     public @NonNull Structure getStructure(@NonNull StructureRef ref) throws IOException {
         return repository.getStructure(ref)
                 .orElseThrow(() -> CommonSdmxExceptions.missingStructure(this, ref));

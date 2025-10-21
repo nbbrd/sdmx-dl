@@ -55,10 +55,6 @@ public class BbkDialectDriverTest {
                 .describedAs("SdmxFix#1 + SdmxFix#2 + SdmxFix#3")
                 .hasToString("https://api.statistiken.bundesbank.de/rest/metadata/dataflow/BBK");
 
-        assertThat(queries.getFlowQuery(endpoint, FlowRef.parse("BBEX3")).build())
-                .describedAs("SdmxFix#1 + SdmxFix#2")
-                .hasToString("https://api.statistiken.bundesbank.de/rest/metadata/dataflow/BBK/BBEX3");
-
         assertThat(queries.getStructureQuery(endpoint, StructureRef.parse("BBK_ERX")).build())
                 .describedAs("SdmxFix#1 + SdmxFix#2")
                 .hasToString("https://api.statistiken.bundesbank.de/rest/metadata/datastructure/BBK/BBK_ERX?references=children");

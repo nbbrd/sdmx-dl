@@ -54,12 +54,6 @@ public final class XCountingRestClient implements RestClient {
     }
 
     @Override
-    public @NonNull Flow getFlow(@NonNull FlowRef ref) throws IOException {
-        count.incrementAndGet();
-        return delegate.getFlow(ref);
-    }
-
-    @Override
     public @NonNull Structure getStructure(@NonNull StructureRef ref) throws IOException {
         count.incrementAndGet();
         return delegate.getStructure(ref);

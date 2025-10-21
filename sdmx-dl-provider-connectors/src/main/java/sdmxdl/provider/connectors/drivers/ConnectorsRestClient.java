@@ -129,15 +129,6 @@ public final class ConnectorsRestClient implements RestClient {
     }
 
     @Override
-    public @NonNull Flow getFlow(@NonNull FlowRef ref) throws IOException {
-        try {
-            return Connectors.toFlow(connector.getDataflow(ref.getId(), ref.getAgency(), ref.getVersion()));
-        } catch (SdmxException ex) {
-            throw wrap(ex, "Failed to get dataflow '%s' from '%s'", ref, marker);
-        }
-    }
-
-    @Override
     public @NonNull Structure getStructure(@NonNull StructureRef ref) throws IOException {
         try {
             return Connectors.toStructure(connector.getDataFlowStructure(Connectors.fromStructureRef(ref), true));

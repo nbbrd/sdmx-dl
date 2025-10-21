@@ -37,9 +37,6 @@ public interface RestClient extends HasMarker {
     List<Flow> getFlows() throws IOException;
 
     @NonNull
-    Flow getFlow(@NonNull FlowRef ref) throws IOException;
-
-    @NonNull
     Structure getStructure(@NonNull StructureRef ref) throws IOException;
 
     @NonNull

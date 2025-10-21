@@ -40,17 +40,6 @@ public class DotStatRestParsers implements RiRestParsers {
     }
 
     @Override
-    public @NonNull List<MediaType> getFlowTypes() {
-        return singletonList(XML);
-    }
-
-    @Override
-    public @NonNull FileParser<Optional<Flow>> getFlowParser(@NonNull MediaType mediaType, @NonNull Languages langs, @NonNull FlowRef ref) {
-        return SdmxXmlStreams.struct20(langs)
-                .andThen(structs -> structs.stream().map(DotStatRestParsers::getFlowFromStructure).findFirst());
-    }
-
-    @Override
     public @NonNull List<MediaType> getStructureTypes() {
         return singletonList(XmlMediaTypes.STRUCTURE_21);
     }

@@ -22,7 +22,6 @@ import sdmxdl.*;
 import sdmxdl.provider.CommonSdmxExceptions;
 import sdmxdl.provider.ConnectionSupport;
 import sdmxdl.provider.DataRef;
-import sdmxdl.provider.Validator;
 
 import java.io.IOException;
 import java.net.URI;
@@ -40,11 +39,6 @@ final class RestConnection implements Connection {
 
     @lombok.NonNull
     private final RestClient client;
-
-    @lombok.NonNull
-    private final Validator<FlowRef> dataflowRefValidator;
-
-    private final boolean noBatchFlow;
 
     private boolean closed = false;
 
@@ -132,16 +126,7 @@ final class RestConnection implements Connection {
     }
 
     private Flow lookupFlow(DatabaseRef database, FlowRef flowRef) throws IOException, IllegalArgumentException {
-        if (noBatchFlow) {
-            checkDataflowRef(flowRef);
-            return client.getFlow(flowRef);
-        }
-
         return ConnectionSupport.getFlowFromFlows(database, flowRef, this, client);
-    }
-
-    private void checkDataflowRef(FlowRef ref) throws IllegalArgumentException {
-        dataflowRefValidator.checkValidity(ref);
     }
 
     private void checkKey(Key key, Structure dsd) throws IllegalArgumentException {

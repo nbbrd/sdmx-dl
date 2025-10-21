@@ -40,8 +40,6 @@ public class Sdmx21RestQueriesTest {
         for (boolean trailingSlash : new boolean[]{false, true}) {
             Sdmx21RestQueries x = trailingSlash ? Sdmx21RestQueries.WITH_TRAILING_SLASH : Sdmx21RestQueries.DEFAULT;
             assertThatNullPointerException().isThrownBy(() -> x.getFlowsQuery(null));
-            assertThatNullPointerException().isThrownBy(() -> x.getFlowQuery(null, specificFlow));
-            assertThatNullPointerException().isThrownBy(() -> x.getFlowQuery(base, null));
             assertThatNullPointerException().isThrownBy(() -> x.getStructureQuery(null, specificStruct));
             assertThatNullPointerException().isThrownBy(() -> x.getStructureQuery(base, null));
             assertThatNullPointerException().isThrownBy(() -> x.getDataQuery(null, DataRef.of(specificFlow, newDataQuery(Key.ALL, SERIES_KEYS_ONLY)), ignoreDsdRef));
@@ -58,21 +56,6 @@ public class Sdmx21RestQueriesTest {
 
         Assertions.assertThat(Sdmx21RestQueries.WITH_TRAILING_SLASH.getFlowsQuery(base))
                 .hasToString("http://base/dataflow/all/all/latest/");
-    }
-
-    @Test
-    public void testGetFlowQuery() {
-        Assertions.assertThat(Sdmx21RestQueries.DEFAULT)
-                .satisfies(x -> {
-                    assertThat(x.getFlowQuery(base, specificFlow))
-                            .hasToString("http://base/dataflow/ECB/EXR/1.0");
-
-                    assertThat(x.getFlowQuery(base, genericFlow))
-                            .hasToString("http://base/dataflow/all/EXR/latest");
-                });
-
-        Assertions.assertThat(Sdmx21RestQueries.WITH_TRAILING_SLASH.getFlowQuery(base, specificFlow))
-                .hasToString("http://base/dataflow/ECB/EXR/1.0/");
     }
 
     @Test

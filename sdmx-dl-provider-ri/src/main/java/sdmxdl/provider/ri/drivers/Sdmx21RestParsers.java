@@ -46,21 +46,6 @@ public class Sdmx21RestParsers implements RiRestParsers {
     }
 
     @Override
-    public @NonNull List<MediaType> getFlowTypes() {
-        return DEFAULT_DATAFLOW_TYPES;
-    }
-
-    @Override
-    public @NonNull FileParser<Optional<Flow>> getFlowParser(@NonNull MediaType mediaType, @NonNull Languages langs, @NonNull FlowRef ref) {
-
-        if (mediaType.isCompatibleWithoutParameters(STRUCTURE_21) || mediaType.isCompatibleWithoutParameters(APPLICATION_XML_UTF_8)) {
-            return withCharset(SdmxXmlStreams.flow21(langs).andThen(getResourceSelector(ref)), mediaType.getCharset());
-        }
-
-        return new UnsupportedParser<>(mediaType);
-    }
-
-    @Override
     public @NonNull List<MediaType> getStructureTypes() {
         return DEFAULT_DATASTRUCTURE_TYPES;
     }

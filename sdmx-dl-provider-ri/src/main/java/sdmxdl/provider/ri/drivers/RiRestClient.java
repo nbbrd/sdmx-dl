@@ -41,7 +41,8 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static sdmxdl.provider.CommonSdmxExceptions.*;
+import static sdmxdl.provider.CommonSdmxExceptions.missingCodelist;
+import static sdmxdl.provider.CommonSdmxExceptions.missingStructure;
 import static sdmxdl.provider.web.RestErrorMapping.CLIENT_NO_RESULTS_FOUND;
 
 /**
@@ -78,11 +79,6 @@ public class RiRestClient implements RestClient {
     @Override
     public @NonNull List<Flow> getFlows() throws IOException {
         return getFlows(getFlowsQuery());
-    }
-
-    @Override
-    public @NonNull Flow getFlow(@NonNull FlowRef ref) throws IOException {
-        return getFlow(getFlowQuery(ref), ref);
     }
 
     @Override
@@ -135,27 +131,6 @@ public class RiRestClient implements RestClient {
         } catch (HttpResponseException ex) {
             if (errors.getFlowsError(ex) == CLIENT_NO_RESULTS_FOUND) {
                 return Collections.emptyList();
-            }
-            throw ex;
-        }
-    }
-
-    @NonNull
-    protected URL getFlowQuery(@NonNull FlowRef ref) throws IOException {
-        return queries.getFlowQuery(endpoint, ref).build();
-    }
-
-    @NonNull
-    protected Flow getFlow(@NonNull URL url, @NonNull FlowRef ref) throws IOException {
-        HttpRequest request = RiHttpUtils.newRequest(url, parsers.getFlowTypes(), langs);
-        try (HttpResponse response = httpClient.send(request)) {
-            return parsers
-                    .getFlowParser(response.getContentType(), langs, ref)
-                    .parseStream(response::getBody)
-                    .orElseThrow(() -> missingFlow(this, ref));
-        } catch (HttpResponseException ex) {
-            if (errors.getFlowError(ex) == CLIENT_NO_RESULTS_FOUND) {
-                throw missingFlow(this, ref);
             }
             throw ex;
         }

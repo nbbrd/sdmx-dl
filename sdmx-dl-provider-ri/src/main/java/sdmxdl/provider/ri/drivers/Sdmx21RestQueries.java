@@ -23,12 +23,6 @@ public class Sdmx21RestQueries implements RiRestQueries {
     }
 
     @Override
-    public @NonNull URLQueryBuilder getFlowQuery(@NonNull URL endpoint, @NonNull FlowRef ref) {
-        return onMeta(endpoint, DEFAULT_DATAFLOW_PATH, ref)
-                .trailingSlash(trailingSlashRequired);
-    }
-
-    @Override
     public @NonNull URLQueryBuilder getStructureQuery(@NonNull URL endpoint, @NonNull StructureRef ref) {
         return onMeta(endpoint, DEFAULT_DATASTRUCTURE_PATH, ref)
                 .param(REFERENCES_PARAM, "children")
