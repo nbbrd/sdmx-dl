@@ -23,6 +23,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * @author Philippe Charles
@@ -248,9 +249,7 @@ public final class XMLStreamStructure21 {
         XMLStreamUtil.check(conceptIdentity != null, reader, "Missing Concept identity for Dimension '%s'", id);
 
         String conceptId = conceptIdentity;
-        Concept concept = context.getConcept(conceptId)
-                .orElseThrow(() -> new XMLStreamException("Cannot find Concept '" + conceptId + "' for Dimension '" + id + "'"));
-
+        Concept concept = context.findConceptById(conceptId).orElseGet(missingConceptFallback(conceptId));
         CodelistRef ref = concept.resolveRef(localRepresentation)
                 .orElseThrow(() -> new XMLStreamException("Cannot resolve CodelistRef for Concept '" + conceptId + "' Dimension '" + id + "'"));
 
@@ -259,7 +258,7 @@ public final class XMLStreamStructure21 {
                 .id(id)
                 .position(parseInt(position))
                 .name(concept.getName())
-                .codelist(context.getCodelist(ref).orElse(Codelist.builder().ref(ref).build()))
+                .codelist(context.findCodelistByRef(ref).orElse(emptyCodelistFallback(ref)))
                 .build()
         );
 
@@ -359,18 +358,14 @@ public final class XMLStreamStructure21 {
 
         XMLStreamUtil.check(conceptIdentity != null, reader, "Missing Concept identity for Attribute '%s'", id);
 
-        String conceptId = conceptIdentity;
-        Concept concept = context.getConcept(conceptId)
-                .orElseThrow(() -> new XMLStreamException("Cannot find Concept '" + conceptId + "' for Attribute '" + id + "'"));
-
-        CodelistRef ref = concept.resolveRef(localRepresentation)
-                .orElse(null);
+        Concept concept = context.findConceptById(conceptIdentity).orElseGet(missingConceptFallback(conceptIdentity));
+        CodelistRef ref = concept.resolveRef(localRepresentation).orElse(NO_CODELIST_REF);
 
         ds.attribute(Attribute
                 .builder()
                 .id(id)
                 .name(concept.getName())
-                .codelist(ref != null ? context.getCodelist(ref).orElse(null) : null)
+                .codelist(context.findCodelistByRef(ref).orElse(NO_CODELIST))
                 .relationship(attributeRelationship)
                 .build()
         );
@@ -402,4 +397,15 @@ public final class XMLStreamStructure21 {
             throw new XMLStreamException(ex);
         }
     }
+
+    private static @NonNull Codelist emptyCodelistFallback(@NonNull CodelistRef ref) {
+        return Codelist.builder().ref(ref).build();
+    }
+
+    private static @NonNull Supplier<Concept> missingConceptFallback(@NonNull String conceptId) {
+        return () -> new Concept(conceptId, conceptId, null);
+    }
+
+    private static final CodelistRef NO_CODELIST_REF = null;
+    private static final Codelist NO_CODELIST = null;
 }

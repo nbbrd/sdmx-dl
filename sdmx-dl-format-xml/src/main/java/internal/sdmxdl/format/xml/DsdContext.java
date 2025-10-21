@@ -1,7 +1,7 @@
 package internal.sdmxdl.format.xml;
 
 
-import lombok.NonNull;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.Codelist;
 import sdmxdl.CodelistRef;
 
@@ -22,17 +22,15 @@ final class DsdContext {
         dimensionCount++;
     }
 
-    public Optional<Codelist> getCodelist(@NonNull CodelistRef ref) {
-        return codelists
-                .stream()
-                .filter(ref::containsRef)
-                .findFirst();
+    public Optional<Codelist> findCodelistByRef(@Nullable CodelistRef ref) {
+        return ref != null
+                ? codelists.stream().filter(ref::containsRef).findFirst()
+                : Optional.empty();
     }
 
-    public Optional<Concept> getConcept(@NonNull String id) {
-        return concepts
-                .stream()
-                .filter(concept -> concept.getId().equals(id))
-                .findFirst();
+    public Optional<Concept> findConceptById(@Nullable String id) {
+        return id != null
+                ? concepts.stream().filter(concept -> concept.getId().equals(id)).findFirst()
+                : Optional.empty();
     }
 }

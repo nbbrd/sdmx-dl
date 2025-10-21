@@ -206,12 +206,12 @@ public final class XMLStreamStructure20 {
 
         component.id(id);
 
-        Concept concept = context.getConcept(id).orElse(null);
+        Concept concept = context.findConceptById(id).orElse(null);
         component.name(concept != null ? concept.getName() : id);
 
         CodelistRef ref = CodelistRef.of(null, codelist, null);
 
-        component.codelist(context.getCodelist(ref).orElse(Codelist.builder().ref(ref).build()));
+        component.codelist(context.findCodelistByRef(ref).orElse(Codelist.builder().ref(ref).build()));
     }
 
     private void parseDimension(XMLStreamReader reader, Structure.Builder ds, DsdContext context, int position) throws XMLStreamException {
