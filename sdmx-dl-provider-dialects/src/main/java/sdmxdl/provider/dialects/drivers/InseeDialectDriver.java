@@ -21,12 +21,15 @@ import nbbrd.design.DirectImpl;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.FileParser;
 import nbbrd.io.function.IOFunction;
+import nbbrd.io.http.URLQueryBuilder;
 import nbbrd.io.net.MediaType;
+import nbbrd.io.text.BooleanProperty;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
 import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
+import sdmxdl.format.design.PropertyDefinition;
 import sdmxdl.format.time.ObservationalTimePeriod;
 import sdmxdl.format.time.StandardReportingFormat;
 import sdmxdl.format.time.TimeFormats;
@@ -41,13 +44,14 @@ import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.EnumSet;
 import java.util.function.Supplier;
 
 import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.format.time.TimeFormats.IGNORE_ERROR;
-import static sdmxdl.provider.SdmxFix.Category.CONTENT;
-import static sdmxdl.provider.SdmxFix.Category.MEDIA_TYPE;
+import static sdmxdl.provider.SdmxFix.Category.*;
 import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 
 /**
@@ -66,6 +70,7 @@ public final class InseeDialectDriver implements Driver {
             .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(InseeRestClient::new))
             .properties(RI_CONNECTION_PROPERTIES)
+            .propertyOf(NO_COMMA_ENCODING_PROPERTY)
             .source(WebSource
                     .builder()
                     .id("INSEE")
@@ -77,6 +82,7 @@ public final class InseeDialectDriver implements Driver {
                     .websiteOf("https://www.insee.fr/fr/statistiques")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/INSEE")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/insee")
+                    .propertyOf(NO_COMMA_ENCODING_PROPERTY, true)
                     .build())
             .build();
 
@@ -99,6 +105,11 @@ public final class InseeDialectDriver implements Driver {
     @SdmxFix(id = 5, category = MEDIA_TYPE, cause = "Default media type is compact instead of generic")
     private static final MediaType DATA_TYPE = XmlMediaTypes.STRUCTURE_SPECIFIC_DATA_21;
 
+    @SdmxFix(id = 6, category = QUERY, cause = "Since October 2025, encoded comma in URL triggers HTTP 500 error")
+    @PropertyDefinition
+    private static final BooleanProperty NO_COMMA_ENCODING_PROPERTY =
+            BooleanProperty.of(DRIVER_PROPERTY_PREFIX + ".noCommaEncoding", false);
+
     private final static class InseeRestClient extends RiRestClient {
 
         InseeRestClient(WebSource s, Languages languages, WebContext c) throws IOException {
@@ -108,7 +119,9 @@ public final class InseeDialectDriver implements Driver {
                     languages,
                     OBS_FACTORY,
                     RiHttpUtils.newClient(s, c),
-                    Sdmx21RestQueries.DEFAULT,
+                    NO_COMMA_ENCODING_PROPERTY.get(s.getProperties())
+                            ? InseeRestQueries.NO_COMMA_ENCODING
+                            : InseeRestQueries.DEFAULT,
                     InseeRestParsers.INSTANCE,
                     Sdmx21RestErrors.DEFAULT,
                     EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD, Feature.DATA_QUERY_DETAIL)
@@ -123,6 +136,33 @@ public final class InseeDialectDriver implements Driver {
                 result.dimension(fixDimensionCodes(fixDimensionId(dimension), super::getCodelist));
             }
             return result.build();
+        }
+    }
+
+    private static final class InseeRestQueries extends Sdmx21RestQueries {
+
+        public static final InseeRestQueries DEFAULT = new InseeRestQueries(false);
+        public static final InseeRestQueries NO_COMMA_ENCODING = new InseeRestQueries(true);
+
+        private final boolean noCommaEncoding;
+
+        private InseeRestQueries(boolean noCommaEncoding) {
+            super(false);
+            this.noCommaEncoding = noCommaEncoding;
+        }
+
+        @Override
+        protected URLQueryBuilder onData(URL endpoint, String resourcePath, FlowRef flowRef, Key key, String providerRef) {
+            URLQueryBuilder result = super.onData(endpoint, resourcePath, flowRef, key, providerRef);
+            if (noCommaEncoding) {
+                String fixedURL = result.toString().replace("%2C", ",");
+                try {
+                    return URLQueryBuilder.of(new URL(fixedURL));
+                } catch (MalformedURLException e) {
+                    return result;
+                }
+            }
+            return result;
         }
     }
 

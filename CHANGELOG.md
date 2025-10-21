@@ -21,6 +21,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![CLI] Fix network warmup in check access duration
 - ![SOURCE] Replace IMF source with new endpoint [#1064](https://github.com/nbbrd/sdmx-dl/issues/1064)
 - ![FORMAT] Fix parsing core representation codelist ref in XML structures
+- ![PROVIDER] Fix URL comma encoding in INSEE driver
 
 ### Changed
 
