@@ -16,6 +16,7 @@
  */
 package sdmxdl.provider.dialects.drivers;
 
+import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.io.http.URLQueryBuilder;
 import nbbrd.service.ServiceProvider;
@@ -71,18 +72,20 @@ public final class ImfDialectDriver implements Driver {
             .build();
 
     private static RestClient newClient(WebSource s, Languages languages, WebContext c) throws IOException {
-        return RiRestClient.of(s, languages, c, new ImfQueries(), new Sdmx21RestParsers(), EnumSet.allOf(Feature.class));
+        return RiRestClient.of(s, languages, c, ImfQueries.INSTANCE, Sdmx21RestParsers.DEFAULT, EnumSet.allOf(Feature.class));
     }
 
     private static final class ImfQueries extends Sdmx21RestQueries {
 
-        public ImfQueries() {
+        public static final ImfQueries INSTANCE = new ImfQueries();
+
+        private ImfQueries() {
             super(false);
         }
 
         @SdmxFix(id = 1, category = QUERY, cause = "Children reference does not return codelists")
         @Override
-        public URLQueryBuilder getStructureQuery(URL endpoint, StructureRef ref) {
+        public @NonNull URLQueryBuilder getStructureQuery(@NonNull URL endpoint, @NonNull StructureRef ref) {
             return onMeta(endpoint, DEFAULT_DATASTRUCTURE_PATH, ref)
                     .param(REFERENCES_PARAM, "descendants");
         }

@@ -49,7 +49,7 @@ public class BbkDialectDriverTest {
     public void testQueries() throws MalformedURLException {
         URL endpoint = new URL(" https://api.statistiken.bundesbank.de/rest");
 
-        BbkDialectDriver.BbkQueries queries = new BbkDialectDriver.BbkQueries();
+        BbkDialectDriver.BbkQueries queries = BbkDialectDriver.BbkQueries.INSTANCE;
 
         assertThat(queries.getFlowsQuery(endpoint).build())
                 .describedAs("SdmxFix#1 + SdmxFix#2 + SdmxFix#3")

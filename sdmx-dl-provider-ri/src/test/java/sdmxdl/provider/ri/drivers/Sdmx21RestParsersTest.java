@@ -87,35 +87,35 @@ public class Sdmx21RestParsersTest {
     }
 
     private void testType(List<MediaType> defaultTypes, Function<Sdmx21RestParsers, List<MediaType>> extractor) {
-        assertThat(new Sdmx21RestParsers())
+        assertThat(Sdmx21RestParsers.DEFAULT)
                 .extracting(extractor, LIST)
                 .containsExactlyElementsOf(defaultTypes);
     }
 
     private void testParser(List<MediaType> defaultTypes, BiFunction<Sdmx21RestParsers, MediaType, FileParser<?>> extractor) {
-        assertThat(new Sdmx21RestParsers())
+        assertThat(Sdmx21RestParsers.DEFAULT)
                 .extracting(x -> extractor.apply(x, ANY_TYPE))
                 .isInstanceOf(Sdmx21RestParsers.UnsupportedParser.class);
 
         for (MediaType mediaType : defaultTypes) {
-            assertThat(new Sdmx21RestParsers())
+            assertThat(Sdmx21RestParsers.DEFAULT)
                     .extracting(x -> extractor.apply(x, mediaType))
                     .isNotInstanceOf(Sdmx21RestParsers.UnsupportedParser.class)
                     .isInstanceOf(Xml.Parser.class);
 
-            assertThat(new Sdmx21RestParsers())
+            assertThat(Sdmx21RestParsers.DEFAULT)
                     .extracting(x -> extractor.apply(x, mediaType.withoutParameters()))
                     .isNotInstanceOf(Sdmx21RestParsers.UnsupportedParser.class)
                     .isInstanceOf(Xml.Parser.class);
 
-            assertThat(new Sdmx21RestParsers())
+            assertThat(Sdmx21RestParsers.DEFAULT)
                     .extracting(x -> extractor.apply(x, mediaType.withCharset(StandardCharsets.US_ASCII)))
                     .isNotInstanceOf(Xml.Parser.class);
         }
     }
 
     private void testContent(BiFunction<Sdmx21RestParsers, MediaType, FileParser<?>> extractor, MediaType mediaType, ByteSource sample) throws IOException {
-        Sdmx21RestParsers x = new Sdmx21RestParsers();
+        Sdmx21RestParsers x = Sdmx21RestParsers.DEFAULT;
         assertThat(extractor.apply(x, mediaType).parseStream(sample::openStream))
                 .isEqualTo(extractor.apply(x, mediaType.withCharset(StandardCharsets.UTF_8)).parseStream(sample::openStream));
     }

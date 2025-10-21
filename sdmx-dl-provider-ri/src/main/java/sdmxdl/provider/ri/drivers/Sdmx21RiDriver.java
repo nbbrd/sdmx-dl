@@ -358,14 +358,13 @@ public final class Sdmx21RiDriver implements Driver {
     }
 
     private static Sdmx21RestQueries getQueries(WebSource s) {
-        return Sdmx21RestQueries
-                .builder()
-                .trailingSlashRequired(TRAILING_SLASH_PROPERTY.get(s.getProperties()))
-                .build();
+        return TRAILING_SLASH_PROPERTY.get(s.getProperties())
+                ? Sdmx21RestQueries.WITH_TRAILING_SLASH
+                : Sdmx21RestQueries.DEFAULT;
     }
 
     private static Sdmx21RestParsers getParsers(WebSource s) {
-        return new Sdmx21RestParsers();
+        return Sdmx21RestParsers.DEFAULT;
     }
 
     private static Set<Feature> getSupportedFeatures(WebSource s) {

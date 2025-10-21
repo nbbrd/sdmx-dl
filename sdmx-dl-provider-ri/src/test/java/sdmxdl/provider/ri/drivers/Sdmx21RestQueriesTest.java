@@ -38,7 +38,7 @@ public class Sdmx21RestQueriesTest {
     @SuppressWarnings({"null", "ConstantConditions"})
     public void testNPE() {
         for (boolean trailingSlash : new boolean[]{false, true}) {
-            Sdmx21RestQueries x = Sdmx21RestQueries.builder().trailingSlashRequired(trailingSlash).build();
+            Sdmx21RestQueries x = trailingSlash ? Sdmx21RestQueries.WITH_TRAILING_SLASH : Sdmx21RestQueries.DEFAULT;
             assertThatNullPointerException().isThrownBy(() -> x.getFlowsQuery(null));
             assertThatNullPointerException().isThrownBy(() -> x.getFlowQuery(null, specificFlow));
             assertThatNullPointerException().isThrownBy(() -> x.getFlowQuery(base, null));
@@ -52,17 +52,17 @@ public class Sdmx21RestQueriesTest {
 
     @Test
     public void testGetFlowsQuery() {
-        Assertions.assertThat(Sdmx21RestQueries.builder().build())
+        Assertions.assertThat(Sdmx21RestQueries.DEFAULT)
                 .satisfies(x -> assertThat(x.getFlowsQuery(base))
                         .hasToString("http://base/dataflow/all/all/latest"));
 
-        Assertions.assertThat(Sdmx21RestQueries.builder().trailingSlashRequired(true).build().getFlowsQuery(base))
+        Assertions.assertThat(Sdmx21RestQueries.WITH_TRAILING_SLASH.getFlowsQuery(base))
                 .hasToString("http://base/dataflow/all/all/latest/");
     }
 
     @Test
     public void testGetFlowQuery() {
-        Assertions.assertThat(Sdmx21RestQueries.builder().build())
+        Assertions.assertThat(Sdmx21RestQueries.DEFAULT)
                 .satisfies(x -> {
                     assertThat(x.getFlowQuery(base, specificFlow))
                             .hasToString("http://base/dataflow/ECB/EXR/1.0");
@@ -71,13 +71,13 @@ public class Sdmx21RestQueriesTest {
                             .hasToString("http://base/dataflow/all/EXR/latest");
                 });
 
-        Assertions.assertThat(Sdmx21RestQueries.builder().trailingSlashRequired(true).build().getFlowQuery(base, specificFlow))
+        Assertions.assertThat(Sdmx21RestQueries.WITH_TRAILING_SLASH.getFlowQuery(base, specificFlow))
                 .hasToString("http://base/dataflow/ECB/EXR/1.0/");
     }
 
     @Test
     public void testGetStructureQuery() {
-        Assertions.assertThat(Sdmx21RestQueries.builder().build())
+        Assertions.assertThat(Sdmx21RestQueries.DEFAULT)
                 .satisfies(x -> {
                     assertThat(x.getStructureQuery(base, specificStruct))
                             .hasToString("http://base/datastructure/ECB/EXR/1.0?references=children");
@@ -86,13 +86,13 @@ public class Sdmx21RestQueriesTest {
                             .hasToString("http://base/datastructure/all/EXR/latest?references=children");
                 });
 
-        Assertions.assertThat(Sdmx21RestQueries.builder().trailingSlashRequired(true).build().getStructureQuery(base, specificStruct))
+        Assertions.assertThat(Sdmx21RestQueries.WITH_TRAILING_SLASH.getStructureQuery(base, specificStruct))
                 .hasToString("http://base/datastructure/ECB/EXR/1.0/?references=children");
     }
 
     @Test
     public void testGetDataQuery() {
-        Assertions.assertThat(Sdmx21RestQueries.builder().build())
+        Assertions.assertThat(Sdmx21RestQueries.DEFAULT)
                 .satisfies(x -> {
                     assertThat(x.getDataQuery(base, DataRef.of(specificFlow, newDataQuery(Key.ALL, FULL)), ignoreDsdRef))
                             .hasToString("http://base/data/ECB%2CEXR%2C1.0/all/all");
@@ -110,11 +110,11 @@ public class Sdmx21RestQueriesTest {
                             .hasToString("http://base/data/all%2CEXR%2Clatest/D.NOK.EUR.SP00.A/all?detail=serieskeysonly");
                 });
 
-        Assertions.assertThat(Sdmx21RestQueries.builder().trailingSlashRequired(true).build().getDataQuery(base, DataRef.of(specificFlow, newDataQuery(Key.ALL, FULL)), ignoreDsdRef))
+        Assertions.assertThat(Sdmx21RestQueries.WITH_TRAILING_SLASH.getDataQuery(base, DataRef.of(specificFlow, newDataQuery(Key.ALL, FULL)), ignoreDsdRef))
                 .hasToString("http://base/data/ECB%2CEXR%2C1.0/all/all/");
     }
 
-    private final URL base = Parser.onURL().parse("http://base");
+    private final URL base = Parser.onURL().parseValue("http://base").orElseThrow(RuntimeException::new);
     private final FlowRef specificFlow = FlowRef.of("ECB", "EXR", "1.0");
     private final FlowRef genericFlow = FlowRef.of(null, "EXR", null);
     private final StructureRef specificStruct = StructureRef.of("ECB", "EXR", "1.0");

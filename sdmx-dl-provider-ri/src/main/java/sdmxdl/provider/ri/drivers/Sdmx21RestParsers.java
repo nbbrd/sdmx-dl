@@ -1,5 +1,6 @@
 package sdmxdl.provider.ri.drivers;
 
+import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.FileParser;
@@ -24,7 +25,10 @@ import static java.util.Collections.singletonList;
 import static nbbrd.io.xml.Xml.APPLICATION_XML_UTF_8;
 import static sdmxdl.format.xml.XmlMediaTypes.*;
 
+@lombok.AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Sdmx21RestParsers implements RiRestParsers {
+
+    public static final Sdmx21RestParsers DEFAULT = new Sdmx21RestParsers();
 
     @Override
     public @NonNull List<MediaType> getFlowsTypes() {

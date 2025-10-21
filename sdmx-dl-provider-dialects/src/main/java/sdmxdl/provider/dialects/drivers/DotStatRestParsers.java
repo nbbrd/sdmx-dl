@@ -1,5 +1,6 @@
 package sdmxdl.provider.dialects.drivers;
 
+import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.io.FileParser;
 import nbbrd.io.net.MediaType;
@@ -20,9 +21,12 @@ import java.util.stream.Collectors;
 import static java.util.Collections.singletonList;
 import static sdmxdl.provider.SdmxFix.Category.CONTENT;
 
+@lombok.AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class DotStatRestParsers implements RiRestParsers {
 
     public static final MediaType XML = Xml.APPLICATION_XML_UTF_8.withoutParameters();
+
+    public static final DotStatRestParsers DEFAULT = new DotStatRestParsers();
 
     @Override
     public @NonNull List<MediaType> getFlowsTypes() {

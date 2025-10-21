@@ -157,8 +157,8 @@ public final class EstatDialectDriver implements Driver {
                 languages,
                 ObsParser::newDefault,
                 getHttpClient(s, c),
-                new Sdmx21RestQueries(false),
-                new Sdmx21RestParsers(),
+                Sdmx21RestQueries.DEFAULT,
+                Sdmx21RestParsers.DEFAULT,
                 Sdmx21RestErrors.DEFAULT,
                 ESTAT_FEATURES
         );

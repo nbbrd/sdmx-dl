@@ -17,14 +17,14 @@
 package sdmxdl.provider.dialects.drivers;
 
 import nbbrd.design.DirectImpl;
-import sdmxdl.provider.ri.drivers.RiRestClient;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.Feature;
 import sdmxdl.Languages;
 import sdmxdl.provider.SdmxFix;
+import sdmxdl.provider.ri.drivers.RiRestClient;
+import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestClient;
 import sdmxdl.provider.web.RestConnector;
-import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
@@ -34,9 +34,9 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import static sdmxdl.Confidentiality.PUBLIC;
-import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 import static sdmxdl.provider.SdmxFix.Category.ENDPOINT;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
+import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 
 /**
  * @author Philippe Charles
@@ -80,7 +80,7 @@ public final class DotStatDialectDriver implements Driver {
             .build();
 
     private static RestClient newClient(WebSource s, Languages languages, WebContext c) throws IOException {
-        return RiRestClient.of(s, languages, c, new DotStatRestQueries(), new DotStatRestParsers(), DOTSTAT_FEATURES);
+        return RiRestClient.of(s, languages, c, DotStatRestQueries.DEFAULT, DotStatRestParsers.DEFAULT, DOTSTAT_FEATURES);
     }
 
     @SdmxFix(id = 1, category = ENDPOINT, cause = "UIS API requires auth by key in header and this is not supported yet in facade")

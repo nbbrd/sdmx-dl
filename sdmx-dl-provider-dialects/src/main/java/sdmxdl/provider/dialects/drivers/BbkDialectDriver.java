@@ -77,8 +77,8 @@ public final class BbkDialectDriver implements Driver {
                 languages,
                 ObsParser::newDefault,
                 RiHttpUtils.newClient(s, c),
-                new BbkQueries(),
-                new Sdmx21RestParsers(),
+                BbkQueries.INSTANCE,
+                Sdmx21RestParsers.DEFAULT,
                 Sdmx21RestErrors.DEFAULT,
                 BBK_FEATURES
         );
@@ -90,7 +90,9 @@ public final class BbkDialectDriver implements Driver {
     @VisibleForTesting
     static final class BbkQueries extends Sdmx21RestQueries {
 
-        BbkQueries() {
+        public static final BbkQueries INSTANCE = new BbkQueries();
+
+        private BbkQueries() {
             super(false);
         }
 

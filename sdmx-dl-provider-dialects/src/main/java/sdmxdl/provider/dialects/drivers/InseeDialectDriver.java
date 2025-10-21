@@ -108,8 +108,8 @@ public final class InseeDialectDriver implements Driver {
                     languages,
                     OBS_FACTORY,
                     RiHttpUtils.newClient(s, c),
-                    new Sdmx21RestQueries(false),
-                    new InseeRestParsers(),
+                    Sdmx21RestQueries.DEFAULT,
+                    InseeRestParsers.INSTANCE,
                     Sdmx21RestErrors.DEFAULT,
                     EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD, Feature.DATA_QUERY_DETAIL)
             );
@@ -127,6 +127,8 @@ public final class InseeDialectDriver implements Driver {
     }
 
     private static final class InseeRestParsers extends Sdmx21RestParsers {
+
+        public static final InseeRestParsers INSTANCE = new InseeRestParsers();
 
         @Override
         public @NonNull FileParser<DataCursor> getDataParser(@NonNull MediaType mediaType, @NonNull Structure dsd, @NonNull Supplier<ObsParser> dataFactory) {

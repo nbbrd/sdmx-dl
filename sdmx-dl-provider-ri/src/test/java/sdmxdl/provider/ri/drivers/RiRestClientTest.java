@@ -97,8 +97,8 @@ public class RiRestClientTest {
                 Languages.ANY,
                 ObsParser::newDefault,
                 executor,
-                new Sdmx21RestQueries(false),
-                new Sdmx21RestParsers(),
+                Sdmx21RestQueries.DEFAULT,
+                Sdmx21RestParsers.DEFAULT,
                 Sdmx21RestErrors.DEFAULT,
                 EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD, Feature.DATA_QUERY_DETAIL)
         );

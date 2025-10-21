@@ -1,5 +1,6 @@
 package sdmxdl.provider.dialects.drivers;
 
+import lombok.AccessLevel;
 import nbbrd.io.http.URLQueryBuilder;
 import lombok.NonNull;
 import sdmxdl.CodelistRef;
@@ -10,10 +11,13 @@ import sdmxdl.provider.ri.drivers.RiRestQueries;
 
 import java.net.URL;
 
+@lombok.AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class DotStatRestQueries implements RiRestQueries {
 
+    public static final DotStatRestQueries DEFAULT = new DotStatRestQueries();
+
     @Override
-    public URLQueryBuilder getFlowsQuery(URL endpoint) {
+    public @NonNull URLQueryBuilder getFlowsQuery(@NonNull URL endpoint) {
         return URLQueryBuilder
                 .of(endpoint)
                 .path(DATASTRUCTURE_RESOURCE)
@@ -21,7 +25,7 @@ public class DotStatRestQueries implements RiRestQueries {
     }
 
     @Override
-    public URLQueryBuilder getFlowQuery(URL endpoint, FlowRef ref) {
+    public @NonNull URLQueryBuilder getFlowQuery(@NonNull URL endpoint, @NonNull FlowRef ref) {
         return URLQueryBuilder
                 .of(endpoint)
                 .path(DATASTRUCTURE_RESOURCE)
@@ -29,7 +33,7 @@ public class DotStatRestQueries implements RiRestQueries {
     }
 
     @Override
-    public URLQueryBuilder getStructureQuery(URL endpoint, StructureRef ref) {
+    public @NonNull URLQueryBuilder getStructureQuery(@NonNull URL endpoint, @NonNull StructureRef ref) {
         return URLQueryBuilder
                 .of(endpoint)
                 .path(DATASTRUCTURE_RESOURCE)
@@ -37,7 +41,7 @@ public class DotStatRestQueries implements RiRestQueries {
     }
 
     @Override
-    public URLQueryBuilder getDataQuery(URL endpoint, DataRef ref, @NonNull StructureRef dsdRef) {
+    public @NonNull URLQueryBuilder getDataQuery(@NonNull URL endpoint, @NonNull DataRef ref, @NonNull StructureRef dsdRef) {
         return URLQueryBuilder
                 .of(endpoint)
                 .path(DATA_RESOURCE)
@@ -49,11 +53,6 @@ public class DotStatRestQueries implements RiRestQueries {
     @Override
     public @NonNull URLQueryBuilder getCodelistQuery(@NonNull URL endpoint, @NonNull CodelistRef ref) {
         throw new UnsupportedOperationException("codelist");
-    }
-
-    @Override
-    public StructureRef peekStructureRef(FlowRef ref) {
-        return getStructureRefFromFlowRef(ref);
     }
 
     @NonNull

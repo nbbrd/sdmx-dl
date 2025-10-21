@@ -98,8 +98,8 @@ public final class NbbDialectDriver implements Driver {
     static @NonNull RiRestClient newClient(@NonNull Marker marker, @NonNull URL endpoint, @NonNull Languages langs, @NonNull HttpClient executor) {
         return new RiRestClient(marker, endpoint, langs, ObsParser::newDefault,
                 new InterceptingClient(executor, (client, request, response) -> checkInternalErrorRedirect(response)),
-                new NbbQueries(),
-                new DotStatRestParsers(),
+                NbbQueries.INSTANCE,
+                DotStatRestParsers.DEFAULT,
                 Sdmx21RestErrors.DEFAULT,
                 EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD));
     }
@@ -118,9 +118,11 @@ public final class NbbDialectDriver implements Driver {
     @VisibleForTesting
     static final class NbbQueries extends DotStatRestQueries {
 
+        public static final NbbQueries INSTANCE = new NbbQueries();
+
         @SdmxFix(id = 1, category = QUERY, cause = "'/all' must be encoded to '%2Fall'")
         @Override
-        public URLQueryBuilder getDataQuery(URL endpoint, DataRef ref, @NonNull StructureRef dsdRef) {
+        public @NonNull URLQueryBuilder getDataQuery(@NonNull URL endpoint, @NonNull DataRef ref, @NonNull StructureRef dsdRef) {
             return URLQueryBuilder
                     .of(endpoint)
                     .path(DotStatRestQueries.DATA_RESOURCE)
