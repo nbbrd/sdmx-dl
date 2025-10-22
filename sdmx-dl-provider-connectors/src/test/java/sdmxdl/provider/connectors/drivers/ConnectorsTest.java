@@ -60,7 +60,7 @@ public class ConnectorsTest {
     @Disabled("CodeList is no more embedded")
     @Test
     public void testDimension() {
-        assertThat(toDimension(fromDimension(DIM1)))
+        assertThat(toDimension(fromDimension(DIM1, 1)))
                 .isEqualTo(DIM1);
     }
 
@@ -83,8 +83,8 @@ public class ConnectorsTest {
                 .toBuilder()
                 .clearDimensions()
                 .dimension(DIM1)
-                .dimension(DIM2.toBuilder().position(2).build())
-                .dimension(DIM3.toBuilder().position(3).build())
+                .dimension(DIM2.toBuilder().build())
+                .dimension(DIM3.toBuilder().build())
                 .clearAttributes()
                 .attribute(NOT_CODED_ATTRIBUTE.toBuilder().relationship(AttributeRelationship.UNKNOWN).build())
                 .attribute(CODED_ATTRIBUTE.toBuilder().relationship(AttributeRelationship.UNKNOWN).build())

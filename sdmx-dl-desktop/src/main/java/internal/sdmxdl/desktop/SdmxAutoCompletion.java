@@ -308,7 +308,7 @@ public abstract class SdmxAutoCompletion {
         }
 
         private List<Dimension> load(String term) throws Exception {
-            return manager.using(source.get()).getMeta(toRequest()).getStructure().getDimensionList();
+            return manager.using(source.get()).getMeta(toRequest()).getStructure().getDimensions();
         }
 
         private AutoCompletionSource.Behavior getBehavior(String term) {
@@ -318,7 +318,7 @@ public abstract class SdmxAutoCompletion {
         private List<Dimension> filterAndSort(List<Dimension> values, String term) {
             Predicate<String> filter = ExtAutoCompletionSource.basicFilter(term);
             return values.stream()
-                    .filter(o -> filter.test(o.getId()) || filter.test(o.getName()) || filter.test(String.valueOf(o.getPosition())))
+                    .filter(o -> filter.test(o.getId()) || filter.test(o.getName()))
                     .sorted(Comparator.comparing(Dimension::getId))
                     .collect(toList());
         }

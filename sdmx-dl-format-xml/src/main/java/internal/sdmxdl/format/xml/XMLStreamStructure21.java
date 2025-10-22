@@ -230,9 +230,6 @@ public final class XMLStreamStructure21 {
         String id = reader.getAttributeValue(null, ID_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing Dimension id");
 
-        String position = reader.getAttributeValue(null, POSITION_ATTR);
-        XMLStreamUtil.check(position != null, reader, "Missing Dimension position for Dimension '%s'", id);
-
         String conceptIdentity = null;
         CodelistRef localRepresentation = null;
         while (XMLStreamUtil.nextTags(reader, DIMENSION_TAG)) {
@@ -256,7 +253,6 @@ public final class XMLStreamStructure21 {
         ds.dimension(Dimension
                 .builder()
                 .id(id)
-                .position(parseInt(position))
                 .name(concept.getName())
                 .codelist(context.findCodelistByRef(ref).orElse(emptyCodelistFallback(ref)))
                 .build()
@@ -388,14 +384,6 @@ public final class XMLStreamStructure21 {
             result = dimensionCount < context.getDimensionCount() ? AttributeRelationship.GROUP : AttributeRelationship.SERIES;
         }
         return result;
-    }
-
-    private static int parseInt(String value) throws XMLStreamException {
-        try {
-            return Integer.parseInt(value);
-        } catch (NumberFormatException ex) {
-            throw new XMLStreamException(ex);
-        }
     }
 
     private static @NonNull Codelist emptyCodelistFallback(@NonNull CodelistRef ref) {

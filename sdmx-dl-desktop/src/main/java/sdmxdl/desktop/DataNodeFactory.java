@@ -41,7 +41,7 @@ class DataNodeFactory implements DynamicTree.NodeFactory {
         try (Connection conn = dataSourceRef.getConnection(manager)) {
             Structure dsd = conn.getMeta(dataSourceRef.getDatabase(), dataSourceRef.toFlowRef()).getStructure();
             Key base = key.expand(dsd);
-            int dimensionIndex = getDimensionIndex(dataSourceRef.getDimensions(), dsd.getDimensionList(), getLevel(key));
+            int dimensionIndex = getDimensionIndex(dataSourceRef.getDimensions(), dsd.getDimensions(), getLevel(key));
             return conn.getAvailableDimensionCodes(dataSourceRef.getDatabase(), dataSourceRef.toFlowRef(), key, dimensionIndex)
                     .stream()
                     .sorted()

@@ -178,11 +178,10 @@ public final class XMLStreamStructure20 {
     }
 
     private void parseDataStructureComponents(XMLStreamReader reader, Structure.Builder ds, DsdContext context) throws XMLStreamException {
-        int position = 1;
         while (XMLStreamUtil.nextTags(reader, COMPONENTS_TAG)) {
             switch (reader.getLocalName()) {
                 case DIMENSION_TAG:
-                    parseDimension(reader, ds, context, position++);
+                    parseDimension(reader, ds, context);
                     break;
                 case TIME_DIMENSION_TAG:
                     parseTimeDimension(reader, ds);
@@ -214,10 +213,10 @@ public final class XMLStreamStructure20 {
         component.codelist(context.findCodelistByRef(ref).orElse(Codelist.builder().ref(ref).build()));
     }
 
-    private void parseDimension(XMLStreamReader reader, Structure.Builder ds, DsdContext context, int position) throws XMLStreamException {
+    private void parseDimension(XMLStreamReader reader, Structure.Builder ds, DsdContext context) throws XMLStreamException {
         Dimension.Builder result = Dimension.builder();
         parseComponent(reader, result, context);
-        ds.dimension(result.position(position).build());
+        ds.dimension(result.build());
     }
 
     private void parseTimeDimension(XMLStreamReader reader, Structure.Builder ds) throws XMLStreamException {

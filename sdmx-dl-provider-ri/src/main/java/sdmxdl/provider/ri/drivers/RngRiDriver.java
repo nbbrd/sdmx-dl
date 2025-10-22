@@ -137,7 +137,6 @@ public final class RngRiDriver implements Driver {
                             .builder()
                             .id(FREQ)
                             .name("Frequency")
-                            .position(1)
                             .codelist(Codelist
                                     .builder()
                                     .ref(CodelistRef.parse("CL_FREQ"))
@@ -148,7 +147,6 @@ public final class RngRiDriver implements Driver {
                             .builder()
                             .id(INDEX)
                             .name("Index")
-                            .position(2)
                             .codelist(Codelist
                                     .builder()
                                     .ref(CodelistRef.parse("CL_INDEX"))

@@ -115,7 +115,7 @@ public final class SeriesMetaFactory {
     public static final int NO_FREQUENCY_CODE_ID_INDEX = -1;
 
     public static int getFrequencyCodeIdIndex(@NonNull Structure dsd) {
-        List<Dimension> dimensions = dsd.getDimensionList();
+        List<Dimension> dimensions = dsd.getDimensions();
         return IntStream.range(0, dimensions.size())
                 .filter(i -> isFrequencyCodeId(dimensions.get(i)))
                 .findFirst()
@@ -135,7 +135,7 @@ public final class SeriesMetaFactory {
     private static Function<Series, String> getValueUnit(Structure dsd) {
         Dimension dimension = first(dsd.getDimensions(), o -> o.getId().contains("UNIT") && !o.getId().contains("MULT"), BY_LENGTH_ID);
         if (dimension != null) {
-            return onDimension(dsd.getDimensionList().indexOf(dimension));
+            return onDimension(dsd.getDimensions().indexOf(dimension));
         }
         Attribute attribute = first(dsd.getAttributes(), o -> o.getId().contains("UNIT") && !o.getId().contains("MULT"), BY_LENGTH_ID);
         if (attribute != null) {

@@ -47,7 +47,6 @@ public class XMLStreamStructure20Test {
             assertThat(o.getDimensions()).hasSize(3).element(0).satisfies(x -> {
                 assertThat(x.getId()).isEqualTo("SUBJECT");
                 assertThat(x.getName()).isEqualTo("Subject");
-                assertThat(x.getPosition()).isEqualTo(1);
                 assertThat(x.getCodelist().getRef()).isEqualTo(CodelistRef.of("NBB", "CL_TEST_DATASET_SUBJECT", "latest"));
                 assertThat(x.getCodelist().getCodes()).hasSize(1).containsEntry("LOCSTL04", "Amplitude adjusted (CLI)");
             });
@@ -76,7 +75,6 @@ public class XMLStreamStructure20Test {
             assertThat(o.getDimensions()).hasSize(3).element(0).satisfies(x -> {
                 assertThat(x.getId()).isEqualTo("SUBJECT");
                 assertThat(x.getName()).isEqualTo("Sujet");
-                assertThat(x.getPosition()).isEqualTo(1);
             });
         });
 

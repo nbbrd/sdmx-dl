@@ -585,7 +585,6 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
             output.writeString(t.getId());
             output.writeString(t.getName());
             kryo.writeObject(output, t.getCodelist());
-            output.writeInt(t.getPosition(), true);
         }
 
         @SuppressWarnings("unchecked")
@@ -596,7 +595,6 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
                     .id(input.readString())
                     .name(input.readString())
                     .codelist(kryo.readObject(input, Codelist.class))
-                    .position(input.readInt(true))
                     .build();
         }
     }

@@ -114,7 +114,7 @@ public final class Key {
             return null;
         }
 
-        List<Dimension> dimensions = dsd.getDimensionList();
+        List<Dimension> dimensions = dsd.getDimensions();
 
         if (dimensions.size() != size()) {
             return String.format(Locale.ROOT, "Expecting key '%s' to have %d dimensions instead of %d", this, dimensions.size(), size());
@@ -200,7 +200,7 @@ public final class Key {
 
     @NonNull
     public static Builder builder(@NonNull Structure dfs) {
-        List<Dimension> dimensions = dfs.getDimensionList();
+        List<Dimension> dimensions = dfs.getDimensions();
         Map<String, Integer> result = new HashMap<>();
         for (int i = 0; i < dimensions.size(); i++) {
             result.put(dimensions.get(i).getId(), i);

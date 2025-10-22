@@ -16,10 +16,9 @@
  */
 package sdmxdl.provider.connectors.drivers;
 
-import it.bancaditalia.oss.sdmx.api.Codelist;
-import it.bancaditalia.oss.sdmx.api.Dataflow;
-import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.api.*;
+import it.bancaditalia.oss.sdmx.api.Codelist;
+import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxResponseException;
 import it.bancaditalia.oss.sdmx.util.LocalizedText;
@@ -30,6 +29,7 @@ import sdmxdl.format.design.PropertyDefinition;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static sdmxdl.web.spi.Driver.DRIVER_PROPERTY_PREFIX;
 
@@ -57,14 +57,11 @@ public class Connectors {
     }
 
     public sdmxdl.Dimension toDimension(Dimension o) {
-        return toComponent(sdmxdl.Dimension.builder(), o)
-                .position(o.getPosition())
-                .build();
+        return toComponent(sdmxdl.Dimension.builder(), o).build();
     }
 
     public Attribute toAttribute(SdmxAttribute o) {
-        return toComponent(Attribute.builder(), o)
-                .build();
+        return toComponent(Attribute.builder(), o).build();
     }
 
     private <T extends Component.Builder<T>> T toComponent(T result, SdmxMetaElement o) {
@@ -89,7 +86,7 @@ public class Connectors {
                 .name(dsd.getName())
                 .timeDimensionId(dsd.getTimeDimension())
                 .primaryMeasureId(dsd.getMeasure())
-                .dimensions(dsd.getDimensions().stream().map(Connectors::toDimension).collect(Collectors.toSet()))
+                .dimensions(dsd.getDimensions().stream().map(Connectors::toDimension).collect(Collectors.toList()))
                 .attributes(dsd.getAttributes().stream().map(Connectors::toAttribute).collect(Collectors.toSet()))
                 .build();
     }
@@ -118,8 +115,8 @@ public class Connectors {
         return new SDMXReference(ref.getId(), ref.getAgency(), ref.getVersion());
     }
 
-    public Dimension fromDimension(sdmxdl.Dimension o) {
-        Dimension result = new Dimension(o.getId(), o.getPosition());
+    public Dimension fromDimension(sdmxdl.Dimension o, int position) {
+        Dimension result = new Dimension(o.getId(), position);
         fromComponent(result, o);
         return result;
     }
@@ -158,7 +155,8 @@ public class Connectors {
         result.setName(dsd.getName());
         result.setTimeDimension(dsd.getTimeDimensionId());
         result.setMeasure(dsd.getPrimaryMeasureId());
-        dsd.getDimensions().forEach(o -> result.setDimension(fromDimension(o)));
+        List<sdmxdl.Dimension> dimensions = dsd.getDimensions();
+        IntStream.range(0, dimensions.size()).forEach(i -> result.setDimension(fromDimension(dimensions.get(i), i + 1)));
         dsd.getAttributes().forEach(o -> result.setAttribute(fromAttribute(o)));
         return result;
     }

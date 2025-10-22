@@ -182,7 +182,7 @@ public final class MockedDriver implements Driver {
             } else {
                 return getMeta(database, flowRef)
                         .getStructure()
-                        .getDimensionList()
+                        .getDimensions()
                         .get(dimensionIndex)
                         .getCodes()
                         .keySet();

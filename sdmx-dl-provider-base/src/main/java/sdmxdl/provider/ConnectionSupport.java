@@ -51,7 +51,7 @@ public class ConnectionSupport {
             }
         } else {
             return dsd
-                    .getDimensionList()
+                    .getDimensions()
                     .get(dimensionIndex)
                     .getCodes()
                     .keySet();

@@ -16,10 +16,8 @@
  */
 package sdmxdl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
 
 /**
  * Dataset Structure Definition (DSD) is a set of structural metadata associated
@@ -42,12 +40,12 @@ public class Structure extends Resource<StructureRef> implements HasName {
     StructureRef ref;
 
     /**
-     * Non-null list of statistical concepts used to identify a statistical
+     * Non-null ordered list of statistical concepts used to identify a statistical
      * series or individual observations.
      */
     @lombok.NonNull
     @lombok.Singular
-    SortedSet<Dimension> dimensions;
+    List<Dimension> dimensions;
 
     /**
      * Non-null list of statistical concept providing qualitative information
@@ -65,9 +63,6 @@ public class Structure extends Resource<StructureRef> implements HasName {
 
     @lombok.NonNull
     String name;
-
-    @lombok.Getter(lazy = true)
-    List<Dimension> dimensionList = new ArrayList<>(getDimensions());
 
     public static final class Builder {
     }

@@ -530,7 +530,7 @@ public final class PxWebDriver implements Driver {
                     .toBuilder()
                     .clearDimensions()
                     .dimension(MANDATORY_FREQ_AS_FIRST_DIMENSION)
-                    .dimensions(dsd.getDimensionList()
+                    .dimensions(dsd.getDimensions()
                             .stream()
                             .map(dimension -> dimension
                                     .toBuilder()
@@ -559,7 +559,6 @@ public final class PxWebDriver implements Driver {
                 .builder()
                 .id("FREQ")
                 .name("")
-                .position(0)
                 .codelist(Codelist
                         .builder()
                         .ref(CodelistRef.parse("FREQ"))
@@ -686,9 +685,9 @@ public final class PxWebDriver implements Driver {
         }
 
         List<Dimension> toDimensionList(TableVariable timeVariable) {
-            return CollectionUtil.indexedStreamOf(variables)
-                    .filter(item -> !timeVariable.equals(item.getElement()))
-                    .map(item -> item.getElement().toDimension(item.getIndex() + 1))
+            return variables.stream()
+                    .filter(item -> !timeVariable.equals(item))
+                    .map(item -> item.toDimension())
                     .collect(Collectors.toList());
         }
 
@@ -730,10 +729,9 @@ public final class PxWebDriver implements Driver {
         List<String> valueTexts;
         boolean time;
 
-        Dimension toDimension(int position) {
+        Dimension toDimension() {
             return Dimension
                     .builder()
-                    .position(position)
                     .id(code)
                     .name(text)
                     .codelist(Codelist
@@ -765,7 +763,7 @@ public final class PxWebDriver implements Driver {
         Map<String, Collection<String>> itemFilters;
 
         static TableQuery fromDataStructureAndKey(Structure dsd, Key key) {
-            return new TableQuery(CollectionUtil.indexedStreamOf(dsd.getDimensionList())
+            return new TableQuery(CollectionUtil.indexedStreamOf(dsd.getDimensions())
                     .collect(Collectors.toMap(
                             dimension -> dimension.getElement().getId(),
                             dimension -> fromDimensionAndKey(dimension, key))

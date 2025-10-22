@@ -50,7 +50,6 @@ public class XMLStreamStructure21Test {
             assertThat(o.getDimensions()).hasSize(7).element(0).satisfies(x -> {
                 assertThat(x.getId()).isEqualTo("FREQ");
                 assertThat(x.getName()).isEqualTo("Frequency");
-                assertThat(x.getPosition()).isEqualTo(1);
                 assertThat(x.getCodelist().getRef()).isEqualTo(CodelistRef.of("ECB", "CL_FREQ", "1.0"));
                 assertThat(x.getCodelist().getCodes()).hasSize(10).containsEntry("M", "Monthly");
             });
@@ -87,7 +86,6 @@ public class XMLStreamStructure21Test {
             assertThat(o.getDimensions()).hasSize(3).element(0).satisfies(x -> {
                 assertThat(x.getId()).isEqualTo("COUNTRY");
                 assertThat(x.getName()).isEqualTo("Country");
-                assertThat(x.getPosition()).isEqualTo(0);
                 assertThat(x.getCodelist().getRef()).isEqualTo(CodelistRef.of("IMF.APD", "CL_APDREO_COUNTRY", "3.0.0"));
                 assertThat(x.getCodelist().getCodes()).hasSize(340).containsEntry("BEL", "Belgium");
             });

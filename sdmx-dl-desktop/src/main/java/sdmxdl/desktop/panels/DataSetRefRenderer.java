@@ -153,7 +153,7 @@ public enum DataSetRefRenderer implements Renderer<DataSetRef> {
     }
 
     private static Dimension getDimension(DataSetRef ref, MetaSet metaSet) {
-        return metaSet.getStructure().getDimensionList().get(ref.getDimensionIndex());
+        return metaSet.getStructure().getDimensions().get(ref.getDimensionIndex());
     }
 
     private static String getKeyText(DataSetRef ref) {

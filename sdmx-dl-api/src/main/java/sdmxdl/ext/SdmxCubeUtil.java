@@ -99,7 +99,7 @@ public class SdmxCubeUtil {
     }
 
     public @NonNull OptionalInt getDimensionIndexById(@NonNull Structure dsd, @NonNull String id) {
-        List<Dimension> dimensionList = dsd.getDimensionList();
+        List<Dimension> dimensionList = dsd.getDimensions();
         for (int i = 0; i < dimensionList.size(); i++) {
             if (dimensionList.get(i).getId().equals(id)) {
                 return OptionalInt.of(i);
@@ -132,7 +132,7 @@ public class SdmxCubeUtil {
     }
 
     private Stream<Key> computeAllPossibleSeries(Structure dsd, Key ref) {
-        return computeAllPossibleSeries(dsd.getDimensionList(), ref);
+        return computeAllPossibleSeries(dsd.getDimensions(), ref);
     }
 
     private Stream<Key> computeAllPossibleSeries(List<Dimension> dimensions, Key ref) {

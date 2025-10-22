@@ -541,8 +541,8 @@ public class KeyTest {
     private final Codelist clSector = Codelist.builder().ref(CodelistRef.parse("CL_SECTOR")).code("IND", "Industry").build();
     private final Codelist clRegion = Codelist.builder().ref(CodelistRef.parse("CL_REGION")).code("BE", "Belgium").code("LU", "Luxembourg").build();
 
-    private final Dimension sector = Dimension.builder().position(1).id("SECTOR").name("Sector").codelist(clSector).build();
-    private final Dimension region = Dimension.builder().position(3).id("REGION").name("Region").codelist(clRegion).build();
+    private final Dimension sector = Dimension.builder().id("SECTOR").name("Sector").codelist(clSector).build();
+    private final Dimension region = Dimension.builder().id("REGION").name("Region").codelist(clRegion).build();
 
     private final Structure dsd2 = dsd0
             .toBuilder()

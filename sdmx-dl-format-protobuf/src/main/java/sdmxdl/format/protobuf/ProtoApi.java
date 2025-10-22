@@ -86,7 +86,6 @@ public class ProtoApi {
                 .setId(value.getId())
                 .setName(value.getName())
                 .setCodelist(fromCodelist(value.getCodelist()))
-                .setPosition(value.getPosition())
                 .build();
     }
 
@@ -96,7 +95,6 @@ public class ProtoApi {
                 .id(value.getId())
                 .name(value.getName())
                 .codelist(toCodelist(value.getCodelist()))
-                .position(value.getPosition())
                 .build();
     }
 

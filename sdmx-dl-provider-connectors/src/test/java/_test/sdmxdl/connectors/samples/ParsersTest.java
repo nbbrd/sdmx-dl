@@ -77,8 +77,6 @@ public class ParsersTest {
                                             .isEqualTo("FREQ");
                                     assertThat(dimension.getName())
                                             .isEqualTo("Frequency");
-                                    assertThat(dimension.getPosition())
-                                            .isEqualTo(1);
                                     assertThat(dimension.getCodelist()).satisfies(codelist -> {
                                         assertThat(codelist.getRef())
                                                 .isEqualTo(CodelistRef.of("ECB", "CL_FREQ", "1.0"));
@@ -141,8 +139,6 @@ public class ParsersTest {
                                             .isEqualTo("SUBJECT");
                                     assertThat(dimension.getName())
                                             .isEqualTo("Sujet");
-                                    assertThat(dimension.getPosition())
-                                            .isEqualTo(1);
                                     assertThat(dimension.getCodelist()).satisfies(codelist -> {
                                         assertThat(codelist.getRef())
                                                 .isEqualTo(CodelistRef.of("NBB", "CL_TEST_DATASET_SUBJECT", "latest"));

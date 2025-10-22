@@ -68,7 +68,7 @@ public final class ListDimensionsCommand implements Callable<Void> {
     }
 
     private Stream<IndexedComponent> getDimensions(Structure dsd) {
-        List<Dimension> dimensions = dsd.getDimensionList();
+        List<Dimension> dimensions = dsd.getDimensions();
         return IntStream
                 .range(0, dimensions.size())
                 .mapToObj(i -> new IndexedComponent(i, dimensions.get(i)));
