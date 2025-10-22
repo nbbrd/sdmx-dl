@@ -29,7 +29,7 @@ public class RuntimeDependenciesTest {
                 .satisfies(RuntimeDependenciesTest::checkJavaNetProxy)
                 .satisfies(RuntimeDependenciesTest::checkSlf4j)
                 .satisfies(RuntimeDependenciesTest::checkKryo5)
-                .hasSize(22);
+                .hasSize(23);
     }
 
     private static void checkJavaIoUtil(List<? extends DependencyResolver.GAV> coordinates) {
@@ -89,7 +89,7 @@ public class RuntimeDependenciesTest {
     private static void checkSllContextKickstart(List<? extends DependencyResolver.GAV> coordinates) {
         assertThatGroupId(coordinates, "io.github.hakky54")
                 .extracting(DependencyResolver.GAV::getArtifactId)
-                .containsExactlyInAnyOrder("ayza");
+                .containsExactlyInAnyOrder("ayza", "sude");
     }
 
     private static void checkJavaNetProxy(List<? extends DependencyResolver.GAV> coordinates) {
