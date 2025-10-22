@@ -60,11 +60,6 @@
             <artifactId>sdmx-dl-format-kryo</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
 
         <!-- test only -->
         <dependency>
@@ -185,10 +180,6 @@
                                 <relocation>
                                     <pattern>nl.altindag</pattern>
                                     <shadedPattern>standalone_sdmxdl.nl.altindag</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.slf4j</pattern>
-                                    <shadedPattern>standalone_sdmxdl.org.slf4j</shadedPattern>
                                 </relocation>
                             </relocations>
                             <createDependencyReducedPom>true</createDependencyReducedPom>

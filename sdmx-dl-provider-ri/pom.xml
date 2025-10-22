@@ -83,22 +83,11 @@
             <groupId>io.github.hakky54</groupId>
             <artifactId>ayza</artifactId>
             <version>10.0.1</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>slf4j-api</artifactId>
-                    <groupId>org.slf4j</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.github.nbbrd.java-net-proxy</groupId>
             <artifactId>java-net-proxy</artifactId>
             <version>1.0.1</version>
-        </dependency>
-        <dependency>
-            <artifactId>slf4j-api</artifactId>
-            <groupId>org.slf4j</groupId>
-            <version>${slf4j.version}</version>
         </dependency>
 
         <!-- test only -->
