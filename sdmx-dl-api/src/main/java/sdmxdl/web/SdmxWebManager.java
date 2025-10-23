@@ -165,7 +165,7 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
         return monitor.getReport(source, getContext());
     }
 
-    public @NonNull Provider usingName(@NonNull String name) throws IOException {
+    public @NonNull Provider<WebSource> usingName(@NonNull String name) throws IOException {
         return using(lookupSource(name)
                 .orElseThrow(() -> newMissingSource(name)));
     }

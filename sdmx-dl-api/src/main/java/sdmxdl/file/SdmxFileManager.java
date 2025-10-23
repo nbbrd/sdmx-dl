@@ -87,7 +87,7 @@ public class SdmxFileManager extends SdmxManager<FileSource> {
         return reader.read(source, languages, getContext());
     }
 
-    public @NonNull Provider usingFile(@NonNull File data) throws IOException {
+    public @NonNull Provider<FileSource> usingFile(@NonNull File data) throws IOException {
         return using(new FileSource(data, null));
     }
 

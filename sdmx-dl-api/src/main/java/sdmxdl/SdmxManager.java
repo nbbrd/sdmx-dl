@@ -24,7 +24,9 @@ import sdmxdl.file.SdmxFileManager;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -38,7 +40,7 @@ import java.util.function.Function;
 @ThreadSafe
 public abstract class SdmxManager<SOURCE extends Source> {
 
-    public final @NonNull Provider using(@NonNull SOURCE source) {
+    public final @NonNull Provider<SOURCE> using(@NonNull SOURCE source) {
         return new DefaultProvider<>(this, source);
     }
 
@@ -49,13 +51,21 @@ public abstract class SdmxManager<SOURCE extends Source> {
     public abstract @Nullable Function<? super SOURCE, ErrorListener> getOnError();
 
     @lombok.AllArgsConstructor
-    private static final class DefaultProvider<SOURCE extends Source> implements Provider {
+    private static final class DefaultProvider<SOURCE extends Source> implements Provider<SOURCE> {
 
         @NonNull
         private final SdmxManager<SOURCE> manager;
 
+        @lombok.Getter
         @NonNull
         private final SOURCE source;
+
+        @Override
+        public @NonNull Optional<URI> testConnection(sdmxdl.@NonNull SourceRequest request) throws IOException {
+            try (Connection connection = manager.getConnection(source, request.getLanguages())) {
+                return connection.testConnection();
+            }
+        }
 
         @Override
         public @NonNull Set<Feature> getSupportedFeatures(sdmxdl.@NonNull SourceRequest request) throws IOException {

@@ -3,10 +3,18 @@ package sdmxdl;
 import lombok.NonNull;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 
-public interface Provider {
+public interface Provider<SOURCE extends Source> {
+
+    @NonNull
+    SOURCE getSource();
+
+    @NonNull
+    Optional<URI> testConnection(@NonNull SourceRequest request) throws IOException;
 
     @NonNull
     Set<Feature> getSupportedFeatures(@NonNull SourceRequest request) throws IOException;
