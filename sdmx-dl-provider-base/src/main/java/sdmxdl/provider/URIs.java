@@ -1,8 +1,9 @@
-package internal.sdmxdl.desktop.util;
+package sdmxdl.provider;
 
 import lombok.NonNull;
 import org.jspecify.annotations.Nullable;
 
+import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
@@ -74,7 +75,7 @@ public class URIs {
         try {
             return URLDecoder.decode(o, UTF_8.name());
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
@@ -82,7 +83,7 @@ public class URIs {
         try {
             return URLEncoder.encode(o, UTF_8.name()).replace("+", "%20");
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 }

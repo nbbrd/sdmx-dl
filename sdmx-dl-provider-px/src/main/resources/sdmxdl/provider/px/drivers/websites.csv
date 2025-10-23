@@ -1,6 +1,5 @@
-api.scb.se,
+api.scb.se,https://www.statistikdatabasen.scb.se/pxweb/en/ssd/
 statfin.stat.fi,https://statfin.stat.fi/PxWeb/pxweb/en/
-pxwebapi2.stat.fi,
 statistik.sjv.se,https://statistik.sjv.se/PXWeb/pxweb/sv/
 fohm-app.folkhalsomyndigheten.se,http://fohm-app.folkhalsomyndigheten.se/Folkhalsodata/pxweb/en/
 statistik.konj.se,http://statistik.konj.se/PxWeb/pxweb/en/
@@ -24,7 +23,7 @@ trafi2.stat.fi,https://trafi2.stat.fi/PXWeb/pxweb/en/
 w3.unece.org,https://w3.unece.org/PXWeb2015/pxweb/en/
 www.grande-region.lu,
 visitfinland.stat.fi,http://visitfinland.stat.fi/PXWeb/pxweb/en/
-stat.hel.fi,
+stat.hel.fi,https://stat.hel.fi/pxweb/en/Nordstat/
 andmed.stat.ee,https://andmed.stat.ee/en
 pxweb.nordicstatistics.org,https://pxweb.nordicstatistics.org/pxweb/en/
 pxweb.stat.si,https://pxweb.stat.si/SiStatData/pxweb/en/

@@ -1,6 +1,6 @@
 package internal.sdmxdl.desktop;
 
-import internal.sdmxdl.desktop.util.URIs;
+import sdmxdl.provider.URIs;
 import lombok.NonNull;
 import sdmxdl.DatabaseRef;
 import sdmxdl.FlowRequest;

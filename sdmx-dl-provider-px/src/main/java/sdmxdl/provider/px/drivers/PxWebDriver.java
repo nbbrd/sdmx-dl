@@ -19,10 +19,7 @@ import sdmxdl.format.design.PropertyDefinition;
 import sdmxdl.format.time.ObservationalTimePeriod;
 import sdmxdl.format.time.TimeFormats;
 import sdmxdl.format.xml.SdmxXmlStreams;
-import sdmxdl.provider.ConnectionSupport;
-import sdmxdl.provider.HasMarker;
-import sdmxdl.provider.Marker;
-import sdmxdl.provider.TypedId;
+import sdmxdl.provider.*;
 import sdmxdl.provider.ri.drivers.RiHttpUtils;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.WebSource;
@@ -164,10 +161,11 @@ public final class PxWebDriver implements Driver {
         @Override
         public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
             checkDatabase(database);
+            String tableId = Converter.flowRefToTableId(flowRef);
             return MetaSet
                     .builder()
                     .flow(ConnectionSupport.getFlowFromFlows(database, flowRef, this, client))
-                    .structure(client.getMeta(database.getId(), flowRef.getId()))
+                    .structure(client.getMeta(database.getId(), tableId))
                     .build();
         }
 
@@ -180,8 +178,9 @@ public final class PxWebDriver implements Driver {
         @Override
         public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
             checkDatabase(database);
-            Structure dsd = client.getMeta(database.getId(), flowRef.getId());
-            DataCursor dataCursor = client.getData(database.getId(), flowRef.getId(), dsd, query.getKey());
+            String tableId = Converter.flowRefToTableId(flowRef);
+            Structure dsd = client.getMeta(database.getId(), tableId);
+            DataCursor dataCursor = client.getData(database.getId(), tableId, dsd, query.getKey());
             return query.execute(dataCursor.asCloseableStream());
         }
 
@@ -341,7 +340,7 @@ public final class PxWebDriver implements Driver {
 
         private TextParser<Structure> getMetaParser(String tableId, MediaType ignore) {
             return TableMeta.JSON_PARSER
-                    .andThen(tableMeta -> tableMeta.toStructure(StructureRef.of(null, tableId, null)));
+                    .andThen(tableMeta -> tableMeta.toStructure(Converter.tableIdToStructureRef(tableId)));
         }
 
         @Override
@@ -567,6 +566,27 @@ public final class PxWebDriver implements Driver {
     }
 
     @VisibleForTesting
+    @lombok.experimental.UtilityClass
+    static class Converter {
+
+        static FlowRef tableIdToFlowRef(String id) {
+            return FlowRef.of(null, URIs.encode(id), null);
+        }
+
+        static String flowRefToTableId(FlowRef ref) {
+            return URIs.decode(ref.getId());
+        }
+
+        static StructureRef tableIdToStructureRef(String id) {
+            return StructureRef.of(null, URIs.encode(id), null);
+        }
+
+        static String structureRefToTableId(StructureRef ref) {
+            return URIs.decode(ref.getId());
+        }
+    }
+
+    @VisibleForTesting
     @lombok.Value
     static class Config {
 
@@ -629,8 +649,8 @@ public final class PxWebDriver implements Driver {
         Flow toDataflow() {
             return Flow
                     .builder()
-                    .ref(FlowRef.of(null, id, null))
-                    .structureRef(StructureRef.of(null, id, null))
+                    .ref(Converter.tableIdToFlowRef(id))
+                    .structureRef(Converter.tableIdToStructureRef(id))
                     .name(title)
                     .build();
         }
