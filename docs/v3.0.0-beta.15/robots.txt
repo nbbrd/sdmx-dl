@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /tags/*
+
+Sitemap: https://nbbrd.github.io/sdmx-dl/docs/v3.0.0-beta.15/sitemap.xml
