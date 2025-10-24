@@ -19,9 +19,9 @@ package sdmxdl;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
-import static sdmxdl.StructureRef.of;
 import static sdmxdl.ResourceRef.ALL_AGENCIES;
 import static sdmxdl.ResourceRef.LATEST_VERSION;
+import static sdmxdl.StructureRef.of;
 
 /**
  * @author Philippe Charles
@@ -47,20 +47,39 @@ public class StructureRefTest {
     @SuppressWarnings("null")
     public void testValueOf() {
         assertThat(of(null, "", null))
-                .extracting(StructureRef::getAgency, StructureRef::getId, StructureRef::getVersion, Object::toString)
-                .containsExactly(ALL_AGENCIES, "", LATEST_VERSION, "all,,latest");
+                .returns(ALL_AGENCIES, StructureRef::getAgency)
+                .returns("", StructureRef::getId)
+                .returns(LATEST_VERSION, StructureRef::getVersion)
+                .hasToString("all,,latest")
+                .returns("", StructureRef::toShortString);
 
         assertThat(of("", "hello", null))
-                .extracting(StructureRef::getAgency, StructureRef::getId, StructureRef::getVersion, Object::toString)
-                .containsExactly(ALL_AGENCIES, "hello", LATEST_VERSION, "all,hello,latest");
+                .returns(ALL_AGENCIES, StructureRef::getAgency)
+                .returns("hello", StructureRef::getId)
+                .returns(LATEST_VERSION, StructureRef::getVersion)
+                .hasToString("all,hello,latest")
+                .returns("hello", StructureRef::toShortString);
 
         assertThat(of("world", "hello", null))
-                .extracting(StructureRef::getAgency, StructureRef::getId, StructureRef::getVersion, Object::toString)
-                .containsExactly("world", "hello", LATEST_VERSION, "world,hello,latest");
+                .returns("world", StructureRef::getAgency)
+                .returns("hello", StructureRef::getId)
+                .returns(LATEST_VERSION, StructureRef::getVersion)
+                .hasToString("world,hello,latest")
+                .returns("world,hello,latest", StructureRef::toShortString);
 
         assertThat(of("world", "hello", "123"))
-                .extracting(StructureRef::getAgency, StructureRef::getId, StructureRef::getVersion, Object::toString)
-                .containsExactly("world", "hello", "123", "world,hello,123");
+                .returns("world", StructureRef::getAgency)
+                .returns("hello", StructureRef::getId)
+                .returns("123", StructureRef::getVersion)
+                .hasToString("world,hello,123")
+                .returns("world,hello,123", StructureRef::toShortString);
+
+        assertThat(of(null, "hello", "123"))
+                .returns(ALL_AGENCIES, StructureRef::getAgency)
+                .returns("hello", StructureRef::getId)
+                .returns("123", StructureRef::getVersion)
+                .hasToString("all,hello,123")
+                .returns("all,hello,123", StructureRef::toShortString);
 
         assertThatIllegalArgumentException().isThrownBy(() -> of(null, "world,hello", null));
         assertThatNullPointerException().isThrownBy(() -> of(null, null, null));

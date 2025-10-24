@@ -45,7 +45,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
@@ -53,6 +52,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static ec.util.completion.AutoCompletionSource.Behavior.*;
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -72,8 +72,8 @@ public abstract class SdmxAutoCompletion {
         return new DatabaseCompletion<>(manager, languages, source, cache);
     }
 
-    public static <S extends Source> SdmxAutoCompletion onDataflow(SdmxManager<S> manager, Languages languages, Supplier<S> source, Supplier<DatabaseRef> database, ConcurrentMap<?, ?> cache) {
-        return new DataflowCompletion<>(manager, languages, source, database, cache);
+    public static <S extends Source> SdmxAutoCompletion onFlow(SdmxManager<S> manager, Languages languages, Supplier<S> source, Supplier<DatabaseRef> database, ConcurrentMap<?, ?> cache) {
+        return new FlowCompletion<>(manager, languages, source, database, cache);
     }
 
     public static <S extends Source> SdmxAutoCompletion onDimension(SdmxManager<S> manager, Languages languages, Supplier<S> source, Supplier<DatabaseRef> database, Supplier<FlowRef> flowRef, ConcurrentMap<?, ?> cache) {
@@ -199,7 +199,7 @@ public abstract class SdmxAutoCompletion {
     }
 
     @lombok.AllArgsConstructor
-    private static final class DataflowCompletion<S extends Source> extends SdmxAutoCompletion {
+    private static final class FlowCompletion<S extends Source> extends SdmxAutoCompletion {
 
         @lombok.NonNull
         private final SdmxManager<S> manager;
@@ -230,14 +230,14 @@ public abstract class SdmxAutoCompletion {
                     .builder(this::load)
                     .behavior(this::getBehavior)
                     .postProcessor(this::filterAndSort)
-                    .valueToString(o -> o.getRef().toString())
+                    .valueToString(o -> o.getRef().toShortString())
                     .cache(cache, this::getCacheKey, SYNC)
                     .build();
         }
 
         @Override
         public ListCellRenderer<?> getRenderer() {
-            return CustomListCellRenderer.<Flow>of(flow -> flow.getRef() + "<br><i>" + flow.getName(), flow -> flow.getRef().toString());
+            return CustomListCellRenderer.<Flow>of(flow -> flow.getRef().toShortString() + "<br><i>" + flow.getName(), flow -> flow.getRef().toString());
         }
 
         private List<Flow> load(String term) throws Exception {
@@ -252,7 +252,7 @@ public abstract class SdmxAutoCompletion {
             Predicate<String> filter = ExtAutoCompletionSource.basicFilter(term);
             return values.stream()
                     .filter(o -> filter.test(o.getName()) || filter.test(o.getRef().getId()) || filter.test(o.getDescription()))
-                    .sorted(Comparator.comparing(Flow::getName))
+                    .sorted(comparing(Flow::getName))
                     .collect(toList());
         }
 
@@ -319,7 +319,7 @@ public abstract class SdmxAutoCompletion {
             Predicate<String> filter = ExtAutoCompletionSource.basicFilter(term);
             return values.stream()
                     .filter(o -> filter.test(o.getId()) || filter.test(o.getName()))
-                    .sorted(Comparator.comparing(Dimension::getId))
+                    .sorted(comparing(Dimension::getId))
                     .collect(toList());
         }
 
@@ -386,7 +386,7 @@ public abstract class SdmxAutoCompletion {
             Predicate<String> filter = ExtAutoCompletionSource.basicFilter(term);
             return values.stream()
                     .filter(o -> filter.test(o.getId()) || filter.test(o.getName()))
-                    .sorted(Comparator.comparing(Attribute::getId))
+                    .sorted(comparing(Attribute::getId))
                     .collect(toList());
         }
 

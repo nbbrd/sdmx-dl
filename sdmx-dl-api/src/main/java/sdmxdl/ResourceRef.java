@@ -60,6 +60,11 @@ public abstract class ResourceRef<T extends ResourceRef<T>> {
         return equals(that.getRef());
     }
 
+    public @NonNull String toShortString() {
+        return ALL_AGENCIES.equals(getAgency()) && LATEST_VERSION.equals(getVersion())
+                ? getId() : toString();
+    }
+
     @NonNull
     protected static String toString(ResourceRef<?> ref) {
         return ref.getAgency() + SEP + ref.getId() + SEP + ref.getVersion();

@@ -69,7 +69,7 @@ public final class DataSourceRefPanel extends JComponent {
 
         JButton flowButton = new JButton(Ikons.of(MDI_MENU_DOWN, 16, FlatIconColors.ACTIONS_GREYINLINE.key));
         flowField.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_COMPONENT, flowButton);
-        SdmxAutoCompletion flowCompletion = SdmxAutoCompletion.onDataflow(Sdmxdl.INSTANCE.getSdmxManager(), Sdmxdl.INSTANCE.getLanguages(),
+        SdmxAutoCompletion flowCompletion = SdmxAutoCompletion.onFlow(Sdmxdl.INSTANCE.getSdmxManager(), Sdmxdl.INSTANCE.getLanguages(),
                 () -> Sdmxdl.INSTANCE.getSdmxManager().getSources().get(sourceField.getText()),
                 () -> DatabaseRef.parse(databaseField.getText()),
                 new ConcurrentHashMap<>());
