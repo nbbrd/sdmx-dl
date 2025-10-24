@@ -5,7 +5,7 @@
 
     <groupId>com.github.nbbrd.sdmx-dl</groupId>
     <artifactId>sdmx-dl-parent</artifactId>
-    <version>3.0.0-beta.15</version>
+    <version>3.0.0-beta.16-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>sdmx-dl</name>
@@ -38,7 +38,7 @@
     <properties>
         <!-- Java 8+ config -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.build.outputTimestamp>2025-10-24T12:21:05Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2025-10-24T12:22:04Z</project.build.outputTimestamp>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
 
