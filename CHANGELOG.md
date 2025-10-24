@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.0-beta.15] - 2025-10-24
+
 This is the fifteenth beta release of **sdmx-dl**.  
 sdmx-dl follows [semantic versioning](https://semver.org/).
 
@@ -537,7 +539,8 @@ production._
 
 - Initial release
 
-[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.14...HEAD
+[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.15...HEAD
+[3.0.0-beta.15]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.14...v3.0.0-beta.15
 [3.0.0-beta.14]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.13...v3.0.0-beta.14
 [3.0.0-beta.13]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.12...v3.0.0-beta.13
 [3.0.0-beta.12]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.11...v3.0.0-beta.12
