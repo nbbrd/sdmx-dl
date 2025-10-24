@@ -28,7 +28,8 @@ import nbbrd.design.SealedType;
         Structure.class,
         Flow.class,
         Codelist.class,
-        DataSet.class
+        DataSet.class,
+        MetaSet.class
 })
 public abstract class Resource<T extends ResourceRef<T>> implements HasReference<T> {
     

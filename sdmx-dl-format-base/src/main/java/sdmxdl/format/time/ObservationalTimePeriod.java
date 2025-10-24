@@ -1,7 +1,7 @@
 package sdmxdl.format.time;
 
 import lombok.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.Duration;
 import sdmxdl.TimeInterval;
 

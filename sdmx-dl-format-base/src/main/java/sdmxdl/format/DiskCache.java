@@ -19,7 +19,7 @@ package sdmxdl.format;
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.sys.SystemProperties;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.About;
 import sdmxdl.HasExpiration;
 import sdmxdl.HasPersistence;

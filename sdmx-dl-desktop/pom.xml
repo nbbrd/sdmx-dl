@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.14</version>
+        <version>3.0.0-beta.15</version>
     </parent>
 
     <artifactId>sdmx-dl-desktop</artifactId>
@@ -20,7 +20,7 @@
     <properties>
         <project.x.mainClass>sdmxdl.desktop.Main</project.x.mainClass>
         <ikonli.version>2.6.0</ikonli.version>
-        <flatlaf.version>3.5.4</flatlaf.version>
+        <flatlaf.version>3.6.2</flatlaf.version>
     </properties>
 
     <dependencyManagement>
@@ -28,7 +28,7 @@
             <dependency>
                 <groupId>com.github.nbbrd.java-desktop-util</groupId>
                 <artifactId>java-desktop-util-bom</artifactId>
-                <version>2.4.0</version>
+                <version>2.5.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -38,8 +38,8 @@
     <dependencies>
         <!-- compile only -->
         <dependency>
-            <groupId>org.checkerframework</groupId>
-            <artifactId>checker-qual</artifactId>
+            <groupId>org.jspecify</groupId>
+            <artifactId>jspecify</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -145,12 +145,6 @@
                     <artifactId>gson</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
-            <version>${slf4j.version}</version>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.github.nbbrd.java-io-util</groupId>

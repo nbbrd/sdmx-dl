@@ -8,7 +8,7 @@ import nbbrd.io.text.Formatter;
 import nbbrd.io.text.Parser;
 import nbbrd.io.text.Property;
 import nbbrd.service.ServiceProvider;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.*;
 import sdmxdl.ext.Cache;
 import sdmxdl.ext.Persistence;
@@ -57,10 +57,13 @@ public final class FileRiDriver implements Driver {
     private final SdmxFileManager fileManager = SdmxFileManager.ofServiceLoader();
 
     private @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException, IllegalArgumentException {
+        EventListener eventListener = context.getEventListener(source);
+        ErrorListener errorListener = context.getErrorListener(source);
         return fileManager
                 .toBuilder()
-                .onEvent(context.getOnEvent() != null ? (fileSource, marker, message) -> context.getOnEvent().accept(source, marker, message) : null)
-                .caching(new FileCachingAdapter(context.getCaching(), source, context.getOnEvent(), context.getOnError()))
+                .onEvent(eventListener != null ? (fileSource) -> eventListener : null)
+                .onError(errorListener != null ? (fileSource) -> errorListener : null)
+                .caching(new FileCachingAdapter(context.getCaching(), source, eventListener, errorListener))
                 .build()
                 .getConnection(toFileSource(source), languages);
     }
@@ -72,9 +75,9 @@ public final class FileRiDriver implements Driver {
 
         private final @NonNull WebSource webSource;
 
-        private final @Nullable EventListener<? super WebSource> onWebEvent;
+        private final @Nullable EventListener onWebEvent;
 
-        private final @Nullable ErrorListener<? super WebSource> onWebError;
+        private final @Nullable ErrorListener onWebError;
 
         @Override
         public @NonNull String getFileCachingId() {
@@ -90,8 +93,8 @@ public final class FileRiDriver implements Driver {
         public @NonNull Cache<DataRepository> getReaderCache(
                 @NonNull FileSource ignoreSource,
                 @NonNull List<Persistence> persistences,
-                @Nullable EventListener<? super FileSource> ignoreEvent,
-                @Nullable ErrorListener<? super FileSource> ignoreError) {
+                @Nullable EventListener ignoreEvent,
+                @Nullable ErrorListener ignoreError) {
             return new FileCacheAdapter(delegate.getDriverCache(webSource, persistences, onWebEvent, onWebError));
         }
 

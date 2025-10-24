@@ -2,17 +2,22 @@ package sdmxdl.desktop;
 
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.FlatIconColors;
+import ec.util.completion.AutoCompletionSource;
+import ec.util.completion.AutoCompletionSources;
+import ec.util.completion.swing.JAutoCompletion;
 import ec.util.list.swing.JLists;
+import ec.util.table.swing.JTables;
 import ec.util.various.swing.JCommand;
 import internal.sdmxdl.desktop.SdmxCommand;
-import internal.sdmxdl.desktop.SdmxURI;
+import internal.sdmxdl.desktop.SdmxUri;
 import internal.sdmxdl.desktop.XmlDataSetRef;
 import internal.sdmxdl.desktop.XmlDataSourceRef;
 import internal.sdmxdl.desktop.util.*;
 import lombok.NonNull;
 import nbbrd.io.function.IOBiConsumer;
 import org.kordamp.ikonli.Ikon;
-import sdmxdl.Key;
+import sdmxdl.FlowRequest;
+import sdmxdl.KeyRequest;
 import sdmxdl.desktop.panels.*;
 import sdmxdl.ext.Persistence;
 import sdmxdl.provider.ri.caching.RiCaching;
@@ -24,6 +29,8 @@ import sdmxdl.web.spi.*;
 import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
@@ -33,13 +40,18 @@ import java.beans.PropertyChangeEvent;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 import java.util.prefs.Preferences;
+import java.util.stream.Stream;
 
 import static internal.sdmxdl.desktop.Collectors2.getSingle;
 import static internal.sdmxdl.desktop.util.Actions.hideWhenDisabled;
 import static internal.sdmxdl.desktop.util.Actions.onActionPerformed;
+import static internal.sdmxdl.desktop.util.Documents.documentListenerOf;
+import static internal.sdmxdl.desktop.util.Documents.getText;
 import static internal.sdmxdl.desktop.util.JTrees.toDefaultMutableTreeNode;
 import static internal.sdmxdl.desktop.util.MouseListeners.onDoubleClick;
 import static java.awt.event.KeyEvent.VK_ENTER;
@@ -150,6 +162,71 @@ public final class MainComponent extends JComponent {
         addPropertyChangeListener(DATA_SOURCES_PROPERTY, this::onDataSourcesChange);
 
         onSdmxWebManagerChange(null);
+        main.addIfAbsent("Events", new JEditorTabs.TabFactory<String>() {
+            @Override
+            public String getTitle(String s, JEditorTabs source) {
+                return s;
+            }
+
+            @Override
+            public Icon getIcon(String s, JEditorTabs source) {
+                return null;
+            }
+
+            @Override
+            public Component getComponent(String s, JEditorTabs source) {
+                JTable view = new JTable(new EventListTableModel(Sdmxdl.INSTANCE.getEventList()));
+
+                TableRowSorter<TableModel> sorter = new TableRowSorter<>(view.getModel());
+                view.setRowSorter(sorter);
+
+                JTextField filterField = new JTextField(10);
+                filterField.getDocument().addDocumentListener(documentListenerOf(e -> sorter.setRowFilter(TokensRowFilter.of(getText(e)))));
+
+                JAutoCompletion autoCompletion = new JAutoCompletion(filterField);
+                autoCompletion.setSeparator(" ");
+                autoCompletion.setSource(new AutoCompletionSource() {
+                    @Override
+                    public @NonNull Behavior getBehavior(@NonNull String term) {
+                        return Behavior.SYNC;
+                    }
+
+                    @Override
+                    public @NonNull String toString(@NonNull Object value) {
+                        return Objects.toString(value);
+                    }
+
+                    @Override
+                    public @NonNull List<?> getValues(@NonNull String term) throws Exception {
+                        String normalizedTerm = AutoCompletionSources.normalize(term);
+                        return JLists.stream(Sdmxdl.INSTANCE.getEventList())
+                                .flatMap(event -> Stream.of(event.getSource(), event.getMarker()))
+                                .distinct()
+                                .filter(item -> AutoCompletionSources.normalize(item).contains(normalizedTerm))
+                                .sorted()
+                                .limit(10)
+                                .collect(toList());
+                    }
+                });
+
+                JTables.setWidthAsPercentages(view, .15, .2, .65);
+
+                JPanel result = new JPanel(new GridBagLayout());
+                result.add(new JLabel("Filter: "), new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+                result.add(filterField, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+                result.add(new JScrollPane(view), new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+                result.setPreferredSize(new Dimension(200, 200));
+                return result;
+            }
+
+            @Override
+            public String getTip(String s, JEditorTabs source) {
+                return s;
+            }
+        });
     }
 
     private void addTool(JToolWindowBar toolToolBar, String name, Ikon ikon, Component component, JToolBar toolBar) {
@@ -529,25 +606,28 @@ public final class MainComponent extends JComponent {
     }
 
     private void copyPath(DataSourceRef ref) {
+        String source = ref.getSource();
+        FlowRequest flowRequest = ref.toFlowRequest();
         new OnDemandMenuBuilder()
-                .copyToClipboard("SDMX-DL URI", SdmxURI.dataSourceURI(ref.getSource(), ref.toFlowRef(), ref.getDatabase()))
+                .copyToClipboard("SDMX-DL URI", SdmxUri.fromFlowRequest(source, flowRequest).toString())
                 .copyToClipboard("XML reference", XmlDataSourceRef.formatToString(ref))
                 .addSeparator()
-                .copyToClipboard("List dimensions command", SdmxCommand.listDimensions(ref.getDatabase(), ref.getSource(), ref.toFlowRef()))
-                .copyToClipboard("List attributes command", SdmxCommand.listAttributes(ref.getDatabase(), ref.getSource(), ref.toFlowRef()))
-                .copyToClipboard("Fetch all keys command", SdmxCommand.fetchKeys(ref.getDatabase(), ref.getSource(), ref.getFlow(), Key.ALL))
+                .copyToClipboard("List dimensions command", SdmxCommand.listDimensions(source, flowRequest))
+                .copyToClipboard("List attributes command", SdmxCommand.listAttributes(source, flowRequest))
+                .copyToClipboard("Fetch all keys command", SdmxCommand.fetchKeys(source, KeyRequest.builderOf(flowRequest).build()))
                 .showMenuAsPopup(this);
     }
 
     private void copyPath(DataSetRef ref) {
-        DataSourceRef src = ref.getDataSourceRef();
+        String source = ref.getDataSourceRef().getSource();
+        KeyRequest keyRequest = ref.toKeyRequest();
         new OnDemandMenuBuilder()
-                .copyToClipboard("SDMX-DL URI", SdmxURI.dataSetURI(src.getSource(), src.toFlowRef(), ref.getKey(), src.getDatabase()))
+                .copyToClipboard("SDMX-DL URI", SdmxUri.fromKeyRequest(source, keyRequest).toString())
                 .copyToClipboard("XML reference", XmlDataSetRef.formatToString(ref))
                 .addSeparator()
-                .copyToClipboard("Fetch data command", SdmxCommand.fetchData(src.getDatabase(), src.getSource(), src.getFlow(), ref.getKey()))
-                .copyToClipboard("Fetch meta command", SdmxCommand.fetchMeta(src.getDatabase(), src.getSource(), src.getFlow(), ref.getKey()))
-                .copyToClipboard("Fetch keys command", SdmxCommand.fetchKeys(src.getDatabase(), src.getSource(), src.getFlow(), ref.getKey()))
+                .copyToClipboard("Fetch data command", SdmxCommand.fetchData(source, keyRequest))
+                .copyToClipboard("Fetch meta command", SdmxCommand.fetchMeta(source, keyRequest))
+                .copyToClipboard("Fetch keys command", SdmxCommand.fetchKeys(source, keyRequest))
                 .showMenuAsPopup(this);
     }
 
@@ -579,4 +659,44 @@ public final class MainComponent extends JComponent {
     }
 
     private static final Preferences PREFERENCES = Preferences.userNodeForPackage(MainComponent.class).node(MainComponent.class.getSimpleName());
+
+    private static final class EventListTableModel extends AbstractListTableModel<Event> {
+
+        public EventListTableModel(ListModel<Event> list) {
+            super(list);
+        }
+
+        @Override
+        public int getColumnCount() {
+            return 3;
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            switch (column) {
+                case 0:
+                    return "Source";
+                case 1:
+                    return "Marker";
+                case 2:
+                    return "Message";
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public Object getColumnValue(Event row, int columnIndex) {
+            switch (columnIndex) {
+                case 0:
+                    return row.getSource();
+                case 1:
+                    return row.getMarker();
+                case 2:
+                    return row.getMessage();
+                default:
+                    return null;
+            }
+        }
+    }
 }

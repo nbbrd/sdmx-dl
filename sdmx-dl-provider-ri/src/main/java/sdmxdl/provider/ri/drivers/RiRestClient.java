@@ -16,11 +16,11 @@
  */
 package sdmxdl.provider.ri.drivers;
 
+import lombok.NonNull;
 import nbbrd.io.http.HttpClient;
 import nbbrd.io.http.HttpRequest;
 import nbbrd.io.http.HttpResponse;
 import nbbrd.io.http.HttpResponseException;
-import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.format.ObsParser;
 import sdmxdl.provider.DataRef;
@@ -31,14 +31,18 @@ import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.WebContext;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static sdmxdl.provider.CommonSdmxExceptions.*;
+import static sdmxdl.provider.CommonSdmxExceptions.missingCodelist;
+import static sdmxdl.provider.CommonSdmxExceptions.missingStructure;
 import static sdmxdl.provider.web.RestErrorMapping.CLIENT_NO_RESULTS_FOUND;
 
 /**
@@ -78,11 +82,6 @@ public class RiRestClient implements RestClient {
     }
 
     @Override
-    public @NonNull Flow getFlow(@NonNull FlowRef ref) throws IOException {
-        return getFlow(getFlowQuery(ref), ref);
-    }
-
-    @Override
     public @NonNull Structure getStructure(@NonNull StructureRef ref) throws IOException {
         return getStructure(getStructureQuery(ref), ref);
     }
@@ -102,9 +101,19 @@ public class RiRestClient implements RestClient {
         return supportedFeatures;
     }
 
+    @NonNull
     @Override
-    public void testClient() throws IOException {
-        getFlows();
+    public Optional<URI> testClient() throws IOException {
+        HttpRequest request = RiHttpUtils.newRequest(getFlowsQuery(), parsers.getFlowsTypes(), langs);
+        try {
+            try (HttpResponse ignore = httpClient.send(request)) {
+                return Optional.of(request.getQuery().toURI());
+            } catch (HttpResponseException ex) {
+                return Optional.of(request.getQuery().toURI());
+            }
+        } catch (URISyntaxException e) {
+            throw new IOException(e);
+        }
     }
 
     @NonNull
@@ -122,27 +131,6 @@ public class RiRestClient implements RestClient {
         } catch (HttpResponseException ex) {
             if (errors.getFlowsError(ex) == CLIENT_NO_RESULTS_FOUND) {
                 return Collections.emptyList();
-            }
-            throw ex;
-        }
-    }
-
-    @NonNull
-    protected URL getFlowQuery(@NonNull FlowRef ref) throws IOException {
-        return queries.getFlowQuery(endpoint, ref).build();
-    }
-
-    @NonNull
-    protected Flow getFlow(@NonNull URL url, @NonNull FlowRef ref) throws IOException {
-        HttpRequest request = RiHttpUtils.newRequest(url, parsers.getFlowTypes(), langs);
-        try (HttpResponse response = httpClient.send(request)) {
-            return parsers
-                    .getFlowParser(response.getContentType(), langs, ref)
-                    .parseStream(response::getBody)
-                    .orElseThrow(() -> missingFlow(this, ref));
-        } catch (HttpResponseException ex) {
-            if (errors.getFlowError(ex) == CLIENT_NO_RESULTS_FOUND) {
-                throw missingFlow(this, ref);
             }
             throw ex;
         }

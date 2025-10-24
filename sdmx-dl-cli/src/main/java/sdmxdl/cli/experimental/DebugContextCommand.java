@@ -18,7 +18,7 @@ package sdmxdl.cli.experimental;
 
 import internal.sdmxdl.cli.DebugOutputOptions;
 import picocli.CommandLine;
-import sdmxdl.cli.protobuf.Context;
+import sdmxdl.cli.protobuf.ContextDto;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -44,7 +44,7 @@ public final class DebugContextCommand implements Callable<Void> {
     private ContextType type;
 
     public Void call() throws Exception {
-        output.dumpAll(Context
+        output.dumpAll(ContextDto
                 .newBuilder()
                 .putAllItems(this.type.get())
                 .build()

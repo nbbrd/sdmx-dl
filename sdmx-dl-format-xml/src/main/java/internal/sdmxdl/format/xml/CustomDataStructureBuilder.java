@@ -18,7 +18,7 @@ package internal.sdmxdl.format.xml;
 
 import lombok.NonNull;
 import nbbrd.io.net.MediaType;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.*;
 import sdmxdl.format.xml.XmlMediaTypes;
 
@@ -92,13 +92,12 @@ public final class CustomDataStructureBuilder {
 
     private Set<Dimension> guessDimensions() {
         Set<Dimension> result = new LinkedHashSet<>();
-        int position = 1;
         boolean needsFiltering = fileType.equals(XmlMediaTypes.STRUCTURE_SPECIFIC_DATA_20) || fileType.equals(XmlMediaTypes.STRUCTURE_SPECIFIC_DATA_21);
         for (Entry<String, Set<String>> item : dimensions.entrySet()) {
             if (needsFiltering && isAttribute(item)) {
                 continue;
             }
-            result.add(dimension(item.getKey(), position++, item.getValue()));
+            result.add(dimension(item.getKey(), item.getValue()));
         }
         return result;
     }
@@ -116,17 +115,16 @@ public final class CustomDataStructureBuilder {
         map.computeIfAbsent(key, k -> new HashSet<>()).add(value);
     }
 
-    public static Dimension dimension(String name, int pos, String... values) {
-        return dimension(name, pos, Arrays.asList(values));
+    public static Dimension dimension(String name, String... values) {
+        return dimension(name, Arrays.asList(values));
     }
 
-    public static Dimension dimension(String name, int pos, Collection<String> values) {
+    public static Dimension dimension(String name, Collection<String> values) {
         Codelist.Builder codelist = Codelist.builder().ref(CodelistRef.parse(name));
         values.forEach(o -> codelist.code(o, o));
 
         return Dimension.builder()
                 .id(name)
-                .position(pos)
                 .name(name)
                 .codelist(codelist.build())
                 .build();

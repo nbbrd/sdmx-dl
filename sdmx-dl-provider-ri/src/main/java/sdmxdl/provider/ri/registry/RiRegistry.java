@@ -6,7 +6,9 @@ import nbbrd.io.text.Formatter;
 import nbbrd.io.text.Parser;
 import nbbrd.io.text.Property;
 import nbbrd.service.ServiceProvider;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
+import sdmxdl.ErrorListener;
+import sdmxdl.EventListener;
 import sdmxdl.ext.Persistence;
 import sdmxdl.format.design.PropertyDefinition;
 import sdmxdl.provider.PropertiesSupport;
@@ -18,8 +20,6 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static java.util.Collections.emptyMap;
@@ -49,24 +49,25 @@ public final class RiRegistry implements Registry {
     @Override
     public @NonNull WebSources getSources(
             @NonNull List<Persistence> persistences,
-            @Nullable Consumer<CharSequence> onEvent,
-            @Nullable BiConsumer<CharSequence, IOException> onError) {
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError) {
 
         Function<? super String, ? extends CharSequence> properties = key -> PropertiesSupport.getProperty(emptyMap(), key);
 
         File sourcesFile = SOURCES_FILE_PROPERTY.get(properties);
         if (sourcesFile == null || sourcesFile.equals(NO_SOURCES_FILE)) {
-            if (onEvent != null) onEvent.accept("Using default sources");
+            if (onEvent != null) onEvent.accept(getRegistryId(), "Using default sources");
             return WebSources.EMPTY;
         }
 
         try {
             WebSources result = loadCustomSources(sourcesFile, persistences);
             if (onEvent != null)
-                onEvent.accept("Using " + result.getSources().size() + " custom sources from file '" + sourcesFile + "'");
+                onEvent.accept(getRegistryId(), "Using " + result.getSources().size() + " custom sources from file " + sourcesFile.toPath().toUri());
             return result;
         } catch (IOException ex) {
-            if (onError != null) onError.accept("Failed to load source file '" + sourcesFile + "'", ex);
+            if (onError != null)
+                onError.accept(getRegistryId(), "Failed to load source file " + sourcesFile.toPath().toUri(), ex);
             return WebSources.EMPTY;
         }
     }

@@ -8,23 +8,44 @@ import static org.assertj.core.api.Assertions.assertThat;
 class SdmxCommandTest {
 
     @Test
-    public void test() {
+    public void testBuilder() {
         assertThat(SdmxCommand
                 .builder()
                 .parameter("fetch")
                 .parameter("keys")
                 .parameter("all")
-                .option("c", DatabaseRef.parse("hello_world").toString())
+                .option("d", DatabaseRef.parse("hello_world").toString())
                 .build()
                 .toText())
-                .isEqualTo("sdmx-dl fetch keys all -c hello_world");
+                .isEqualTo("sdmx-dl fetch keys all -d hello_world");
 
         assertThat(SdmxCommand
                 .builder()
                 .parameter("fetch")
                 .parameter("keys")
                 .parameter("all")
-                .option("c", null)
+                .option("d", null)
+                .build()
+                .toText())
+                .isEqualTo("sdmx-dl fetch keys all");
+    }
+
+    @Test
+    public void testBuilderOf() {
+        assertThat(SdmxCommand
+                .builderOf(DatabaseRef.parse("hello_world"))
+                .parameter("fetch")
+                .parameter("keys")
+                .parameter("all")
+                .build()
+                .toText())
+                .isEqualTo("sdmx-dl fetch keys all -d hello_world");
+
+        assertThat(SdmxCommand
+                .builderOf(DatabaseRef.NO_DATABASE)
+                .parameter("fetch")
+                .parameter("keys")
+                .parameter("all")
                 .build()
                 .toText())
                 .isEqualTo("sdmx-dl fetch keys all");

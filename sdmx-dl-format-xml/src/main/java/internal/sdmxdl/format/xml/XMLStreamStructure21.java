@@ -23,7 +23,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * @author Philippe Charles
@@ -48,6 +48,7 @@ public final class XMLStreamStructure21 {
     private static final String TIME_DIMENSION_TAG = "TimeDimension";
     private static final String PRIMARY_MEASURE_TAG = "PrimaryMeasure";
     private static final String NAME_TAG = "Name";
+    private static final String CORE_REPRESENTATION_TAG = "CoreRepresentation";
     private static final String LOCAL_REPRESENTATION_TAG = "LocalRepresentation";
     private static final String CONCEPT_IDENTITY_TAG = "ConceptIdentity";
     private static final String REF_TAG = "Ref";
@@ -144,21 +145,29 @@ public final class XMLStreamStructure21 {
         codelist.code(id, label.build(id));
     }
 
-    private void parseConcepts(XMLStreamReader reader, Map<String, String> concepts) throws XMLStreamException {
+    private void parseConcepts(XMLStreamReader reader, List<Concept> concepts) throws XMLStreamException {
         while (XMLStreamUtil.nextTag(reader, CONCEPTS_TAG, CONCEPT_TAG)) {
             parseConcept(reader, concepts);
         }
     }
 
-    private void parseConcept(XMLStreamReader reader, Map<String, String> concepts) throws XMLStreamException {
+    private void parseConcept(XMLStreamReader reader, List<Concept> concepts) throws XMLStreamException {
         String id = reader.getAttributeValue(null, ID_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing Concept id");
 
         label.clear();
-        while (XMLStreamUtil.nextTag(reader, CONCEPT_TAG, NAME_TAG)) {
-            parseNameTag(reader, label);
+        CodelistRef coreRepresentation = null;
+        while (XMLStreamUtil.nextTags(reader, CONCEPT_TAG)) {
+            switch (reader.getLocalName()) {
+                case NAME_TAG:
+                    parseNameTag(reader, label);
+                    break;
+                case CORE_REPRESENTATION_TAG:
+                    coreRepresentation = parseCoreRepresentation(reader);
+                    break;
+            }
         }
-        concepts.put(id, label.build(id));
+        concepts.add(new Concept(id, label.build(id), coreRepresentation));
     }
 
     private void parseDataStructures(XMLStreamReader reader, List<Structure> result, DsdContext context) throws XMLStreamException {
@@ -221,46 +230,72 @@ public final class XMLStreamStructure21 {
         String id = reader.getAttributeValue(null, ID_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing Dimension id");
 
-        String position = reader.getAttributeValue(null, POSITION_ATTR);
-        XMLStreamUtil.check(position != null, reader, "Missing Dimension position");
-
-        Dimension.Builder dimension = Dimension.builder().id(id).position(parseInt(position)).name(id);
+        String conceptIdentity = null;
+        CodelistRef localRepresentation = null;
         while (XMLStreamUtil.nextTags(reader, DIMENSION_TAG)) {
             switch (reader.getLocalName()) {
                 case CONCEPT_IDENTITY_TAG:
-                    parseConceptIdentity(reader, dimension, context);
+                    conceptIdentity = parseConceptIdentity(reader);
                     break;
                 case LOCAL_REPRESENTATION_TAG:
-                    parseLocalRepresentation(reader, dimension, context);
+                    localRepresentation = parseLocalRepresentation(reader);
                     break;
             }
         }
-        ds.dimension(dimension.build());
+
+        XMLStreamUtil.check(conceptIdentity != null, reader, "Missing Concept identity for Dimension '%s'", id);
+
+        String conceptId = conceptIdentity;
+        Concept concept = context.findConceptById(conceptId).orElseGet(missingConceptFallback(conceptId));
+        CodelistRef ref = concept.resolveRef(localRepresentation)
+                .orElseThrow(() -> new XMLStreamException("Cannot resolve CodelistRef for Concept '" + conceptId + "' Dimension '" + id + "'"));
+
+        ds.dimension(Dimension
+                .builder()
+                .id(id)
+                .name(concept.getName())
+                .codelist(context.findCodelistByRef(ref).orElse(emptyCodelistFallback(ref)))
+                .build()
+        );
+
         context.incrementDimensionCount();
     }
 
-    private void parseConceptIdentity(XMLStreamReader reader, Component.Builder<?> concept, DsdContext context) throws XMLStreamException {
+    private String parseConceptIdentity(XMLStreamReader reader) throws XMLStreamException {
         if (XMLStreamUtil.nextTag(reader, CONCEPT_IDENTITY_TAG, REF_TAG)) {
             String id = reader.getAttributeValue(null, ID_ATTR);
+
             XMLStreamUtil.check(id != null, reader, "Missing Ref id");
 
-            String conceptName = context.getConcepts().get(id);
-            concept.name(conceptName != null ? conceptName : id);
+            return id;
         }
+        return null;
     }
 
-    private void parseLocalRepresentation(XMLStreamReader reader, Component.Builder<?> component, DsdContext context) throws XMLStreamException {
+    private CodelistRef parseLocalRepresentation(XMLStreamReader reader) throws XMLStreamException {
         if (XMLStreamUtil.nextTag(reader, LOCAL_REPRESENTATION_TAG, REF_TAG)) {
             String id = reader.getAttributeValue(null, ID_ATTR);
             String version = reader.getAttributeValue(null, VERSION_ATTR);
             String agencyID = reader.getAttributeValue(null, AGENCY_ID_ATTR);
 
-            XMLStreamUtil.check(id != null, reader, "Missing Codelist id");
+            XMLStreamUtil.check(id != null, reader, "Missing Local Codelist id");
 
-            CodelistRef ref = CodelistRef.of(agencyID, id, version);
-
-            component.codelist(context.getCodelist(ref));
+            return CodelistRef.of(agencyID, id, version);
         }
+        return null;
+    }
+
+    private CodelistRef parseCoreRepresentation(XMLStreamReader reader) throws XMLStreamException {
+        if (XMLStreamUtil.nextTag(reader, CORE_REPRESENTATION_TAG, REF_TAG)) {
+            String id = reader.getAttributeValue(null, ID_ATTR);
+            String version = reader.getAttributeValue(null, VERSION_ATTR);
+            String agencyID = reader.getAttributeValue(null, AGENCY_ID_ATTR);
+
+            XMLStreamUtil.check(id != null, reader, "Missing Core Codelist id");
+
+            return CodelistRef.of(agencyID, id, version);
+        }
+        return null;
     }
 
     private void parseTimeDimension(XMLStreamReader reader, Structure.Builder ds) throws XMLStreamException {
@@ -300,30 +335,45 @@ public final class XMLStreamStructure21 {
         String id = reader.getAttributeValue(null, ID_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing Attribute id");
 
-        Attribute.Builder attribute = Attribute.builder().id(id).name(id);
+        String conceptIdentity = null;
+        CodelistRef localRepresentation = null;
+        AttributeRelationship attributeRelationship = AttributeRelationship.DATAFLOW;
         while (XMLStreamUtil.nextTags(reader, ATTRIBUTE_TAG)) {
             switch (reader.getLocalName()) {
                 case CONCEPT_IDENTITY_TAG:
-                    parseConceptIdentity(reader, attribute, context);
+                    conceptIdentity = parseConceptIdentity(reader);
                     break;
                 case LOCAL_REPRESENTATION_TAG:
-                    parseLocalRepresentation(reader, attribute, context);
+                    localRepresentation = parseLocalRepresentation(reader);
                     break;
                 case ATTRIBUTE_RELATIONSHIP_TAG:
-                    parseAttributeRelationship(reader, attribute, context);
+                    attributeRelationship = parseAttributeRelationship(reader, context);
                     break;
             }
         }
-        ds.attribute(attribute.build());
+
+        XMLStreamUtil.check(conceptIdentity != null, reader, "Missing Concept identity for Attribute '%s'", id);
+
+        Concept concept = context.findConceptById(conceptIdentity).orElseGet(missingConceptFallback(conceptIdentity));
+        CodelistRef ref = concept.resolveRef(localRepresentation).orElse(NO_CODELIST_REF);
+
+        ds.attribute(Attribute
+                .builder()
+                .id(id)
+                .name(concept.getName())
+                .codelist(context.findCodelistByRef(ref).orElse(NO_CODELIST))
+                .relationship(attributeRelationship)
+                .build()
+        );
     }
 
-    private void parseAttributeRelationship(XMLStreamReader reader, Attribute.Builder attribute, DsdContext context) throws XMLStreamException {
-        attribute.relationship(AttributeRelationship.DATAFLOW);
+    private AttributeRelationship parseAttributeRelationship(XMLStreamReader reader, DsdContext context) throws XMLStreamException {
+        AttributeRelationship result = AttributeRelationship.DATAFLOW;
         int dimensionCount = 0;
         while (XMLStreamUtil.nextTags(reader, ATTRIBUTE_RELATIONSHIP_TAG)) {
             switch (reader.getLocalName()) {
                 case PRIMARY_MEASURE_TAG:
-                    attribute.relationship(AttributeRelationship.OBSERVATION);
+                    result = AttributeRelationship.OBSERVATION;
                     break;
                 case DIMENSION_TAG:
                     dimensionCount++;
@@ -331,15 +381,19 @@ public final class XMLStreamStructure21 {
             }
         }
         if (dimensionCount > 0) {
-            attribute.relationship(dimensionCount < context.getDimensionCount() ? AttributeRelationship.GROUP : AttributeRelationship.SERIES);
+            result = dimensionCount < context.getDimensionCount() ? AttributeRelationship.GROUP : AttributeRelationship.SERIES;
         }
+        return result;
     }
 
-    private int parseInt(String value) throws XMLStreamException {
-        try {
-            return Integer.parseInt(value);
-        } catch (NumberFormatException ex) {
-            throw new XMLStreamException(ex);
-        }
+    private static @NonNull Codelist emptyCodelistFallback(@NonNull CodelistRef ref) {
+        return Codelist.builder().ref(ref).build();
     }
+
+    private static @NonNull Supplier<Concept> missingConceptFallback(@NonNull String conceptId) {
+        return () -> new Concept(conceptId, conceptId, null);
+    }
+
+    private static final CodelistRef NO_CODELIST_REF = null;
+    private static final Codelist NO_CODELIST = null;
 }

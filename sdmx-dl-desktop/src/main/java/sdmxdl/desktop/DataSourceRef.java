@@ -49,6 +49,15 @@ public class DataSourceRef {
     @NonNull
     Toggle curlBackend = Toggle.DEFAULT;
 
+    public FlowRequest toFlowRequest() {
+        return FlowRequest
+                .builder()
+                .database(database)
+                .flowOf(flow)
+                .languages(languages)
+                .build();
+    }
+
     public FlowRef toFlowRef() {
         return FlowRef.parse(flow);
     }

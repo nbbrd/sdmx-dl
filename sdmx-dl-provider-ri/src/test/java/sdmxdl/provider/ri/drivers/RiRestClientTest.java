@@ -27,26 +27,10 @@ import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
 import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static tests.sdmxdl.api.RepoSamples.*;
+import static tests.sdmxdl.api.RepoSamples.BAD_CODELIST_REF;
+import static tests.sdmxdl.api.RepoSamples.BAD_STRUCT_REF;
 
 public class RiRestClientTest {
-
-    @Test
-    public void testGetFlow() throws IOException {
-        assertThatExceptionOfType(IOException.class)
-                .isThrownBy(() -> of(onResponseError(HTTP_NOT_FOUND)).getFlow(BAD_FLOW_REF))
-                .withMessageContaining(BAD_FLOW_REF.toString());
-
-        assertThatExceptionOfType(HttpResponseException.class)
-                .isThrownBy(() -> of(onResponseError(HTTP_FORBIDDEN)).getFlow(BAD_FLOW_REF))
-                .withMessageContaining(String.valueOf(HTTP_FORBIDDEN));
-
-        FlowRef ref = FlowRef.of("ECB", "AME", "1.0");
-        assertThat(of(onResponseStream(SdmxXmlSources.ECB_DATAFLOWS)).getFlow(ref)).satisfies(dsd -> {
-                    assertThat(dsd.getRef()).isEqualTo(ref);
-                }
-        );
-    }
 
     @Test
     public void testGetStructure() throws IOException {
@@ -97,8 +81,8 @@ public class RiRestClientTest {
                 Languages.ANY,
                 ObsParser::newDefault,
                 executor,
-                new Sdmx21RestQueries(false),
-                new Sdmx21RestParsers(),
+                Sdmx21RestQueries.DEFAULT,
+                Sdmx21RestParsers.DEFAULT,
                 Sdmx21RestErrors.DEFAULT,
                 EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD, Feature.DATA_QUERY_DETAIL)
         );

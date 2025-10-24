@@ -1,7 +1,7 @@
 package internal.sdmxdl;
 
 import lombok.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @lombok.experimental.UtilityClass
 public class Chars {

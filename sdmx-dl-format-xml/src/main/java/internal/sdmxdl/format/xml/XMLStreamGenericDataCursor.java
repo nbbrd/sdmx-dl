@@ -18,7 +18,7 @@ package internal.sdmxdl.format.xml;
 
 import lombok.NonNull;
 import nbbrd.io.WrappedIOException;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.Key;
 import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;

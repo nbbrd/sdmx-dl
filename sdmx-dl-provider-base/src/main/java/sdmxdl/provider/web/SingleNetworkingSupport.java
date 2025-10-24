@@ -2,7 +2,7 @@ package sdmxdl.provider.web;
 
 import lombok.AccessLevel;
 import lombok.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.format.design.ServiceSupport;
@@ -64,10 +64,19 @@ public final class SingleNetworkingSupport implements Networking {
     }
 
     @Override
+    public void warmupNetwork() {
+        Network network = getSingleNetwork();
+        network.getSSLFactory().getSSLSocketFactory();
+        network.getSSLFactory().getHostnameVerifier();
+        network.getProxySelector();
+        network.getURLConnectionFactory();
+    }
+
+    @Override
     public @NonNull Network getNetwork(
             @NonNull WebSource source,
-            @Nullable EventListener<? super WebSource> onEvent,
-            @Nullable ErrorListener<? super WebSource> onError) {
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError) {
         return getSingleNetwork();
     }
 

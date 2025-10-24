@@ -16,13 +16,17 @@
  */
 package internal.sdmxdl.cli;
 
+import internal.sdmxdl.cli.ext.Anchor;
 import lombok.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import picocli.CommandLine;
+import sdmxdl.ErrorListener;
+import sdmxdl.EventListener;
 import sdmxdl.ext.Persistence;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.WebSources;
+import sdmxdl.web.spi.Networking;
 import sdmxdl.web.spi.Registry;
 
 import java.io.IOException;
@@ -31,8 +35,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.SortedMap;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import static java.util.stream.Collectors.toList;
 
@@ -67,6 +69,12 @@ public class WebNetOptions extends WebOptions {
                 .build();
     }
 
+    public void warmup(SdmxWebManager manager) {
+        Networking networking = manager.getNetworking();
+        getVerboseOptions().reportToErrorStream(Anchor.CFG, networking.getNetworkingId() + ": Warming up network");
+        networking.warmupNetwork();
+    }
+
     private Registry getForcedSslSources(SdmxWebManager manager) {
         return isForceSsl()
                 ? ForceSslRegistry.of(manager.getSources())
@@ -98,7 +106,7 @@ public class WebNetOptions extends WebOptions {
         }
 
         @Override
-        public @NonNull WebSources getSources(@NonNull List<Persistence> persistences, @Nullable Consumer<CharSequence> onEvent, @Nullable BiConsumer<CharSequence, IOException> onError) {
+        public @NonNull WebSources getSources(@NonNull List<Persistence> persistences, @Nullable EventListener onEvent, @Nullable ErrorListener onError) {
             return sources;
         }
 

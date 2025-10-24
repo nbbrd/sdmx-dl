@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.14</version>
+        <version>3.0.0-beta.15</version>
     </parent>
 
     <artifactId>sdmx-dl-bom</artifactId>
@@ -18,7 +18,7 @@
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
     <properties>
-        <hugo-geekdoc.version>v1.4.1</hugo-geekdoc.version>
+        <hugo-geekdoc.version>v1.6.1</hugo-geekdoc.version>
     </properties>
 
     <dependencyManagement>
@@ -100,11 +100,6 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <artifactId>sdmx-dl-testing</artifactId>
-                <groupId>${project.groupId}</groupId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
                 <artifactId>sdmx-dl-cli</artifactId>
                 <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
@@ -127,7 +122,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.6.0</version>
+                <version>1.7.3</version>
                 <configuration>
                     <flattenMode>bom</flattenMode>
                     <outputDirectory>${project.build.directory}</outputDirectory>
@@ -214,6 +209,7 @@
                                 </goals>
                                 <configuration>
                                     <inputFile>${project.parent.basedir}/CHANGELOG.md</inputFile>
+                                    <outputFile>${project.build.directory}/CHANGELOG.md</outputFile>
                                 </configuration>
                             </execution>
                         </executions>
@@ -330,6 +326,37 @@
                                 </distributions>
                             </jreleaser>
                         </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>check-compatibility</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.nbbrd.nbbrd-maven-tools</groupId>
+                        <artifactId>compatibility-maven-plugin</artifactId>
+                        <version>1.1.1</version>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>check-downstream</goal>
+                                </goals>
+                                <configuration>
+                                    <source>${project.baseUri}/../</source>
+                                    <targets>
+                                        <target>https://github.com/nbbrd/jdemetra-dotstat</target>
+                                        <target>https://github.com/nbbrd/jdplus-sdmx</target>
+                                    </targets>
+                                    <targetFroms>2021,2023</targetFroms>
+                                    <targetLimits>3,3</targetLimits>
+                                    <logErrors>true</logErrors>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>

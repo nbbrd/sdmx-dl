@@ -3,13 +3,16 @@ package sdmxdl.format.protobuf;
 import com.google.protobuf.MessageLite;
 import nbbrd.design.DirectImpl;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.DataRepository;
 import sdmxdl.HasPersistence;
 import sdmxdl.ext.FileFormat;
 import sdmxdl.ext.Persistence;
 import sdmxdl.format.FileFormatSupport;
 import sdmxdl.format.PersistenceSupport;
-import sdmxdl.format.protobuf.web.MonitorReports;
-import sdmxdl.format.protobuf.web.WebSources;
+import sdmxdl.format.protobuf.web.MonitorReportsDto;
+import sdmxdl.format.protobuf.web.WebSourcesDto;
+import sdmxdl.web.MonitorReports;
+import sdmxdl.web.WebSources;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -26,34 +29,34 @@ public final class ProtobufPersistence implements Persistence {
             .builder()
             .id("PROTOBUF")
             .rank(300)
-            .type(sdmxdl.DataRepository.class)
-            .type(sdmxdl.web.MonitorReports.class)
-            .type(sdmxdl.web.WebSources.class)
+            .type(DataRepository.class)
+            .type(MonitorReports.class)
+            .type(WebSources.class)
             .factory(this::create)
             .build();
 
     @SuppressWarnings("unchecked")
     private <T extends HasPersistence> FileFormat<T> create(Class<T> type) {
-        if (sdmxdl.DataRepository.class.equals(type)) {
+        if (DataRepository.class.equals(type)) {
             return (FileFormat<T>) FileFormatSupport
-                    .builder(sdmxdl.DataRepository.class)
-                    .parser(onParsingStream(DataRepository::parseFrom).andThen(ProtoApi::toDataRepository))
+                    .builder(DataRepository.class)
+                    .parser(onParsingStream(DataRepositoryDto::parseFrom).andThen(ProtoApi::toDataRepository))
                     .formatter(onFormattingStream(ProtobufPersistence::writeProtobuf).compose(ProtoApi::fromDataRepository))
                     .extension(".protobuf")
                     .build();
         }
-        if (sdmxdl.web.MonitorReports.class.equals(type)) {
+        if (MonitorReports.class.equals(type)) {
             return (FileFormat<T>) FileFormatSupport
-                    .builder(sdmxdl.web.MonitorReports.class)
-                    .parser(onParsingStream(MonitorReports::parseFrom).andThen(ProtoWeb::toMonitorReports))
+                    .builder(MonitorReports.class)
+                    .parser(onParsingStream(MonitorReportsDto::parseFrom).andThen(ProtoWeb::toMonitorReports))
                     .formatter(onFormattingStream(ProtobufPersistence::writeProtobuf).compose(ProtoWeb::fromMonitorReports))
                     .extension(".protobuf")
                     .build();
         }
-        if (sdmxdl.web.WebSources.class.equals(type)) {
+        if (WebSources.class.equals(type)) {
             return (FileFormat<T>) FileFormatSupport
-                    .builder(sdmxdl.web.WebSources.class)
-                    .parser(onParsingStream(WebSources::parseFrom).andThen(ProtoWeb::toWebSources))
+                    .builder(WebSources.class)
+                    .parser(onParsingStream(WebSourcesDto::parseFrom).andThen(ProtoWeb::toWebSources))
                     .formatter(onFormattingStream(ProtobufPersistence::writeProtobuf).compose(ProtoWeb::fromWebSources))
                     .extension(".protobuf")
                     .build();

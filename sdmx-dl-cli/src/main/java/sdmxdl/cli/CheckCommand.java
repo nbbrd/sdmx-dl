@@ -17,7 +17,6 @@
 package sdmxdl.cli;
 
 import picocli.CommandLine;
-import sdmxdl.cli.experimental.CheckRulesCommand;
 
 import java.util.concurrent.Callable;
 
@@ -30,8 +29,7 @@ import java.util.concurrent.Callable;
                 CheckStatusCommand.class,
                 CheckAccessCommand.class,
                 CheckConfigCommand.class,
-                CheckSourcesCommand.class,
-                CheckRulesCommand.class
+                CheckSourcesCommand.class
         }
 )
 public final class CheckCommand implements Callable<Void> {

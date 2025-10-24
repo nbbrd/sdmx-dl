@@ -151,6 +151,7 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
         result.register(Key.class, new KeySerializer());
         result.register(Query.class, new QuerySerializer());
         result.register(Detail.class, new DefaultSerializers.EnumSerializer(Detail.class));
+        result.register(MetaSet.class, new MetaSetSerializer());
         result.register(DataSet.class, new DataSetSerializer());
         result.register(Series.class, new SeriesSerializer());
         result.register(Obs.class, new ObsSerializer());
@@ -429,6 +430,24 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
         }
     }
 
+    private static final class MetaSetSerializer extends ImmutableSerializer<MetaSet> {
+
+        @Override
+        public void write(Kryo kryo, Output output, MetaSet t) {
+            kryo.writeObject(output, t.getFlow());
+            kryo.writeObject(output, t.getStructure());
+        }
+
+        @Override
+        public MetaSet read(Kryo kryo, Input input, Class<? extends MetaSet> type) {
+            return MetaSet
+                    .builder()
+                    .flow(kryo.readObject(input, Flow.class))
+                    .structure(kryo.readObject(input, Structure.class))
+                    .build();
+        }
+    }
+
     private static final class DataSetSerializer extends ImmutableSerializer<DataSet> {
 
         private final Serializer<Collection<Series>> data = new CustomCollectionSerializer<>(Series.class);
@@ -566,7 +585,6 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
             output.writeString(t.getId());
             output.writeString(t.getName());
             kryo.writeObject(output, t.getCodelist());
-            output.writeInt(t.getPosition(), true);
         }
 
         @SuppressWarnings("unchecked")
@@ -577,7 +595,6 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
                     .id(input.readString())
                     .name(input.readString())
                     .codelist(kryo.readObject(input, Codelist.class))
-                    .position(input.readInt(true))
                     .build();
         }
     }

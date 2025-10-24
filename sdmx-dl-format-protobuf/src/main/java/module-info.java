@@ -7,7 +7,7 @@ module sdmxdl.format.protobuf {
     requires static lombok;
     requires static nbbrd.design;
     requires static nbbrd.service;
-    requires static org.checkerframework.checker.qual;
+    requires static org.jspecify;
 
     requires transitive sdmxdl.format.base;
     requires transitive com.google.protobuf;

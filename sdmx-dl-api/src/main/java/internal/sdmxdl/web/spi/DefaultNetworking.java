@@ -1,7 +1,7 @@
 package internal.sdmxdl.web.spi;
 
 import lombok.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.web.WebSource;
@@ -36,10 +36,19 @@ public enum DefaultNetworking implements Networking {
     }
 
     @Override
+    public void warmupNetwork() {
+        Network network = Network.getDefault();
+        network.getSSLFactory().getSSLSocketFactory();
+        network.getSSLFactory().getHostnameVerifier();
+        network.getProxySelector();
+        network.getURLConnectionFactory();
+    }
+
+    @Override
     public @NonNull Network getNetwork(
             @NonNull WebSource source,
-            @Nullable EventListener<? super WebSource> onEvent,
-            @Nullable ErrorListener<? super WebSource> onError) {
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError) {
         return Network.getDefault();
     }
 }

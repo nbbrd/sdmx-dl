@@ -5,11 +5,11 @@ import lombok.NonNull;
 import java.util.function.Consumer;
 
 @FunctionalInterface
-public interface EventListener<S extends Source> {
+public interface EventListener {
 
-    void accept(@NonNull S source, @NonNull String marker, @NonNull CharSequence message);
+    void accept(@NonNull String marker, @NonNull CharSequence message);
 
-    default @NonNull Consumer<CharSequence> asConsumer(@NonNull S source, @NonNull String marker) {
-        return message -> accept(source, marker, message);
+    default @NonNull Consumer<CharSequence> asConsumer(@NonNull String marker) {
+        return message -> accept(marker, message);
     }
 }

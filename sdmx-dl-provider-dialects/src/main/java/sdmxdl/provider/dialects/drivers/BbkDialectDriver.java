@@ -16,9 +16,9 @@
  */
 package sdmxdl.provider.dialects.drivers;
 
-import nbbrd.io.http.URLQueryBuilder;
 import nbbrd.design.DirectImpl;
 import nbbrd.design.VisibleForTesting;
+import nbbrd.io.http.URLQueryBuilder;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
 import sdmxdl.format.ObsParser;
@@ -36,6 +36,7 @@ import java.net.URL;
 import java.util.EnumSet;
 import java.util.Set;
 
+import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
 import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 
@@ -61,7 +62,7 @@ public final class BbkDialectDriver implements Driver {
                     .name("en", "Deutsche Bundesbank")
                     .name("de", "Deutsche Bundesbank")
                     .driver(DIALECTS_BBK)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://api.statistiken.bundesbank.de/rest")
                     .websiteOf("https://www.bundesbank.de/en/statistics/time-series-databases")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/BBK")
@@ -76,8 +77,8 @@ public final class BbkDialectDriver implements Driver {
                 languages,
                 ObsParser::newDefault,
                 RiHttpUtils.newClient(s, c),
-                new BbkQueries(),
-                new Sdmx21RestParsers(),
+                BbkQueries.INSTANCE,
+                Sdmx21RestParsers.DEFAULT,
                 Sdmx21RestErrors.DEFAULT,
                 BBK_FEATURES
         );
@@ -89,7 +90,9 @@ public final class BbkDialectDriver implements Driver {
     @VisibleForTesting
     static final class BbkQueries extends Sdmx21RestQueries {
 
-        BbkQueries() {
+        public static final BbkQueries INSTANCE = new BbkQueries();
+
+        private BbkQueries() {
             super(false);
         }
 

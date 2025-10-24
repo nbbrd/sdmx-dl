@@ -1,19 +1,22 @@
 package sdmxdl.provider.dialects.drivers;
 
-import nbbrd.io.http.URLQueryBuilder;
+import lombok.AccessLevel;
 import lombok.NonNull;
+import nbbrd.io.http.URLQueryBuilder;
 import sdmxdl.CodelistRef;
 import sdmxdl.StructureRef;
-import sdmxdl.FlowRef;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.ri.drivers.RiRestQueries;
 
 import java.net.URL;
 
+@lombok.AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class DotStatRestQueries implements RiRestQueries {
 
+    public static final DotStatRestQueries DEFAULT = new DotStatRestQueries();
+
     @Override
-    public URLQueryBuilder getFlowsQuery(URL endpoint) {
+    public @NonNull URLQueryBuilder getFlowsQuery(@NonNull URL endpoint) {
         return URLQueryBuilder
                 .of(endpoint)
                 .path(DATASTRUCTURE_RESOURCE)
@@ -21,7 +24,7 @@ public class DotStatRestQueries implements RiRestQueries {
     }
 
     @Override
-    public URLQueryBuilder getFlowQuery(URL endpoint, FlowRef ref) {
+    public @NonNull URLQueryBuilder getStructureQuery(@NonNull URL endpoint, @NonNull StructureRef ref) {
         return URLQueryBuilder
                 .of(endpoint)
                 .path(DATASTRUCTURE_RESOURCE)
@@ -29,15 +32,7 @@ public class DotStatRestQueries implements RiRestQueries {
     }
 
     @Override
-    public URLQueryBuilder getStructureQuery(URL endpoint, StructureRef ref) {
-        return URLQueryBuilder
-                .of(endpoint)
-                .path(DATASTRUCTURE_RESOURCE)
-                .path(ref.getId());
-    }
-
-    @Override
-    public URLQueryBuilder getDataQuery(URL endpoint, DataRef ref, @NonNull StructureRef dsdRef) {
+    public @NonNull URLQueryBuilder getDataQuery(@NonNull URL endpoint, @NonNull DataRef ref, @NonNull StructureRef dsdRef) {
         return URLQueryBuilder
                 .of(endpoint)
                 .path(DATA_RESOURCE)
@@ -49,16 +44,6 @@ public class DotStatRestQueries implements RiRestQueries {
     @Override
     public @NonNull URLQueryBuilder getCodelistQuery(@NonNull URL endpoint, @NonNull CodelistRef ref) {
         throw new UnsupportedOperationException("codelist");
-    }
-
-    @Override
-    public StructureRef peekStructureRef(FlowRef ref) {
-        return getStructureRefFromFlowRef(ref);
-    }
-
-    @NonNull
-    public static StructureRef getStructureRefFromFlowRef(@NonNull FlowRef o) {
-        return StructureRef.of(o.getAgency(), o.getId(), o.getVersion());
     }
 
     public static final String DATASTRUCTURE_RESOURCE = "GetDataStructure";

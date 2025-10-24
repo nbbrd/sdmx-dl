@@ -17,11 +17,15 @@
 package sdmxdl;
 
 import lombok.NonNull;
+import nbbrd.design.NonNegative;
 import nbbrd.design.NotThreadSafe;
+import org.jspecify.annotations.Nullable;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -31,25 +35,26 @@ import java.util.stream.Stream;
 @NotThreadSafe
 public interface Connection extends Closeable {
 
-    void testConnection() throws IOException;
+    @NonNull
+    Optional<URI> testConnection() throws IOException;
 
     @NonNull
     Collection<Database> getDatabases() throws IOException;
 
     @NonNull
-    Collection<Flow> getFlows(@NonNull DatabaseRef database) throws IOException;
+    Collection<Flow> getFlows(@NonNull DatabaseRef database) throws IOException, IllegalArgumentException;
 
     @NonNull
-    Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException;
-
-    @NonNull
-    Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException;
+    MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException;
 
     @NonNull
     DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException;
 
     @NonNull
     Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException;
+
+    @NonNull
+    Collection<String> getAvailableDimensionCodes(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, @NonNegative int dimensionIndex) throws IOException, IllegalArgumentException;
 
     @NonNull
     Set<Feature> getSupportedFeatures() throws IOException;

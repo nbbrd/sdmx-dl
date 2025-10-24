@@ -7,6 +7,50 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.0-beta.15] - 2025-10-24
+
+This is the fifteenth beta release of **sdmx-dl**.  
+sdmx-dl follows [semantic versioning](https://semver.org/).
+
+This release focuses on simplifying the code and improving the performances.  
+As usual, it also adds and updates a few sources.
+
+> **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in
+> production!**
+
+### Added
+
+- ![API] Add warming of network resources [#919](https://github.com/nbbrd/sdmx-dl/issues/919)
+- ![API] Add dimension code availability API [#1016](https://github.com/nbbrd/sdmx-dl/issues/1016)
+- ![API] Add convenient request API [#1027](https://github.com/nbbrd/sdmx-dl/issues/1027)
+- ![API] Add short representation of ResourceRef [#1068](https://github.com/nbbrd/sdmx-dl/issues/1068)
+- ![SOURCE] Add sources from Canadian Center of Energy Information [#1055](https://github.com/nbbrd/sdmx-dl/issues/1055)
+- ![SOURCE] Add source from Canadian Census Profile Data [#1056](https://github.com/nbbrd/sdmx-dl/issues/1056)
+- ![GRPC] Add dimension code availability in protobuf service [#912](https://github.com/nbbrd/sdmx-dl/issues/912)
+
+### Fixed
+
+- ![CLI] Fix network warmup in check access duration [#1072](https://github.com/nbbrd/sdmx-dl/issues/1072)
+- ![SOURCE] Replace IMF source with new endpoint [#1064](https://github.com/nbbrd/sdmx-dl/issues/1064)
+- ![FORMAT] Fix parsing core representation codelist ref in XML structures [#1069](https://github.com/nbbrd/sdmx-dl/issues/1069)
+- ![PROVIDER] Fix URL comma encoding in INSEE driver [#1070](https://github.com/nbbrd/sdmx-dl/issues/1070)
+
+### Changed
+
+- ![API] Modify TimeInterval to closely follow ISO-8601
+- ![API] Simplify listeners
+- ![API] Retrieve testing connection URI for external usage [#1058](https://github.com/nbbrd/sdmx-dl/issues/1058)
+- ![API] Remove confusing Dimension#getPosition() [#1071](https://github.com/nbbrd/sdmx-dl/issues/1071)
+- ![SOURCE] Update ABS endpoint [#1037](https://github.com/nbbrd/sdmx-dl/issues/1037)
+- ![SOURCE] Remove TNSO source [#1036](https://github.com/nbbrd/sdmx-dl/issues/1036)
+- ![SOURCE] Remove SE source [#1057](https://github.com/nbbrd/sdmx-dl/issues/1057)
+- ![FORMAT] Migrate protobuf-maven-plugin from org.xolstice.maven.plugins to io.github.ascopes
+- ![FORMAT] Apply dto naming convention to protocol buffer messages [#1034](https://github.com/nbbrd/sdmx-dl/issues/1034)
+- ![PROVIDER] Increase default cache TTL [#964](https://github.com/nbbrd/sdmx-dl/issues/964)
+- ![BUILD] Migrate OSSRH to Central Portal
+- ![BUILD] Move testing module to test units
+- ![BUILD] Apply zero-dependency principle to standalone module [#1028](https://github.com/nbbrd/sdmx-dl/issues/1028)
+
 ## [3.0.0-beta.14] - 2025-02-24
 
 This is the fourteenth beta release of **sdmx-dl**.  
@@ -495,7 +539,8 @@ production._
 
 - Initial release
 
-[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.14...HEAD
+[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.15...HEAD
+[3.0.0-beta.15]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.14...v3.0.0-beta.15
 [3.0.0-beta.14]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.13...v3.0.0-beta.14
 [3.0.0-beta.13]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.12...v3.0.0-beta.13
 [3.0.0-beta.12]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.11...v3.0.0-beta.12

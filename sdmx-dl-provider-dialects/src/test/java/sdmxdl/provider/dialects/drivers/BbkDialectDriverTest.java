@@ -17,13 +17,17 @@
 package sdmxdl.provider.dialects.drivers;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.Query;
-import sdmxdl.StructureRef;
-import sdmxdl.FlowRef;
-import sdmxdl.Key;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
+import sdmxdl.*;
+import sdmxdl.format.MemCachingSupport;
 import sdmxdl.provider.DataRef;
+import sdmxdl.provider.ri.networking.RiNetworking;
+import sdmxdl.web.spi.WebContext;
 import tests.sdmxdl.web.spi.DriverAssert;
+import tests.sdmxdl.web.spi.EnableWebQueriesOnSystemProperty;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -45,15 +49,11 @@ public class BbkDialectDriverTest {
     public void testQueries() throws MalformedURLException {
         URL endpoint = new URL(" https://api.statistiken.bundesbank.de/rest");
 
-        BbkDialectDriver.BbkQueries queries = new BbkDialectDriver.BbkQueries();
+        BbkDialectDriver.BbkQueries queries = BbkDialectDriver.BbkQueries.INSTANCE;
 
         assertThat(queries.getFlowsQuery(endpoint).build())
                 .describedAs("SdmxFix#1 + SdmxFix#2 + SdmxFix#3")
                 .hasToString("https://api.statistiken.bundesbank.de/rest/metadata/dataflow/BBK");
-
-        assertThat(queries.getFlowQuery(endpoint, FlowRef.parse("BBEX3")).build())
-                .describedAs("SdmxFix#1 + SdmxFix#2")
-                .hasToString("https://api.statistiken.bundesbank.de/rest/metadata/dataflow/BBK/BBEX3");
 
         assertThat(queries.getStructureQuery(endpoint, StructureRef.parse("BBK_ERX")).build())
                 .describedAs("SdmxFix#1 + SdmxFix#2")
@@ -67,4 +67,28 @@ public class BbkDialectDriverTest {
                 .describedAs("SdmxFix#5")
                 .hasToString("https://api.statistiken.bundesbank.de/rest/data/BBEX3/M.ISK.EUR%2BUSD.CA.AC.A01?detail=serieskeyonly");
     }
+
+    @ParameterizedTest
+    @CsvFileSource(resources = "BbkDialectDriverTest.csv", useHeadersInDisplayName = true)
+    @EnableWebQueriesOnSystemProperty
+    public void testBuiltinSources(String source, String flow, String key, int minFlowCount, int dimCount, int minSeriesCount, int minObsCount, String details) throws IOException {
+        DriverAssert.assertBuiltinSource(new BbkDialectDriver(), DriverAssert.SourceQuery
+                        .builder()
+                        .source(source)
+                        .keyRequest(KeyRequest.builder().flowOf(flow).keyOf(key).build())
+                        .minFlowCount(minFlowCount)
+                        .dimCount(dimCount)
+                        .minSeriesCount(minSeriesCount)
+                        .minObsCount(minObsCount)
+                        .build(),
+                context
+        );
+    }
+
+    private final WebContext context = WebContext
+            .builder()
+            .caching(MemCachingSupport.builder().id("local").build())
+            .networking(new RiNetworking())
+            .onEvent(source -> DriverAssert.eventOf(source, System.out::println))
+            .build();
 }

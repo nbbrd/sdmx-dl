@@ -23,8 +23,10 @@ import sdmxdl.provider.Marker;
 import sdmxdl.provider.web.RestClient;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -45,11 +47,6 @@ public enum XFailingRestClient implements RestClient {
         }
 
         @Override
-        public @NonNull Flow getFlow(@NonNull FlowRef ref) throws IOException {
-            throw new CustomIOException();
-        }
-
-        @Override
         public @NonNull Structure getStructure(@NonNull StructureRef ref) throws IOException {
             throw new CustomIOException();
         }
@@ -65,12 +62,13 @@ public enum XFailingRestClient implements RestClient {
         }
 
         @Override
-        public Set<Feature> getSupportedFeatures() throws IOException {
+        public @NonNull Set<Feature> getSupportedFeatures() throws IOException {
             throw new CustomIOException();
         }
 
+        @NonNull
         @Override
-        public void testClient() throws IOException {
+        public Optional<URI> testClient() throws IOException {
             throw new CustomIOException();
         }
     },
@@ -86,11 +84,6 @@ public enum XFailingRestClient implements RestClient {
         }
 
         @Override
-        public @NonNull Flow getFlow(@NonNull FlowRef ref) {
-            throw new CustomRuntimeException();
-        }
-
-        @Override
         public @NonNull Structure getStructure(@NonNull StructureRef ref) {
             throw new CustomRuntimeException();
         }
@@ -106,12 +99,13 @@ public enum XFailingRestClient implements RestClient {
         }
 
         @Override
-        public Set<Feature> getSupportedFeatures() throws IOException {
+        public @NonNull Set<Feature> getSupportedFeatures() throws IOException {
             throw new CustomRuntimeException();
         }
 
+        @NonNull
         @Override
-        public void testClient() {
+        public Optional<URI> testClient() {
             throw new CustomRuntimeException();
         }
     },
@@ -127,11 +121,6 @@ public enum XFailingRestClient implements RestClient {
         }
 
         @Override
-        public @NonNull Flow getFlow(@NonNull FlowRef ref) {
-            return null;
-        }
-
-        @Override
         public @NonNull Structure getStructure(@NonNull StructureRef ref) {
             return null;
         }
@@ -147,12 +136,14 @@ public enum XFailingRestClient implements RestClient {
         }
 
         @Override
-        public Set<Feature> getSupportedFeatures() {
+        public @NonNull Set<Feature> getSupportedFeatures() {
             return Collections.emptySet();
         }
 
+        @NonNull
         @Override
-        public void testClient() {
+        public Optional<URI> testClient() {
+            return Optional.empty();
         }
     };
 

@@ -1,20 +1,22 @@
 package sdmxdl.format.protobuf;
 
+import sdmxdl.*;
+
 import static sdmxdl.format.protobuf.WellKnownTypes.*;
 
 @lombok.experimental.UtilityClass
 public class ProtoApi {
 
-    public static About fromAbout() {
-        return About
+    public static AboutDto fromAbout() {
+        return AboutDto
                 .newBuilder()
-                .setName(sdmxdl.About.NAME)
-                .setVersion(sdmxdl.About.VERSION)
+                .setName(About.NAME)
+                .setVersion(About.VERSION)
                 .build();
     }
 
-    public static DataRepository fromDataRepository(sdmxdl.DataRepository value) {
-        return DataRepository
+    public static DataRepositoryDto fromDataRepository(DataRepository value) {
+        return DataRepositoryDto
                 .newBuilder()
                 .setName(value.getName())
                 .addAllDatabases(fromCollection(value.getDatabases(), ProtoApi::fromDatabase))
@@ -26,8 +28,8 @@ public class ProtoApi {
                 .build();
     }
 
-    public static sdmxdl.DataRepository toDataRepository(DataRepository value) {
-        return sdmxdl.DataRepository
+    public static DataRepository toDataRepository(DataRepositoryDto value) {
+        return DataRepository
                 .builder()
                 .name(value.getName())
                 .databases(toCollection(value.getDatabasesList(), ProtoApi::toDatabase))
@@ -39,20 +41,20 @@ public class ProtoApi {
                 .build();
     }
 
-    public static Database fromDatabase(sdmxdl.Database value) {
-        return Database
+    public static DatabaseDto fromDatabase(Database value) {
+        return DatabaseDto
                 .newBuilder()
                 .setRef(value.getRef().getId())
                 .setName(value.getName())
                 .build();
     }
 
-    public static sdmxdl.Database toDatabase(Database value) {
-        return new sdmxdl.Database(sdmxdl.DatabaseRef.parse(value.getRef()), value.getName());
+    public static Database toDatabase(DatabaseDto value) {
+        return new Database(DatabaseRef.parse(value.getRef()), value.getName());
     }
 
-    public static Structure fromDataStructure(sdmxdl.Structure value) {
-        Structure.Builder result = Structure
+    public static StructureDto fromDataStructure(Structure value) {
+        StructureDto.Builder result = StructureDto
                 .newBuilder()
                 .setRef(value.getRef().toString())
                 .addAllDimensions(fromCollection(value.getDimensions(), ProtoApi::fromDimension))
@@ -66,10 +68,10 @@ public class ProtoApi {
                 .build();
     }
 
-    public static sdmxdl.Structure toDataStructure(Structure value) {
-        return sdmxdl.Structure
+    public static Structure toDataStructure(StructureDto value) {
+        return Structure
                 .builder()
-                .ref(sdmxdl.StructureRef.parse(value.getRef()))
+                .ref(StructureRef.parse(value.getRef()))
                 .dimensions(toCollection(value.getDimensionsList(), ProtoApi::toDimension))
                 .attributes(toCollection(value.getAttributesList(), ProtoApi::toAttribute))
                 .timeDimensionId(value.hasTimeDimensionId() ? value.getTimeDimensionId() : null)
@@ -78,44 +80,42 @@ public class ProtoApi {
                 .build();
     }
 
-    public static Dimension fromDimension(sdmxdl.Dimension value) {
-        return Dimension
+    public static DimensionDto fromDimension(Dimension value) {
+        return DimensionDto
                 .newBuilder()
                 .setId(value.getId())
                 .setName(value.getName())
                 .setCodelist(fromCodelist(value.getCodelist()))
-                .setPosition(value.getPosition())
                 .build();
     }
 
-    public static sdmxdl.Dimension toDimension(Dimension value) {
-        return sdmxdl.Dimension
+    public static Dimension toDimension(DimensionDto value) {
+        return Dimension
                 .builder()
                 .id(value.getId())
                 .name(value.getName())
                 .codelist(toCodelist(value.getCodelist()))
-                .position(value.getPosition())
                 .build();
     }
 
-    public static Codelist fromCodelist(sdmxdl.Codelist value) {
-        return Codelist
+    public static CodelistDto fromCodelist(Codelist value) {
+        return CodelistDto
                 .newBuilder()
                 .setRef(value.getRef().toString())
                 .putAllCodes(value.getCodes())
                 .build();
     }
 
-    public sdmxdl.Codelist toCodelist(Codelist value) {
-        return sdmxdl.Codelist
+    public Codelist toCodelist(CodelistDto value) {
+        return Codelist
                 .builder()
-                .ref(sdmxdl.CodelistRef.parse(value.getRef()))
+                .ref(CodelistRef.parse(value.getRef()))
                 .codes(value.getCodesMap())
                 .build();
     }
 
-    public static Attribute fromAttribute(sdmxdl.Attribute value) {
-        Attribute.Builder result = Attribute
+    public static AttributeDto fromAttribute(Attribute value) {
+        AttributeDto.Builder result = AttributeDto
                 .newBuilder()
                 .setId(value.getId())
                 .setName(value.getName());
@@ -126,8 +126,8 @@ public class ProtoApi {
                 .build();
     }
 
-    public static sdmxdl.Attribute toAttribute(Attribute value) {
-        return sdmxdl.Attribute
+    public static Attribute toAttribute(AttributeDto value) {
+        return Attribute
                 .builder()
                 .id(value.getId())
                 .name(value.getName())
@@ -136,16 +136,16 @@ public class ProtoApi {
                 .build();
     }
 
-    public static AttributeRelationship fromAttributeRelationship(sdmxdl.AttributeRelationship value) {
+    public static AttributeRelationshipDto fromAttributeRelationship(AttributeRelationship value) {
+        return AttributeRelationshipDto.valueOf(value.name());
+    }
+
+    public static AttributeRelationship toAttributeRelationship(AttributeRelationshipDto value) {
         return AttributeRelationship.valueOf(value.name());
     }
 
-    public static sdmxdl.AttributeRelationship toAttributeRelationship(AttributeRelationship value) {
-        return sdmxdl.AttributeRelationship.valueOf(value.name());
-    }
-
-    public static Flow fromDataflow(sdmxdl.Flow value) {
-        Flow.Builder result = Flow
+    public static FlowDto fromDataflow(Flow value) {
+        FlowDto.Builder result = FlowDto
                 .newBuilder()
                 .setRef(value.getRef().toString())
                 .setStructureRef(value.getStructureRef().toString())
@@ -156,18 +156,18 @@ public class ProtoApi {
         return result.build();
     }
 
-    public static sdmxdl.Flow toDataflow(Flow value) {
-        return sdmxdl.Flow
+    public static Flow toDataflow(FlowDto value) {
+        return Flow
                 .builder()
-                .ref(sdmxdl.FlowRef.parse(value.getRef()))
-                .structureRef(sdmxdl.StructureRef.parse(value.getStructureRef()))
+                .ref(FlowRef.parse(value.getRef()))
+                .structureRef(StructureRef.parse(value.getStructureRef()))
                 .name(value.getName())
                 .description(value.hasDescription() ? value.getDescription() : null)
                 .build();
     }
 
-    public static DataSet fromDataSet(sdmxdl.DataSet value) {
-        return DataSet
+    public static DataSetDto fromDataSet(DataSet value) {
+        return DataSetDto
                 .newBuilder()
                 .setRef(value.getRef().toString())
                 .setQuery(fromDataQuery(value.getQuery()))
@@ -175,41 +175,57 @@ public class ProtoApi {
                 .build();
     }
 
-    public static sdmxdl.DataSet toDataSet(DataSet value) {
-        return sdmxdl.DataSet
+    public static DataSet toDataSet(DataSetDto value) {
+        return DataSet
                 .builder()
-                .ref(sdmxdl.FlowRef.parse(value.getRef()))
+                .ref(FlowRef.parse(value.getRef()))
                 .query(toDataQuery(value.getQuery()))
                 .data(toCollection(value.getDataList(), ProtoApi::toSeries))
                 .build();
     }
 
-    public static Query fromDataQuery(sdmxdl.Query value) {
-        return Query
+    public static MetaSetDto fromMetaSet(MetaSet value) {
+        return MetaSetDto
+                .newBuilder()
+                .setFlow(fromDataflow(value.getFlow()))
+                .setStructure(fromDataStructure(value.getStructure()))
+                .build();
+    }
+
+    public static MetaSet toMetaSet(MetaSetDto value) {
+        return MetaSet
+                .builder()
+                .flow(toDataflow(value.getFlow()))
+                .structure(toDataStructure(value.getStructure()))
+                .build();
+    }
+
+    public static QueryDto fromDataQuery(Query value) {
+        return QueryDto
                 .newBuilder()
                 .setKey(value.getKey().toString())
                 .setDetail(fromDataDetail(value.getDetail()))
                 .build();
     }
 
-    public static sdmxdl.Query toDataQuery(Query value) {
-        return sdmxdl.Query
+    public static Query toDataQuery(QueryDto value) {
+        return Query
                 .builder()
-                .key(sdmxdl.Key.parse(value.getKey()))
+                .key(Key.parse(value.getKey()))
                 .detail(toDataDetail(value.getDetail()))
                 .build();
     }
 
-    public static Detail fromDataDetail(sdmxdl.Detail value) {
+    public static DetailDto fromDataDetail(Detail value) {
+        return DetailDto.valueOf(value.name());
+    }
+
+    public static Detail toDataDetail(DetailDto value) {
         return Detail.valueOf(value.name());
     }
 
-    public static sdmxdl.Detail toDataDetail(Detail value) {
-        return sdmxdl.Detail.valueOf(value.name());
-    }
-
-    public static Series fromSeries(sdmxdl.Series value) {
-        return Series
+    public static SeriesDto fromSeries(Series value) {
+        return SeriesDto
                 .newBuilder()
                 .setKey(value.getKey().toString())
                 .putAllMeta(value.getMeta())
@@ -217,17 +233,17 @@ public class ProtoApi {
                 .build();
     }
 
-    public static sdmxdl.Series toSeries(Series value) {
-        return sdmxdl.Series
+    public static Series toSeries(SeriesDto value) {
+        return Series
                 .builder()
-                .key(sdmxdl.Key.parse(value.getKey()))
+                .key(Key.parse(value.getKey()))
                 .meta(value.getMetaMap())
                 .obs(toCollection(value.getObsList(), ProtoApi::toObs))
                 .build();
     }
 
-    public static Obs fromObs(sdmxdl.Obs value) {
-        return Obs
+    public static ObsDto fromObs(Obs value) {
+        return ObsDto
                 .newBuilder()
                 .setPeriod(value.getPeriod().toString())
                 .setValue(value.getValue())
@@ -235,16 +251,27 @@ public class ProtoApi {
                 .build();
     }
 
-    public static sdmxdl.Obs toObs(Obs value) {
-        return sdmxdl.Obs
+    public static Obs toObs(ObsDto value) {
+        return Obs
                 .builder()
-                .period(sdmxdl.TimeInterval.parse(value.getPeriod()))
+                .period(TimeInterval.parse(value.getPeriod()))
                 .value(value.getValue())
                 .meta(value.getMetaMap())
                 .build();
     }
 
-    public static Feature fromFeature(sdmxdl.Feature value) {
+    public static FeatureDto fromFeature(Feature value) {
+        switch (value) {
+            case DATA_QUERY_ALL_KEYWORD:
+                return FeatureDto.DATA_QUERY_ALL_KEYWORD;
+            case DATA_QUERY_DETAIL:
+                return FeatureDto.DATA_QUERY_DETAIL;
+            default:
+                throw new RuntimeException();
+        }
+    }
+
+    public static Feature toFeature(FeatureDto value) {
         switch (value) {
             case DATA_QUERY_ALL_KEYWORD:
                 return Feature.DATA_QUERY_ALL_KEYWORD;
@@ -255,22 +282,11 @@ public class ProtoApi {
         }
     }
 
-    public static sdmxdl.Feature toFeature(Feature value) {
-        switch (value) {
-            case DATA_QUERY_ALL_KEYWORD:
-                return sdmxdl.Feature.DATA_QUERY_ALL_KEYWORD;
-            case DATA_QUERY_DETAIL:
-                return sdmxdl.Feature.DATA_QUERY_DETAIL;
-            default:
-                throw new RuntimeException();
-        }
+    public static ConfidentialityDto fromConfidentiality(Confidentiality value) {
+        return ConfidentialityDto.valueOf(value.name());
     }
 
-    public static Confidentiality fromConfidentiality(sdmxdl.Confidentiality value) {
+    public static Confidentiality toConfidentiality(ConfidentialityDto value) {
         return Confidentiality.valueOf(value.name());
-    }
-
-    public static sdmxdl.Confidentiality toConfidentiality(Confidentiality value) {
-        return sdmxdl.Confidentiality.valueOf(value.name());
     }
 }

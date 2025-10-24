@@ -9,6 +9,7 @@ import picocli.CommandLine;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.data.Index.atIndex;
@@ -40,7 +41,7 @@ public class ListSourcesCommandTest {
         assertThat(watcher.getOut())
                 .isEmpty();
         assertThat(watcher.getErr())
-                .contains("[CFG] Using 1 custom sources from file '" + src.getPath() + "'")
+                .contains("[CFG] RI_REGISTRY: Using 1 custom sources from file " + Paths.get(src.getPath()).toUri())
                 .doesNotContain("[SSL] Initializing SSL factory");
 
         assertThat(FileSample.readAll(out))

@@ -8,7 +8,9 @@ import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
 import nbbrd.service.ServiceId;
 import nbbrd.service.ServiceSorter;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
+import sdmxdl.ErrorListener;
+import sdmxdl.EventListener;
 import sdmxdl.ext.Persistence;
 import sdmxdl.web.WebSources;
 
@@ -34,8 +36,8 @@ public interface Registry {
 
     @NonNull WebSources getSources(
             @NonNull List<Persistence> persistences,
-            @Nullable Consumer<CharSequence> onEvent,
-            @Nullable BiConsumer<CharSequence, IOException> onError);
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError);
 
     @NonNull Collection<String> getRegistryProperties();
 

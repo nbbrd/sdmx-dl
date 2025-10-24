@@ -16,8 +16,6 @@ import sdmxdl.desktop.Sdmxdl;
 import sdmxdl.desktop.Toggle;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,6 +23,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static internal.sdmxdl.desktop.util.Documents.documentListenerOf;
 import static org.kordamp.ikonli.materialdesign.MaterialDesign.MDI_MENU_DOWN;
 
 public final class DataSourceRefPanel extends JComponent {
@@ -70,7 +69,7 @@ public final class DataSourceRefPanel extends JComponent {
 
         JButton flowButton = new JButton(Ikons.of(MDI_MENU_DOWN, 16, FlatIconColors.ACTIONS_GREYINLINE.key));
         flowField.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_COMPONENT, flowButton);
-        SdmxAutoCompletion flowCompletion = SdmxAutoCompletion.onDataflow(Sdmxdl.INSTANCE.getSdmxManager(), Sdmxdl.INSTANCE.getLanguages(),
+        SdmxAutoCompletion flowCompletion = SdmxAutoCompletion.onFlow(Sdmxdl.INSTANCE.getSdmxManager(), Sdmxdl.INSTANCE.getLanguages(),
                 () -> Sdmxdl.INSTANCE.getSdmxManager().getSources().get(sourceField.getText()),
                 () -> DatabaseRef.parse(databaseField.getText()),
                 new ConcurrentHashMap<>());
@@ -111,13 +110,13 @@ public final class DataSourceRefPanel extends JComponent {
         add(BorderLayout.CENTER, new JScrollPane(panel));
 
         addPropertyChangeListener(MODEL_PROPERTY, this::onModelChange);
-        sourceField.getDocument().addDocumentListener((DocumentAdapter) ignore -> updateModel());
-        databaseField.getDocument().addDocumentListener((DocumentAdapter) ignore -> updateModel());
-        flowField.getDocument().addDocumentListener((DocumentAdapter) ignore -> updateModel());
-        dimensionsField.getDocument().addDocumentListener((DocumentAdapter) ignore -> updateModel());
-        languagesField.getDocument().addDocumentListener((DocumentAdapter) ignore -> updateModel());
-        debugBox.addChangeListener(ignore -> updateModel());
-        curlBackendBox.getModel().addListDataListener(JLists.dataListenerOf(ignore -> updateModel()));
+        sourceField.getDocument().addDocumentListener(documentListenerOf(this::updateModel));
+        databaseField.getDocument().addDocumentListener(documentListenerOf(this::updateModel));
+        flowField.getDocument().addDocumentListener(documentListenerOf(this::updateModel));
+        dimensionsField.getDocument().addDocumentListener(documentListenerOf(this::updateModel));
+        languagesField.getDocument().addDocumentListener(documentListenerOf(this::updateModel));
+        debugBox.addChangeListener(this::updateModel);
+        curlBackendBox.getModel().addListDataListener(JLists.dataListenerOf(this::updateModel));
     }
 
     private void onModelChange(PropertyChangeEvent event) {
@@ -133,8 +132,8 @@ public final class DataSourceRefPanel extends JComponent {
         }
     }
 
-    private void updateModel() {
-        updateModel(dataSourceRef -> dataSourceRef
+    private void updateModel(Object ignore) {
+        updateModel2(dataSourceRef -> dataSourceRef
                 .toBuilder()
                 .source(sourceField.getText())
                 .database(DatabaseRef.parse(databaseField.getText()))
@@ -147,7 +146,7 @@ public final class DataSourceRefPanel extends JComponent {
     }
 
     @MightBePromoted
-    private void updateModel(UnaryOperator<DataSourceRef> operator) {
+    private void updateModel2(UnaryOperator<DataSourceRef> operator) {
         updating = true;
         setModel(operator.apply(getModel()));
         updating = false;
@@ -159,19 +158,6 @@ public final class DataSourceRefPanel extends JComponent {
 
         panel.add(l, "gapbottom 1, span, split 2, aligny center");
         panel.add(new JSeparator(), "gapleft rel, growx");
-    }
-
-    private interface DocumentAdapter extends DocumentListener {
-
-        @Override
-        default void insertUpdate(DocumentEvent e) {
-            changedUpdate(e);
-        }
-
-        @Override
-        default void removeUpdate(DocumentEvent e) {
-            changedUpdate(e);
-        }
     }
 
     @MightBePromoted

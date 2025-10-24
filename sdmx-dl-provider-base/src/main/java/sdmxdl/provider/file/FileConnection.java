@@ -17,6 +17,7 @@
 package sdmxdl.provider.file;
 
 import lombok.NonNull;
+import nbbrd.design.NonNegative;
 import sdmxdl.*;
 import sdmxdl.provider.CommonSdmxExceptions;
 import sdmxdl.provider.ConnectionSupport;
@@ -24,10 +25,8 @@ import sdmxdl.provider.DataRef;
 import sdmxdl.provider.web.WebValidators;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.Set;
+import java.net.URI;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -45,9 +44,9 @@ public final class FileConnection implements Connection {
     private boolean closed = false;
 
     @Override
-    public void testConnection() throws IOException {
+    public @NonNull Optional<URI> testConnection() throws IOException {
         checkState();
-        client.testClient();
+        return client.testClient();
     }
 
     @Override
@@ -63,17 +62,14 @@ public final class FileConnection implements Connection {
     }
 
     @Override
-    public @NonNull Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
+    public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
         checkState();
         checkFlowRef(flowRef);
-        return flow;
-    }
-
-    @Override
-    public @NonNull Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
-        checkState();
-        checkFlowRef(flowRef);
-        return client.decode().getStructure();
+        return MetaSet
+                .builder()
+                .flow(flow)
+                .structure(client.decode().getStructure())
+                .build();
     }
 
     @Override
@@ -90,6 +86,11 @@ public final class FileConnection implements Connection {
         checkKey(query.getKey(), info);
 
         return client.loadData(info, DataRef.of(flowRef, query));
+    }
+
+    @Override
+    public @NonNull Collection<String> getAvailableDimensionCodes(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, @NonNegative int dimensionIndex) throws IOException, IllegalArgumentException {
+        return ConnectionSupport.getAvailableDimensionCodes(this, database, flowRef, constraints, dimensionIndex);
     }
 
     @Override

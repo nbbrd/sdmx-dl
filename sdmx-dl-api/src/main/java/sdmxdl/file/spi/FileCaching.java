@@ -7,7 +7,7 @@ import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
 import nbbrd.service.ServiceId;
 import nbbrd.service.ServiceSorter;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.DataRepository;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
@@ -34,8 +34,8 @@ public interface FileCaching {
     @NonNull Cache<DataRepository> getReaderCache(
             @NonNull FileSource source,
             @NonNull List<Persistence> persistences,
-            @Nullable EventListener<? super FileSource> onEvent,
-            @Nullable ErrorListener<? super FileSource> onError);
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError);
 
     @NonNull Collection<String> getFileCachingProperties();
 

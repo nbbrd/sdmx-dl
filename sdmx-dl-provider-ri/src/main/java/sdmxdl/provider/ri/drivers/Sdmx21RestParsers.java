@@ -1,5 +1,6 @@
 package sdmxdl.provider.ri.drivers;
 
+import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.FileParser;
@@ -24,7 +25,10 @@ import static java.util.Collections.singletonList;
 import static nbbrd.io.xml.Xml.APPLICATION_XML_UTF_8;
 import static sdmxdl.format.xml.XmlMediaTypes.*;
 
+@lombok.AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Sdmx21RestParsers implements RiRestParsers {
+
+    public static final Sdmx21RestParsers DEFAULT = new Sdmx21RestParsers();
 
     @Override
     public @NonNull List<MediaType> getFlowsTypes() {
@@ -36,21 +40,6 @@ public class Sdmx21RestParsers implements RiRestParsers {
 
         if (mediaType.isCompatibleWithoutParameters(STRUCTURE_21) || mediaType.isCompatibleWithoutParameters(APPLICATION_XML_UTF_8)) {
             return withCharset(SdmxXmlStreams.flow21(langs), mediaType.getCharset());
-        }
-
-        return new UnsupportedParser<>(mediaType);
-    }
-
-    @Override
-    public @NonNull List<MediaType> getFlowTypes() {
-        return DEFAULT_DATAFLOW_TYPES;
-    }
-
-    @Override
-    public @NonNull FileParser<Optional<Flow>> getFlowParser(@NonNull MediaType mediaType, @NonNull Languages langs, @NonNull FlowRef ref) {
-
-        if (mediaType.isCompatibleWithoutParameters(STRUCTURE_21) || mediaType.isCompatibleWithoutParameters(APPLICATION_XML_UTF_8)) {
-            return withCharset(SdmxXmlStreams.flow21(langs).andThen(getResourceSelector(ref)), mediaType.getCharset());
         }
 
         return new UnsupportedParser<>(mediaType);

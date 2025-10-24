@@ -23,5 +23,6 @@ public class DatabaseRef {
         return new DatabaseRef(input.toString());
     }
 
-    public static final DatabaseRef NO_DATABASE = DatabaseRef.parse("");
+    public static final String NO_DATABASE_KEYWORD = "";
+    public static final DatabaseRef NO_DATABASE = DatabaseRef.parse(NO_DATABASE_KEYWORD);
 }

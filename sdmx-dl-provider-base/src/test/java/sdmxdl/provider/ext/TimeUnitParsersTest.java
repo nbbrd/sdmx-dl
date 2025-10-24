@@ -31,19 +31,19 @@ public class TimeUnitParsersTest {
     public void testParseByFreq() {
         assertThat(TimeUnitParsers.parseFreqCode(null)).isNull();
 
-        assertThat(TimeUnitParsers.parseFreqCode("A")).isEqualTo(SeriesMetaFactory.ANNUAL);
-        assertThat(TimeUnitParsers.parseFreqCode("S")).isEqualTo(SeriesMetaFactory.HALF_YEARLY);
-        assertThat(TimeUnitParsers.parseFreqCode("Q")).isEqualTo(SeriesMetaFactory.QUARTERLY);
-        assertThat(TimeUnitParsers.parseFreqCode("M")).isEqualTo(SeriesMetaFactory.MONTHLY);
-        assertThat(TimeUnitParsers.parseFreqCode("W")).isEqualTo(SeriesMetaFactory.WEEKLY);
-        assertThat(TimeUnitParsers.parseFreqCode("D")).isEqualTo(SeriesMetaFactory.DAILY);
-        assertThat(TimeUnitParsers.parseFreqCode("H")).isEqualTo(SeriesMetaFactory.HOURLY);
-        assertThat(TimeUnitParsers.parseFreqCode("B")).isEqualTo(SeriesMetaFactory.DAILY_BUSINESS);
-        assertThat(TimeUnitParsers.parseFreqCode("N")).isEqualTo(SeriesMetaFactory.MINUTELY);
+        assertThat(TimeUnitParsers.parseFreqCode("A")).isEqualTo(TimeUnitParsers.ANNUAL);
+        assertThat(TimeUnitParsers.parseFreqCode("S")).isEqualTo(TimeUnitParsers.HALF_YEARLY);
+        assertThat(TimeUnitParsers.parseFreqCode("Q")).isEqualTo(TimeUnitParsers.QUARTERLY);
+        assertThat(TimeUnitParsers.parseFreqCode("M")).isEqualTo(TimeUnitParsers.MONTHLY);
+        assertThat(TimeUnitParsers.parseFreqCode("W")).isEqualTo(TimeUnitParsers.WEEKLY);
+        assertThat(TimeUnitParsers.parseFreqCode("D")).isEqualTo(TimeUnitParsers.DAILY);
+        assertThat(TimeUnitParsers.parseFreqCode("H")).isEqualTo(TimeUnitParsers.HOURLY);
+        assertThat(TimeUnitParsers.parseFreqCode("B")).isEqualTo(TimeUnitParsers.DAILY_BUSINESS);
+        assertThat(TimeUnitParsers.parseFreqCode("N")).isEqualTo(TimeUnitParsers.MINUTELY);
 
-        assertThat(TimeUnitParsers.parseFreqCode("A5")).isEqualTo(SeriesMetaFactory.ANNUAL);
-        assertThat(TimeUnitParsers.parseFreqCode("M2")).isEqualTo(SeriesMetaFactory.MONTHLY);
-        assertThat(TimeUnitParsers.parseFreqCode("W6")).isEqualTo(SeriesMetaFactory.WEEKLY);
+        assertThat(TimeUnitParsers.parseFreqCode("A5")).isEqualTo(TimeUnitParsers.ANNUAL);
+        assertThat(TimeUnitParsers.parseFreqCode("M2")).isEqualTo(TimeUnitParsers.MONTHLY);
+        assertThat(TimeUnitParsers.parseFreqCode("W6")).isEqualTo(TimeUnitParsers.WEEKLY);
 
         assertThat(TimeUnitParsers.parseFreqCode("")).isNull();
         assertThat(TimeUnitParsers.parseFreqCode("A0")).isNull();

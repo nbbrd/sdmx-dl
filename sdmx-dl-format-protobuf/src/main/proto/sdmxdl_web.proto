@@ -5,7 +5,7 @@ package sdmxdl.format.protobuf.web;
 
 import "sdmxdl_api.proto";
 
-message WebSource {
+message WebSourceDto {
   string id = 1;
   map<string, string> names = 2;
   string driver = 3;
@@ -15,29 +15,29 @@ message WebSource {
   optional string website = 7;
   optional string monitor = 8;
   optional string monitor_website = 9;
-  Confidentiality confidentiality = 10;
+  ConfidentialityDto confidentiality = 10;
 }
 
-message WebSources {
-  repeated WebSource web_sources = 1;
+message WebSourcesDto {
+  repeated WebSourceDto web_sources = 1;
 }
 
-enum MonitorStatus {
+enum MonitorStatusDto {
   UNKNOWN = 0;
   UP = 1;
   DOWN = 2;
 }
 
-message MonitorReport {
+message MonitorReportDto {
   string source = 1;
-  MonitorStatus status = 2;
+  MonitorStatusDto status = 2;
   optional double uptime_ratio = 3;
   optional int64 average_response_time = 4;
 }
 
-message MonitorReports {
+message MonitorReportsDto {
   string uri_scheme = 1;
-  repeated MonitorReport reports = 2;
+  repeated MonitorReportDto reports = 2;
   string creation_time = 3;
   string expiration_time = 4;
 }

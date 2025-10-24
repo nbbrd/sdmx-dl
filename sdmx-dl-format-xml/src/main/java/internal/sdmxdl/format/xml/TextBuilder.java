@@ -17,7 +17,7 @@
 package internal.sdmxdl.format.xml;
 
 import lombok.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.Languages;
 
 import java.util.LinkedHashMap;

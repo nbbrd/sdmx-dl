@@ -43,26 +43,12 @@ public class DimensionTest {
         assertThat(Dimension.builder().id(someId).name(someLabel).codelist(someCodelist).build())
                 .hasFieldOrPropertyWithValue("id", someId)
                 .hasFieldOrPropertyWithValue("codelist", someCodelist)
-                .hasFieldOrPropertyWithValue("name", someLabel)
-                .hasFieldOrPropertyWithValue("position", 0);
+                .hasFieldOrPropertyWithValue("name", someLabel);
     }
 
     @Test
     public void testEquals() {
-        assertThat(Dimension.builder().id("id").name("label").position(1).codelist(someCodelist).build())
-                .isEqualTo(Dimension.builder().id("id").name("label").position(1).codelist(someCodelist).build());
-    }
-
-    @Test
-    public void testComparable() {
-        Dimension d1a = Dimension.builder().id("id1a").name("label1").position(1).codelist(someCodelist).build();
-        Dimension d1b = Dimension.builder().id("id1b").name("label1").position(1).codelist(someCodelist).build();
-        Dimension d2 = Dimension.builder().id("id2").name("label2").position(2).codelist(someCodelist).build();
-
-        assertThat(d1a).isEqualByComparingTo(d1a);
-        assertThat(d1a).isLessThan(d2);
-        assertThat(d2).isGreaterThan(d1a);
-        assertThat(d1a).isLessThan(d1b);
-        assertThat(d1b).isLessThan(d2);
+        assertThat(Dimension.builder().id("id").name("label").codelist(someCodelist).build())
+                .isEqualTo(Dimension.builder().id("id").name("label").codelist(someCodelist).build());
     }
 }

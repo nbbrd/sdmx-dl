@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -67,9 +68,6 @@ final class CachedRestClient implements RestClient {
     private final TypedId<List<Flow>> idOfFlows = initIdOfFlows(base);
 
     @lombok.Getter(lazy = true)
-    private final TypedId<Flow> idOfFlow = initIdOfFlow(base);
-
-    @lombok.Getter(lazy = true)
     private final TypedId<Structure> idOfStruct = initIdOfStruct(base);
 
     @lombok.Getter(lazy = true)
@@ -83,13 +81,6 @@ final class CachedRestClient implements RestClient {
                 DataRepository::getFlows,
                 flows -> DataRepository.builder().flows(flows).build()
         ).with("flows");
-    }
-
-    private static TypedId<Flow> initIdOfFlow(URI base) {
-        return TypedId.of(base,
-                repo -> repo.getFlows().stream().findFirst().orElse(null),
-                flow -> DataRepository.builder().flow(flow).build()
-        ).with("flow");
     }
 
     private static TypedId<Structure> initIdOfStruct(URI base) {
@@ -124,12 +115,6 @@ final class CachedRestClient implements RestClient {
     }
 
     @Override
-    public @NonNull Flow getFlow(@NonNull FlowRef ref) throws IOException {
-        Flow result = peekDataflowFromCache(ref);
-        return result != null ? result : loadDataflowWithCache(ref);
-    }
-
-    @Override
     public @NonNull Structure getStructure(@NonNull StructureRef ref) throws IOException {
         return loadDataStructureWithCache(ref);
     }
@@ -151,13 +136,14 @@ final class CachedRestClient implements RestClient {
     }
 
     @Override
-    public Set<Feature> getSupportedFeatures() throws IOException {
+    public @NonNull Set<Feature> getSupportedFeatures() throws IOException {
         return delegate.getSupportedFeatures();
     }
 
+    @NonNull
     @Override
-    public void testClient() throws IOException {
-        delegate.testClient();
+    public Optional<URI> testClient() throws IOException {
+        return delegate.testClient();
     }
 
     private List<Flow> loadDataflowsWithCache() throws IOException {
@@ -177,26 +163,6 @@ final class CachedRestClient implements RestClient {
     private DataSet loadNoDataWithCache(DataRef ref, Structure dsd) throws IOException {
         TypedId<DataSet> id = getIdOfNoData().with(ref.getFlowRef());
         return id.load(cache, () -> copyData(ref, dsd), this::getTtl, o -> isNarrowerRequest(ref.getQuery().getKey(), o.getQuery()));
-    }
-
-    private Flow peekDataflowFromCache(FlowRef ref) {
-        // check if dataflow has been already loaded by #loadDataflowsWithCache
-        List<Flow> dataFlows = getIdOfFlows().peek(cache);
-        if (dataFlows == null) {
-            return null;
-        }
-        for (Flow o : dataFlows) {
-            // FIXME: use #contains instead of #id
-            if (o.getRef().getId().equals(ref.getId())) {
-                return o;
-            }
-        }
-        return null;
-    }
-
-    private Flow loadDataflowWithCache(FlowRef ref) throws IOException {
-        TypedId<Flow> id = getIdOfFlow().with(ref);
-        return id.load(cache, () -> delegate.getFlow(ref), this::getTtl);
     }
 
     private boolean isNarrowerRequest(Key key, Query query) {

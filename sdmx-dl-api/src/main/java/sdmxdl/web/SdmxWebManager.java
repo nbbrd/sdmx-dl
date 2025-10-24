@@ -21,9 +21,9 @@ import internal.sdmxdl.web.spi.*;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.EventListener;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.*;
+import sdmxdl.EventListener;
 import sdmxdl.ext.Persistence;
 import sdmxdl.web.spi.*;
 
@@ -31,8 +31,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
+import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
@@ -86,10 +85,10 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
     WebCaching caching = WebCaching.noOp();
 
     @Nullable
-    EventListener<? super WebSource> onEvent;
+    Function<? super WebSource, EventListener> onEvent;
 
     @Nullable
-    ErrorListener<? super WebSource> onError;
+    Function<? super WebSource, ErrorListener> onError;
 
     @lombok.Singular
     @NonNull
@@ -104,10 +103,10 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
     Registry registry = Registry.noOp();
 
     @Nullable
-    Consumer<CharSequence> onRegistryEvent;
+    EventListener onRegistryEvent;
 
     @Nullable
-    BiConsumer<CharSequence, IOException> onRegistryError;
+    ErrorListener onRegistryError;
 
     @lombok.Getter(lazy = true)
     @NonNull
@@ -124,6 +123,12 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
     @lombok.Getter(lazy = true, value = AccessLevel.PRIVATE)
     @NonNull
     WebContext context = initLazyContext();
+
+    public @NonNull SdmxWebManager warmupAsync() {
+        Executors.newSingleThreadExecutor(SdmxWebManager::newLowPriorityDaemonThread)
+                .execute(networking::warmupNetwork);
+        return this;
+    }
 
     public @NonNull Connection getConnection(@NonNull String name, @NonNull Languages languages) throws IOException {
         WebSource source = lookupSource(name)
@@ -160,6 +165,11 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
         return monitor.getReport(source, getContext());
     }
 
+    public @NonNull Provider<WebSource> usingName(@NonNull String name) throws IOException {
+        return using(lookupSource(name)
+                .orElseThrow(() -> newMissingSource(name)));
+    }
+
     private Optional<WebSource> lookupSource(String name) {
         return Optional.ofNullable(getSources().get(name));
     }
@@ -190,7 +200,7 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
                 .build();
     }
 
-    private static List<WebSource> initLazyCustomSources(Registry registry, List<Persistence> persistences, Consumer<CharSequence> onEvent, BiConsumer<CharSequence, IOException> onError) {
+    private static List<WebSource> initLazyCustomSources(Registry registry, List<Persistence> persistences, EventListener onEvent, ErrorListener onError) {
         return registry.getSources(persistences, onEvent, onError).getSources();
     }
 
@@ -226,5 +236,12 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
     private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
         Set<Object> seen = ConcurrentHashMap.newKeySet();
         return t -> seen.add(keyExtractor.apply(t));
+    }
+
+    private static Thread newLowPriorityDaemonThread(Runnable runnable) {
+        Thread result = new Thread(runnable);
+        result.setDaemon(true);
+        result.setPriority(Thread.MIN_PRIORITY);
+        return result;
     }
 }

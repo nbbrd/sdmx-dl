@@ -51,11 +51,11 @@ public class DriverProperties {
     /**
      * Defines the duration (in milliseconds) of response storage in the cache.
      * A duration of zero is interpreted as an infinite duration. Default value
-     * is 5 minutes.
+     * is 1 hour.
      */
     @PropertyDefinition
     public static final LongProperty CACHE_TTL_PROPERTY =
-            LongProperty.of(DRIVER_PROPERTY_PREFIX + ".cacheTtl", TimeUnit.MINUTES.toMillis(5));
+            LongProperty.of(DRIVER_PROPERTY_PREFIX + ".cacheTtl", TimeUnit.HOURS.toMillis(1));
 
     /**
      * Defines the max number of redirects to be followed by HTTP client. This

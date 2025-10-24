@@ -16,20 +16,19 @@
  */
 package sdmxdl.provider.dialects.drivers;
 
+import lombok.NonNull;
+import nbbrd.design.DirectImpl;
+import nbbrd.design.VisibleForTesting;
 import nbbrd.io.http.HttpClient;
 import nbbrd.io.http.HttpResponse;
 import nbbrd.io.http.HttpResponseException;
 import nbbrd.io.http.URLQueryBuilder;
 import nbbrd.io.http.ext.InterceptingClient;
-import lombok.NonNull;
-import nbbrd.design.DirectImpl;
-import nbbrd.design.VisibleForTesting;
 import nbbrd.io.net.MediaType;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.Confidentiality;
-import sdmxdl.StructureRef;
 import sdmxdl.Feature;
 import sdmxdl.Languages;
+import sdmxdl.StructureRef;
 import sdmxdl.format.ObsParser;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.HasMarker;
@@ -49,6 +48,7 @@ import java.net.URL;
 import java.util.EnumSet;
 
 import static java.net.HttpURLConnection.HTTP_UNAVAILABLE;
+import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.provider.SdmxFix.Category.PROTOCOL;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
 import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
@@ -77,7 +77,7 @@ public final class NbbDialectDriver implements Driver {
                     .name("fr", "Banque Nationale de Belgique")
                     .name("nl", "Nationale Bank van België")
                     .driver(DIALECTS_NBB)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://stat.nbb.be/restsdmx/sdmx.ashx")
                     .websiteOf("https://stat.nbb.be")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/NBB")
@@ -98,8 +98,8 @@ public final class NbbDialectDriver implements Driver {
     static @NonNull RiRestClient newClient(@NonNull Marker marker, @NonNull URL endpoint, @NonNull Languages langs, @NonNull HttpClient executor) {
         return new RiRestClient(marker, endpoint, langs, ObsParser::newDefault,
                 new InterceptingClient(executor, (client, request, response) -> checkInternalErrorRedirect(response)),
-                new NbbQueries(),
-                new DotStatRestParsers(),
+                NbbQueries.INSTANCE,
+                DotStatRestParsers.DEFAULT,
                 Sdmx21RestErrors.DEFAULT,
                 EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD));
     }
@@ -118,9 +118,11 @@ public final class NbbDialectDriver implements Driver {
     @VisibleForTesting
     static final class NbbQueries extends DotStatRestQueries {
 
+        public static final NbbQueries INSTANCE = new NbbQueries();
+
         @SdmxFix(id = 1, category = QUERY, cause = "'/all' must be encoded to '%2Fall'")
         @Override
-        public URLQueryBuilder getDataQuery(URL endpoint, DataRef ref, @NonNull StructureRef dsdRef) {
+        public @NonNull URLQueryBuilder getDataQuery(@NonNull URL endpoint, @NonNull DataRef ref, @NonNull StructureRef dsdRef) {
             return URLQueryBuilder
                     .of(endpoint)
                     .path(DotStatRestQueries.DATA_RESOURCE)

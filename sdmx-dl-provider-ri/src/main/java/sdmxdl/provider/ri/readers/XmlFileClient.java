@@ -19,11 +19,11 @@ package sdmxdl.provider.ri.readers;
 import lombok.NonNull;
 import nbbrd.io.net.MediaType;
 import nbbrd.io.xml.Xml;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.Structure;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.EventListener;
 import sdmxdl.Languages;
 import sdmxdl.Series;
+import sdmxdl.Structure;
 import sdmxdl.file.FileSource;
 import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
@@ -37,6 +37,8 @@ import sdmxdl.provider.file.FileInfo;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -58,21 +60,23 @@ public class XmlFileClient implements FileClient {
     @Nullable
     private final Supplier<ObsParser> obsFactory;
 
-    private final @Nullable EventListener<? super FileSource> listener;
+    private final @Nullable EventListener listener;
 
     @Override
     public @NonNull Marker getMarker() {
         return HasMarker.of(source);
     }
 
+    @NonNull
     @Override
-    public void testClient() throws IOException {
+    public Optional<URI> testClient() throws IOException {
         if (!source.getData().exists()) {
             throw new FileNotFoundException(source.getData().toString());
         }
         if (source.getStructure() != null && !source.getStructure().exists()) {
             throw new FileNotFoundException(source.getStructure().toString());
         }
+        return Optional.of(source.getData().toPath().toUri());
     }
 
     @Override
@@ -83,7 +87,7 @@ public class XmlFileClient implements FileClient {
     @Override
     public @NonNull Stream<Series> loadData(@NonNull FileInfo info, @NonNull DataRef dataRef) throws IOException {
         if (listener != null) {
-            listener.accept(source, MARKER, "Loading data from file '" + source.getData() + "'");
+            listener.accept(MARKER, "Loading data from file '" + source.getData() + "'");
         }
         return dataRef.getQuery().execute(
                 getDataSupplier(info.getDataType(), info.getStructure())

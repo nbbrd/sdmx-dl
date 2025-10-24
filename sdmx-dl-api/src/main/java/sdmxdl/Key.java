@@ -18,12 +18,8 @@ package sdmxdl;
 
 import internal.sdmxdl.Chars;
 import lombok.NonNull;
-import nbbrd.design.Immutable;
-import nbbrd.design.RepresentableAsString;
-import nbbrd.design.StaticFactoryMethod;
-import nbbrd.design.VisibleForTesting;
-import org.checkerframework.checker.index.qual.NonNegative;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import nbbrd.design.*;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -60,6 +56,12 @@ public final class Key {
     @NonNull
     public String get(@NonNegative int index) throws IndexOutOfBoundsException {
         return items[index];
+    }
+
+    public @NonNull Key with(@NonNull String item, @NonNegative int index) throws IndexOutOfBoundsException {
+        String[] result = Arrays.copyOf(items, items.length);
+        result[index] = parseCode(item);
+        return new Key(result);
     }
 
     public boolean isWildcard(@NonNegative int index) throws IndexOutOfBoundsException {
@@ -112,7 +114,7 @@ public final class Key {
             return null;
         }
 
-        List<Dimension> dimensions = dsd.getDimensionList();
+        List<Dimension> dimensions = dsd.getDimensions();
 
         if (dimensions.size() != size()) {
             return String.format(Locale.ROOT, "Expecting key '%s' to have %d dimensions instead of %d", this, dimensions.size(), size());
@@ -130,6 +132,15 @@ public final class Key {
         }
 
         return null;
+    }
+
+    public @NonNull Key expand(@NonNull Structure dsd) {
+        if (equals(Key.ALL)) {
+            String[] expanded = new String[dsd.getDimensions().size()];
+            Arrays.fill(expanded, "");
+            return Key.of(expanded);
+        }
+        return this;
     }
 
     @Override
@@ -189,7 +200,7 @@ public final class Key {
 
     @NonNull
     public static Builder builder(@NonNull Structure dfs) {
-        List<Dimension> dimensions = dfs.getDimensionList();
+        List<Dimension> dimensions = dfs.getDimensions();
         Map<String, Integer> result = new HashMap<>();
         for (int i = 0; i < dimensions.size(); i++) {
             result.put(dimensions.get(i).getId(), i);

@@ -19,12 +19,12 @@ package sdmxdl.provider.connectors.drivers;
 import nbbrd.design.DirectImpl;
 import it.bancaditalia.oss.sdmx.client.custom.OECD;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.Confidentiality;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestConnector;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 
+import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.provider.connectors.drivers.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
 
 /**
@@ -48,7 +48,7 @@ public final class OecdDriver implements Driver {
                     .id("OECD")
                     .name("en", "The Organisation for Economic Co-operation and Development")
                     .driver(CONNECTORS_OECD)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://stats.oecd.org/restsdmx/sdmx.ashx")
                     .websiteOf("https://stats.oecd.org")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/OECD")

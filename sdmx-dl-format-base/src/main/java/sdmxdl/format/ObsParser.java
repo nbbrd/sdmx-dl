@@ -19,7 +19,7 @@ package sdmxdl.format;
 import lombok.NonNull;
 import nbbrd.design.NotThreadSafe;
 import nbbrd.io.text.Parser;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.format.time.ObservationalTimePeriod;
 import sdmxdl.format.time.TimeFormats;
 

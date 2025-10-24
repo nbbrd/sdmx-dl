@@ -2,18 +2,15 @@ package sdmxdl.provider.px.drivers;
 
 import com.google.gson.*;
 import lombok.NonNull;
-import nbbrd.design.DirectImpl;
-import nbbrd.design.MightBeGenerated;
-import nbbrd.design.MightBePromoted;
-import nbbrd.design.VisibleForTesting;
+import nbbrd.design.*;
 import nbbrd.io.FileParser;
 import nbbrd.io.function.IOSupplier;
 import nbbrd.io.http.*;
 import nbbrd.io.net.MediaType;
-import nbbrd.io.text.Formatter;
 import nbbrd.io.text.*;
+import nbbrd.io.text.Formatter;
 import nbbrd.service.ServiceProvider;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.*;
 import sdmxdl.ext.Cache;
 import sdmxdl.format.DataCursor;
@@ -22,10 +19,7 @@ import sdmxdl.format.design.PropertyDefinition;
 import sdmxdl.format.time.ObservationalTimePeriod;
 import sdmxdl.format.time.TimeFormats;
 import sdmxdl.format.xml.SdmxXmlStreams;
-import sdmxdl.provider.ConnectionSupport;
-import sdmxdl.provider.HasMarker;
-import sdmxdl.provider.Marker;
-import sdmxdl.provider.TypedId;
+import sdmxdl.provider.*;
 import sdmxdl.provider.ri.drivers.RiHttpUtils;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.WebSource;
@@ -145,8 +139,12 @@ public final class PxWebDriver implements Driver {
         private final PxWebClient client;
 
         @Override
-        public void testConnection() throws IOException {
-            client.getConfig();
+        public @NonNull Optional<URI> testConnection() throws IOException {
+            try {
+                return Optional.of(client.ping().toURI());
+            } catch (URISyntaxException e) {
+                throw new IOException(e);
+            }
         }
 
         @Override
@@ -161,15 +159,14 @@ public final class PxWebDriver implements Driver {
         }
 
         @Override
-        public @NonNull Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
+        public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
             checkDatabase(database);
-            return ConnectionSupport.getFlowFromFlows(database, flowRef, this, client);
-        }
-
-        @Override
-        public @NonNull Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
-            checkDatabase(database);
-            return client.getMeta(database.getId(), flowRef.getId());
+            String tableId = Converter.flowRefToTableId(flowRef);
+            return MetaSet
+                    .builder()
+                    .flow(ConnectionSupport.getFlowFromFlows(database, flowRef, this, client))
+                    .structure(client.getMeta(database.getId(), tableId))
+                    .build();
         }
 
         @Override
@@ -181,9 +178,15 @@ public final class PxWebDriver implements Driver {
         @Override
         public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
             checkDatabase(database);
-            Structure dsd = client.getMeta(database.getId(), flowRef.getId());
-            DataCursor dataCursor = client.getData(database.getId(), flowRef.getId(), dsd, query.getKey());
+            String tableId = Converter.flowRefToTableId(flowRef);
+            Structure dsd = client.getMeta(database.getId(), tableId);
+            DataCursor dataCursor = client.getData(database.getId(), tableId, dsd, query.getKey());
             return query.execute(dataCursor.asCloseableStream());
+        }
+
+        @Override
+        public @NonNull Collection<String> getAvailableDimensionCodes(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, @NonNegative int dimensionIndex) throws IOException, IllegalArgumentException {
+            return ConnectionSupport.getAvailableDimensionCodes(this, database, flowRef, constraints, dimensionIndex);
         }
 
         @Override
@@ -203,6 +206,9 @@ public final class PxWebDriver implements Driver {
     }
 
     private interface PxWebClient extends HasMarker {
+
+        @NonNull
+        URL ping() throws IOException;
 
         @NonNull
         Config getConfig() throws IOException;
@@ -244,6 +250,18 @@ public final class PxWebDriver implements Driver {
 
         @lombok.NonNull
         private final HttpClient client;
+
+        @Override
+        public @NonNull URL ping() throws IOException {
+            HttpRequest request = HttpRequest
+                    .builder()
+                    .query(URLQueryBuilder.of(baseURL).param("config").build())
+                    .build();
+
+            try (HttpResponse ignore = client.send(request)) {
+                return request.getQuery();
+            }
+        }
 
         @Override
         public @NonNull Config getConfig() throws IOException {
@@ -322,7 +340,7 @@ public final class PxWebDriver implements Driver {
 
         private TextParser<Structure> getMetaParser(String tableId, MediaType ignore) {
             return TableMeta.JSON_PARSER
-                    .andThen(tableMeta -> tableMeta.toStructure(StructureRef.of(null, tableId, null)));
+                    .andThen(tableMeta -> tableMeta.toStructure(Converter.tableIdToStructureRef(tableId)));
         }
 
         @Override
@@ -401,6 +419,11 @@ public final class PxWebDriver implements Driver {
         @Override
         public @NonNull Marker getMarker() {
             return delegate.getMarker();
+        }
+
+        @Override
+        public @NonNull URL ping() throws IOException {
+            return delegate.ping();
         }
 
         @Override
@@ -506,7 +529,7 @@ public final class PxWebDriver implements Driver {
                     .toBuilder()
                     .clearDimensions()
                     .dimension(MANDATORY_FREQ_AS_FIRST_DIMENSION)
-                    .dimensions(dsd.getDimensionList()
+                    .dimensions(dsd.getDimensions()
                             .stream()
                             .map(dimension -> dimension
                                     .toBuilder()
@@ -535,12 +558,32 @@ public final class PxWebDriver implements Driver {
                 .builder()
                 .id("FREQ")
                 .name("")
-                .position(0)
                 .codelist(Codelist
                         .builder()
                         .ref(CodelistRef.parse("FREQ"))
                         .build())
                 .build();
+    }
+
+    @VisibleForTesting
+    @lombok.experimental.UtilityClass
+    static class Converter {
+
+        static FlowRef tableIdToFlowRef(String id) {
+            return FlowRef.of(null, URIs.encode(id), null);
+        }
+
+        static String flowRefToTableId(FlowRef ref) {
+            return URIs.decode(ref.getId());
+        }
+
+        static StructureRef tableIdToStructureRef(String id) {
+            return StructureRef.of(null, URIs.encode(id), null);
+        }
+
+        static String structureRefToTableId(StructureRef ref) {
+            return URIs.decode(ref.getId());
+        }
     }
 
     @VisibleForTesting
@@ -606,8 +649,8 @@ public final class PxWebDriver implements Driver {
         Flow toDataflow() {
             return Flow
                     .builder()
-                    .ref(FlowRef.of(null, id, null))
-                    .structureRef(StructureRef.of(null, id, null))
+                    .ref(Converter.tableIdToFlowRef(id))
+                    .structureRef(Converter.tableIdToStructureRef(id))
                     .name(title)
                     .build();
         }
@@ -662,9 +705,9 @@ public final class PxWebDriver implements Driver {
         }
 
         List<Dimension> toDimensionList(TableVariable timeVariable) {
-            return CollectionUtil.indexedStreamOf(variables)
-                    .filter(item -> !timeVariable.equals(item.getElement()))
-                    .map(item -> item.getElement().toDimension(item.getIndex() + 1))
+            return variables.stream()
+                    .filter(item -> !timeVariable.equals(item))
+                    .map(item -> item.toDimension())
                     .collect(Collectors.toList());
         }
 
@@ -706,10 +749,9 @@ public final class PxWebDriver implements Driver {
         List<String> valueTexts;
         boolean time;
 
-        Dimension toDimension(int position) {
+        Dimension toDimension() {
             return Dimension
                     .builder()
-                    .position(position)
                     .id(code)
                     .name(text)
                     .codelist(Codelist
@@ -741,7 +783,7 @@ public final class PxWebDriver implements Driver {
         Map<String, Collection<String>> itemFilters;
 
         static TableQuery fromDataStructureAndKey(Structure dsd, Key key) {
-            return new TableQuery(CollectionUtil.indexedStreamOf(dsd.getDimensionList())
+            return new TableQuery(CollectionUtil.indexedStreamOf(dsd.getDimensions())
                     .collect(Collectors.toMap(
                             dimension -> dimension.getElement().getId(),
                             dimension -> fromDimensionAndKey(dimension, key))

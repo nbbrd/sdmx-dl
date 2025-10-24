@@ -46,20 +46,39 @@ public class FlowRefTest {
     @SuppressWarnings({"null", "ConstantConditions"})
     public void testValueOf() {
         assertThat(of(null, "", null))
-                .extracting(FlowRef::getAgency, FlowRef::getId, FlowRef::getVersion, Object::toString)
-                .containsExactly(ALL_AGENCIES, "", LATEST_VERSION, "all,,latest");
+                .returns(ALL_AGENCIES, FlowRef::getAgency)
+                .returns("", FlowRef::getId)
+                .returns(LATEST_VERSION, FlowRef::getVersion)
+                .hasToString("all,,latest")
+                .returns("", FlowRef::toShortString);
 
         assertThat(of("", "hello", null))
-                .extracting(FlowRef::getAgency, FlowRef::getId, FlowRef::getVersion, Object::toString)
-                .containsExactly(ALL_AGENCIES, "hello", LATEST_VERSION, "all,hello,latest");
+                .returns(ALL_AGENCIES, FlowRef::getAgency)
+                .returns("hello", FlowRef::getId)
+                .returns(LATEST_VERSION, FlowRef::getVersion)
+                .hasToString("all,hello,latest")
+                .returns("hello", FlowRef::toShortString);
 
         assertThat(of("world", "hello", null))
-                .extracting(FlowRef::getAgency, FlowRef::getId, FlowRef::getVersion, Object::toString)
-                .containsExactly("world", "hello", LATEST_VERSION, "world,hello,latest");
+                .returns("world", FlowRef::getAgency)
+                .returns("hello", FlowRef::getId)
+                .returns(LATEST_VERSION, FlowRef::getVersion)
+                .hasToString("world,hello,latest")
+                .returns("world,hello,latest", FlowRef::toShortString);
 
         assertThat(of("world", "hello", "123"))
-                .extracting(FlowRef::getAgency, FlowRef::getId, FlowRef::getVersion, Object::toString)
-                .containsExactly("world", "hello", "123", "world,hello,123");
+                .returns("world", FlowRef::getAgency)
+                .returns("hello", FlowRef::getId)
+                .returns("123", FlowRef::getVersion)
+                .hasToString("world,hello,123")
+                .returns("world,hello,123", FlowRef::toShortString);
+
+        assertThat(of(null, "hello", "123"))
+                .returns(ALL_AGENCIES, FlowRef::getAgency)
+                .returns("hello", FlowRef::getId)
+                .returns("123", FlowRef::getVersion)
+                .hasToString("all,hello,123")
+                .returns("all,hello,123", FlowRef::toShortString);
 
         assertThatIllegalArgumentException().isThrownBy(() -> of(null, "world,hello", null));
         assertThatNullPointerException().isThrownBy(() -> of(null, null, null));

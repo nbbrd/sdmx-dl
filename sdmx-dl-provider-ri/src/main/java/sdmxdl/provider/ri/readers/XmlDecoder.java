@@ -19,14 +19,15 @@ package sdmxdl.provider.ri.readers;
 import lombok.NonNull;
 import nbbrd.io.net.MediaType;
 import nbbrd.io.xml.Xml;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.Structure;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.EventListener;
 import sdmxdl.Languages;
+import sdmxdl.Structure;
 import sdmxdl.file.FileSource;
 import sdmxdl.format.xml.*;
 import sdmxdl.provider.file.FileInfo;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -36,7 +37,7 @@ import java.util.List;
 @lombok.AllArgsConstructor
 public final class XmlDecoder implements Decoder {
 
-    private final @Nullable EventListener<? super FileSource> listener;
+    private final @Nullable EventListener listener;
 
     @Override
     public @NonNull FileInfo decode(@NonNull FileSource source, @NonNull Languages langs) throws IOException {
@@ -46,7 +47,7 @@ public final class XmlDecoder implements Decoder {
 
     private MediaType probeDataType(FileSource source) throws IOException {
         if (listener != null) {
-            listener.accept(source, MARKER, "Probing data type from '" + source.getData() + "'");
+            listener.accept(MARKER, "Probing data type from '" + source.getData() + "'");
         }
         return XmlMediaTypeProbe.of()
                 .parseFile(source.getData())
@@ -55,16 +56,16 @@ public final class XmlDecoder implements Decoder {
 
     private Structure loadStructure(FileSource source, Languages langs, MediaType type) throws IOException {
         return XmlFileSource.isValidFile(source.getStructure())
-                ? parseStruct(type, langs, source)
+                ? parseStruct(type, langs, source.getStructure())
                 : decodeStruct(type, source);
     }
 
-    private Structure parseStruct(MediaType dataType, Languages langs, FileSource source) throws IOException {
+    private Structure parseStruct(MediaType dataType, Languages langs, File structure) throws IOException {
         if (listener != null) {
-            listener.accept(source, MARKER, "Parsing structure from '" + source.getStructure() + "' with data type '" + dataType + "'");
+            listener.accept(MARKER, "Parsing structure from '" + structure + "' with data type '" + dataType + "'");
         }
         return getStructParser(dataType, langs)
-                .parseFile(source.getStructure())
+                .parseFile(structure)
                 .stream()
                 .findFirst()
                 .orElseThrow(IOException::new);
@@ -81,7 +82,7 @@ public final class XmlDecoder implements Decoder {
 
     private Structure decodeStruct(MediaType dataType, FileSource source) throws IOException {
         if (listener != null) {
-            listener.accept(source, MARKER, "Decoding structure from '" + source.getData() + "' with data type '" + dataType + "'");
+            listener.accept(MARKER, "Decoding structure from '" + source.getData() + "' with data type '" + dataType + "'");
         }
         return getStructDecoder(dataType)
                 .parseFile(source.getData());

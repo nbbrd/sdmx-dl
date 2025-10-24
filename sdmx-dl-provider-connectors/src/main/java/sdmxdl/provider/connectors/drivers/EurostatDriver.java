@@ -16,15 +16,15 @@
  */
 package sdmxdl.provider.connectors.drivers;
 
-import nbbrd.design.DirectImpl;
 import it.bancaditalia.oss.sdmx.client.custom.EUROSTAT;
+import nbbrd.design.DirectImpl;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.Confidentiality;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestConnector;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 
+import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.provider.connectors.drivers.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
 
 /**
@@ -51,7 +51,7 @@ public final class EurostatDriver implements Driver {
                     .name("de", "Eurostat")
                     .name("fr", "Eurostat")
                     .driver(CONNECTORS_EUROSTAT)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1")
                     .websiteOf("https://ec.europa.eu/eurostat/data/database")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ESTAT")

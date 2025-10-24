@@ -20,7 +20,7 @@ import internal.sdmxdl.NoOpCache;
 import lombok.NonNull;
 import nbbrd.design.NotThreadSafe;
 import nbbrd.design.StaticFactoryMethod;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.HasExpiration;
 
 import java.time.Clock;

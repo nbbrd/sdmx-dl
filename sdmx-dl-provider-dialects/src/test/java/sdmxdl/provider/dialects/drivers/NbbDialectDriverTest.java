@@ -17,14 +17,20 @@
 package sdmxdl.provider.dialects.drivers;
 
 import _tests.RestClientResponseMock;
-import sdmxdl.provider.ri.drivers.RiRestClient;
 import nbbrd.io.http.HttpResponseException;
 import nbbrd.io.net.MediaType;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
 import sdmxdl.*;
+import sdmxdl.format.MemCachingSupport;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.Marker;
+import sdmxdl.provider.ri.drivers.RiRestClient;
+import sdmxdl.provider.ri.networking.RiNetworking;
+import sdmxdl.web.spi.WebContext;
 import tests.sdmxdl.web.spi.DriverAssert;
+import tests.sdmxdl.web.spi.EnableWebQueriesOnSystemProperty;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
@@ -32,9 +38,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static sdmxdl.provider.dialects.drivers.NbbDialectDriver.checkInternalErrorRedirect;
 import static org.assertj.core.api.Assertions.*;
 import static sdmxdl.Detail.FULL;
+import static sdmxdl.provider.dialects.drivers.NbbDialectDriver.checkInternalErrorRedirect;
 
 /**
  * @author Philippe Charles
@@ -113,4 +119,28 @@ public class NbbDialectDriverTest {
     private static void hasSuppressedMessage(Throwable ex, String msg) {
         assertThat(ex.getSuppressed()[0].getMessage()).isEqualTo(msg);
     }
+
+    @ParameterizedTest
+    @CsvFileSource(resources = "NbbDialectDriverTest.csv", useHeadersInDisplayName = true)
+    @EnableWebQueriesOnSystemProperty
+    public void testBuiltinSources(String source, String flow, String key, int minFlowCount, int dimCount, int minSeriesCount, int minObsCount, String details) throws IOException {
+        DriverAssert.assertBuiltinSource(new NbbDialectDriver(), DriverAssert.SourceQuery
+                        .builder()
+                        .source(source)
+                        .keyRequest(KeyRequest.builder().flowOf(flow).keyOf(key).build())
+                        .minFlowCount(minFlowCount)
+                        .dimCount(dimCount)
+                        .minSeriesCount(minSeriesCount)
+                        .minObsCount(minObsCount)
+                        .build(),
+                context
+        );
+    }
+
+    private final WebContext context = WebContext
+            .builder()
+            .caching(MemCachingSupport.builder().id("local").build())
+            .networking(new RiNetworking())
+            .onEvent(source -> DriverAssert.eventOf(source, System.out::println))
+            .build();
 }

@@ -4,7 +4,7 @@ import lombok.NonNull;
 import nbbrd.design.MightBePromoted;
 import nbbrd.io.function.IOUnaryOperator;
 import nbbrd.io.text.Parser;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.time.MonthDay;

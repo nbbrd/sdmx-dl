@@ -22,16 +22,18 @@ import internal.sdmxdl.file.spi.ReaderLoader;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.*;
 import sdmxdl.ext.Persistence;
 import sdmxdl.file.spi.FileCaching;
 import sdmxdl.file.spi.FileContext;
 import sdmxdl.file.spi.Reader;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * @author Philippe Charles
@@ -60,10 +62,10 @@ public class SdmxFileManager extends SdmxManager<FileSource> {
     FileCaching caching = FileCaching.noOp();
 
     @Nullable
-    EventListener<? super FileSource> onEvent;
+    Function<? super FileSource, EventListener> onEvent;
 
     @Nullable
-    ErrorListener<? super FileSource> onError;
+    Function<? super FileSource, ErrorListener> onError;
 
     @lombok.Singular
     @NonNull
@@ -83,6 +85,10 @@ public class SdmxFileManager extends SdmxManager<FileSource> {
                 .orElseThrow(() -> new IOException("cannot find reader for source '" + source + "'"));
 
         return reader.read(source, languages, getContext());
+    }
+
+    public @NonNull Provider<FileSource> usingFile(@NonNull File data) throws IOException {
+        return using(new FileSource(data, null));
     }
 
     private FileContext initLazyContext() {

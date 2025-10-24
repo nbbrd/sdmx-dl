@@ -29,20 +29,7 @@
         "period_in_seconds": 10,
         "max_values_to_download" : 120000
               },
-  
-    "pxwebapi2.stat.fi": {
-        "description" : "Statistics Finland (old version)",
-        "citation" : {
-          "organization" : "Statistics Finland",
-          "address" : "Helsinki, Finland"},
-        "url" : "https://pxwebapi2.stat.fi/PXWeb/api/[version]/[lang]",
-        "version": ["v1"], 
-        "lang": ["fi"],
-        "calls_per_period": 1000,
-        "period_in_seconds": 10,
-        "max_values_to_download" : 110000
-              },
-      
+
     "statistik.sjv.se": {
         "alias" : ["jordbruksverket"],
         "description" : "The Swedish Agricultural Agency",
@@ -105,7 +92,7 @@
         "citation" : {
           "organization" : "Natural Resources Institute Finland",
           "address" : "Helsinki, Finland"},
-        "url" : "http://statdb.luke.fi/PXWeb/api/[version]/[lang]",
+        "url" : "https://statdb.luke.fi/PXWeb/api/[version]/[lang]",
         "version": ["v1"], 
         "lang": ["en","fi","sv"],
         "calls_per_period": 10,
@@ -245,7 +232,7 @@
       "citation" : {
           "organization" : "State Statistical Office of the Republic of Macedonia",
           "address" : "Skopje, Macedonia"},
-      "url" : "https://makstat.stat.gov.mk/PXWeb/api/[version]/[lang]/MakStat/",
+      "url" : "https://makstat.stat.gov.mk/PXWeb/api/[version]/[lang]",
       "version": ["v1"], 
       "lang": ["en", "mk"],
       "calls_per_period": 30,
@@ -301,7 +288,7 @@
       "citation" : {
           "organization" : "Kosovo Agency of Statistics",
           "address" : "Pristina, Kosovo"},
-      "url" : "https://askdata.rks-gov.net/PXWeb/api/[version]/[lang]/",
+      "url" : "https://askdata.rks-gov.net/api/[version]/[lang]/",
       "version": ["v1"], 
       "lang": ["en"],
       "calls_per_period": 10,
@@ -356,7 +343,7 @@
         "citation" : {
           "organization" : "Business Finland / Statistics Finland",
           "address" : "Helsinki, Finland"},
-        "url" : "http://visitfinland.stat.fi/PXWeb/api/[version]/[lang]/VisitFinland",
+        "url" : "https://visitfinland.stat.fi/PXWeb/api/[version]/[lang]",
         "version": ["v1"], 
         "lang": ["fi"],
         "calls_per_period": 20,
@@ -383,7 +370,7 @@
         "citation" : {
           "organization" : "Statistics Estonia",
           "address" : "Tallinn, Estonia"},
-        "url" : "https://andmed.stat.ee/api/[version]/[lang]/stat",
+        "url" : "https://andmed.stat.ee/api/[version]/[lang]",
         "version": ["v1"], 
         "lang": ["en", "et"],
         "calls_per_period": 1000,
@@ -410,7 +397,7 @@
           "organization" : "Statistical Office of the Republic of Slovenia",
           "address" : "Ljubljana, Slovenia"
           },
-        "url" : "https://pxweb.stat.si/SiStatData/api/[version]/[lang]/Data",
+        "url" : "https://pxweb.stat.si/SiStatData/api/[version]/[lang]",
         "version": ["v1"],
         "lang": ["sl"],
         "calls_per_period": 100,

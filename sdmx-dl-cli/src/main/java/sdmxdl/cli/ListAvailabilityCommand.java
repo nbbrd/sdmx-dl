@@ -23,13 +23,12 @@ import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import nbbrd.picocsv.Csv;
 import picocli.CommandLine;
 import sdmxdl.Connection;
-import sdmxdl.ext.SdmxCubeUtil;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.concurrent.Callable;
-import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
@@ -66,12 +65,11 @@ public final class ListAvailabilityCommand implements Callable<Void> {
 
     private void writeBody(Csv.Writer w) throws IOException {
         try (Connection conn = web.loadManager().getConnection(web.getSource(), web.getLangs())) {
-            try (Stream<String> children = SdmxCubeUtil.getChildren(conn, web.getDatabase(), web.getFlow(), web.getKey(), dimensionIndex)) {
-                Iterator<String> iterator = sort.applySort(children, Comparator.naturalOrder()).iterator();
-                while (iterator.hasNext()) {
-                    w.writeField(iterator.next());
-                    w.writeEndOfLine();
-                }
+            Collection<String> children = conn.getAvailableDimensionCodes(web.getDatabase(), web.getFlow(), web.getKey(), dimensionIndex);
+            Iterator<String> iterator = sort.applySort(children, Comparator.naturalOrder()).iterator();
+            while (iterator.hasNext()) {
+                w.writeField(iterator.next());
+                w.writeEndOfLine();
             }
         }
     }

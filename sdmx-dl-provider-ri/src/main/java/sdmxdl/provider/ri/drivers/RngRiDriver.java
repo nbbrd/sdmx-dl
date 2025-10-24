@@ -2,6 +2,7 @@ package sdmxdl.provider.ri.drivers;
 
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
+import nbbrd.design.NonNegative;
 import nbbrd.design.RepresentableAs;
 import nbbrd.design.StaticFactoryMethod;
 import nbbrd.io.text.BooleanProperty;
@@ -25,16 +26,14 @@ import java.time.Month;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
+import static sdmxdl.Confidentiality.PUBLIC;
 
 @DirectImpl
 @ServiceProvider
@@ -58,7 +57,7 @@ public final class RngRiDriver implements Driver {
                     .id("RNG")
                     .name("en", "Random number generator")
                     .driver(RI_RNG)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("rng:3:4:0:2010-01-01")
                     .build())
             .build();
@@ -114,7 +113,8 @@ public final class RngRiDriver implements Driver {
         private final RngDriverId config;
 
         @Override
-        public void testConnection() {
+        public @NonNull Optional<URI> testConnection() {
+            return Optional.empty();
         }
 
         @Override
@@ -128,21 +128,15 @@ public final class RngRiDriver implements Driver {
         }
 
         @Override
-        public @NonNull Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException {
-            return ConnectionSupport.getFlowFromFlows(database, flowRef, this, this);
-        }
-
-        @Override
-        public @NonNull Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException {
-            Flow flow = getFlow(database, flowRef);
-            return Structure
+        public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
+            Flow flow = ConnectionSupport.getFlowFromFlows(database, flowRef, this, this);
+            Structure dsd = Structure
                     .builder()
                     .ref(flow.getStructureRef())
                     .dimension(Dimension
                             .builder()
                             .id(FREQ)
                             .name("Frequency")
-                            .position(1)
                             .codelist(Codelist
                                     .builder()
                                     .ref(CodelistRef.parse("CL_FREQ"))
@@ -153,7 +147,6 @@ public final class RngRiDriver implements Driver {
                             .builder()
                             .id(INDEX)
                             .name("Index")
-                            .position(2)
                             .codelist(Codelist
                                     .builder()
                                     .ref(CodelistRef.parse("CL_INDEX"))
@@ -167,6 +160,11 @@ public final class RngRiDriver implements Driver {
                     .primaryMeasureId("OBS_VALUE")
                     .name("RNG")
                     .build();
+            return MetaSet
+                    .builder()
+                    .flow(flow)
+                    .structure(dsd)
+                    .build();
         }
 
         @Override
@@ -177,6 +175,11 @@ public final class RngRiDriver implements Driver {
         @Override
         public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) {
             return Freq.stream().flatMap(freq -> newSeriesStream(freq, query));
+        }
+
+        @Override
+        public @NonNull Collection<String> getAvailableDimensionCodes(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, @NonNegative int dimensionIndex) throws IOException, IllegalArgumentException {
+            return ConnectionSupport.getAvailableDimensionCodes(this, database, flowRef, constraints, dimensionIndex);
         }
 
         private Stream<Series> newSeriesStream(Freq freq, Query query) {

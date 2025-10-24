@@ -16,23 +16,21 @@ import j2html.tags.DomContent;
 import lombok.Getter;
 import nbbrd.io.text.Formatter;
 import nbbrd.io.text.Parser;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jfree.data.time.*;
 import org.jfree.data.xy.IntervalXYDataset;
-import sdmxdl.Attribute;
-import sdmxdl.AttributeRelationship;
-import sdmxdl.Obs;
-import sdmxdl.Structure;
+import org.jspecify.annotations.Nullable;
+import sdmxdl.*;
 import sdmxdl.desktop.SingleSeries;
 import sdmxdl.provider.ext.SeriesMeta;
 
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.sql.Timestamp;
 import java.text.*;
-import java.time.temporal.TemporalAmount;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -109,6 +107,7 @@ public final class DataPanel extends JComponent {
             grid.setCornerRenderer(JTables.cellRendererOf((label, value) -> {
                 label.setText(model.getDuration() != null ? html(small(labelTag(model.getDuration().toString(), model.getAccentColor()))).render() : null);
                 label.setHorizontalAlignment(JLabel.CENTER);
+                label.setToolTipText(model.getDuration() + " #" + model.getSeries().getObs().size());
             }));
             chart.setDataset(asChartModel(model));
             chart.setTitle(model.getMeta().getName());
@@ -162,7 +161,11 @@ public final class DataPanel extends JComponent {
         result.setXPosition(TimePeriodAnchor.MIDDLE);
         TimeSeries ts = new TimeSeries(item.getSeries().getKey().toString());
         for (Obs obs : item.getSeries().getObs()) {
-            ts.add(new TimeSeriesDataItem(new FixedMillisecond(Timestamp.valueOf(obs.getPeriod().getStart())), obs.getValue()));
+            RegularTimePeriod newPeriod = new Millisecond(Timestamp.valueOf(obs.getPeriod().getStart()));
+            TimeSeriesDataItem oldValue = ts.addOrUpdate(new TimeSeriesDataItem(newPeriod, obs.getValue()));
+            if (oldValue != null) {
+                System.err.println("Duplicate period: " + obs.getPeriod());
+            }
         }
         result.addSeries(ts);
         return result;
@@ -206,27 +209,35 @@ public final class DataPanel extends JComponent {
     }
 
     private static DateFormat getDateFormat(SeriesMeta meta) {
-        TemporalAmount timeUnit = meta.getTimeUnit();
+        Locale locale = Locale.getDefault(Locale.Category.DISPLAY);
+        Duration timeUnit = meta.getTimeUnit();
         if (timeUnit != null) {
-            switch (timeUnit.toString()) {
-                case "P1D":
-                    return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault(Locale.Category.DISPLAY));
-                case "P1M":
-                    return new SimpleDateFormat("yyyy-MM", Locale.getDefault(Locale.Category.DISPLAY));
-                case "P1Y":
-                    return new SimpleDateFormat("yyyy", Locale.getDefault(Locale.Category.DISPLAY));
+            switch (timeUnit.getMinChronoUnit()) {
+                case SECONDS:
+                    return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", locale);
+                case MINUTES:
+                    return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm", locale);
+                case HOURS:
+                    return new SimpleDateFormat("yyyy-MM-dd'T'HH", locale);
+                case DAYS:
+                    return new SimpleDateFormat("yyyy-MM-dd", locale);
+                case MONTHS:
+                    return new SimpleDateFormat("yyyy-MM", locale);
+                case YEARS:
+                    return new SimpleDateFormat("yyyy", locale);
             }
         }
-        return SimpleDateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.getDefault(Locale.Category.DISPLAY));
+        return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", locale);
     }
 
     private static NumberFormat getNumberFormat(SeriesMeta meta) {
+        Locale locale = Locale.getDefault(Locale.Category.DISPLAY);
         return Parser.onInteger()
                 .parseValue(meta.getDecimals())
                 .map(DataPanel::getValuePattern)
-                .map(pattern -> new DecimalFormat(pattern, DecimalFormatSymbols.getInstance(Locale.getDefault(Locale.Category.DISPLAY))))
+                .map(pattern -> new DecimalFormat(pattern, DecimalFormatSymbols.getInstance(locale)))
                 .map(NumberFormat.class::cast)
-                .orElseGet(() -> NumberFormat.getInstance(Locale.getDefault(Locale.Category.DISPLAY)));
+                .orElseGet(() -> NumberFormat.getInstance(locale));
     }
 
     private static String getValuePattern(int decimals) {

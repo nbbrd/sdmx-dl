@@ -17,7 +17,7 @@
 package sdmxdl.file;
 
 import lombok.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.FlowRef;
 import sdmxdl.Source;
 

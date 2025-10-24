@@ -224,7 +224,7 @@ public class Duration implements TemporalAmount {
      */
     int weeks;
 
-    @lombok.Getter(value = AccessLevel.PACKAGE, lazy = true)
+    @lombok.Getter(lazy = true)
     ChronoUnit minChronoUnit = initMinChronoUnit();
 
     @Override

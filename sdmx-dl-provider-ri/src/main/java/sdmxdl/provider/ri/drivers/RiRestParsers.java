@@ -19,10 +19,6 @@ public interface RiRestParsers {
 
     @NonNull FileParser<List<Flow>> getFlowsParser(@NonNull MediaType mediaType, @NonNull Languages langs);
 
-    @NonNull List<MediaType> getFlowTypes();
-
-    @NonNull FileParser<Optional<Flow>> getFlowParser(@NonNull MediaType mediaType, @NonNull Languages langs, @NonNull FlowRef ref);
-
     @NonNull List<MediaType> getStructureTypes();
 
     @NonNull FileParser<Optional<Structure>> getStructureParser(@NonNull MediaType mediaType, @NonNull Languages langs, @NonNull StructureRef ref);

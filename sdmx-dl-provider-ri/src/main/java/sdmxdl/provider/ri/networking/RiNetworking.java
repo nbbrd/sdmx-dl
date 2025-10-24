@@ -7,7 +7,7 @@ import nbbrd.io.text.Formatter;
 import nbbrd.io.text.Parser;
 import nbbrd.io.text.Property;
 import nbbrd.service.ServiceProvider;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.format.design.PropertyDefinition;
@@ -19,6 +19,7 @@ import sdmxdl.web.spi.Networking;
 import java.util.Collection;
 import java.util.function.Function;
 
+import static java.util.Collections.emptyMap;
 import static nbbrd.io.text.BaseProperty.keysOf;
 
 @DirectImpl
@@ -70,13 +71,22 @@ public final class RiNetworking implements Networking {
         );
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    @Override
+    public void warmupNetwork() {
+        RiNetwork network = getNetwork(key -> PropertiesSupport.getProperty(emptyMap(), key));
+        network.getSSLFactory().getLazyDelegate();
+        network.getProxySelector();
+        network.getURLConnectionFactory();
+    }
+
     @Override
     public @NonNull Network getNetwork(
             @NonNull WebSource source,
-            @Nullable EventListener<? super WebSource> onEvent,
-            @Nullable ErrorListener<? super WebSource> onError) {
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError) {
         RiNetwork result = getNetwork(PropertiesSupport.asFunction(source));
-        if (onEvent != null) onEvent.accept(source, getNetworkingId(), "Using " + result);
+        if (onEvent != null) onEvent.accept(getNetworkingId(), "Using " + result);
         return result;
     }
 

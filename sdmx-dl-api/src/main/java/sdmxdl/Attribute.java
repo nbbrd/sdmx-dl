@@ -16,7 +16,7 @@
  */
 package sdmxdl;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Statistical concept providing qualitative information about a specific statistical object.

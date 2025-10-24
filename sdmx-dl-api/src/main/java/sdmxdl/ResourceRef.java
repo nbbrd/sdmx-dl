@@ -19,7 +19,7 @@ package sdmxdl;
 import internal.sdmxdl.Chars;
 import lombok.NonNull;
 import nbbrd.design.SealedType;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Abstract identifier of a resource.
@@ -58,6 +58,11 @@ public abstract class ResourceRef<T extends ResourceRef<T>> {
 
     public boolean equalsRef(@NonNull Resource<T> that) {
         return equals(that.getRef());
+    }
+
+    public @NonNull String toShortString() {
+        return ALL_AGENCIES.equals(getAgency()) && LATEST_VERSION.equals(getVersion())
+                ? getId() : toString();
     }
 
     @NonNull

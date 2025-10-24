@@ -6,7 +6,7 @@ module sdmxdl.provider.connectors {
     requires static lombok;
     requires static nbbrd.design;
     requires static nbbrd.service;
-    requires static org.checkerframework.checker.qual;
+    requires static org.jspecify;
 
     requires sdmxdl.format.xml;
     requires sdmxdl.provider.base;
@@ -23,6 +23,5 @@ module sdmxdl.provider.connectors {
             OecdDriver,
             Sdmx20Driver,
             Sdmx21Driver,
-            SeDriver,
             UisDriver;
 }

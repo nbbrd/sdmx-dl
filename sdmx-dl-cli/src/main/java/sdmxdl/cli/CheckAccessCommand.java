@@ -22,17 +22,19 @@ import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import lombok.AccessLevel;
 import lombok.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import picocli.CommandLine;
 import sdmxdl.Connection;
 import sdmxdl.Languages;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
+import java.net.URI;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
@@ -63,6 +65,7 @@ public final class CheckAccessCommand implements Callable<Void> {
                 .builderOf(Access.class)
                 .columnOf("Source", Access::getSource)
                 .columnOf("Accessible", Access::isAccessible, o -> Boolean.TRUE.equals(o) ? "YES" : "NO")
+                .columnOf("URI", Access::getUri, Objects::toString)
                 .columnOf("DurationInMillis", Access::getDuration, CheckAccessCommand::formatDuration)
                 .columnOf("ErrorMessage", Access::getCause)
                 .build();
@@ -70,6 +73,7 @@ public final class CheckAccessCommand implements Callable<Void> {
 
     private Stream<Access> getRows() throws IOException {
         SdmxWebManager manager = web.loadManager();
+        web.warmup(manager);
         Stream<String> sources = web.isAllSources() ? WebSourcesOptions.getAllSourceNames(manager) : web.getSources().stream();
         return sort.applySort(web.applyParallel(sources).map(sourceName -> Access.of(manager, web.getLangs(), sourceName)), BY_SOURCE);
     }
@@ -88,23 +92,25 @@ public final class CheckAccessCommand implements Callable<Void> {
             try (Connection conn = manager.getConnection(source, languages)) {
                 Clock clock = Clock.systemDefaultZone();
                 Instant start = clock.instant();
-                conn.testConnection();
-                return success(source, Duration.between(start, clock.instant()));
+                return success(source, conn.testConnection().orElse(null), Duration.between(start, clock.instant()));
             } catch (IOException ex) {
                 return failure(source, ex);
             }
         }
 
-        static @NonNull Access success(@NonNull String source, @NonNull Duration duration) {
-            return new Access(source, duration, null);
+        static @NonNull Access success(@NonNull String source, @Nullable URI uri, @NonNull Duration duration) {
+            return new Access(source, uri, duration, null);
         }
 
         static @NonNull Access failure(@NonNull String source, @NonNull IOException cause) {
-            return new Access(source, null, cause.getMessage());
+            return new Access(source, null, null, cause.getMessage());
         }
 
         @lombok.NonNull
         String source;
+
+        @Nullable
+        URI uri;
 
         @Nullable
         Duration duration;

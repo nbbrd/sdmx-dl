@@ -1,16 +1,22 @@
 package sdmxdl.desktop.panels;
 
+import ec.util.various.swing.JCommand;
 import internal.sdmxdl.desktop.util.*;
 import j2html.tags.DomContent;
 import j2html.tags.Text;
+import nbbrd.io.picocsv.Picocsv;
 import sdmxdl.DataRepository;
 import sdmxdl.Dimension;
+import sdmxdl.MetaSet;
 import sdmxdl.desktop.*;
 import sdmxdl.web.WebSource;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
@@ -23,9 +29,9 @@ public enum DataSetRefRenderer implements Renderer<DataSetRef> {
 
     @Override
     public String toText(DataSetRef value, Runnable onUpdate) {
-        FlowStruct flowStruct = Sdmxdl.INSTANCE.getFlowStructSupport().getOrNull(value.getDataSourceRef(), onUpdate);
-        return flowStruct != null
-                ? getDimension(value, flowStruct).getCodelist().getCodes().get(value.getKey().get(value.getDimensionIndex()))
+        MetaSet metaSet = Sdmxdl.INSTANCE.getMetaSetAsyncSupport().getOrNull(value.getDataSourceRef(), onUpdate);
+        return metaSet != null
+                ? getDimension(value, metaSet).getCodelist().getCodes().get(value.getKey().get(value.getDimensionIndex()))
                 : getKeyText(value);
     }
 
@@ -37,11 +43,11 @@ public enum DataSetRefRenderer implements Renderer<DataSetRef> {
 
     @Override
     public String toTooltip(DataSetRef value, Runnable onUpdate) {
-        FlowStruct flowStruct = Sdmxdl.INSTANCE.getFlowStructSupport().getOrNull(value.getDataSourceRef(), onUpdate);
+        MetaSet metaSet = Sdmxdl.INSTANCE.getMetaSetAsyncSupport().getOrNull(value.getDataSourceRef(), onUpdate);
         return html(
                 table(
                         tr(th("Key:").withStyle("text-align:right"), td(getKeyText(value))),
-                        tr(th("Dimension:").withStyle("text-align:right"), td(htmlDimension(value, flowStruct)))
+                        tr(th("Dimension:").withStyle("text-align:right"), td(htmlDimension(value, metaSet)))
                 )
         ).render();
     }
@@ -73,7 +79,13 @@ public enum DataSetRefRenderer implements Renderer<DataSetRef> {
                 .build());
 
         result.addToolBarItem(new ButtonBuilder()
-                .action(NoOpCommand.INSTANCE.toAction(result))
+                .action(JCommand.<JDocument<DataSetRef>>of(x -> {
+                            SingleSeries singleSeries = (SingleSeries) x.getClientProperty("singleSeries");
+                            String csv = getCsvTestingLine(singleSeries);
+                            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(csv), null);
+                        })
+                        .toAction(result)
+                        .withWeakPropertyChangeListener(result, JDocument.MODEL_PROPERTY))
                 .ikon(MDI_EXPORT)
                 .toolTipText("Export")
                 .build());
@@ -107,6 +119,7 @@ public enum DataSetRefRenderer implements Renderer<DataSetRef> {
                     JValueAsText<DataRepository> dsdTextArea = new JValueAsText<>();
                     dsdTextArea.setModel(DataRepository.builder().structure(singleSeries.getDsd()).build());
                     result.addComponent("DSD", dsdTextArea);
+                    result.putClientProperty("singleSeries", singleSeries);
                 } catch (InterruptedException | ExecutionException ex) {
                     ExceptionPanel exceptionPanel = new ExceptionPanel();
                     exceptionPanel.setException(ex.getCause());
@@ -139,17 +152,17 @@ public enum DataSetRefRenderer implements Renderer<DataSetRef> {
         return source.getWebsite();
     }
 
-    private static Dimension getDimension(DataSetRef ref, FlowStruct fs) {
-        return fs.getStructure().getDimensionList().get(ref.getDimensionIndex());
+    private static Dimension getDimension(DataSetRef ref, MetaSet metaSet) {
+        return metaSet.getStructure().getDimensions().get(ref.getDimensionIndex());
     }
 
     private static String getKeyText(DataSetRef ref) {
         return ref.getKey().toString();
     }
 
-    private static DomContent htmlDimension(DataSetRef ref, FlowStruct fs) {
-        return fs != null
-                ? htmlDimension(getDimension(ref, fs))
+    private static DomContent htmlDimension(DataSetRef ref, MetaSet metaSet) {
+        return metaSet != null
+                ? htmlDimension(getDimension(ref, metaSet))
                 : htmlDimension(ref);
     }
 
@@ -159,5 +172,22 @@ public enum DataSetRefRenderer implements Renderer<DataSetRef> {
 
     private static Text htmlDimension(DataSetRef ref) {
         return text(String.valueOf(ref.getDimensionIndex()));
+    }
+
+    private static String getCsvTestingLine(SingleSeries series) {
+        try {
+            return Picocsv.Formatter.<SingleSeries>of((value, writer) -> {
+                writer.writeField(value.getRef().getDataSourceRef().getSource());
+                writer.writeField(value.getRef().getDataSourceRef().getFlow());
+                writer.writeField(value.getRef().getKey().toString());
+                writer.writeField(String.valueOf(value.getFlows().size()));
+                writer.writeField(String.valueOf(value.getDsd().getDimensions().size()));
+                writer.writeField("1");
+                writer.writeField(String.valueOf(value.getSeries().getObs().size()));
+                writer.writeField("");
+            }).formatToString(series);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

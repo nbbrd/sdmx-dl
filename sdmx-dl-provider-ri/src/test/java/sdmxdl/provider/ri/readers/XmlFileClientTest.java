@@ -22,19 +22,23 @@ import sdmxdl.*;
 import sdmxdl.file.FileSource;
 import sdmxdl.format.xml.XmlMediaTypes;
 import sdmxdl.provider.DataRef;
-import sdmxdl.provider.file.FileConnection;
 import sdmxdl.provider.file.FileClient;
+import sdmxdl.provider.file.FileConnection;
 import sdmxdl.provider.file.FileInfo;
 import tests.sdmxdl.api.ConnectionAssert;
 import tests.sdmxdl.api.RepoSamples;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIOException;
 import static sdmxdl.Languages.ANY;
 
 /**
@@ -67,13 +71,13 @@ public class XmlFileClientTest {
                                 .hasSize(57)
                                 .element(0)
                                 .satisfies(obs -> {
-                                    assertThat(obs.getPeriod()).hasToString("1960-01-01T00:00/P1Y");
+                                    assertThat(obs.getPeriod()).hasToString("1960-01-01T00:00:00/P1Y");
                                     assertThat(obs.getValue()).isEqualTo(92.0142);
                                 });
                         assertThat(series.getObs())
                                 .element(56)
                                 .satisfies(obs -> {
-                                    assertThat(obs.getPeriod()).hasToString("2016-01-01T00:00/P1Y");
+                                    assertThat(obs.getPeriod()).hasToString("2016-01-01T00:00:00/P1Y");
                                     assertThat(obs.getValue()).isEqualTo(386.5655);
                                 });
                     });
@@ -89,6 +93,28 @@ public class XmlFileClientTest {
                         .invalidKey(Key.of("zzz"))
                         .build()
         );
+    }
+
+    @Test
+    public void testTestClient(@TempDir Path temp) throws IOException {
+        File compact21 = temp.resolve("compact21").toFile();
+        SdmxXmlSources.OTHER_COMPACT21.copyTo(compact21);
+
+        assertThat(clientOf(compact21).testClient())
+                .hasValue(compact21.toURI())
+                .map(URI::toString)
+                .hasValue(temp.resolve("compact21").toUri().toString());
+
+        File missing = Files.createTempFile("missing", ".xml").toFile();
+        assertThat(missing.delete()).isTrue();
+
+        assertThatIOException()
+                .isThrownBy(() -> clientOf(missing).testClient())
+                .isInstanceOf(FileNotFoundException.class);
+    }
+
+    private static XmlFileClient clientOf(File file) {
+        return new XmlFileClient(sourceOf(file), Languages.ANY, DECODER, null, null);
     }
 
     public static FileSource sourceOf(File compact21) {

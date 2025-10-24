@@ -19,6 +19,7 @@ package sdmxdl;
 import lombok.NonNull;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collector;
@@ -34,7 +35,7 @@ import static java.util.stream.Collectors.toList;
 @lombok.Value
 @lombok.Builder(toBuilder = true)
 @lombok.EqualsAndHashCode(callSuper = false)
-public class DataSet extends Resource<FlowRef> {
+public class DataSet extends Resource<FlowRef> implements Iterable<Series> {
 
     @lombok.NonNull
     FlowRef ref;
@@ -46,6 +47,15 @@ public class DataSet extends Resource<FlowRef> {
     @lombok.NonNull
     @lombok.Singular("series")
     Collection<Series> data;
+
+    @Override
+    public @NonNull Iterator<Series> iterator() {
+        return data.iterator();
+    }
+
+    public @NonNull Stream<Series> stream() {
+        return data.stream();
+    }
 
     public @NonNull DataSet getData(@NonNull Query query) {
         return query.equals(Query.ALL) ? this : query.execute(data.stream()).collect(toDataSet(ref, query));

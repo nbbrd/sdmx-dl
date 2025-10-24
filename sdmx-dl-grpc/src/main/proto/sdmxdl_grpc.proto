@@ -8,50 +8,63 @@ import "sdmxdl_web.proto";
 
 service SdmxWebManager {
 
-  rpc GetAbout(Empty) returns (sdmxdl.format.protobuf.About);
+  rpc GetAbout(EmptyDto) returns (sdmxdl.format.protobuf.AboutDto);
 
-  rpc GetSources(Empty) returns (stream sdmxdl.format.protobuf.web.WebSource);
+  rpc GetSources(EmptyDto) returns (stream sdmxdl.format.protobuf.web.WebSourceDto);
 
-  rpc GetMonitorReport(SourceRequest) returns (sdmxdl.format.protobuf.web.MonitorReport);
+  rpc GetMonitorReport(SourceRequestDto) returns (sdmxdl.format.protobuf.web.MonitorReportDto);
 
-  rpc GetDatabases(SourceRequest) returns (stream sdmxdl.format.protobuf.Database);
+  rpc GetDatabases(SourceRequestDto) returns (stream sdmxdl.format.protobuf.DatabaseDto);
 
-  rpc GetFlows(DatabaseRequest) returns (stream sdmxdl.format.protobuf.Flow);
+  rpc GetFlows(DatabaseRequestDto) returns (stream sdmxdl.format.protobuf.FlowDto);
 
-  rpc GetFlow(FlowRequest) returns (sdmxdl.format.protobuf.Flow);
+  rpc GetMeta(FlowRequestDto) returns (sdmxdl.format.protobuf.MetaSetDto);
 
-  rpc GetStructure(FlowRequest) returns (sdmxdl.format.protobuf.Structure);
+  rpc GetData(KeyRequestDto) returns (sdmxdl.format.protobuf.DataSetDto);
 
-  rpc GetData(KeyRequest) returns (sdmxdl.format.protobuf.DataSet);
+  rpc GetDataStream(KeyRequestDto) returns (stream sdmxdl.format.protobuf.SeriesDto);
 
-  rpc GetDataStream(KeyRequest) returns (stream sdmxdl.format.protobuf.Series);
+  rpc GetAvailability(KeyDimensionRequestDto) returns (stream DimensionCodesDto);
 }
 
-message Empty {
+message EmptyDto {
 }
 
-message SourceRequest {
+message SourceRequestDto {
   string source = 1;
   optional string languages = 2;
 }
 
-message DatabaseRequest {
+message DatabaseRequestDto {
   string source = 1;
   optional string database = 2;
   optional string languages = 3;
 }
 
-message FlowRequest {
+message FlowRequestDto {
   string source = 1;
   string flow = 2;
   optional string database = 3;
   optional string languages = 4;
 }
 
-message KeyRequest {
+message KeyRequestDto {
   string source = 1;
   string flow = 2;
   string key = 3;
   optional string database = 4;
   optional string languages = 5;
+}
+
+message KeyDimensionRequestDto {
+  string source = 1;
+  string flow = 2;
+  string key = 3;
+  int32 dimension = 4;
+  optional string database = 5;
+  optional string languages = 6;
+}
+
+message DimensionCodesDto {
+  repeated string codes = 1;
 }

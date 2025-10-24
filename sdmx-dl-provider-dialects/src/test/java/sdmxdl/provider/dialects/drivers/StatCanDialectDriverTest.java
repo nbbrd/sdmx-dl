@@ -1,16 +1,20 @@
 package sdmxdl.provider.dialects.drivers;
 
-import nbbrd.design.MightBePromoted;
 import nbbrd.io.Resource;
 import nbbrd.io.text.TextParser;
 import org.assertj.core.api.Assertions;
-import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
 import sdmxdl.*;
+import sdmxdl.format.MemCachingSupport;
+import sdmxdl.provider.ri.networking.RiNetworking;
 import sdmxdl.web.WebSource;
+import sdmxdl.web.spi.WebContext;
 import tests.sdmxdl.web.spi.DriverAssert;
+import tests.sdmxdl.web.spi.EnableWebQueriesOnSystemProperty;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +22,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +29,8 @@ import static org.assertj.core.api.Assertions.*;
 import static sdmxdl.DatabaseRef.NO_DATABASE;
 import static sdmxdl.Languages.ANY;
 import static sdmxdl.provider.dialects.drivers.StatCanDialectDriver.Converter.*;
+import static tests.sdmxdl.api.SdmxConditions.uniqueObs;
+import static tests.sdmxdl.api.SdmxConditions.uniqueSeriesKeys;
 
 public class StatCanDialectDriverTest {
 
@@ -43,11 +48,7 @@ public class StatCanDialectDriverTest {
             String msg = "Expecting DataflowRef id 'F_10100001' to match pattern 'DF_\\d+'";
 
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> connection.getFlow(NO_DATABASE, badFlowRef))
-                    .withMessageContaining(msg);
-
-            assertThatIllegalArgumentException()
-                    .isThrownBy(() -> connection.getStructure(NO_DATABASE, badFlowRef))
+                    .isThrownBy(() -> connection.getMeta(NO_DATABASE, badFlowRef))
                     .withMessageContaining(msg);
 
             assertThatIllegalArgumentException()
@@ -182,7 +183,7 @@ public class StatCanDialectDriverTest {
             }
 
             assertThat(toSdmxRepository(x, 34100158, ANY).getDataSets().get(0).getData())
-                    .has(uniqueKeys())
+                    .has(uniqueSeriesKeys())
                     .have(uniqueObs())
                     .filteredOn(Series::getKey, Key.parse("1"))
                     .singleElement()
@@ -199,6 +200,30 @@ public class StatCanDialectDriverTest {
         }
     }
 
+    @ParameterizedTest
+    @CsvFileSource(resources = "StatCanDialectDriverTest.csv", useHeadersInDisplayName = true)
+    @EnableWebQueriesOnSystemProperty
+    public void testBuiltinSources(String source, String flow, String key, int minFlowCount, int dimCount, int minSeriesCount, int minObsCount, String details) throws IOException {
+        DriverAssert.assertBuiltinSource(new StatCanDialectDriver(), DriverAssert.SourceQuery
+                        .builder()
+                        .source(source)
+                        .keyRequest(KeyRequest.builder().flowOf(flow).keyOf(key).build())
+                        .minFlowCount(minFlowCount)
+                        .dimCount(dimCount)
+                        .minSeriesCount(minSeriesCount)
+                        .minObsCount(minObsCount)
+                        .build(),
+                context
+        );
+    }
+
+    private final WebContext context = WebContext
+            .builder()
+            .caching(MemCachingSupport.builder().id("local").build())
+            .networking(new RiNetworking())
+            .onEvent(source -> DriverAssert.eventOf(source, System.out::println))
+            .build();
+
     private static TimeInterval periodOf(String localDate, String duration) {
         return TimeInterval.of(LocalDate.parse(localDate).atStartOfDay(), Duration.parse(duration));
     }
@@ -209,16 +234,6 @@ public class StatCanDialectDriverTest {
                 .period(periodOf(localDate, duration))
                 .value(value)
                 .build();
-    }
-
-    @MightBePromoted
-    private static Condition<Collection<? extends Series>> uniqueKeys() {
-        return new Condition<>(o -> o.stream().map(Series::getKey).distinct().count() == o.size(), "unique keys");
-    }
-
-    @MightBePromoted
-    private static Condition<Series> uniqueObs() {
-        return new Condition<>(o -> o.getObs().stream().map(Obs::getPeriod).distinct().count() == o.getObs().size(), "unique obs");
     }
 }
 

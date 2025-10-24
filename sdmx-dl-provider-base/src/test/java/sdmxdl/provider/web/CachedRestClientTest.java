@@ -78,25 +78,6 @@ public class CachedRestClientTest {
     }
 
     @Test
-    public void testGetFlow() throws IOException {
-        Method<Flow> x = client -> client.getFlow(FLOW_REF);
-
-        checkCacheHit(this::getClient, x, new HamcrestCondition<>(equalTo(FLOW)), flowId, ttl);
-    }
-
-    @Test
-    public void testPeekDataflowFromCache() throws IOException {
-        Context ctx = new Context();
-        CachedRestClient client = getClient(ctx);
-
-        ctx.reset();
-        client.getFlows();
-        client.getFlow(FLOW_REF);
-        assertThat(ctx.getCount()).hasValue(1);
-        assertThat(ctx.getMap()).containsOnlyKeys(flowsId);
-    }
-
-    @Test
     public void testGetStructure() throws IOException {
         Method<Structure> x = client -> client.getStructure(STRUCT_REF);
 

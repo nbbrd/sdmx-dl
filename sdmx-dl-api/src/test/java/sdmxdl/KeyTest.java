@@ -25,8 +25,7 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNullPointerException;
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 
 /**
@@ -189,6 +188,35 @@ public class KeyTest {
 
         assertThat(Key.parse("4. .M"))
                 .describedAs("Blank code must return wildcard")
+                .extracting(KeyTest::keyAsList, LIST)
+                .containsExactly("4", "", "M");
+    }
+
+    @Test
+    public void testWith() {
+        assertThat(Key.parse("").with("x", 0))
+                .extracting(KeyTest::keyAsList, LIST)
+                .containsExactly("x");
+
+        assertThat(Key.parse("4.AUS.M").with("x", 1))
+                .extracting(KeyTest::keyAsList, LIST)
+                .containsExactly("4", "x", "M");
+
+        assertThat(Key.parse("4..M").with("x", 1))
+                .extracting(KeyTest::keyAsList, LIST)
+                .containsExactly("4", "x", "M");
+
+        assertThat(Key.parse("4.*.M").with("x", 1))
+                .extracting(KeyTest::keyAsList, LIST)
+                .containsExactly("4", "x", "M");
+
+        assertThat(Key.parse("4. .M").with("x", 1))
+                .extracting(KeyTest::keyAsList, LIST)
+                .containsExactly("4", "x", "M");
+
+        assertThat(Key.parse("4.AUS.M").with("", 1))
+                .isEqualTo(Key.parse("4.AUS.M").with("*", 1))
+                .isEqualTo(Key.parse("4.AUS.M").with(" ", 1))
                 .extracting(KeyTest::keyAsList, LIST)
                 .containsExactly("4", "", "M");
     }
@@ -513,8 +541,8 @@ public class KeyTest {
     private final Codelist clSector = Codelist.builder().ref(CodelistRef.parse("CL_SECTOR")).code("IND", "Industry").build();
     private final Codelist clRegion = Codelist.builder().ref(CodelistRef.parse("CL_REGION")).code("BE", "Belgium").code("LU", "Luxembourg").build();
 
-    private final Dimension sector = Dimension.builder().position(1).id("SECTOR").name("Sector").codelist(clSector).build();
-    private final Dimension region = Dimension.builder().position(3).id("REGION").name("Region").codelist(clRegion).build();
+    private final Dimension sector = Dimension.builder().id("SECTOR").name("Sector").codelist(clSector).build();
+    private final Dimension region = Dimension.builder().id("REGION").name("Region").codelist(clRegion).build();
 
     private final Structure dsd2 = dsd0
             .toBuilder()

@@ -9,11 +9,18 @@ import sdmxdl.web.SdmxWebManager;
 import java.awt.*;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.Collection;
 
 import static internal.sdmxdl.desktop.Collectors2.single;
 
 @lombok.Value
 public class SingleSeries {
+
+    @NonNull
+    DataSetRef ref;
+
+    @NonNull
+    Collection<Flow> flows;
 
     @NonNull
     Structure dsd;
@@ -33,9 +40,12 @@ public class SingleSeries {
 
     public static SingleSeries load(SdmxWebManager manager, DataSetRef ref, Color accentColor) throws IOException {
         try (Connection conn = ref.getDataSourceRef().getConnection(manager)) {
+            DatabaseRef database = ref.getDataSourceRef().getDatabase();
+            FlowRef flowRef = ref.getDataSourceRef().toFlowRef();
             return new SingleSeries(
-                    conn.getStructure(ref.getDataSourceRef().getDatabase(), ref.getDataSourceRef().toFlowRef()),
-                    conn.getDataStream(ref.getDataSourceRef().getDatabase(), ref.getDataSourceRef().toFlowRef(), Query.builder().key(ref.getKey()).build())
+                    ref, conn.getFlows(database),
+                    conn.getMeta(database, flowRef).getStructure(),
+                    conn.getDataStream(database, flowRef, Query.builder().key(ref.getKey()).build())
                             .findFirst()
                             .orElseGet(() -> Series.builder().key(ref.getKey()).build()),
                     accentColor

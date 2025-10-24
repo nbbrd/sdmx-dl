@@ -1,6 +1,6 @@
 package sdmxdl;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Defines the ability to have a human-readable description.

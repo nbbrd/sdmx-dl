@@ -17,13 +17,12 @@
 package internal.sdmxdl.cli;
 
 import picocli.CommandLine;
-import sdmxdl.*;
-import sdmxdl.web.SdmxWebManager;
+import sdmxdl.DatabaseRef;
+import sdmxdl.DatabaseRequest;
+import sdmxdl.Flow;
+import sdmxdl.SourceRequest;
 
-import java.io.IOException;
-import java.util.Collection;
 import java.util.Comparator;
-import java.util.Set;
 
 /**
  * @author Philippe Charles
@@ -51,20 +50,18 @@ public class WebSourceOptions extends WebNetOptions {
         return database == null ? DatabaseRef.NO_DATABASE : database;
     }
 
-    public Connection open(SdmxWebManager manager, Languages languages) throws IOException {
-        return manager.getConnection(getSource(), languages);
+    public SourceRequest toSourceRequest() {
+        return SourceRequest
+                .builder()
+                .languages(getLangs())
+                .build();
     }
 
-    public Set<Feature> loadFeatures(SdmxWebManager manager, Languages languages) throws IOException {
-        try (Connection conn = open(manager, languages)) {
-            return conn.getSupportedFeatures();
-        }
-    }
-
-    public Collection<Flow> loadFlows(SdmxWebManager manager, Languages languages) throws IOException {
-        try (Connection conn = open(manager, languages)) {
-            return conn.getFlows(getDatabase());
-        }
+    public DatabaseRequest toDatabaseRequest() {
+        return DatabaseRequest
+                .builderOf(toSourceRequest())
+                .database(getDatabase())
+                .build();
     }
 
     public static final Comparator<Flow> FLOWS_BY_REF = Comparator.comparing(dataflow -> dataflow.getRef().toString());

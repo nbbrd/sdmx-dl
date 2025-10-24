@@ -3,19 +3,19 @@ option java_multiple_files = true;
 
 package sdmxdl.format.protobuf;
 
-message About {
+message AboutDto {
   string name = 1;
   string version = 2;
 }
 
-message Attribute {
+message AttributeDto {
   string id = 1;
   string name = 2;
-  optional Codelist codelist = 3;
-  AttributeRelationship relationship = 4;
+  optional CodelistDto codelist = 3;
+  AttributeRelationshipDto relationship = 4;
 }
 
-enum AttributeRelationship {
+enum AttributeRelationshipDto {
   UNKNOWN = 0;
   DATAFLOW = 1;
   GROUP = 2;
@@ -23,12 +23,12 @@ enum AttributeRelationship {
   OBSERVATION = 4;
 }
 
-message Codelist {
+message CodelistDto {
   string ref = 1; /* Representation of CodelistRef */
   map<string, string> codes = 2;
 }
 
-enum Confidentiality {
+enum ConfidentialityDto {
   PUBLIC = 0;
   UNRESTRICTED = 1;
   RESTRICTED = 2;
@@ -36,74 +36,78 @@ enum Confidentiality {
   SECRET = 4;
 }
 
-message Database {
+message DatabaseDto {
   string ref = 1; /* Representation of DatabaseRef */
   string name = 2;
 }
 
-message DataRepository {
+message DataRepositoryDto {
   string name = 1;
-  repeated Database databases = 2;
-  repeated Structure structures = 3;
-  repeated Flow flows = 4;
-  repeated DataSet dataSets = 5;
+  repeated DatabaseDto databases = 2;
+  repeated StructureDto structures = 3;
+  repeated FlowDto flows = 4;
+  repeated DataSetDto dataSets = 5;
   string creation_time = 6;
   string expiration_time = 7;
 }
 
-message DataSet {
-  string ref = 1; /* Representation of FlowRef */
-  Query query = 2;
-  repeated Series data = 3;
+message MetaSetDto {
+  FlowDto flow = 1;
+  StructureDto structure = 2;
 }
 
-enum Detail {
+message DataSetDto {
+  string ref = 1; /* Representation of FlowRef */
+  QueryDto query = 2;
+  repeated SeriesDto data = 3;
+}
+
+enum DetailDto {
   FULL = 0;
   DATA_ONLY = 1;
   SERIES_KEYS_ONLY = 2;
   NO_DATA = 3;
 }
 
-message Dimension {
+message DimensionDto {
   string id = 1;
   string name = 2;
-  Codelist codelist = 3;
-  int32 position = 4;
+  CodelistDto codelist = 3;
 }
 
-enum Feature {
+enum FeatureDto {
   DATA_QUERY_ALL_KEYWORD = 0;
   DATA_QUERY_DETAIL = 1;
 }
 
-message Flow {
+message FlowDto {
   string ref = 1; /* Representation of FlowRef */
   string structure_ref = 2; /* Representation of StructureRef */
   string name = 3;
   optional string description = 4;
 }
 
-message Obs {
+message ObsDto {
   string period = 1; /* Representation of TimeInterval */
   double value = 2;
   map<string, string> meta = 3;
 }
 
-message Query {
+message QueryDto {
   string key = 1; /* Representation of Key */
-  Detail detail = 2;
+  DetailDto detail = 2;
 }
 
-message Series {
+message SeriesDto {
   string key = 1; /* Representation of Key */
   map<string, string> meta = 2;
-  repeated Obs obs = 3;
+  repeated ObsDto obs = 3;
 }
 
-message Structure {
+message StructureDto {
   string ref = 1; /* Representation of StructureRef */
-  repeated Dimension dimensions = 2;
-  repeated Attribute attributes = 3;
+  repeated DimensionDto dimensions = 2;
+  repeated AttributeDto attributes = 3;
   optional string time_dimension_id = 4;
   string primary_measure_id = 5;
   string name = 6;

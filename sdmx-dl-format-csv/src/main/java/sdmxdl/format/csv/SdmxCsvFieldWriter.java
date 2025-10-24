@@ -3,7 +3,7 @@ package sdmxdl.format.csv;
 import lombok.NonNull;
 import nbbrd.io.function.IOConsumer;
 import nbbrd.io.text.Formatter;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.*;
 
 import java.io.IOException;

@@ -19,7 +19,7 @@ package sdmxdl.cli.experimental;
 import internal.sdmxdl.cli.DebugOutputOptions;
 import nbbrd.console.properties.ConsoleProperties;
 import picocli.CommandLine;
-import sdmxdl.cli.protobuf.ConsoleInfo;
+import sdmxdl.cli.protobuf.ConsoleInfoDto;
 
 import java.nio.charset.Charset;
 import java.util.concurrent.Callable;
@@ -40,8 +40,8 @@ public final class DebugConsoleCommand implements Callable<Void> {
         return null;
     }
 
-    private static ConsoleInfo of(ConsoleProperties properties) {
-        return ConsoleInfo
+    private static ConsoleInfoDto of(ConsoleProperties properties) {
+        return ConsoleInfoDto
                 .newBuilder()
                 .setStdInEncoding(properties.getStdInEncoding().map(Charset::name).orElse(""))
                 .setStdOutEncoding(properties.getStdOutEncoding().map(Charset::name).orElse(""))

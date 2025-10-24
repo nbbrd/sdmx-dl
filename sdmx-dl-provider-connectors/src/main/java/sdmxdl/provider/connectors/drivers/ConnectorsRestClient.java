@@ -26,9 +26,9 @@ import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.io.text.BaseProperty;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.EventListener;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.*;
+import sdmxdl.EventListener;
 import sdmxdl.format.ObsParser;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.HasMarker;
@@ -129,15 +129,6 @@ public final class ConnectorsRestClient implements RestClient {
     }
 
     @Override
-    public @NonNull Flow getFlow(@NonNull FlowRef ref) throws IOException {
-        try {
-            return Connectors.toFlow(connector.getDataflow(ref.getId(), ref.getAgency(), ref.getVersion()));
-        } catch (SdmxException ex) {
-            throw wrap(ex, "Failed to get dataflow '%s' from '%s'", ref, marker);
-        }
-    }
-
-    @Override
     public @NonNull Structure getStructure(@NonNull StructureRef ref) throws IOException {
         try {
             return Connectors.toStructure(connector.getDataFlowStructure(Connectors.fromStructureRef(ref), true));
@@ -180,13 +171,15 @@ public final class ConnectorsRestClient implements RestClient {
                 : EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD);
     }
 
+    @NonNull
     @Override
-    public void testClient() throws IOException {
+    public Optional<URI> testClient() throws IOException {
         try {
             connector.getDataflows();
         } catch (SdmxException ex) {
             throw wrap(ex, "Failed to ping '%s' : '%s'", marker, ex.getMessage());
         }
+        return Optional.empty();
     }
 
     public static final List<String> CONNECTORS_CONNECTION_PROPERTIES = BaseProperty.keysOf(
@@ -218,7 +211,8 @@ public final class ConnectorsRestClient implements RestClient {
         client.setSslSocketFactory(sslFactory.getSSLSocketFactory());
         client.setHostnameVerifier(sslFactory.getHostnameVerifier());
         client.setMaxRedirects(MAX_REDIRECTS_PROPERTY.get(source.getProperties()));
-        RestSdmxEventListener eventListener = new DefaultRestSdmxEventListener(source, context.getOnEvent(), client.getName());
+        EventListener contextOnEvent = context.getEventListener(source);
+        RestSdmxEventListener eventListener = new DefaultRestSdmxEventListener(contextOnEvent, client.getName());
         client.setRedirectionEventListener(eventListener);
         client.setOpenEventListener(eventListener);
     }
@@ -226,10 +220,7 @@ public final class ConnectorsRestClient implements RestClient {
     @lombok.AllArgsConstructor
     private static final class DefaultRestSdmxEventListener implements RestSdmxEventListener {
 
-        @NonNull
-        private final WebSource source;
-
-        private final @Nullable EventListener<? super WebSource> listener;
+        private final @Nullable EventListener listener;
 
         @NonNull
         private final String marker;
@@ -239,10 +230,10 @@ public final class ConnectorsRestClient implements RestClient {
             if (listener != null) {
                 if (event instanceof RedirectionEvent) {
                     RedirectionEvent redirectionEvent = (RedirectionEvent) event;
-                    listener.accept(source, marker, WebEvents.onRedirection(redirectionEvent.getUrl(), redirectionEvent.getRedirection()));
+                    listener.accept(marker, WebEvents.onRedirection(redirectionEvent.getUrl(), redirectionEvent.getRedirection()));
                 } else if (event instanceof OpenEvent) {
                     OpenEvent openEvent = (OpenEvent) event;
-                    listener.accept(source, marker, WebEvents.onQuery(openEvent.getUrl(), openEvent.getProxy()));
+                    listener.accept(marker, WebEvents.onQuery(openEvent.getUrl(), openEvent.getProxy()));
                 }
             }
         }

@@ -28,7 +28,6 @@ import sdmxdl.provider.ext.SeriesMetaFactory;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
-import java.time.temporal.TemporalAmount;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
@@ -71,8 +70,8 @@ public final class FetchExtraCommand implements Callable<Void> {
     private Stream<Extra> getRows() throws IOException {
         SdmxWebManager manager = web.loadManager();
 
-        try (Connection conn = web.open(manager, web.getLangs())) {
-            Structure dsd = conn.getStructure(web.getDatabase(), web.getFlow());
+        try (Connection conn = manager.getConnection(web.getSource(), web.getLangs())) {
+            Structure dsd = conn.getMeta(web.getDatabase(), web.getFlow()).getStructure();
 
             SeriesMetaFactory factory = SeriesMetaFactory.getDefault(dsd);
 
@@ -98,7 +97,7 @@ public final class FetchExtraCommand implements Callable<Void> {
     @lombok.Value
     private static class Extra {
         Key key;
-        TemporalAmount timeUnit;
+        Duration timeUnit;
         String valueUnit;
         String decimals;
         String name;

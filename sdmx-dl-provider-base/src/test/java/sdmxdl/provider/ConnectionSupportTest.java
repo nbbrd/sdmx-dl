@@ -1,13 +1,16 @@
 package sdmxdl.provider;
 
 import lombok.NonNull;
+import nbbrd.design.NonNegative;
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -60,7 +63,8 @@ class ConnectionSupportTest {
         private final Supplier<Stream<Series>> streamSupplier;
 
         @Override
-        public void testConnection() throws IOException {
+        public @NonNull Optional<URI> testConnection() throws IOException {
+            return Optional.empty();
         }
 
         @Override
@@ -74,12 +78,7 @@ class ConnectionSupportTest {
         }
 
         @Override
-        public @NonNull Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
-            throw new IllegalArgumentException("");
-        }
-
-        @Override
-        public @NonNull Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
+        public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
             throw new IllegalArgumentException("");
         }
 
@@ -91,6 +90,11 @@ class ConnectionSupportTest {
         @Override
         public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
             return streamSupplier.get();
+        }
+
+        @Override
+        public @NonNull Collection<String> getAvailableDimensionCodes(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, @NonNegative int dimensionIndex) throws IOException, IllegalArgumentException {
+            throw new IllegalArgumentException("");
         }
 
         @Override

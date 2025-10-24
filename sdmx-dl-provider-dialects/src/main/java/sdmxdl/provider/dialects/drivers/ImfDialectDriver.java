@@ -16,19 +16,17 @@
  */
 package sdmxdl.provider.dialects.drivers;
 
-import nbbrd.design.DirectImpl;
-import sdmxdl.provider.ri.drivers.RiRestClient;
-import nbbrd.io.http.URLQueryBuilder;
 import lombok.NonNull;
-import nbbrd.io.FileParser;
-import nbbrd.io.net.MediaType;
+import nbbrd.design.DirectImpl;
+import nbbrd.io.http.URLQueryBuilder;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.*;
-import sdmxdl.format.DataCursor;
-import sdmxdl.format.ObsParser;
-import sdmxdl.format.xml.SdmxXmlStreams;
-import sdmxdl.provider.DataRef;
+import sdmxdl.Feature;
+import sdmxdl.Languages;
+import sdmxdl.StructureRef;
 import sdmxdl.provider.SdmxFix;
+import sdmxdl.provider.ri.drivers.RiRestClient;
+import sdmxdl.provider.ri.drivers.Sdmx21RestParsers;
+import sdmxdl.provider.ri.drivers.Sdmx21RestQueries;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestClient;
 import sdmxdl.provider.web.RestConnector;
@@ -39,12 +37,10 @@ import sdmxdl.web.spi.WebContext;
 import java.io.IOException;
 import java.net.URL;
 import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Supplier;
 
-import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
+import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
+import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 
 /**
  * @author Philippe Charles
@@ -67,8 +63,8 @@ public final class ImfDialectDriver implements Driver {
                     .id("IMF")
                     .name("en", "International Monetary Fund")
                     .driver(DIALECTS_IMF)
-                    .confidentiality(Confidentiality.PUBLIC)
-                    .endpointOf("http://dataservices.imf.org/REST/SDMX_XML.svc")
+                    .confidentiality(PUBLIC)
+                    .endpointOf("https://api.imf.org/external/sdmx/2.1")
                     .websiteOf("https://data.imf.org")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/IMF")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/imf")
@@ -76,49 +72,22 @@ public final class ImfDialectDriver implements Driver {
             .build();
 
     private static RestClient newClient(WebSource s, Languages languages, WebContext c) throws IOException {
-        return RiRestClient.of(s, languages, c, new ImfQueries(), new ImfParsers(), IMF_FEATURES);
+        return RiRestClient.of(s, languages, c, ImfQueries.INSTANCE, Sdmx21RestParsers.DEFAULT, EnumSet.allOf(Feature.class));
     }
 
-    @SdmxFix(id = 1, category = QUERY, cause = "Data detail parameter not supported")
-    private static final Set<Feature> IMF_FEATURES = EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD);
+    private static final class ImfQueries extends Sdmx21RestQueries {
 
-    private static final class ImfQueries extends DotStatRestQueries {
+        public static final ImfQueries INSTANCE = new ImfQueries();
 
-        @Override
-        public URLQueryBuilder getFlowsQuery(URL endpoint) {
-            return URLQueryBuilder
-                    .of(endpoint)
-                    .path("Dataflow");
+        private ImfQueries() {
+            super(false);
         }
 
+        @SdmxFix(id = 1, category = QUERY, cause = "Children reference does not return codelists")
         @Override
-        public URLQueryBuilder getStructureQuery(URL endpoint, StructureRef ref) {
-            return URLQueryBuilder
-                    .of(endpoint)
-                    .path("DataStructure")
-                    .path(ref.getId());
-        }
-
-        @Override
-        public URLQueryBuilder getDataQuery(URL endpoint, DataRef ref, @NonNull StructureRef dsdRef) {
-            return URLQueryBuilder
-                    .of(endpoint)
-                    .path("CompactData")
-                    .path(dsdRef.getId())
-                    .path(ref.getQuery().getKey().toString());
-        }
-    }
-
-    private static final class ImfParsers extends DotStatRestParsers {
-
-        @Override
-        public @NonNull FileParser<List<Flow>> getFlowsParser(@NonNull MediaType mediaType, @NonNull Languages langs) {
-            return SdmxXmlStreams.flow20(langs);
-        }
-
-        @Override
-        public @NonNull FileParser<DataCursor> getDataParser(@NonNull MediaType mediaType, @NonNull Structure dsd, @NonNull Supplier<ObsParser> dataFactory) {
-            return SdmxXmlStreams.compactData20(dsd, dataFactory);
+        public @NonNull URLQueryBuilder getStructureQuery(@NonNull URL endpoint, @NonNull StructureRef ref) {
+            return onMeta(endpoint, DEFAULT_DATASTRUCTURE_PATH, ref)
+                    .param(REFERENCES_PARAM, "descendants");
         }
     }
 }

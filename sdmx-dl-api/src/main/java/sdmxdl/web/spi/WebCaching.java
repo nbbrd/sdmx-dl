@@ -7,7 +7,7 @@ import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
 import nbbrd.service.ServiceId;
 import nbbrd.service.ServiceSorter;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.DataRepository;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
@@ -35,14 +35,14 @@ public interface WebCaching {
     @NonNull Cache<DataRepository> getDriverCache(
             @NonNull WebSource source,
             @NonNull List<Persistence> persistences,
-            @Nullable EventListener<? super WebSource> onEvent,
-            @Nullable ErrorListener<? super WebSource> onError);
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError);
 
     @NonNull Cache<MonitorReports> getMonitorCache(
             @NonNull WebSource source,
             @NonNull List<Persistence> persistences,
-            @Nullable EventListener<? super WebSource> onEvent,
-            @Nullable ErrorListener<? super WebSource> onError);
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError);
 
     @NonNull Collection<String> getWebCachingProperties();
 

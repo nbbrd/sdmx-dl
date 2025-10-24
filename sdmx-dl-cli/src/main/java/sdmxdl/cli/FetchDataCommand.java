@@ -72,7 +72,7 @@ public final class FetchDataCommand implements Callable<Void> {
 
     private void writeBody(Csv.Writer w) throws IOException {
         try (Connection conn = web.loadManager().getConnection(web.getSource(), web.getLangs())) {
-            Structure dsd = conn.getStructure(web.getDatabase(), web.getFlow());
+            Structure dsd = conn.getMeta(web.getDatabase(), web.getFlow()).getStructure();
             getBodyFormatter(dsd, format).getFormatter(dsd).formatCsv(getSortedSeries(conn, web), w);
         }
     }

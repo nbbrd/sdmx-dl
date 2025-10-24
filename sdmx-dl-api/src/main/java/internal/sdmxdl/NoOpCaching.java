@@ -1,7 +1,7 @@
 package internal.sdmxdl;
 
 import lombok.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.DataRepository;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
@@ -45,8 +45,8 @@ public enum NoOpCaching implements FileCaching, WebCaching {
     public @NonNull Cache<DataRepository> getReaderCache(
             @NonNull FileSource source,
             @NonNull List<Persistence> persistences,
-            @Nullable EventListener<? super FileSource> onEvent,
-            @Nullable ErrorListener<? super FileSource> onError) {
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError) {
         return Cache.noOp();
     }
 
@@ -54,8 +54,8 @@ public enum NoOpCaching implements FileCaching, WebCaching {
     public @NonNull Cache<DataRepository> getDriverCache(
             @NonNull WebSource source,
             @NonNull List<Persistence> persistences,
-            @Nullable EventListener<? super WebSource> onEvent,
-            @Nullable ErrorListener<? super WebSource> onError) {
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError) {
         return Cache.noOp();
     }
 
@@ -63,8 +63,8 @@ public enum NoOpCaching implements FileCaching, WebCaching {
     public @NonNull Cache<MonitorReports> getMonitorCache(
             @NonNull WebSource source,
             @NonNull List<Persistence> persistences,
-            @Nullable EventListener<? super WebSource> onEvent,
-            @Nullable ErrorListener<? super WebSource> onError) {
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError) {
         return Cache.noOp();
     }
 

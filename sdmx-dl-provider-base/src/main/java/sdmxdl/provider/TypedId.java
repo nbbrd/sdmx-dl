@@ -19,7 +19,7 @@ package sdmxdl.provider;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.io.function.IOSupplier;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.DataRepository;
 import sdmxdl.ext.Cache;
 import sdmxdl.web.WebSource;
@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.stream.Collectors.joining;
 
 /**
  * @param <T>
@@ -93,14 +94,8 @@ public final class TypedId<T> {
 
     public static URI resolveURI(URI base, String... items) {
         return URI.create(Stream.of(items)
-                .map(item -> {
-                    try {
-                        return URLEncoder.encode(item, UTF_8.name());
-                    } catch (UnsupportedEncodingException ex) {
-                        throw new UncheckedIOException(ex);
-                    }
-                })
-                .collect(Collectors.joining("/", base + "/", "")));
+                .map(URIs::encode)
+                .collect(joining("/", base + "/", "")));
     }
 
     public static String getUniqueID(WebSource source) {

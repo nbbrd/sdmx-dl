@@ -19,28 +19,27 @@ package sdmxdl.provider.ext;
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.text.Parser;
-
-import java.time.temporal.TemporalAmount;
+import sdmxdl.Duration;
 
 /**
  * @author Philippe Charles
  */
 @lombok.experimental.UtilityClass
-public class TimeUnitParsers {
+class TimeUnitParsers {
 
     @NonNull
-    public Parser<TemporalAmount> onFreqCodeList() {
+    public Parser<Duration> onFreqCodeList() {
         return TimeUnitParsers::parseFreqCode;
     }
 
     @NonNull
-    public Parser<TemporalAmount> onTimeFormatCodeList() {
+    public Parser<Duration> onTimeFormatCodeList() {
         return TimeUnitParsers::parseTimeFormatCode;
     }
 
     // http://sdmx.org/wp-content/uploads/CL_FREQ_v2.0_update_April_2015.doc
     @VisibleForTesting
-    TemporalAmount parseFreqCode(CharSequence code) {
+    Duration parseFreqCode(CharSequence code) {
         if (code == null) {
             return null;
         }
@@ -50,31 +49,31 @@ public class TimeUnitParsers {
             case 1:
                 return parseStandardFreqCode(code.charAt(0));
             default:
-                TemporalAmount base = parseStandardFreqCode(code.charAt(0));
+                Duration base = parseStandardFreqCode(code.charAt(0));
                 return isMultiplier(code.toString().substring(1)) ? base : null;
         }
     }
 
-    private TemporalAmount parseStandardFreqCode(char code) {
+    private Duration parseStandardFreqCode(char code) {
         switch (code) {
             case 'A':
-                return SeriesMetaFactory.ANNUAL;
+                return ANNUAL;
             case 'S':
-                return SeriesMetaFactory.HALF_YEARLY;
+                return HALF_YEARLY;
             case 'Q':
-                return SeriesMetaFactory.QUARTERLY;
+                return QUARTERLY;
             case 'M':
-                return SeriesMetaFactory.MONTHLY;
+                return MONTHLY;
             case 'W':
-                return SeriesMetaFactory.WEEKLY;
+                return WEEKLY;
             case 'D':
-                return SeriesMetaFactory.DAILY;
+                return DAILY;
             case 'H':
-                return SeriesMetaFactory.HOURLY;
+                return HOURLY;
             case 'B':
-                return SeriesMetaFactory.DAILY_BUSINESS;
+                return DAILY_BUSINESS;
             case 'N':
-                return SeriesMetaFactory.MINUTELY;
+                return MINUTELY;
             default:
                 return null;
         }
@@ -90,27 +89,46 @@ public class TimeUnitParsers {
 
     // http://sdmx.org/wp-content/uploads/CL_TIME_FORMAT_1.0_2009.doc
     @VisibleForTesting
-    TemporalAmount parseTimeFormatCode(CharSequence code) {
+    Duration parseTimeFormatCode(CharSequence code) {
         if (code == null) {
             return null;
         }
         switch (code.toString()) {
             case "P1Y":
-                return SeriesMetaFactory.ANNUAL;
+                return ANNUAL;
             case "P6M":
-                return SeriesMetaFactory.HALF_YEARLY;
+                return HALF_YEARLY;
             case "P3M":
-                return SeriesMetaFactory.QUARTERLY;
+                return QUARTERLY;
             case "P1M":
-                return SeriesMetaFactory.MONTHLY;
+                return MONTHLY;
             case "P7D":
-                return SeriesMetaFactory.WEEKLY;
+                return WEEKLY;
             case "P1D":
-                return SeriesMetaFactory.DAILY;
+                return DAILY;
             case "PT1M":
-                return SeriesMetaFactory.MINUTELY;
+                return MINUTELY;
             default:
                 return null;
         }
     }
+
+    @VisibleForTesting
+    static final Duration ANNUAL = Duration.P1Y;
+    @VisibleForTesting
+    static final Duration HALF_YEARLY = Duration.P6M;
+    @VisibleForTesting
+    static final Duration QUARTERLY = Duration.P3M;
+    @VisibleForTesting
+    static final Duration MONTHLY = Duration.P1M;
+    @VisibleForTesting
+    static final Duration WEEKLY = Duration.P7D;
+    @VisibleForTesting
+    static final Duration DAILY = Duration.P1D;
+    @VisibleForTesting
+    static final Duration DAILY_BUSINESS = Duration.P1D;
+    @VisibleForTesting
+    static final Duration HOURLY = Duration.parse("PT1H");
+    @VisibleForTesting
+    static final Duration MINUTELY = Duration.parse("PT1M");
 }

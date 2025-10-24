@@ -45,9 +45,9 @@ public class CheckAccessCommandTest {
                 .isEmpty();
 
         assertThat(FileSample.readAll(out))
-                .contains("Source,Accessible,DurationInMillis,ErrorMessage", atIndex(0))
+                .contains("Source,Accessible,URI,DurationInMillis,ErrorMessage", atIndex(0))
                 .hasSize(2)
                 .element(1, as(STRING))
-                .startsWith("sample,YES,");
+                .startsWith("sample,YES," + temp.resolve("data.xml").toUri() + ",");
     }
 }

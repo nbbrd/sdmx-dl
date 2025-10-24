@@ -4,6 +4,7 @@ import com.google.gson.*;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.design.MightBePromoted;
+import nbbrd.design.NonNegative;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.FileParser;
 import nbbrd.io.function.IOFunction;
@@ -29,13 +30,12 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.time.Clock;
 import java.time.Duration;
-import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -46,6 +46,7 @@ import static java.util.Arrays.asList;
 import static java.util.function.Function.identity;
 import static java.util.regex.Pattern.compile;
 import static java.util.stream.Collectors.toMap;
+import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.DataSet.toDataSet;
 import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 import static sdmxdl.provider.ri.drivers.RiHttpUtils.newClient;
@@ -72,7 +73,7 @@ public final class StatCanDialectDriver implements Driver {
                     .name("en", "Statistics Canada")
                     .name("fr", "Statistique Canada")
                     .driver(DIALECTS_STATCAN)
-                    .confidentiality(Confidentiality.PUBLIC)
+                    .confidentiality(PUBLIC)
                     .endpointOf("https://www150.statcan.gc.ca/t1/wds/rest")
                     .websiteOf("https://www150.statcan.gc.ca/n1/en/type/data?MM=1")
                     .propertyOf(CACHE_TTL_PROPERTY, Long.toString(Duration.ofHours(1).toMillis()))
@@ -115,18 +116,21 @@ public final class StatCanDialectDriver implements Driver {
         }
 
         @Override
-        public @NonNull Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException {
+        public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
             Converter.DATAFLOW_REF_VALIDATOR.checkValidity(flowRef);
-            return ConnectionSupport.getFlowFromFlows(database, flowRef, this, client);
-        }
+            Flow flow = ConnectionSupport.getFlowFromFlows(database, flowRef, this, client);
 
-        @Override
-        public @NonNull Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException {
             int productId = Converter.fromDataflowRef(flowRef);
             StructureRef dsdRef = Converter.toDataStructureRef(productId);
-            return client.getStructAndData(productId)
+            Structure structure = client.getStructAndData(productId)
                     .getStructure(dsdRef)
                     .orElseThrow(() -> CommonSdmxExceptions.missingStructure(client, dsdRef));
+
+            return MetaSet
+                    .builder()
+                    .flow(flow)
+                    .structure(structure)
+                    .build();
         }
 
         private Optional<DataSet> getDataSet(FlowRef ref) throws IOException {
@@ -154,13 +158,22 @@ public final class StatCanDialectDriver implements Driver {
         }
 
         @Override
+        public @NonNull Collection<String> getAvailableDimensionCodes(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, @NonNegative int dimensionIndex) throws IOException, IllegalArgumentException {
+            return ConnectionSupport.getAvailableDimensionCodes(this, database, flowRef, constraints, dimensionIndex);
+        }
+
+        @Override
         public @NonNull Set<Feature> getSupportedFeatures() {
             return EnumSet.allOf(Feature.class);
         }
 
         @Override
-        public void testConnection() throws IOException {
-            client.ping();
+        public @NonNull Optional<URI> testConnection() throws IOException {
+            try {
+                return Optional.of(client.ping().toURI());
+            } catch (URISyntaxException e) {
+                throw new IOException(e);
+            }
         }
 
         @Override
@@ -178,7 +191,7 @@ public final class StatCanDialectDriver implements Driver {
         DataRepository getStructAndData(int productId) throws IOException;
 
         @NonNull
-        Duration ping() throws IOException;
+        URL ping() throws IOException;
     }
 
     @VisibleForTesting
@@ -210,11 +223,19 @@ public final class StatCanDialectDriver implements Driver {
         }
 
         @Override
-        public @NonNull Duration ping() throws IOException {
-            Clock clock = Clock.systemDefaultZone();
-            Instant start = clock.instant();
-            getAllCubesListLite();
-            return Duration.between(start, clock.instant());
+        public @NonNull URL ping() throws IOException {
+            HttpRequest request = HttpRequest
+                    .builder()
+                    .query(URLQueryBuilder
+                            .of(endpoint)
+                            .path("getAllCubesListLite")
+                            .build())
+                    .mediaType(JSON_TYPE)
+                    .build();
+
+            try (HttpResponse ignore = client.send(request)) {
+                return request.getQuery();
+            }
         }
 
         private DataTable[] getAllCubesListLite() throws IOException {
@@ -319,17 +340,17 @@ public final class StatCanDialectDriver implements Driver {
         }
 
         @Override
-        public List<Flow> getFlows() throws IOException {
+        public @NonNull List<Flow> getFlows() throws IOException {
             return getIdOfFlows().load(cache, delegate::getFlows, o -> ttl);
         }
 
         @Override
-        public DataRepository getStructAndData(int productId) throws IOException {
+        public @NonNull DataRepository getStructAndData(int productId) throws IOException {
             return getIdOfRepo().with(productId).load(cache, () -> delegate.getStructAndData(productId), o -> ttl);
         }
 
         @Override
-        public @NonNull Duration ping() throws IOException {
+        public @NonNull URL ping() throws IOException {
             return delegate.ping();
         }
     }

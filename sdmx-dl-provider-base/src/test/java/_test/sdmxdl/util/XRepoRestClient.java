@@ -25,8 +25,10 @@ import sdmxdl.provider.Marker;
 import sdmxdl.provider.web.RestClient;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -47,12 +49,6 @@ public final class XRepoRestClient implements RestClient {
     @Override
     public @NonNull List<Flow> getFlows() {
         return repository.getFlows();
-    }
-
-    @Override
-    public @NonNull Flow getFlow(@NonNull FlowRef ref) throws IOException {
-        return repository.getFlow(ref)
-                .orElseThrow(() -> CommonSdmxExceptions.missingFlow(this, ref));
     }
 
     @Override
@@ -80,11 +76,13 @@ public final class XRepoRestClient implements RestClient {
     }
 
     @Override
-    public Set<Feature> getSupportedFeatures() {
+    public @NonNull Set<Feature> getSupportedFeatures() {
         return EnumSet.allOf(Feature.class);
     }
 
+    @NonNull
     @Override
-    public void testClient() {
+    public Optional<URI> testClient() {
+        return Optional.empty();
     }
 }

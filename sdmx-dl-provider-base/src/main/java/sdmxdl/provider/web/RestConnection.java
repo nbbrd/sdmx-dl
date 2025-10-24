@@ -17,15 +17,17 @@
 package sdmxdl.provider.web;
 
 import lombok.NonNull;
+import nbbrd.design.NonNegative;
 import sdmxdl.*;
 import sdmxdl.provider.CommonSdmxExceptions;
 import sdmxdl.provider.ConnectionSupport;
 import sdmxdl.provider.DataRef;
-import sdmxdl.provider.Validator;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -37,11 +39,6 @@ final class RestConnection implements Connection {
 
     @lombok.NonNull
     private final RestClient client;
-
-    @lombok.NonNull
-    private final Validator<FlowRef> dataflowRefValidator;
-
-    private final boolean noBatchFlow;
 
     private boolean closed = false;
 
@@ -59,17 +56,15 @@ final class RestConnection implements Connection {
     }
 
     @Override
-    public @NonNull Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException {
+    public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
         checkState();
         checkDatabase(database);
-        return lookupFlow(database, flowRef);
-    }
-
-    @Override
-    public @NonNull Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException {
-        checkState();
-        checkDatabase(database);
-        return client.getStructure(lookupFlow(database, flowRef).getStructureRef());
+        Flow flow = lookupFlow(database, flowRef);
+        return MetaSet
+                .builder()
+                .flow(flow)
+                .structure(client.getStructure(flow.getStructureRef()))
+                .build();
     }
 
     @Override
@@ -80,18 +75,20 @@ final class RestConnection implements Connection {
 
     @Override
     public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
-        checkState();
-        checkDatabase(database);
+        MetaSet meta = getMeta(database, flowRef);
 
-        Flow flow = lookupFlow(database, flowRef);
-        Structure dsd = client.getStructure(flow.getStructureRef());
-        checkKey(query.getKey(), dsd);
+        checkKey(query.getKey(), meta.getStructure());
 
-        Query realQuery = deriveDataQuery(query, getSupportedFeatures(), dsd);
+        Query realQuery = deriveDataQuery(query, getSupportedFeatures(), meta.getStructure());
 
-        Stream<Series> result = client.getData(DataRef.of(flow.getRef(), realQuery), dsd);
+        Stream<Series> result = client.getData(DataRef.of(meta.getFlow().getRef(), realQuery), meta.getStructure());
 
         return realQuery.equals(query) ? result : query.execute(result);
+    }
+
+    @Override
+    public @NonNull Collection<String> getAvailableDimensionCodes(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, @NonNegative int dimensionIndex) throws IOException, IllegalArgumentException {
+        return ConnectionSupport.getAvailableDimensionCodes(this, database, flowRef, constraints, dimensionIndex);
     }
 
     private static Query deriveDataQuery(Query query, Set<Feature> features, Structure dsd) {
@@ -112,9 +109,9 @@ final class RestConnection implements Connection {
     }
 
     @Override
-    public void testConnection() throws IOException {
+    public @NonNull Optional<URI> testConnection() throws IOException {
         checkState();
-        client.testClient();
+        return client.testClient();
     }
 
     @Override
@@ -129,16 +126,7 @@ final class RestConnection implements Connection {
     }
 
     private Flow lookupFlow(DatabaseRef database, FlowRef flowRef) throws IOException, IllegalArgumentException {
-        if (noBatchFlow) {
-            checkDataflowRef(flowRef);
-            return client.getFlow(flowRef);
-        }
-
         return ConnectionSupport.getFlowFromFlows(database, flowRef, this, client);
-    }
-
-    private void checkDataflowRef(FlowRef ref) throws IllegalArgumentException {
-        dataflowRefValidator.checkValidity(ref);
     }
 
     private void checkKey(Key key, Structure dsd) throws IllegalArgumentException {

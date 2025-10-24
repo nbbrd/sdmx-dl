@@ -22,7 +22,9 @@ import sdmxdl.provider.DataRef;
 import sdmxdl.provider.HasMarker;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -31,17 +33,21 @@ import java.util.stream.Stream;
  */
 public interface RestClient extends HasMarker {
 
-    @NonNull List<Flow> getFlows() throws IOException;
+    @NonNull
+    List<Flow> getFlows() throws IOException;
 
-    @NonNull Flow getFlow(@NonNull FlowRef ref) throws IOException;
+    @NonNull
+    Structure getStructure(@NonNull StructureRef ref) throws IOException;
 
-    @NonNull Structure getStructure(@NonNull StructureRef ref) throws IOException;
+    @NonNull
+    Stream<Series> getData(@NonNull DataRef ref, @NonNull Structure dsd) throws IOException;
 
-    @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull Structure dsd) throws IOException;
+    @NonNull
+    Codelist getCodelist(@NonNull CodelistRef ref) throws IOException;
 
-    @NonNull Codelist getCodelist(@NonNull CodelistRef ref) throws IOException;
+    @NonNull
+    Set<Feature> getSupportedFeatures() throws IOException;
 
-    @NonNull Set<Feature> getSupportedFeatures() throws IOException;
-
-    void testClient() throws IOException;
+    @NonNull
+    Optional<URI> testClient() throws IOException;
 }

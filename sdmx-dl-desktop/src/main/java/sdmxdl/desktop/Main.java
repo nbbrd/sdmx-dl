@@ -3,6 +3,8 @@ package sdmxdl.desktop;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import ec.util.various.swing.BasicSwingLauncher;
+import sdmxdl.ErrorListener;
+import sdmxdl.EventListener;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 
@@ -79,23 +81,29 @@ public class Main {
                 .onError(Main::printError)
                 .onRegistryEvent(Main::printRegistryEvent)
                 .onRegistryError(Main::printRegistryError)
-                .build();
+                .build()
+                .warmupAsync();
     }
 
-    private static void printEvent(WebSource source, String marker, CharSequence message) {
-        System.out.println("[" + source.getId() + "] (" + marker + ") " + message);
+    private static EventListener printEvent(WebSource source) {
+        return (marker, message) -> {
+            SwingUtilities.invokeLater(() -> Sdmxdl.INSTANCE.getEventList().addElement(new Event(source.getId(), marker, message.toString())));
+            System.out.println("[" + source.getId() + "] (" + marker + ") " + message);
+        };
     }
 
-    private static void printError(WebSource source, String marker, CharSequence message, IOException error) {
-        System.err.println("[" + source.getId() + "] (" + marker + ") " + message + ": " + error.getMessage());
-        error.printStackTrace(System.err);
+    private static ErrorListener printError(WebSource source) {
+        return (marker, message, error) -> {
+            System.err.println("[" + source.getId() + "] (" + marker + ") " + message + ": " + error.getMessage());
+            error.printStackTrace(System.err);
+        };
     }
 
-    private static void printRegistryEvent(CharSequence message) {
-        System.out.println("[REG] (" + "" + ") " + message);
+    private static void printRegistryEvent(String marker, CharSequence message) {
+        System.out.println("[REG] (" + marker + ") " + message);
     }
 
-    private static void printRegistryError(CharSequence message, IOException error) {
-        System.err.println("[REG] (" + "" + ") " + message + ": " + error.getMessage());
+    private static void printRegistryError(String marker, CharSequence message, IOException error) {
+        System.err.println("[REG] (" + marker + ") " + message + ": " + error.getMessage());
     }
 }

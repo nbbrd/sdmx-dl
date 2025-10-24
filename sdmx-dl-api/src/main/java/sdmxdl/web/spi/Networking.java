@@ -5,7 +5,7 @@ import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;
 import nbbrd.design.ThreadSafe;
 import nbbrd.service.*;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.web.WebSource;
@@ -21,7 +21,8 @@ import java.util.Collection;
 public interface Networking {
 
     @ServiceId(pattern = ServiceId.SCREAMING_SNAKE_CASE)
-    @NonNull String getNetworkingId();
+    @NonNull
+    String getNetworkingId();
 
     @ServiceSorter(reverse = true)
     int getNetworkingRank();
@@ -29,12 +30,16 @@ public interface Networking {
     @ServiceFilter
     boolean isNetworkingAvailable();
 
-    @NonNull Collection<String> getNetworkingProperties();
+    @NonNull
+    Collection<String> getNetworkingProperties();
 
-    @NonNull Network getNetwork(
+    void warmupNetwork();
+
+    @NonNull
+    Network getNetwork(
             @NonNull WebSource source,
-            @Nullable EventListener<? super WebSource> onEvent,
-            @Nullable ErrorListener<? super WebSource> onError);
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError);
 
     int UNKNOWN_NETWORKING_RANK = -1;
 

@@ -19,7 +19,7 @@ package internal.sdmxdl.cli;
 import internal.sdmxdl.cli.ext.Anchor;
 import internal.sdmxdl.cli.ext.VerboseOptions;
 import nbbrd.design.ReturnNew;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import picocli.CommandLine;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
@@ -30,6 +30,7 @@ import sdmxdl.web.WebSource;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.function.Function;
 import java.util.logging.Level;
 
 /**
@@ -98,13 +99,13 @@ public class WebOptions {
                 .toBuilder()
                 .onEvent(getEventListener())
                 .onError(getErrorListener())
-                .onRegistryEvent(message -> {
+                .onRegistryEvent((marker, message) -> {
                     if (verboseOptions.isVerbose())
-                        verboseOptions.reportToErrorStream(Anchor.CFG, message.toString());
+                        verboseOptions.reportToErrorStream(Anchor.CFG, marker + ": " + message);
                 })
-                .onRegistryError((message, error) -> {
+                .onRegistryError((marker, message, error) -> {
                     if (verboseOptions.isVerbose())
-                        verboseOptions.reportToErrorStream(Anchor.CFG, message.toString(), error);
+                        verboseOptions.reportToErrorStream(Anchor.CFG, marker + ": " + message, error);
                 })
                 .build();
     }
@@ -113,26 +114,31 @@ public class WebOptions {
         return !isNoConfig() && sourcesFile != null && sourcesFile.exists() && sourcesFile.isFile();
     }
 
-    private EventListener<? super WebSource> getEventListener() {
-        EventListener<? super WebSource> original = isNoLog() ? null : new LoggingListener()::onSourceEvent;
-        return new VerboseEventListener(original, verboseOptions)::onSourceEvent;
+    private Function<? super WebSource, EventListener> getEventListener() {
+        Function<? super WebSource, EventListener> original = isNoLog() ? null : source -> new LoggingListener(source)::onSourceEvent;
+        VerboseEventListener result = new VerboseEventListener(original, verboseOptions);
+        return source -> (marker, message) -> result.onSourceEvent(source, marker, message);
     }
 
-    private ErrorListener<? super WebSource> getErrorListener() {
-        ErrorListener<? super WebSource> original = isNoLog() ? null : new LoggingListener()::onSourceError;
-        return new VerboseErrorListener(original, verboseOptions)::onSourceError;
+    private Function<? super WebSource, ErrorListener> getErrorListener() {
+        Function<? super WebSource, ErrorListener> original = isNoLog() ? null : source -> new LoggingListener(source)::onSourceError;
+        VerboseErrorListener result = new VerboseErrorListener(original, verboseOptions);
+        return source -> (marker, message, ex) -> result.onSourceError(source, marker, message, ex);
     }
 
     @lombok.extern.java.Log
+    @lombok.AllArgsConstructor
     private static class LoggingListener {
 
-        public void onSourceEvent(WebSource source, String marker, CharSequence message) {
+        private final WebSource source;
+
+        public void onSourceEvent(String marker, CharSequence message) {
             if (log.isLoggable(Level.INFO)) {
                 log.info(message.toString());
             }
         }
 
-        public void onSourceError(WebSource source, String marker, CharSequence message, IOException error) {
+        public void onSourceError(String marker, CharSequence message, IOException error) {
             if (log.isLoggable(Level.INFO)) {
                 log.log(Level.INFO, message.toString(), error);
             }
@@ -142,14 +148,14 @@ public class WebOptions {
     @lombok.AllArgsConstructor
     private static class VerboseEventListener {
 
-        private final @Nullable EventListener<? super WebSource> main;
+        private final @Nullable Function<? super WebSource, EventListener> main;
 
         @lombok.NonNull
         private final VerboseOptions verboseOptions;
 
         public void onSourceEvent(WebSource source, String marker, CharSequence message) {
             if (main != null) {
-                main.accept(source, marker, message);
+                main.apply(source).accept(marker, message);
             }
             if (verboseOptions.isVerbose()) {
                 verboseOptions.reportToErrorStream(Anchor.WEB, source.getId() + ": " + message);
@@ -160,14 +166,14 @@ public class WebOptions {
     @lombok.AllArgsConstructor
     private static class VerboseErrorListener {
 
-        private final @Nullable ErrorListener<? super WebSource> main;
+        private final @Nullable Function<? super WebSource, ErrorListener> main;
 
         @lombok.NonNull
         private final VerboseOptions verboseOptions;
 
         public void onSourceError(WebSource source, String marker, CharSequence message, IOException error) {
             if (main != null) {
-                main.accept(source, marker, message, error);
+                main.apply(source).accept(marker, message, error);
             }
             if (verboseOptions.isVerbose()) {
                 verboseOptions.reportToErrorStream(Anchor.WEB, source.getId() + ": " + message, error);

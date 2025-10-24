@@ -28,6 +28,7 @@ import sdmxdl.provider.TypedId;
 import java.io.IOException;
 import java.net.URI;
 import java.time.Duration;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static sdmxdl.DataSet.toDataSet;
@@ -85,9 +86,10 @@ public final class CachedFileClient implements FileClient {
         return delegate.getMarker();
     }
 
+    @NonNull
     @Override
-    public void testClient() throws IOException {
-        delegate.testClient();
+    public Optional<URI> testClient() throws IOException {
+        return delegate.testClient();
     }
 
     @Override

@@ -25,13 +25,12 @@ import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Spec;
-import sdmxdl.Detail;
-import sdmxdl.Flow;
 import sdmxdl.Feature;
-import sdmxdl.Key;
-import sdmxdl.cli.protobuf.Features;
-import sdmxdl.cli.protobuf.Flows;
-import sdmxdl.cli.protobuf.Sources;
+import sdmxdl.Flow;
+import sdmxdl.KeyRequest;
+import sdmxdl.cli.protobuf.FeaturesDto;
+import sdmxdl.cli.protobuf.FlowsDto;
+import sdmxdl.cli.protobuf.SourcesDto;
 import sdmxdl.format.protobuf.ProtoApi;
 import sdmxdl.format.protobuf.ProtoWeb;
 import sdmxdl.web.WebSource;
@@ -39,6 +38,8 @@ import sdmxdl.web.WebSource;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
+
+import static sdmxdl.Detail.SERIES_KEYS_ONLY;
 
 /**
  * @author Philippe Charles
@@ -60,8 +61,8 @@ public final class DebugListCommand implements Callable<Void> {
         nonNull(out).dumpAll(fromWebSources(web.loadManager().getSources().values()));
     }
 
-    private static Sources fromWebSources(Collection<WebSource> value) {
-        return Sources
+    private static SourcesDto fromWebSources(Collection<WebSource> value) {
+        return SourcesDto
                 .newBuilder()
                 .addAllSources(value.stream().map(ProtoWeb::fromWebSource).collect(Collectors.toList()))
                 .build();
@@ -69,11 +70,11 @@ public final class DebugListCommand implements Callable<Void> {
 
     @Command
     public void flows(@Mixin WebSourceOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out) throws Exception {
-        nonNull(out).dumpAll(fromDataflows(web.loadFlows(web.loadManager(), web.getLangs())));
+        nonNull(out).dumpAll(fromDataflows(web.loadManager().usingName(web.getSource()).getFlows(web.toDatabaseRequest())));
     }
 
-    private static Flows fromDataflows(Collection<Flow> value) {
-        return Flows
+    private static FlowsDto fromDataflows(Collection<Flow> value) {
+        return FlowsDto
                 .newBuilder()
                 .addAllFlows(value.stream().map(ProtoApi::fromDataflow).collect(Collectors.toList()))
                 .build();
@@ -81,16 +82,17 @@ public final class DebugListCommand implements Callable<Void> {
 
     @Command
     public void keys(@Mixin WebFlowOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out) throws Exception {
-        nonNull(out).dumpAll(ProtoApi.fromDataSet(web.loadSeries(web.loadManager(), Key.ALL, Detail.SERIES_KEYS_ONLY)));
+        KeyRequest request = KeyRequest.builderOf(web.toFlowRequest()).detail(SERIES_KEYS_ONLY).build();
+        nonNull(out).dumpAll(ProtoApi.fromDataSet(web.loadManager().usingName(web.getSource()).getData(request)));
     }
 
     @Command
     public void features(@Mixin WebSourceOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out) throws Exception {
-        nonNull(out).dumpAll(fromFeatures(web.loadFeatures(web.loadManager(), web.getLangs())));
+        nonNull(out).dumpAll(fromFeatures(web.loadManager().usingName(web.getSource()).getSupportedFeatures(web.toSourceRequest())));
     }
 
-    private static Features fromFeatures(Collection<Feature> value) {
-        return Features
+    private static FeaturesDto fromFeatures(Collection<Feature> value) {
+        return FeaturesDto
                 .newBuilder()
                 .addAllFeatures(value.stream().map(ProtoApi::fromFeature).collect(Collectors.toList()))
                 .build();

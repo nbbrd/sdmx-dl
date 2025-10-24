@@ -17,10 +17,10 @@
 package internal.sdmxdl.cli;
 
 import picocli.CommandLine;
-import sdmxdl.*;
-import sdmxdl.web.SdmxWebManager;
+import sdmxdl.FlowRef;
+import sdmxdl.FlowRequest;
+import sdmxdl.Series;
 
-import java.io.IOException;
 import java.util.Comparator;
 
 /**
@@ -38,16 +38,11 @@ public class WebFlowOptions extends WebSourceOptions {
     )
     private FlowRef flow;
 
-    public Structure loadStructure(SdmxWebManager manager) throws IOException {
-        try (Connection conn = open(manager, getLangs())) {
-            return conn.getStructure(getDatabase(), getFlow());
-        }
-    }
-
-    public DataSet loadSeries(SdmxWebManager manager, Key key, Detail detail) throws IOException {
-        try (Connection conn = open(manager, getLangs())) {
-            return conn.getData(getDatabase(), getFlow(), Query.builder().key(key).detail(detail).build());
-        }
+    public FlowRequest toFlowRequest() {
+        return FlowRequest
+                .builderOf(toDatabaseRequest())
+                .flow(getFlow())
+                .build();
     }
 
     public static final Comparator<Series> SERIES_BY_KEY = Comparator.comparing(series -> series.getKey().toString());

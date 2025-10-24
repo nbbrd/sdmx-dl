@@ -8,8 +8,7 @@ import sdmxdl.web.spi.Networking;
 import tests.sdmxdl.api.ExtensionPoint;
 import tests.sdmxdl.api.TckUtil;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNullPointerException;
+import static org.assertj.core.api.Assertions.*;
 import static sdmxdl.web.spi.Networking.NETWORKING_PROPERTY_PREFIX;
 
 @lombok.experimental.UtilityClass
@@ -43,5 +42,8 @@ public class NetworkingAssert {
         assertThat(networking.getNetwork(validSource, null, null))
                 .isNotNull()
                 .satisfies(NetworkAssert::assertCompliance);
+
+        assertThatCode(networking::warmupNetwork)
+                .doesNotThrowAnyException();
     }
 }

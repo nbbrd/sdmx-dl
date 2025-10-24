@@ -19,7 +19,6 @@ package sdmxdl.provider.web;
 import _test.sdmxdl.util.XRepoRestClient;
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataRepository;
-import sdmxdl.provider.Validator;
 import tests.sdmxdl.api.ConnectionAssert;
 import tests.sdmxdl.api.RepoSamples;
 
@@ -32,7 +31,7 @@ public class SdmxRestConnectionTest {
     public void testCompliance() {
         DataRepository repo = RepoSamples.REPO;
         ConnectionAssert.assertCompliance(
-                () -> RestConnection.of(XRepoRestClient.of(repo), Validator.noOp(), false),
+                () -> RestConnection.of(XRepoRestClient.of(repo)),
                 ConnectionAssert.Sample
                         .builder()
                         .validFlow(RepoSamples.FLOW_REF)

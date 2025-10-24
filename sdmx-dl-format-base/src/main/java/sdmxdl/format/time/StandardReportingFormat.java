@@ -2,7 +2,7 @@ package sdmxdl.format.time;
 
 import lombok.AccessLevel;
 import nbbrd.design.MightBePromoted;
-import org.checkerframework.checker.index.qual.NonNegative;
+import nbbrd.design.NonNegative;
 import sdmxdl.Duration;
 
 import java.time.LocalDate;
