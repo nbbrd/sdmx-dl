@@ -1,5 +1,6 @@
 import sdmxdl.file.spi.FileCaching;
 import sdmxdl.file.spi.Reader;
+import sdmxdl.provider.ri.authenticators.MsalAuthenticator;
 import sdmxdl.provider.ri.authenticators.WinPasswordVaultAuthenticator;
 import sdmxdl.provider.ri.caching.RiCaching;
 import sdmxdl.provider.ri.drivers.FileRiDriver;
@@ -29,6 +30,7 @@ module sdmxdl.provider.ri {
     requires nbbrd.io.curl;
     requires nbbrd.io.http;
     requires nbbrd.net.proxy;
+    requires com.microsoft.aad.msal4j;
 
     exports sdmxdl.provider.ri.drivers to sdmxdl.provider.dialects, sdmxdl.provider.px;
 
@@ -41,6 +43,7 @@ module sdmxdl.provider.ri {
             XmlReader;
 
     provides Authenticator with
+            MsalAuthenticator,
             WinPasswordVaultAuthenticator;
 
     provides Monitor with

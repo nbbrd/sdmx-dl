@@ -8,9 +8,7 @@ import sdmxdl.web.spi.Authenticator;
 import tests.sdmxdl.api.ExtensionPoint;
 import tests.sdmxdl.api.TckUtil;
 
-import static java.util.Collections.emptyList;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 @SuppressWarnings("ConstantConditions")
 @lombok.experimental.UtilityClass
@@ -19,7 +17,9 @@ public class AuthenticatorAssert {
     @lombok.Value
     @lombok.Builder(toBuilder = true)
     public static class Sample {
-        WebSource source;
+        WebSource ignoring;
+        WebSource valid;
+        WebSource invalid;
     }
 
     @MightBeGenerated
@@ -44,15 +44,24 @@ public class AuthenticatorAssert {
         assertThatThrownBy(() -> authenticator.getPasswordAuthenticationOrNull(null))
                 .isInstanceOf(NullPointerException.class);
 
-        assertThatCode(() -> authenticator.getPasswordAuthenticationOrNull(sample.source)).
-                doesNotThrowAnyException();
+        if (sample.ignoring != null)
+            assertThatCode(() -> authenticator.getPasswordAuthenticationOrNull(sample.ignoring)).
+                    doesNotThrowAnyException();
+
+        if (sample.valid != null)
+            assertThatCode(() -> authenticator.getPasswordAuthenticationOrNull(sample.valid)).
+                    doesNotThrowAnyException();
+
+        if (sample.invalid != null)
+            assertThatIOException()
+                    .isThrownBy(() -> authenticator.getPasswordAuthenticationOrNull(sample.invalid));
     }
 
     private void checkInvalidate(Authenticator authenticator, Sample sample) {
         assertThatThrownBy(() -> authenticator.invalidateAuthentication(null))
                 .isInstanceOf(NullPointerException.class);
 
-        assertThatCode(() -> authenticator.invalidateAuthentication(sample.source))
+        assertThatCode(() -> authenticator.invalidateAuthentication(sample.ignoring))
                 .doesNotThrowAnyException();
     }
 }

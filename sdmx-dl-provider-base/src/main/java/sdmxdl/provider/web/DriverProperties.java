@@ -16,12 +16,17 @@
  */
 package sdmxdl.provider.web;
 
+import lombok.NonNull;
+import nbbrd.design.MightBePromoted;
 import nbbrd.io.text.*;
 import sdmxdl.About;
 import sdmxdl.format.design.PropertyDefinition;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.joining;
 import static sdmxdl.web.spi.Driver.DRIVER_PROPERTY_PREFIX;
 
 /**
@@ -80,11 +85,11 @@ public class DriverProperties {
             BooleanProperty.of(DRIVER_PROPERTY_PREFIX + ".trailingSlash", false);
 
     /**
-     * Defines if preemptive authentication should be used. Default value is false.
+     * Defines which authentication scheme should be used. Default value is blank for no authentication.
      */
     @PropertyDefinition
-    public static final BooleanProperty PREEMPTIVE_AUTH_PROPERTY =
-            BooleanProperty.of(DRIVER_PROPERTY_PREFIX + ".preemptiveAuth", false);
+    public static final Property<String> AUTH_SCHEME_PROPERTY =
+            Property.of(DRIVER_PROPERTY_PREFIX + ".authScheme", "", Parser.onString(), Formatter.onString());
 
     /**
      * Defines the user-agent request header. Default value is library name and version.
@@ -92,4 +97,18 @@ public class DriverProperties {
     @PropertyDefinition
     public static final Property<String> USER_AGENT_PROPERTY =
             Property.of(DRIVER_PROPERTY_PREFIX + ".userAgent", About.NAME + "/" + About.VERSION, Parser.onString(), Formatter.onString());
+
+    public static @NonNull Property<List<String>> commaSeparatedProperty(@NonNull String key, @NonNull List<String> defaultValue) {
+        return Property.of(key, defaultValue, Parser.onStringList(DriverProperties::split), Formatter.onStringList(DriverProperties::join));
+    }
+
+    @MightBePromoted
+    private static @NonNull Stream<String> split(@NonNull CharSequence text) {
+        return Stream.of(text.toString().split(",", -1));
+    }
+
+    @MightBePromoted
+    private static @NonNull String join(@NonNull Stream<CharSequence> stream) {
+        return stream.collect(joining(","));
+    }
 }

@@ -208,6 +208,7 @@
                                 <exclude>META-INF/NOTICE</exclude>
                                 <exclude>META-INF/LICENSE</exclude>
                                 <exclude>META-INF/LICENSE.txt</exclude>
+                                <exclude>META-INF/MSFTSIG*</exclude>
                             </excludes>
                         </filter>
                     </filters>

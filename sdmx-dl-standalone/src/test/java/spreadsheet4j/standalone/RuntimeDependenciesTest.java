@@ -28,7 +28,8 @@ public class RuntimeDependenciesTest {
                 .satisfies(RuntimeDependenciesTest::checkSllContextKickstart)
                 .satisfies(RuntimeDependenciesTest::checkJavaNetProxy)
                 .satisfies(RuntimeDependenciesTest::checkKryo5)
-                .hasSize(21);
+                .satisfies(RuntimeDependenciesTest::checkMsal)
+                .hasSize(25);
     }
 
     private static void checkJavaIoUtil(List<? extends DependencyResolver.GAV> coordinates) {
@@ -95,6 +96,20 @@ public class RuntimeDependenciesTest {
         assertThatGroupId(coordinates, "com.github.nbbrd.java-net-proxy")
                 .extracting(DependencyResolver.GAV::getArtifactId)
                 .containsExactlyInAnyOrder("java-net-proxy");
+    }
+
+    private static void checkMsal(List<? extends DependencyResolver.GAV> coordinates) {
+        assertThatGroupId(coordinates, "com.microsoft.azure")
+                .extracting(DependencyResolver.GAV::getArtifactId)
+                .containsExactlyInAnyOrder("msal4j");
+
+        assertThatGroupId(coordinates, "com.azure")
+                .extracting(DependencyResolver.GAV::getArtifactId)
+                .containsExactlyInAnyOrder("azure-json");
+
+        assertThatGroupId(coordinates, "org.slf4j")
+                .extracting(DependencyResolver.GAV::getArtifactId)
+                .containsExactlyInAnyOrder("slf4j-api", "slf4j-jdk14");
     }
 
     private static ListAssert<? extends DependencyResolver.GAV> assertThatGroupId(List<? extends DependencyResolver.GAV> coordinates, String groupId) {

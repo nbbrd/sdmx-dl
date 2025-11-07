@@ -7,6 +7,7 @@ import nbbrd.io.picocsv.Picocsv;
 import nbbrd.io.text.TextParser;
 import nbbrd.io.text.TextResource;
 import nbbrd.picocsv.Csv;
+import org.jspecify.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
@@ -20,11 +21,14 @@ public final class WinPasswordVault implements Closeable {
     @lombok.Value
     public static class PasswordCredential {
 
-        @NonNull String resource;
+        @NonNull
+        String resource;
 
-        @NonNull String userName;
+        @NonNull
+        String userName;
 
-        @NonNull char[] password;
+        @NonNull
+        char[] password;
     }
 
     public static @NonNull WinPasswordVault open() throws IOException {
@@ -52,6 +56,27 @@ public final class WinPasswordVault implements Closeable {
         return CREDENTIAL_PARSER.parseChars(result);
     }
 
+    public @Nullable PasswordCredential get(@NonNull String resource) throws IOException {
+        String resourceParam = PowerShell.escapePowerShellString(resource);
+        String result = exec(
+                "$cred = GetCredential -resource " + resourceParam,
+                "if ($cred -ne $null) {",
+                "  echo ($cred | Select-Object -Property Resource, UserName, Password | ConvertTo-Csv -NoTypeInformation)",
+                "}"
+        );
+        return !result.isEmpty() ? CREDENTIAL_PARSER.parseChars(result) : null;
+    }
+
+    public void add(@NonNull PasswordCredential credential) throws IOException {
+        String resourceParam = PowerShell.escapePowerShellString(credential.getResource());
+        String userNameParam = PowerShell.escapePowerShellString(credential.getUserName());
+        String passwordParam = PowerShell.escapePowerShellString(String.valueOf(credential.getPassword()));
+        exec(
+                "$cred = (New-Object Windows.Security.Credentials.PasswordCredential(" + resourceParam + ", " + userNameParam + ", " + passwordParam + "))",
+                "AddCredential -cred $cred"
+        );
+    }
+
     public void invalidate(@NonNull String resource) throws IOException {
         String resourceParam = PowerShell.escapePowerShellString(resource);
         exec("InvalidateCredential -resource " + resourceParam);
@@ -70,7 +95,10 @@ public final class WinPasswordVault implements Closeable {
         }
     }
 
-    private static final TextParser<PasswordCredential> CREDENTIAL_PARSER = Picocsv.Parser.builder(WinPasswordVault::parseCsv).build();
+    private static final TextParser<PasswordCredential> CREDENTIAL_PARSER = Picocsv.Parser
+            .builder(WinPasswordVault::parseCsv)
+            .options(Csv.ReaderOptions.DEFAULT.toBuilder().maxCharsPerField(4096 * 2).build())
+            .build();
 
     private static PasswordCredential parseCsv(Csv.Reader reader) throws IOException {
         if (reader.readLine() && reader.readLine()) {

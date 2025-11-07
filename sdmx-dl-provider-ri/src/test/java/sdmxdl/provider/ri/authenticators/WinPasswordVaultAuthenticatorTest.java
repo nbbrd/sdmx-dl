@@ -1,18 +1,16 @@
-package internal.sdmxdl.cli;
+package sdmxdl.provider.ri.authenticators;
 
 import org.junit.jupiter.api.Test;
 import sdmxdl.web.WebSource;
 import tests.sdmxdl.web.spi.AuthenticatorAssert;
 
-import java.net.PasswordAuthentication;
-
 import static tests.sdmxdl.web.spi.AuthenticatorAssert.assertCompliance;
 
-public class ConstantAuthenticatorTest {
+public class WinPasswordVaultAuthenticatorTest {
 
     @Test
     public void testCompliance() {
-        WebSource validSource = WebSource
+        WebSource ignoring = WebSource
                 .builder()
                 .id("valid")
                 .driver("driver")
@@ -20,8 +18,8 @@ public class ConstantAuthenticatorTest {
                 .build();
 
         assertCompliance(
-                new ConstantAuthenticator(new PasswordAuthentication("userName", "password".toCharArray())),
-                AuthenticatorAssert.Sample.builder().ignoring(validSource).build()
+                new WinPasswordVaultAuthenticator(),
+                AuthenticatorAssert.Sample.builder().ignoring(ignoring).build()
         );
     }
 }

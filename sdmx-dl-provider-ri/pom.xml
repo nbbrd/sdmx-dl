@@ -89,6 +89,20 @@
             <artifactId>java-net-proxy</artifactId>
             <version>1.0.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.microsoft.azure</groupId>
+            <artifactId>msal4j</artifactId>
+            <version>1.30.0-beta</version>
+        </dependency>
+
+        <!-- runtime only -->
+        <dependency>
+            <!-- slf4j required by msal4j -->
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.7.36</version>
+            <scope>runtime</scope>
+        </dependency>
 
         <!-- test only -->
         <dependency>
