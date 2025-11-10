@@ -4,6 +4,8 @@ import com.microsoft.aad.msal4j.*;
 import internal.util.credentials.WinPasswordVault;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
+import nbbrd.design.VisibleForTesting;
+import nbbrd.io.sys.OS;
 import nbbrd.io.text.Formatter;
 import nbbrd.io.text.Parser;
 import nbbrd.io.text.Property;
@@ -21,11 +23,15 @@ import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URI;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.BiConsumer;
+import java.util.logging.Level;
 
 import static java.util.Collections.emptyList;
 import static nbbrd.io.function.IOFunction.unchecked;
@@ -37,6 +43,10 @@ import static sdmxdl.provider.web.DriverProperties.commaSeparatedProperty;
 @DirectImpl
 @ServiceProvider
 public final class MsalAuthenticator implements Authenticator {
+
+    @PropertyDefinition
+    public static final Property<String> UID_PROPERTY =
+            Property.of(AUTHENTICATOR_PROPERTY_PREFIX + ".uid", null, Parser.onString(), Formatter.onString());
 
     @PropertyDefinition
     public static final Property<String> CLIENT_ID_PROPERTY =
@@ -54,7 +64,7 @@ public final class MsalAuthenticator implements Authenticator {
     public static final Property<URI> REDIRECT_URI_PROPERTY =
             Property.of(AUTHENTICATOR_PROPERTY_PREFIX + ".redirectUri", URI.create("http://localhost"), Parser.onURI(), Formatter.onURI());
 
-    private static final ConcurrentMap<String, IPublicClientApplication> cache = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, IPublicClientApplication> cache = new ConcurrentHashMap<>();
 
     @Override
     public @NonNull String getAuthenticatorId() {
@@ -70,7 +80,7 @@ public final class MsalAuthenticator implements Authenticator {
     public @Nullable PasswordAuthentication getPasswordAuthenticationOrNull(@NonNull WebSource source) throws IOException {
         MsalConfig config = MsalConfig.parse(source);
         if (config != null) {
-            IPublicClientApplication app = getClientApplication(source, config);
+            IPublicClientApplication app = getClientApplication(config);
             return newToken(acquireToken(app, config.getScopes(), config.getRedirectUri()).accessToken());
         }
         return null;
@@ -80,13 +90,14 @@ public final class MsalAuthenticator implements Authenticator {
     public void invalidateAuthentication(@NonNull WebSource source) throws IOException {
         MsalConfig config = MsalConfig.parse(source);
         if (config != null) {
-            cache.remove(TypedId.getUniqueID(source));
+            cache.remove(config.getUid());
         }
     }
 
     @Override
     public @NonNull Collection<String> getAuthenticatorProperties() {
         return keysOf(
+                UID_PROPERTY,
                 CLIENT_ID_PROPERTY,
                 AUTHORITY_PROPERTY,
                 SCOPES_PROPERTY,
@@ -94,17 +105,30 @@ public final class MsalAuthenticator implements Authenticator {
         );
     }
 
+    @VisibleForTesting
     @lombok.Value
-    public static class MsalConfig {
+    static class MsalConfig {
 
+        @NonNull
+        String uid;
+
+        @NonNull
         String clientId;
+
+        @NonNull
         String authority;
+
+        @NonNull
         Set<String> scopes;
+
+        @NonNull
         URI redirectUri;
 
-        public static MsalConfig parse(WebSource source) throws IOException {
+        public static @Nullable MsalConfig parse(@NonNull WebSource source) throws IOException {
             if (AuthSchemes.MSAL_AUTH_SCHEME.equals(DriverProperties.AUTH_SCHEME_PROPERTY.get(source.getProperties()))) {
+                String uid = UID_PROPERTY.get(source.getProperties());
                 return new MsalConfig(
+                        uid != null && !uid.isEmpty() ? uid : TypedId.getUniqueID(source),
                         getNotNull(CLIENT_ID_PROPERTY, source),
                         getNotNull(AUTHORITY_PROPERTY, source),
                         new HashSet<>(getNotNull(SCOPES_PROPERTY, source)),
@@ -115,50 +139,47 @@ public final class MsalAuthenticator implements Authenticator {
         }
     }
 
-    private static IPublicClientApplication getClientApplication(WebSource source, MsalConfig config) throws IOException {
+    private IPublicClientApplication getClientApplication(MsalConfig config) throws IOException {
         try {
-            return cache.computeIfAbsent(TypedId.getUniqueID(source), unchecked(key -> newClientApplication(source, config, key)));
+            return cache.computeIfAbsent(config.getUid(), unchecked(uid -> newClientApplication(config)));
         } catch (UncheckedIOException ex) {
             throw ex.getCause();
         }
     }
 
-    private static IPublicClientApplication newClientApplication(WebSource source, MsalConfig config, String key) throws MalformedURLException {
-        return newClientApplication(config.getClientId(), config.getAuthority(), newTokenPersistence(key, key));
-    }
-
-    private static IPublicClientApplication newClientApplication(String clientId, String authority, ITokenCacheAccessAspect tokenPersistence) throws MalformedURLException {
+    private static IPublicClientApplication newClientApplication(MsalConfig config) throws MalformedURLException {
         return PublicClientApplication
-                .builder(clientId)
-                .authority(authority)
-                .setTokenCacheAccessAspect(tokenPersistence)
+                .builder(config.getClientId())
+                .authority(config.getAuthority())
+                .setTokenCacheAccessAspect(newTokenPersistence(config.getUid(), config.getUid()))
                 .build();
     }
 
     private static ITokenCacheAccessAspect newTokenPersistence(String resource, String userName) {
-//        return OS.NAME.equals(OS.Name.WINDOWS)
-//                ? new VaultTokenPersistence(resource, userName, (msg, e) -> log.log(Level.SEVERE, msg, e))
-//                : NoOpTokenPersistence.INSTANCE;
-        return NoOpTokenPersistence.INSTANCE;
+        return OS.NAME.equals(OS.Name.WINDOWS)
+                ? new VaultTokenPersistence(resource, userName, (msg, e) -> log.log(Level.SEVERE, msg, e))
+                : NoOpTokenPersistence.INSTANCE;
     }
 
     private static IAuthenticationResult acquireToken(IPublicClientApplication app, Set<String> scopes, URI redirectUri) throws IOException {
-        try {
-            return app.acquireTokenSilently(SilentParameters
-                            .builder(scopes)
-                            .account(app.getAccounts().join().stream().findFirst().orElse(null))
-                            .build())
-                    .join();
-        } catch (CompletionException ex) {
-            if (ex.getCause() instanceof MsalException) {
-                return app.acquireToken(InteractiveRequestParameters
-                                .builder(redirectUri)
-                                .scopes(scopes)
-                                .prompt(Prompt.SELECT_ACCOUNT)
+        synchronized (app) {
+            try {
+                return app.acquireTokenSilently(SilentParameters
+                                .builder(scopes)
+                                .account(app.getAccounts().join().stream().findFirst().orElse(null))
                                 .build())
                         .join();
-            } else {
-                throw new IOException(ex.getCause());
+            } catch (CompletionException ex) {
+                if (ex.getCause() instanceof MsalException) {
+                    return app.acquireToken(InteractiveRequestParameters
+                                    .builder(redirectUri)
+                                    .scopes(scopes)
+                                    .prompt(Prompt.SELECT_ACCOUNT)
+                                    .build())
+                            .join();
+                } else {
+                    throw new IOException(ex.getCause());
+                }
             }
         }
     }
@@ -198,7 +219,7 @@ public final class MsalAuthenticator implements Authenticator {
             try (WinPasswordVault vault = WinPasswordVault.open()) {
                 WinPasswordVault.PasswordCredential credential = vault.get(resource);
                 if (credential != null && credential.getUserName().equals(userName)) {
-                    context.tokenCache().deserialize(Arrays.toString(credential.getPassword()));
+                    context.tokenCache().deserialize(String.valueOf(credential.getPassword()));
                 }
             } catch (IOException e) {
                 onError.accept("Failed to access token cache from Windows Password Vault", e);
@@ -209,6 +230,7 @@ public final class MsalAuthenticator implements Authenticator {
         public void afterCacheAccess(ITokenCacheAccessContext context) {
             if (context.hasCacheChanged()) {
                 try (WinPasswordVault vault = WinPasswordVault.open()) {
+                    vault.invalidate(resource);
                     vault.add(new WinPasswordVault.PasswordCredential(resource, userName, context.tokenCache().serialize().toCharArray()));
                 } catch (IOException e) {
                     onError.accept("Failed to update token cache in Windows Password Vault", e);
