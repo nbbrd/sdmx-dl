@@ -12,9 +12,11 @@
 <meta name="generator" content="Hugo 0.152.2">
 
 
-  <meta name="description" content=" Common file encoding char string locale datetime The date-time format is ISO-8601." />
+  <meta name="description" content="sdmx-dl support multiple authentication schemes:
+BASIC: username/password pair MSAL: Microsoft Authentication Library (OAuth2) The authentication scheme is defined in the data source configuration using the sdmxdl.driver.authScheme property.
+BASIC scheme The BASIC scheme is used for data sources that require a username/password pair to access their data. When using this scheme, the credentials are prompted when accessing the data for the first time. These credentials are stored securely for future use in the OS keystore." />
 
-    <title>Data types | sdmx-dl</title>
+    <title>Authentication | sdmx-dl</title>
 
     <link rel="icon" type="image/svg+xml" href="/sdmx-dl/docs/develop/favicon/favicon.svg" />
 <link
@@ -35,46 +37,50 @@
     
   <meta
     property="og:title"
-    content="Data types"
+    content="Authentication"
   />
   <meta property="og:site_name" content="sdmx-dl" />
-  <meta property="og:description" content=" Common file encoding char string locale datetime The date-time format is ISO-8601." />
+  <meta property="og:description" content="sdmx-dl support multiple authentication schemes:
+BASIC: username/password pair MSAL: Microsoft Authentication Library (OAuth2) The authentication scheme is defined in the data source configuration using the sdmxdl.driver.authScheme property.
+BASIC scheme The BASIC scheme is used for data sources that require a username/password pair to access their data. When using this scheme, the credentials are prompted when accessing the data for the first time. These credentials are stored securely for future use in the OS keystore." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/" />
+<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/auth/" />
 
-<meta property="article:section" content="CLI" />
+<meta property="article:section" content="Auth" />
     <meta
       property="article:modified_time"
-      content="2022-06-24T09:57:23+02:00"
+      content="2025-11-12T11:26:49+01:00"
     />
 
 
   <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Data types" />
-  <meta name="twitter:description" content=" Common file encoding char string locale datetime The date-time format is ISO-8601." />
+<meta name="twitter:title" content="Authentication" />
+  <meta name="twitter:description" content="sdmx-dl support multiple authentication schemes:
+BASIC: username/password pair MSAL: Microsoft Authentication Library (OAuth2) The authentication scheme is defined in the data source configuration using the sdmxdl.driver.authScheme property.
+BASIC scheme The BASIC scheme is used for data sources that require a username/password pair to access their data. When using this scheme, the credentials are prompted when accessing the data for the first time. These credentials are stored securely for future use in the OS keystore." />
 
 
   <script type="application/ld+json">
   {
       "@context": "http://schema.org",
       "@type": "TechArticle",
-      "articleSection": "CLI",
-      "name": "Data types",
-      "url" : "https://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/",
-      "headline": "Data types",
-      "description": " Common file encoding char string locale datetime The date-time format is ISO-8601.",
-      "wordCount" : "246",
+      "articleSection": "Auth",
+      "name": "Authentication",
+      "url" : "https://nbbrd.github.io/sdmx-dl/docs/develop/auth/",
+      "headline": "Authentication",
+      "description": "sdmx-dl support multiple authentication schemes:\nBASIC: username\/password pair MSAL: Microsoft Authentication Library (OAuth2) The authentication scheme is defined in the data source configuration using the sdmxdl.driver.authScheme property.\nBASIC scheme The BASIC scheme is used for data sources that require a username\/password pair to access their data. When using this scheme, the credentials are prompted when accessing the data for the first time. These credentials are stored securely for future use in the OS keystore.",
+      "wordCount" : "276",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
           "@type": "WebPage",
-          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/"
+          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/auth/"
       },
       "copyrightHolder" : "sdmx-dl",
       "copyrightYear" : "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2022-06-24T09:57:23.00Z",
+      "dateModified": "2025-11-12T11:26:49.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -152,7 +158,7 @@
   href="/sdmx-dl/docs/develop/custom.css"
   media="all"
 />
-  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/" rel="canonical" type="text/html" />
+  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/auth/" rel="canonical" type="text/html" />
 
 <!-- Made with Geekdoc theme https://github.com/thegeeklab/hugo-geekdoc -->
 
@@ -634,7 +640,7 @@
                 <span class="flex">
                   <a
                     href="/sdmx-dl/docs/develop/cli/datatypes/"
-                    class="gdoc-nav__entry is-active"
+                    class="gdoc-nav__entry"
                   >
                     Data types
                   </a>
@@ -773,7 +779,7 @@
                 <span class="flex">
                   <a
                     href="/sdmx-dl/docs/develop/auth/"
-                    class="gdoc-nav__entry"
+                    class="gdoc-nav__entry is-active"
                   >
                     Authentication
                   </a>
@@ -926,15 +932,7 @@
     
   
   
-    
-    
-    
-    
-  
-  
-    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/cli/' href='/sdmx-dl/docs/develop/cli/'><span itemprop='name'>Command-line tool</span></a><meta itemprop='position' content='5' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Data types</span><meta itemprop='position' content='6' /></li>
-  
-
+    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Authentication</span><meta itemprop='position' content='5' /></li>
   
 
   
@@ -951,283 +949,117 @@
     class="gdoc-markdown gdoc-markdown__align--left"
     id="main-content" tabindex="-1"
   >
-    <h1>Data types</h1>
-    
-    <div class="flex align-center gdoc-page__anchorwrap">
-    <h2 id="common"
-    >
-        Common
-    </h2>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#common" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Common" aria-label="Anchor to: Common" href="#common">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-<div class="flex align-center gdoc-page__anchorwrap">
-    <h3 id="file"
-    >
-        <code>file</code>
-    </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#file" class="gdoc-page__anchor clip flex align-center" title="Anchor to: file" aria-label="Anchor to: file" href="#file">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-<div class="flex align-center gdoc-page__anchorwrap">
-    <h3 id="encoding"
-    >
-        <code>encoding</code>
-    </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#encoding" class="gdoc-page__anchor clip flex align-center" title="Anchor to: encoding" aria-label="Anchor to: encoding" href="#encoding">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-<div class="flex align-center gdoc-page__anchorwrap">
-    <h3 id="char"
-    >
-        <code>char</code>
-    </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#char" class="gdoc-page__anchor clip flex align-center" title="Anchor to: char" aria-label="Anchor to: char" href="#char">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-<div class="flex align-center gdoc-page__anchorwrap">
-    <h3 id="string"
-    >
-        <code>string</code>
-    </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#string" class="gdoc-page__anchor clip flex align-center" title="Anchor to: string" aria-label="Anchor to: string" href="#string">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-<div class="flex align-center gdoc-page__anchorwrap">
-    <h3 id="locale"
-    >
-        <code>locale</code>
-    </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#locale" class="gdoc-page__anchor clip flex align-center" title="Anchor to: locale" aria-label="Anchor to: locale" href="#locale">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-<div class="flex align-center gdoc-page__anchorwrap">
-    <h3 id="datetime"
-    >
-        <code>datetime</code>
-    </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#datetime" class="gdoc-page__anchor clip flex align-center" title="Anchor to: datetime" aria-label="Anchor to: datetime" href="#datetime">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-<p>The date-time format is <a
+    <h1>Authentication</h1>
+    <p><strong>sdmx-dl</strong> support multiple authentication schemes:</p>
+<ul>
+<li><a
   class="gdoc-markdown__link"
-  href="https://en.wikipedia.org/wiki/ISO_8601"
->ISO-8601</a>.</p>
-<div class="flex align-center gdoc-page__anchorwrap">
-    <h3 id="number"
-    >
-        <code>number</code>
-    </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#number" class="gdoc-page__anchor clip flex align-center" title="Anchor to: number" aria-label="Anchor to: number" href="#number">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-<p>A number is a numeric value.</p>
-<p><strong>Format:</strong> depends on the locale and number pattern.</p>
-<p><strong>Note:</strong> The number format provider has been changed in <a
+  href="#basic-scheme"
+>BASIC</a>: username/password pair</li>
+<li><a
   class="gdoc-markdown__link"
-  href="https://openjdk.java.net/jeps/252"
->JDK9 (see JEP252)</a> so the formatting might be different when using an old JDK. For example, NaN value (aka &ldquo;not-a-number&rdquo;) is represented by <code>NaN</code> in JDK9+ but was represented by <code>U+FFFD REPLACEMENT CHARACTER</code> in JDK8. Fortunately, the use of the newer provider (<code>CLDR</code>) can be enforced by setting explicitly the system property <code>java.locale.providers</code>:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-properties" data-lang="properties"><span class="line"><span class="cl"><span class="na">java.locale.providers</span><span class="o">=</span><span class="s">CLDR</span>
-</span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
-    <h3 id="url"
-    >
-        <code>url</code>
-    </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#url" class="gdoc-page__anchor clip flex align-center" title="Anchor to: url" aria-label="Anchor to: url" href="#url">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
+  href="#msal-scheme"
+>MSAL</a>: Microsoft Authentication Library (OAuth2)</li>
+</ul>
+<p>The authentication scheme is defined in the data source configuration using the <code>sdmxdl.driver.authScheme</code> property.</p>
 <div class="flex align-center gdoc-page__anchorwrap">
-    <h3 id="bool"
+    <h2 id="basic-scheme"
     >
-        <code>bool</code>
-    </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#bool" class="gdoc-page__anchor clip flex align-center" title="Anchor to: bool" aria-label="Anchor to: bool" href="#bool">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-<div class="flex align-center gdoc-page__anchorwrap">
-    <h3 id="int"
-    >
-        <code>int</code>
-    </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#int" class="gdoc-page__anchor clip flex align-center" title="Anchor to: int" aria-label="Anchor to: int" href="#int">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-<div class="flex align-center gdoc-page__anchorwrap">
-    <h2 id="sdmx"
-    >
-        SDMX
+        BASIC scheme
     </h2>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#sdmx" class="gdoc-page__anchor clip flex align-center" title="Anchor to: SDMX" aria-label="Anchor to: SDMX" href="#sdmx">
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/auth/#basic-scheme" class="gdoc-page__anchor clip flex align-center" title="Anchor to: BASIC scheme" aria-label="Anchor to: BASIC scheme" href="#basic-scheme">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
+<p>The BASIC scheme is used for data sources that require a username/password pair to access their data.
+When using this scheme, the credentials are prompted when accessing the data for the first time.
+These credentials are stored securely for future use in the <a
+  class="gdoc-markdown__link"
+  href="#native-os-keystore"
+>OS keystore</a>.</p>
 <div class="flex align-center gdoc-page__anchorwrap">
-    <h3 id="source"
+    <h2 id="msal-scheme"
     >
-        <code>source</code>
-    </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#source" class="gdoc-page__anchor clip flex align-center" title="Anchor to: source" aria-label="Anchor to: source" href="#source">
+        MSAL scheme
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/auth/#msal-scheme" class="gdoc-page__anchor clip flex align-center" title="Anchor to: MSAL scheme" aria-label="Anchor to: MSAL scheme" href="#msal-scheme">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<p>A source is a string that identifies of a data source.</p>
-<p><strong>Format:</strong> nothing specific but usually short and uppercase.</p>
+<p>The MSAL scheme is used for data sources that require OAuth2 authentication using the <a
+  class="gdoc-markdown__link"
+  href="https://docs.azure.cn/en-us/entra/identity-platform/authentication-flows-app-scenarios"
+>Microsoft Authentication Library</a>.
+When using this scheme, the user is prompted to authenticate via a web browser when accessing the data for the first time.
+The authentication tokens are stored securely for future use in the <a
+  class="gdoc-markdown__link"
+  href="#native-os-keystore"
+>OS keystore</a>.</p>
 
-<div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="8bee66a7-0">
-    <span>Examples</span>
-    <span>↕</span>
-  </label>
-  <input id="8bee66a7-0" type="checkbox" class="gdoc-expand__control hidden" />
-  <div class="gdoc-markdown--nested gdoc-expand__content">
-    <div class="table-wrap"> <table>
+
+
+<blockquote class="gdoc-hint info">
+  <div class="gdoc-hint__title flex gap-8 align-center"><i class="fa info"></i>
+      <span>Info</span></div>
+  <div class="gdoc-hint__text">The current implementation only supports the Authorization Code Flow with PKCE (Proof Key for Code Exchange) for public client applications.</div>
+</blockquote>
+
+<p>This scheme requires additional configuration properties:</p>
+<div class="table-wrap"> <table>
   <thead>
       <tr>
-          <th>source</th>
-          <th>description</th>
+          <th>Property</th>
+          <th>Type</th>
+          <th>Default</th>
       </tr>
   </thead>
   <tbody>
       <tr>
-          <td><code>ABS</code></td>
-          <td>Australian Bureau of Statistics</td>
+          <td><code>sdmxdl.authenticator.clientId</code> <br><small><i> Client ID (Application ID) of the application as registered in the application registration portal.</td>
+          <td><code>String</code></td>
+          <td><em>required</em></td>
       </tr>
       <tr>
-          <td><code>ECB</code></td>
-          <td>European Central Bank</td>
+          <td><code>sdmxdl.authenticator.authority</code> <br><small><i> URL of the authenticating authority or security token service (STS) from which MSAL will acquire security tokens.</td>
+          <td><code>URL</code></td>
+          <td><em>required</em></td>
       </tr>
       <tr>
-          <td><code>NBB</code></td>
-          <td>National Bank of Belgium</td>
+          <td><code>sdmxdl.authenticator.scopes</code> <br><small><i> Scopes application is requesting access to.</td>
+          <td><code>Comma-separated Strings</code></td>
+          <td><em>required</em></td>
+      </tr>
+      <tr>
+          <td><code>sdmxdl.authenticator.redirectUri</code> <br><small><i> Redirect URI where MSAL will listen to for the authorization code returned by Azure AD. Should be a loopback address with a port specified (for example, http://localhost:3671). If no port is specified, MSAL will find an open port.</td>
+          <td><code>URI</code></td>
+          <td><code>http://localhost</code></td>
+      </tr>
+      <tr>
+          <td><code>sdmxdl.authenticator.uid</code> <br><small><i> An optional UID used to store tokens.</td>
+          <td><code>String</code></td>
+          <td></td>
       </tr>
   </tbody>
 </table> </div>
-
-  </div>
-</div>
-
 <div class="flex align-center gdoc-page__anchorwrap">
-    <h3 id="flow"
+    <h2 id="native-os-keystore"
     >
-        <code>flow</code>
-    </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#flow" class="gdoc-page__anchor clip flex align-center" title="Anchor to: flow" aria-label="Anchor to: flow" href="#flow">
+        Native OS keystore
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/auth/#native-os-keystore" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Native OS keystore" aria-label="Anchor to: Native OS keystore" href="#native-os-keystore">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<p>A flow is a string that identifies a multi-dimensional dataset.</p>
-<p><strong>Format:</strong> <em>TODO</em></p>
+<p><strong>sdmx-dl</strong> uses native OS keystores to store credentials and tokens securely.</p>
 
-<div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="492a2ee6-1">
-    <span>Examples</span>
-    <span>↕</span>
-  </label>
-  <input id="492a2ee6-1" type="checkbox" class="gdoc-expand__control hidden" />
-  <div class="gdoc-markdown--nested gdoc-expand__content">
-    <div class="table-wrap"> <table>
-  <thead>
-      <tr>
-          <th>flow</th>
-          <th>description</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td><code>EXR</code></td>
-          <td>Exchange Rates</td>
-      </tr>
-      <tr>
-          <td><code>ABS_REGIONAL_ASGS</code></td>
-          <td>Regional Statistics, ASGS 2011, 2011-2016</td>
-      </tr>
-  </tbody>
-</table> </div>
 
-  </div>
-</div>
 
-<div class="flex align-center gdoc-page__anchorwrap">
-    <h3 id="key"
-    >
-        <code>key</code>
-    </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#key" class="gdoc-page__anchor clip flex align-center" title="Anchor to: key" aria-label="Anchor to: key" href="#key">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-<p>A key is a string that identifies a data subset of a dataset
-(<em>In a cube, it would be a slice identifier</em>).<br>
-A key can identify single or multiple time series.</p>
-<p><strong>Format:</strong> either an ordered list of dimension values separated by a dot (<code>.</code>) or the special keyword <code>all</code>.</p>
+<blockquote class="gdoc-hint info">
+  <div class="gdoc-hint__title flex gap-8 align-center"><i class="fa info"></i>
+      <span>Info</span></div>
+  <div class="gdoc-hint__text">The current implementation only supports Windows.</div>
+</blockquote>
 
-<div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="3d7f2f0b-2">
-    <span>Examples</span>
-    <span>↕</span>
-  </label>
-  <input id="3d7f2f0b-2" type="checkbox" class="gdoc-expand__control hidden" />
-  <div class="gdoc-markdown--nested gdoc-expand__content">
-    <div class="table-wrap"> <table>
-  <thead>
-      <tr>
-          <th>key</th>
-          <th>type</th>
-          <th>description</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td><code>M.CHF.EUR.SP00.A</code></td>
-          <td>single</td>
-          <td>Monthly; Swiss franc; …</td>
-      </tr>
-      <tr>
-          <td><code>M+D.CHF.EUR.SP00.A</code></td>
-          <td>multiple</td>
-          <td>Monthly + Daily; Swiss franc; …</td>
-      </tr>
-      <tr>
-          <td><code>M.CHF+USD.EUR.SP00.A</code></td>
-          <td>multiple</td>
-          <td>Monthly; Swiss franc + US dollar; …</td>
-      </tr>
-      <tr>
-          <td><code>M..EUR.SP00.A</code></td>
-          <td>multiple</td>
-          <td>Monthly; all currencies; …</td>
-      </tr>
-      <tr>
-          <td><code>all</code></td>
-          <td>multiple</td>
-          <td>everything</td>
-      </tr>
-  </tbody>
-</table> </div>
-
-  </div>
-</div>
-
-<div class="flex align-center gdoc-page__anchorwrap">
-    <h3 id="langs"
-    >
-        <code>langs</code>
-    </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#langs" class="gdoc-page__anchor clip flex align-center" title="Anchor to: langs" aria-label="Anchor to: langs" href="#langs">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
 
   </article>
 
@@ -1473,8 +1305,77 @@ A key can identify single or multiple time series.</p>
         
 
         
+
+        
           
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
           
+        
+
+        
+        
+      
+    
+
+  
+
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
         
 
         
@@ -1493,6 +1394,33 @@ A key can identify single or multiple time series.</p>
       
     
 
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+          
+          
+        
+
+        
+          
+        
+
+        
+        
+      
     
       
       
@@ -1511,102 +1439,6 @@ A key can identify single or multiple time series.</p>
             
             
           
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
         
 
         
@@ -1662,11 +1494,11 @@ A key can identify single or multiple time series.</p>
   
     <a
       class="gdoc-page__nav--prev flex align-center"
-      href="/sdmx-dl/docs/develop/cli/options/"
-      title="Options"
+      href="/sdmx-dl/docs/develop/ws/"
+      title="Web service"
     >
       <i class="gdoc-icon">gdoc_arrow_left_alt</i>
-      Options
+      Web service
     </a>
   
 </span>
@@ -1674,10 +1506,10 @@ A key can identify single or multiple time series.</p>
   
     <a
       class="gdoc-page__nav--next flex align-center"
-      href="/sdmx-dl/docs/develop/cli/examples/"
-      title="Examples"
+      href="/sdmx-dl/docs/develop/formats/"
+      title="Data formats"
     >
-      Examples
+      Data formats
       <i class="gdoc-icon">gdoc_arrow_right_alt</i>
     </a>
   
