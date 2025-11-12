@@ -7,6 +7,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+This is the sixteenth beta release of **sdmx-dl**.  
+sdmx-dl follows [semantic versioning](https://semver.org/).
+
+This release focuses on supporting multiple authentication mechanisms, 
+starting with [MSAL Authorization Code Flow](https://docs.azure.cn/en-us/entra/identity-platform/authentication-flows-app-scenarios).
+
+### Added
+
+- ![PROVIDER] Add support of MSAL Authorization Code Flow
+
 ## [3.0.0-beta.15] - 2025-10-24
 
 This is the fifteenth beta release of **sdmx-dl**.  

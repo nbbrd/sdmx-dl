@@ -1,3 +1,7 @@
+{{ $csv := resources.Get "sources.csv" | transform.Unmarshal (dict "delimiter" ",") }}
+{{ $lineCount := len $csv }}
+
+sdmx-dl is bundled with the following pre-configured {{ sub $lineCount 1 }} web services:
 
 <table>
     <thead>
@@ -9,7 +13,7 @@
         </tr>
     </thead>
     <tbody>
-    {{ range $i, $r := resources.Get "sources.csv" | transform.Unmarshal (dict "delimiter" ",") }}
+    {{ range $i, $r := $csv }}
     {{ if ne $i 0 }}
     <tr>
         {{ $id := index $r 0 }}
@@ -18,8 +22,7 @@
         {{ $domain := (urls.Parse $website).Host }}
         {{ $monitor_website := index $r 9 }}
         {{ $monitor_name := replace (lower $id) "_" "-" }}
-        <td><img src="https://www.google.com/s2/favicons?domain={{ $domain }}" /><code>{{ $id }}</code></td>
-        <td><a href="{{ $website }}">{{ $name }}</a></td>
+        <td><img src="https://www.google.com/s2/favicons?domain={{ $domain }}" /><code>{{ $id }}</code><br><small><a href="{{ $website }}">{{ $name }}</a></small></td>
         <td><a href="{{ $monitor_website }}"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2F{{ $monitor_name }}.yml"></a></td>
         <td><a href="{{ $monitor_website }}"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2F{{ $monitor_name }}%2Fuptime.json"></a></td>
     </tr>
