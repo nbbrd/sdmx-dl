@@ -6,8 +6,7 @@ sdmx-dl is bundled with the following pre-configured {{ sub $lineCount 1 }} web 
 <table>
     <thead>
         <tr>
-            <th>ID</th>
-            <th>Name</th>
+            <th>Source</th>
             <th>Status</th>
             <th>Uptime</th>
         </tr>
@@ -22,7 +21,15 @@ sdmx-dl is bundled with the following pre-configured {{ sub $lineCount 1 }} web 
         {{ $domain := (urls.Parse $website).Host }}
         {{ $monitor_website := index $r 9 }}
         {{ $monitor_name := replace (lower $id) "_" "-" }}
-        <td><img src="https://www.google.com/s2/favicons?domain={{ $domain }}" /><code>{{ $id }}</code><br><small><a href="{{ $website }}">{{ $name }}</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/{{ $domain }}.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>{{ $id }}</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="{{ $website }}">{{ $name }}</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="{{ $monitor_website }}"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2F{{ $monitor_name }}.yml"></a></td>
         <td><a href="{{ $monitor_website }}"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2F{{ $monitor_name }}%2Fuptime.json"></a></td>
     </tr>
@@ -30,3 +37,4 @@ sdmx-dl is bundled with the following pre-configured {{ sub $lineCount 1 }} web 
     {{ end }}
     </tbody>
 </table>
+
