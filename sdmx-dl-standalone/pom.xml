@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.15</version>
+        <version>3.0.0-beta.16</version>
     </parent>
 
     <artifactId>sdmx-dl-standalone</artifactId>
@@ -133,6 +133,7 @@
                                         <exclude>**/pom.xml</exclude>
                                         <exclude>META-INF/MANIFEST.MF</exclude>
                                         <exclude>META-INF/NOTICE</exclude>
+                                        <exclude>META-INF/MSFTSIG*</exclude>
                                         <exclude>**/*.proto</exclude>
                                         <exclude>**/proguard/*</exclude>
                                     </excludes>
@@ -180,6 +181,18 @@
                                 <relocation>
                                     <pattern>nl.altindag</pattern>
                                     <shadedPattern>standalone_sdmxdl.nl.altindag</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.azure</pattern>
+                                    <shadedPattern>standalone_sdmxdl.com.azure</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.microsoft</pattern>
+                                    <shadedPattern>standalone_sdmxdl.com.microsoft</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.slf4j</pattern>
+                                    <shadedPattern>standalone_sdmxdl.org.slf4j</shadedPattern>
                                 </relocation>
                             </relocations>
                             <createDependencyReducedPom>true</createDependencyReducedPom>

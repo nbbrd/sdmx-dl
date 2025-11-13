@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.15</version>
+        <version>3.0.0-beta.16</version>
     </parent>
 
     <artifactId>sdmx-dl-grpc</artifactId>
@@ -23,8 +23,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-        <quarkus.platform.version>3.28.4</quarkus.platform.version>
-        <quarkus.mcp.version>1.7.0</quarkus.mcp.version>
+        <quarkus.platform.version>3.29.1</quarkus.platform.version>
+        <quarkus.mcp.version>1.7.1</quarkus.mcp.version>
         <quarkus.package.jar.type>uber-jar</quarkus.package.jar.type>
         <skipITs>true</skipITs>
         <enforcer.skip>true</enforcer.skip>
@@ -55,6 +55,12 @@
             <groupId>com.github.nbbrd.sdmx-dl</groupId>
             <artifactId>sdmx-dl-provider-ri</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>*</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

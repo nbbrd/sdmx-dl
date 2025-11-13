@@ -45,6 +45,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import static sdmxdl.provider.ri.drivers.AuthSchemes.*;
 import static sdmxdl.provider.web.DriverProperties.*;
 import static sdmxdl.web.spi.Driver.DRIVER_PROPERTY_PREFIX;
 
@@ -65,7 +66,7 @@ public class RiHttpUtils {
             CONNECT_TIMEOUT_PROPERTY,
             READ_TIMEOUT_PROPERTY,
             MAX_REDIRECTS_PROPERTY,
-            PREEMPTIVE_AUTH_PROPERTY,
+            AUTH_SCHEME_PROPERTY,
             USER_AGENT_PROPERTY,
             DUMP_FOLDER_PROPERTY
     );
@@ -97,7 +98,7 @@ public class RiHttpUtils {
                 .readTimeout(READ_TIMEOUT_PROPERTY.get(source.getProperties()))
                 .connectTimeout(CONNECT_TIMEOUT_PROPERTY.get(source.getProperties()))
                 .maxRedirects(MAX_REDIRECTS_PROPERTY.get(source.getProperties()))
-                .preemptiveAuthentication(PREEMPTIVE_AUTH_PROPERTY.get(source.getProperties()))
+                .authScheme(toHttpAuthScheme(AUTH_SCHEME_PROPERTY.get(source.getProperties())))
                 .proxySelector(network::getProxySelector)
                 .sslSocketFactory(() -> network.getSSLFactory().getSSLSocketFactory())
                 .hostnameVerifier(() -> network.getSSLFactory().getHostnameVerifier())
@@ -106,6 +107,18 @@ public class RiHttpUtils {
                 .authenticator(new RiHttpAuthenticator(source, context.getAuthenticators(), eventListener))
                 .userAgent(USER_AGENT_PROPERTY.get(source.getProperties()))
                 .build();
+    }
+
+    private static HttpAuthScheme toHttpAuthScheme(@Nullable String name) {
+        if (name != null) {
+            switch (name) {
+                case BASIC_AUTH_SCHEME:
+                    return HttpAuthScheme.BASIC;
+                case MSAL_AUTH_SCHEME:
+                    return HttpAuthScheme.BEARER;
+            }
+        }
+        return HttpAuthScheme.NONE;
     }
 
     private static DumpingClient newDumpingClient(HttpContext context, HttpClient client, File dumpFolder) {

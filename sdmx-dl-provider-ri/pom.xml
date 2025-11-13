@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.15</version>
+        <version>3.0.0-beta.16</version>
     </parent>
 
     <artifactId>sdmx-dl-provider-ri</artifactId>
@@ -88,6 +88,26 @@
             <groupId>com.github.nbbrd.java-net-proxy</groupId>
             <artifactId>java-net-proxy</artifactId>
             <version>1.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.azure</groupId>
+            <artifactId>msal4j</artifactId>
+            <version>1.30.0-beta</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- runtime only -->
+        <dependency>
+            <!-- slf4j required by msal4j -->
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>2.0.17</version>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- test only -->

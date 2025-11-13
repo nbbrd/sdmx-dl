@@ -2,13 +2,15 @@ package sdmxdl.provider.px.drivers;
 
 import com.google.gson.*;
 import lombok.NonNull;
-import nbbrd.design.*;
+import nbbrd.design.DirectImpl;
+import nbbrd.design.MightBeGenerated;
+import nbbrd.design.NonNegative;
+import nbbrd.design.VisibleForTesting;
 import nbbrd.io.FileParser;
 import nbbrd.io.function.IOSupplier;
 import nbbrd.io.http.*;
 import nbbrd.io.net.MediaType;
 import nbbrd.io.text.*;
-import nbbrd.io.text.Formatter;
 import nbbrd.service.ServiceProvider;
 import org.jspecify.annotations.Nullable;
 import sdmxdl.*;
@@ -43,6 +45,7 @@ import static java.util.stream.Collectors.toList;
 import static nbbrd.io.Resource.newInputStream;
 import static sdmxdl.format.time.TimeFormats.IGNORE_ERROR;
 import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
+import static sdmxdl.provider.web.DriverProperties.commaSeparatedProperty;
 
 @DirectImpl
 @ServiceProvider
@@ -53,11 +56,11 @@ public final class PxWebDriver implements Driver {
 
     @PropertyDefinition
     static final Property<List<String>> VERSIONS_PROPERTY =
-            Property.of(DRIVER_PROPERTY_PREFIX + ".versions", emptyList(), Parser.onStringList(PxWebDriver::split), Formatter.onStringList(PxWebDriver::join));
+            commaSeparatedProperty(DRIVER_PROPERTY_PREFIX + ".versions", emptyList());
 
     @PropertyDefinition
     static final Property<List<String>> LANGUAGES_PROPERTY =
-            Property.of(DRIVER_PROPERTY_PREFIX + ".languages", emptyList(), Parser.onStringList(PxWebDriver::split), Formatter.onStringList(PxWebDriver::join));
+            commaSeparatedProperty(DRIVER_PROPERTY_PREFIX + ".languages", emptyList());
 
     @PropertyDefinition
     static final BooleanProperty ENABLE_PROPERTY =
@@ -825,15 +828,5 @@ public final class PxWebDriver implements Driver {
 
             return result;
         }
-    }
-
-    @MightBePromoted
-    private static Stream<String> split(CharSequence text) {
-        return Stream.of(text.toString().split(",", -1));
-    }
-
-    @MightBePromoted
-    private static String join(Stream<CharSequence> stream) {
-        return stream.collect(Collectors.joining(","));
     }
 }

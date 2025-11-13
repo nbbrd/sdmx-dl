@@ -5,6 +5,8 @@ import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.io.sys.OS;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.provider.ri.drivers.AuthSchemes;
+import sdmxdl.provider.web.DriverProperties;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Authenticator;
 
@@ -29,16 +31,21 @@ public final class WinPasswordVaultAuthenticator implements Authenticator {
 
     @Override
     public PasswordAuthentication getPasswordAuthenticationOrNull(@NonNull WebSource source) throws IOException {
-        try (WinPasswordVault vault = WinPasswordVault.open()) {
-            String message = "Enter your credentials for " + source.getId();
-            return toPasswordAuthentication(vault.getOrPrompt(getResource(source), message, false));
+        if (AuthSchemes.BASIC_AUTH_SCHEME.equals(DriverProperties.AUTH_SCHEME_PROPERTY.get(source.getProperties()))) {
+            try (WinPasswordVault vault = WinPasswordVault.open()) {
+                String message = "Enter your credentials for " + source.getId();
+                return toPasswordAuthentication(vault.getOrPrompt(getResource(source), message, false));
+            }
         }
+        return null;
     }
 
     @Override
     public void invalidateAuthentication(@NonNull WebSource source) throws IOException {
-        try (WinPasswordVault vault = WinPasswordVault.open()) {
-            vault.invalidate(getResource(source));
+        if (AuthSchemes.BASIC_AUTH_SCHEME.equals(DriverProperties.AUTH_SCHEME_PROPERTY.get(source.getProperties()))) {
+            try (WinPasswordVault vault = WinPasswordVault.open()) {
+                vault.invalidate(getResource(source));
+            }
         }
     }
 
@@ -47,7 +54,7 @@ public final class WinPasswordVaultAuthenticator implements Authenticator {
         return Collections.emptyList();
     }
 
-    private String getResource(WebSource source) {
+    private static String getResource(WebSource source) {
         return "sdmx-dl:" + source.getEndpoint().getHost();
     }
 
