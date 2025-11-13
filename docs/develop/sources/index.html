@@ -13,7 +13,7 @@
 
 
   <meta name="description" content="sdmx-dl supports any SDMX 2.1 RESTful web service as well as a few variants.
-sdmx-dl is bundled with the following pre-configured 34 web services: ID Name Status Uptime ABS
+sdmx-dl is bundled with the following pre-configured 34 web services: Source Status Uptime ABS
 Australian Bureau of Statistics BBK
 Deutsche Bundesbank BIS
 Bank for International Settlements CAMSTAT
@@ -74,7 +74,7 @@ World Integrated Trade Solution " />
   />
   <meta property="og:site_name" content="sdmx-dl" />
   <meta property="og:description" content="sdmx-dl supports any SDMX 2.1 RESTful web service as well as a few variants.
-sdmx-dl is bundled with the following pre-configured 34 web services: ID Name Status Uptime ABS
+sdmx-dl is bundled with the following pre-configured 34 web services: Source Status Uptime ABS
 Australian Bureau of Statistics BBK
 Deutsche Bundesbank BIS
 Bank for International Settlements CAMSTAT
@@ -122,7 +122,7 @@ World Integrated Trade Solution " />
   <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Data sources" />
   <meta name="twitter:description" content="sdmx-dl supports any SDMX 2.1 RESTful web service as well as a few variants.
-sdmx-dl is bundled with the following pre-configured 34 web services: ID Name Status Uptime ABS
+sdmx-dl is bundled with the following pre-configured 34 web services: Source Status Uptime ABS
 Australian Bureau of Statistics BBK
 Deutsche Bundesbank BIS
 Bank for International Settlements CAMSTAT
@@ -167,8 +167,8 @@ World Integrated Trade Solution " />
       "name": "Data sources",
       "url" : "https://nbbrd.github.io/sdmx-dl/docs/develop/sources/",
       "headline": "Data sources",
-      "description": "sdmx-dl supports any SDMX 2.1 RESTful web service as well as a few variants.\nsdmx-dl is bundled with the following pre-configured 34 web services: ID Name Status Uptime ABS\nAustralian Bureau of Statistics BBK\nDeutsche Bundesbank BIS\nBank for International Settlements CAMSTAT\nNational Institute of Statistics of Cambodia ECB\nEuropean Central Bank EC_DG_COMP\nEuropean Commission - Directorate General for Competition EC_DG_EMPL\nEuropean Commission - Directorate General for Employment, Social Affairs and inclusion EC_DG_GROW\nEuropean Commission - Directorate General for Internal Market, Industry, Entrepreneurship and SMEs ESCAP\nEconomic and Social Commission for Asia and the Pacific ESTAT\nEurostat ESTAT_COMEXT\nEurostat - International trade in goods statistics (ITGS) ILO\nInternational Labour Organization IMF\nInternational Monetary Fund IMF_SDMX_CENTRAL\nInternational Monetary Fund (SDMX Central) INEGI\nNational Institute of Statistics, Geography and Informatics INSEE\nNational Institute of Statistics and Economic Studies ISTAT\nItalian National Institute of Statistics NB\nNorges Bank NBB\nNational Bank of Belgium OECD\nThe Organisation for Economic Co-operation and Development SGR\nSDMX Global Registry SIMEL\nEl Salvador Labor Market Information System SPC\nPacific Data Hub STATCAN\nStatistics Canada STATCAN_CCEI\nCanadian Center of Energy Information STATCAN_CENSUS\nCanadian Census of Population STATCAN_HFED\nCanadian high frequency electricity data STATEC\nNational Institute of statistics and economic studies of the Grand Duchy of Luxembourg UIS\nUnesco Institute for Statistics UKDS\nUK Data Service UNDATA\nData access system to UN databases UNICEF\nUN International Children\u0027s Emergency Fund WB\nWorld Bank WITS\nWorld Integrated Trade Solution ",
-      "wordCount" : "237",
+      "description": "sdmx-dl supports any SDMX 2.1 RESTful web service as well as a few variants.\nsdmx-dl is bundled with the following pre-configured 34 web services: Source Status Uptime ABS\nAustralian Bureau of Statistics BBK\nDeutsche Bundesbank BIS\nBank for International Settlements CAMSTAT\nNational Institute of Statistics of Cambodia ECB\nEuropean Central Bank EC_DG_COMP\nEuropean Commission - Directorate General for Competition EC_DG_EMPL\nEuropean Commission - Directorate General for Employment, Social Affairs and inclusion EC_DG_GROW\nEuropean Commission - Directorate General for Internal Market, Industry, Entrepreneurship and SMEs ESCAP\nEconomic and Social Commission for Asia and the Pacific ESTAT\nEurostat ESTAT_COMEXT\nEurostat - International trade in goods statistics (ITGS) ILO\nInternational Labour Organization IMF\nInternational Monetary Fund IMF_SDMX_CENTRAL\nInternational Monetary Fund (SDMX Central) INEGI\nNational Institute of Statistics, Geography and Informatics INSEE\nNational Institute of Statistics and Economic Studies ISTAT\nItalian National Institute of Statistics NB\nNorges Bank NBB\nNational Bank of Belgium OECD\nThe Organisation for Economic Co-operation and Development SGR\nSDMX Global Registry SIMEL\nEl Salvador Labor Market Information System SPC\nPacific Data Hub STATCAN\nStatistics Canada STATCAN_CCEI\nCanadian Center of Energy Information STATCAN_CENSUS\nCanadian Census of Population STATCAN_HFED\nCanadian high frequency electricity data STATEC\nNational Institute of statistics and economic studies of the Grand Duchy of Luxembourg UIS\nUnesco Institute for Statistics UKDS\nUK Data Service UNDATA\nData access system to UN databases UNICEF\nUN International Children\u0027s Emergency Fund WB\nWorld Bank WITS\nWorld Integrated Trade Solution ",
+      "wordCount" : "236",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -1061,8 +1061,7 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
 <div class="table-wrap"> <table>
     <thead>
         <tr>
-            <th>ID</th>
-            <th>Name</th>
+            <th>Source</th>
             <th>Status</th>
             <th>Uptime</th>
         </tr>
@@ -1079,7 +1078,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=explore.data.abs.gov.au" /><code>ABS</code><br><small><a href="https://explore.data.abs.gov.au">Australian Bureau of Statistics</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/explore.data.abs.gov.au.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>ABS</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://explore.data.abs.gov.au">Australian Bureau of Statistics</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/abs"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fabs.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/abs"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fabs%2Fuptime.json"></a></td>
     </tr>
@@ -1093,7 +1100,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=www.bundesbank.de" /><code>BBK</code><br><small><a href="https://www.bundesbank.de/en/statistics/time-series-databases">Deutsche Bundesbank</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/www.bundesbank.de.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>BBK</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://www.bundesbank.de/en/statistics/time-series-databases">Deutsche Bundesbank</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/bbk"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fbbk.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/bbk"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fbbk%2Fuptime.json"></a></td>
     </tr>
@@ -1107,7 +1122,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=stats.bis.org" /><code>BIS</code><br><small><a href="https://stats.bis.org/statx/toc/LBS.html">Bank for International Settlements</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/stats.bis.org.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>BIS</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://stats.bis.org/statx/toc/LBS.html">Bank for International Settlements</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/bis"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fbis.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/bis"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fbis%2Fuptime.json"></a></td>
     </tr>
@@ -1121,7 +1144,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=camstat.nis.gov.kh" /><code>CAMSTAT</code><br><small><a href="http://camstat.nis.gov.kh/?locale=en&amp;start=0">National Institute of Statistics of Cambodia</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/camstat.nis.gov.kh.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>CAMSTAT</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="http://camstat.nis.gov.kh/?locale=en&amp;start=0">National Institute of Statistics of Cambodia</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/camstat"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fcamstat.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/camstat"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fcamstat%2Fuptime.json"></a></td>
     </tr>
@@ -1135,7 +1166,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=data.ecb.europa.eu" /><code>ECB</code><br><small><a href="https://data.ecb.europa.eu/">European Central Bank</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/data.ecb.europa.eu.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>ECB</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://data.ecb.europa.eu/">European Central Bank</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/ecb"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fecb.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/ecb"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fecb%2Fuptime.json"></a></td>
     </tr>
@@ -1149,7 +1188,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=data.europa.eu" /><code>EC_DG_COMP</code><br><small><a href="https://data.europa.eu/data/datasets?catalog=comp">European Commission - Directorate General for Competition</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/data.europa.eu.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>EC_DG_COMP</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://data.europa.eu/data/datasets?catalog=comp">European Commission - Directorate General for Competition</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/ec_dg_comp"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fec-dg-comp.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/ec_dg_comp"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fec-dg-comp%2Fuptime.json"></a></td>
     </tr>
@@ -1163,7 +1210,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=data.europa.eu" /><code>EC_DG_EMPL</code><br><small><a href="https://data.europa.eu/data/datasets?catalog=empl">European Commission - Directorate General for Employment, Social Affairs and inclusion</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/data.europa.eu.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>EC_DG_EMPL</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://data.europa.eu/data/datasets?catalog=empl">European Commission - Directorate General for Employment, Social Affairs and inclusion</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/ec_dg_empl"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fec-dg-empl.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/ec_dg_empl"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fec-dg-empl%2Fuptime.json"></a></td>
     </tr>
@@ -1177,7 +1232,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=data.europa.eu" /><code>EC_DG_GROW</code><br><small><a href="https://data.europa.eu/data/datasets?catalog=grow">European Commission - Directorate General for Internal Market, Industry, Entrepreneurship and SMEs</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/data.europa.eu.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>EC_DG_GROW</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://data.europa.eu/data/datasets?catalog=grow">European Commission - Directorate General for Internal Market, Industry, Entrepreneurship and SMEs</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/ec_dg_grow"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fec-dg-grow.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/ec_dg_grow"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fec-dg-grow%2Fuptime.json"></a></td>
     </tr>
@@ -1191,7 +1254,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=dataexplorer.unescap.org" /><code>ESCAP</code><br><small><a href="https://dataexplorer.unescap.org/">Economic and Social Commission for Asia and the Pacific</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/dataexplorer.unescap.org.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>ESCAP</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://dataexplorer.unescap.org/">Economic and Social Commission for Asia and the Pacific</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/escap"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fescap.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/escap"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fescap%2Fuptime.json"></a></td>
     </tr>
@@ -1205,7 +1276,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=ec.europa.eu" /><code>ESTAT</code><br><small><a href="https://ec.europa.eu/eurostat/data/database">Eurostat</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/ec.europa.eu.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>ESTAT</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://ec.europa.eu/eurostat/data/database">Eurostat</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/estat"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Festat.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/estat"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Festat%2Fuptime.json"></a></td>
     </tr>
@@ -1219,7 +1298,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=ec.europa.eu" /><code>ESTAT_COMEXT</code><br><small><a href="https://ec.europa.eu/eurostat/web/international-trade-in-goods/overview">Eurostat - International trade in goods statistics (ITGS)</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/ec.europa.eu.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>ESTAT_COMEXT</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://ec.europa.eu/eurostat/web/international-trade-in-goods/overview">Eurostat - International trade in goods statistics (ITGS)</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/estat_comext"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Festat-comext.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/estat_comext"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Festat-comext%2Fuptime.json"></a></td>
     </tr>
@@ -1233,7 +1320,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=data.ilo.org" /><code>ILO</code><br><small><a href="https://data.ilo.org/">International Labour Organization</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/data.ilo.org.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>ILO</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://data.ilo.org/">International Labour Organization</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/ilo"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Filo.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/ilo"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Filo%2Fuptime.json"></a></td>
     </tr>
@@ -1247,7 +1342,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=data.imf.org" /><code>IMF</code><br><small><a href="https://data.imf.org">International Monetary Fund</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/data.imf.org.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>IMF</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://data.imf.org">International Monetary Fund</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/imf"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fimf.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/imf"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fimf%2Fuptime.json"></a></td>
     </tr>
@@ -1261,7 +1364,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=data.imf.org" /><code>IMF_SDMX_CENTRAL</code><br><small><a href="https://data.imf.org">International Monetary Fund (SDMX Central)</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/data.imf.org.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>IMF_SDMX_CENTRAL</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://data.imf.org">International Monetary Fund (SDMX Central)</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/imf-sdmx-central"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fimf-sdmx-central.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/imf-sdmx-central"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fimf-sdmx-central%2Fuptime.json"></a></td>
     </tr>
@@ -1275,7 +1386,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=sdmx.snieg.mx" /><code>INEGI</code><br><small><a href="https://sdmx.snieg.mx">National Institute of Statistics, Geography and Informatics</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/sdmx.snieg.mx.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>INEGI</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://sdmx.snieg.mx">National Institute of Statistics, Geography and Informatics</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/inegi"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Finegi.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/inegi"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Finegi%2Fuptime.json"></a></td>
     </tr>
@@ -1289,7 +1408,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=www.insee.fr" /><code>INSEE</code><br><small><a href="https://www.insee.fr/fr/statistiques">National Institute of Statistics and Economic Studies</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/www.insee.fr.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>INSEE</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://www.insee.fr/fr/statistiques">National Institute of Statistics and Economic Studies</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/insee"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Finsee.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/insee"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Finsee%2Fuptime.json"></a></td>
     </tr>
@@ -1303,7 +1430,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=esploradati.istat.it" /><code>ISTAT</code><br><small><a href="https://esploradati.istat.it/databrowser/">Italian National Institute of Statistics</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/esploradati.istat.it.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>ISTAT</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://esploradati.istat.it/databrowser/">Italian National Institute of Statistics</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/istat"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fistat.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/istat"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fistat%2Fuptime.json"></a></td>
     </tr>
@@ -1317,7 +1452,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=www.norges-bank.no" /><code>NB</code><br><small><a href="https://www.norges-bank.no/en/topics/Statistics/">Norges Bank</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/www.norges-bank.no.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>NB</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://www.norges-bank.no/en/topics/Statistics/">Norges Bank</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/nb"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fnb.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/nb"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fnb%2Fuptime.json"></a></td>
     </tr>
@@ -1331,7 +1474,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=stat.nbb.be" /><code>NBB</code><br><small><a href="https://stat.nbb.be">National Bank of Belgium</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/stat.nbb.be.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>NBB</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://stat.nbb.be">National Bank of Belgium</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/nbb"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fnbb.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/nbb"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fnbb%2Fuptime.json"></a></td>
     </tr>
@@ -1345,7 +1496,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=data-explorer.oecd.org" /><code>OECD</code><br><small><a href="https://data-explorer.oecd.org/">The Organisation for Economic Co-operation and Development</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/data-explorer.oecd.org.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>OECD</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://data-explorer.oecd.org/">The Organisation for Economic Co-operation and Development</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/oecd"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Foecd.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/oecd"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Foecd%2Fuptime.json"></a></td>
     </tr>
@@ -1359,7 +1518,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=registry.sdmx.org" /><code>SGR</code><br><small><a href="https://registry.sdmx.org/overview.html">SDMX Global Registry</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/registry.sdmx.org.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>SGR</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://registry.sdmx.org/overview.html">SDMX Global Registry</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/sgr"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fsgr.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/sgr"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fsgr%2Fuptime.json"></a></td>
     </tr>
@@ -1373,7 +1540,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=datasimel.mtps.gob.sv" /><code>SIMEL</code><br><small><a href="https://datasimel.mtps.gob.sv/">El Salvador Labor Market Information System</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/datasimel.mtps.gob.sv.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>SIMEL</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://datasimel.mtps.gob.sv/">El Salvador Labor Market Information System</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/simel"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fsimel.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/simel"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fsimel%2Fuptime.json"></a></td>
     </tr>
@@ -1387,7 +1562,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=stats.pacificdata.org" /><code>SPC</code><br><small><a href="https://stats.pacificdata.org/?locale=en">Pacific Data Hub</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/stats.pacificdata.org.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>SPC</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://stats.pacificdata.org/?locale=en">Pacific Data Hub</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/spc"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fspc.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/spc"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fspc%2Fuptime.json"></a></td>
     </tr>
@@ -1401,7 +1584,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=www150.statcan.gc.ca" /><code>STATCAN</code><br><small><a href="https://www150.statcan.gc.ca/n1/en/type/data?MM=1">Statistics Canada</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/www150.statcan.gc.ca.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>STATCAN</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://www150.statcan.gc.ca/n1/en/type/data?MM=1">Statistics Canada</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/statcan"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fstatcan.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/statcan"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fstatcan%2Fuptime.json"></a></td>
     </tr>
@@ -1415,7 +1606,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=de-ccei.statcan.gc.ca" /><code>STATCAN_CCEI</code><br><small><a href="https://de-ccei.statcan.gc.ca/?lc=en&amp;pg=0">Canadian Center of Energy Information</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/de-ccei.statcan.gc.ca.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>STATCAN_CCEI</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://de-ccei.statcan.gc.ca/?lc=en&amp;pg=0">Canadian Center of Energy Information</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/statcan_ccei"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fstatcan-ccei.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/statcan_ccei"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fstatcan-ccei%2Fuptime.json"></a></td>
     </tr>
@@ -1429,7 +1628,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=www12.statcan.gc.ca" /><code>STATCAN_CENSUS</code><br><small><a href="https://www12.statcan.gc.ca/census-recensement/index-eng.cfm">Canadian Census of Population</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/www12.statcan.gc.ca.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>STATCAN_CENSUS</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://www12.statcan.gc.ca/census-recensement/index-eng.cfm">Canadian Census of Population</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/statcan_census"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fstatcan-census.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/statcan_census"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fstatcan-census%2Fuptime.json"></a></td>
     </tr>
@@ -1443,7 +1650,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=energy-information.canada.ca" /><code>STATCAN_HFED</code><br><small><a href="https://energy-information.canada.ca/en/resources/high-frequency-electricity-data">Canadian high frequency electricity data</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/energy-information.canada.ca.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>STATCAN_HFED</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://energy-information.canada.ca/en/resources/high-frequency-electricity-data">Canadian high frequency electricity data</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/statcan_hfed"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fstatcan-hfed.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/statcan_hfed"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fstatcan-hfed%2Fuptime.json"></a></td>
     </tr>
@@ -1457,7 +1672,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=lustat.statec.lu" /><code>STATEC</code><br><small><a href="https://lustat.statec.lu">National Institute of statistics and economic studies of the Grand Duchy of Luxembourg</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/lustat.statec.lu.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>STATEC</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://lustat.statec.lu">National Institute of statistics and economic studies of the Grand Duchy of Luxembourg</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/statec"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fstatec.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/statec"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fstatec%2Fuptime.json"></a></td>
     </tr>
@@ -1471,7 +1694,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=data.uis.unesco.org" /><code>UIS</code><br><small><a href="http://data.uis.unesco.org">Unesco Institute for Statistics</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/data.uis.unesco.org.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>UIS</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="http://data.uis.unesco.org">Unesco Institute for Statistics</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/uis"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fuis.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/uis"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fuis%2Fuptime.json"></a></td>
     </tr>
@@ -1485,7 +1716,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=stats2.digitalresources.jisc.ac.uk" /><code>UKDS</code><br><small><a href="https://stats2.digitalresources.jisc.ac.uk/">UK Data Service</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/stats2.digitalresources.jisc.ac.uk.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>UKDS</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://stats2.digitalresources.jisc.ac.uk/">UK Data Service</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/ukds"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fukds.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/ukds"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fukds%2Fuptime.json"></a></td>
     </tr>
@@ -1499,7 +1738,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=data.un.org" /><code>UNDATA</code><br><small><a href="https://data.un.org/SdmxBrowser/start">Data access system to UN databases</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/data.un.org.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>UNDATA</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://data.un.org/SdmxBrowser/start">Data access system to UN databases</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/undata"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fundata.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/undata"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fundata%2Fuptime.json"></a></td>
     </tr>
@@ -1513,7 +1760,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=data.unicef.org" /><code>UNICEF</code><br><small><a href="https://data.unicef.org/">UN International Children&#39;s Emergency Fund</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/data.unicef.org.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>UNICEF</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://data.unicef.org/">UN International Children&#39;s Emergency Fund</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/unicef"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Funicef.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/unicef"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Funicef%2Fuptime.json"></a></td>
     </tr>
@@ -1527,7 +1782,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=data.worldbank.org" /><code>WB</code><br><small><a href="https://data.worldbank.org">World Bank</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/data.worldbank.org.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>WB</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://data.worldbank.org">World Bank</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/wb"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fwb.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/wb"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fwb%2Fuptime.json"></a></td>
     </tr>
@@ -1541,7 +1804,15 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
         
         
         
-        <td><img src="https://www.google.com/s2/favicons?domain=wits.worldbank.org" /><code>WITS</code><br><small><a href="https://wits.worldbank.org">World Integrated Trade Solution</a></small></td>
+        <td>
+            <div style="display: flex; align-items: center;">
+                <img src="https://icons.duckduckgo.com/ip3/wits.worldbank.org.ico" width="32" style="margin-right: 8px;" />
+                <div>
+                    <code>WITS</code><br>
+                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="https://wits.worldbank.org">World Integrated Trade Solution</a></small>
+                </div>
+            </div>
+        </td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/wits"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fwits.yml"></a></td>
         <td><a href="https://nbbrd.github.io/sdmx-upptime/history/wits"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fwits%2Fuptime.json"></a></td>
     </tr>
@@ -1549,6 +1820,7 @@ sdmx-dl is bundled with the following pre-configured 34 web services:
     
     </tbody>
 </table> </div>
+
 
 
   </article>
