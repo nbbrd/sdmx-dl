@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Web service on sdmx-dl</title>
+    <link>https://nbbrd.github.io/sdmx-dl/docs/v3.0.0-beta.16/ws/</link>
+    <description>Recent content in Web service on sdmx-dl</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <atom:link href="https://nbbrd.github.io/sdmx-dl/docs/v3.0.0-beta.16/ws/index.xml" rel="self" type="application/rss+xml" />
+  </channel>
+</rss>
