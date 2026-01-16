@@ -130,6 +130,26 @@
             <version>${quarkus.mcp.version}</version>
             <scope>test</scope>
         </dependency>
+        <!-- Selenium WebDriver for UI testing -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>4.39.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- WebDriverManager for automatic driver management -->
+        <dependency>
+            <groupId>io.github.bonigarcia</groupId>
+            <artifactId>webdrivermanager</artifactId>
+            <version>6.3.3</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- REST Assured for API testing -->
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -186,6 +206,8 @@
                     <systemPropertyVariables>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                         <maven.home>${maven.home}</maven.home>
+                        <webdriver.chrome.driver>target/chromedriver</webdriver.chrome.driver>
+                        <headless>true</headless>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
