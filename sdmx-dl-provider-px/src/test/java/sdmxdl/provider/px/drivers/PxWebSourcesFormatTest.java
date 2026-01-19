@@ -20,7 +20,7 @@ public class PxWebSourcesFormatTest {
         try (InputStream stream = newInputStream(PxWebDriver.class, "api.json")) {
             assertThat(PxWebSourcesFormat.INSTANCE.parseStream(stream))
                     .extracting(WebSources::getSources, list(WebSource.class))
-                    .hasSize(29)
+                    .hasSize(28)
                     .element(0)
                     .isEqualTo(WebSource
                             .builder()

@@ -9,6 +9,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- ![SOURCE] Add source from Swiss Federal Statistical Office [#1132](https://github.com/nbbrd/sdmx-dl/issues/1132)
 - ![GRPC] Add simple web page to query rest web service
 
 ### Fixed
