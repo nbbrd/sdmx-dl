@@ -14,6 +14,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - ![SOURCE] Fix source links in PxWebDriver
+- ![GRPC] Fix aliases when listing sources
 
 ## [3.0.0-beta.16] - 2025-11-13
 

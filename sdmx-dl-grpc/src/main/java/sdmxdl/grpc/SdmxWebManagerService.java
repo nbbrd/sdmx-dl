@@ -181,6 +181,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
         return PromptResponse.withMessages(manager.getSources()
                 .values()
                 .stream()
+                .filter(source -> !source.isAlias())
                 .filter(Confidentiality.PUBLIC::isAllowedIn)
                 .map(WebSource::getId)
                 .map(PromptMessage::withUserRole)
@@ -206,6 +207,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
                 manager.getSources()
                         .values()
                         .stream()
+                        .filter(source -> !source.isAlias())
                         .filter(Confidentiality.PUBLIC::isAllowedIn)
                         .toList()
         ).build());
@@ -301,6 +303,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
         return Multi.createFrom().items(manager.getSources()
                 .values()
                 .stream()
+                .filter(source -> !source.isAlias())
                 .map(ProtoWeb::fromWebSource));
     }
 
