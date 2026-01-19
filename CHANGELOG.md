@@ -7,6 +7,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- ![GRPC] Add simple web page to query rest web service
+
+### Fixed
+
+- ![SOURCE] Fix source links in PxWebDriver
+
 ## [3.0.0-beta.16] - 2025-11-13
 
 This is the sixteenth beta release of **sdmx-dl**.  

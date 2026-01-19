@@ -50,7 +50,7 @@
         "citation" : {
           "organization" : "Public Health Agency of Sweden",
           "address" : "Solna, Sweden"},        
-        "url" : "http://fohm-app.folkhalsomyndigheten.se/Folkhalsodata/api/[version]/[lang]",
+        "url" : "https://fohm-app.folkhalsomyndigheten.se/Folkhalsodata/api/[version]/[lang]",
         "version": ["v1"], 
         "lang": ["sv"],
         "calls_per_period": 1000,
@@ -64,7 +64,7 @@
         "citation" : {
           "organization" : "Swedish National Institute of Economic Research",
           "address" : "Stockholm, Sweden"},        
-        "url" : "http://statistik.konj.se/PXWeb/api/[version]/[lang]",
+        "url" : "https://statistik.konj.se/PXWeb/api/[version]/[lang]",
         "version": ["v1"], 
         "lang": ["en", "sv"],
         "calls_per_period": 10,
@@ -78,7 +78,7 @@
                 "citation" : {
           "organization" : "Swedish National Institute of Economic Research",
           "address" : "Stockholm, Sweden"},        
-                "url" : "http://prognos.konj.se/PXWeb/api/[version]/[lang]",
+                "url" : "https://prognos.konj.se/PXWeb/api/[version]/[lang]",
                 "version" : ["v1"], 
                 "lang" : ["sv"],
                 "calls_per_period" :  10,
@@ -106,7 +106,7 @@
         "citation" : {
           "organization" : "Finnish Tax Administration",
           "address" : "Helsinki, Finland"},
-        "url": "http://vero2.stat.fi/PXWeb/api/[version]/[lang]",
+        "url": "https://vero2.stat.fi/PXWeb/api/[version]/[lang]",
         "version": ["v1"],
         "lang": ["en","fi","sv"],
         "calls_per_period":     100,
@@ -120,7 +120,7 @@
         "citation" : {
           "organization" : "Statistics Iceland",
           "address" : "Reykjavík, Iceland"},
-        "url" : "http://px.hagstofa.is/px[lang]/api/[version]/[lang]",
+        "url" : "https://px.hagstofa.is/px[lang]/api/[version]/[lang]",
         "version": ["v1"], 
         "lang": ["en","is"],
         "calls_per_period": 30,
@@ -134,7 +134,7 @@
         "citation" : {
           "organization" : "City of Linköping",
           "address" : "Linköping, Sweden"},
-        "url" : "http://statistik.linkoping.se/PXWeb/api/[version]/[lang]",
+        "url" : "https://statistik.linkoping.se/PXWeb/api/[version]/[lang]",
         "version": ["v1"], 
         "lang": ["sv"],
         "calls_per_period": 1000,
@@ -148,7 +148,7 @@
         "citation" : {
           "organization" : "Region Västra Götaland",
           "address" : "Vänersborg, Sweden"},
-        "url" : "http://pxwebb2017.vgregion.se/pxweb/api/[version]/[lang]",
+        "url" : "https://pxweb2022.vgregion.se/Pxwebb/api/[version]/[lang]",
         "version": ["v1"], 
         "lang": ["sv"],
         "calls_per_period": 10,
@@ -168,20 +168,6 @@
         "calls_per_period": 10000,
         "period_in_seconds": 10,
         "max_values_to_download" : 1000000
-              },
-
-    "px.rsv.is": {
-        "alias" : ["rsv"],
-        "description" : "Icelandic Centre for Retail Studies",
-        "citation" : {
-          "organization" : "Icelandic Centre for Retail Studies",
-          "address" : "Reykjavík, Iceland"},
-        "url" : "http://px.rsv.is/PXWeb/api/[version]/[lang]",
-        "version": ["v1"], 
-        "lang": ["en", "is"],
-        "calls_per_period": 30,
-        "period_in_seconds": 1,
-        "max_values_to_download" : 10000
               },
 
     "statbank.hagstova.fo": {
@@ -204,7 +190,7 @@
       "citation" : {
           "organization" : "Statistics Norway",
           "address" : "Oslo, Norway"},
-      "url" : "http://data.ssb.no/api/[version]/[lang]",
+      "url" : "https://data.ssb.no/api/[version]/[lang]",
       "version": ["v0"], 
       "lang": ["en","no"],
       "calls_per_period": 30,
