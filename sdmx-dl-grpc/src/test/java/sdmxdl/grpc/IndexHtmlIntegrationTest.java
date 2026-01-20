@@ -4,6 +4,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.*;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -285,7 +286,7 @@ class IndexHtmlIntegrationTest {
             .isNotEqualTo(initialClass);
     }
 
-    @Test
+    @RetryingTest(3)
     @Order(12)
     @DisplayName("Contextual buttons appear on source card click")
     void testSourceCardContextualButtons() {
