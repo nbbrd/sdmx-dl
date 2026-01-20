@@ -11,6 +11,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - ![SOURCE] Add source from Swiss Federal Statistical Office [#1132](https://github.com/nbbrd/sdmx-dl/issues/1132)
 - ![GRPC] Add simple web page to query rest web service
+- ![CLI] Add option to set system properties from command-line
 
 ### Fixed
 

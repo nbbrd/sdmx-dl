@@ -26,6 +26,7 @@ import picocli.jansi.graalvm.AnsiConsole;
 import sdmxdl.About;
 import sdmxdl.cli.experimental.DebugCommand;
 
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 
@@ -63,7 +64,7 @@ public final class MainCommand implements Callable<Void> {
 
         LoggerHelper.disableDefaultConsoleLogger();
         KeychainStoreIgnoredExceptionFix.register();
-        
+
         System.exit(execMain(specialProperties, System.getProperties(), args));
     }
 
@@ -77,6 +78,15 @@ public final class MainCommand implements Callable<Void> {
             cmd.setExecutionExceptionHandler(new PrintAndLogExceptionHandler(MainCommand.class, specialProperties.isDebugRequired()));
             return cmd.execute(args);
         }
+    }
+
+    @CommandLine.Option(
+            names = "-D",
+            mapFallbackValue = "", // allow -Dkey
+            hidden = true,
+            scope = CommandLine.ScopeType.INHERIT)
+    void setProperty(Map<String, String> props) {
+        props.forEach(System::setProperty);
     }
 
     @CommandLine.Spec
