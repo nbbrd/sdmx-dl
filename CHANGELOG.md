@@ -12,9 +12,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![SOURCE] Add source from Swiss Federal Statistical Office [#1132](https://github.com/nbbrd/sdmx-dl/issues/1132)
 - ![GRPC] Add simple web page to query rest web service
 - ![CLI] Add option to set system properties from command-line
+- ![CLI] Add experimental list upptime command
 
 ### Fixed
 
+- ![SOURCE] Update NBB source [#1133](https://github.com/nbbrd/sdmx-dl/issues/1133)
 - ![SOURCE] Fix source links in PxWebDriver
 - ![GRPC] Fix aliases when listing sources
 
