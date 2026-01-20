@@ -89,7 +89,7 @@ public class WebOptions {
     private boolean noConfig;
 
     @ReturnNew
-    public SdmxWebManager loadManager() throws IOException {
+    public SdmxWebManager loadManager() {
         System.setProperty(
                 RiRegistry.SOURCES_FILE_PROPERTY.getKey(),
                 hasSourceFile() ? sourcesFile.toString() : RiRegistry.NO_SOURCES_FILE.toString()

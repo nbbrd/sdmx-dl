@@ -29,7 +29,6 @@ import sdmxdl.web.WebSources;
 import sdmxdl.web.spi.Networking;
 import sdmxdl.web.spi.Registry;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
@@ -56,7 +55,7 @@ public class WebNetOptions extends WebOptions {
     private boolean forceSsl;
 
     @Override
-    public SdmxWebManager loadManager() throws IOException {
+    public SdmxWebManager loadManager() {
         SdmxWebManager defaultManager = super.loadManager();
         WebContextOptions context = getContextOptions();
         return defaultManager
