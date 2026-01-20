@@ -1,6 +1,6 @@
 {
   "maxValues": 120000,
-  "maxCells": 120000,
+  "maxCells": 120012,
   "maxCalls": 30,
   "timeWindow": 10,
   "CORS": true
