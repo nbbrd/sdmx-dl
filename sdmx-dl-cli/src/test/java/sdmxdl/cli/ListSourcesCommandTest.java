@@ -40,7 +40,7 @@ public class ListSourcesCommandTest {
                 .isEqualTo(CommandLine.ExitCode.OK);
         assertThat(watcher.getOut())
                 .isEmpty();
-        assertThat(watcher.getErr())
+        assertThat(watcher.getErrWithoutAnsiCodes())
                 .contains("[CFG] RI_REGISTRY: Using 1 custom sources from file " + Paths.get(src.getPath()).toUri())
                 .doesNotContain("[SSL] Initializing SSL factory");
 

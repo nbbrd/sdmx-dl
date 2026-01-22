@@ -28,8 +28,13 @@ public class PxWebDriverTest {
 
     @Test
     public void testConfig() throws IOException {
+        Config sample = new Config(120000, 120012, 30, 10);
+
         assertThat(PxWebDriver.Config.JSON_PARSER.parseResource(PxWebDriverTest.class, "statfin-config.json", UTF_8))
-                .isEqualTo(new PxWebDriver.Config(120000, 120000, 30, 10));
+                .isEqualTo(sample);
+
+        assertThat(Config.JSON_PARSER.parseChars(PxWebDriver.Config.JSON_FORMATTER.formatToString(sample)))
+                .isEqualTo(sample);
     }
 
     @Test

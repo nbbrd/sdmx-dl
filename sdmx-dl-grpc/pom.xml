@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.16</version>
+        <version>3.0.0-beta.17</version>
     </parent>
 
     <artifactId>sdmx-dl-grpc</artifactId>
@@ -23,8 +23,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-        <quarkus.platform.version>3.29.1</quarkus.platform.version>
-        <quarkus.mcp.version>1.7.1</quarkus.mcp.version>
+        <quarkus.platform.version>3.30.7</quarkus.platform.version>
+        <quarkus.mcp.version>1.8.1</quarkus.mcp.version>
         <quarkus.package.jar.type>uber-jar</quarkus.package.jar.type>
         <skipITs>true</skipITs>
         <enforcer.skip>true</enforcer.skip>
@@ -109,7 +109,7 @@
         </dependency>
         <dependency>
             <groupId>io.quarkiverse.mcp</groupId>
-            <artifactId>quarkus-mcp-server-sse</artifactId>
+            <artifactId>quarkus-mcp-server-http</artifactId>
             <version>${quarkus.mcp.version}</version>
         </dependency>
 
@@ -125,9 +125,34 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.junit-pioneer</groupId>
+            <artifactId>junit-pioneer</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>io.quarkiverse.mcp</groupId>
             <artifactId>quarkus-mcp-server-test</artifactId>
             <version>${quarkus.mcp.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Selenium WebDriver for UI testing -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>4.40.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- WebDriverManager for automatic driver management -->
+        <dependency>
+            <groupId>io.github.bonigarcia</groupId>
+            <artifactId>webdrivermanager</artifactId>
+            <version>6.3.3</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- REST Assured for API testing -->
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -186,6 +211,8 @@
                     <systemPropertyVariables>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                         <maven.home>${maven.home}</maven.home>
+                        <webdriver.chrome.driver>target/chromedriver</webdriver.chrome.driver>
+                        <headless>true</headless>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>

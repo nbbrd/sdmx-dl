@@ -181,6 +181,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
         return PromptResponse.withMessages(manager.getSources()
                 .values()
                 .stream()
+                .filter(source -> !source.isAlias())
                 .filter(Confidentiality.PUBLIC::isAllowedIn)
                 .map(WebSource::getId)
                 .map(PromptMessage::withUserRole)
@@ -206,6 +207,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
                 manager.getSources()
                         .values()
                         .stream()
+                        .filter(source -> !source.isAlias())
                         .filter(Confidentiality.PUBLIC::isAllowedIn)
                         .toList()
         ).build());
@@ -241,7 +243,17 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
                         .build())
                 .stream()
                 .map(ProtoApi::fromDataflow)
+                .map(SdmxWebManagerService::cleanDescription)
                 .toList();
+    }
+
+    private static FlowDto cleanDescription(FlowDto flowDto) {
+        return flowDto.toBuilder()
+                .clearDescription()
+//                .clearName()
+//                .clearStructureRef()
+//                .setDescription(flowDto.getDescription().replaceAll("<[^>]*>", ""))
+                .build();
     }
 
     @Tool(description = "Get SDMX metadata such as flow and structure.")
@@ -291,6 +303,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
         return Multi.createFrom().items(manager.getSources()
                 .values()
                 .stream()
+                .filter(source -> !source.isAlias())
                 .map(ProtoWeb::fromWebSource));
     }
 

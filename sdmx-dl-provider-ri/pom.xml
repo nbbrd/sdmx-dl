@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.16</version>
+        <version>3.0.0-beta.17</version>
     </parent>
 
     <artifactId>sdmx-dl-provider-ri</artifactId>
@@ -82,7 +82,7 @@
         <dependency>
             <groupId>io.github.hakky54</groupId>
             <artifactId>ayza</artifactId>
-            <version>10.0.1</version>
+            <version>10.0.3</version>
         </dependency>
         <dependency>
             <groupId>com.github.nbbrd.java-net-proxy</groupId>

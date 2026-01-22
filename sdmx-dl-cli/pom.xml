@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.16</version>
+        <version>3.0.0-beta.17</version>
     </parent>
 
     <artifactId>sdmx-dl-cli</artifactId>
@@ -105,6 +105,10 @@
             <artifactId>java-console-properties</artifactId>
             <version>1.4.1</version>
         </dependency>
+        <dependency>
+            <groupId>dev.failsafe</groupId>
+            <artifactId>failsafe</artifactId>
+        </dependency>
 
         <!-- runtime only -->
         <dependency>
@@ -143,7 +147,6 @@
         <dependency>
             <groupId>org.junit-pioneer</groupId>
             <artifactId>junit-pioneer</artifactId>
-            <version>1.9.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -230,7 +233,7 @@
                 <!-- Generates data files for documentation -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.6.2</version>
+                <version>3.6.3</version>
                 <executions>
                     <execution>
                         <id>generate-csv-sources</id>

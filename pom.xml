@@ -5,7 +5,7 @@
 
     <groupId>com.github.nbbrd.sdmx-dl</groupId>
     <artifactId>sdmx-dl-parent</artifactId>
-    <version>3.0.0-beta.16</version>
+    <version>3.0.0-beta.17</version>
     <packaging>pom</packaging>
 
     <name>sdmx-dl</name>
@@ -32,15 +32,16 @@
     <scm>
         <connection>scm:git:git://github.com/${x.github.user}/${x.github.repo}.git</connection>
         <developerConnection>scm:git:ssh://github.com:${x.github.user}/${x.github.repo}.git</developerConnection>
-        <url>http://github.com/${x.github.user}/${x.github.repo}/tree/master</url>
+        <url>https://github.com/${x.github.user}/${x.github.repo}/tree/master</url>
     </scm>
 
     <properties>
         <!-- Java 8+ config -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.build.outputTimestamp>2025-11-13T13:40:01Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2026-01-22T14:04:41Z</project.build.outputTimestamp>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
+        <requiredMavenVersion>3.9.11</requiredMavenVersion>
 
         <!-- GitHub hosting -->
         <x.github.user>nbbrd</x.github.user>
@@ -62,9 +63,14 @@
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
-                <version>6.0.1</version>
+                <version>6.0.2</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit-pioneer</groupId>
+                <artifactId>junit-pioneer</artifactId>
+                <version>1.9.1</version>
             </dependency>
             <dependency>
                 <groupId>org.assertj</groupId>
@@ -79,7 +85,7 @@
             <dependency>
                 <groupId>io.github.hakky54</groupId>
                 <artifactId>logcaptor</artifactId>
-                <version>2.12.1</version>
+                <version>2.12.2</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
@@ -100,6 +106,11 @@
                 <version>0.0.35</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>dev.failsafe</groupId>
+                <artifactId>failsafe</artifactId>
+                <version>3.3.2</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -131,12 +142,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.4.2</version>
+                    <version>3.5.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.3.1</version>
+                    <version>3.4.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -162,7 +173,7 @@
                 <plugin>
                     <groupId>io.github.ascopes</groupId>
                     <artifactId>protobuf-maven-plugin</artifactId>
-                    <version>4.0.2</version>
+                    <version>4.1.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -197,7 +208,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>3.3.1</version>
+                    <version>3.4.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -212,7 +223,7 @@
                 <plugin>
                     <groupId>org.sonatype.central</groupId>
                     <artifactId>central-publishing-maven-plugin</artifactId>
-                    <version>0.9.0</version>
+                    <version>0.10.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
@@ -222,12 +233,12 @@
                 <plugin>
                     <groupId>org.jreleaser</groupId>
                     <artifactId>jreleaser-maven-plugin</artifactId>
-                    <version>1.21.0</version>
+                    <version>1.22.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>templating-maven-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>3.1.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -555,7 +566,7 @@
                                         <dependencyConvergence/>
                                         <reactorModuleConvergence/>
                                         <requireMavenVersion>
-                                            <version>3.6.0</version>
+                                            <version>${requiredMavenVersion}</version>
                                         </requireMavenVersion>
                                         <requireNoRepositories>
                                             <allowSnapshotRepositories>true</allowSnapshotRepositories>
@@ -764,6 +775,18 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+
+        <!-- Skip all checks for local builds -->
+        <profile>
+            <id>yolo</id>
+            <properties>
+                <enforcer.skip>true</enforcer.skip>
+                <modernizer.skip>true</modernizer.skip>
+                <forbiddenapis.skip>true</forbiddenapis.skip>
+                <jacoco.skip>true</jacoco.skip>
+                <heylogs.skip>true</heylogs.skip>
+            </properties>
         </profile>
     </profiles>
 </project>

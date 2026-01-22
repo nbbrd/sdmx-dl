@@ -25,6 +25,7 @@ public class PxWebExplorer {
                 .values()
                 .parallelStream()
                 .filter(source -> source.getDriver().equals("PX_PXWEB"))
+                .filter(source -> !source.isAlias())
                 .map(manager::using)
                 .map(PxWebExplorer::explore)
                 .collect(groupingBy(Report::getStatus))

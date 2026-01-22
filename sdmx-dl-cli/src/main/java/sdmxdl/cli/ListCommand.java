@@ -17,6 +17,7 @@
 package sdmxdl.cli;
 
 import picocli.CommandLine;
+import sdmxdl.cli.experimental.ListUpptimeCommand;
 
 import java.util.concurrent.Callable;
 
@@ -34,7 +35,8 @@ import java.util.concurrent.Callable;
                 ListCodesCommand.class,
                 ListAvailabilityCommand.class,
                 ListFeaturesCommand.class,
-                ListPluginsCommand.class
+                ListPluginsCommand.class,
+                ListUpptimeCommand.class
         }
 )
 public final class ListCommand implements Callable<Void> {

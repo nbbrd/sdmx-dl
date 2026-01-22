@@ -7,6 +7,28 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.0-beta.17] - 2026-01-22
+
+This is the seventeenth beta release of **sdmx-dl**.  
+sdmx-dl follows [semantic versioning](https://semver.org/).
+
+This release adds a new web page to explore the web service as well as a few convenient command-line features.  
+As usual, it also adds and updates a few sources.
+
+### Added
+
+- ![SOURCE] Add source from Swiss Federal Statistical Office [#1132](https://github.com/nbbrd/sdmx-dl/issues/1132)
+- ![PROVIDER] Add config caching in PxWebDriver
+- ![GRPC] Add simple web page to query rest web service
+- ![CLI] Add option to set system properties from command-line
+- ![CLI] Add experimental list upptime command
+
+### Fixed
+
+- ![SOURCE] Update NBB source [#1133](https://github.com/nbbrd/sdmx-dl/issues/1133)
+- ![PROVIDER] Fix source links in PxWebDriver
+- ![GRPC] Fix aliases when listing sources
+
 ## [3.0.0-beta.16] - 2025-11-13
 
 This is the sixteenth beta release of **sdmx-dl**.  
@@ -551,7 +573,8 @@ production._
 
 - Initial release
 
-[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.16...HEAD
+[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.17...HEAD
+[3.0.0-beta.17]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.16...v3.0.0-beta.17
 [3.0.0-beta.16]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.15...v3.0.0-beta.16
 [3.0.0-beta.15]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.14...v3.0.0-beta.15
 [3.0.0-beta.14]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.13...v3.0.0-beta.14

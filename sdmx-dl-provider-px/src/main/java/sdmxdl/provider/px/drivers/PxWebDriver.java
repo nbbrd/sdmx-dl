@@ -390,6 +390,9 @@ public final class PxWebDriver implements Driver {
         private final Duration ttl;
 
         @lombok.Getter(lazy = true)
+        private final TypedId<Config> idOfConfig = initIdOfConfig(baseURI);
+
+        @lombok.Getter(lazy = true)
         private final TypedId<List<sdmxdl.Database>> idOfDatabases = initIdOfDatabases(baseURI);
 
         @lombok.Getter(lazy = true)
@@ -397,6 +400,13 @@ public final class PxWebDriver implements Driver {
 
         @lombok.Getter(lazy = true)
         private final TypedId<Structure> idOfMeta = initIdOfMeta(baseURI);
+
+        private static TypedId<Config> initIdOfConfig(URI base) {
+            return TypedId.of(base,
+                    repo -> Config.JSON_PARSER.asParser().parse(repo.getName()),
+                    config -> DataRepository.builder().name(Config.JSON_FORMATTER.asFormatter().formatValueAsString(config).orElse("")).build()
+            ).with("config");
+        }
 
         private static TypedId<List<sdmxdl.Database>> initIdOfDatabases(URI base) {
             return TypedId.of(base,
@@ -431,7 +441,8 @@ public final class PxWebDriver implements Driver {
 
         @Override
         public @NonNull Config getConfig() throws IOException {
-            return delegate.getConfig();
+            return getIdOfConfig()
+                    .load(cache, delegate::getConfig, ignore -> ttl);
         }
 
         @Override
@@ -612,6 +623,21 @@ public final class PxWebDriver implements Driver {
                     x.get("maxCalls").getAsInt(),
                     x.get("timeWindow").getAsInt()
             );
+        }
+
+        static final TextFormatter<Config> JSON_FORMATTER = GsonIO.GsonFormatter
+                .builder(Config.class)
+                .serializer(Config.class, Config::serialize)
+                .build();
+
+        @MightBeGenerated
+        static JsonElement serialize(Config src, Type typeOfSrc, JsonSerializationContext context) {
+            JsonObject result = new JsonObject();
+            result.addProperty("maxValues", src.maxValues);
+            result.addProperty("maxCells", src.maxCells);
+            result.addProperty("maxCalls", src.maxCalls);
+            result.addProperty("timeWindow", src.timeWindow);
+            return result;
         }
     }
 

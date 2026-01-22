@@ -53,13 +53,13 @@ public class WebOptionsTest {
             assertThat(cmd.execute("-v", "-s", invalid.getPath())).isEqualTo(OK);
             assertThat((List<WebSource>) cmd.getExecutionResult()).isEmpty();
             assertThat(watcher.getExecutionException()).isNull();
-            assertThat(watcher.getErr()).contains("[CFG] RI_REGISTRY: Failed to load source file " + Paths.get(invalid.getPath()).toUri());
+            assertThat(watcher.getErrWithoutAnsiCodes()).contains("[CFG] RI_REGISTRY: Failed to load source file " + Paths.get(invalid.getPath()).toUri());
 
             watcher.reset();
             assertThat(cmd.execute("--no-config", "-v", "-s", invalid.getPath())).isEqualTo(OK);
             assertThat((List<WebSource>) cmd.getExecutionResult()).isEmpty();
             assertThat(watcher.getExecutionException()).isNull();
-            assertThat(watcher.getErr()).hasLineCount(1).contains("[CFG] RI_REGISTRY: Using default sources");
+            assertThat(watcher.getErrWithoutAnsiCodes()).hasLineCount(1).contains("[CFG] RI_REGISTRY: Using default sources");
         });
 
         assertThat(newValidFile(temp)).satisfies(valid -> {
@@ -67,13 +67,13 @@ public class WebOptionsTest {
             assertThat(cmd.execute("-v", "-s", valid.getPath())).isEqualTo(OK);
             assertThat((List<WebSource>) cmd.getExecutionResult()).isNotEmpty();
             assertThat(watcher.getExecutionException()).isNull();
-            assertThat(watcher.getErr()).contains("[CFG] RI_REGISTRY: Using 1 custom sources from file " + Paths.get(valid.getPath()).toUri());
+            assertThat(watcher.getErrWithoutAnsiCodes()).contains("[CFG] RI_REGISTRY: Using 1 custom sources from file " + Paths.get(valid.getPath()).toUri());
 
             watcher.reset();
             assertThat(cmd.execute("--no-config", "-v", "-s", valid.getPath())).isEqualTo(OK);
             assertThat((List<WebSource>) cmd.getExecutionResult()).isEmpty();
             assertThat(watcher.getExecutionException()).isNull();
-            assertThat(watcher.getErr()).hasLineCount(1).contains("[CFG] RI_REGISTRY: Using default sources");
+            assertThat(watcher.getErrWithoutAnsiCodes()).hasLineCount(1).contains("[CFG] RI_REGISTRY: Using default sources");
         });
     }
 

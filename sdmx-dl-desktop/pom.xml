@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.16</version>
+        <version>3.0.0-beta.17</version>
     </parent>
 
     <artifactId>sdmx-dl-desktop</artifactId>
@@ -20,7 +20,7 @@
     <properties>
         <project.x.mainClass>sdmxdl.desktop.Main</project.x.mainClass>
         <ikonli.version>2.6.0</ikonli.version>
-        <flatlaf.version>3.6.2</flatlaf.version>
+        <flatlaf.version>3.7</flatlaf.version>
     </properties>
 
     <dependencyManagement>
@@ -28,7 +28,7 @@
             <dependency>
                 <groupId>com.github.nbbrd.java-desktop-util</groupId>
                 <artifactId>java-desktop-util-bom</artifactId>
-                <version>2.5.0</version>
+                <version>2.6.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -182,7 +182,6 @@
         <dependency>
             <groupId>org.junit-pioneer</groupId>
             <artifactId>junit-pioneer</artifactId>
-            <version>1.9.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
