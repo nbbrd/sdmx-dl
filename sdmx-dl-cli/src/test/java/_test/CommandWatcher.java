@@ -25,6 +25,10 @@ public class CommandWatcher {
         return err.toString();
     }
 
+    public String getErrWithoutAnsiCodes() {
+        return stripAnsi(getErr());
+    }
+
     public Exception getExecutionException() {
         return executionException;
     }
@@ -46,5 +50,9 @@ public class CommandWatcher {
         return cmdx.getExitCodeExceptionMapper() != null
                 ? cmdx.getExitCodeExceptionMapper().getExitCode(ex)
                 : cmdx.getCommandSpec().exitCodeOnExecutionException();
+    }
+
+    public static String stripAnsi(String text) {
+        return text != null ? text.replaceAll("\u001B\\[[;\\d]*m", "") : null;
     }
 }
