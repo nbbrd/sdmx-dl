@@ -20,6 +20,7 @@ import internal.sdmxdl.ext.PersistenceLoader;
 import internal.sdmxdl.web.spi.*;
 import lombok.AccessLevel;
 import lombok.NonNull;
+import nbbrd.design.MightBePromoted;
 import nbbrd.design.StaticFactoryMethod;
 import org.jspecify.annotations.Nullable;
 import sdmxdl.*;
@@ -238,6 +239,7 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
         return t -> seen.add(keyExtractor.apply(t));
     }
 
+    @MightBePromoted
     private static Thread newLowPriorityDaemonThread(Runnable runnable) {
         Thread result = new Thread(runnable);
         result.setDaemon(true);

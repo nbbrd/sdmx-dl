@@ -4,6 +4,7 @@ import com.microsoft.aad.msal4j.*;
 import internal.util.credentials.WinPasswordVault;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
+import nbbrd.design.MightBePromoted;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.sys.OS;
 import nbbrd.io.text.Formatter;
@@ -30,6 +31,7 @@ import java.util.Set;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
 import java.util.logging.Level;
 
@@ -152,7 +154,16 @@ public final class MsalAuthenticator implements Authenticator {
                 .builder(config.getClientId())
                 .authority(config.getAuthority())
                 .setTokenCacheAccessAspect(newTokenPersistence(config.getUid(), config.getUid()))
+                .executorService(Executors.newCachedThreadPool(MsalAuthenticator::newLowPriorityDaemonThread))
                 .build();
+    }
+
+    @MightBePromoted
+    private static Thread newLowPriorityDaemonThread(Runnable runnable) {
+        Thread result = new Thread(runnable);
+        result.setDaemon(true);
+        result.setPriority(Thread.MIN_PRIORITY);
+        return result;
     }
 
     private static ITokenCacheAccessAspect newTokenPersistence(String resource, String userName) {

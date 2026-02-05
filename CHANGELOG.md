@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - ![PROVIDER] Fix field overflow in MsalAuthenticator [#1138](https://github.com/nbbrd/sdmx-dl/issues/1138)
+- ![PROVIDER] Fix use of common execution pool in MsalAuthenticator [#1146](https://github.com/nbbrd/sdmx-dl/issues/1146)
 
 ## [3.0.0-beta.17] - 2026-01-22
 
