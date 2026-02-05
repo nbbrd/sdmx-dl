@@ -2,6 +2,8 @@ package internal.sdmxdl.cli;
 
 import lombok.NonNull;
 import org.jspecify.annotations.Nullable;
+import sdmxdl.ErrorListener;
+import sdmxdl.EventListener;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Authenticator;
 
@@ -25,12 +27,16 @@ final class ConstantAuthenticator implements Authenticator {
     }
 
     @Override
-    public @Nullable PasswordAuthentication getPasswordAuthenticationOrNull(@NonNull WebSource source) {
+    public @Nullable PasswordAuthentication getPasswordAuthenticationOrNull(@NonNull WebSource source,
+                                                                            @Nullable EventListener onEvent,
+                                                                            @Nullable ErrorListener onError) {
         return user;
     }
 
     @Override
-    public void invalidateAuthentication(@NonNull WebSource source) {
+    public void invalidateAuthentication(@NonNull WebSource source,
+                                         @Nullable EventListener onEvent,
+                                         @Nullable ErrorListener onError) {
     }
 
     @Override

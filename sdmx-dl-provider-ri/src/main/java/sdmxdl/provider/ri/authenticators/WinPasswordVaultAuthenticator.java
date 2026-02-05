@@ -5,6 +5,9 @@ import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.io.sys.OS;
 import nbbrd.service.ServiceProvider;
+import org.jspecify.annotations.Nullable;
+import sdmxdl.ErrorListener;
+import sdmxdl.EventListener;
 import sdmxdl.provider.ri.drivers.AuthSchemes;
 import sdmxdl.provider.web.DriverProperties;
 import sdmxdl.web.WebSource;
@@ -30,7 +33,9 @@ public final class WinPasswordVaultAuthenticator implements Authenticator {
     }
 
     @Override
-    public PasswordAuthentication getPasswordAuthenticationOrNull(@NonNull WebSource source) throws IOException {
+    public PasswordAuthentication getPasswordAuthenticationOrNull(@NonNull WebSource source,
+                                                                  @Nullable EventListener onEvent,
+                                                                  @Nullable ErrorListener onError) throws IOException {
         if (AuthSchemes.BASIC_AUTH_SCHEME.equals(DriverProperties.AUTH_SCHEME_PROPERTY.get(source.getProperties()))) {
             try (WinPasswordVault vault = WinPasswordVault.open()) {
                 String message = "Enter your credentials for " + source.getId();
@@ -41,7 +46,9 @@ public final class WinPasswordVaultAuthenticator implements Authenticator {
     }
 
     @Override
-    public void invalidateAuthentication(@NonNull WebSource source) throws IOException {
+    public void invalidateAuthentication(@NonNull WebSource source,
+                                         @Nullable EventListener onEvent,
+                                         @Nullable ErrorListener onError) throws IOException {
         if (AuthSchemes.BASIC_AUTH_SCHEME.equals(DriverProperties.AUTH_SCHEME_PROPERTY.get(source.getProperties()))) {
             try (WinPasswordVault vault = WinPasswordVault.open()) {
                 vault.invalidate(getResource(source));

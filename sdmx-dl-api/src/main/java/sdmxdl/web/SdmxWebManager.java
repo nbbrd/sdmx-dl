@@ -246,4 +246,12 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
         result.setPriority(Thread.MIN_PRIORITY);
         return result;
     }
+
+    public static EventListener printEvent(WebSource source) {
+        return (marker, message) -> System.out.println("[" + source.getId() + "] (" + marker + ") " + message);
+    }
+
+    public static ErrorListener printError(WebSource source) {
+        return (marker, message, error) -> System.err.println("[" + source.getId() + "] (" + marker + ") " + message + ": " + error.getMessage());
+    }
 }

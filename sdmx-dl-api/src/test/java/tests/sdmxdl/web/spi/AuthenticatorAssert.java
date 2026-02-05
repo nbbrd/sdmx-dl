@@ -41,27 +41,27 @@ public class AuthenticatorAssert {
     }
 
     private void checkGetPasswordAuthentication(Authenticator authenticator, Sample sample) {
-        assertThatThrownBy(() -> authenticator.getPasswordAuthenticationOrNull(null))
+        assertThatThrownBy(() -> authenticator.getPasswordAuthenticationOrNull(null, null, null))
                 .isInstanceOf(NullPointerException.class);
 
         if (sample.ignoring != null)
-            assertThatCode(() -> authenticator.getPasswordAuthenticationOrNull(sample.ignoring)).
+            assertThatCode(() -> authenticator.getPasswordAuthenticationOrNull(sample.ignoring, null, null)).
                     doesNotThrowAnyException();
 
         if (sample.valid != null)
-            assertThatCode(() -> authenticator.getPasswordAuthenticationOrNull(sample.valid)).
+            assertThatCode(() -> authenticator.getPasswordAuthenticationOrNull(sample.valid, null, null)).
                     doesNotThrowAnyException();
 
         if (sample.invalid != null)
             assertThatIOException()
-                    .isThrownBy(() -> authenticator.getPasswordAuthenticationOrNull(sample.invalid));
+                    .isThrownBy(() -> authenticator.getPasswordAuthenticationOrNull(sample.invalid, null, null));
     }
 
     private void checkInvalidate(Authenticator authenticator, Sample sample) {
-        assertThatThrownBy(() -> authenticator.invalidateAuthentication(null))
+        assertThatThrownBy(() -> authenticator.invalidateAuthentication(null, null, null))
                 .isInstanceOf(NullPointerException.class);
 
-        assertThatCode(() -> authenticator.invalidateAuthentication(sample.ignoring))
+        assertThatCode(() -> authenticator.invalidateAuthentication(sample.ignoring, null, null))
                 .doesNotThrowAnyException();
     }
 }

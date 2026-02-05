@@ -1,3 +1,5 @@
+import sdmxdl.provider.ri.spi.VaultService;
+import internal.util.credentials.WindowsVaultService;
 import sdmxdl.file.spi.FileCaching;
 import sdmxdl.file.spi.Reader;
 import sdmxdl.provider.ri.authenticators.MsalAuthenticator;
@@ -33,6 +35,7 @@ module sdmxdl.provider.ri {
     requires com.microsoft.aad.msal4j;
 
     exports sdmxdl.provider.ri.drivers to sdmxdl.provider.dialects, sdmxdl.provider.px;
+    exports sdmxdl.provider.ri.spi;
 
     provides Driver with
             FileRiDriver,
@@ -61,6 +64,11 @@ module sdmxdl.provider.ri {
 
     provides Registry with
             RiRegistry;
+
+    provides VaultService with
+            WindowsVaultService;
+
+    uses VaultService;
 
     opens sdmxdl.provider.ri.monitors to com.google.gson;
 }

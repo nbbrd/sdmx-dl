@@ -25,6 +25,7 @@ import nbbrd.io.text.Formatter;
 import nbbrd.io.text.Parser;
 import nbbrd.io.text.Property;
 import org.jspecify.annotations.Nullable;
+import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.Languages;
 import sdmxdl.format.design.PropertyDefinition;
@@ -45,7 +46,8 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import static sdmxdl.provider.ri.drivers.AuthSchemes.*;
+import static sdmxdl.provider.ri.drivers.AuthSchemes.BASIC_AUTH_SCHEME;
+import static sdmxdl.provider.ri.drivers.AuthSchemes.MSAL_AUTH_SCHEME;
 import static sdmxdl.provider.web.DriverProperties.*;
 import static sdmxdl.web.spi.Driver.DRIVER_PROPERTY_PREFIX;
 
@@ -92,7 +94,8 @@ public class RiHttpUtils {
 
     public static @NonNull HttpContext newContext(@NonNull WebSource source, @NonNull WebContext context) {
         Network network = context.getNetwork(source);
-        EventListener eventListener = context.getEventListener(source);
+        EventListener onEvent = context.getEventListener(source);
+        ErrorListener onError = context.getErrorListener(source);
         return HttpContext
                 .builder()
                 .readTimeout(READ_TIMEOUT_PROPERTY.get(source.getProperties()))
@@ -103,8 +106,8 @@ public class RiHttpUtils {
                 .sslSocketFactory(() -> network.getSSLFactory().getSSLSocketFactory())
                 .hostnameVerifier(() -> network.getSSLFactory().getHostnameVerifier())
                 .urlConnectionFactory(() -> network.getURLConnectionFactory()::openConnection)
-                .listener(eventListener != null ? new RiHttpEventListener(eventListener.asConsumer("RI_HTTP")) : HttpEventListener.noOp())
-                .authenticator(new RiHttpAuthenticator(source, context.getAuthenticators(), eventListener))
+                .listener(onEvent != null ? new RiHttpEventListener(onEvent.asConsumer("RI_HTTP")) : HttpEventListener.noOp())
+                .authenticator(new RiHttpAuthenticator(source, context.getAuthenticators(), onEvent, onError))
                 .userAgent(USER_AGENT_PROPERTY.get(source.getProperties()))
                 .build();
     }
@@ -169,7 +172,9 @@ public class RiHttpUtils {
         @lombok.NonNull
         private final List<Authenticator> authenticators;
 
-        private final @Nullable EventListener listener;
+        private final @Nullable EventListener onEvent;
+
+        private final @Nullable ErrorListener onError;
 
         @Override
         public @Nullable PasswordAuthentication getPasswordAuthentication(URL url) {
@@ -198,10 +203,10 @@ public class RiHttpUtils {
 
         private PasswordAuthentication getPasswordAuthentication(Authenticator authenticator) {
             try {
-                return authenticator.getPasswordAuthenticationOrNull(source);
+                return authenticator.getPasswordAuthenticationOrNull(source, onEvent, onError);
             } catch (IOException ex) {
-                if (listener != null) {
-                    listener.accept(authenticator.getAuthenticatorId(), "Failed to get password authentication: " + ex.getMessage());
+                if (onEvent != null) {
+                    onEvent.accept(authenticator.getAuthenticatorId(), "Failed to get password authentication: " + ex.getMessage());
                 }
                 return null;
             }
@@ -209,10 +214,10 @@ public class RiHttpUtils {
 
         private void invalidate(Authenticator authenticator) {
             try {
-                authenticator.invalidateAuthentication(source);
+                authenticator.invalidateAuthentication(source, onEvent, onError);
             } catch (IOException ex) {
-                if (listener != null) {
-                    listener.accept(authenticator.getAuthenticatorId(), "Failed to invalidate password authentication: " + ex.getMessage());
+                if (onEvent != null) {
+                    onEvent.accept(authenticator.getAuthenticatorId(), "Failed to invalidate password authentication: " + ex.getMessage());
                 }
             }
         }
