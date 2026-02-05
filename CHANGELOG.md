@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- ![PROVIDER] Fix field overflow in MsalAuthenticator [#1138](https://github.com/nbbrd/sdmx-dl/issues/1138)
+
 ## [3.0.0-beta.17] - 2026-01-22
 
 This is the seventeenth beta release of **sdmx-dl**.  
