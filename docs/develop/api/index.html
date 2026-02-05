@@ -9,7 +9,7 @@
 <meta name="referrer" content="no-referrer" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="color-scheme" content="light dark" />
-<meta name="generator" content="Hugo 0.154.5">
+<meta name="generator" content="Hugo 0.155.2">
 
 
   <meta name="description" content="sdmx-dl API is a library designed as a facade for the SDMX model and APIs.
@@ -73,7 +73,7 @@ SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .b
       "name": "Java library",
       "url" : "https://nbbrd.github.io/sdmx-dl/docs/develop/api/",
       "headline": "Java library",
-      "description": "\nsdmx-dl API is a library designed as a facade for the SDMX model and APIs.\nWeb example:\nSdmxWebManager .ofServiceLoader() .usingName(\u0022ECB\u0022) .getData(KeyRequest .builder() .flowOf(\u0022EXR\u0022) .keyOf(\u0022M.CHF\u002bUSD.EUR.SP00.A\u0022) .build()) .forEach(series -\u003e System.out.printf(Locale.ROOT, \u0022%s: %d obs%n\u0022, series.getKey(), series.getObs().size())); File example:\nSdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .builder() .flowOf(\u0022data\u0022) .keyOf(\u0022A.DEU.1.0.319.0.UBLGE\u0022) .build()) .forEach(series -\u003e System.out.printf(Locale.ROOT, \u0022%s: %d obs%n\u0022, series.getKey(), series.getObs().size())); Structure overview flowchart BT api subgraph formats format-base[base] csv kryo protobuf xml end subgraph providers provider-base[base] connectors ri dialects px end subgraph applications cli desktop grpc end formats --\u003e api providers --\u003e formats applications --\u003e providers Dependencies setup sdmx-dl is distributed in two different ways: a standard JAR hierarchy, and a standalone uber JAR containing all the implementations and their dependencies. Most of the standalone JAR’s dependencies are shaded i.e. they are hidden in alternative packages. This allows sdmx-dl to be used as a zero-dependency library in projects without conflicting with other dependencies.",
+      "description": "\nsdmx-dl API is a library designed as a facade for the SDMX model and APIs.\nWeb example:\nSdmxWebManager .ofServiceLoader() .usingName(\u0022ECB\u0022) .getData(KeyRequest .builder() .flowOf(\u0022EXR\u0022) .keyOf(\u0022M.CHF\u002bUSD.EUR.SP00.A\u0022) .build()) .forEach(series -\u003e System.out.printf(Locale.ROOT, \u0022%s: %d obs%n\u0022, series.getKey(), series.getObs().size())); File example:\nSdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .builder() .flowOf(\u0022data\u0022) .keyOf(\u0022A.DEU.1.0.319.0.UBLGE\u0022) .build()) .forEach(series -\u003e System.out.printf(Locale.ROOT, \u0022%s: %d obs%n\u0022, series.getKey(), series.getObs().size())); Structure overview flowchart BT api subgraph formats format-base[base] csv kryo protobuf xml end subgraph providers provider-base[base] connectors ri dialects px end subgraph applications cli desktop grpc end formats --\u003e api providers --\u003e formats applications --\u003e providers Dependencies setup sdmx-dl is distributed in two different ways: a standard JAR hierarchy, and a standalone uber JAR containing all the implementations and their dependencies. Most of the standalone JAR’s dependencies are shaded i.e. they are hidden in alternative packages. This allows sdmx-dl to be used as a zero-dependency library in projects without conflicting with other dependencies.",""
       "wordCount" : "173",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
