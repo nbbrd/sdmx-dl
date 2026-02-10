@@ -50,8 +50,12 @@ public final class ConcurrentMemCache<V extends HasExpiration> implements Cache<
     }
 
     @Override
-    public void put(@NonNull String key, @NonNull V value) {
-        map.put(key, value);
+    public void put(@NonNull String key, @Nullable V value) {
+        if (value != null) {
+            map.put(key, value);
+        } else {
+            map.remove(key);
+        }
     }
 
     public void evict() {

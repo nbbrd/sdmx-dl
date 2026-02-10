@@ -58,7 +58,11 @@ public final class MemCache<V extends HasExpiration> implements Cache<V> {
     }
 
     @Override
-    public void put(@NonNull String key, @NonNull V value) {
-        map.put(key, value);
+    public void put(@NonNull String key, @Nullable V value) {
+        if (value != null) {
+            map.put(key, value);
+        } else {
+            map.remove(key);
+        }
     }
 }

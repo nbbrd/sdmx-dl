@@ -18,7 +18,9 @@ package sdmxdl.format;
 
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataRepository;
+import sdmxdl.ext.Cache;
 import sdmxdl.web.MonitorReports;
+import tests.sdmxdl.api.RepoSamples;
 import tests.sdmxdl.ext.FakeClock;
 
 import java.time.Clock;
@@ -28,8 +30,10 @@ import java.time.ZoneId;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static tests.sdmxdl.ext.CacheAssert.assertMonitorCompliance;
 import static tests.sdmxdl.ext.CacheAssert.assertRepositoryCompliance;
 
@@ -42,6 +46,16 @@ public class ConcurrentMemCacheTest {
     public void testCompliance() {
         assertMonitorCompliance(ConcurrentMemCache.<MonitorReports>builder().build());
         assertRepositoryCompliance(ConcurrentMemCache.<DataRepository>builder().build());
+    }
+
+    @Test
+    void testConcurrentAccess() {
+        Cache<DataRepository> x = ConcurrentMemCache.<DataRepository>builder().build();
+
+        assertThatCode(() -> IntStream.range(0, 10).forEach(i -> x.put("key", RepoSamples.REPO)))
+                .doesNotThrowAnyException();
+
+        assertThat(x.get("key")).isEqualTo(RepoSamples.REPO);
     }
 
     @Test

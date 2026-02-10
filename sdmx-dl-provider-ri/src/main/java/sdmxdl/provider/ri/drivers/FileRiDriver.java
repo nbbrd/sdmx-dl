@@ -120,7 +120,7 @@ public final class FileRiDriver implements Driver {
         }
 
         @Override
-        public void put(@NonNull String key, @NonNull DataRepository value) {
+        public void put(@NonNull String key, @Nullable DataRepository value) {
             delegate.put(key, value);
         }
     }

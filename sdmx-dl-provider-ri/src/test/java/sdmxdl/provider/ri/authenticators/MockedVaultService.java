@@ -1,11 +1,13 @@
 package sdmxdl.provider.ri.authenticators;
 
+import lombok.Builder;
 import lombok.Getter;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import sdmxdl.provider.ri.spi.VaultService;
 
 import java.net.PasswordAuthentication;
+import java.util.HashMap;
 import java.util.Map;
 
 @lombok.Builder
@@ -14,7 +16,8 @@ final class MockedVaultService implements VaultService {
     @lombok.Builder.Default
     private final String id = "MOCKED_VAULT";
 
-    private final Map<String, PasswordAuthentication> items;
+    @lombok.Builder.Default
+    private final Map<String, PasswordAuthentication> items = new HashMap<>();
 
     @lombok.Builder.Default
     private final boolean available = true;
@@ -44,6 +47,10 @@ final class MockedVaultService implements VaultService {
     @Override
     public void storeCredentials(@NonNull String key, @Nullable PasswordAuthentication credentials) {
         storeCount++;
-        items.put(key, credentials);
+        if (credentials != null) {
+            items.put(key, credentials);
+        } else {
+            items.remove(key);
+        }
     }
 }

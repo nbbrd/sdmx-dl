@@ -32,7 +32,7 @@ public final class DualCache<V extends HasExpiration> implements Cache<V> {
     }
 
     @Override
-    public void put(@NonNull String key, @NonNull V value) {
+    public void put(@NonNull String key, @Nullable V value) {
         first.put(key, value);
         second.put(key, value);
     }

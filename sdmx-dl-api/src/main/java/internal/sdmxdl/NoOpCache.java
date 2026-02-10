@@ -42,6 +42,6 @@ public enum NoOpCache implements Cache<HasExpiration> {
     }
 
     @Override
-    public void put(@NonNull String key, @NonNull HasExpiration value) {
+    public void put(@NonNull String key, @Nullable HasExpiration value) {
     }
 }

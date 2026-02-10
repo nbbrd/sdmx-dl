@@ -54,15 +54,15 @@ final class VaultCache implements Cache<Credentials> {
             if (onError != null)
                 onError.accept(id, format(ROOT, "Failed to load credentials from %s resource '%s'", vault.getVaultId(), key), e);
         }
-        return Credentials.empty(clock, ttl);
+        return Credentials.empty(clock.instant(), ttl);
     }
 
     @Override
-    public void put(@NonNull String key, @NonNull Credentials value) {
+    public void put(@NonNull String key, @Nullable Credentials value) {
         try {
             if (onEvent != null)
                 onEvent.accept(id, format(ROOT, "Updating credentials to %s resource '%s'", vault.getVaultId(), key));
-            vault.storeCredentials(key, value.getCredentials());
+            vault.storeCredentials(key, value != null ? value.getCredentials() : null);
         } catch (IOException e) {
             if (onError != null)
                 onError.accept(id, format(ROOT, "Failed to update credentials to %s resource '%s'", vault.getVaultId(), key), e);

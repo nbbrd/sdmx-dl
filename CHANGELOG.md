@@ -13,6 +13,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![PROVIDER] Fix use of common execution pool in MsalAuthenticator [#1146](https://github.com/nbbrd/sdmx-dl/issues/1146)
 - ![PROVIDER] Fix MsalAnthenticator performances [#1151](https://github.com/nbbrd/sdmx-dl/issues/1151)
 
+### Changed
+
+- ![API] Modify cache API to allow key invalidation
+
 ## [3.0.0-beta.17] - 2026-01-22
 
 This is the seventeenth beta release of **sdmx-dl**.  

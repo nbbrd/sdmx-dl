@@ -29,7 +29,7 @@ public final class LockingByKeyCache<V extends HasExpiration> implements Cache<V
     }
 
     @Override
-    public void put(@NonNull String key, @NonNull V value) {
+    public void put(@NonNull String key, @Nullable V value) {
         LockByKey lockByKey = new LockByKey();
         try {
             lockByKey.lock(key);

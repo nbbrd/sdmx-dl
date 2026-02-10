@@ -88,9 +88,13 @@ public final class DiskCache<V extends HasExpiration & HasPersistence> implement
     }
 
     @Override
-    public void put(@NonNull String key, @NonNull V value) {
+    public void put(@NonNull String key, @Nullable V value) {
         Path file = getFile(key);
-        writeFile(file, value);
+        if (value != null) {
+            writeFile(file, value);
+        } else {
+            deleteFile(file);
+        }
     }
 
     private void reportRead(String key, DiskCacheEvent event) {

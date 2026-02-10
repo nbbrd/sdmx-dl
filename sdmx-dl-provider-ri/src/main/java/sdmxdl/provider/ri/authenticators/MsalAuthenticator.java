@@ -69,7 +69,7 @@ public final class MsalAuthenticator implements Authenticator {
 
     private final ExecutorService executor = Executors.newCachedThreadPool(MsalAuthenticator::newLowPriorityDaemonThread);
 
-    private final VaultCachingSupport caching = VaultCachingSupport.builder().id(ID).build();
+    private final CredentialsCaching caching = VaultCachingSupport.builder().id(ID).build();
 
     private final Duration ttl = Duration.ofMinutes(5);
 
@@ -108,7 +108,7 @@ public final class MsalAuthenticator implements Authenticator {
                                          @Nullable ErrorListener onError) throws IOException {
         MsalConfig config = MsalConfig.parse(source);
         if (config != null) {
-            caching.getDryValues().remove(config.getUid());
+            caching.getCredentialsCache(ttl, onEvent, onError).put(config.getUid(), null);
         }
     }
 

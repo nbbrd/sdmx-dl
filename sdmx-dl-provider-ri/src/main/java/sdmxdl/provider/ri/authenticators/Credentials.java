@@ -31,8 +31,8 @@ public class Credentials implements HasExpiration {
     }
 
     @StaticFactoryMethod
-    public static @NonNull Credentials empty(@NonNull Clock clock, @NonNull Duration ttl) {
-        return new Credentials(EMPTY, clock.instant().plus(ttl));
+    public static @NonNull Credentials empty(@NonNull Instant creationTime, @NonNull Duration ttl) {
+        return new Credentials(EMPTY, creationTime.plus(ttl));
     }
 
     private static final PasswordAuthentication EMPTY = new PasswordAuthentication("", new char[0]);

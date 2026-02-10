@@ -35,7 +35,7 @@ public interface Cache<V extends HasExpiration> {
 
     @Nullable V get(@NonNull String key);
 
-    void put(@NonNull String key, @NonNull V value);
+    void put(@NonNull String key, @Nullable V value);
 
     @SuppressWarnings("unchecked")
     @StaticFactoryMethod

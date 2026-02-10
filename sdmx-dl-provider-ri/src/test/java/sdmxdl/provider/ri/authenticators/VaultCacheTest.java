@@ -3,6 +3,7 @@ package sdmxdl.provider.ri.authenticators;
 import org.assertj.core.api.Condition;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import tests.sdmxdl.ext.FakeClock;
 
@@ -14,11 +15,20 @@ import java.util.Map;
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static tests.sdmxdl.ext.CacheAssert.assertCompliance;
 
 class VaultCacheTest {
 
     @Test
+    @Disabled("Vault is not yet able to store expiration time")
     public void testCompliance() {
+        assertCompliance(VaultCache
+                        .builder()
+                        .id("test")
+                        .vault(MockedVaultService.builder().build())
+                        .build(),
+                Credentials::empty
+        );
     }
 
     @Test
