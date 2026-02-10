@@ -30,12 +30,14 @@ public interface Authenticator {
 
     @Nullable PasswordAuthentication getPasswordAuthenticationOrNull(
             @NonNull WebSource source,
+            @NonNull WebCaching caching,
             @Nullable EventListener onEvent,
             @Nullable ErrorListener onError
     ) throws IOException;
 
     void invalidateAuthentication(
             @NonNull WebSource source,
+            @NonNull WebCaching caching,
             @Nullable EventListener onEvent,
             @Nullable ErrorListener onError
     ) throws IOException;

@@ -13,6 +13,7 @@ import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.ext.Cache;
 import sdmxdl.ext.Persistence;
+import sdmxdl.web.Credentials;
 import sdmxdl.web.MonitorReports;
 import sdmxdl.web.WebSource;
 
@@ -41,6 +42,11 @@ public interface WebCaching {
     @NonNull Cache<MonitorReports> getMonitorCache(
             @NonNull WebSource source,
             @NonNull List<Persistence> persistences,
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError);
+
+    @NonNull Cache<Credentials> getCredentialsCache(
+            @NonNull WebSource source,
             @Nullable EventListener onEvent,
             @Nullable ErrorListener onError);
 

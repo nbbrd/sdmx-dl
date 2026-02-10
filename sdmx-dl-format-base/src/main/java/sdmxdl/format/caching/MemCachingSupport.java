@@ -1,4 +1,4 @@
-package sdmxdl.format;
+package sdmxdl.format.caching;
 
 import lombok.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -10,6 +10,7 @@ import sdmxdl.ext.Persistence;
 import sdmxdl.file.FileSource;
 import sdmxdl.file.spi.FileCaching;
 import sdmxdl.format.design.ServiceSupport;
+import sdmxdl.web.Credentials;
 import sdmxdl.web.MonitorReports;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.WebCaching;
@@ -37,6 +38,10 @@ public final class MemCachingSupport implements FileCaching, WebCaching {
     @lombok.NonNull
     @lombok.Builder.Default
     private final Supplier<? extends Map<String, MonitorReports>> webMonitors = HashMap::new;
+
+    @lombok.NonNull
+    @lombok.Builder.Default
+    private final Supplier<? extends Map<String, Credentials>> credentials = HashMap::new;
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -102,6 +107,18 @@ public final class MemCachingSupport implements FileCaching, WebCaching {
     }
 
     @Override
+    public @NonNull Cache<Credentials> getCredentialsCache(
+            @NonNull WebSource source,
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError) {
+        return MemCache
+                .<Credentials>builder()
+                .map(credentials.get())
+                .clock(clock)
+                .build();
+    }
+
+    @Override
     public @NonNull Collection<String> getFileCachingProperties() {
         return Collections.emptyList();
     }
@@ -119,6 +136,10 @@ public final class MemCachingSupport implements FileCaching, WebCaching {
 
         public @NonNull Builder webMonitorsOf(@NonNull ConcurrentMap<String, MonitorReports> webMonitors) {
             return webMonitors(() -> webMonitors);
+        }
+
+        public @NonNull Builder credentialsOf(@NonNull ConcurrentMap<String, Credentials> credentials) {
+            return credentials(() -> credentials);
         }
     }
 }

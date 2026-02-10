@@ -2,11 +2,12 @@ package _demo;
 
 import sdmxdl.DatabaseRequest;
 import sdmxdl.Provider;
+import sdmxdl.format.caching.MemCachingSupport;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
-import sdmxdl.web.spi.WebCaching;
 
 import java.io.IOException;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.IntStream;
 
 public class WebDemo3 {
@@ -18,7 +19,14 @@ public class WebDemo3 {
                 .toBuilder()
                 .onEvent(SdmxWebManager::printEvent)
                 .onError(SdmxWebManager::printError)
-                .caching(WebCaching.noOp())
+//                .caching(WebCaching.noOp())
+                .caching(MemCachingSupport
+                        .builder()
+                        .id("")
+                        .repositoriesOf(new ConcurrentHashMap<>())
+                        .webMonitorsOf(new ConcurrentHashMap<>())
+                        .credentialsOf(new ConcurrentHashMap<>())
+                        .build())
                 .build()
                 .usingName("ECB");
 

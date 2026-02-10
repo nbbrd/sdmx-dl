@@ -33,6 +33,7 @@ import sdmxdl.provider.web.WebEvents;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Authenticator;
 import sdmxdl.web.spi.Network;
+import sdmxdl.web.spi.WebCaching;
 import sdmxdl.web.spi.WebContext;
 
 import java.io.File;
@@ -107,7 +108,7 @@ public class RiHttpUtils {
                 .hostnameVerifier(() -> network.getSSLFactory().getHostnameVerifier())
                 .urlConnectionFactory(() -> network.getURLConnectionFactory()::openConnection)
                 .listener(onEvent != null ? new RiHttpEventListener(onEvent.asConsumer("RI_HTTP")) : HttpEventListener.noOp())
-                .authenticator(new RiHttpAuthenticator(source, context.getAuthenticators(), onEvent, onError))
+                .authenticator(new RiHttpAuthenticator(source, context.getAuthenticators(), context.getCaching(), onEvent, onError))
                 .userAgent(USER_AGENT_PROPERTY.get(source.getProperties()))
                 .build();
     }
@@ -172,6 +173,8 @@ public class RiHttpUtils {
         @lombok.NonNull
         private final List<Authenticator> authenticators;
 
+        private final @NonNull WebCaching caching;
+
         private final @Nullable EventListener onEvent;
 
         private final @Nullable ErrorListener onError;
@@ -203,7 +206,7 @@ public class RiHttpUtils {
 
         private PasswordAuthentication getPasswordAuthentication(Authenticator authenticator) {
             try {
-                return authenticator.getPasswordAuthenticationOrNull(source, onEvent, onError);
+                return authenticator.getPasswordAuthenticationOrNull(source, caching, onEvent, onError);
             } catch (IOException ex) {
                 if (onEvent != null) {
                     onEvent.accept(authenticator.getAuthenticatorId(), "Failed to get password authentication: " + ex.getMessage());
@@ -214,7 +217,7 @@ public class RiHttpUtils {
 
         private void invalidate(Authenticator authenticator) {
             try {
-                authenticator.invalidateAuthentication(source, onEvent, onError);
+                authenticator.invalidateAuthentication(source, caching, onEvent, onError);
             } catch (IOException ex) {
                 if (onEvent != null) {
                     onEvent.accept(authenticator.getAuthenticatorId(), "Failed to invalidate password authentication: " + ex.getMessage());

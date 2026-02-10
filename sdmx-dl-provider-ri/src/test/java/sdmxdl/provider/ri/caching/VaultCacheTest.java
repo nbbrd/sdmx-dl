@@ -1,10 +1,12 @@
-package sdmxdl.provider.ri.authenticators;
+package sdmxdl.provider.ri.caching;
 
+import internal.util.credentials.MockedVaultService;
 import org.assertj.core.api.Condition;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import sdmxdl.web.Credentials;
 import tests.sdmxdl.ext.FakeClock;
 
 import java.net.PasswordAuthentication;
@@ -27,7 +29,7 @@ class VaultCacheTest {
                         .id("test")
                         .vault(MockedVaultService.builder().build())
                         .build(),
-                Credentials::empty
+                (creationTime, ttl) -> Credentials.empty(creationTime.plus(ttl))
         );
     }
 
@@ -47,27 +49,27 @@ class VaultCacheTest {
 
         clock.set(1000);
         assertThat(x.get("KEY1"))
-                .as("Empty map should return empty")
-                .is(emptyCredentials(clock.instant().plus(ttl)));
+                .as("Empty map should return null")
+                .isNull();
 
         PasswordAuthentication r1000 = new PasswordAuthentication("r1", "r1".toCharArray());
         map.put("KEY1", r1000);
         clock.set(1009);
         assertThat(x.get("KEY1"))
                 .as("Existing key should return value")
-                .isEqualTo(Credentials.of(r1000, clock, ttl));
+                .isEqualTo(Credentials.of(r1000, clock.instant().plus(ttl)));
 
         clock.set(1009);
         assertThat(x.get("KEY2"))
-                .as("Non-existing key should return empty")
-                .is(emptyCredentials(clock.instant().plus(ttl)));
+                .as("Non-existing key should return null")
+                .isNull();
 
         PasswordAuthentication r1009 = new PasswordAuthentication("r2", "r2".toCharArray());
         map.put("KEY1", r1009);
         clock.set(1010);
         assertThat(x.get("KEY1"))
                 .as("Updated key should return updated value")
-                .isEqualTo(Credentials.of(r1009, clock, ttl));
+                .isEqualTo(Credentials.of(r1009, clock.instant().plus(ttl)));
     }
 
     private static @NonNull Condition<@Nullable Credentials> emptyCredentials(Instant expirationTime) {

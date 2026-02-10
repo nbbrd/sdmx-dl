@@ -14,17 +14,19 @@ import sdmxdl.ext.Cache;
 import sdmxdl.ext.Persistence;
 import sdmxdl.file.FileSource;
 import sdmxdl.file.spi.FileCaching;
-import sdmxdl.format.DiskCache;
-import sdmxdl.format.DiskCachingSupport;
-import sdmxdl.format.MemCache;
+import sdmxdl.format.caching.DiskCache;
+import sdmxdl.format.caching.DiskCachingSupport;
+import sdmxdl.format.caching.MemCache;
 import sdmxdl.format.design.PropertyDefinition;
 import sdmxdl.provider.PropertiesSupport;
+import sdmxdl.web.Credentials;
 import sdmxdl.web.MonitorReports;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.WebCaching;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
@@ -73,6 +75,8 @@ public final class RiCaching implements FileCaching, WebCaching {
             PERSISTENCE_ID_PROPERTY,
             MAX_CONFIDENTIALITY_PROPERTY
     );
+
+    private final VaultCachingSupport vaultCaching = VaultCachingSupport.builder().id(ID).build();
 
     @Override
     public @NonNull String getWebCachingId() {
@@ -144,6 +148,14 @@ public final class RiCaching implements FileCaching, WebCaching {
 
         return getDiskCaching(properties)
                 .getMonitorCache(source, persistences, onEvent, onError);
+    }
+
+    @Override
+    public @NonNull Cache<Credentials> getCredentialsCache(
+            @NonNull WebSource source,
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError) {
+        return vaultCaching.getCredentialsCache(Duration.ofMinutes(5), onEvent, onError);
     }
 
     @Override

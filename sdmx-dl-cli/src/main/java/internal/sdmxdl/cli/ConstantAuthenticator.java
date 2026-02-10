@@ -6,6 +6,7 @@ import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Authenticator;
+import sdmxdl.web.spi.WebCaching;
 
 import java.net.PasswordAuthentication;
 import java.util.Collection;
@@ -28,6 +29,7 @@ final class ConstantAuthenticator implements Authenticator {
 
     @Override
     public @Nullable PasswordAuthentication getPasswordAuthenticationOrNull(@NonNull WebSource source,
+                                                                            @NonNull WebCaching caching,
                                                                             @Nullable EventListener onEvent,
                                                                             @Nullable ErrorListener onError) {
         return user;
@@ -35,6 +37,7 @@ final class ConstantAuthenticator implements Authenticator {
 
     @Override
     public void invalidateAuthentication(@NonNull WebSource source,
+                                         @NonNull WebCaching caching,
                                          @Nullable EventListener onEvent,
                                          @Nullable ErrorListener onError) {
     }

@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
 import sdmxdl.*;
-import sdmxdl.format.MemCachingSupport;
+import sdmxdl.format.caching.MemCachingSupport;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.ri.networking.RiNetworking;
 import sdmxdl.web.spi.WebContext;

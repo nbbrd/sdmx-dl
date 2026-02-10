@@ -15,7 +15,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- ![API] Modify cache API to allow key invalidation
+- ![API] Modify Cache API to allow key invalidation
+- ![API] Modify WebCaching API to handle credentials
 
 ## [3.0.0-beta.17] - 2026-01-22
 

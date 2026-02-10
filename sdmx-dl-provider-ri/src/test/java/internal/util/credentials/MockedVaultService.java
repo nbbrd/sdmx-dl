@@ -1,6 +1,5 @@
-package sdmxdl.provider.ri.authenticators;
+package internal.util.credentials;
 
-import lombok.Builder;
 import lombok.Getter;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -11,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @lombok.Builder
-final class MockedVaultService implements VaultService {
+public final class MockedVaultService implements VaultService {
 
     @lombok.Builder.Default
     private final String id = "MOCKED_VAULT";

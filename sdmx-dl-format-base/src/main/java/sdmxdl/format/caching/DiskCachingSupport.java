@@ -1,4 +1,4 @@
-package sdmxdl.format;
+package sdmxdl.format.caching;
 
 import lombok.AccessLevel;
 import lombok.NonNull;
@@ -10,6 +10,7 @@ import sdmxdl.ext.Persistence;
 import sdmxdl.file.FileSource;
 import sdmxdl.file.spi.FileCaching;
 import sdmxdl.format.design.ServiceSupport;
+import sdmxdl.web.Credentials;
 import sdmxdl.web.MonitorReports;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.WebCaching;
@@ -112,6 +113,11 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
     }
 
     @Override
+    public @NonNull Cache<Credentials> getCredentialsCache(@NonNull WebSource source, @Nullable EventListener onEvent, @Nullable ErrorListener onError) {
+        return Cache.noOp();
+    }
+
+    @Override
     public @NonNull Collection<String> getFileCachingProperties() {
         return emptyList();
     }
@@ -145,11 +151,12 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
     }
 
     private static <V extends HasExpiration> Cache<V> dry(Cache<V> cache) {
-        return new DualCache<>(
-                MemCache.<V>builder().clock(cache.getClock()).build(),
-                cache,
-                cache.getClock()
-        );
+        return DualCache
+                .<V>builder()
+                .first(MemCache.<V>builder().clock(cache.getClock()).build())
+                .second(cache)
+                .clock(cache.getClock())
+                .build();
     }
 
     private void logConfig(EventListener onEvent, FileFormat<?> format) {

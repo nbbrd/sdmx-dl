@@ -3,7 +3,7 @@ package _test.sdmxdl.util;
 import nbbrd.io.function.IOFunction;
 import org.assertj.core.api.Condition;
 import sdmxdl.DataRepository;
-import sdmxdl.format.MemCache;
+import sdmxdl.format.caching.MemCache;
 import sdmxdl.web.MonitorReports;
 import tests.sdmxdl.ext.FakeClock;
 

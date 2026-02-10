@@ -1,4 +1,4 @@
-package sdmxdl.provider.ri.authenticators;
+package sdmxdl.web;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -7,8 +7,6 @@ import nbbrd.design.StaticFactoryMethod;
 import sdmxdl.HasExpiration;
 
 import java.net.PasswordAuthentication;
-import java.time.Clock;
-import java.time.Duration;
 import java.time.Instant;
 
 @lombok.Value
@@ -26,13 +24,13 @@ public class Credentials implements HasExpiration {
     }
 
     @StaticFactoryMethod
-    public static @NonNull Credentials of(@NonNull PasswordAuthentication credentials, @NonNull Clock clock, @NonNull Duration ttl) {
-        return new Credentials(credentials, clock.instant().plus(ttl));
+    public static @NonNull Credentials of(@NonNull PasswordAuthentication credentials, @NonNull Instant expirationTime) {
+        return new Credentials(credentials, expirationTime);
     }
 
     @StaticFactoryMethod
-    public static @NonNull Credentials empty(@NonNull Instant creationTime, @NonNull Duration ttl) {
-        return new Credentials(EMPTY, creationTime.plus(ttl));
+    public static @NonNull Credentials empty(@NonNull Instant expirationTime) {
+        return new Credentials(EMPTY, expirationTime);
     }
 
     private static final PasswordAuthentication EMPTY = new PasswordAuthentication("", new char[0]);

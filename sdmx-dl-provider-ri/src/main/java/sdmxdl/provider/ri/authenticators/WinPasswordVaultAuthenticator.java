@@ -12,6 +12,7 @@ import sdmxdl.provider.ri.drivers.AuthSchemes;
 import sdmxdl.provider.web.DriverProperties;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Authenticator;
+import sdmxdl.web.spi.WebCaching;
 
 import java.io.IOException;
 import java.net.PasswordAuthentication;
@@ -34,6 +35,7 @@ public final class WinPasswordVaultAuthenticator implements Authenticator {
 
     @Override
     public PasswordAuthentication getPasswordAuthenticationOrNull(@NonNull WebSource source,
+                                                                  @NonNull WebCaching caching,
                                                                   @Nullable EventListener onEvent,
                                                                   @Nullable ErrorListener onError) throws IOException {
         if (AuthSchemes.BASIC_AUTH_SCHEME.equals(DriverProperties.AUTH_SCHEME_PROPERTY.get(source.getProperties()))) {
@@ -47,6 +49,7 @@ public final class WinPasswordVaultAuthenticator implements Authenticator {
 
     @Override
     public void invalidateAuthentication(@NonNull WebSource source,
+                                         @NonNull WebCaching caching,
                                          @Nullable EventListener onEvent,
                                          @Nullable ErrorListener onError) throws IOException {
         if (AuthSchemes.BASIC_AUTH_SCHEME.equals(DriverProperties.AUTH_SCHEME_PROPERTY.get(source.getProperties()))) {

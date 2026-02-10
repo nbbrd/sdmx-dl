@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.format;
+package sdmxdl.format.caching;
 
 import lombok.AccessLevel;
 import lombok.NonNull;
@@ -23,18 +23,18 @@ import sdmxdl.HasExpiration;
 import sdmxdl.ext.Cache;
 
 import java.time.Clock;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author Philippe Charles
  */
 @lombok.Builder(toBuilder = true)
-public final class MemCache<V extends HasExpiration> implements Cache<V> {
+public final class ConcurrentMemCache<V extends HasExpiration> implements Cache<V> {
 
     @lombok.Getter(AccessLevel.PACKAGE)
     @lombok.Builder.Default
-    private final @NonNull Map<String, V> map = new HashMap<>();
+    private final @NonNull ConcurrentMap<String, V> map = new ConcurrentHashMap<>();
 
     @lombok.Builder.Default
     private final @NonNull Clock clock = Clock.systemDefaultZone();
@@ -46,15 +46,7 @@ public final class MemCache<V extends HasExpiration> implements Cache<V> {
 
     @Override
     public @Nullable V get(@NonNull String key) {
-        V result = map.get(key);
-        if (result == null) {
-            return null;
-        }
-        if (result.isExpired(clock)) {
-            map.remove(key);
-            return null;
-        }
-        return result;
+        return map.computeIfPresent(key, (k, v) -> v.isExpired(clock) ? null : v);
     }
 
     @Override
@@ -64,5 +56,9 @@ public final class MemCache<V extends HasExpiration> implements Cache<V> {
         } else {
             map.remove(key);
         }
+    }
+
+    public void evict() {
+        map.keySet().forEach(key -> map.computeIfPresent(key, (k, v) -> v.isExpired(clock) ? null : v));
     }
 }

@@ -5,7 +5,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
-import nbbrd.design.MightBePromoted;
 import nbbrd.design.StaticFactoryMethod;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.text.Formatter;
@@ -21,8 +20,11 @@ import sdmxdl.format.design.PropertyDefinition;
 import sdmxdl.provider.TypedId;
 import sdmxdl.provider.ri.drivers.AuthSchemes;
 import sdmxdl.provider.web.DriverProperties;
+import sdmxdl.web.Credentials;
+import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Authenticator;
+import sdmxdl.web.spi.WebCaching;
 
 import java.io.IOException;
 import java.net.PasswordAuthentication;
@@ -67,9 +69,7 @@ public final class MsalAuthenticator implements Authenticator {
 
     private static final String ID = "MSAL";
 
-    private final ExecutorService executor = Executors.newCachedThreadPool(MsalAuthenticator::newLowPriorityDaemonThread);
-
-    private final CredentialsCaching caching = VaultCachingSupport.builder().id(ID).build();
+    private final ExecutorService executor = Executors.newCachedThreadPool(SdmxWebManager::newLowPriorityDaemonThread);
 
     private final Duration ttl = Duration.ofMinutes(5);
 
@@ -85,6 +85,7 @@ public final class MsalAuthenticator implements Authenticator {
 
     @Override
     public @Nullable PasswordAuthentication getPasswordAuthenticationOrNull(@NonNull WebSource source,
+                                                                            @NonNull WebCaching caching,
                                                                             @Nullable EventListener onEvent,
                                                                             @Nullable ErrorListener onError) throws IOException {
         MsalConfig config = MsalConfig.parse(source);
@@ -93,7 +94,7 @@ public final class MsalAuthenticator implements Authenticator {
                     .builder(config.getClientId())
                     .authority(config.getAuthority())
                     .setTokenCacheAccessAspect(new CachedTokenCacheAccessAspect(
-                            caching.getCredentialsCache(ttl, onEvent, onError), ttl, config.getUid()
+                            caching.getCredentialsCache(source, onEvent, onError), ttl, config.getUid()
                     ))
                     .executorService(executor)
                     .build();
@@ -104,11 +105,12 @@ public final class MsalAuthenticator implements Authenticator {
 
     @Override
     public void invalidateAuthentication(@NonNull WebSource source,
+                                         @NonNull WebCaching caching,
                                          @Nullable EventListener onEvent,
                                          @Nullable ErrorListener onError) throws IOException {
         MsalConfig config = MsalConfig.parse(source);
         if (config != null) {
-            caching.getCredentialsCache(ttl, onEvent, onError).put(config.getUid(), null);
+            caching.getCredentialsCache(source, onEvent, onError).put(config.getUid(), null);
         }
     }
 
@@ -211,16 +213,8 @@ public final class MsalAuthenticator implements Authenticator {
         @Override
         public void afterCacheAccess(ITokenCacheAccessContext context) {
             if (context.hasCacheChanged()) {
-                cache.put(uid, Credentials.of(new PasswordAuthentication(uid, context.tokenCache().serialize().toCharArray()), cache.getClock(), ttl));
+                cache.put(uid, Credentials.of(new PasswordAuthentication(uid, context.tokenCache().serialize().toCharArray()), cache.getClock().instant().plus(ttl)));
             }
         }
-    }
-
-    @MightBePromoted
-    static Thread newLowPriorityDaemonThread(Runnable runnable) {
-        Thread result = new Thread(runnable);
-        result.setDaemon(true);
-        result.setPriority(Thread.MIN_PRIORITY);
-        return result;
     }
 }

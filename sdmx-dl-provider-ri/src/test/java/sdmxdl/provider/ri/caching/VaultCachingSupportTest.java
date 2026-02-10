@@ -1,7 +1,9 @@
-package sdmxdl.provider.ri.authenticators;
+package sdmxdl.provider.ri.caching;
 
+import internal.util.credentials.MockedVaultService;
 import org.junit.jupiter.api.Test;
 import sdmxdl.ext.Cache;
+import sdmxdl.web.Credentials;
 
 import java.net.PasswordAuthentication;
 import java.time.Duration;

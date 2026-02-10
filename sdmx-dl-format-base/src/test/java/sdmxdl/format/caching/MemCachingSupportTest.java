@@ -1,4 +1,4 @@
-package sdmxdl.format;
+package sdmxdl.format.caching;
 
 import nbbrd.io.text.Parser;
 import org.junit.jupiter.api.Test;
@@ -7,14 +7,13 @@ import org.junit.jupiter.params.provider.EnumSource;
 import sdmxdl.file.FileSource;
 import sdmxdl.web.WebSource;
 
-import java.io.File;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static sdmxdl.format.MemCachingSupport.builder;
+import static sdmxdl.format.caching.MemCachingSupport.builder;
 import static tests.sdmxdl.file.spi.FileCachingAssert.assertFileCompliance;
 import static tests.sdmxdl.web.spi.WebCachingAssert.assertWebCompliance;
 

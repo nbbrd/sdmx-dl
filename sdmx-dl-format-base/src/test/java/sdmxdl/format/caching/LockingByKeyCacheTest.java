@@ -1,4 +1,4 @@
-package sdmxdl.format;
+package sdmxdl.format.caching;
 
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataRepository;

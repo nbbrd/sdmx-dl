@@ -1,4 +1,4 @@
-package sdmxdl.provider.ri.authenticators;
+package sdmxdl.provider.ri.caching;
 
 import internal.util.credentials.NoOpVaultService;
 import lombok.NonNull;
@@ -7,6 +7,7 @@ import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.ext.Cache;
 import sdmxdl.provider.ri.spi.VaultService;
+import sdmxdl.web.Credentials;
 
 import java.io.IOException;
 import java.net.PasswordAuthentication;
@@ -46,7 +47,7 @@ final class VaultCache implements Cache<Credentials> {
                 onEvent.accept(id, format(ROOT, "Loading credentials from %s resource '%s'", vault.getVaultId(), key));
             PasswordAuthentication credentials = vault.loadCredentials(key);
             if (credentials != null) {
-                return Credentials.of(credentials, clock, ttl);
+                return Credentials.of(credentials, clock.instant().plus(ttl));
             }
             if (onEvent != null)
                 onEvent.accept(id, format(ROOT, "Found no credentials in %s resource '%s'", vault.getVaultId(), key));
@@ -54,7 +55,7 @@ final class VaultCache implements Cache<Credentials> {
             if (onError != null)
                 onError.accept(id, format(ROOT, "Failed to load credentials from %s resource '%s'", vault.getVaultId(), key), e);
         }
-        return Credentials.empty(clock.instant(), ttl);
+        return null;
     }
 
     @Override

@@ -14,57 +14,43 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.format;
+package sdmxdl.format.caching;
 
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataRepository;
-import sdmxdl.ext.Cache;
 import sdmxdl.web.MonitorReports;
-import tests.sdmxdl.api.RepoSamples;
 import tests.sdmxdl.ext.FakeClock;
 
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.stream.IntStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static tests.sdmxdl.ext.CacheAssert.assertMonitorCompliance;
 import static tests.sdmxdl.ext.CacheAssert.assertRepositoryCompliance;
 
 /**
  * @author Philippe Charles
  */
-public class ConcurrentMemCacheTest {
+public class MemCacheTest {
 
     @Test
     public void testCompliance() {
-        assertMonitorCompliance(ConcurrentMemCache.<MonitorReports>builder().build());
-        assertRepositoryCompliance(ConcurrentMemCache.<DataRepository>builder().build());
-    }
-
-    @Test
-    void testConcurrentAccess() {
-        Cache<DataRepository> x = ConcurrentMemCache.<DataRepository>builder().build();
-
-        assertThatCode(() -> IntStream.range(0, 10).forEach(i -> x.put("key", RepoSamples.REPO)))
-                .doesNotThrowAnyException();
-
-        assertThat(x.get("key")).isEqualTo(RepoSamples.REPO);
+        assertMonitorCompliance(MemCache.<MonitorReports>builder().build());
+        assertRepositoryCompliance(MemCache.<DataRepository>builder().build());
     }
 
     @Test
     public void testGet() {
-        ConcurrentMap<String, DataRepository> map = new ConcurrentHashMap<>();
+        Map<String, DataRepository> map = new HashMap<>();
 
         FakeClock clock = new FakeClock();
 
-        ConcurrentMemCache<DataRepository> x = ConcurrentMemCache
+        MemCache<DataRepository> x = MemCache
                 .<DataRepository>builder()
                 .map(map)
                 .clock(clock)
@@ -113,11 +99,11 @@ public class ConcurrentMemCacheTest {
 
     @Test
     public void testMapFactories() {
-        assertThat(ConcurrentMemCache.builder().build().getMap())
-                .isInstanceOf(ConcurrentHashMap.class);
+        assertThat(MemCache.builder().build().getMap())
+                .isInstanceOf(HashMap.class);
 
-        assertThat(ConcurrentMemCache.builder().map(new ConcurrentSkipListMap<>()).build().getMap())
-                .isInstanceOf(ConcurrentSkipListMap.class);
+        assertThat(MemCache.builder().map(new TreeMap<>()).build().getMap())
+                .isInstanceOf(TreeMap.class);
     }
 
     private static Clock clock(long value) {

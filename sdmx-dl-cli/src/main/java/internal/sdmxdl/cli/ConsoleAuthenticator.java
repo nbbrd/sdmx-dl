@@ -6,6 +6,7 @@ import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Authenticator;
+import sdmxdl.web.spi.WebCaching;
 
 import java.io.Console;
 import java.io.IOError;
@@ -33,6 +34,7 @@ final class ConsoleAuthenticator implements Authenticator {
 
     @Override
     public PasswordAuthentication getPasswordAuthenticationOrNull(@NonNull WebSource source,
+                                                                  @NonNull WebCaching caching,
                                                                   @Nullable EventListener onEvent,
                                                                   @Nullable ErrorListener onError) throws IOException {
         if (!isConsoleAvailable()) {
@@ -54,6 +56,7 @@ final class ConsoleAuthenticator implements Authenticator {
 
     @Override
     public void invalidateAuthentication(@NonNull WebSource source,
+                                         @NonNull WebCaching caching,
                                          @Nullable EventListener onEvent,
                                          @Nullable ErrorListener onError) {
         cache.remove(source);
