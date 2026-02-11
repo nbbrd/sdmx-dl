@@ -15,7 +15,7 @@ import org.jspecify.annotations.Nullable;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.ext.Cache;
-import sdmxdl.format.LockByKey;
+import sdmxdl.provider.LockByKey;
 import sdmxdl.format.design.PropertyDefinition;
 import sdmxdl.provider.TypedId;
 import sdmxdl.provider.ri.drivers.AuthSchemes;

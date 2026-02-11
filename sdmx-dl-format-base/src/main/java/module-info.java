@@ -13,7 +13,6 @@ module sdmxdl.format.base {
     exports sdmxdl.format;
     exports sdmxdl.format.design;
     exports sdmxdl.format.time;
-    exports sdmxdl.format.caching;
 
     uses Persistence;
 }

@@ -1,7 +1,7 @@
 package internal.sdmxdl.cli;
 
 import picocli.CommandLine;
-import sdmxdl.format.caching.DiskCachingSupport;
+import sdmxdl.provider.caching.DiskCachingSupport;
 import sdmxdl.provider.ri.caching.RiCaching;
 import sdmxdl.web.spi.WebCaching;
 

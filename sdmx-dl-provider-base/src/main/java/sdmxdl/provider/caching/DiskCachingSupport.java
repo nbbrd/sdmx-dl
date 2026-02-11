@@ -1,4 +1,4 @@
-package sdmxdl.format.caching;
+package sdmxdl.provider.caching;
 
 import lombok.AccessLevel;
 import lombok.NonNull;
@@ -12,7 +12,7 @@ import sdmxdl.ext.Cache;
 import sdmxdl.ext.FileFormat;
 import sdmxdl.file.FileSource;
 import sdmxdl.file.spi.FileCaching;
-import sdmxdl.format.PropertiesSupport;
+import sdmxdl.provider.PropertiesSupport;
 import sdmxdl.format.design.PropertyDefinition;
 import sdmxdl.format.design.ServiceSupport;
 import sdmxdl.web.Credentials;

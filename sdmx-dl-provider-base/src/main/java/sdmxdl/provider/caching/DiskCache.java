@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.format.caching;
+package sdmxdl.provider.caching;
 
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;

@@ -20,7 +20,7 @@ import sdmxdl.FlowRequest;
 import sdmxdl.KeyRequest;
 import sdmxdl.desktop.panels.*;
 import sdmxdl.ext.Persistence;
-import sdmxdl.format.caching.DiskCachingSupport;
+import sdmxdl.provider.caching.DiskCachingSupport;
 import sdmxdl.provider.ri.drivers.RiHttpUtils;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;

@@ -3,7 +3,7 @@ package sdmxdl.desktop;
 import lombok.NonNull;
 import nbbrd.io.sys.SystemProperties;
 import sdmxdl.*;
-import sdmxdl.format.caching.DiskCachingSupport;
+import sdmxdl.provider.caching.DiskCachingSupport;
 import sdmxdl.provider.ri.drivers.RiHttpUtils;
 import sdmxdl.provider.ri.networking.RiNetworking;
 import sdmxdl.web.SdmxWebManager;

@@ -8,6 +8,7 @@ module sdmxdl.provider.base {
     requires transitive sdmxdl.format.base;
 
     exports sdmxdl.provider;
+    exports sdmxdl.provider.caching;
     exports sdmxdl.provider.ext;
     exports sdmxdl.provider.file;
     exports sdmxdl.provider.web;

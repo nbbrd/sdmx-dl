@@ -1,4 +1,4 @@
-package sdmxdl.format;
+package sdmxdl.provider;
 
 import lombok.NonNull;
 import org.jspecify.annotations.Nullable;

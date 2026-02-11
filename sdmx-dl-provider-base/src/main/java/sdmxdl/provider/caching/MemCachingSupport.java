@@ -1,4 +1,4 @@
-package sdmxdl.format.caching;
+package sdmxdl.provider.caching;
 
 import lombok.NonNull;
 import org.jspecify.annotations.Nullable;

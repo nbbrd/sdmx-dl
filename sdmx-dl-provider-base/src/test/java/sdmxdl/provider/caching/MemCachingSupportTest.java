@@ -1,4 +1,4 @@
-package sdmxdl.format.caching;
+package sdmxdl.provider.caching;
 
 import nbbrd.io.text.Parser;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static sdmxdl.format.caching.MemCachingSupport.builder;
 import static tests.sdmxdl.file.spi.FileCachingAssert.assertFileCompliance;
 import static tests.sdmxdl.web.spi.WebCachingAssert.assertWebCompliance;
 
@@ -28,13 +27,13 @@ public class MemCachingSupportTest {
     @ParameterizedTest
     @EnumSource(Extractor.class)
     public void testFactories(Extractor extractor) {
-        assertThat(builder().id("").build())
+        assertThat(MemCachingSupport.builder().id("").build())
                 .satisfies(x -> assertThat(extractor.f(x).getMap()).isNotSameAs(extractor.f(x).getMap()).isInstanceOf(HashMap.class));
 
-        assertThat(builder().id("").repositories(ConcurrentHashMap::new).webMonitors(ConcurrentHashMap::new).build())
+        assertThat(MemCachingSupport.builder().id("").repositories(ConcurrentHashMap::new).webMonitors(ConcurrentHashMap::new).build())
                 .satisfies(x -> assertThat(extractor.f(x).getMap()).isNotSameAs(extractor.f(x).getMap()).isInstanceOf(ConcurrentHashMap.class));
 
-        assertThat(builder().id("").repositoriesOf(new ConcurrentHashMap<>()).webMonitorsOf(new ConcurrentHashMap<>()).build())
+        assertThat(MemCachingSupport.builder().id("").repositoriesOf(new ConcurrentHashMap<>()).webMonitorsOf(new ConcurrentHashMap<>()).build())
                 .satisfies(x -> assertThat(extractor.f(x).getMap()).isSameAs(extractor.f(x).getMap()).isInstanceOf(ConcurrentHashMap.class));
     }
 

@@ -2,7 +2,7 @@ package _demo;
 
 import sdmxdl.DatabaseRequest;
 import sdmxdl.Provider;
-import sdmxdl.format.caching.MemCachingSupport;
+import sdmxdl.provider.caching.MemCachingSupport;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 

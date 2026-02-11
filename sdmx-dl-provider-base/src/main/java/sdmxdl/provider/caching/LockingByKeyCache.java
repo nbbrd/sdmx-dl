@@ -1,10 +1,10 @@
-package sdmxdl.format.caching;
+package sdmxdl.provider.caching;
 
 import lombok.NonNull;
 import org.jspecify.annotations.Nullable;
 import sdmxdl.HasExpiration;
 import sdmxdl.ext.Cache;
-import sdmxdl.format.LockByKey;
+import sdmxdl.provider.LockByKey;
 
 import java.time.Clock;
 

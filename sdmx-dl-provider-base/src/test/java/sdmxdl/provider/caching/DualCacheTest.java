@@ -1,4 +1,4 @@
-package sdmxdl.format.caching;
+package sdmxdl.provider.caching;
 
 import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.Test;
