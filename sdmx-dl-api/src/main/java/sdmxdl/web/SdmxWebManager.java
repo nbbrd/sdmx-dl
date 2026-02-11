@@ -195,7 +195,6 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
                 .networking(networking)
                 .onEvent(onEvent)
                 .onError(onError)
-                .persistences(persistences)
                 .authenticators(authenticators)
                 .build();
     }

@@ -56,6 +56,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sdmx-dl-format-kryo</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.github.tuupertunut</groupId>
             <artifactId>powershell-lib-java</artifactId>
             <version>2.0.0</version>

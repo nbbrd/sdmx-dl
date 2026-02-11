@@ -3,7 +3,7 @@ package sdmxdl.desktop;
 import lombok.NonNull;
 import nbbrd.io.sys.SystemProperties;
 import sdmxdl.*;
-import sdmxdl.provider.ri.caching.RiCaching;
+import sdmxdl.format.caching.DiskCachingSupport;
 import sdmxdl.provider.ri.drivers.RiHttpUtils;
 import sdmxdl.provider.ri.networking.RiNetworking;
 import sdmxdl.web.SdmxWebManager;
@@ -69,9 +69,8 @@ public class DataSourceRef {
         if (debug) {
             Path tmp = requireNonNull(SystemProperties.DEFAULT.getJavaIoTmpdir()).resolve(About.NAME).resolve("debug_" + source);
             builder.property(RiHttpUtils.DUMP_FOLDER_PROPERTY.getKey(), tmp.resolve("dump").toString());
-            builder.property(RiCaching.CACHE_FOLDER_PROPERTY.getKey(), tmp.resolve("cache").toString());
-            builder.property(RiCaching.NO_COMPRESSION_PROPERTY.getKey(), "true");
-            builder.property(RiCaching.PERSISTENCE_ID_PROPERTY.getKey(), "JSON");
+            builder.property(DiskCachingSupport.CACHE_FOLDER_PROPERTY.getKey(), tmp.resolve("cache").toString());
+            builder.property(DiskCachingSupport.NO_COMPRESSION_PROPERTY.getKey(), "true");
         }
         if (curlBackend != Toggle.DEFAULT) {
             builder.property(RiNetworking.URL_BACKEND_PROPERTY.getKey(), curlBackend.equals(Toggle.ENABLE) ? "CURL" : "JDK");

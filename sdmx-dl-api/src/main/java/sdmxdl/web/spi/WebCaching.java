@@ -12,13 +12,11 @@ import sdmxdl.DataRepository;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.ext.Cache;
-import sdmxdl.ext.Persistence;
 import sdmxdl.web.Credentials;
 import sdmxdl.web.MonitorReports;
 import sdmxdl.web.WebSource;
 
 import java.util.Collection;
-import java.util.List;
 
 @ServiceDefinition(
         quantifier = Quantifier.SINGLE,
@@ -35,13 +33,11 @@ public interface WebCaching {
 
     @NonNull Cache<DataRepository> getDriverCache(
             @NonNull WebSource source,
-            @NonNull List<Persistence> persistences,
             @Nullable EventListener onEvent,
             @Nullable ErrorListener onError);
 
     @NonNull Cache<MonitorReports> getMonitorCache(
             @NonNull WebSource source,
-            @NonNull List<Persistence> persistences,
             @Nullable EventListener onEvent,
             @Nullable ErrorListener onError);
 

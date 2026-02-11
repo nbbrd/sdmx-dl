@@ -11,7 +11,7 @@ import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.ext.Persistence;
 import sdmxdl.format.design.PropertyDefinition;
-import sdmxdl.provider.PropertiesSupport;
+import sdmxdl.format.PropertiesSupport;
 import sdmxdl.web.WebSources;
 import sdmxdl.web.spi.Registry;
 

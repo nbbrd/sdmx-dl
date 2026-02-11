@@ -107,7 +107,7 @@ public class RiHttpUtils {
                 .sslSocketFactory(() -> network.getSSLFactory().getSSLSocketFactory())
                 .hostnameVerifier(() -> network.getSSLFactory().getHostnameVerifier())
                 .urlConnectionFactory(() -> network.getURLConnectionFactory()::openConnection)
-                .listener(onEvent != null ? new RiHttpEventListener(onEvent.asConsumer("RI_HTTP")) : HttpEventListener.noOp())
+                .listener(onEvent != null ? new RiHttpEventListener(message -> onEvent.accept("RI_HTTP", message)) : HttpEventListener.noOp())
                 .authenticator(new RiHttpAuthenticator(source, context.getAuthenticators(), context.getCaching(), onEvent, onError))
                 .userAgent(USER_AGENT_PROPERTY.get(source.getProperties()))
                 .build();

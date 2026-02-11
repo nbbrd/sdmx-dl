@@ -9,7 +9,6 @@ import tests.sdmxdl.api.ExtensionPoint;
 import tests.sdmxdl.api.TckUtil;
 import tests.sdmxdl.ext.CacheAssert;
 
-import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
@@ -32,10 +31,10 @@ public class WebCachingAssert {
         TckUtil.run(s -> EXTENSION_POINT.assertCompliance(s, caching));
 
         assertThatNullPointerException()
-                .isThrownBy(() -> caching.getMonitorCache(null, emptyList(), null, null));
+                .isThrownBy(() -> caching.getMonitorCache(null, null, null));
 
         assertThatNullPointerException()
-                .isThrownBy(() -> caching.getDriverCache(null, emptyList(), null, null));
+                .isThrownBy(() -> caching.getDriverCache(null, null, null));
 
         WebSource validSource = WebSource
                 .builder()
@@ -44,17 +43,11 @@ public class WebCachingAssert {
                 .endpointOf("http://localhost")
                 .build();
 
-        assertThatNullPointerException()
-                .isThrownBy(() -> caching.getMonitorCache(validSource, null, null, null));
-
-        assertThatNullPointerException()
-                .isThrownBy(() -> caching.getDriverCache(validSource, null, null, null));
-
-        assertThat(caching.getMonitorCache(validSource, emptyList(), null, null))
+        assertThat(caching.getMonitorCache(validSource, null, null))
                 .isNotNull()
                 .satisfies(CacheAssert::assertMonitorCompliance);
 
-        assertThat(caching.getDriverCache(validSource, emptyList(), null, null))
+        assertThat(caching.getDriverCache(validSource, null, null))
                 .isNotNull()
                 .satisfies(CacheAssert::assertRepositoryCompliance);
     }

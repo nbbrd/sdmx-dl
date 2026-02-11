@@ -11,7 +11,7 @@ import org.jspecify.annotations.Nullable;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.format.design.PropertyDefinition;
-import sdmxdl.provider.PropertiesSupport;
+import sdmxdl.format.PropertiesSupport;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Network;
 import sdmxdl.web.spi.Networking;

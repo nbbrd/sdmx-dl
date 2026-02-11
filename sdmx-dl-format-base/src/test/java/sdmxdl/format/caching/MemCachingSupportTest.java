@@ -11,7 +11,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static sdmxdl.format.caching.MemCachingSupport.builder;
 import static tests.sdmxdl.file.spi.FileCachingAssert.assertFileCompliance;
@@ -44,19 +43,19 @@ public class MemCachingSupportTest {
         READER {
             @Override
             MemCache<?> f(MemCachingSupport z) {
-                return (MemCache<?>) z.getReaderCache(FILE_SOURCE, emptyList(), null, null);
+                return (MemCache<?>) z.getReaderCache(FILE_SOURCE, null, null);
             }
         },
         DRIVER {
             @Override
             MemCache<?> f(MemCachingSupport z) {
-                return (MemCache<?>) z.getDriverCache(WEB_SOURCE, emptyList(), null, null);
+                return (MemCache<?>) z.getDriverCache(WEB_SOURCE, null, null);
             }
         },
         MONITOR {
             @Override
             MemCache<?> f(MemCachingSupport z) {
-                return (MemCache<?>) z.getMonitorCache(WEB_SOURCE, emptyList(), null, null);
+                return (MemCache<?>) z.getMonitorCache(WEB_SOURCE, null, null);
             }
         };
 

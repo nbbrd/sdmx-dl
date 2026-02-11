@@ -47,8 +47,8 @@ public class DiskCacheTest {
 
     @Test
     public void testCompliance() {
-        assertMonitorCompliance(DiskCache.<MonitorReports>builder().build());
-        assertRepositoryCompliance(DiskCache.<DataRepository>builder().build());
+        assertMonitorCompliance(DiskCache.<MonitorReports>builder().id("test").build());
+        assertRepositoryCompliance(DiskCache.<DataRepository>builder().id("test").build());
     }
 
     @Test
@@ -61,11 +61,12 @@ public class DiskCacheTest {
 
         DiskCache<DataRepository> cache = DiskCache
                 .<DataRepository>builder()
+                .id("test")
                 .root(root)
                 .nameGenerator(identity())
                 .format(newFakeFileFormat())
                 .clock(clock)
-                .onError((message, exception) -> exceptions.add(exception))
+                .onError((id, message, exception) -> exceptions.add(exception))
                 .build();
 
         assertThat(root)

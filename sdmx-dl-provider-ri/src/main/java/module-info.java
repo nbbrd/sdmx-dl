@@ -24,6 +24,7 @@ module sdmxdl.provider.ri {
 
     requires sdmxdl.format.csv;
     requires sdmxdl.format.xml;
+    requires sdmxdl.format.kryo;
     requires sdmxdl.provider.base;
     requires com.github.tuupertunut.powershelllibjava;
     requires com.google.gson;

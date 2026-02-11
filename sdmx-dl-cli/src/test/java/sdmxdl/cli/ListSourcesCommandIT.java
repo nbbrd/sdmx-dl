@@ -6,7 +6,7 @@ import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import sdmxdl.Languages;
-import sdmxdl.provider.PropertiesSupport;
+import sdmxdl.format.PropertiesSupport;
 import sdmxdl.provider.ri.registry.RiRegistry;
 import sdmxdl.web.SdmxWebManager;
 
