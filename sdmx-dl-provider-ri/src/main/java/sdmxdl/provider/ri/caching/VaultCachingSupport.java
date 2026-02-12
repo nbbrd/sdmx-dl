@@ -1,7 +1,6 @@
 package sdmxdl.provider.ri.caching;
 
 import internal.sdmxdl.provider.ri.spi.VaultServiceLoader;
-import internal.util.credentials.NoOpVaultService;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -31,7 +30,7 @@ public final class VaultCachingSupport {
     private final @NonNull Clock clock = Clock.systemDefaultZone();
 
     @lombok.Builder.Default
-    private final @NonNull VaultService vaultService = VaultServiceLoader.load().orElse(NoOpVaultService.INSTANCE);
+    private final @NonNull VaultService vaultService = VaultServiceLoader.load();
 
     @lombok.Builder.Default
     private final @NonNull ScheduledExecutorService cleaner = Executors.newSingleThreadScheduledExecutor(SdmxWebManager::newLowPriorityDaemonThread);

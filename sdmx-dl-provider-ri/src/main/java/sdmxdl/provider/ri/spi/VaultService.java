@@ -1,6 +1,8 @@
 package sdmxdl.provider.ri.spi;
 
+import internal.util.credentials.NoOpVaultService;
 import lombok.NonNull;
+import nbbrd.design.StaticFactoryMethod;
 import nbbrd.design.ThreadSafe;
 import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
@@ -10,10 +12,10 @@ import org.jspecify.annotations.Nullable;
 import sdmxdl.provider.Slow;
 
 import java.io.IOException;
-import java.net.PasswordAuthentication;
 
 @ServiceDefinition(
-        quantifier = Quantifier.OPTIONAL,
+        quantifier = Quantifier.SINGLE,
+        fallback = NoOpVaultService.class,
         loaderName = "internal.{{canonicalName}}Loader"
 )
 @ThreadSafe
@@ -27,8 +29,13 @@ public interface VaultService {
     boolean isVaultAvailable();
 
     @Slow
-    @Nullable PasswordAuthentication loadCredentials(@NonNull String id) throws IOException;
+    @Nullable String loadPassword(@NonNull String resource, @NonNull String userName) throws IOException;
 
     @Slow
-    void storeCredentials(@NonNull String id, @Nullable PasswordAuthentication credentials) throws IOException;
+    void storePassword(@NonNull String resource, @NonNull String userName, @Nullable String password) throws IOException;
+
+    @StaticFactoryMethod
+    static @NonNull VaultService noOp() {
+        return NoOpVaultService.INSTANCE;
+    }
 }

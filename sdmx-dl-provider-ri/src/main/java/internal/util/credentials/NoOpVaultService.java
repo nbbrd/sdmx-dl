@@ -4,8 +4,6 @@ import lombok.NonNull;
 import org.jspecify.annotations.Nullable;
 import sdmxdl.provider.ri.spi.VaultService;
 
-import java.net.PasswordAuthentication;
-
 public enum NoOpVaultService implements VaultService {
 
     INSTANCE;
@@ -21,11 +19,11 @@ public enum NoOpVaultService implements VaultService {
     }
 
     @Override
-    public @Nullable PasswordAuthentication loadCredentials(@NonNull String id) {
+    public @Nullable String loadPassword(@NonNull String resource, @NonNull String userName) {
         return null;
     }
 
     @Override
-    public void storeCredentials(@NonNull String id, @Nullable PasswordAuthentication credentials) {
+    public void storePassword(@NonNull String resource, @NonNull String userName, @Nullable String password) {
     }
 }

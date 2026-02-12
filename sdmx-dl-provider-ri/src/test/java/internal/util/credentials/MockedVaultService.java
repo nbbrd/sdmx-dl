@@ -1,11 +1,11 @@
 package internal.util.credentials;
 
 import lombok.Getter;
-import org.jspecify.annotations.NonNull;
+import lombok.NonNull;
 import org.jspecify.annotations.Nullable;
 import sdmxdl.provider.ri.spi.VaultService;
 
-import java.net.PasswordAuthentication;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +16,7 @@ public final class MockedVaultService implements VaultService {
     private final String id = "MOCKED_VAULT";
 
     @lombok.Builder.Default
-    private final Map<String, PasswordAuthentication> items = new HashMap<>();
+    private final Map<Key, String> items = new HashMap<>();
 
     @lombok.Builder.Default
     private final boolean available = true;
@@ -38,18 +38,30 @@ public final class MockedVaultService implements VaultService {
     private int storeCount = 0;
 
     @Override
-    public @Nullable PasswordAuthentication loadCredentials(@NonNull String key) {
+    public @Nullable String loadPassword(@NonNull String resource, @NonNull String userName) throws IOException {
         loadCount++;
-        return items.get(key);
+        return items.get(new Key(resource, userName));
     }
 
     @Override
-    public void storeCredentials(@NonNull String key, @Nullable PasswordAuthentication credentials) {
+    public void storePassword(@NonNull String resource, @NonNull String userName, @Nullable String password) throws IOException {
         storeCount++;
-        if (credentials != null) {
-            items.put(key, credentials);
+        if (password != null) {
+            items.put(new Key(resource, userName), password);
         } else {
-            items.remove(key);
+            items.remove(new Key(resource, userName));
         }
+    }
+
+    private static String toKey(String resource, String userName) {
+        return resource + "|" + userName;
+    }
+
+    @lombok.Value
+    public static class Key {
+        @NonNull
+        String resource;
+        @NonNull
+        String userName;
     }
 }

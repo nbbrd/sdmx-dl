@@ -12,6 +12,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![PROVIDER] Fix field overflow in MsalAuthenticator [#1138](https://github.com/nbbrd/sdmx-dl/issues/1138)
 - ![PROVIDER] Fix use of common execution pool in MsalAuthenticator [#1146](https://github.com/nbbrd/sdmx-dl/issues/1146)
 - ![PROVIDER] Fix MsalAnthenticator performances [#1151](https://github.com/nbbrd/sdmx-dl/issues/1151)
+- ![PROVIDER] Fix potential secret leak in WindowsVaultService [#1152](https://github.com/nbbrd/sdmx-dl/issues/1152)
 
 ### Changed
 

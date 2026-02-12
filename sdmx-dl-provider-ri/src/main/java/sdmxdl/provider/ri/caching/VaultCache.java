@@ -1,6 +1,5 @@
 package sdmxdl.provider.ri.caching;
 
-import internal.util.credentials.NoOpVaultService;
 import lombok.NonNull;
 import org.jspecify.annotations.Nullable;
 import sdmxdl.ErrorListener;
@@ -33,7 +32,7 @@ final class VaultCache implements Cache<Credentials> {
     private final @Nullable ErrorListener onError;
 
     @lombok.Builder.Default
-    private final @NonNull VaultService vault = NoOpVaultService.INSTANCE;
+    private final @NonNull VaultService vault = VaultService.noOp();
 
     @Override
     public @NonNull Clock getClock() {
@@ -45,9 +44,9 @@ final class VaultCache implements Cache<Credentials> {
         try {
             if (onEvent != null)
                 onEvent.accept(id, format(ROOT, "Loading credentials from %s resource '%s'", vault.getVaultId(), key));
-            PasswordAuthentication credentials = vault.loadCredentials(key);
-            if (credentials != null) {
-                return Credentials.of(credentials, clock.instant().plus(ttl));
+            String password = vault.loadPassword(key, key);
+            if (password != null) {
+                return Credentials.of(new PasswordAuthentication(key, password.toCharArray()), clock.instant().plus(ttl));
             }
             if (onEvent != null)
                 onEvent.accept(id, format(ROOT, "Found no credentials in %s resource '%s'", vault.getVaultId(), key));
@@ -63,7 +62,7 @@ final class VaultCache implements Cache<Credentials> {
         try {
             if (onEvent != null)
                 onEvent.accept(id, format(ROOT, "Updating credentials to %s resource '%s'", vault.getVaultId(), key));
-            vault.storeCredentials(key, value != null ? value.getCredentials() : null);
+            vault.storePassword(key, key, value != null ? new String(value.getCredentials().getPassword()) : null);
         } catch (IOException e) {
             if (onError != null)
                 onError.accept(id, format(ROOT, "Failed to update credentials to %s resource '%s'", vault.getVaultId(), key), e);

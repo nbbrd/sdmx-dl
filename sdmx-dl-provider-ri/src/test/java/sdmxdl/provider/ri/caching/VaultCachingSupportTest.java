@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import sdmxdl.ext.Cache;
 import sdmxdl.web.Credentials;
 
-import java.net.PasswordAuthentication;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,9 +22,9 @@ class VaultCachingSupportTest {
 
         ConcurrentMap<String, Credentials> dryValues = new ConcurrentHashMap<>();
 
-        String key = "KEY1";
-        PasswordAuthentication value = new PasswordAuthentication("r1", "r1".toCharArray());
-        Map<String, PasswordAuthentication> items = new HashMap<>();
+        MockedVaultService.Key key = new MockedVaultService.Key("KEY1", "KEY1");
+        String value = "r1";
+        Map<MockedVaultService.Key, String> items = new HashMap<>();
         items.put(key, value);
         MockedVaultService vaultService = MockedVaultService.builder().items(items).build();
 
@@ -40,26 +39,26 @@ class VaultCachingSupportTest {
         Cache<Credentials> cache = x.getCredentialsCache(ttl, null, null);
 
         assertThat(dryValues).isEmpty();
-        assertThat(cache.get(key))
+        assertThat(cache.get(key.getResource()))
                 .as("Non-expired key should return value")
-                .returns(value, credentials -> credentials != null ? credentials.getCredentials() : null);
-        assertThat(dryValues).containsKey(key);
+                .returns(value.toCharArray(), credentials -> credentials != null ? credentials.getCredentials().getPassword() : null);
+        assertThat(dryValues).containsKey(key.getResource());
         assertThat(vaultService.getLoadCount()).isEqualTo(1);
 
         Thread.sleep(evictionDelay.toMillis() * 2);
-        assertThat(dryValues).containsKey(key);
-        assertThat(cache.get(key))
+        assertThat(dryValues).containsKey(key.getResource());
+        assertThat(cache.get(key.getResource()))
                 .as("Non-expired key should return value")
-                .returns(value, credentials -> credentials != null ? credentials.getCredentials() : null);
-        assertThat(dryValues).containsKey(key);
+                .returns(value.toCharArray(), credentials -> credentials != null ? credentials.getCredentials().getPassword() : null);
+        assertThat(dryValues).containsKey(key.getResource());
         assertThat(vaultService.getLoadCount()).isEqualTo(1);
 
         Thread.sleep(evictionDelay.toMillis() * 20);
         assertThat(dryValues).isEmpty();
-        assertThat(cache.get(key))
+        assertThat(cache.get(key.getResource()))
                 .as("Expired key should return new value")
-                .returns(value, credentials -> credentials != null ? credentials.getCredentials() : null);
-        assertThat(dryValues).containsKey(key);
+                .returns(value.toCharArray(), credentials -> credentials != null ? credentials.getCredentials().getPassword() : null);
+        assertThat(dryValues).containsKey(key.getResource());
         assertThat(vaultService.getLoadCount()).isEqualTo(2);
     }
 }

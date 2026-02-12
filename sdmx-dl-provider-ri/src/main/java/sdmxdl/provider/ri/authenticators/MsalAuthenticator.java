@@ -181,7 +181,7 @@ public final class MsalAuthenticator implements Authenticator {
                     .join();
         } catch (CompletionException ex) {
             if (ex.getCause() instanceof MsalException) {
-                if (onEvent != null) onEvent.accept(ID, "Acquiring token interactivity for UID '" + uid + "'");
+                if (onEvent != null) onEvent.accept(ID, "Acquiring token interactively for UID '" + uid + "'");
                 return app.acquireToken(InteractiveRequestParameters
                                 .builder(redirectUri)
                                 .scopes(scopes)
