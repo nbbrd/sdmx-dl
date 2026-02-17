@@ -128,6 +128,17 @@ public final class EstatDialectDriver implements Driver {
                     .build())
             .source(WebSource
                     .builder()
+                    .id("EC_DG_ECFIN")
+                    .name("en", "European Commission - Directorate-General for Economic and Financial Affairs")
+                    .driver(DIALECTS_ESTAT)
+                    .confidentiality(PUBLIC)
+                    .endpointOf("https://webgate.ec.europa.eu/ecfin/redisstat/api/dissemination/sdmx/2.1")
+                    .websiteOf("https://webgate.ec.europa.eu/ecfin/redisstat/databrowser/explore")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/EC_DG_ECFIN")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ec_dg_ecfin")
+                    .build())
+            .source(WebSource
+                    .builder()
                     .id("EC_DG_EMPL")
                     .name("en", "European Commission - Directorate General for Employment, Social Affairs and inclusion")
                     .driver(DIALECTS_ESTAT)
@@ -147,6 +158,17 @@ public final class EstatDialectDriver implements Driver {
                     .websiteOf("https://data.europa.eu/data/datasets?catalog=grow")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/EC_DG_GROW")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ec_dg_grow")
+                    .build())
+            .source(WebSource
+                    .builder()
+                    .id("EC_DG_TAXUD")
+                    .name("en", "European Commission - Directorate-General for Taxation and Customs Union")
+                    .driver(DIALECTS_ESTAT)
+                    .confidentiality(PUBLIC)
+                    .endpointOf("https://webgate.ec.europa.eu/taxation_customs/redisstat/api/dissemination/sdmx/2.1")
+                    .websiteOf("https://webgate.ec.europa.eu/taxation_customs/redisstat/databrowser/explore")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/EC_DG_TAXUD")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ec_dg_taxud")
                     .build())
             .build();
 
