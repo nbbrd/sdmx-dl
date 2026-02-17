@@ -7,6 +7,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.0-beta.18] - 2026-02-17
+
+This is the eighteenth beta release of **sdmx-dl**.  
+sdmx-dl follows [semantic versioning](https://semver.org/).
+
+This release focuses on improving the authentication mechanism.
+
 ### Added
 
 - ![SOURCE] Add sources from Directorates General of the European Commission [#1137](https://github.com/nbbrd/sdmx-dl/issues/1137)
@@ -591,7 +598,8 @@ production._
 
 - Initial release
 
-[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.17...HEAD
+[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.18...HEAD
+[3.0.0-beta.18]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.17...v3.0.0-beta.18
 [3.0.0-beta.17]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.16...v3.0.0-beta.17
 [3.0.0-beta.16]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.15...v3.0.0-beta.16
 [3.0.0-beta.15]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.14...v3.0.0-beta.15
