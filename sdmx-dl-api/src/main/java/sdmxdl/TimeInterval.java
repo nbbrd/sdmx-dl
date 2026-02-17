@@ -21,7 +21,7 @@ import static java.time.temporal.ChronoField.NANO_OF_SECOND;
  */
 @RepresentableAsString
 @lombok.Value(staticConstructor = "of")
-public class TimeInterval {
+public class TimeInterval implements HasShortString {
 
     @StaticFactoryMethod
     public static @NonNull TimeInterval parse(@NonNull CharSequence text) throws DateTimeParseException {
@@ -47,6 +47,7 @@ public class TimeInterval {
         return toIsoString(start) + SOLIDUS + duration;
     }
 
+    @Override
     public @NonNull String toShortString() {
         return getStartAsShortString() + SOLIDUS + duration;
     }

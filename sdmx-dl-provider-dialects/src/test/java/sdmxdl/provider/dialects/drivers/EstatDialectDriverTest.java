@@ -21,7 +21,7 @@ public class EstatDialectDriverTest {
 
     @ParameterizedTest
     @CsvFileSource(resources = "EstatDialectDriverTest.csv", useHeadersInDisplayName = true)
-//    @EnableWebQueriesOnSystemProperty
+    @EnableWebQueriesOnSystemProperty
     public void testBuiltinSources(String source, String flow, String key, int minFlowCount, int dimCount, int minSeriesCount, int minObsCount, String details) throws IOException {
         DriverAssert.assertBuiltinSource(new EstatDialectDriver(), DriverAssert.SourceQuery
                         .builder()
