@@ -1,0 +1,83 @@
+package sdmxdl.provider.ri.caching;
+
+import internal.util.credentials.MockedVaultService;
+import org.assertj.core.api.Condition;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import sdmxdl.web.Credentials;
+import tests.sdmxdl.ext.FakeClock;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static tests.sdmxdl.ext.CacheAssert.assertCompliance;
+
+class VaultCacheTest {
+
+    @Test
+    @Disabled("Vault is not yet able to store expiration time")
+    public void testCompliance() {
+        assertCompliance(VaultCache
+                        .builder()
+                        .id("test")
+                        .vault(MockedVaultService.builder().build())
+                        .build(),
+                (creationTime, ttl) -> Credentials.empty(creationTime.plus(ttl))
+        );
+    }
+
+    @Test
+    public void testGet() {
+        Map<MockedVaultService.Key, String> map = new HashMap<>();
+        FakeClock clock = new FakeClock();
+        Duration ttl = Duration.ofSeconds(1);
+
+        VaultCache x = VaultCache
+                .builder()
+                .id("test")
+                .ttl(ttl)
+                .clock(clock)
+                .vault(MockedVaultService.builder().items(map).build())
+                .build();
+
+        clock.set(1000);
+        assertThat(x.get("KEY1"))
+                .as("Empty map should return null")
+                .isNull();
+
+        MockedVaultService.Key key1 = new MockedVaultService.Key("KEY1", "KEY1");
+
+        String r1000 = "r1";
+        map.put(key1, r1000);
+        clock.set(1009);
+        assertThat(x.get("KEY1"))
+                .as("Existing key should return value")
+                .returns("KEY1", credentials -> credentials != null ? credentials.getCredentials().getUserName() : null)
+                .returns(r1000.toCharArray(), credentials -> credentials != null ? credentials.getCredentials().getPassword() : null)
+                .returns(clock.instant().plus(ttl), credentials -> credentials != null ? credentials.getExpirationTime() : null);
+
+        clock.set(1009);
+        assertThat(x.get("KEY2"))
+                .as("Non-existing key should return null")
+                .isNull();
+
+        String r1009 = "r2";
+        map.put(key1, r1009);
+        clock.set(1010);
+        assertThat(x.get("KEY1"))
+                .as("Updated key should return updated value")
+                .returns("KEY1", credentials -> credentials != null ? credentials.getCredentials().getUserName() : null)
+                .returns(r1009.toCharArray(), credentials -> credentials != null ? credentials.getCredentials().getPassword() : null)
+                .returns(clock.instant().plus(ttl), credentials -> credentials != null ? credentials.getExpirationTime() : null);
+    }
+
+    private static @NonNull Condition<@Nullable Credentials> emptyCredentials(Instant expirationTime) {
+        return new Condition<>(credentials -> Objects.requireNonNull(credentials).isEmpty() && credentials.getExpirationTime().equals(expirationTime), "empty credentials");
+    }
+}

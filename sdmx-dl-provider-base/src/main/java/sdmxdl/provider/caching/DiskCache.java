@@ -14,15 +14,13 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.format;
+package sdmxdl.provider.caching;
 
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.sys.SystemProperties;
 import org.jspecify.annotations.Nullable;
-import sdmxdl.About;
-import sdmxdl.HasExpiration;
-import sdmxdl.HasPersistence;
+import sdmxdl.*;
 import sdmxdl.ext.Cache;
 import sdmxdl.ext.FileFormat;
 
@@ -31,8 +29,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Clock;
 import java.util.Locale;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
 import static java.util.Objects.requireNonNull;
@@ -42,6 +38,8 @@ import static java.util.Objects.requireNonNull;
  */
 @lombok.Builder(toBuilder = true)
 public final class DiskCache<V extends HasExpiration & HasPersistence> implements Cache<V> {
+
+    private final @NonNull String id;
 
     @lombok.Builder.Default
     private final @NonNull Path root = SDMXDL_TMP_DIR;
@@ -58,9 +56,9 @@ public final class DiskCache<V extends HasExpiration & HasPersistence> implement
     @lombok.Builder.Default
     private final @NonNull FileFormat<V> format = FileFormat.noOp();
 
-    private final @Nullable Consumer<? super String> onRead;
+    private final @Nullable EventListener onEvent;
 
-    private final @Nullable BiConsumer<? super String, ? super IOException> onError;
+    private final @Nullable ErrorListener onError;
 
     @lombok.Builder.Default
     private final @NonNull Clock clock = Clock.systemDefaultZone();
@@ -88,13 +86,17 @@ public final class DiskCache<V extends HasExpiration & HasPersistence> implement
     }
 
     @Override
-    public void put(@NonNull String key, @NonNull V value) {
+    public void put(@NonNull String key, @Nullable V value) {
         Path file = getFile(key);
-        writeFile(file, value);
+        if (value != null) {
+            writeFile(file, value);
+        } else {
+            deleteFile(file);
+        }
     }
 
     private void reportRead(String key, DiskCacheEvent event) {
-        if (onRead != null) onRead.accept(event.name() + " " + key);
+        if (onEvent != null) onEvent.accept(id, event.name() + " " + key);
     }
 
     private V readFile(Path file) {
@@ -102,7 +104,7 @@ public final class DiskCache<V extends HasExpiration & HasPersistence> implement
             try {
                 return format.parsePath(file);
             } catch (IOException ex) {
-                if (onError != null) onError.accept("Failed reading '" + file + "'", ex);
+                if (onError != null) onError.accept(id, "Failed reading '" + file + "'", ex);
             }
         }
         return null;
@@ -113,7 +115,7 @@ public final class DiskCache<V extends HasExpiration & HasPersistence> implement
         try {
             format.formatPath(value, file);
         } catch (IOException ex) {
-            if (onError != null) onError.accept("Failed writing '" + file + "'", ex);
+            if (onError != null) onError.accept(id, "Failed writing '" + file + "'", ex);
         }
     }
 
@@ -121,7 +123,7 @@ public final class DiskCache<V extends HasExpiration & HasPersistence> implement
         try {
             Files.createDirectories(file.getParent());
         } catch (IOException ex) {
-            if (onError != null) onError.accept("While creating working dir '" + file + "'", ex);
+            if (onError != null) onError.accept(id, "While creating working dir '" + file + "'", ex);
         }
     }
 
@@ -129,7 +131,7 @@ public final class DiskCache<V extends HasExpiration & HasPersistence> implement
         try {
             Files.deleteIfExists(file);
         } catch (IOException ex) {
-            if (onError != null) onError.accept("While deleting '" + file + "'", ex);
+            if (onError != null) onError.accept(id, "While deleting '" + file + "'", ex);
         }
     }
 

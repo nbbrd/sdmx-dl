@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
 import sdmxdl.KeyRequest;
-import sdmxdl.format.MemCachingSupport;
+import sdmxdl.provider.caching.MemCachingSupport;
 import sdmxdl.format.time.*;
 import sdmxdl.provider.ri.networking.RiNetworking;
 import sdmxdl.web.spi.WebContext;

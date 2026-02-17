@@ -20,7 +20,7 @@ import sdmxdl.FlowRequest;
 import sdmxdl.KeyRequest;
 import sdmxdl.desktop.panels.*;
 import sdmxdl.ext.Persistence;
-import sdmxdl.provider.ri.caching.RiCaching;
+import sdmxdl.provider.caching.DiskCachingSupport;
 import sdmxdl.provider.ri.drivers.RiHttpUtils;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
@@ -600,7 +600,7 @@ public final class MainComponent extends JComponent {
     private void debug(DataSourceRef ref) {
         WebSource source = ref.toWebSource(Sdmxdl.INSTANCE.getSdmxManager());
         new OnDemandMenuBuilder()
-                .openFolder("Open cache folder", RiCaching.CACHE_FOLDER_PROPERTY.get(source.getProperties()))
+                .openFolder("Open cache folder", DiskCachingSupport.CACHE_FOLDER_PROPERTY.get(source.getProperties()))
                 .openFolder("Open dump folder", RiHttpUtils.DUMP_FOLDER_PROPERTY.get(source.getProperties()))
                 .showMenuAsPopup(this);
     }

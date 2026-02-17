@@ -6,10 +6,8 @@ import sdmxdl.DataRepository;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.ext.Cache;
-import sdmxdl.ext.Persistence;
 import sdmxdl.file.FileSource;
 
-import java.util.List;
 import java.util.function.Function;
 
 @lombok.Value
@@ -26,10 +24,6 @@ public class FileContext {
     @Nullable
     Function<? super FileSource, ErrorListener> onError;
 
-    @lombok.Singular
-    @NonNull
-    List<Persistence> persistences;
-
     public @Nullable EventListener getEventListener(@NonNull FileSource source) {
         return onEvent != null ? onEvent.apply(source) : null;
     }
@@ -39,6 +33,6 @@ public class FileContext {
     }
 
     public @NonNull Cache<DataRepository> getReaderCache(@NonNull FileSource source) {
-        return caching.getReaderCache(source, persistences, getEventListener(source), getErrorListener(source));
+        return caching.getReaderCache(source, getEventListener(source), getErrorListener(source));
     }
 }

@@ -7,6 +7,8 @@ import nbbrd.service.ServiceDefinition;
 import nbbrd.service.ServiceFilter;
 import nbbrd.service.ServiceId;
 import org.jspecify.annotations.Nullable;
+import sdmxdl.ErrorListener;
+import sdmxdl.EventListener;
 import sdmxdl.web.WebSource;
 
 import java.io.IOException;
@@ -26,9 +28,19 @@ public interface Authenticator {
     @ServiceFilter
     boolean isAuthenticatorAvailable();
 
-    @Nullable PasswordAuthentication getPasswordAuthenticationOrNull(@NonNull WebSource source) throws IOException;
+    @Nullable PasswordAuthentication getPasswordAuthenticationOrNull(
+            @NonNull WebSource source,
+            @NonNull WebCaching caching,
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError
+    ) throws IOException;
 
-    void invalidateAuthentication(@NonNull WebSource source) throws IOException;
+    void invalidateAuthentication(
+            @NonNull WebSource source,
+            @NonNull WebCaching caching,
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError
+    ) throws IOException;
 
     @NonNull Collection<String> getAuthenticatorProperties();
 

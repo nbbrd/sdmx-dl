@@ -2,10 +2,8 @@ package _demo;
 
 import sdmxdl.*;
 import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.WebSource;
 
 import java.io.IOException;
-import java.util.function.Function;
 
 import static sdmxdl.DatabaseRef.NO_DATABASE;
 import static sdmxdl.Detail.DATA_ONLY;
@@ -18,7 +16,8 @@ public class WebDemo2 {
 
         SdmxWebManager manager = SdmxWebManager.ofServiceLoader()
                 .toBuilder()
-                .onEvent(WebDemo2.printEvent())
+                .onEvent(SdmxWebManager::printEvent)
+                .onError(SdmxWebManager::printError)
                 .build();
 
         try (Connection ecb = manager.getConnection("ECB", ANY)) {
@@ -39,9 +38,5 @@ public class WebDemo2 {
 
     private static void printSeries(Series series) {
         System.out.println(series.getKey() + ": " + series.getObs().size() + " obs");
-    }
-
-    private static Function<? super WebSource, EventListener> printEvent() {
-        return source -> (marker, message) -> System.err.println("[" + source.getId() + "] (" + marker + ") " + message);
     }
 }

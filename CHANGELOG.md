@@ -7,6 +7,31 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.0-beta.18] - 2026-02-17
+
+This is the eighteenth beta release of **sdmx-dl**.  
+sdmx-dl follows [semantic versioning](https://semver.org/).
+
+This release focuses on improving the authentication mechanism.
+
+### Added
+
+- ![SOURCE] Add sources from Directorates General of the European Commission [#1137](https://github.com/nbbrd/sdmx-dl/issues/1137)
+
+### Fixed
+
+- ![PROVIDER] Fix field overflow in MsalAuthenticator [#1138](https://github.com/nbbrd/sdmx-dl/issues/1138)
+- ![PROVIDER] Fix use of common execution pool in MsalAuthenticator [#1146](https://github.com/nbbrd/sdmx-dl/issues/1146)
+- ![PROVIDER] Fix MsalAnthenticator performances [#1151](https://github.com/nbbrd/sdmx-dl/issues/1151)
+- ![PROVIDER] Fix potential secret leak in WindowsVaultService [#1152](https://github.com/nbbrd/sdmx-dl/issues/1152)
+- ![GRPC] Fix CORS problems for localhost pages
+
+### Changed
+
+- ![API] Modify Cache API to allow key invalidation
+- ![API] Modify WebCaching API to handle credentials
+- ![API] Remove Persistence from FileCaching and WebCaching API
+
 ## [3.0.0-beta.17] - 2026-01-22
 
 This is the seventeenth beta release of **sdmx-dl**.  
@@ -573,7 +598,8 @@ production._
 
 - Initial release
 
-[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.17...HEAD
+[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.18...HEAD
+[3.0.0-beta.18]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.17...v3.0.0-beta.18
 [3.0.0-beta.17]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.16...v3.0.0-beta.17
 [3.0.0-beta.16]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.15...v3.0.0-beta.16
 [3.0.0-beta.15]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.14...v3.0.0-beta.15

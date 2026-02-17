@@ -31,7 +31,7 @@ import org.jspecify.annotations.Nullable;
         FlowRef.class,
         CodelistRef.class
 })
-public abstract class ResourceRef<T extends ResourceRef<T>> {
+public abstract class ResourceRef<T extends ResourceRef<T>> implements HasShortString {
 
     public static final String ALL_AGENCIES = "all";
     public static final String LATEST_VERSION = "latest";
@@ -60,6 +60,7 @@ public abstract class ResourceRef<T extends ResourceRef<T>> {
         return equals(that.getRef());
     }
 
+    @Override
     public @NonNull String toShortString() {
         return ALL_AGENCIES.equals(getAgency()) && LATEST_VERSION.equals(getVersion())
                 ? getId() : toString();

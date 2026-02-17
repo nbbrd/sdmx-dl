@@ -6,7 +6,7 @@ import tests.sdmxdl.web.spi.AuthenticatorAssert;
 
 import static tests.sdmxdl.web.spi.AuthenticatorAssert.assertCompliance;
 
-public class WinPasswordVaultAuthenticatorTest {
+public class BasicAuthenticatorTest {
 
     @Test
     public void testCompliance() {
@@ -18,7 +18,7 @@ public class WinPasswordVaultAuthenticatorTest {
                 .build();
 
         assertCompliance(
-                new WinPasswordVaultAuthenticator(),
+                new BasicAuthenticator(),
                 AuthenticatorAssert.Sample.builder().ignoring(ignoring).build()
         );
     }

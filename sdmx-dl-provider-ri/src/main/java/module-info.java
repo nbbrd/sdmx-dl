@@ -1,7 +1,10 @@
+import internal.util.credentials.SwingPasswordPrompt;
+import internal.util.credentials.WindowsPasswordPrompt;
+import internal.util.credentials.WindowsVaultService;
 import sdmxdl.file.spi.FileCaching;
 import sdmxdl.file.spi.Reader;
 import sdmxdl.provider.ri.authenticators.MsalAuthenticator;
-import sdmxdl.provider.ri.authenticators.WinPasswordVaultAuthenticator;
+import sdmxdl.provider.ri.authenticators.BasicAuthenticator;
 import sdmxdl.provider.ri.caching.RiCaching;
 import sdmxdl.provider.ri.drivers.FileRiDriver;
 import sdmxdl.provider.ri.drivers.RngRiDriver;
@@ -11,6 +14,8 @@ import sdmxdl.provider.ri.monitors.UptimeRobotMonitor;
 import sdmxdl.provider.ri.networking.RiNetworking;
 import sdmxdl.provider.ri.readers.XmlReader;
 import sdmxdl.provider.ri.registry.RiRegistry;
+import sdmxdl.provider.ri.spi.PasswordPrompt;
+import sdmxdl.provider.ri.spi.VaultService;
 import sdmxdl.web.spi.*;
 
 module sdmxdl.provider.ri {
@@ -22,6 +27,7 @@ module sdmxdl.provider.ri {
 
     requires sdmxdl.format.csv;
     requires sdmxdl.format.xml;
+    requires sdmxdl.format.kryo;
     requires sdmxdl.provider.base;
     requires com.github.tuupertunut.powershelllibjava;
     requires com.google.gson;
@@ -31,8 +37,10 @@ module sdmxdl.provider.ri {
     requires nbbrd.io.http;
     requires nbbrd.net.proxy;
     requires com.microsoft.aad.msal4j;
+    requires java.desktop;
 
     exports sdmxdl.provider.ri.drivers to sdmxdl.provider.dialects, sdmxdl.provider.px;
+    exports sdmxdl.provider.ri.spi;
 
     provides Driver with
             FileRiDriver,
@@ -44,7 +52,7 @@ module sdmxdl.provider.ri {
 
     provides Authenticator with
             MsalAuthenticator,
-            WinPasswordVaultAuthenticator;
+            BasicAuthenticator;
 
     provides Monitor with
             UpptimeMonitor,
@@ -61,6 +69,16 @@ module sdmxdl.provider.ri {
 
     provides Registry with
             RiRegistry;
+
+    provides PasswordPrompt with
+            SwingPasswordPrompt,
+            WindowsPasswordPrompt;
+
+    provides VaultService with
+            WindowsVaultService;
+
+    uses PasswordPrompt;
+    uses VaultService;
 
     opens sdmxdl.provider.ri.monitors to com.google.gson;
 }

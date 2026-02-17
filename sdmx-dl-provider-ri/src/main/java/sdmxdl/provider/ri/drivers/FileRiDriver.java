@@ -11,7 +11,6 @@ import nbbrd.service.ServiceProvider;
 import org.jspecify.annotations.Nullable;
 import sdmxdl.*;
 import sdmxdl.ext.Cache;
-import sdmxdl.ext.Persistence;
 import sdmxdl.file.FileSource;
 import sdmxdl.file.SdmxFileManager;
 import sdmxdl.file.spi.FileCaching;
@@ -28,7 +27,6 @@ import java.net.URI;
 import java.nio.file.Paths;
 import java.time.Clock;
 import java.util.Collection;
-import java.util.List;
 
 @DirectImpl
 @ServiceProvider
@@ -92,10 +90,9 @@ public final class FileRiDriver implements Driver {
         @Override
         public @NonNull Cache<DataRepository> getReaderCache(
                 @NonNull FileSource ignoreSource,
-                @NonNull List<Persistence> persistences,
                 @Nullable EventListener ignoreEvent,
                 @Nullable ErrorListener ignoreError) {
-            return new FileCacheAdapter(delegate.getDriverCache(webSource, persistences, onWebEvent, onWebError));
+            return new FileCacheAdapter(delegate.getDriverCache(webSource, onWebEvent, onWebError));
         }
 
         @Override
@@ -120,7 +117,7 @@ public final class FileRiDriver implements Driver {
         }
 
         @Override
-        public void put(@NonNull String key, @NonNull DataRepository value) {
+        public void put(@NonNull String key, @Nullable DataRepository value) {
             delegate.put(key, value);
         }
     }

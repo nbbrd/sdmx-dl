@@ -1,7 +1,6 @@
-package sdmxdl.format.time;
+package sdmxdl.provider.caching;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.format.DiskCachingSupport;
 
 import static tests.sdmxdl.file.spi.FileCachingAssert.assertFileCompliance;
 import static tests.sdmxdl.web.spi.WebCachingAssert.assertWebCompliance;

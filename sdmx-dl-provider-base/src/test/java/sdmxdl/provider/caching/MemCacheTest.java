@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.format;
+package sdmxdl.provider.caching;
 
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataRepository;

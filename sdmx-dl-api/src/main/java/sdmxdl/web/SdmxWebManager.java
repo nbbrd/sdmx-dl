@@ -195,7 +195,6 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
                 .networking(networking)
                 .onEvent(onEvent)
                 .onError(onError)
-                .persistences(persistences)
                 .authenticators(authenticators)
                 .build();
     }
@@ -238,10 +237,21 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
         return t -> seen.add(keyExtractor.apply(t));
     }
 
-    private static Thread newLowPriorityDaemonThread(Runnable runnable) {
+    @StaticFactoryMethod(Thread.class)
+    public static @NonNull Thread newLowPriorityDaemonThread(@NonNull Runnable runnable) {
         Thread result = new Thread(runnable);
         result.setDaemon(true);
         result.setPriority(Thread.MIN_PRIORITY);
         return result;
+    }
+
+    @StaticFactoryMethod(EventListener.class)
+    public static EventListener printEvent(WebSource source) {
+        return (marker, message) -> System.out.println("[" + source.getId() + "] (" + marker + ") " + message);
+    }
+
+    @StaticFactoryMethod(ErrorListener.class)
+    public static ErrorListener printError(WebSource source) {
+        return (marker, message, error) -> System.err.println("[" + source.getId() + "] (" + marker + ") " + message + ": " + error.getMessage());
     }
 }

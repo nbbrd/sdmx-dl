@@ -9,10 +9,8 @@ import tests.sdmxdl.api.ExtensionPoint;
 import tests.sdmxdl.api.TckUtil;
 import tests.sdmxdl.ext.CacheAssert;
 
-import java.io.File;
 import java.nio.file.Paths;
 
-import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
@@ -35,17 +33,14 @@ public class FileCachingAssert {
         TckUtil.run(s -> EXTENSION_POINT.assertCompliance(s, caching));
 
         assertThatNullPointerException()
-                .isThrownBy(() -> caching.getReaderCache(null, emptyList(), null, null));
+                .isThrownBy(() -> caching.getReaderCache(null, null, null));
 
         FileSource validSource = FileSource
                 .builder()
                 .data(Paths.get("hello.xml").toFile())
                 .build();
 
-        assertThatNullPointerException()
-                .isThrownBy(() -> caching.getReaderCache(validSource, null, null, null));
-
-        assertThat(caching.getReaderCache(validSource, emptyList(), null, null))
+        assertThat(caching.getReaderCache(validSource, null, null))
                 .isNotNull()
                 .satisfies(CacheAssert::assertRepositoryCompliance);
     }

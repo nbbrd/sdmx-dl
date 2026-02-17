@@ -42,8 +42,8 @@ import java.util.*;
 /**
  * @author Philippe Charles
  */
-@lombok.AllArgsConstructor(access = AccessLevel.PACKAGE)
-final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
+@lombok.AllArgsConstructor(staticName = "of")
+public final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
 
     @lombok.NonNull
     private final Class<T> type;

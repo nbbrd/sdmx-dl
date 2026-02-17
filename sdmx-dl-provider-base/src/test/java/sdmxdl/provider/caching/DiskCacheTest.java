@@ -14,13 +14,14 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.format;
+package sdmxdl.provider.caching;
 
 import nbbrd.io.FileFormatter;
 import nbbrd.io.FileParser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import sdmxdl.DataRepository;
+import sdmxdl.format.FileFormatSupport;
 import sdmxdl.web.MonitorReports;
 import tests.sdmxdl.ext.FakeClock;
 
@@ -46,8 +47,8 @@ public class DiskCacheTest {
 
     @Test
     public void testCompliance() {
-        assertMonitorCompliance(DiskCache.<MonitorReports>builder().build());
-        assertRepositoryCompliance(DiskCache.<DataRepository>builder().build());
+        assertMonitorCompliance(DiskCache.<MonitorReports>builder().id("test").build());
+        assertRepositoryCompliance(DiskCache.<DataRepository>builder().id("test").build());
     }
 
     @Test
@@ -60,11 +61,12 @@ public class DiskCacheTest {
 
         DiskCache<DataRepository> cache = DiskCache
                 .<DataRepository>builder()
+                .id("test")
                 .root(root)
                 .nameGenerator(identity())
                 .format(newFakeFileFormat())
                 .clock(clock)
-                .onError((message, exception) -> exceptions.add(exception))
+                .onError((id, message, exception) -> exceptions.add(exception))
                 .build();
 
         assertThat(root)

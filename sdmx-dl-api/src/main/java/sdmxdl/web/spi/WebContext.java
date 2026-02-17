@@ -22,7 +22,6 @@ import sdmxdl.DataRepository;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.ext.Cache;
-import sdmxdl.ext.Persistence;
 import sdmxdl.web.MonitorReports;
 import sdmxdl.web.WebSource;
 
@@ -48,10 +47,6 @@ public class WebContext {
 
     @lombok.Singular
     @NonNull
-    List<Persistence> persistences;
-
-    @lombok.Singular
-    @NonNull
     List<Authenticator> authenticators;
 
     @lombok.Builder.Default
@@ -67,11 +62,11 @@ public class WebContext {
     }
 
     public @NonNull Cache<DataRepository> getDriverCache(@NonNull WebSource source) {
-        return caching.getDriverCache(source, persistences, getEventListener(source), getErrorListener(source));
+        return caching.getDriverCache(source, getEventListener(source), getErrorListener(source));
     }
 
     public @NonNull Cache<MonitorReports> getMonitorCache(@NonNull WebSource source) {
-        return caching.getMonitorCache(source, persistences, getEventListener(source), getErrorListener(source));
+        return caching.getMonitorCache(source, getEventListener(source), getErrorListener(source));
     }
 
     public @NonNull Network getNetwork(@NonNull WebSource source) {

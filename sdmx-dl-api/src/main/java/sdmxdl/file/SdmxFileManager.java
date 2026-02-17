@@ -97,7 +97,6 @@ public class SdmxFileManager extends SdmxManager<FileSource> {
                 .onEvent(onEvent)
                 .onError(onError)
                 .caching(caching)
-                .persistences(persistences)
                 .build();
     }
 

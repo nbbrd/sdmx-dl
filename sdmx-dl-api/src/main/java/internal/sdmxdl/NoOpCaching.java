@@ -6,16 +6,15 @@ import sdmxdl.DataRepository;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.ext.Cache;
-import sdmxdl.ext.Persistence;
 import sdmxdl.file.FileSource;
 import sdmxdl.file.spi.FileCaching;
+import sdmxdl.web.Credentials;
 import sdmxdl.web.MonitorReports;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.WebCaching;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 public enum NoOpCaching implements FileCaching, WebCaching {
 
@@ -44,7 +43,6 @@ public enum NoOpCaching implements FileCaching, WebCaching {
     @Override
     public @NonNull Cache<DataRepository> getReaderCache(
             @NonNull FileSource source,
-            @NonNull List<Persistence> persistences,
             @Nullable EventListener onEvent,
             @Nullable ErrorListener onError) {
         return Cache.noOp();
@@ -53,7 +51,6 @@ public enum NoOpCaching implements FileCaching, WebCaching {
     @Override
     public @NonNull Cache<DataRepository> getDriverCache(
             @NonNull WebSource source,
-            @NonNull List<Persistence> persistences,
             @Nullable EventListener onEvent,
             @Nullable ErrorListener onError) {
         return Cache.noOp();
@@ -62,7 +59,14 @@ public enum NoOpCaching implements FileCaching, WebCaching {
     @Override
     public @NonNull Cache<MonitorReports> getMonitorCache(
             @NonNull WebSource source,
-            @NonNull List<Persistence> persistences,
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError) {
+        return Cache.noOp();
+    }
+
+    @Override
+    public @NonNull Cache<Credentials> getCredentialsCache(
+            @NonNull WebSource source,
             @Nullable EventListener onEvent,
             @Nullable ErrorListener onError) {
         return Cache.noOp();

@@ -17,6 +17,6 @@ public final class KryoPersistence implements Persistence {
             .type(sdmxdl.DataRepository.class)
             .type(sdmxdl.web.MonitorReports.class)
             .type(sdmxdl.web.WebSources.class)
-            .factory(KryoFileFormat::new)
+            .factory(KryoFileFormat::of)
             .build();
 }

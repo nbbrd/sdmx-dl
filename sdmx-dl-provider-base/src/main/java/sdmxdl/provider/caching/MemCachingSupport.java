@@ -1,4 +1,4 @@
-package sdmxdl.format;
+package sdmxdl.provider.caching;
 
 import lombok.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -6,16 +6,19 @@ import sdmxdl.DataRepository;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.ext.Cache;
-import sdmxdl.ext.Persistence;
 import sdmxdl.file.FileSource;
 import sdmxdl.file.spi.FileCaching;
 import sdmxdl.format.design.ServiceSupport;
+import sdmxdl.web.Credentials;
 import sdmxdl.web.MonitorReports;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.WebCaching;
 
 import java.time.Clock;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Supplier;
 
@@ -37,6 +40,10 @@ public final class MemCachingSupport implements FileCaching, WebCaching {
     @lombok.NonNull
     @lombok.Builder.Default
     private final Supplier<? extends Map<String, MonitorReports>> webMonitors = HashMap::new;
+
+    @lombok.NonNull
+    @lombok.Builder.Default
+    private final Supplier<? extends Map<String, Credentials>> credentials = HashMap::new;
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -65,7 +72,6 @@ public final class MemCachingSupport implements FileCaching, WebCaching {
     @Override
     public @NonNull Cache<DataRepository> getReaderCache(
             @NonNull FileSource source,
-            @NonNull List<Persistence> persistences,
             @Nullable EventListener onEvent,
             @Nullable ErrorListener onError) {
         return MemCache
@@ -78,7 +84,6 @@ public final class MemCachingSupport implements FileCaching, WebCaching {
     @Override
     public @NonNull Cache<DataRepository> getDriverCache(
             @NonNull WebSource source,
-            @NonNull List<Persistence> persistences,
             @Nullable EventListener onEvent,
             @Nullable ErrorListener onError) {
         return MemCache
@@ -91,12 +96,23 @@ public final class MemCachingSupport implements FileCaching, WebCaching {
     @Override
     public @NonNull Cache<MonitorReports> getMonitorCache(
             @NonNull WebSource source,
-            @NonNull List<Persistence> persistences,
             @Nullable EventListener onEvent,
             @Nullable ErrorListener onError) {
         return MemCache
                 .<MonitorReports>builder()
                 .map(webMonitors.get())
+                .clock(clock)
+                .build();
+    }
+
+    @Override
+    public @NonNull Cache<Credentials> getCredentialsCache(
+            @NonNull WebSource source,
+            @Nullable EventListener onEvent,
+            @Nullable ErrorListener onError) {
+        return MemCache
+                .<Credentials>builder()
+                .map(credentials.get())
                 .clock(clock)
                 .build();
     }
@@ -119,6 +135,10 @@ public final class MemCachingSupport implements FileCaching, WebCaching {
 
         public @NonNull Builder webMonitorsOf(@NonNull ConcurrentMap<String, MonitorReports> webMonitors) {
             return webMonitors(() -> webMonitors);
+        }
+
+        public @NonNull Builder credentialsOf(@NonNull ConcurrentMap<String, Credentials> credentials) {
+            return credentials(() -> credentials);
         }
     }
 }
