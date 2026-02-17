@@ -17,7 +17,7 @@ class VaultCachingSupportTest {
 
     @Test
     public void testGet() throws InterruptedException {
-        Duration ttl = Duration.ofMillis(100);
+        Duration ttl = Duration.ofMillis(1000);
         Duration evictionDelay = Duration.ofMillis(10);
 
         ConcurrentMap<String, Credentials> dryValues = new ConcurrentHashMap<>();
@@ -37,11 +37,12 @@ class VaultCachingSupportTest {
                 .build();
 
         Cache<Credentials> cache = x.getCredentialsCache(ttl, null, null);
+        assertThat(vaultService.getLoadCount()).isEqualTo(0);
 
         assertThat(dryValues).isEmpty();
         assertThat(cache.get(key.getResource()))
                 .as("Non-expired key should return value")
-                .returns(value.toCharArray(), credentials -> credentials != null ? credentials.getCredentials().getPassword() : null);
+                .returns(value.toCharArray(), VaultCachingSupportTest::toPassword);
         assertThat(dryValues).containsKey(key.getResource());
         assertThat(vaultService.getLoadCount()).isEqualTo(1);
 
@@ -49,16 +50,20 @@ class VaultCachingSupportTest {
         assertThat(dryValues).containsKey(key.getResource());
         assertThat(cache.get(key.getResource()))
                 .as("Non-expired key should return value")
-                .returns(value.toCharArray(), credentials -> credentials != null ? credentials.getCredentials().getPassword() : null);
+                .returns(value.toCharArray(), VaultCachingSupportTest::toPassword);
         assertThat(dryValues).containsKey(key.getResource());
         assertThat(vaultService.getLoadCount()).isEqualTo(1);
 
-        Thread.sleep(evictionDelay.toMillis() * 20);
+        Thread.sleep(ttl.toMillis() + 1);
         assertThat(dryValues).isEmpty();
         assertThat(cache.get(key.getResource()))
                 .as("Expired key should return new value")
-                .returns(value.toCharArray(), credentials -> credentials != null ? credentials.getCredentials().getPassword() : null);
+                .returns(value.toCharArray(), VaultCachingSupportTest::toPassword);
         assertThat(dryValues).containsKey(key.getResource());
         assertThat(vaultService.getLoadCount()).isEqualTo(2);
+    }
+
+    private static char[] toPassword(Credentials credentials) {
+        return credentials != null ? credentials.getCredentials().getPassword() : null;
     }
 }
