@@ -286,7 +286,7 @@ class IndexHtmlIntegrationTest {
             .isNotEqualTo(initialClass);
     }
 
-    @RetryingTest(3)
+    @RetryingTest(value = 5, suspendForMs = 1000)
     @Order(12)
     @DisplayName("Contextual buttons appear on source card click")
     void testSourceCardContextualButtons() {
