@@ -15,18 +15,8 @@ jobs:
       DEP_REPO: thegeeklab/hugo-geekdoc
 
     steps:
-      - name: Checkout source code
-        uses: actions/checkout@v6
-        with:
-          submodules: true
-          fetch-depth: 0
-
-      - name: Setup Java
-        uses: actions/setup-java@v5
-        with:
-          distribution: 'zulu'
-          java-version: 17
-          cache: 'maven'
+      - name: Checkout and Setup Maven
+        uses: s4u/setup-maven-action@v1.19.0
 
       - name: Get latest release version
         id: lr
