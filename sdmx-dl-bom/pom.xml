@@ -18,7 +18,7 @@
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
     <properties>
-        <hugo-geekdoc.version>v2.0.0</hugo-geekdoc.version>
+        <hugo-geekdoc.version>v2.0.1</hugo-geekdoc.version>
     </properties>
 
     <dependencyManagement>
