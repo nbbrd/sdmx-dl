@@ -9,7 +9,7 @@
 <meta name="referrer" content="no-referrer" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="color-scheme" content="light dark" />
-<meta name="generator" content="Hugo 0.158.0">
+<meta name="generator" content="Hugo 0.160.0">
 
 
   <meta name="description" content="sdmx-dl API is a library designed as a facade for the SDMX model and APIs.
@@ -52,7 +52,7 @@ SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .b
 <meta property="article:section" content="API" />
     <meta
       property="article:modified_time"
-      content="2026-03-17T12:40:53+01:00"
+      content="2026-04-07T11:38:30+02:00"
     />
 
 
@@ -71,21 +71,21 @@ SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .b
       "@type": "TechArticle",
       "articleSection": "API",
       "name": "Java library",
-      "url" : "https://nbbrd.github.io/sdmx-dl/docs/develop/api/",
+      "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/api/",
       "headline": "Java library",
-      "description": "\nsdmx-dl API is a library designed as a facade for the SDMX model and APIs.\nWeb example:\nSdmxWebManager .ofServiceLoader() .usingName(\u0022ECB\u0022) .getData(KeyRequest .builder() .flowOf(\u0022EXR\u0022) .keyOf(\u0022M.CHF\u002bUSD.EUR.SP00.A\u0022) .build()) .forEach(series -\u003e System.out.printf(Locale.ROOT, \u0022%s: %d obs%n\u0022, series.getKey(), series.getObs().size())); File example:\nSdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .builder() .flowOf(\u0022data\u0022) .keyOf(\u0022A.DEU.1.0.319.0.UBLGE\u0022) .build()) .forEach(series -\u003e System.out.printf(Locale.ROOT, \u0022%s: %d obs%n\u0022, series.getKey(), series.getObs().size())); Structure overview flowchart BT api subgraph formats format-base[base] csv kryo protobuf xml end subgraph providers provider-base[base] connectors ri dialects px end subgraph applications cli desktop grpc end formats --\u003e api providers --\u003e formats applications --\u003e providers Dependencies setup sdmx-dl is distributed in two different ways: a standard JAR hierarchy, and a standalone uber JAR containing all the implementations and their dependencies. Most of the standalone JAR’s dependencies are shaded i.e. they are hidden in alternative packages. This allows sdmx-dl to be used as a zero-dependency library in projects without conflicting with other dependencies.",""
-      "wordCount" : "173",
+      "description": "\nsdmx-dl API is a library designed as a facade for the SDMX model and APIs.\nWeb example:\nSdmxWebManager .ofServiceLoader() .usingName(\u0022ECB\u0022) .getData(KeyRequest .builder() .flowOf(\u0022EXR\u0022) .keyOf(\u0022M.CHF\u002bUSD.EUR.SP00.A\u0022) .build()) .forEach(series -\u003e System.out.printf(Locale.ROOT, \u0022%s: %d obs%n\u0022, series.getKey(), series.getObs().size())); File example:\nSdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .builder() .flowOf(\u0022data\u0022) .keyOf(\u0022A.DEU.1.0.319.0.UBLGE\u0022) .build()) .forEach(series -\u003e System.out.printf(Locale.ROOT, \u0022%s: %d obs%n\u0022, series.getKey(), series.getObs().size())); Structure overview flowchart BT api subgraph formats format-base[base] csv kryo protobuf xml end subgraph providers provider-base[base] connectors ri dialects px end subgraph applications cli desktop grpc end formats --\u003e api providers --\u003e formats applications --\u003e providers Dependencies setup sdmx-dl is distributed in two different ways: a standard JAR hierarchy, and a standalone uber JAR containing all the implementations and their dependencies. Most of the standalone JAR’s dependencies are shaded i.e. they are hidden in alternative packages. This allows sdmx-dl to be used as a zero-dependency library in projects without conflicting with other dependencies.",
+      "wordCount": "173",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
           "@type": "WebPage",
           "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/api/"
       },
-      "copyrightHolder" : "sdmx-dl",
-      "copyrightYear" : "0001",
+      "copyrightHolder": "sdmx-dl",
+      "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-03-17T12:40:53.00Z",
+      "dateModified": "2026-04-07T11:38:30.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -102,8 +102,8 @@ SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .b
 
 
     
-  <script src="/sdmx-dl/docs/develop/js/colortheme-9a38f5f8.bundle.min.js"></script>
-<script src="/sdmx-dl/docs/develop/js/main-9ea6fcb1.bundle.min.js"></script>
+  <script src="/sdmx-dl/docs/develop/js/colortheme-6c1bf822.bundle.min.js"></script>
+<script src="/sdmx-dl/docs/develop/js/main-1b467c45.bundle.min.js"></script>
 
 <link
   rel="preload"
@@ -122,12 +122,12 @@ SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .b
 
 <link
   rel="preload"
-  href="/sdmx-dl/docs/develop/main-188aff9e.min.css"
+  href="/sdmx-dl/docs/develop/main-7800dd97.min.css"
   as="style"
 />
 <link
   rel="stylesheet"
-  href="/sdmx-dl/docs/develop/main-188aff9e.min.css"
+  href="/sdmx-dl/docs/develop/main-7800dd97.min.css"
   media="all"
 />
 
@@ -221,47 +221,6 @@ SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .b
     <div class="gdoc-menu-header flex gap-16">
       <span class="gdoc-menu-header__items">
         
-          
-
-  
-  
-  
-  
-
-  
-    
-      
-      
-      
-
-      
-      
-
-      
-
-      
-        <span>
-          <a
-            href="https://github.com/nbbrd/sdmx-dl"
-            class="gdoc-header__link"
-            
-          >
-            <svg class="gdoc-icon gdoc_github">
-              <title>GitHub</title>
-              <use xlink:href="#gdoc_github"></use>
-            </svg>
-          </a>
-        </span>
-      
-    
-  
-
-
-
-
-
-
-        
 
 
         <span id="gdoc-color-theme" tabindex="0" role="button" aria-pressed="false">
@@ -319,7 +278,7 @@ SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .b
           <aside class="gdoc-nav">
             <nav>
   
-  <script defer src="/sdmx-dl/docs/develop/js/search-caed05b8.bundle.min.js"></script><div class="gdoc-search flex align-center">
+  <script defer src="/sdmx-dl/docs/develop/js/search-8a051f6b.bundle.min.js"></script><div class="gdoc-search flex align-center">
     <svg class="gdoc-icon gdoc_search"><use xlink:href="#gdoc_search"></use></svg>
     <input
       type="text"
@@ -993,7 +952,7 @@ SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .b
 
 
   
-  <script defer src="/sdmx-dl/docs/develop/js/mermaid-f13a572e.bundle.min.js"></script>
+  <script defer src="/sdmx-dl/docs/develop/js/mermaid-0dbf3612.bundle.min.js"></script>
   
 
 
