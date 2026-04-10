@@ -153,6 +153,19 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <properties combine.self="append">
+                        <!-- Disable parallel JUnit execution due to shared system property handling -->
+                        <configurationParameters>
+                            junit.jupiter.execution.parallel.enabled=false
+                        </configurationParameters>
+                    </properties>
+                </configuration>
+            </plugin>
+
             <!-- Generate configuration files and documentation for picocli-based applications -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
