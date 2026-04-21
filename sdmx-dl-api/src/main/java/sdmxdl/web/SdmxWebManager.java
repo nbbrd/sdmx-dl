@@ -177,6 +177,7 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
     private Optional<Driver> lookupDriverById(String id) {
         return drivers
                 .stream()
+                .map(FailsafeDriver::wrap)
                 .filter(driver -> id.equals(driver.getDriverId()))
                 .findFirst();
     }
