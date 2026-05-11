@@ -36,6 +36,7 @@ public final class XMLStreamStructure21 {
     private static final String STRUCTURES_TAG = "Structures";
     private static final String CODELISTS_TAG = "Codelists";
     private static final String CONCEPTS_TAG = "Concepts";
+    private static final String CONCEPT_SCHEME_TAG = "ConceptScheme";
     private static final String DATA_STUCTURES_TAG = "DataStructures";
     private static final String CODELIST_TAG = "Codelist";
     private static final String CONCEPT_TAG = "Concept";
@@ -61,6 +62,8 @@ public final class XMLStreamStructure21 {
     private static final String VERSION_ATTR = "version";
     private static final String LANG_ATTR = "lang";
     private static final String POSITION_ATTR = "position";
+    private static final String MAINTAINABLE_PARENT_ID_ATTR = "maintainableParentID";
+    private static final String MAINTAINABLE_PARENT_VERSION_ATTR = "maintainableParentVersion";
 
     private final TextBuilder structureLabel;
     private final TextBuilder label;
@@ -146,12 +149,20 @@ public final class XMLStreamStructure21 {
     }
 
     private void parseConcepts(XMLStreamReader reader, List<Concept> concepts) throws XMLStreamException {
-        while (XMLStreamUtil.nextTag(reader, CONCEPTS_TAG, CONCEPT_TAG)) {
-            parseConcept(reader, concepts);
+        while (XMLStreamUtil.nextTag(reader, CONCEPTS_TAG, CONCEPT_SCHEME_TAG)) {
+            parseConceptScheme(reader, concepts);
         }
     }
 
-    private void parseConcept(XMLStreamReader reader, List<Concept> concepts) throws XMLStreamException {
+    private void parseConceptScheme(XMLStreamReader reader, List<Concept> concepts) throws XMLStreamException {
+        String conceptSchemeID = reader.getAttributeValue(null, ID_ATTR);
+        String conceptSchemeVersion = reader.getAttributeValue(null, VERSION_ATTR);
+        while (XMLStreamUtil.nextTag(reader, CONCEPT_SCHEME_TAG, CONCEPT_TAG)) {
+            parseConcept(reader, concepts, conceptSchemeID, conceptSchemeVersion);
+        }
+    }
+
+    private void parseConcept(XMLStreamReader reader, List<Concept> concepts, String conceptSchemeID, String conceptSchemeVersion) throws XMLStreamException {
         String id = reader.getAttributeValue(null, ID_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing Concept id");
 
@@ -167,7 +178,7 @@ public final class XMLStreamStructure21 {
                     break;
             }
         }
-        concepts.add(new Concept(id, label.build(id), coreRepresentation));
+        concepts.add(new Concept(id, label.build(id), coreRepresentation, conceptSchemeID, conceptSchemeVersion));
     }
 
     private void parseDataStructures(XMLStreamReader reader, List<Structure> result, DsdContext context) throws XMLStreamException {
@@ -230,7 +241,7 @@ public final class XMLStreamStructure21 {
         String id = reader.getAttributeValue(null, ID_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing Dimension id");
 
-        String conceptIdentity = null;
+        ConceptIdentity conceptIdentity = null;
         CodelistRef localRepresentation = null;
         while (XMLStreamUtil.nextTags(reader, DIMENSION_TAG)) {
             switch (reader.getLocalName()) {
@@ -245,10 +256,8 @@ public final class XMLStreamStructure21 {
 
         XMLStreamUtil.check(conceptIdentity != null, reader, "Missing Concept identity for Dimension '%s'", id);
 
-        String conceptId = conceptIdentity;
-        Concept concept = context.findConceptById(conceptId).orElseGet(missingConceptFallback(conceptId));
-        CodelistRef ref = concept.resolveRef(localRepresentation)
-                .orElseThrow(() -> new XMLStreamException("Cannot resolve CodelistRef for Concept '" + conceptId + "' Dimension '" + id + "'"));
+        Concept concept = context.findConceptByConceptIdentity(conceptIdentity).orElseGet(missingConceptFallback(conceptIdentity));
+        CodelistRef ref = concept.resolveRef(localRepresentation).orElseThrow(missingCodelistRefError(conceptIdentity, id));
 
         ds.dimension(Dimension
                 .builder()
@@ -261,13 +270,18 @@ public final class XMLStreamStructure21 {
         context.incrementDimensionCount();
     }
 
-    private String parseConceptIdentity(XMLStreamReader reader) throws XMLStreamException {
+    private ConceptIdentity parseConceptIdentity(XMLStreamReader reader) throws XMLStreamException {
         if (XMLStreamUtil.nextTag(reader, CONCEPT_IDENTITY_TAG, REF_TAG)) {
             String id = reader.getAttributeValue(null, ID_ATTR);
 
             XMLStreamUtil.check(id != null, reader, "Missing Ref id");
 
-            return id;
+            return new ConceptIdentity(
+                    reader.getAttributeValue(null, MAINTAINABLE_PARENT_ID_ATTR),
+                    reader.getAttributeValue(null, MAINTAINABLE_PARENT_VERSION_ATTR),
+                    reader.getAttributeValue(null, AGENCY_ID_ATTR),
+                    id
+            );
         }
         return null;
     }
@@ -335,7 +349,7 @@ public final class XMLStreamStructure21 {
         String id = reader.getAttributeValue(null, ID_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing Attribute id");
 
-        String conceptIdentity = null;
+        ConceptIdentity conceptIdentity = null;
         CodelistRef localRepresentation = null;
         AttributeRelationship attributeRelationship = AttributeRelationship.DATAFLOW;
         while (XMLStreamUtil.nextTags(reader, ATTRIBUTE_TAG)) {
@@ -354,7 +368,7 @@ public final class XMLStreamStructure21 {
 
         XMLStreamUtil.check(conceptIdentity != null, reader, "Missing Concept identity for Attribute '%s'", id);
 
-        Concept concept = context.findConceptById(conceptIdentity).orElseGet(missingConceptFallback(conceptIdentity));
+        Concept concept = context.findConceptByConceptIdentity(conceptIdentity).orElseGet(missingConceptFallback(conceptIdentity));
         CodelistRef ref = concept.resolveRef(localRepresentation).orElse(NO_CODELIST_REF);
 
         ds.attribute(Attribute
@@ -390,8 +404,12 @@ public final class XMLStreamStructure21 {
         return Codelist.builder().ref(ref).build();
     }
 
-    private static @NonNull Supplier<Concept> missingConceptFallback(@NonNull String conceptId) {
-        return () -> new Concept(conceptId, conceptId, null);
+    private static @NonNull Supplier<Concept> missingConceptFallback(@NonNull ConceptIdentity conceptIdentity) {
+        return () -> new Concept(conceptIdentity.getId(), conceptIdentity.getId(), null, null, null);
+    }
+
+    private static @NonNull Supplier<XMLStreamException> missingCodelistRefError(ConceptIdentity conceptIdentity, String dimensionId) {
+        return () -> new XMLStreamException("Cannot resolve CodelistRef for Concept '" + conceptIdentity.getId() + "' Dimension '" + dimensionId + "'");
     }
 
     private static final CodelistRef NO_CODELIST_REF = null;
