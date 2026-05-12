@@ -39,6 +39,23 @@ public class DataSetTest {
     }
 
     @Test
+    public void testGetData() {
+        assertThatNullPointerException()
+                .isThrownBy(() -> dataSet.getData(null));
+
+        // Query.ALL is a no-op shortcut — returns same instance
+        assertThat(dataSet.getData(Query.ALL)).isSameAs(dataSet);
+
+        // Query with key filter returns only matching series
+        Query keyQuery = Query.builder().key(Key.of("BE")).build();
+        assertThat(dataSet.getData(keyQuery).getData()).containsExactly(series);
+
+        // Query that matches nothing returns empty DataSet
+        Query noMatchQuery = Query.builder().key(Key.of("XX")).build();
+        assertThat(dataSet.getData(noMatchQuery).getData()).isEmpty();
+    }
+
+    @Test
     public void testGetDataStream() {
         assertThatNullPointerException()
                 .isThrownBy(() -> dataSet.getDataStream(null));

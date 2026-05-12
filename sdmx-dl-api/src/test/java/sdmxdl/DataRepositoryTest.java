@@ -19,6 +19,7 @@ package sdmxdl;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,6 +52,28 @@ public class DataRepositoryTest {
     @Test
     public void testGetStructures() {
         Assertions.assertThat(repo.getStructures()).containsExactly(struct);
+    }
+
+    @Test
+    @SuppressWarnings("null")
+    public void testGetDataSet() {
+        assertThatNullPointerException().isThrownBy(() -> repo.getDataSet(null));
+        assertThat(repo.getDataSet(goodFlowRef)).isNotEmpty();
+        assertThat(repo.getDataSet(badFlowRef)).isEmpty();
+        assertThat(repo.getDataSet(FlowRef.of(null, "XYZ", null))).isNotEmpty();
+    }
+
+    @Test
+    public void testBuilderTtl() {
+        Instant creationTime = Instant.parse("2024-01-01T00:00:00Z");
+        java.time.Duration ttl = java.time.Duration.ofHours(24);
+
+        DataRepository built = DataRepository.builder()
+                .ttl(creationTime, ttl)
+                .build();
+
+        assertThat(built.getCreationTime()).isEqualTo(creationTime);
+        assertThat(built.getExpirationTime()).isEqualTo(creationTime.plus(ttl));
     }
 
     @Test
