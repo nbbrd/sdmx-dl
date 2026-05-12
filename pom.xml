@@ -270,6 +270,7 @@
                             junit.jupiter.execution.parallel.config.dynamic.max-pool-size-factor=4
                         </configurationParameters>
                     </properties>
+                    <groups>!webQueries</groups>
                 </configuration>
             </plugin>
             <plugin>
@@ -786,6 +787,21 @@
                 <jacoco.skip>true</jacoco.skip>
                 <heylogs.skip>true</heylogs.skip>
             </properties>
+        </profile>
+
+        <profile>
+            <id>webQueries</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <groups>webQueries</groups>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>
