@@ -900,34 +900,30 @@
     id="main-content" tabindex="-1"
   >
     <h1>sdmx-dl</h1>
-    
-
-
-<blockquote class="gdoc-hint caution">
-  <div class="gdoc-hint__title flex gap-8 align-center"><i class="fa caution"></i>
-      <span>Caution</span></div>
-  <div class="gdoc-hint__text">sdmx-dl is still in development and is available <ins>for test only</ins>. <strong>Do not use in production!</strong><br></div>
-</blockquote>
-
-<p><img src="SDMX_logo.svg" alt="logo" width="200px" /><br>
-sdmx-dl - <strong>Easily download official statistics</strong><br></p>
-<p><a
+    <p><a
   class="gdoc-markdown__link--raw"
   href="https://github.com/nbbrd/sdmx-dl/releases/latest"
 ><img
   src="https://img.shields.io/github/release/nbbrd/sdmx-dl.svg"
   alt="Download"
   
+/></a>
+<a
+  class="gdoc-markdown__link--raw"
+  href="https://github.com/nbbrd/sdmx-dl/blob/develop/CHANGELOG.md"
+><img
+  src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-dl%2Fbadges%2Funreleased-changes.json"
+  alt="Changes"
+  
+/></a>
+<a
+  class="gdoc-markdown__link--raw"
+  href="https://github.com/jvm-repo-rebuild/reproducible-central/blob/master/content/com/github/nbbrd/sdmx-dl/README.md"
+><img
+  src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/jvm-repo-rebuild/reproducible-central/master/content/com/github/nbbrd/sdmx-dl/badge.json"
+  alt="Reproducible Builds"
+  
 /></a></p>
-<div class="flex align-center gdoc-page__anchorwrap">
-    <h2 id="about"
-    >
-        About
-    </h2>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/#about" class="gdoc-page__anchor clip flex align-center" title="Anchor to: About" aria-label="Anchor to: About" href="#about">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
 <p><strong><a
   class="gdoc-markdown__link"
   href="https://github.com/nbbrd/sdmx-dl"
@@ -991,9 +987,38 @@ It is mainly based on the <a
 <li>Is bundled with a <a
   class="gdoc-markdown__link"
   href="sources"
->pre-configured set of data sources</a></li>
+>pre-configured set of data sources</a> covering major international organizations and national agencies (ECB, IMF, OECD, Eurostat, World Bank, ILO, BIS, INSEE, &hellip;)</li>
 </ul>
 <div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="quick-start"
+    >
+        Quick Start
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/#quick-start" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Quick Start" aria-label="Anchor to: Quick Start" href="#quick-start">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p><strong>CLI</strong> — download monthly CHF/EUR exchange rates from the ECB in one command (<a
+  class="gdoc-markdown__link"
+  href="https://www.jbang.dev/"
+>JBang</a> required):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">jbang sdmx-dl@nbbrd fetch data ECB EXR M.CHF.EUR.SP00.A
+</span></span></code></pre></div><p><strong>Java library</strong> — add the dependency to your <code>pom.xml</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;groupId&gt;</span>com.github.nbbrd.sdmx-dl<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;artifactId&gt;</span>sdmx-dl-standalone<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;version&gt;</span>LATEST<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependency&gt;</span>
+</span></span></code></pre></div><p>Then retrieve data in a few lines:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">SdmxWebManager</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">KeyRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">flowOf</span><span class="p">(</span><span class="s">&#34;EXR&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">keyOf</span><span class="p">(</span><span class="s">&#34;M.CHF+USD.EUR.SP00.A&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">series</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">printf</span><span class="p">(</span><span class="n">Locale</span><span class="p">.</span><span class="na">ROOT</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;%s: %d obs%n&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">series</span><span class="p">.</span><span class="na">getKey</span><span class="p">(),</span><span class="w"> </span><span class="n">series</span><span class="p">.</span><span class="na">getObs</span><span class="p">().</span><span class="na">size</span><span class="p">()));</span><span class="w">
+</span></span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="installing"
     >
         Installing
@@ -1002,11 +1027,42 @@ It is mainly based on the <a
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<p><strong>sdmx-dl CLI</strong> runs on any desktop operating system such as Microsoft <strong>Windows</strong>, <strong>Solaris OS</strong>, Apple <strong>macOS</strong>, <strong>Ubuntu</strong> and other various <strong>Linux</strong> distributions.
-See <a
+<p><strong>sdmx-dl CLI</strong> runs on any desktop operating system such as Microsoft <strong>Windows</strong>, <strong>Solaris OS</strong>, Apple <strong>macOS</strong>, <strong>Ubuntu</strong> and other various <strong>Linux</strong> distributions.</p>
+<div class="table-wrap"> <table>
+  <thead>
+      <tr>
+          <th>Platform</th>
+          <th>Command</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Windows (<a
+  class="gdoc-markdown__link"
+  href="https://github.com/nbbrd/scoop-nbbrd"
+>Scoop</a>)</td>
+          <td><code>scoop bucket add nbbrd https://github.com/nbbrd/scoop-nbbrd.git &amp;&amp; scoop install sdmx-dl</code></td>
+      </tr>
+      <tr>
+          <td>macOS / Linux (<a
+  class="gdoc-markdown__link"
+  href="https://github.com/nbbrd/homebrew-tap"
+>Homebrew</a>)</td>
+          <td><code>brew install nbbrd/tap/sdmx-dl</code></td>
+      </tr>
+      <tr>
+          <td>Any (<a
+  class="gdoc-markdown__link"
+  href="https://www.jbang.dev/"
+>JBang</a>)</td>
+          <td><code>jbang sdmx-dl@nbbrd &lt;command&gt; [&lt;args&gt;]</code></td>
+      </tr>
+  </tbody>
+</table> </div>
+<p>See <a
   class="gdoc-markdown__link"
   href="cli/installation"
->CLI installation</a> for more details.</p>
+>CLI installation</a> for all options including Docker, GitHub Actions, Maven, and Gradle.</p>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="developing"
     >
@@ -1027,7 +1083,7 @@ It requires <a
   class="gdoc-markdown__link"
   href="https://search.maven.org/"
 >Maven Central</a>.</p>
-<p>The code can be build using any IDE or by just type-in the following commands in a terminal:</p>
+<p>The code can be built using any IDE or by just type-in the following commands in a terminal:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">git clone https://github.com/nbbrd/sdmx-dl.git
 </span></span><span class="line"><span class="cl"><span class="nb">cd</span> sdmx-dl
 </span></span><span class="line"><span class="cl">mvn clean install
@@ -1054,6 +1110,39 @@ It requires <a
   class="gdoc-markdown__link"
   href="https://joinup.ec.europa.eu/page/eupl-text-11-12"
 >European Union Public Licence (EUPL)</a>.</p>
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="related-work"
+    >
+        Related work
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/#related-work" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Related work" aria-label="Anchor to: Related work" href="#related-work">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>This project is not the only one that deals with official statistics.<br>
+Here is a non-exhaustive list of related work:</p>
+<ul>
+<li><a
+  class="gdoc-markdown__link"
+  href="https://github.com/amattioc/SDMX"
+>amattioc/SDMX</a> (SDMX / Java)</li>
+<li><a
+  class="gdoc-markdown__link"
+  href="https://github.com/sosna/sdmx-rest4js"
+>sosna/sdmx-rest4js</a> (SDMX / JavaScript)</li>
+<li><a
+  class="gdoc-markdown__link"
+  href="https://github.com/dr-leo/pandaSDMX"
+>dr-leo/pandaSDMX</a> (SDMX / Python)</li>
+<li><a
+  class="gdoc-markdown__link"
+  href="https://github.com/rOpenGov/pxweb"
+>rOpenGov/pxweb</a> (PXWEB / R)</li>
+<li><a
+  class="gdoc-markdown__link"
+  href="https://github.com/ondata/opensdmx"
+>ondata/opensdmx</a> (SDMX / Python)</li>
+</ul>
 
   </article>
 
