@@ -45,24 +45,23 @@ sdmx-dl is a SDMX-focused attempt to tackle these problems.
 jbang sdmx-dl@nbbrd fetch data ECB EXR M.CHF.EUR.SP00.A
 ```
 
-**Java library** — add the dependency to your `pom.xml`:
-```xml
-<dependency>
-  <groupId>com.github.nbbrd.sdmx-dl</groupId>
-  <artifactId>sdmx-dl-standalone</artifactId>
-  <version>LATEST</version>
-</dependency>
-```
-Then retrieve data in a few lines:
+**Java library** — retrieve data in a few lines with a [JBang](https://www.jbang.dev/) script:
 ```java
-SdmxWebManager
-    .ofServiceLoader()
-    .usingName("ECB")
-    .getData(KeyRequest.builder()
-        .flowOf("EXR")
-        .keyOf("M.CHF+USD.EUR.SP00.A")
-        .build())
-    .forEach(series -> System.out.printf(Locale.ROOT, "%s: %d obs%n", series.getKey(), series.getObs().size()));
+//JAVA 25+
+//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.0.0-beta.18
+import sdmxdl.*;
+import sdmxdl.web.*;
+
+void main() throws Exception {
+    SdmxWebManager
+        .ofServiceLoader()
+        .usingName("ECB")
+        .getData(KeyRequest.builder()
+            .flowOf("EXR")
+            .keyOf("M.CHF+USD.EUR.SP00.A")
+            .build())
+        .forEach(series -> IO.println(series.getKey() + ": " + series.getObs().size() + " obs"));
+}
 ```
 
 ## Installing
