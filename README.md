@@ -1,6 +1,4 @@
----
-title: "sdmx-dl"
----
+# sdmx-dl - **easily download official statistics**<br>
 
 [![Download](https://img.shields.io/github/release/nbbrd/sdmx-dl.svg)](https://github.com/nbbrd/sdmx-dl/releases/latest)
 [![Changes](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-dl%2Fbadges%2Funreleased-changes.json)](https://github.com/nbbrd/sdmx-dl/blob/develop/CHANGELOG.md)
@@ -10,13 +8,13 @@ title: "sdmx-dl"
 It is mainly based on the [SDMX standard](https://sdmx.org/?page_id=3425) but can be extended with other APIs as well.
 
 This project has three parts:
-- [a Java library](api) that can be incorporated into other projects
-- [a command-line tool](cli) that allows to easily browse and download data
-- [a web service](ws) that serves as a bridge to any application or language
+- [a Java library](https://nbbrd.github.io/sdmx-dl/docs/develop/api) that can be incorporated into other projects
+- [a command-line tool](https://nbbrd.github.io/sdmx-dl/docs/develop/cli) that allows to easily browse and download data
+- [a web service](https://nbbrd.github.io/sdmx-dl/docs/develop/ws) that serves as a bridge to any application or language
 
 Its **documentation** is available at https://nbbrd.github.io/sdmx-dl/docs/.
 
-### Why?
+## Why?
 
 While being in the information age, it is surprisingly difficult to get free quality statistics, even from official sources.
 
@@ -30,13 +28,13 @@ There are many reasons to that situation:
 
 sdmx-dl is a SDMX-focused attempt to tackle these problems.
 
-### Goals & features
+## Goals & features
 
 - Provides an **easy**, **consistent** and **reliable** data retrieval
 - Allows **data discovery** and **automation**
 - Takes care of technical difficulties and data handling
 - Is designed to be used by other applications
-- Is bundled with a [pre-configured set of data sources](sources) covering major international organizations and national agencies (ECB, IMF, OECD, Eurostat, World Bank, ILO, BIS, INSEE, ...)
+- Is bundled with a [pre-configured set of data sources](https://nbbrd.github.io/sdmx-dl/docs/develop/sources) covering major international organizations and national agencies (ECB, IMF, OECD, Eurostat, World Bank, ILO, BIS, INSEE, ...)
 
 ## Quick Start
 
@@ -75,7 +73,7 @@ SdmxWebManager
 | macOS / Linux ([Homebrew](https://github.com/nbbrd/homebrew-tap)) | `brew install nbbrd/tap/sdmx-dl`                                                           |
 | Any ([JBang](https://www.jbang.dev/))                             | `jbang sdmx-dl@nbbrd <command> [<args>]`                                                   |
 
-See [CLI installation](cli/installation) for all options including Docker, GitHub Actions, Maven, and Gradle.
+See [CLI installation](https://nbbrd.github.io/sdmx-dl/docs/develop/cli/installation) for all options including Docker, GitHub Actions, Maven, and Gradle.
 
 ## Developing
 
