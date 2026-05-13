@@ -25,11 +25,11 @@ public class RuntimeDependenciesTest {
                 .satisfies(RuntimeDependenciesTest::checkPicocsv)
                 .satisfies(RuntimeDependenciesTest::checkPowershell)
                 .satisfies(RuntimeDependenciesTest::checkGson)
-                .satisfies(RuntimeDependenciesTest::checkSllContextKickstart)
+                .satisfies(RuntimeDependenciesTest::checkAyza)
                 .satisfies(RuntimeDependenciesTest::checkJavaNetProxy)
                 .satisfies(RuntimeDependenciesTest::checkKryo5)
                 .satisfies(RuntimeDependenciesTest::checkMsal)
-                .hasSize(25);
+                .hasSize(27);
     }
 
     private static void checkJavaIoUtil(List<? extends DependencyResolver.GAV> coordinates) {
@@ -86,10 +86,10 @@ public class RuntimeDependenciesTest {
                 .containsExactlyInAnyOrder("gson");
     }
 
-    private static void checkSllContextKickstart(List<? extends DependencyResolver.GAV> coordinates) {
+    private static void checkAyza(List<? extends DependencyResolver.GAV> coordinates) {
         assertThatGroupId(coordinates, "io.github.hakky54")
                 .extracting(DependencyResolver.GAV::getArtifactId)
-                .containsExactlyInAnyOrder("ayza", "sude");
+                .containsExactlyInAnyOrder("ayza", "sude", "laleler", "desidero");
     }
 
     private static void checkJavaNetProxy(List<? extends DependencyResolver.GAV> coordinates) {
