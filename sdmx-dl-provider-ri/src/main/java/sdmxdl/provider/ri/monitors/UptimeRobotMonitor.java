@@ -58,7 +58,7 @@ public final class UptimeRobotMonitor implements Monitor {
     }
 
     @Override
-    public @NonNull Collection<String> getMonitorProperties() {
+    public @NonNull Collection<String> getMonitorPropertyNames() {
         return Collections.emptyList();
     }
 

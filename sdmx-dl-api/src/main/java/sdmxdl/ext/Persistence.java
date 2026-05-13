@@ -30,7 +30,7 @@ public interface Persistence {
 
     @NonNull <T extends HasPersistence> FileFormat<T> getFormat(@NonNull Class<T> type);
 
-    @NonNull Collection<String> getPersistenceProperties();
+    @NonNull Collection<String> getPersistencePropertyNames();
 
     int UNKNOWN_PERSISTENCE_RANK = -1;
 

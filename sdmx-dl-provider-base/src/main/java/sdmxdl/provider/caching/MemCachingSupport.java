@@ -118,12 +118,12 @@ public final class MemCachingSupport implements FileCaching, WebCaching {
     }
 
     @Override
-    public @NonNull Collection<String> getFileCachingProperties() {
+    public @NonNull Collection<String> getFileCachingPropertyNames() {
         return Collections.emptyList();
     }
 
     @Override
-    public @NonNull Collection<String> getWebCachingProperties() {
+    public @NonNull Collection<String> getWebCachingPropertyNames() {
         return Collections.emptyList();
     }
 

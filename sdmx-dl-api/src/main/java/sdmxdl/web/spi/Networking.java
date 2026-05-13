@@ -31,7 +31,7 @@ public interface Networking {
     boolean isNetworkingAvailable();
 
     @NonNull
-    Collection<String> getNetworkingProperties();
+    Collection<String> getNetworkingPropertyNames();
 
     void warmupNetwork();
 

@@ -28,7 +28,7 @@ public interface Monitor {
             @NonNull WebContext context
     ) throws IOException, IllegalArgumentException;
 
-    @NonNull Collection<String> getMonitorProperties();
+    @NonNull Collection<String> getMonitorPropertyNames();
 
     String MONITOR_PROPERTY_PREFIX = "sdmxdl.monitor";
 }

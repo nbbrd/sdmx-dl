@@ -88,7 +88,7 @@ public final class DriverSupport implements Driver {
     }
 
     @Override
-    public @NonNull Collection<String> getDriverProperties() {
+    public @NonNull Collection<String> getDriverPropertyNames() {
         return properties;
     }
 

@@ -51,7 +51,7 @@ public final class PersistenceSupport implements Persistence {
     }
 
     @Override
-    public @NonNull Collection<String> getPersistenceProperties() {
+    public @NonNull Collection<String> getPersistencePropertyNames() {
         return properties;
     }
 

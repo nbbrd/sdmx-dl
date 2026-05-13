@@ -37,35 +37,35 @@ public class Plugin {
     }
 
     static Plugin of(Driver o) {
-        return new Plugin(Type.DRIVER, o.getDriverId(), o.getDriverProperties());
+        return new Plugin(Type.DRIVER, o.getDriverId(), o.getDriverPropertyNames());
     }
 
     static Plugin of(Authenticator o) {
-        return new Plugin(Type.AUTHENTICATOR, o.getAuthenticatorId(), o.getAuthenticatorProperties());
+        return new Plugin(Type.AUTHENTICATOR, o.getAuthenticatorId(), o.getAuthenticatorPropertyNames());
     }
 
     static Plugin of(Monitor o) {
-        return new Plugin(Type.MONITOR, o.getMonitorId(), o.getMonitorProperties());
+        return new Plugin(Type.MONITOR, o.getMonitorId(), o.getMonitorPropertyNames());
     }
 
     static Plugin of(Persistence o) {
-        return new Plugin(Type.PERSISTENCE, o.getPersistenceId(), o.getPersistenceProperties());
+        return new Plugin(Type.PERSISTENCE, o.getPersistenceId(), o.getPersistencePropertyNames());
     }
 
     static Plugin of(Registry o) {
-        return new Plugin(Type.REGISTRY, o.getRegistryId(), o.getRegistryProperties());
+        return new Plugin(Type.REGISTRY, o.getRegistryId(), o.getRegistryPropertyNames());
     }
 
     static Plugin of(WebCaching o) {
-        return new Plugin(Type.WEB_CACHING, o.getWebCachingId(), o.getWebCachingProperties());
+        return new Plugin(Type.WEB_CACHING, o.getWebCachingId(), o.getWebCachingPropertyNames());
     }
 
     static Plugin of(FileCaching o) {
-        return new Plugin(Type.FILE_CACHING, o.getFileCachingId(), o.getFileCachingProperties());
+        return new Plugin(Type.FILE_CACHING, o.getFileCachingId(), o.getFileCachingPropertyNames());
     }
 
     static Plugin of(Networking o) {
-        return new Plugin(Type.NETWORKING, o.getNetworkingId(), o.getNetworkingProperties());
+        return new Plugin(Type.NETWORKING, o.getNetworkingId(), o.getNetworkingPropertyNames());
     }
 
     @NonNull

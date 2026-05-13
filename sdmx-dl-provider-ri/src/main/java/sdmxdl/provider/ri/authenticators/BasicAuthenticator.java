@@ -89,7 +89,7 @@ public final class BasicAuthenticator implements Authenticator {
     }
 
     @Override
-    public @NonNull Collection<String> getAuthenticatorProperties() {
+    public @NonNull Collection<String> getAuthenticatorPropertyNames() {
         return Collections.emptyList();
     }
 

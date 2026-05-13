@@ -32,7 +32,7 @@ public class DriverAssert {
             .idPattern(DriverLoader.ID_PATTERN)
             .rank(Driver::getDriverRank)
             .rankLowerBound(Driver.UNKNOWN_DRIVER_RANK)
-            .properties(Driver::getDriverProperties)
+            .properties(Driver::getDriverPropertyNames)
             .propertiesPrefix(Driver.DRIVER_PROPERTY_PREFIX)
             .build();
 
@@ -64,7 +64,7 @@ public class DriverAssert {
         assertThat(o.getId()).isNotBlank();
         assertThat(o.getProperties()).isNotNull();
         assertThat(o.getDriver()).isEqualTo(d.getDriverId());
-        assertThat(o.getProperties().keySet()).isSubsetOf(d.getDriverProperties());
+        assertThat(o.getProperties().keySet()).isSubsetOf(d.getDriverPropertyNames());
         assertThat(o.getConfidentiality()).isEqualTo(Confidentiality.PUBLIC);
     }
 

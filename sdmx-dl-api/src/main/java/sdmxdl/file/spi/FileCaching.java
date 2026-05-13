@@ -34,7 +34,7 @@ public interface FileCaching {
             @Nullable EventListener onEvent,
             @Nullable ErrorListener onError);
 
-    @NonNull Collection<String> getFileCachingProperties();
+    @NonNull Collection<String> getFileCachingPropertyNames();
 
     @StaticFactoryMethod
     static @NonNull FileCaching noOp() {

@@ -9,7 +9,6 @@ import sdmxdl.web.spi.WebContext;
 import tests.sdmxdl.api.ExtensionPoint;
 import tests.sdmxdl.api.TckUtil;
 
-import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
@@ -30,7 +29,7 @@ public class MonitorAssert {
             .idPattern(MonitorLoader.ID_PATTERN)
             .rank(ignore -> -1)
             .rankLowerBound(-1)
-            .properties(Monitor::getMonitorProperties)
+            .properties(Monitor::getMonitorPropertyNames)
             .propertiesPrefix(Monitor.MONITOR_PROPERTY_PREFIX)
             .build();
 

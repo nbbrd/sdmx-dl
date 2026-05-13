@@ -57,7 +57,7 @@ public enum TestDriver implements Driver {
         }
 
         @Override
-        public @NonNull Collection<String> getDriverProperties() {
+        public @NonNull Collection<String> getDriverPropertyNames() {
             return Collections.singletonList("hello");
         }
     }, FAILING {
@@ -87,7 +87,7 @@ public enum TestDriver implements Driver {
         }
 
         @Override
-        public @NonNull Collection<String> getDriverProperties() {
+        public @NonNull Collection<String> getDriverPropertyNames() {
             throw new CustomException();
         }
     }, NULL {
@@ -117,7 +117,7 @@ public enum TestDriver implements Driver {
         }
 
         @Override
-        public @NonNull Collection<String> getDriverProperties() {
+        public @NonNull Collection<String> getDriverPropertyNames() {
             return null;
         }
     };

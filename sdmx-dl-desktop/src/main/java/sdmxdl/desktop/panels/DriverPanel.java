@@ -62,7 +62,7 @@ public final class DriverPanel extends JComponent {
         if (model != null) {
             id.setText(model.getDriverId());
             sourcesList.setModel(JLists.modelOf(new ArrayList<>(model.getDefaultSources())));
-            properties.setModel(JLists.modelOf(new ArrayList<>(model.getDriverProperties())));
+            properties.setModel(JLists.modelOf(new ArrayList<>(model.getDriverPropertyNames())));
         }
     }
 }

@@ -42,7 +42,7 @@ public interface Authenticator {
             @Nullable ErrorListener onError
     ) throws IOException;
 
-    @NonNull Collection<String> getAuthenticatorProperties();
+    @NonNull Collection<String> getAuthenticatorPropertyNames();
 
     String AUTHENTICATOR_PROPERTY_PREFIX = "sdmxdl.authenticator";
 }

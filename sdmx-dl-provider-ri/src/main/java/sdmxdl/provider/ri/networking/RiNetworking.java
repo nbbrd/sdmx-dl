@@ -62,7 +62,7 @@ public final class RiNetworking implements Networking {
     }
 
     @Override
-    public @NonNull Collection<String> getNetworkingProperties() {
+    public @NonNull Collection<String> getNetworkingPropertyNames() {
         return keysOf(
                 AUTO_PROXY_PROPERTY,
                 NO_SYSTEM_SSL_PROPERTY,

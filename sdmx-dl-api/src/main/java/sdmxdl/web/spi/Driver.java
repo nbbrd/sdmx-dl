@@ -57,7 +57,7 @@ public interface Driver {
     Collection<WebSource> getDefaultSources();
 
     @NonNull
-    Collection<String> getDriverProperties();
+    Collection<String> getDriverPropertyNames();
 
     int NATIVE_DRIVER_RANK = Byte.MAX_VALUE;
     int WRAPPED_DRIVER_RANK = 0;

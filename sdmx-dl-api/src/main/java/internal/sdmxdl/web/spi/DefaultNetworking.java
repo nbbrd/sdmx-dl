@@ -31,7 +31,7 @@ public enum DefaultNetworking implements Networking {
     }
 
     @Override
-    public @NonNull Collection<String> getNetworkingProperties() {
+    public @NonNull Collection<String> getNetworkingPropertyNames() {
         return Collections.emptyList();
     }
 

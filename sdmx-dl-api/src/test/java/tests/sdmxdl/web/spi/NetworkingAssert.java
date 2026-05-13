@@ -21,7 +21,7 @@ public class NetworkingAssert {
             .idPattern(NetworkingLoader.ID_PATTERN)
             .rank(Networking::getNetworkingRank)
             .rankLowerBound(Networking.UNKNOWN_NETWORKING_RANK)
-            .properties(Networking::getNetworkingProperties)
+            .properties(Networking::getNetworkingPropertyNames)
             .propertiesPrefix(NETWORKING_PROPERTY_PREFIX)
             .build();
 

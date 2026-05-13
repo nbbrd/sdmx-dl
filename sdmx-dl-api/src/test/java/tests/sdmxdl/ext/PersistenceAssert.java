@@ -34,8 +34,6 @@ import java.time.Clock;
 import java.time.Duration;
 import java.util.Set;
 
-import static java.util.Collections.emptyList;
-
 @lombok.experimental.UtilityClass
 public class PersistenceAssert {
 
@@ -46,7 +44,7 @@ public class PersistenceAssert {
             .idPattern(PersistenceLoader.ID_PATTERN)
             .rank(Persistence::getPersistenceRank)
             .rankLowerBound(Persistence.UNKNOWN_PERSISTENCE_RANK)
-            .properties(Persistence::getPersistenceProperties)
+            .properties(Persistence::getPersistencePropertyNames)
             .propertiesPrefix(Persistence.PERSISTENCE_PROPERTY_PREFIX)
             .build();
 
