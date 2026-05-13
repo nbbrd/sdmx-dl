@@ -1003,21 +1003,25 @@ It is mainly based on the <a
   href="https://www.jbang.dev/"
 >JBang</a> required):</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">jbang sdmx-dl@nbbrd fetch data ECB EXR M.CHF.EUR.SP00.A
-</span></span></code></pre></div><p><strong>Java library</strong> — add the dependency to your <code>pom.xml</code>:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependency&gt;</span>
-</span></span><span class="line"><span class="cl">  <span class="nt">&lt;groupId&gt;</span>com.github.nbbrd.sdmx-dl<span class="nt">&lt;/groupId&gt;</span>
-</span></span><span class="line"><span class="cl">  <span class="nt">&lt;artifactId&gt;</span>sdmx-dl-standalone<span class="nt">&lt;/artifactId&gt;</span>
-</span></span><span class="line"><span class="cl">  <span class="nt">&lt;version&gt;</span>LATEST<span class="nt">&lt;/version&gt;</span>
-</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependency&gt;</span>
-</span></span></code></pre></div><p>Then retrieve data in a few lines:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">SdmxWebManager</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">()</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">KeyRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">flowOf</span><span class="p">(</span><span class="s">&#34;EXR&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">keyOf</span><span class="p">(</span><span class="s">&#34;M.CHF+USD.EUR.SP00.A&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">series</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">printf</span><span class="p">(</span><span class="n">Locale</span><span class="p">.</span><span class="na">ROOT</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;%s: %d obs%n&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">series</span><span class="p">.</span><span class="na">getKey</span><span class="p">(),</span><span class="w"> </span><span class="n">series</span><span class="p">.</span><span class="na">getObs</span><span class="p">().</span><span class="na">size</span><span class="p">()));</span><span class="w">
+</span></span></code></pre></div><p><strong>Java library</strong> — retrieve data in a few lines with a <a
+  class="gdoc-markdown__link"
+  href="https://www.jbang.dev/"
+>JBang</a> script:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.0.0-beta.18</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.*</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.*</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">KeyRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">flowOf</span><span class="p">(</span><span class="s">&#34;EXR&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">keyOf</span><span class="p">(</span><span class="s">&#34;M.CHF+USD.EUR.SP00.A&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">series</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">series</span><span class="p">.</span><span class="na">getKey</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34;: &#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">series</span><span class="p">.</span><span class="na">getObs</span><span class="p">().</span><span class="na">size</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34; obs&#34;</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="installing"
     >
