@@ -21,5 +21,6 @@ module sdmxdl.provider.dialects {
             EstatDialectDriver,
             ImfDialectDriver,
             InseeDialectDriver,
-            StatCanDialectDriver;
+            StatCanDialectDriver,
+            UisDialectDriver;
 }

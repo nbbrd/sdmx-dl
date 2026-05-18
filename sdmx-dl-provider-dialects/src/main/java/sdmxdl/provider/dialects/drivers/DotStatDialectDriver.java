@@ -34,7 +34,6 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import static sdmxdl.Confidentiality.PUBLIC;
-import static sdmxdl.provider.SdmxFix.Category.ENDPOINT;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
 import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 
@@ -56,18 +55,6 @@ public final class DotStatDialectDriver implements Driver {
             .properties(RI_CONNECTION_PROPERTIES)
             .source(WebSource
                     .builder()
-                    .id("UIS")
-                    .name("en", "Unesco Institute for Statistics")
-                    .name("fr", "Unesco Institut de statistique")
-                    .driver(DIALECTS_DOTSTAT)
-                    .confidentiality(PUBLIC)
-                    .endpointOf(UIS_ENDPOINT)
-                    .websiteOf("http://data.uis.unesco.org")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/UIS")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/uis")
-                    .build())
-            .source(WebSource
-                    .builder()
                     .id("UKDS")
                     .name("en", "UK Data Service")
                     .driver(DIALECTS_DOTSTAT)
@@ -83,9 +70,6 @@ public final class DotStatDialectDriver implements Driver {
         return RiRestClient.of(s, languages, c, DotStatRestQueries.DEFAULT, DotStatRestParsers.DEFAULT, DOTSTAT_FEATURES);
     }
 
-    @SdmxFix(id = 1, category = ENDPOINT, cause = "UIS API requires auth by key in header and this is not supported yet in facade")
-    private final static String UIS_ENDPOINT = "http://data.uis.unesco.org/RestSDMX/sdmx.ashx";
-
-    @SdmxFix(id = 2, category = QUERY, cause = "Data detail parameter not supported")
+    @SdmxFix(id = 1, category = QUERY, cause = "Data detail parameter not supported")
     private static final Set<Feature> DOTSTAT_FEATURES = EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD);
 }
