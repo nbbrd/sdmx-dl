@@ -101,6 +101,6 @@ Here is a non-exhaustive list of related work:
 
 - [amattioc/SDMX](https://github.com/amattioc/SDMX) (SDMX / Java)
 - [sosna/sdmx-rest4js](https://github.com/sosna/sdmx-rest4js) (SDMX / JavaScript)
-- [dr-leo/pandaSDMX](https://github.com/dr-leo/pandaSDMX) (SDMX / Python)
+- [khaeru/sdmx](https://github.com/khaeru/sdmx) (SDMX / Python)
 - [rOpenGov/pxweb](https://github.com/rOpenGov/pxweb) (PXWEB / R)
 - [ondata/opensdmx](https://github.com/ondata/opensdmx) (SDMX / Python)
