@@ -7,6 +7,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+This is the first stable release of the v3 series of **sdmx-dl**.  
+After an extended beta period, sdmx-dl is now considered production-ready.
+
 ### Added
 
 - ![DOC] Add README file [#1229](https://github.com/nbbrd/sdmx-dl/issues/1229)
