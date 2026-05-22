@@ -90,12 +90,12 @@ public final class RiCaching implements FileCaching, WebCaching {
     }
 
     @Override
-    public @NonNull Collection<String> getWebCachingProperties() {
+    public @NonNull Collection<String> getWebCachingPropertyNames() {
         return PROPERTIES;
     }
 
     @Override
-    public @NonNull Collection<String> getFileCachingProperties() {
+    public @NonNull Collection<String> getFileCachingPropertyNames() {
         return PROPERTIES;
     }
 

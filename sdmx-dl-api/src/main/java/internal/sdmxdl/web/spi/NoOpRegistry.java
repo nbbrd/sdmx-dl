@@ -35,7 +35,7 @@ public enum NoOpRegistry implements Registry {
     }
 
     @Override
-    public @NonNull Collection<String> getRegistryProperties() {
+    public @NonNull Collection<String> getRegistryPropertyNames() {
         return Collections.emptyList();
     }
 }

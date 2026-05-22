@@ -33,4 +33,10 @@ final class DsdContext {
                 ? concepts.stream().filter(concept -> concept.getId().equals(id)).findFirst()
                 : Optional.empty();
     }
+
+    public Optional<Concept> findConceptByConceptIdentity(@Nullable ConceptIdentity conceptIdentity) {
+        return conceptIdentity != null
+                ? concepts.stream().filter(conceptIdentity::isCompatibleWith).findFirst()
+                : Optional.empty();
+    }
 }

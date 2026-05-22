@@ -24,7 +24,7 @@ public class FileCachingAssert {
             .idPattern(FileCachingLoader.ID_PATTERN)
             .rank(FileCaching::getFileCachingRank)
             .rankLowerBound(FileCaching.UNKNOWN_FILE_CACHING_RANK)
-            .properties(FileCaching::getFileCachingProperties)
+            .properties(FileCaching::getFileCachingPropertyNames)
             .propertiesPrefix(FileCaching.FILE_CACHING_PROPERTY_PREFIX)
             .build();
 

@@ -4,6 +4,7 @@ import nbbrd.io.Resource;
 import nbbrd.io.text.TextParser;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,7 +15,6 @@ import sdmxdl.provider.ri.networking.RiNetworking;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.WebContext;
 import tests.sdmxdl.web.spi.DriverAssert;
-import tests.sdmxdl.web.spi.EnableWebQueriesOnSystemProperty;
 
 import java.io.File;
 import java.io.IOException;
@@ -202,7 +202,7 @@ public class StatCanDialectDriverTest {
 
     @ParameterizedTest
     @CsvFileSource(resources = "StatCanDialectDriverTest.csv", useHeadersInDisplayName = true)
-    @EnableWebQueriesOnSystemProperty
+    @Tag("webQueries")
     public void testBuiltinSources(String source, String flow, String key, int minFlowCount, int dimCount, int minSeriesCount, int minObsCount, String details) throws IOException {
         DriverAssert.assertBuiltinSource(new StatCanDialectDriver(), DriverAssert.SourceQuery
                         .builder()

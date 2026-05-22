@@ -22,7 +22,7 @@ public class WebCachingAssert {
             .idPattern(WebCachingLoader.ID_PATTERN)
             .rank(WebCaching::getWebCachingRank)
             .rankLowerBound(WebCaching.UNKNOWN_WEB_CACHING_RANK)
-            .properties(WebCaching::getWebCachingProperties)
+            .properties(WebCaching::getWebCachingPropertyNames)
             .propertiesPrefix(WebCaching.WEB_CACHING_PROPERTY_PREFIX)
             .build();
 

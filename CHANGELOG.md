@@ -7,6 +7,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-05-22
+
+This is the first stable release of the v3 series of **sdmx-dl**.  
+After an extended beta period, sdmx-dl is now considered production-ready.
+
+### Added
+
+- ![DOC] Add README file [#1229](https://github.com/nbbrd/sdmx-dl/issues/1229)
+
+### Fixed
+
+- ![PROVIDER] Fix IMF driver [#1228](https://github.com/nbbrd/sdmx-dl/issues/1228)
+
 ## [3.0.0-beta.18] - 2026-02-17
 
 This is the eighteenth beta release of **sdmx-dl**.  
@@ -598,7 +611,8 @@ production._
 
 - Initial release
 
-[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.18...HEAD
+[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0...HEAD
+[3.0.0]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.18...v3.0.0
 [3.0.0-beta.18]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.17...v3.0.0-beta.18
 [3.0.0-beta.17]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.16...v3.0.0-beta.17
 [3.0.0-beta.16]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.15...v3.0.0-beta.16

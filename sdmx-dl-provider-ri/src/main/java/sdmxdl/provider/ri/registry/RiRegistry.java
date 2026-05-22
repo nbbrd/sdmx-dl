@@ -73,7 +73,7 @@ public final class RiRegistry implements Registry {
     }
 
     @Override
-    public @NonNull Collection<String> getRegistryProperties() {
+    public @NonNull Collection<String> getRegistryPropertyNames() {
         return keysOf(SOURCES_FILE_PROPERTY);
     }
 

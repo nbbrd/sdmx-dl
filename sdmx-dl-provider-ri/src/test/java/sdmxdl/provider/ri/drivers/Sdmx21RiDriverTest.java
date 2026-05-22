@@ -16,6 +16,7 @@
  */
 package sdmxdl.provider.ri.drivers;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
@@ -24,7 +25,6 @@ import sdmxdl.provider.caching.MemCachingSupport;
 import sdmxdl.provider.ri.networking.RiNetworking;
 import sdmxdl.web.spi.WebContext;
 import tests.sdmxdl.web.spi.DriverAssert;
-import tests.sdmxdl.web.spi.EnableWebQueriesOnSystemProperty;
 
 import java.io.IOException;
 
@@ -40,7 +40,7 @@ public class Sdmx21RiDriverTest {
 
     @ParameterizedTest
     @CsvFileSource(resources = "Sdmx21RiDriverTest.csv", useHeadersInDisplayName = true)
-    @EnableWebQueriesOnSystemProperty
+    @Tag("webQueries")
     public void testBuiltinSources(String source, String flow, String key, int minFlowCount, int dimCount, int minSeriesCount, int minObsCount, String details) throws IOException {
         DriverAssert.assertBuiltinSource(new Sdmx21RiDriver(), DriverAssert.SourceQuery
                         .builder()

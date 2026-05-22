@@ -96,8 +96,8 @@ public final class FileRiDriver implements Driver {
         }
 
         @Override
-        public @NonNull Collection<String> getFileCachingProperties() {
-            return delegate.getWebCachingProperties();
+        public @NonNull Collection<String> getFileCachingPropertyNames() {
+            return delegate.getWebCachingPropertyNames();
         }
     }
 

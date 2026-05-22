@@ -14,11 +14,8 @@ import sdmxdl.EventListener;
 import sdmxdl.ext.Persistence;
 import sdmxdl.web.WebSources;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 @ServiceDefinition(
         quantifier = Quantifier.SINGLE,
@@ -39,7 +36,7 @@ public interface Registry {
             @Nullable EventListener onEvent,
             @Nullable ErrorListener onError);
 
-    @NonNull Collection<String> getRegistryProperties();
+    @NonNull Collection<String> getRegistryPropertyNames();
 
     @StaticFactoryMethod
     static @NonNull Registry noOp() {

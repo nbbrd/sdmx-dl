@@ -46,7 +46,7 @@ public interface WebCaching {
             @Nullable EventListener onEvent,
             @Nullable ErrorListener onError);
 
-    @NonNull Collection<String> getWebCachingProperties();
+    @NonNull Collection<String> getWebCachingPropertyNames();
 
     @StaticFactoryMethod
     static @NonNull WebCaching noOp() {

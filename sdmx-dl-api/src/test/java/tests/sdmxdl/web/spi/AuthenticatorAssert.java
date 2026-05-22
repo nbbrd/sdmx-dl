@@ -30,7 +30,7 @@ public class AuthenticatorAssert {
             .idPattern(AuthenticatorLoader.ID_PATTERN)
             .rank(ignore -> -1)
             .rankLowerBound(-1)
-            .properties(Authenticator::getAuthenticatorProperties)
+            .properties(Authenticator::getAuthenticatorPropertyNames)
             .propertiesPrefix(Authenticator.AUTHENTICATOR_PROPERTY_PREFIX)
             .build();
 

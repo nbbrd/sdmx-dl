@@ -16,7 +16,6 @@
  */
 package sdmxdl.web.spi;
 
-import internal.sdmxdl.web.spi.FailsafeDriver;
 import lombok.NonNull;
 import nbbrd.design.ThreadSafe;
 import nbbrd.service.*;
@@ -32,7 +31,6 @@ import java.util.Collection;
  */
 @ServiceDefinition(
         quantifier = Quantifier.MULTIPLE,
-        wrapper = FailsafeDriver.class,
         loaderName = "internal.{{canonicalName}}Loader"
 )
 @ThreadSafe
@@ -59,7 +57,7 @@ public interface Driver {
     Collection<WebSource> getDefaultSources();
 
     @NonNull
-    Collection<String> getDriverProperties();
+    Collection<String> getDriverPropertyNames();
 
     int NATIVE_DRIVER_RANK = Byte.MAX_VALUE;
     int WRAPPED_DRIVER_RANK = 0;

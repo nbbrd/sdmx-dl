@@ -59,7 +59,7 @@ public final class SingleNetworkingSupport implements Networking {
     }
 
     @Override
-    public @NonNull Collection<String> getNetworkingProperties() {
+    public @NonNull Collection<String> getNetworkingPropertyNames() {
         return Collections.emptyList();
     }
 

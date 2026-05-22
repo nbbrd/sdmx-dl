@@ -69,7 +69,7 @@ public final class MockedDriver implements Driver {
     }
 
     @Override
-    public @NonNull Collection<String> getDriverProperties() {
+    public @NonNull Collection<String> getDriverPropertyNames() {
         return Collections.emptyList();
     }
 

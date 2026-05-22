@@ -73,6 +73,46 @@ public class FailsafeConnectionTest {
     }
 
     @Test
+    public void testGetDatabases() {
+        failsafe.reset();
+        assertThatNoException()
+                .isThrownBy(valid::getDatabases);
+        failsafe.assertEmpty();
+
+        failsafe.reset();
+        assertThatIOException()
+                .isThrownBy(failing::getDatabases)
+                .withCauseInstanceOf(CustomException.class);
+        failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
+
+        failsafe.reset();
+        assertThatIOException()
+                .isThrownBy(nul::getDatabases)
+                .withNoCause();
+        failsafe.assertUnexpectedNull("unexpected null");
+    }
+
+    @Test
+    public void testGetAvailableDimensionCodes() {
+        failsafe.reset();
+        assertThatNoException()
+                .isThrownBy(() -> valid.getAvailableDimensionCodes(NO_DATABASE, RepoSamples.FLOW_REF, RepoSamples.K1, 0));
+        failsafe.assertEmpty();
+
+        failsafe.reset();
+        assertThatIOException()
+                .isThrownBy(() -> failing.getAvailableDimensionCodes(NO_DATABASE, RepoSamples.FLOW_REF, RepoSamples.K1, 0))
+                .withCauseInstanceOf(CustomException.class);
+        failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
+
+        failsafe.reset();
+        assertThatIOException()
+                .isThrownBy(() -> nul.getAvailableDimensionCodes(NO_DATABASE, RepoSamples.FLOW_REF, RepoSamples.K1, 0))
+                .withNoCause();
+        failsafe.assertUnexpectedNull("unexpected null");
+    }
+
+    @Test
     public void testGetFlows() {
         failsafe.reset();
         assertThatNoException()

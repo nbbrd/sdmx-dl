@@ -115,7 +115,7 @@ public final class MsalAuthenticator implements Authenticator {
     }
 
     @Override
-    public @NonNull Collection<String> getAuthenticatorProperties() {
+    public @NonNull Collection<String> getAuthenticatorPropertyNames() {
         return keysOf(
                 UID_PROPERTY,
                 CLIENT_ID_PROPERTY,

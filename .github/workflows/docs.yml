@@ -9,7 +9,7 @@ jobs:
 
     steps:
       - name: Check jbang-action
-        uses: jbangdev/jbang-action@v0.136.0
+        uses: jbangdev/jbang-action@v0.138.0
         with:
           trust: https://github.com/nbbrd/jbang-catalog/
           script: heylogs@nbbrd
@@ -26,18 +26,8 @@ jobs:
       DOC_URL: "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/docs/${{ github.ref_name }}"
 
     steps:
-      - name: Checkout source code
-        uses: actions/checkout@v6
-        with:
-          submodules: true
-          fetch-depth: 0
-
-      - name: Setup Java
-        uses: actions/setup-java@v5
-        with:
-          distribution: 'zulu'
-          java-version: 17
-          cache: 'maven'
+      - name: Checkout and Setup Maven
+        uses: s4u/setup-maven-action@v1.20.0
 
       - name: Setup docs with Maven
         run: mvn -B -ntp install -DskipTests -P setup-docs
@@ -81,7 +71,7 @@ jobs:
             $-jbang-
 
       - name: Create index.html
-        uses: jbangdev/jbang-action@v0.136.0
+        uses: jbangdev/jbang-action@v0.138.0
         with:
           trust: https://gist.github.com/charphi/
           script: https://gist.github.com/charphi/f44a24eb35dbd61b9f1d7759f0e561bd

@@ -22,7 +22,7 @@ public class RegistryAssert {
             .idPattern(ReaderLoader.ID_PATTERN)
             .rank(Registry::getRegistryRank)
             .rankLowerBound(Registry.UNKNOWN_REGISTRY_RANK)
-            .properties(Registry::getRegistryProperties)
+            .properties(Registry::getRegistryPropertyNames)
             .propertiesPrefix(REGISTRY_PROPERTY_PREFIX)
             .build();
 

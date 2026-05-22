@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.18</version>
+        <version>3.0.0</version>
     </parent>
 
     <artifactId>sdmx-dl-grpc</artifactId>
@@ -23,8 +23,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-        <quarkus.platform.version>3.31.3</quarkus.platform.version>
-        <quarkus.mcp.version>1.10.0</quarkus.mcp.version>
+        <quarkus.platform.version>3.35.3</quarkus.platform.version>
+        <quarkus.mcp.version>1.12.0</quarkus.mcp.version>
         <quarkus.package.jar.type>uber-jar</quarkus.package.jar.type>
         <skipITs>true</skipITs>
         <enforcer.skip>true</enforcer.skip>
@@ -139,14 +139,14 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
-            <version>4.40.0</version>
+            <version>4.44.0</version>
             <scope>test</scope>
         </dependency>
         <!-- WebDriverManager for automatic driver management -->
         <dependency>
             <groupId>io.github.bonigarcia</groupId>
             <artifactId>webdrivermanager</artifactId>
-            <version>6.3.3</version>
+            <version>6.3.4</version>
             <scope>test</scope>
         </dependency>
         <!-- REST Assured for API testing -->
@@ -214,6 +214,12 @@
                         <webdriver.chrome.driver>target/chromedriver</webdriver.chrome.driver>
                         <headless>true</headless>
                     </systemPropertyVariables>
+                    <properties combine.self="append">
+                        <!-- Disable parallel JUnit execution due to Quarkus not initializing -->
+                        <configurationParameters>
+                            junit.jupiter.execution.parallel.enabled=false
+                        </configurationParameters>
+                    </properties>
                 </configuration>
             </plugin>
             <plugin>

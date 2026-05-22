@@ -34,7 +34,7 @@ public enum NoOpPersistence implements Persistence {
     }
 
     @Override
-    public @NonNull Collection<String> getPersistenceProperties() {
+    public @NonNull Collection<String> getPersistencePropertyNames() {
         return Collections.emptyList();
     }
 }

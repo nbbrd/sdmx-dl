@@ -19,6 +19,12 @@ class Concept {
     @Nullable
     CodelistRef coreRef;
 
+    @Nullable
+    String parentID;
+
+    @Nullable
+    String parentVersion;
+
     public Optional<CodelistRef> resolveRef(@Nullable CodelistRef localRef) {
         return Optional.ofNullable(localRef != null ? localRef : coreRef);
     }

@@ -119,15 +119,15 @@ public class FailsafeDriverTest {
     @Test
     public void testGetSupportedProperties() {
         failsafe.reset();
-        assertThat(valid.getDriverProperties()).containsExactly("hello");
+        assertThat(valid.getDriverPropertyNames()).containsExactly("hello");
         failsafe.assertEmpty();
 
         failsafe.reset();
-        assertThat(failing.getDriverProperties()).isEmpty();
+        assertThat(failing.getDriverPropertyNames()).isEmpty();
         failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
-        assertThat(nul.getDriverProperties()).isEmpty();
+        assertThat(nul.getDriverPropertyNames()).isEmpty();
         failsafe.assertUnexpectedNull("unexpected null");
     }
 

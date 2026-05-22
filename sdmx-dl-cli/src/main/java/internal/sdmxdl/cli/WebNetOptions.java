@@ -110,7 +110,7 @@ public class WebNetOptions extends WebOptions {
         }
 
         @Override
-        public @NonNull Collection<String> getRegistryProperties() {
+        public @NonNull Collection<String> getRegistryPropertyNames() {
             return Collections.emptyList();
         }
 

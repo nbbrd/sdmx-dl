@@ -129,11 +129,11 @@ public final class FailsafeDriver implements Driver {
     }
 
     @Override
-    public @NonNull Collection<String> getDriverProperties() {
+    public @NonNull Collection<String> getDriverPropertyNames() {
         Collection<String> result;
 
         try {
-            result = delegate.getDriverProperties();
+            result = delegate.getDriverPropertyNames();
         } catch (RuntimeException ex) {
             unexpectedError("while getting supported properties", ex);
             return Collections.emptyList();

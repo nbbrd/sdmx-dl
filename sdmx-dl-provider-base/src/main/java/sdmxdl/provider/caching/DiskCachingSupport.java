@@ -148,12 +148,12 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
     }
 
     @Override
-    public @NonNull Collection<String> getFileCachingProperties() {
+    public @NonNull Collection<String> getFileCachingPropertyNames() {
         return emptyList();
     }
 
     @Override
-    public @NonNull Collection<String> getWebCachingProperties() {
+    public @NonNull Collection<String> getWebCachingPropertyNames() {
         return emptyList();
     }
 
