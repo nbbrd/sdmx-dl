@@ -48,6 +48,7 @@ import java.util.concurrent.Callable;
         subcommands = {
                 FetchCommand.class,
                 ListCommand.class,
+                SearchCommand.class,
                 CheckCommand.class,
                 SetupCommand.class,
                 DebugCommand.class

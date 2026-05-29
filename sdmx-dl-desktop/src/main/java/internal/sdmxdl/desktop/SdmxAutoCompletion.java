@@ -28,6 +28,7 @@ import nbbrd.io.Resource;
 import sdmxdl.*;
 import sdmxdl.Dimension;
 import sdmxdl.desktop.MainComponent;
+import sdmxdl.format.FlowSearch;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Network;
@@ -249,10 +250,14 @@ public abstract class SdmxAutoCompletion {
         }
 
         private List<Flow> filterAndSort(List<Flow> values, String term) {
-            Predicate<String> filter = ExtAutoCompletionSource.basicFilter(term);
-            return values.stream()
-                    .filter(o -> filter.test(o.getName()) || filter.test(o.getRef().getId()) || filter.test(o.getDescription()))
-                    .sorted(comparing(Flow::getName))
+            if (term == null || term.isEmpty()) {
+                return values.stream()
+                        .sorted(comparing(Flow::getName))
+                        .collect(toList());
+            }
+            return FlowSearch.of(values).search(term, values.size())
+                    .stream()
+                    .map(FlowSearch.Result::getFlow)
                     .collect(toList());
         }
 

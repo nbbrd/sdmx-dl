@@ -10,6 +10,7 @@ import io.quarkus.grpc.GrpcClient;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 import sdmxdl.Confidentiality;
+import sdmxdl.format.protobuf.FlowDto;
 import sdmxdl.format.protobuf.ProtoApi;
 import sdmxdl.format.protobuf.ProtoWeb;
 import sdmxdl.format.protobuf.web.WebSourceDto;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
@@ -70,6 +72,83 @@ public class SdmxWebManagerServiceTest {
                             .extracting(ProtoWeb::toWebSources)
                             .extracting(sdmxdl.web.WebSources::getSources, list(sdmxdl.web.WebSource.class))
                             .allMatch(source -> source.getConfidentiality().equals(Confidentiality.PUBLIC));
+                })
+                .thenAssertResults();
+    }
+
+    @Test
+    public void testSearchFlowsReturnsRankedResults() {
+        SearchFlowsRequestDto request = SearchFlowsRequestDto.newBuilder()
+                .setSource("ECB")
+                .setQuery("exchange rates")
+                .setMaxResults(5)
+                .build();
+        List<FlowDto> response = grpc.searchFlows(request).collect().asList().await().atMost(Duration.ofSeconds(30));
+        assertThat(response)
+                .isNotEmpty()
+                .hasSizeLessThanOrEqualTo(5);
+        assertThat(response.get(0).getRef())
+                .containsIgnoringCase("EXR");
+    }
+
+    @Test
+    public void testSearchFlowsReturnsEmptyForEmptyQuery() {
+        SearchFlowsRequestDto request = SearchFlowsRequestDto.newBuilder()
+                .setSource("ECB")
+                .setQuery("")
+                .setMaxResults(10)
+                .build();
+        List<FlowDto> response = grpc.searchFlows(request).collect().asList().await().atMost(Duration.ofSeconds(30));
+        assertThat(response).isEmpty();
+    }
+
+    @Test
+    public void testSearchFlowsRespectsMaxResults() {
+        SearchFlowsRequestDto request = SearchFlowsRequestDto.newBuilder()
+                .setSource("ECB")
+                .setQuery("balance")
+                .setMaxResults(1)
+                .build();
+        List<FlowDto> response = grpc.searchFlows(request).collect().asList().await().atMost(Duration.ofSeconds(30));
+        assertThat(response).hasSizeLessThanOrEqualTo(1);
+    }
+
+    @Test
+    public void mcpSearchFlowsReturnsRankedResults() {
+        McpAssured.newConnectedStreamableClient()
+                .when()
+                .toolsCall("mcpSearchFlows", Map.of("source", "ECB", "query", "exchange rates"), r -> {
+                    assertThat(r)
+                            .returns(false, ToolResponse::isError)
+                            .extracting(ToolResponse::content, list(Content.class))
+                            .isNotEmpty();
+                })
+                .thenAssertResults();
+    }
+
+    @Test
+    public void mcpSearchFlowsReturnsEmptyForEmptyQuery() {
+        McpAssured.newConnectedStreamableClient()
+                .when()
+                .toolsCall("mcpSearchFlows", Map.of("source", "ECB", "query", ""), r -> {
+                    assertThat(r)
+                            .returns(false, ToolResponse::isError)
+                            .extracting(ToolResponse::content, list(Content.class))
+                            .hasSize(1)
+                            .element(0)
+                            .extracting(SdmxWebManagerServiceTest::getText, STRING)
+                            .isEqualToIgnoringWhitespace("[]");
+                })
+                .thenAssertResults();
+    }
+
+    @Test
+    public void mcpSearchFlowsReturnsErrorForInvalidSource() {
+        McpAssured.newConnectedStreamableClient()
+                .when()
+                .toolsCall("mcpSearchFlows", Map.of("source", "INVALID_SOURCE_XYZ", "query", "test"), r -> {
+                    assertThat(r)
+                            .returns(true, ToolResponse::isError);
                 })
                 .thenAssertResults();
     }

@@ -25,6 +25,8 @@ service SdmxWebManager {
   rpc GetDataStream(KeyRequestDto) returns (stream sdmxdl.format.protobuf.SeriesDto);
 
   rpc GetAvailability(KeyDimensionRequestDto) returns (stream DimensionCodesDto);
+
+  rpc SearchFlows(SearchFlowsRequestDto) returns (stream sdmxdl.format.protobuf.FlowDto);
 }
 
 message EmptyDto {
@@ -67,4 +69,12 @@ message KeyDimensionRequestDto {
 
 message DimensionCodesDto {
   repeated string codes = 1;
+}
+
+message SearchFlowsRequestDto {
+  string source = 1;
+  string query = 2;
+  optional string database = 3;
+  optional string languages = 4;
+  optional int32 maxResults = 5;
 }

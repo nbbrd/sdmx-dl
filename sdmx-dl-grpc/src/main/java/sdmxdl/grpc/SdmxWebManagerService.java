@@ -16,6 +16,7 @@ import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import sdmxdl.*;
+import sdmxdl.format.FlowSearch;
 import sdmxdl.format.protobuf.*;
 import sdmxdl.format.protobuf.web.MonitorReportDto;
 import sdmxdl.format.protobuf.web.WebSourceDto;
@@ -25,6 +26,7 @@ import sdmxdl.web.WebSource;
 import sdmxdl.web.WebSources;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -195,6 +197,8 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     private static final String FLOW_ARG = "SDMX flow ref";
     private static final String KEY_ARG = "SDMX key";
     private static final String DETAIL_ARG = "Amount of information to retrieve (FULL, DATA_ONLY, SERIES_KEYS_ONLY, NO_DATA)";
+    private static final String QUERY_ARG = "Search query (free text)";
+    private static final String MAX_RESULTS_ARG = "Maximum number of results to return";
 
     @Tool(description = "Get description of SDMX-DL.")
     public AboutDto mcpAbout() {
@@ -254,6 +258,27 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
 //                .clearStructureRef()
 //                .setDescription(flowDto.getDescription().replaceAll("<[^>]*>", ""))
                 .build();
+    }
+
+    @Tool(description = "Search SDMX data flows by relevance using hybrid search (BM25 + trigram).")
+    public List<FlowDto> mcpSearchFlows(
+            @ToolArg(description = SOURCE_ARG) String source,
+            @ToolArg(description = QUERY_ARG) String query,
+            @ToolArg(description = DATABASE_ARG, required = false, defaultValue = NO_DATABASE_KEYWORD) String database,
+            @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = ANY_KEYWORD) String languages,
+            @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = "20") int maxResults
+    ) throws IOException {
+        Collection<Flow> flows = manager
+                .using(getPublicSourceForMcp(source))
+                .getFlows(DatabaseRequest
+                        .builder()
+                        .databaseOf(database)
+                        .languagesOf(languages)
+                        .build());
+        return FlowSearch.of(flows).search(query, maxResults)
+                .stream()
+                .map(result -> ProtoApi.fromDataflow(result.getFlow()))
+                .toList();
     }
 
     @Tool(description = "Get SDMX metadata such as flow and structure.")
@@ -386,6 +411,44 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
             return Multi.createFrom()
                     .items(connection.getAvailableDimensionCodes(databaseRef, flowRef, key, request.getDimension()))
                     .map(codes -> DimensionCodesDto.newBuilder().addAllCodes(codes).build());
+        } catch (IOException ex) {
+            return Multi.createFrom().failure(ex);
+        }
+    }
+
+    @RequestBody(
+            content = @Content(
+                    examples = @ExampleObject(
+                            name = "ECB example",
+                            value = """
+                                    {
+                                      "source": "ECB",
+                                      "query": "exchange rates",
+                                      "maxResults": 5
+                                    }
+                                    """
+                    )
+            )
+    )
+    @POST
+    @Path("/searchFlows")
+    @Override
+    public Multi<FlowDto> searchFlows(SearchFlowsRequestDto request) {
+        DatabaseRef databaseRef = request.hasDatabase() ? DatabaseRef.parse(request.getDatabase()) : DatabaseRef.NO_DATABASE;
+        Languages languages = request.hasLanguages() ? Languages.parse(request.getLanguages()) : Languages.ANY;
+        int maxResults = request.hasMaxResults() ? request.getMaxResults() : 20;
+        try {
+            Collection<Flow> flows = manager
+                    .usingName(request.getSource())
+                    .getFlows(DatabaseRequest
+                            .builder()
+                            .database(databaseRef)
+                            .languages(languages)
+                            .build());
+            return Multi.createFrom()
+                    .iterable(FlowSearch.of(flows).search(request.getQuery(), maxResults))
+                    .map(FlowSearch.Result::getFlow)
+                    .map(ProtoApi::fromDataflow);
         } catch (IOException ex) {
             return Multi.createFrom().failure(ex);
         }
