@@ -99,11 +99,11 @@ public class WebOptions {
                 .onEvent(getEventListener())
                 .onError(getErrorListener())
                 .onRegistryEvent((marker, message) -> {
-                    if (verboseOptions.isVerbose())
+                    if (verboseOptions.isVerbose() || verboseOptions.isExplain())
                         verboseOptions.reportToErrorStream(null, marker, message);
                 })
                 .onRegistryError((marker, message, error) -> {
-                    if (verboseOptions.isVerbose())
+                    if (verboseOptions.isVerbose() || verboseOptions.isExplain())
                         verboseOptions.reportToErrorStream(null, marker, message, error);
                 })
                 .build();
@@ -156,7 +156,7 @@ public class WebOptions {
             if (main != null) {
                 main.apply(source).accept(marker, message);
             }
-            if (verboseOptions.isVerbose()) {
+            if (verboseOptions.isVerbose() || verboseOptions.isExplain()) {
                 verboseOptions.reportToErrorStream(source, marker, message);
             }
         }
@@ -174,7 +174,7 @@ public class WebOptions {
             if (main != null) {
                 main.apply(source).accept(marker, message, error);
             }
-            if (verboseOptions.isVerbose()) {
+            if (verboseOptions.isVerbose() || verboseOptions.isExplain()) {
                 verboseOptions.reportToErrorStream(source, marker, message, error);
             }
         }

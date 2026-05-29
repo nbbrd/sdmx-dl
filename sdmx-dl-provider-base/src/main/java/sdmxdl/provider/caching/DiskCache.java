@@ -70,18 +70,19 @@ public final class DiskCache<V extends HasExpiration & HasPersistence> implement
 
     @Override
     public @Nullable V get(@NonNull String key) {
+        long start = System.currentTimeMillis();
         Path file = getFile(key);
         V result = readFile(file);
         if (result == null) {
-            reportRead(key, DiskCacheEvent.MISSED);
+            reportRead(key, DiskCacheEvent.MISSED, System.currentTimeMillis() - start);
             return null;
         }
         if (result.isExpired(clock)) {
             deleteFile(file);
-            reportRead(key, DiskCacheEvent.EXPIRED);
+            reportRead(key, DiskCacheEvent.EXPIRED, System.currentTimeMillis() - start);
             return null;
         }
-        reportRead(key, DiskCacheEvent.HIT);
+        reportRead(key, DiskCacheEvent.HIT, System.currentTimeMillis() - start);
         return result;
     }
 
@@ -95,8 +96,8 @@ public final class DiskCache<V extends HasExpiration & HasPersistence> implement
         }
     }
 
-    private void reportRead(String key, DiskCacheEvent event) {
-        if (onEvent != null) onEvent.accept(id, event.name() + " " + key);
+    private void reportRead(String key, DiskCacheEvent event, long elapsedMs) {
+        if (onEvent != null) onEvent.accept(id, String.format(Locale.ROOT, "%s %s (%dms)", event.name(), key, elapsedMs));
     }
 
     private V readFile(Path file) {

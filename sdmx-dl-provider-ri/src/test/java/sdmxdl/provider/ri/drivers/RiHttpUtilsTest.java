@@ -81,7 +81,10 @@ public class RiHttpUtilsTest {
         assertThat(events.pop()).containsExactly(new Event(source, "hello"));
 
         x.onSuccess(MediaType.ANY_TYPE::toString);
-        assertThat(events.pop()).containsExactly(new Event(source, "Parsing '*/*' content-type"));
+        assertThat(events.pop()).hasSize(1).first().satisfies(event -> {
+            assertThat(event.getSource()).isEqualTo(source);
+            assertThat(event.getMessage()).startsWith("Parsing '*/*' content-type (").endsWith("ms)");
+        });
 
         x.onOpen(request, NO_PROXY, NONE);
         assertThat(events.pop()).containsExactly(new Event(source, "HTTP GET http://localhost"));

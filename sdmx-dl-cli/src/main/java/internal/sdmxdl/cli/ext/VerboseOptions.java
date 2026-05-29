@@ -4,9 +4,17 @@ import org.jspecify.annotations.Nullable;
 import picocli.CommandLine;
 import sdmxdl.web.WebSource;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 @lombok.Getter
 @lombok.Setter
 public class VerboseOptions {
+
+    private static final Set<String> EXPLAIN_MARKERS = new HashSet<>(Arrays.asList(
+            "DRIVER", "QUERY", "SUMMARY", "NETWORK", "RI_CACHING", "RI_HTTP"
+    ));
 
     @CommandLine.Option(
             names = {"-v", "--verbose"},
@@ -15,12 +23,20 @@ public class VerboseOptions {
     )
     private boolean verbose;
 
+    @CommandLine.Option(
+            names = {"--explain"},
+            defaultValue = "false",
+            descriptionKey = "cli.explain"
+    )
+    private boolean explain;
+
     @CommandLine.Spec
     private CommandLine.Model.CommandSpec spec;
 
-
     public void reportToErrorStream(@Nullable WebSource source, @Nullable String marker, CharSequence message) {
         if (verbose) {
+            printToErrorStream(source, marker, message, null);
+        } else if (explain && isExplainMarker(marker)) {
             printToErrorStream(source, marker, message, null);
         }
     }
@@ -28,7 +44,13 @@ public class VerboseOptions {
     public void reportToErrorStream(@Nullable WebSource source, @Nullable String marker, CharSequence message, Exception ex) {
         if (verbose) {
             printToErrorStream(source, marker, message, ex);
+        } else if (explain && isExplainMarker(marker)) {
+            printToErrorStream(source, marker, message, ex);
         }
+    }
+
+    private static boolean isExplainMarker(@Nullable String marker) {
+        return marker != null && EXPLAIN_MARKERS.contains(marker);
     }
 
     private void printToErrorStream(@Nullable WebSource source, @Nullable String marker, CharSequence message, @Nullable Exception ex) {

@@ -142,6 +142,13 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
         Driver driver = lookupDriverById(source.getDriver())
                 .orElseThrow(() -> new IOException("Failed to find a suitable driver for '" + source + "'"));
 
+        if (onEvent != null) {
+            EventListener listener = onEvent.apply(source);
+            if (listener != null) {
+                listener.accept("DRIVER", "Using driver '" + driver.getDriverId() + "'");
+            }
+        }
+
         return driver.connect(source, languages, getContext());
     }
 

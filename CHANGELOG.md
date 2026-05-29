@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- ![PROVIDER] Add SQL EXPLAIN ANALYZE-style execution tracing [#1244](https://github.com/nbbrd/sdmx-dl/issues/1244)
+
 ### Changed
 
 - ![CLI] Improve CLI message and error reporting [#1243](https://github.com/nbbrd/sdmx-dl/issues/1243)

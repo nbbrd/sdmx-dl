@@ -37,13 +37,16 @@ import sdmxdl.web.spi.WebCaching;
 import sdmxdl.web.spi.WebContext;
 
 import java.io.File;
+import java.io.FilterInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.URL;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -84,7 +87,10 @@ public class RiHttpUtils {
     }
 
     public static @NonNull HttpClient newClient(@NonNull WebSource source, @NonNull WebContext context) {
-        return newClient(source, newContext(source, context));
+        HttpContext httpContext = newContext(source, context);
+        HttpClient result = newClient(source, httpContext);
+        EventListener onEvent = context.getEventListener(source);
+        return onEvent != null ? new ByteCountingClient(result, message -> onEvent.accept("RI_HTTP", message)) : result;
     }
 
     public static @NonNull HttpClient newClient(@NonNull WebSource source, @NonNull HttpContext context) {
@@ -134,8 +140,16 @@ public class RiHttpUtils {
 
         private final @NonNull Consumer<CharSequence> listener;
 
+        private long openTimestamp;
+
+        RiHttpEventListener(@NonNull Consumer<CharSequence> listener) {
+            this.listener = listener;
+            this.openTimestamp = 0;
+        }
+
         @Override
         public void onOpen(@NonNull HttpRequest request, @NonNull Proxy proxy, @NonNull HttpAuthScheme scheme) {
+            openTimestamp = System.currentTimeMillis();
             String message = WebEvents.onQuery(request.getMethod().name(), request.getQuery(), proxy);
             if (!HttpAuthScheme.NONE.equals(scheme)) {
                 message += " with auth '" + scheme.name() + "'";
@@ -145,7 +159,8 @@ public class RiHttpUtils {
 
         @Override
         public void onSuccess(@NonNull Supplier<String> contentType) {
-            listener.accept(String.format(Locale.ROOT, "Parsing '%s' content-type", contentType.get()));
+            long elapsed = System.currentTimeMillis() - openTimestamp;
+            listener.accept(String.format(Locale.ROOT, "Parsing '%s' content-type (%dms)", contentType.get(), elapsed));
         }
 
         @Override
@@ -223,6 +238,90 @@ public class RiHttpUtils {
                     onEvent.accept(authenticator.getAuthenticatorId(), "Failed to invalidate password authentication: " + ex.getMessage());
                 }
             }
+        }
+    }
+
+    @lombok.AllArgsConstructor
+    private static final class ByteCountingClient implements HttpClient {
+
+        @lombok.NonNull
+        private final HttpClient delegate;
+
+        @lombok.NonNull
+        private final Consumer<CharSequence> listener;
+
+        @Override
+        public @NonNull HttpResponse send(@NonNull HttpRequest request) throws IOException {
+            return new ByteCountingResponse(delegate.send(request), listener);
+        }
+    }
+
+    @lombok.AllArgsConstructor
+    private static final class ByteCountingResponse implements HttpResponse {
+
+        @lombok.NonNull
+        private final HttpResponse delegate;
+
+        @lombok.NonNull
+        private final Consumer<CharSequence> listener;
+
+        private final AtomicLong byteCount = new AtomicLong();
+
+        @Override
+        public @NonNull nbbrd.io.net.MediaType getContentType() throws IOException {
+            return delegate.getContentType();
+        }
+
+        @Override
+        public @NonNull InputStream getBody() throws IOException {
+            return new CountingInputStream(delegate.getBody(), byteCount);
+        }
+
+        @Override
+        public @NonNull InputStream asDisconnectingInputStream() throws IOException {
+            return new CountingInputStream(delegate.asDisconnectingInputStream(), byteCount);
+        }
+
+        @Override
+        public void close() throws IOException {
+            try {
+                delegate.close();
+            } finally {
+                long bytes = byteCount.get();
+                if (bytes > 0) {
+                    listener.accept(String.format(Locale.ROOT, "Read %s", formatBytes(bytes)));
+                }
+            }
+        }
+
+        private static String formatBytes(long bytes) {
+            if (bytes < 1024) return bytes + "B";
+            if (bytes < 1024 * 1024) return String.format(Locale.ROOT, "%.1fKB", bytes / 1024.0);
+            return String.format(Locale.ROOT, "%.1fMB", bytes / (1024.0 * 1024.0));
+        }
+    }
+
+    private static final class CountingInputStream extends FilterInputStream {
+
+        private final AtomicLong counter;
+
+        CountingInputStream(InputStream in, AtomicLong counter) {
+            super(in);
+            this.counter = counter;
+        }
+
+        @Override
+        public int read() throws IOException {
+            int result = super.read();
+            if (result != -1) counter.incrementAndGet();
+            return result;
+        }
+
+        @Override
+        public int read(byte[] b, int off, int len) throws IOException {
+            int result = super.read(b, off, len);
+            if (result > 0) counter.addAndGet(result);
+            return result;
         }
     }
 }
