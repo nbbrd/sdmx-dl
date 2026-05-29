@@ -1,8 +1,8 @@
 package internal.sdmxdl.cli.ext;
 
+import org.jspecify.annotations.Nullable;
 import picocli.CommandLine;
-
-import java.util.Objects;
+import sdmxdl.web.WebSource;
 
 @lombok.Getter
 @lombok.Setter
@@ -18,32 +18,35 @@ public class VerboseOptions {
     @CommandLine.Spec
     private CommandLine.Model.CommandSpec spec;
 
-    public void reportToErrorStream(Anchor anchor, String message) {
+
+    public void reportToErrorStream(@Nullable WebSource source, @Nullable String marker, CharSequence message) {
         if (verbose) {
-            CommandLine.Help.ColorScheme colorScheme = spec.commandLine().getColorScheme();
-            reportToErrorStream(colorScheme
-                    .text("[")
-                    .concat(colorScheme.commandText(anchor.toString()))
-                    .concat(colorScheme.text("] "))
-                    .concat(colorScheme.optionText(message))
-            );
+            printToErrorStream(source, marker, message, null);
         }
     }
 
-    public void reportToErrorStream(Anchor anchor, String message, Exception ex) {
-        CommandLine.Help.ColorScheme colorScheme = spec.commandLine().getColorScheme();
-        String details = ex.getMessage() != null ? ex.getMessage() : ex.getClass().getName();
-        reportToErrorStream(colorScheme
-                .text("[")
-                .concat(colorScheme.commandText(anchor.toString()))
-                .concat(colorScheme.text("] "))
-                .concat(colorScheme.optionText(message))
-                .concat(" ")
-                .concat(colorScheme.stackTraceText(details))
-        );
+    public void reportToErrorStream(@Nullable WebSource source, @Nullable String marker, CharSequence message, Exception ex) {
+        if (verbose) {
+            printToErrorStream(source, marker, message, ex);
+        }
     }
 
-    private void reportToErrorStream(CommandLine.Help.Ansi.Text text) {
-        spec.commandLine().getErr().println(text);
+    private void printToErrorStream(@Nullable WebSource source, @Nullable String marker, CharSequence message, @Nullable Exception ex) {
+        CommandLine.Help.ColorScheme colorScheme = spec.commandLine().getColorScheme();
+
+        CommandLine.Help.Ansi.Text result = colorScheme
+                .text("[")
+                .concat(colorScheme.commandText(source != null ? source.getId() : "-"))
+                .concat(colorScheme.text("] ("))
+                .concat(colorScheme.optionText(marker))
+                .concat(colorScheme.text(") "))
+                .concat(colorScheme.text(message.toString()));
+
+        if (ex != null) {
+            String details = ex.getMessage() != null ? ex.getMessage() : ex.getClass().getName();
+            result = result.concat(" ").concat(colorScheme.stackTraceText(details));
+        }
+
+        spec.commandLine().getErr().println(result);
     }
 }

@@ -16,7 +16,6 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.ext.Anchor;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import internal.sdmxdl.cli.ext.VerboseOptions;
@@ -74,7 +73,7 @@ public final class CheckConfigCommand implements Callable<Void> {
         return ConfigHelper
                 .builder()
                 .appName(About.NAME)
-                .onLoadingError((path, ex) -> verboseOptions.reportToErrorStream(Anchor.CFG, path.toString(), ex))
+                .onLoadingError((path, ex) -> verboseOptions.reportToErrorStream(null, null, path.toString(), ex))
                 .build();
     }
 

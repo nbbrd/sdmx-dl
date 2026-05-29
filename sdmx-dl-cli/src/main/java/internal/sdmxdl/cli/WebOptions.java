@@ -16,7 +16,6 @@
  */
 package internal.sdmxdl.cli;
 
-import internal.sdmxdl.cli.ext.Anchor;
 import internal.sdmxdl.cli.ext.VerboseOptions;
 import nbbrd.design.ReturnNew;
 import org.jspecify.annotations.Nullable;
@@ -101,11 +100,11 @@ public class WebOptions {
                 .onError(getErrorListener())
                 .onRegistryEvent((marker, message) -> {
                     if (verboseOptions.isVerbose())
-                        verboseOptions.reportToErrorStream(Anchor.CFG, marker + ": " + message);
+                        verboseOptions.reportToErrorStream(null, marker, message);
                 })
                 .onRegistryError((marker, message, error) -> {
                     if (verboseOptions.isVerbose())
-                        verboseOptions.reportToErrorStream(Anchor.CFG, marker + ": " + message, error);
+                        verboseOptions.reportToErrorStream(null, marker, message, error);
                 })
                 .build();
     }
@@ -158,7 +157,7 @@ public class WebOptions {
                 main.apply(source).accept(marker, message);
             }
             if (verboseOptions.isVerbose()) {
-                verboseOptions.reportToErrorStream(Anchor.WEB, source.getId() + ": " + message);
+                verboseOptions.reportToErrorStream(source, marker, message);
             }
         }
     }
@@ -176,7 +175,7 @@ public class WebOptions {
                 main.apply(source).accept(marker, message, error);
             }
             if (verboseOptions.isVerbose()) {
-                verboseOptions.reportToErrorStream(Anchor.WEB, source.getId() + ": " + message, error);
+                verboseOptions.reportToErrorStream(source, marker, message, error);
             }
         }
     }
