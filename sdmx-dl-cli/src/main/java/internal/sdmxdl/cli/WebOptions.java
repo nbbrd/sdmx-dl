@@ -116,7 +116,17 @@ public class WebOptions {
     private Function<? super WebSource, EventListener> getEventListener() {
         Function<? super WebSource, EventListener> original = isNoLog() ? null : source -> new LoggingListener(source)::onSourceEvent;
         VerboseEventListener result = new VerboseEventListener(original, verboseOptions);
-        return source -> (marker, message) -> result.onSourceEvent(source, marker, message);
+        return source -> new EventListener() {
+            @Override
+            public void accept(@lombok.NonNull String marker, @lombok.NonNull CharSequence message) {
+                result.onSourceEvent(source, marker, message, 0);
+            }
+
+            @Override
+            public void accept(@lombok.NonNull String marker, @lombok.NonNull CharSequence message, int depth) {
+                result.onSourceEvent(source, marker, message, depth);
+            }
+        };
     }
 
     private Function<? super WebSource, ErrorListener> getErrorListener() {
@@ -152,12 +162,12 @@ public class WebOptions {
         @lombok.NonNull
         private final VerboseOptions verboseOptions;
 
-        public void onSourceEvent(WebSource source, String marker, CharSequence message) {
+        public void onSourceEvent(WebSource source, String marker, CharSequence message, int depth) {
             if (main != null) {
-                main.apply(source).accept(marker, message);
+                main.apply(source).accept(marker, message, depth);
             }
             if (verboseOptions.isVerbose() || verboseOptions.isExplain()) {
-                verboseOptions.reportToErrorStream(source, marker, message);
+                verboseOptions.reportToErrorStream(source, marker, message, depth);
             }
         }
     }

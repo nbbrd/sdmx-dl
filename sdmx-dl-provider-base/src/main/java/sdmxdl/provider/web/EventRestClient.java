@@ -22,6 +22,7 @@ final class EventRestClient implements RestClient {
 
     private static final String QUERY_MARKER = "QUERY";
     private static final String SUMMARY_MARKER = "SUMMARY";
+    private static final int DEPTH = 0;
 
     static @NonNull RestClient of(@NonNull RestClient delegate, @Nullable EventListener onEvent) {
         return onEvent != null ? new EventRestClient(delegate, onEvent) : delegate;
@@ -50,31 +51,31 @@ final class EventRestClient implements RestClient {
 
     @Override
     public @NonNull List<Flow> getFlows() throws IOException {
-        onEvent.accept(QUERY_MARKER, WebEvents.onFlowsQuery());
+        onEvent.accept(QUERY_MARKER, WebEvents.onFlowsQuery(), DEPTH);
         long start = System.currentTimeMillis();
         List<Flow> result = delegate.getFlows();
         long elapsed = System.currentTimeMillis() - start;
         networkMs.addAndGet(elapsed);
         queryCount.incrementAndGet();
-        onEvent.accept(QUERY_MARKER, String.format(Locale.ROOT, "Got %d flows (%dms)", result.size(), elapsed));
+        onEvent.accept(QUERY_MARKER, String.format(Locale.ROOT, "Got %d flows (%dms)", result.size(), elapsed), DEPTH);
         return result;
     }
 
     @Override
     public @NonNull Structure getStructure(@NonNull StructureRef ref) throws IOException {
-        onEvent.accept(QUERY_MARKER, WebEvents.onStructureQuery(ref));
+        onEvent.accept(QUERY_MARKER, WebEvents.onStructureQuery(ref), DEPTH);
         long start = System.currentTimeMillis();
         Structure result = delegate.getStructure(ref);
         long elapsed = System.currentTimeMillis() - start;
         networkMs.addAndGet(elapsed);
         queryCount.incrementAndGet();
-        onEvent.accept(QUERY_MARKER, String.format(Locale.ROOT, "Got structure with %d dimensions (%dms)", result.getDimensions().size(), elapsed));
+        onEvent.accept(QUERY_MARKER, String.format(Locale.ROOT, "Got structure with %d dimensions (%dms)", result.getDimensions().size(), elapsed), DEPTH);
         return result;
     }
 
     @Override
     public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull Structure dsd) throws IOException {
-        onEvent.accept(QUERY_MARKER, WebEvents.onDataQuery(ref));
+        onEvent.accept(QUERY_MARKER, WebEvents.onDataQuery(ref), DEPTH);
         long start = System.currentTimeMillis();
         Stream<Series> result = delegate.getData(ref, dsd);
         AtomicLong seriesCount = new AtomicLong();
@@ -88,7 +89,7 @@ final class EventRestClient implements RestClient {
                 .onClose(() -> {
                     long elapsed = System.currentTimeMillis() - start;
                     networkMs.addAndGet(elapsed);
-                    onEvent.accept(QUERY_MARKER, WebEvents.onDataReceived(seriesCount.get(), obsCount.get(), elapsed));
+                    onEvent.accept(QUERY_MARKER, WebEvents.onDataReceived(seriesCount.get(), obsCount.get(), elapsed), DEPTH);
                 });
     }
 
@@ -114,7 +115,6 @@ final class EventRestClient implements RestClient {
                 "Completed %d %s in %dms",
                 queryCount.get(),
                 queryCount.get() == 1 ? "query" : "queries",
-                totalElapsed));
+                totalElapsed), DEPTH);
     }
 }
-

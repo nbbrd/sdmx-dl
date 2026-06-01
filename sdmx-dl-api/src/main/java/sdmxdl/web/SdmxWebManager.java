@@ -145,7 +145,7 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
         if (onEvent != null) {
             EventListener listener = onEvent.apply(source);
             if (listener != null) {
-                listener.accept("DRIVER", "Using driver '" + driver.getDriverId() + "'");
+                listener.accept("DRIVER", "Using driver '" + driver.getDriverId() + "'", 0);
             }
         }
 

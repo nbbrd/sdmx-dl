@@ -34,18 +34,26 @@ public class VerboseOptions {
     private CommandLine.Model.CommandSpec spec;
 
     public void reportToErrorStream(@Nullable WebSource source, @Nullable String marker, CharSequence message) {
+        reportToErrorStream(source, marker, message, 0);
+    }
+
+    public void reportToErrorStream(@Nullable WebSource source, @Nullable String marker, CharSequence message, int depth) {
         if (verbose) {
-            printToErrorStream(source, marker, message, null);
+            printToErrorStream(source, marker, message, null, depth);
         } else if (explain && isExplainMarker(marker)) {
-            printToErrorStream(source, marker, message, null);
+            printToErrorStream(source, marker, message, null, depth);
         }
     }
 
     public void reportToErrorStream(@Nullable WebSource source, @Nullable String marker, CharSequence message, Exception ex) {
+        reportToErrorStream(source, marker, message, ex, 0);
+    }
+
+    public void reportToErrorStream(@Nullable WebSource source, @Nullable String marker, CharSequence message, Exception ex, int depth) {
         if (verbose) {
-            printToErrorStream(source, marker, message, ex);
+            printToErrorStream(source, marker, message, ex, depth);
         } else if (explain && isExplainMarker(marker)) {
-            printToErrorStream(source, marker, message, ex);
+            printToErrorStream(source, marker, message, ex, depth);
         }
     }
 
@@ -53,13 +61,15 @@ public class VerboseOptions {
         return marker != null && EXPLAIN_MARKERS.contains(marker);
     }
 
-    private void printToErrorStream(@Nullable WebSource source, @Nullable String marker, CharSequence message, @Nullable Exception ex) {
+    private void printToErrorStream(@Nullable WebSource source, @Nullable String marker, CharSequence message, @Nullable Exception ex, int depth) {
         CommandLine.Help.ColorScheme colorScheme = spec.commandLine().getColorScheme();
+
+        String indent = depth > 0 ? repeat("  ", depth) : "";
 
         CommandLine.Help.Ansi.Text result = colorScheme
                 .text("[")
                 .concat(colorScheme.commandText(source != null ? source.getId() : "-"))
-                .concat(colorScheme.text("] ("))
+                .concat(colorScheme.text("] " + indent + "("))
                 .concat(colorScheme.optionText(marker))
                 .concat(colorScheme.text(") "))
                 .concat(colorScheme.text(message.toString()));
@@ -70,5 +80,11 @@ public class VerboseOptions {
         }
 
         spec.commandLine().getErr().println(result);
+    }
+
+    private static String repeat(String s, int count) {
+        StringBuilder sb = new StringBuilder(s.length() * count);
+        for (int i = 0; i < count; i++) sb.append(s);
+        return sb.toString();
     }
 }

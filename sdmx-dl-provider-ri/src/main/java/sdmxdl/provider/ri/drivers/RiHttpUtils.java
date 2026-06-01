@@ -90,7 +90,7 @@ public class RiHttpUtils {
         HttpContext httpContext = newContext(source, context);
         HttpClient result = newClient(source, httpContext);
         EventListener onEvent = context.getEventListener(source);
-        return onEvent != null ? new ByteCountingClient(result, message -> onEvent.accept("RI_HTTP", message)) : result;
+        return onEvent != null ? new ByteCountingClient(result, message -> onEvent.accept("RI_HTTP", message, 1)) : result;
     }
 
     public static @NonNull HttpClient newClient(@NonNull WebSource source, @NonNull HttpContext context) {
@@ -113,7 +113,7 @@ public class RiHttpUtils {
                 .sslSocketFactory(() -> network.getSSLFactory().getSSLSocketFactory())
                 .hostnameVerifier(() -> network.getSSLFactory().getHostnameVerifier())
                 .urlConnectionFactory(() -> network.getURLConnectionFactory()::openConnection)
-                .listener(onEvent != null ? new RiHttpEventListener(message -> onEvent.accept("RI_HTTP", message)) : HttpEventListener.noOp())
+                .listener(onEvent != null ? new RiHttpEventListener(message -> onEvent.accept("RI_HTTP", message, 1)) : HttpEventListener.noOp())
                 .authenticator(new RiHttpAuthenticator(source, context.getAuthenticators(), context.getCaching(), onEvent, onError))
                 .userAgent(USER_AGENT_PROPERTY.get(source.getProperties()))
                 .build();
