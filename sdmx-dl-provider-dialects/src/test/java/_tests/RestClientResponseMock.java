@@ -1,5 +1,6 @@
 package _tests;
 
+import nbbrd.io.http.HttpHeaders;
 import nbbrd.io.http.HttpResponse;
 import lombok.NonNull;
 import nbbrd.io.function.IORunnable;
@@ -27,6 +28,16 @@ public final class RestClientResponseMock implements HttpResponse {
     @Override
     public @NonNull MediaType getContentType() {
         return contentType;
+    }
+
+    @Override
+    public long getContentLength() throws IOException {
+        return NO_CONTENT_LENGTH;
+    }
+
+    @Override
+    public @NonNull HttpHeaders getHeaders() throws IOException {
+        return HttpHeaders.EMPTY;
     }
 
     @Override

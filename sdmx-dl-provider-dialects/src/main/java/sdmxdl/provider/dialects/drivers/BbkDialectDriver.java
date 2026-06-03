@@ -31,7 +31,6 @@ import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.EnumSet;
 import java.util.Set;
@@ -70,13 +69,13 @@ public final class BbkDialectDriver implements Driver {
                     .build())
             .build();
 
-    private static RiRestClient newClient(WebSource s, Languages languages, WebContext c) throws IOException {
+    private static RiRestClient newClient(WebSource s, Languages languages, WebContext c) {
         return new RiRestClient(
                 HasMarker.of(s),
-                s.getEndpoint().toURL(),
+                s.getEndpoint(),
                 languages,
                 ObsParser::newDefault,
-                RiHttpUtils.newClient(s, c),
+                RiHttpUtils.newHttpClient(s, c),
                 BbkQueries.INSTANCE,
                 Sdmx21RestParsers.DEFAULT,
                 Sdmx21RestErrors.DEFAULT,

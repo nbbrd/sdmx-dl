@@ -2,40 +2,33 @@ package sdmxdl.provider.ri.monitors;
 
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
-import nbbrd.design.MightBePromoted;
-import nbbrd.io.function.IOFunction;
+import nbbrd.io.http.*;
 import nbbrd.io.text.Parser;
 import nbbrd.io.xml.Stax;
 import nbbrd.io.xml.Xml;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.EventListener;
-import sdmxdl.provider.web.WebEvents;
+import sdmxdl.provider.ri.drivers.RiHttpUtils;
 import sdmxdl.provider.web.WebMonitors;
 import sdmxdl.web.MonitorReport;
 import sdmxdl.web.MonitorStatus;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Monitor;
-import sdmxdl.web.spi.Network;
-import sdmxdl.web.spi.SSLFactory;
 import sdmxdl.web.spi.WebContext;
 
-import javax.net.ssl.HttpsURLConnection;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.net.*;
-import java.nio.charset.StandardCharsets;
+import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
+
+import static nbbrd.io.http.HttpHeaders.HTTP_CONTENT_TYPE_HEADER;
 
 @DirectImpl
 @ServiceProvider
 public final class UptimeRobotMonitor implements Monitor {
 
-    private final URL url = Parser.onURL().parseValue("https://api.uptimerobot.com/v2/getMonitors").orElseThrow(RuntimeException::new);
+    private static final URI URL = URI.create("https://api.uptimerobot.com/v2/getMonitors");
 
     @Override
     public @NonNull String getMonitorId() {
@@ -53,8 +46,25 @@ public final class UptimeRobotMonitor implements Monitor {
 
         UptimeRobotId id = UptimeRobotId.parse(source.getMonitor());
 
+        HttpRequest request = HttpRequest
+                .builder()
+                .query(URL)
+                .method(HttpMethod.POST)
+                .headers(HttpHeaders
+                        .builder()
+                        .put(HTTP_CONTENT_TYPE_HEADER, "application/x-www-form-urlencoded")
+                        .put("cache-control", "no-cache")
+                        .put("charset", "utf-8")
+                        .build())
+                .bodyOf(id.toBody())
+                .build();
+
+        HttpClient client = RiHttpUtils.newHttpClient(source, context);
+
         Xml.Parser<MonitorReport> parser = Stax.StreamParser.valueOf(UptimeRobotMonitor::parseReport);
-        return post(url, id.toBody(), parser::parseReader, context, source, getMonitorId());
+        try (HttpResponse response = client.send(request)) {
+            return parser.parseReader(response::getBodyAsReader);
+        }
     }
 
     @Override
@@ -96,51 +106,5 @@ public final class UptimeRobotMonitor implements Monitor {
             }
         }
         throw new RuntimeException("Not found");
-    }
-
-    private static URI toURI(URL url) throws IOException {
-        try {
-            return url.toURI();
-        } catch (URISyntaxException ex) {
-            throw new IOException(ex);
-        }
-    }
-
-    @MightBePromoted
-    private static <T> T post(URL url, String query, IOFunction<Reader, T> factory, WebContext context, WebSource source, String monitorId) throws IOException {
-        byte[] data = query.getBytes(StandardCharsets.UTF_8);
-
-        Network network = context.getNetwork(source);
-        Proxy proxy = network.getProxySelector().select(toURI(url)).stream().findFirst().orElse(Proxy.NO_PROXY);
-
-        EventListener eventListener = context.getEventListener(source);
-        if (eventListener != null) {
-            eventListener.accept(monitorId, WebEvents.onQuery(url, proxy));
-        }
-
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
-
-        if (conn instanceof HttpsURLConnection) {
-            SSLFactory sslFactory = network.getSSLFactory();
-            ((HttpsURLConnection) conn).setSSLSocketFactory(sslFactory.getSSLSocketFactory());
-            ((HttpsURLConnection) conn).setHostnameVerifier(sslFactory.getHostnameVerifier());
-        }
-
-        conn.setDoOutput(true);
-        conn.setInstanceFollowRedirects(false);
-        conn.setRequestMethod("POST");
-        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        conn.setRequestProperty("cache-control", "no-cache");
-        conn.setRequestProperty("charset", "utf-8");
-        conn.setRequestProperty("Content-Length", Integer.toString(data.length));
-        conn.setUseCaches(false);
-
-        try (OutputStream wr = conn.getOutputStream()) {
-            wr.write(data);
-        }
-
-        try (Reader reader = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)) {
-            return factory.applyWithIO(reader);
-        }
     }
 }

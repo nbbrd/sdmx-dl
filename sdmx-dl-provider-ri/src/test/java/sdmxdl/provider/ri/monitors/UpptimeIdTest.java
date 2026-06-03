@@ -1,11 +1,10 @@
 package sdmxdl.provider.ri.monitors;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.provider.ri.monitors.UpptimeId;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -19,21 +18,21 @@ public class UpptimeIdTest {
     }
 
     @Test
-    public void toSummaryURL() throws MalformedURLException {
-        assertThat(UpptimeId.builder().owner("").repo("").site("").build().toSummaryURL())
-                .isEqualTo(new URL("https://raw.githubusercontent.com///master/history/summary.json"));
+    public void toSummaryURI() throws IOException {
+        assertThat(UpptimeId.builder().owner("").repo("").site("").build().toSummaryURI())
+                .hasToString("https://raw.githubusercontent.com///master/history/summary.json");
 
-        assertThat(UpptimeId.builder().owner("nbbrd").repo("sdmx-upptime").site("ECB").build().toSummaryURL())
-                .isEqualTo(new URL("https://raw.githubusercontent.com/nbbrd/sdmx-upptime/master/history/summary.json"));
+        assertThat(UpptimeId.builder().owner("nbbrd").repo("sdmx-upptime").site("ECB").build().toSummaryURI())
+                .hasToString("https://raw.githubusercontent.com/nbbrd/sdmx-upptime/master/history/summary.json");
     }
 
     @Test
-    public void toReportURL() throws MalformedURLException {
-        assertThat(UpptimeId.builder().owner("").repo("").site("").build().toReportURL())
-                .isEqualTo(new URL("https://.github.io//history/"));
+    public void toReportURI() throws MalformedURLException {
+        assertThat(UpptimeId.builder().owner("").repo("").site("").build().toReportURI())
+                .hasToString("https://.github.io//history/");
 
-        assertThat(UpptimeId.builder().owner("nbbrd").repo("sdmx-upptime").site("ECB").build().toReportURL())
-                .isEqualTo(new URL("https://nbbrd.github.io/sdmx-upptime/history/ecb"));
+        assertThat(UpptimeId.builder().owner("nbbrd").repo("sdmx-upptime").site("ECB").build().toReportURI())
+                .hasToString("https://nbbrd.github.io/sdmx-upptime/history/ecb");
     }
 
     @Test

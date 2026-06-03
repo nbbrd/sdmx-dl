@@ -1,9 +1,9 @@
 package sdmxdl.provider.ri.drivers;
 
 import lombok.NonNull;
-import nbbrd.io.http.HttpContext;
-import nbbrd.io.http.HttpEventListener;
+import nbbrd.io.http.HttpHeaders;
 import nbbrd.io.http.HttpRequest;
+import nbbrd.io.http.UrlConnectionListener;
 import nbbrd.io.net.MediaType;
 import org.junit.jupiter.api.Test;
 import sdmxdl.provider.web.DriverProperties;
@@ -26,9 +26,7 @@ public class RiHttpUtilsTest {
     @Test
     public void testFactory() {
         assertThatNullPointerException()
-                .isThrownBy(() -> RiHttpUtils.newClient(null, (WebContext) null));
-        assertThatNullPointerException()
-                .isThrownBy(() -> RiHttpUtils.newClient(null, (HttpContext) null));
+                .isThrownBy(() -> RiHttpUtils.newHttpClient(null, (WebContext) null));
     }
 
     WebSource source = WebSource
@@ -40,10 +38,10 @@ public class RiHttpUtilsTest {
 
     @Test
     public void testUserAgent() {
-        assertThat(RiHttpUtils.newContext(source, DriverAssert.noOpWebContext()).getUserAgent())
+        assertThat(RiHttpUtils.newDefaultClient(source, DriverAssert.noOpWebContext()).getUserAgent())
                 .startsWith("sdmx-dl/");
 
-        assertThat(RiHttpUtils.newContext(source.toBuilder().property(DriverProperties.USER_AGENT_PROPERTY.getKey(), "hello world").build(), DriverAssert.noOpWebContext()).getUserAgent())
+        assertThat(RiHttpUtils.newDefaultClient(source.toBuilder().property(DriverProperties.USER_AGENT_PROPERTY.getKey(), "hello world").build(), DriverAssert.noOpWebContext()).getUserAgent())
                 .startsWith("hello world");
     }
 
@@ -57,13 +55,12 @@ public class RiHttpUtilsTest {
                 .onEvent(source -> (marker, message) -> events.onSourceEvent(source, marker, message))
                 .build();
 
-        HttpEventListener x = RiHttpUtils.newContext(source, webContext).getListener();
+        UrlConnectionListener x = RiHttpUtils.newDefaultClient(source, webContext).getListener();
 
         HttpRequest request = HttpRequest
                 .builder()
-                .query(source.getEndpoint().toURL())
-                .mediaType(MediaType.ANY_TYPE)
-                .langs("fr")
+                .query(source.getEndpoint())
+                .headers(HttpHeaders.builder().mediaType(MediaType.ANY_TYPE).languages("fr").build())
                 .build();
 
         assertThatNullPointerException().isThrownBy(() -> x.onEvent(null));

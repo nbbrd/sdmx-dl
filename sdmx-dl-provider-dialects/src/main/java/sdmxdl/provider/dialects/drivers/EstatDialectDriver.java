@@ -19,16 +19,14 @@ package sdmxdl.provider.dialects.drivers;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.io.Resource;
-import nbbrd.io.http.HttpClient;
-import nbbrd.io.http.HttpRequest;
-import nbbrd.io.http.HttpResponse;
-import nbbrd.io.http.HttpResponseException;
-import nbbrd.io.http.ext.InterceptingClient;
+import nbbrd.io.http.*;
+import nbbrd.io.http.ext.InterceptingHttpClient;
 import nbbrd.io.net.MediaType;
 import nbbrd.io.text.IntProperty;
 import nbbrd.io.text.LongProperty;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.EventListener;
 import sdmxdl.Feature;
 import sdmxdl.Languages;
 import sdmxdl.format.MessageFooter;
@@ -49,7 +47,7 @@ import sdmxdl.web.spi.WebContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
 import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Optional;
@@ -172,10 +170,10 @@ public final class EstatDialectDriver implements Driver {
                     .build())
             .build();
 
-    private static RestClient newClient(WebSource s, Languages languages, WebContext c) throws IOException {
+    private static RestClient newClient(WebSource s, Languages languages, WebContext c) {
         return new RiRestClient(
                 HasMarker.of(s),
-                s.getEndpoint().toURL(),
+                s.getEndpoint(),
                 languages,
                 ObsParser::newDefault,
                 getHttpClient(s, c),
@@ -189,22 +187,35 @@ public final class EstatDialectDriver implements Driver {
     @SdmxFix(id = 4, category = QUERY, cause = "Data key parameter does not support 'all' keyword")
     private static final Set<Feature> ESTAT_FEATURES = EnumSet.of(Feature.DATA_QUERY_DETAIL);
 
-    private static HttpClient getHttpClient(WebSource s, WebContext c) {
-        int asyncMaxRetries = ASYNC_MAX_RETRIES_PROPERTY.get(s.getProperties());
-        long asyncSleepTime = ASYNC_SLEEP_TIME_PROPERTY.get(s.getProperties());
-        return new InterceptingClient(
-                RiHttpUtils.newClient(s, RiHttpUtils.newContext(s, c)),
-                (client, request, response) -> checkCodesInMessageFooter(client, response, asyncSleepTime, asyncMaxRetries)
+    private static HttpClient getHttpClient(WebSource source, WebContext context) {
+        return
+                withAsync(
+                        RiHttpUtils.newHttpClient(source, context),
+                        source, context
+                );
+    }
+
+    private static @NonNull HttpClient withAsync(@NonNull HttpClient client, @NonNull WebSource source, @NonNull WebContext context) {
+        int asyncMaxRetries = ASYNC_MAX_RETRIES_PROPERTY.get(source.getProperties());
+        long asyncSleepTime = ASYNC_SLEEP_TIME_PROPERTY.get(source.getProperties());
+        EventListener onEvent = context.getEventListener(source);
+        return new InterceptingHttpClient(
+                client,
+                (c, request, response) -> checkCodesInMessageFooter(c, response, asyncSleepTime, asyncMaxRetries, onEvent)
         );
+
     }
 
     @SdmxFix(id = 3, category = PROTOCOL, cause = "Some response codes are located in the message footer")
-    private static HttpResponse checkCodesInMessageFooter(HttpClient client, HttpResponse result, long asyncSleepTime, int asyncMaxRetries) throws IOException {
+    private static HttpResponse checkCodesInMessageFooter(HttpClient client, HttpResponse result, long asyncSleepTime, int asyncMaxRetries, EventListener onEvent) throws IOException {
         if (result.getContentType().isCompatible(SDMX_GENERIC_XML)) {
             MessageFooter messageFooter = parseMessageFooter(result);
-            Optional<URL> asyncURL = getAsyncURL(messageFooter);
-            if (asyncURL.isPresent()) {
-                return requestAsync(client, asyncURL.get(), asyncSleepTime, asyncMaxRetries);
+            Optional<URI> asyncURI = getAsyncURI(messageFooter);
+            if (asyncURI.isPresent()) {
+                if (onEvent != null) {
+                    onEvent.accept("ESTAT", "Async request " + asyncURI.get());
+                }
+                return requestAsync(client, asyncURI.get(), asyncSleepTime, asyncMaxRetries);
             }
             throw getResponseException(messageFooter);
         }
@@ -222,14 +233,14 @@ public final class EstatDialectDriver implements Driver {
         return new HttpResponseException(messageFooter.getCode(), String.join(System.lineSeparator(), messageFooter.getTexts()));
     }
 
-    private static Optional<URL> getAsyncURL(MessageFooter messageFooter) {
+    private static Optional<URI> getAsyncURI(MessageFooter messageFooter) {
         return messageFooter.getCode() == HttpURLConnection.HTTP_ENTITY_TOO_LARGE
-                ? messageFooter.getTexts().stream().map(Parser.onURL()::parse).filter(Objects::nonNull).findFirst()
+                ? messageFooter.getTexts().stream().map(Parser.onURI()::parse).filter(Objects::nonNull).findFirst()
                 : Optional.empty();
     }
 
-    private static HttpResponse requestAsync(HttpClient client, URL url, long sleepTimeInMillis, int retries) throws IOException {
-        HttpRequest request = RiHttpUtils.newRequest(url, singletonList(MediaType.ANY_TYPE), ANY);
+    private static HttpResponse requestAsync(HttpClient client, URI url, long sleepTimeInMillis, int retries) throws IOException {
+        HttpRequest request = RiHttpUtils.newHttpRequest(url, singletonList(MediaType.ANY_TYPE), ANY);
         for (int i = 1; i <= retries; i++) {
             sleep(sleepTimeInMillis);
             try {
@@ -260,6 +271,16 @@ public final class EstatDialectDriver implements Driver {
         @Override
         public @NonNull MediaType getContentType() {
             return XmlMediaTypes.GENERIC_DATA_21;
+        }
+
+        @Override
+        public long getContentLength() throws IOException {
+            return zipResponse.getContentLength();
+        }
+
+        @Override
+        public @NonNull HttpHeaders getHeaders() throws IOException {
+            return zipResponse.getHeaders();
         }
 
         @Override

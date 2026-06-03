@@ -17,8 +17,11 @@
 package sdmxdl.provider.ri.drivers;
 
 import lombok.NonNull;
+import nbbrd.design.MightBePromoted;
+import nbbrd.design.VisibleForTesting;
 import nbbrd.io.http.*;
-import nbbrd.io.http.ext.DumpingClient;
+import nbbrd.io.http.ext.DumpingHttpClient;
+import nbbrd.io.http.ext.LazyHttpClient;
 import nbbrd.io.net.MediaType;
 import nbbrd.io.text.BaseProperty;
 import nbbrd.io.text.Formatter;
@@ -42,6 +45,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
+import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.Locale;
@@ -77,43 +81,66 @@ public class RiHttpUtils {
             DUMP_FOLDER_PROPERTY
     );
 
-    public static @NonNull HttpRequest newRequest(@NonNull URL query, @NonNull List<MediaType> mediaTypes, @NonNull Languages langs) {
+    public static @NonNull HttpRequest newHttpRequest(@NonNull URI query, @NonNull List<MediaType> mediaTypes, @NonNull Languages langs) {
         return HttpRequest
                 .builder()
                 .query(query)
-                .mediaTypes(mediaTypes)
-                .langs(langs.toString())
+                .headers(HttpHeaders
+                        .builder()
+                        .mediaTypes(mediaTypes)
+                        .languages(langs.toString())
+                        .build())
                 .build();
     }
 
-    public static @NonNull HttpClient newClient(@NonNull WebSource source, @NonNull WebContext context) {
-        HttpContext httpContext = newContext(source, context);
-        HttpClient result = newClient(source, httpContext);
+    public static @NonNull HttpClient newHttpClient(@NonNull WebSource source, @NonNull WebContext context) {
+        return
+                withByteCounting(
+                        withDumping(
+                                withLazy(
+                                        () -> newDefaultClient(source, context)
+                                ), source, context
+                        ), source, context
+                );
+    }
+
+    private static @NonNull HttpClient withByteCounting(@NonNull HttpClient client, @NonNull WebSource source, @NonNull WebContext context) {
         EventListener onEvent = context.getEventListener(source);
-        return onEvent != null ? new ByteCountingClient(result, message -> onEvent.accept("RI_HTTP", message, 1)) : result;
+        if (onEvent != null)
+            return new ByteCountingClient(client, message -> onEvent.accept("RI_HTTP", message, 1));
+        return client;
     }
 
-    public static @NonNull HttpClient newClient(@NonNull WebSource source, @NonNull HttpContext context) {
-        HttpClient result = new DefaultHttpClient(context);
+    private static @NonNull HttpClient withDumping(@NonNull HttpClient client, @NonNull WebSource source, @NonNull WebContext context) {
         File dumpFolder = DUMP_FOLDER_PROPERTY.get(source.getProperties());
-        return dumpFolder != null ? newDumpingClient(context, result, dumpFolder) : result;
+        if (dumpFolder != null) {
+            EventListener onEvent = context.getEventListener(source);
+            return new DumpingHttpClient(dumpFolder.toPath(), client, onEvent != null ? file -> onEvent.accept("RI_HTTP", "Dumping " + file.toUri()) : ignore -> {
+            });
+        }
+        return client;
     }
 
-    public static @NonNull HttpContext newContext(@NonNull WebSource source, @NonNull WebContext context) {
+    private static HttpClient withLazy(@NonNull Supplier<HttpClient> supplier) {
+        return new LazyHttpClient(supplier);
+    }
+
+    @VisibleForTesting
+    static @NonNull UrlConnectionHttpClient newDefaultClient(@NonNull WebSource source, @NonNull WebContext context) {
         Network network = context.getNetwork(source);
         EventListener onEvent = context.getEventListener(source);
         ErrorListener onError = context.getErrorListener(source);
-        return HttpContext
+        return UrlConnectionHttpClient
                 .builder()
                 .readTimeout(READ_TIMEOUT_PROPERTY.get(source.getProperties()))
                 .connectTimeout(CONNECT_TIMEOUT_PROPERTY.get(source.getProperties()))
                 .maxRedirects(MAX_REDIRECTS_PROPERTY.get(source.getProperties()))
                 .authScheme(toHttpAuthScheme(AUTH_SCHEME_PROPERTY.get(source.getProperties())))
-                .proxySelector(network::getProxySelector)
-                .sslSocketFactory(() -> network.getSSLFactory().getSSLSocketFactory())
-                .hostnameVerifier(() -> network.getSSLFactory().getHostnameVerifier())
-                .urlConnectionFactory(() -> network.getURLConnectionFactory()::openConnection)
-                .listener(onEvent != null ? new RiHttpEventListener(message -> onEvent.accept("RI_HTTP", message, 1)) : HttpEventListener.noOp())
+                .proxySelector(network.getProxySelector())
+                .sslSocketFactory(network.getSSLFactory().getSSLSocketFactory())
+                .hostnameVerifier(network.getSSLFactory().getHostnameVerifier())
+                .urlConnectionFactory(network.getURLConnectionFactory()::openConnection)
+                .listener(onEvent != null ? new RiHttpEventListener(message -> onEvent.accept("RI_HTTP", message, 1)) : UrlConnectionListener.noOp())
                 .authenticator(new RiHttpAuthenticator(source, context.getAuthenticators(), context.getCaching(), onEvent, onError))
                 .userAgent(USER_AGENT_PROPERTY.get(source.getProperties()))
                 .build();
@@ -131,12 +158,8 @@ public class RiHttpUtils {
         return HttpAuthScheme.NONE;
     }
 
-    private static DumpingClient newDumpingClient(HttpContext context, HttpClient client, File dumpFolder) {
-        return new DumpingClient(dumpFolder.toPath(), client, file -> context.getListener().onEvent("Dumping " + file.toUri()));
-    }
-
     @lombok.AllArgsConstructor
-    private static final class RiHttpEventListener implements HttpEventListener {
+    private static final class RiHttpEventListener implements UrlConnectionListener {
 
         private final @NonNull Consumer<CharSequence> listener;
 
@@ -241,6 +264,7 @@ public class RiHttpUtils {
         }
     }
 
+    @MightBePromoted
     @lombok.AllArgsConstructor
     private static final class ByteCountingClient implements HttpClient {
 
@@ -251,11 +275,17 @@ public class RiHttpUtils {
         private final Consumer<CharSequence> listener;
 
         @Override
+        public @NonNull String getDescription() {
+            return "Byte counting " + delegate.getDescription();
+        }
+
+        @Override
         public @NonNull HttpResponse send(@NonNull HttpRequest request) throws IOException {
             return new ByteCountingResponse(delegate.send(request), listener);
         }
     }
 
+    @MightBePromoted
     @lombok.AllArgsConstructor
     private static final class ByteCountingResponse implements HttpResponse {
 
@@ -270,6 +300,16 @@ public class RiHttpUtils {
         @Override
         public @NonNull nbbrd.io.net.MediaType getContentType() throws IOException {
             return delegate.getContentType();
+        }
+
+        @Override
+        public long getContentLength() throws IOException {
+            return delegate.getContentLength();
+        }
+
+        @Override
+        public @NonNull HttpHeaders getHeaders() throws IOException {
+            return delegate.getHeaders();
         }
 
         @Override
@@ -301,6 +341,7 @@ public class RiHttpUtils {
         }
     }
 
+    @MightBePromoted
     private static final class CountingInputStream extends FilterInputStream {
 
         private final AtomicLong counter;

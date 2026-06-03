@@ -20,10 +20,7 @@ import com.google.gson.*;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.design.VisibleForTesting;
-import nbbrd.io.http.HttpClient;
-import nbbrd.io.http.HttpRequest;
-import nbbrd.io.http.HttpResponse;
-import nbbrd.io.http.URLQueryBuilder;
+import nbbrd.io.http.*;
 import nbbrd.io.net.MediaType;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
@@ -41,8 +38,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -50,7 +45,7 @@ import java.util.stream.Stream;
 
 import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
-import static sdmxdl.provider.ri.drivers.RiHttpUtils.newClient;
+import static sdmxdl.provider.ri.drivers.RiHttpUtils.newHttpClient;
 import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
 
 /**
@@ -93,8 +88,8 @@ public final class UisDialectDriver implements Driver {
     private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
         UisClient client = new DefaultUisClient(
                 HasMarker.of(source),
-                source.getEndpoint().toURL(),
-                newClient(source, context)
+                source.getEndpoint(),
+                newHttpClient(source, context)
         );
 
         UisClient cachedClient = CachedUisClient.of(
@@ -151,11 +146,7 @@ public final class UisDialectDriver implements Driver {
 
         @Override
         public @NonNull Optional<URI> testConnection() throws IOException {
-            try {
-                return Optional.of(client.ping().toURI());
-            } catch (URISyntaxException e) {
-                throw new IOException(e);
-            }
+            return Optional.of(client.ping());
         }
 
         @Override
@@ -176,7 +167,7 @@ public final class UisDialectDriver implements Driver {
         DataSet getData(@NonNull String indicatorCode) throws IOException;
 
         @NonNull
-        URL ping() throws IOException;
+        URI ping() throws IOException;
     }
 
     @VisibleForTesting
@@ -185,7 +176,7 @@ public final class UisDialectDriver implements Driver {
 
         @lombok.Getter
         private final Marker marker;
-        private final URL endpoint;
+        private final URI endpoint;
         private final HttpClient client;
 
         @Override
@@ -193,10 +184,10 @@ public final class UisDialectDriver implements Driver {
             HttpRequest request = HttpRequest
                     .builder()
                     .query(URLQueryBuilder
-                            .of(endpoint)
+                            .of(endpoint.toURL())
                             .path("api").path("public").path("definitions").path("indicators")
-                            .build())
-                    .mediaType(JSON_TYPE)
+                            .buildURI())
+                    .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
                     .build();
 
             try (HttpResponse response = client.send(request)) {
@@ -211,10 +202,10 @@ public final class UisDialectDriver implements Driver {
             HttpRequest request = HttpRequest
                     .builder()
                     .query(URLQueryBuilder
-                            .of(endpoint)
+                            .of(endpoint.toURL())
                             .path("api").path("public").path("definitions").path("geounits")
-                            .build())
-                    .mediaType(JSON_TYPE)
+                            .buildURI())
+                    .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
                     .build();
 
             try (HttpResponse response = client.send(request)) {
@@ -229,11 +220,11 @@ public final class UisDialectDriver implements Driver {
             HttpRequest request = HttpRequest
                     .builder()
                     .query(URLQueryBuilder
-                            .of(endpoint)
+                            .of(endpoint.toURL())
                             .path("api").path("public").path("data").path("indicators")
                             .param("indicator", indicatorCode)
-                            .build())
-                    .mediaType(JSON_TYPE)
+                            .buildURI())
+                    .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
                     .build();
 
             try (HttpResponse response = client.send(request)) {
@@ -247,14 +238,14 @@ public final class UisDialectDriver implements Driver {
         }
 
         @Override
-        public @NonNull URL ping() throws IOException {
+        public @NonNull URI ping() throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
                     .query(URLQueryBuilder
-                            .of(endpoint)
+                            .of(endpoint.toURL())
                             .path("api").path("public").path("versions").path("default")
-                            .build())
-                    .mediaType(JSON_TYPE)
+                            .buildURI())
+                    .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
                     .build();
 
             try (HttpResponse ignore = client.send(request)) {
@@ -345,7 +336,7 @@ public final class UisDialectDriver implements Driver {
         }
 
         @Override
-        public @NonNull URL ping() throws IOException {
+        public @NonNull URI ping() throws IOException {
             return delegate.ping();
         }
     }

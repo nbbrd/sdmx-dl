@@ -112,13 +112,13 @@ public final class InseeDialectDriver implements Driver {
 
     private final static class InseeRestClient extends RiRestClient {
 
-        InseeRestClient(WebSource s, Languages languages, WebContext c) throws IOException {
+        InseeRestClient(WebSource s, Languages languages, WebContext c) {
             super(
                     HasMarker.of(s),
-                    s.getEndpoint().toURL(),
+                    s.getEndpoint(),
                     languages,
                     OBS_FACTORY,
-                    RiHttpUtils.newClient(s, c),
+                    RiHttpUtils.newHttpClient(s, c),
                     NO_COMMA_ENCODING_PROPERTY.get(s.getProperties())
                             ? InseeRestQueries.NO_COMMA_ENCODING
                             : InseeRestQueries.DEFAULT,

@@ -45,12 +45,12 @@ public final class UpptimeMonitor implements Monitor {
         UpptimeId id = UpptimeId.parse(source.getMonitor());
 
         Cache<MonitorReports> cache = context.getMonitorCache(source);
-        String key = id.toSummaryURL().toString();
+        String key = id.toSummaryURI().toString();
 
         MonitorReports reports = cache.get(key);
 
         if (reports == null) {
-            reports = createReports(RiHttpUtils.newClient(source, context), id, cache.getClock());
+            reports = createReports(RiHttpUtils.newHttpClient(source, context), id, cache.getClock());
             cache.put(key, reports);
         }
 
@@ -68,7 +68,7 @@ public final class UpptimeMonitor implements Monitor {
 
     private MonitorReports createReports(HttpClient client, UpptimeId base, Clock clock) throws IOException {
         MonitorReports.Builder result = MonitorReports.builder().uriScheme(getMonitorUriScheme());
-        for (UpptimeSummary summary : UpptimeSummary.request(client, base.toSummaryURL())) {
+        for (UpptimeSummary summary : UpptimeSummary.request(client, base.toSummaryURI())) {
             result.report(getReport(summary));
         }
         return result.ttl(clock.instant(), Duration.ofMinutes(5)).build();
