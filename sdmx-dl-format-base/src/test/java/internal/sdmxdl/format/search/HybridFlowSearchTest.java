@@ -8,6 +8,7 @@ import sdmxdl.StructureRef;
 import sdmxdl.format.FlowSearch;
 import sdmxdl.format.spi.FlowScorer;
 import sdmxdl.format.spi.FlowSearchScoringProvider;
+import sdmxdl.format.spi.ScoringCategory;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -152,6 +153,11 @@ class HybridFlowSearchTest {
             }
 
             @Override
+            public @NonNull ScoringCategory getScoringCategory() {
+                return ScoringCategory.LEXICAL;
+            }
+
+            @Override
             public @NonNull FlowScorer createScorer(@NonNull List<Flow> flows) {
                 return query -> {
                     double[] scores = new double[flows.size()];
@@ -193,6 +199,11 @@ class HybridFlowSearchTest {
             }
 
             @Override
+            public @NonNull ScoringCategory getScoringCategory() {
+                return ScoringCategory.LEXICAL;
+            }
+
+            @Override
             public @NonNull FlowScorer createScorer(@NonNull List<Flow> flows) {
                 return query -> {
                     double[] scores = new double[flows.size()];
@@ -210,6 +221,11 @@ class HybridFlowSearchTest {
             @Override
             public int getScoringRank() {
                 return BUILTIN_SCORING_RANK;
+            }
+
+            @Override
+            public @NonNull ScoringCategory getScoringCategory() {
+                return ScoringCategory.LEXICAL;
             }
 
             @Override

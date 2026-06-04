@@ -22,6 +22,7 @@ import nbbrd.service.ServiceProvider;
 import sdmxdl.Flow;
 import sdmxdl.format.spi.FlowScorer;
 import sdmxdl.format.spi.FlowSearchScoringProvider;
+import sdmxdl.format.spi.ScoringCategory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,11 @@ public final class Bm25ScoringProvider implements FlowSearchScoringProvider {
     @Override
     public int getScoringRank() {
         return BUILTIN_SCORING_RANK;
+    }
+
+    @Override
+    public @NonNull ScoringCategory getScoringCategory() {
+        return ScoringCategory.LEXICAL;
     }
 
     @Override

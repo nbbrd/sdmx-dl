@@ -60,6 +60,15 @@ public interface FlowSearchScoringProvider {
     int getScoringRank();
 
     /**
+     * Category of this scoring provider (lexical or semantic).
+     *
+     * @return the scoring category, never null
+     * @see ScoringCategory
+     */
+    @NonNull
+    ScoringCategory getScoringCategory();
+
+    /**
      * Create a scorer for the given corpus of flows.
      * Called once when the search index is built; the returned scorer
      * is invoked for each query.
