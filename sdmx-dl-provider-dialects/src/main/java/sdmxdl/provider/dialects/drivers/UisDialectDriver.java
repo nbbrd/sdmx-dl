@@ -44,8 +44,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static sdmxdl.Confidentiality.PUBLIC;
-import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
-import static sdmxdl.provider.ri.drivers.RiHttpUtils.newHttpClient;
+import static sdmxdl.provider.ri.drivers.RiHttpUtils.DEFAULT_HTTP_FACTORY;
 import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
 
 /**
@@ -69,7 +68,7 @@ public final class UisDialectDriver implements Driver {
             .id(DIALECTS_UIS)
             .rank(NATIVE_DRIVER_RANK)
             .connector(UisDialectDriver::newConnection)
-            .properties(RI_CONNECTION_PROPERTIES)
+            .propertiesOf(DEFAULT_HTTP_FACTORY.getFactoryProperties())
             .propertyOf(CACHE_TTL_PROPERTY)
             .source(WebSource
                     .builder()
@@ -89,7 +88,7 @@ public final class UisDialectDriver implements Driver {
         UisClient client = new DefaultUisClient(
                 HasMarker.of(source),
                 source.getEndpoint(),
-                newHttpClient(source, context)
+                DEFAULT_HTTP_FACTORY.create(source, context)
         );
 
         UisClient cachedClient = CachedUisClient.of(

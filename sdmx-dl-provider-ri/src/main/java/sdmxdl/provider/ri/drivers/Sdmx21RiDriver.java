@@ -20,6 +20,8 @@ import nbbrd.design.DirectImpl;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.Feature;
 import sdmxdl.Languages;
+import sdmxdl.format.ObsParser;
+import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestClient;
 import sdmxdl.provider.web.RestConnector;
@@ -27,12 +29,11 @@ import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
-import java.io.IOException;
 import java.util.EnumSet;
 import java.util.Set;
 
 import static sdmxdl.Confidentiality.PUBLIC;
-import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
+import static sdmxdl.provider.ri.drivers.RiHttpUtils.DEFAULT_HTTP_FACTORY;
 import static sdmxdl.provider.web.DriverProperties.DETAIL_SUPPORTED_PROPERTY;
 import static sdmxdl.provider.web.DriverProperties.TRAILING_SLASH_PROPERTY;
 
@@ -51,7 +52,7 @@ public final class Sdmx21RiDriver implements Driver {
             .id(RI_SDMX_21)
             .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(Sdmx21RiDriver::newClient))
-            .properties(RI_CONNECTION_PROPERTIES)
+            .propertiesOf(DEFAULT_HTTP_FACTORY.getFactoryProperties())
             .propertyOf(DETAIL_SUPPORTED_PROPERTY)
             .propertyOf(TRAILING_SLASH_PROPERTY)
             .source(WebSource
@@ -383,8 +384,17 @@ public final class Sdmx21RiDriver implements Driver {
                     .build())
             .build();
 
-    private static RestClient newClient(WebSource s, Languages languages, WebContext c) throws IOException {
-        return RiRestClient.of(s, languages, c, getQueries(s), getParsers(s), getSupportedFeatures(s));
+    private static RestClient newClient(WebSource s, Languages languages, WebContext c) {
+        return new RiRestClient(
+                HasMarker.of(s),
+                s.getEndpoint(),
+                languages,
+                ObsParser::newDefault,
+                DEFAULT_HTTP_FACTORY.create(s, c),
+                getQueries(s),
+                getParsers(s),
+                Sdmx21RestErrors.DEFAULT,
+                getSupportedFeatures(s));
     }
 
     private static Sdmx21RestQueries getQueries(WebSource s) {

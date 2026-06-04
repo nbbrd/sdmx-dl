@@ -24,7 +24,10 @@ import sdmxdl.*;
 import sdmxdl.format.ObsParser;
 import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.SdmxFix;
-import sdmxdl.provider.ri.drivers.*;
+import sdmxdl.provider.ri.drivers.RiRestClient;
+import sdmxdl.provider.ri.drivers.Sdmx21RestErrors;
+import sdmxdl.provider.ri.drivers.Sdmx21RestParsers;
+import sdmxdl.provider.ri.drivers.Sdmx21RestQueries;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestConnector;
 import sdmxdl.web.WebSource;
@@ -37,7 +40,7 @@ import java.util.Set;
 
 import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
-import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
+import static sdmxdl.provider.ri.drivers.RiHttpUtils.DEFAULT_HTTP_FACTORY;
 
 /**
  * @author Philippe Charles
@@ -54,7 +57,7 @@ public final class BbkDialectDriver implements Driver {
             .id(DIALECTS_BBK)
             .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(BbkDialectDriver::newClient))
-            .properties(RI_CONNECTION_PROPERTIES)
+            .propertiesOf(DEFAULT_HTTP_FACTORY.getFactoryProperties())
             .source(WebSource
                     .builder()
                     .id("BBK")
@@ -75,7 +78,7 @@ public final class BbkDialectDriver implements Driver {
                 s.getEndpoint(),
                 languages,
                 ObsParser::newDefault,
-                RiHttpUtils.newHttpClient(s, c),
+                DEFAULT_HTTP_FACTORY.create(s, c),
                 BbkQueries.INSTANCE,
                 Sdmx21RestParsers.DEFAULT,
                 Sdmx21RestErrors.DEFAULT,

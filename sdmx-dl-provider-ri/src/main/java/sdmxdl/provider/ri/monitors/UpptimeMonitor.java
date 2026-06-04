@@ -50,7 +50,7 @@ public final class UpptimeMonitor implements Monitor {
         MonitorReports reports = cache.get(key);
 
         if (reports == null) {
-            reports = createReports(RiHttpUtils.newHttpClient(source, context), id, cache.getClock());
+            reports = createReports(RiHttpUtils.DEFAULT_HTTP_FACTORY.create(source, context), id, cache.getClock());
             cache.put(key, reports);
         }
 

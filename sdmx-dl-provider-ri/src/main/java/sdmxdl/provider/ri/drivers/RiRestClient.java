@@ -24,11 +24,8 @@ import nbbrd.io.http.HttpResponseException;
 import sdmxdl.*;
 import sdmxdl.format.ObsParser;
 import sdmxdl.provider.DataRef;
-import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.Marker;
 import sdmxdl.provider.web.RestClient;
-import sdmxdl.web.WebSource;
-import sdmxdl.web.spi.WebContext;
 
 import java.io.IOException;
 import java.net.URI;
@@ -49,20 +46,6 @@ import static sdmxdl.provider.web.RestErrorMapping.CLIENT_NO_RESULTS_FOUND;
  */
 @lombok.RequiredArgsConstructor
 public class RiRestClient implements RestClient {
-
-    public static @NonNull RiRestClient of(@NonNull WebSource s, @NonNull Languages languages, @NonNull WebContext c,
-                                           @NonNull RiRestQueries queries, @NonNull RiRestParsers parsers, @NonNull Set<Feature> supportedFeatures) throws IOException {
-        return new RiRestClient(
-                HasMarker.of(s),
-                s.getEndpoint(),
-                languages,
-                ObsParser::newDefault,
-                RiHttpUtils.newHttpClient(s, c),
-                queries,
-                parsers,
-                Sdmx21RestErrors.DEFAULT,
-                supportedFeatures);
-    }
 
     @lombok.Getter
     protected final Marker marker;

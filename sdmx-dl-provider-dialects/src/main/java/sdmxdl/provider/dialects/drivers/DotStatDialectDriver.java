@@ -20,8 +20,11 @@ import nbbrd.design.DirectImpl;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.Feature;
 import sdmxdl.Languages;
+import sdmxdl.format.ObsParser;
+import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.SdmxFix;
 import sdmxdl.provider.ri.drivers.RiRestClient;
+import sdmxdl.provider.ri.drivers.Sdmx21RestErrors;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestClient;
 import sdmxdl.provider.web.RestConnector;
@@ -29,13 +32,12 @@ import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
-import java.io.IOException;
 import java.util.EnumSet;
 import java.util.Set;
 
 import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
-import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
+import static sdmxdl.provider.ri.drivers.RiHttpUtils.DEFAULT_HTTP_FACTORY;
 
 /**
  * @author Philippe Charles
@@ -52,7 +54,7 @@ public final class DotStatDialectDriver implements Driver {
             .id(DIALECTS_DOTSTAT)
             .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(DotStatDialectDriver::newClient))
-            .properties(RI_CONNECTION_PROPERTIES)
+            .propertiesOf(DEFAULT_HTTP_FACTORY.getFactoryProperties())
             .source(WebSource
                     .builder()
                     .id("UKDS")
@@ -66,8 +68,18 @@ public final class DotStatDialectDriver implements Driver {
                     .build())
             .build();
 
-    private static RestClient newClient(WebSource s, Languages languages, WebContext c) throws IOException {
-        return RiRestClient.of(s, languages, c, DotStatRestQueries.DEFAULT, DotStatRestParsers.DEFAULT, DOTSTAT_FEATURES);
+    private static RestClient newClient(WebSource s, Languages languages, WebContext c) {
+        return new RiRestClient(
+                HasMarker.of(s),
+                s.getEndpoint(),
+                languages,
+                ObsParser::newDefault,
+                DEFAULT_HTTP_FACTORY.create(s, c),
+                DotStatRestQueries.DEFAULT,
+                DotStatRestParsers.DEFAULT,
+                Sdmx21RestErrors.DEFAULT,
+                DOTSTAT_FEATURES
+        );
     }
 
     @SdmxFix(id = 1, category = QUERY, cause = "Data detail parameter not supported")

@@ -40,6 +40,7 @@ module sdmxdl.provider.ri {
     requires java.desktop;
 
     exports sdmxdl.provider.ri.drivers to sdmxdl.provider.dialects, sdmxdl.provider.px;
+    exports sdmxdl.provider.ri.http to sdmxdl.provider.dialects, sdmxdl.provider.px;
     exports sdmxdl.provider.ri.spi;
 
     provides Driver with

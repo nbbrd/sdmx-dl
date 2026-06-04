@@ -59,7 +59,7 @@ public final class UptimeRobotMonitor implements Monitor {
                 .bodyOf(id.toBody())
                 .build();
 
-        HttpClient client = RiHttpUtils.newHttpClient(source, context);
+        HttpClient client = RiHttpUtils.DEFAULT_HTTP_FACTORY.create(source, context);
 
         Xml.Parser<MonitorReport> parser = Stax.StreamParser.valueOf(UptimeRobotMonitor::parseReport);
         try (HttpResponse response = client.send(request)) {

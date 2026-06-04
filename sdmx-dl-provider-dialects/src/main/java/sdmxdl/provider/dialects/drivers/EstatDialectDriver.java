@@ -37,6 +37,9 @@ import sdmxdl.format.xml.XmlMediaTypes;
 import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.SdmxFix;
 import sdmxdl.provider.ri.drivers.*;
+import sdmxdl.provider.ri.http.HttpClientDecorator;
+import sdmxdl.provider.ri.http.HttpClientDecoratorSupport;
+import sdmxdl.provider.ri.http.HttpClientFactory;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestClient;
 import sdmxdl.provider.web.RestConnector;
@@ -59,7 +62,7 @@ import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.Languages.ANY;
 import static sdmxdl.provider.SdmxFix.Category.PROTOCOL;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
-import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
+import static sdmxdl.provider.ri.drivers.RiHttpUtils.DEFAULT_HTTP_FACTORY;
 import static sdmxdl.provider.ri.drivers.Sdmx21RestParsers.withCharset;
 
 /**
@@ -69,14 +72,6 @@ import static sdmxdl.provider.ri.drivers.Sdmx21RestParsers.withCharset;
 @ServiceProvider
 public final class EstatDialectDriver implements Driver {
 
-    @PropertyDefinition
-    public static final IntProperty ASYNC_MAX_RETRIES_PROPERTY =
-            IntProperty.of(DRIVER_PROPERTY_PREFIX + ".asyncMaxRetries", 10);
-
-    @PropertyDefinition
-    public static final LongProperty ASYNC_SLEEP_TIME_PROPERTY =
-            LongProperty.of(DRIVER_PROPERTY_PREFIX + ".asyncSleepTime", 6000);
-
     private static final String DIALECTS_ESTAT = "DIALECTS_ESTAT";
 
     @lombok.experimental.Delegate
@@ -85,9 +80,7 @@ public final class EstatDialectDriver implements Driver {
             .id(DIALECTS_ESTAT)
             .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(EstatDialectDriver::newClient))
-            .properties(RI_CONNECTION_PROPERTIES)
-            .propertyOf(ASYNC_MAX_RETRIES_PROPERTY)
-            .propertyOf(ASYNC_SLEEP_TIME_PROPERTY)
+            .propertiesOf(ESTAT_HTTP_FACTORY.getFactoryProperties())
             .source(WebSource
                     .builder()
                     .id("ESTAT")
@@ -176,7 +169,7 @@ public final class EstatDialectDriver implements Driver {
                 s.getEndpoint(),
                 languages,
                 ObsParser::newDefault,
-                getHttpClient(s, c),
+                ESTAT_HTTP_FACTORY.create(s, c),
                 Sdmx21RestQueries.DEFAULT,
                 Sdmx21RestParsers.DEFAULT,
                 Sdmx21RestErrors.DEFAULT,
@@ -187,117 +180,139 @@ public final class EstatDialectDriver implements Driver {
     @SdmxFix(id = 4, category = QUERY, cause = "Data key parameter does not support 'all' keyword")
     private static final Set<Feature> ESTAT_FEATURES = EnumSet.of(Feature.DATA_QUERY_DETAIL);
 
-    private static HttpClient getHttpClient(WebSource source, WebContext context) {
-        return
-                withAsync(
-                        RiHttpUtils.newHttpClient(source, context),
-                        source, context
-                );
-    }
+    private static final HttpClientFactory ESTAT_HTTP_FACTORY =
+            new AsyncHttpClientDecorator().decorate(
+                    DEFAULT_HTTP_FACTORY
+            );
 
-    private static @NonNull HttpClient withAsync(@NonNull HttpClient client, @NonNull WebSource source, @NonNull WebContext context) {
-        int asyncMaxRetries = ASYNC_MAX_RETRIES_PROPERTY.get(source.getProperties());
-        long asyncSleepTime = ASYNC_SLEEP_TIME_PROPERTY.get(source.getProperties());
-        EventListener onEvent = context.getEventListener(source);
-        return new InterceptingHttpClient(
-                client,
-                (c, request, response) -> checkCodesInMessageFooter(c, response, asyncSleepTime, asyncMaxRetries, onEvent)
-        );
+    private static final class AsyncHttpClientDecorator implements HttpClientDecorator {
 
-    }
+        @PropertyDefinition
+        public static final IntProperty ASYNC_MAX_RETRIES_PROPERTY =
+                IntProperty.of(DRIVER_PROPERTY_PREFIX + ".asyncMaxRetries", 10);
 
-    @SdmxFix(id = 3, category = PROTOCOL, cause = "Some response codes are located in the message footer")
-    private static HttpResponse checkCodesInMessageFooter(HttpClient client, HttpResponse result, long asyncSleepTime, int asyncMaxRetries, EventListener onEvent) throws IOException {
-        if (result.getContentType().isCompatible(SDMX_GENERIC_XML)) {
-            MessageFooter messageFooter = parseMessageFooter(result);
-            Optional<URI> asyncURI = getAsyncURI(messageFooter);
-            if (asyncURI.isPresent()) {
-                if (onEvent != null) {
-                    onEvent.accept("ESTAT", "Async request " + asyncURI.get());
-                }
-                return requestAsync(client, asyncURI.get(), asyncSleepTime, asyncMaxRetries);
-            }
-            throw getResponseException(messageFooter);
+        @PropertyDefinition
+        public static final LongProperty ASYNC_SLEEP_TIME_PROPERTY =
+                LongProperty.of(DRIVER_PROPERTY_PREFIX + ".asyncSleepTime", 6000);
+
+        @lombok.experimental.Delegate
+        private final HttpClientDecorator support = HttpClientDecoratorSupport
+                .builder()
+                .name("async")
+                .property(ASYNC_MAX_RETRIES_PROPERTY)
+                .property(ASYNC_SLEEP_TIME_PROPERTY)
+                .superFactory(AsyncHttpClientDecorator::decorate)
+                .build();
+
+        private static HttpClient decorate(HttpClientFactory d, WebSource s, WebContext c) {
+            return new InterceptingHttpClient(
+                    d.create(s, c),
+                    getInterceptor(
+                            ASYNC_SLEEP_TIME_PROPERTY.get(s.getProperties()),
+                            ASYNC_MAX_RETRIES_PROPERTY.get(s.getProperties()),
+                            c.getEventListener(s)
+                    )
+            );
         }
-        return result;
-    }
 
-    private static final MediaType SDMX_GENERIC_XML = MediaType.parse("application/vnd.sdmx.generic+xml; version=2.1");
+        private static InterceptingHttpClient.Interceptor getInterceptor(long asyncSleepTime, int asyncMaxRetries, EventListener onEvent) {
+            return (client, request, response) -> checkCodesInMessageFooter(client, response, asyncSleepTime, asyncMaxRetries, onEvent);
+        }
 
-    private static MessageFooter parseMessageFooter(HttpResponse result) throws IOException {
-        return withCharset(SdmxXmlStreams.messageFooter21(ANY), result.getContentType().getCharset())
-                .parseStream(result::getBody);
-    }
 
-    private static HttpResponseException getResponseException(MessageFooter messageFooter) {
-        return new HttpResponseException(messageFooter.getCode(), String.join(System.lineSeparator(), messageFooter.getTexts()));
-    }
+        @SdmxFix(id = 3, category = PROTOCOL, cause = "Some response codes are located in the message footer")
+        private static HttpResponse checkCodesInMessageFooter(HttpClient client, HttpResponse result, long asyncSleepTime, int asyncMaxRetries, EventListener onEvent) throws IOException {
+            if (result.getContentType().isCompatible(SDMX_GENERIC_XML)) {
+                MessageFooter messageFooter = parseMessageFooter(result);
+                Optional<URI> asyncURI = getAsyncURI(messageFooter);
+                if (asyncURI.isPresent()) {
+                    if (onEvent != null) {
+                        onEvent.accept("ESTAT", "Async request " + asyncURI.get());
+                    }
+                    return requestAsync(client, asyncURI.get(), asyncSleepTime, asyncMaxRetries);
+                }
+                throw getResponseException(messageFooter);
+            }
+            return result;
+        }
 
-    private static Optional<URI> getAsyncURI(MessageFooter messageFooter) {
-        return messageFooter.getCode() == HttpURLConnection.HTTP_ENTITY_TOO_LARGE
-                ? messageFooter.getTexts().stream().map(Parser.onURI()::parse).filter(Objects::nonNull).findFirst()
-                : Optional.empty();
-    }
+        private static final MediaType SDMX_GENERIC_XML = MediaType.parse("application/vnd.sdmx.generic+xml; version=2.1");
 
-    private static HttpResponse requestAsync(HttpClient client, URI url, long sleepTimeInMillis, int retries) throws IOException {
-        HttpRequest request = RiHttpUtils.newHttpRequest(url, singletonList(MediaType.ANY_TYPE), ANY);
-        for (int i = 1; i <= retries; i++) {
-            sleep(sleepTimeInMillis);
+        private static MessageFooter parseMessageFooter(HttpResponse result) throws IOException {
+            return withCharset(SdmxXmlStreams.messageFooter21(ANY), result.getContentType().getCharset())
+                    .parseStream(result::getBody);
+        }
+
+        private static HttpResponseException getResponseException(MessageFooter messageFooter) {
+            return new HttpResponseException(messageFooter.getCode(), String.join(System.lineSeparator(), messageFooter.getTexts()));
+        }
+
+        private static Optional<URI> getAsyncURI(MessageFooter messageFooter) {
+            return messageFooter.getCode() == HttpURLConnection.HTTP_ENTITY_TOO_LARGE
+                    ? messageFooter.getTexts().stream().map(Parser.onURI()::parse).filter(Objects::nonNull).findFirst()
+                    : Optional.empty();
+        }
+
+        private static HttpResponse requestAsync(HttpClient client, URI url, long sleepTimeInMillis, int retries) throws IOException {
+            HttpRequest request = RiHttpUtils.newHttpRequest(url, singletonList(MediaType.ANY_TYPE), ANY);
+            for (int i = 1; i <= retries; i++) {
+                sleep(sleepTimeInMillis);
+                try {
+                    return new AsyncResponse(client.send(request));
+                } catch (HttpResponseException ex) {
+                    if (ex.getResponseCode() != HttpURLConnection.HTTP_NOT_FOUND) {
+                        throw ex;
+                    }
+                }
+            }
+            throw new IOException("Asynchronous max retries reached");
+        }
+
+        private static void sleep(long timeInMillis) throws IOException {
             try {
-                return new AsyncResponse(client.send(request));
-            } catch (HttpResponseException ex) {
-                if (ex.getResponseCode() != HttpURLConnection.HTTP_NOT_FOUND) {
+                Thread.sleep(timeInMillis);
+            } catch (InterruptedException ex) {
+                throw new IOException(ex);
+            }
+        }
+
+        @lombok.AllArgsConstructor
+        private static final class AsyncResponse implements HttpResponse {
+
+            @lombok.NonNull
+            private final HttpResponse zipResponse;
+
+            @Override
+            public @NonNull MediaType getContentType() {
+                return XmlMediaTypes.GENERIC_DATA_21;
+            }
+
+            @Override
+            public long getContentLength() throws IOException {
+                return zipResponse.getContentLength();
+            }
+
+            @Override
+            public @NonNull HttpHeaders getHeaders() throws IOException {
+                return zipResponse.getHeaders();
+            }
+
+            @Override
+            public @NonNull InputStream getBody() throws IOException {
+                ZipInputStream result = new ZipInputStream(zipResponse.getBody());
+                try {
+                    result.getNextEntry();
+                    return result;
+                } catch (Throwable ex) {
+                    Resource.ensureClosed(ex, zipResponse);
                     throw ex;
                 }
             }
-        }
-        throw new IOException("Asynchronous max retries reached");
-    }
 
-    private static void sleep(long timeInMillis) throws IOException {
-        try {
-            Thread.sleep(timeInMillis);
-        } catch (InterruptedException ex) {
-            throw new IOException(ex);
-        }
-    }
-
-    @lombok.AllArgsConstructor
-    private static final class AsyncResponse implements HttpResponse {
-
-        @lombok.NonNull
-        private final HttpResponse zipResponse;
-
-        @Override
-        public @NonNull MediaType getContentType() {
-            return XmlMediaTypes.GENERIC_DATA_21;
-        }
-
-        @Override
-        public long getContentLength() throws IOException {
-            return zipResponse.getContentLength();
-        }
-
-        @Override
-        public @NonNull HttpHeaders getHeaders() throws IOException {
-            return zipResponse.getHeaders();
-        }
-
-        @Override
-        public @NonNull InputStream getBody() throws IOException {
-            ZipInputStream result = new ZipInputStream(zipResponse.getBody());
-            try {
-                result.getNextEntry();
-                return result;
-            } catch (Throwable ex) {
-                Resource.ensureClosed(ex, zipResponse);
-                throw ex;
+            @Override
+            public void close() throws IOException {
+                zipResponse.close();
             }
-        }
-
-        @Override
-        public void close() throws IOException {
-            zipResponse.close();
         }
     }
 }
