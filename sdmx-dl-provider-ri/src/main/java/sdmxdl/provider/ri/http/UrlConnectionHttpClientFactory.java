@@ -3,9 +3,11 @@ package sdmxdl.provider.ri.http;
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.http.*;
+import nbbrd.io.text.IntProperty;
 import org.jspecify.annotations.Nullable;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
+import sdmxdl.format.design.PropertyDefinition;
 import sdmxdl.provider.web.WebEvents;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Authenticator;
@@ -26,6 +28,7 @@ import java.util.function.Supplier;
 import static sdmxdl.provider.ri.drivers.AuthSchemes.BASIC_AUTH_SCHEME;
 import static sdmxdl.provider.ri.drivers.AuthSchemes.MSAL_AUTH_SCHEME;
 import static sdmxdl.provider.web.DriverProperties.*;
+import static sdmxdl.web.spi.Driver.DRIVER_PROPERTY_PREFIX;
 
 /**
  * Factory for creating {@link UrlConnectionHttpClient} instances.
@@ -37,6 +40,23 @@ import static sdmxdl.provider.web.DriverProperties.*;
  */
 public final class UrlConnectionHttpClientFactory implements HttpClientFactory {
 
+    /**
+     * Property defining the maximum number of automatic retries for transient network errors.
+     * <p>
+     * When an HTTP request encounters transient network failures (such as temporary connection issues,
+     * timeouts, or temporary server errors), the client can automatically retry the request up to
+     * this many times before reporting a failure to the caller.
+     * </p>
+     * <p>
+     * Default value: 3 retries
+     * </p>
+     *
+     * @see UrlConnectionHttpClient for retry behavior details
+     */
+    @PropertyDefinition
+    public static final IntProperty MAX_RETRIES_PROPERTY =
+            IntProperty.of(DRIVER_PROPERTY_PREFIX + ".maxRetries", 3);
+
     @lombok.experimental.Delegate
     private final HttpClientFactory support = HttpClientFactorySupport
             .builder()
@@ -46,6 +66,7 @@ public final class UrlConnectionHttpClientFactory implements HttpClientFactory {
             .property(MAX_REDIRECTS_PROPERTY)
             .property(AUTH_SCHEME_PROPERTY)
             .property(USER_AGENT_PROPERTY)
+            .property(MAX_RETRIES_PROPERTY)
             .supplier(UrlConnectionHttpClientFactory::newUrlConnectionHttpClient)
             .build();
 
@@ -83,6 +104,7 @@ public final class UrlConnectionHttpClientFactory implements HttpClientFactory {
                 .listener(onEvent != null ? new RiHttpEventListener(message -> onEvent.accept("RI_HTTP", message, 1)) : UrlConnectionListener.noOp())
                 .authenticator(new RiHttpAuthenticator(source, context.getAuthenticators(), context.getCaching(), onEvent, onError))
                 .userAgent(USER_AGENT_PROPERTY.get(source.getProperties()))
+                .maxRetries(MAX_RETRIES_PROPERTY.get(source.getProperties()))
                 .build();
     }
 

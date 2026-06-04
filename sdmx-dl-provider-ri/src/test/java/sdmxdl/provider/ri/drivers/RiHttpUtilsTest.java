@@ -3,6 +3,7 @@ package sdmxdl.provider.ri.drivers;
 import nbbrd.io.text.BaseProperty;
 import org.junit.jupiter.api.Test;
 import sdmxdl.provider.ri.http.DumpingHttpClientDecorator;
+import sdmxdl.provider.ri.http.UrlConnectionHttpClientFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
@@ -22,8 +23,9 @@ public class RiHttpUtilsTest {
                 .isEqualTo("UrlConnectionHttpClientFactory with Lazy with Dumping with ByteCounting");
 
         assertThat(DEFAULT_HTTP_FACTORY.getFactoryProperties())
-                .hasSize(6)
+                .hasSize(7)
                 .extracting(BaseProperty::getKey)
-                .contains(DumpingHttpClientDecorator.DUMP_FOLDER_PROPERTY.getKey());
+                .contains(DumpingHttpClientDecorator.DUMP_FOLDER_PROPERTY.getKey())
+                .contains(UrlConnectionHttpClientFactory.MAX_RETRIES_PROPERTY.getKey());
     }
 }
