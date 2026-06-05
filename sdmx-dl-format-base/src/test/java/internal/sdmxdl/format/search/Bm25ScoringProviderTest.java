@@ -17,10 +17,7 @@
 package internal.sdmxdl.format.search;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.Flow;
-import sdmxdl.FlowRef;
-import sdmxdl.StructureRef;
-import sdmxdl.format.spi.FlowScorer;
+import sdmxdl.format.spi.SearchScorer;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,8 +27,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class Bm25ScoringProviderTest {
 
-    private static final Flow EXR = flow("ECB", "EXR", "Euro foreign exchange reference rates", "Exchange rates of the euro");
-    private static final Flow ICP = flow("ECB", "ICP", "Indices of consumer prices", "Harmonised indices");
+    private static final String[] DOC_EXR = {"EXR", "Euro foreign exchange reference rates", "Exchange rates of the euro"};
+    private static final String[] DOC_ICP = {"ICP", "Indices of consumer prices", "Harmonised indices"};
+    private static final double[] WEIGHTS = {3.0, 2.0, 1.0};
 
     @Test
     void getScoringIdShouldReturnBM25() {
@@ -44,33 +42,25 @@ class Bm25ScoringProviderTest {
     }
 
     @Test
-    void createScorerShouldReturnScorerThatScoresMatchingFlows() {
-        FlowScorer scorer = new Bm25ScoringProvider().createScorer(Arrays.asList(EXR, ICP));
+    void createScorerShouldReturnScorerThatScoresMatchingDocs() {
+        List<String[]> docs = Arrays.asList(DOC_EXR, DOC_ICP);
+        SearchScorer scorer = new Bm25ScoringProvider().createScorer(docs, WEIGHTS);
         double[] scores = scorer.score("EXR");
         assertThat(scores).hasSize(2);
         assertThat(scores[0]).isGreaterThan(scores[1]);
     }
 
     @Test
-    void createScorerShouldHandleEmptyFlowList() {
-        FlowScorer scorer = new Bm25ScoringProvider().createScorer(Collections.emptyList());
+    void createScorerShouldHandleEmptyDocList() {
+        SearchScorer scorer = new Bm25ScoringProvider().createScorer(Collections.emptyList(), WEIGHTS);
         assertThat(scorer.score("EXR")).isEmpty();
     }
 
     @Test
-    void createScorerShouldHandleNullDescription() {
-        Flow bop = flow("ECB", "BOP", "Balance of payments", null);
-        FlowScorer scorer = new Bm25ScoringProvider().createScorer(Collections.singletonList(bop));
+    void createScorerShouldHandleEmptyField() {
+        String[] doc = {"BOP", "Balance of payments", ""};
+        SearchScorer scorer = new Bm25ScoringProvider().createScorer(Collections.singletonList(doc), WEIGHTS);
         double[] scores = scorer.score("BOP");
         assertThat(scores[0]).isGreaterThan(0);
-    }
-
-    private static Flow flow(String agency, String id, String name, String description) {
-        return Flow.builder()
-                .ref(FlowRef.of(agency, id, null))
-                .structureRef(StructureRef.parse(""))
-                .name(name)
-                .description(description)
-                .build();
     }
 }

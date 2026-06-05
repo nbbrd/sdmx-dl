@@ -19,28 +19,20 @@ package internal.sdmxdl.format.search;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.Flow;
-import sdmxdl.format.spi.FlowScorer;
-import sdmxdl.format.spi.FlowSearchScoringProvider;
+import sdmxdl.format.spi.SearchScorer;
+import sdmxdl.format.spi.SearchScoringProvider;
 import sdmxdl.format.spi.ScoringCategory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Built-in BM25 scoring provider.
  * <p>
- * Tokenizes flow fields (id, name, description) with field weights and
- * computes BM25 relevance scores.
+ * Tokenizes document fields with field weights and computes BM25 relevance scores.
  */
 @DirectImpl
 @ServiceProvider
-public final class Bm25ScoringProvider implements FlowSearchScoringProvider {
-
-    private static final double ID_WEIGHT = 3.0;
-    private static final double NAME_WEIGHT = 2.0;
-    private static final double DESCRIPTION_WEIGHT = 1.0;
-    private static final double[] FIELD_WEIGHTS = {ID_WEIGHT, NAME_WEIGHT, DESCRIPTION_WEIGHT};
+public final class Bm25ScoringProvider implements SearchScoringProvider {
 
     @Override
     public @NonNull String getScoringId() {
@@ -58,15 +50,8 @@ public final class Bm25ScoringProvider implements FlowSearchScoringProvider {
     }
 
     @Override
-    public @NonNull FlowScorer createScorer(@NonNull List<Flow> flows) {
-        List<String[]> docs = new ArrayList<>(flows.size());
-        for (Flow flow : flows) {
-            String id = flow.getRef().getId();
-            String name = flow.getName();
-            String description = flow.getDescription() != null ? flow.getDescription() : "";
-            docs.add(new String[]{id, name, description});
-        }
-        BM25Index index = BM25Index.of(docs, FIELD_WEIGHTS);
+    public @NonNull SearchScorer createScorer(@NonNull List<String[]> documents, double[] fieldWeights) {
+        BM25Index index = BM25Index.of(documents, fieldWeights);
         return index::score;
     }
 }

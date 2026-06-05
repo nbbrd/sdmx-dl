@@ -11,7 +11,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - ![PROVIDER] Add SQL EXPLAIN ANALYZE-style execution tracing [#1244](https://github.com/nbbrd/sdmx-dl/issues/1244)
 - ![PROVIDER] Add retry property for transient network errors [#1252](https://github.com/nbbrd/sdmx-dl/issues/1252)
-- ![FORMAT] Add hybrid search on flows [#1251](https://github.com/nbbrd/sdmx-dl/issues/1251)
+- ![FORMAT] Add hybrid search [#1251](https://github.com/nbbrd/sdmx-dl/issues/1251)
 
 ### Changed
 

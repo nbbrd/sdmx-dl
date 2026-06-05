@@ -10,6 +10,8 @@ import java.util.concurrent.Callable;
 @CommandLine.Command(
         name = "search",
         subcommands = {
+                SearchSourcesCommand.class,
+                SearchDatabasesCommand.class,
                 SearchFlowsCommand.class
         }
 )
@@ -24,4 +26,3 @@ public final class SearchCommand implements Callable<Void> {
         return null;
     }
 }
-

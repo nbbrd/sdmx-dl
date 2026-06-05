@@ -16,7 +16,7 @@ import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import sdmxdl.*;
-import sdmxdl.format.FlowSearch;
+import sdmxdl.format.Search;
 import sdmxdl.format.protobuf.*;
 import sdmxdl.format.protobuf.web.MonitorReportDto;
 import sdmxdl.format.protobuf.web.WebSourceDto;
@@ -275,9 +275,46 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
                         .databaseOf(database)
                         .languagesOf(languages)
                         .build());
-        return FlowSearch.of(flows).search(query, maxResults)
+        return Search.ofFlows(flows).search(query, maxResults)
                 .stream()
-                .map(result -> ProtoApi.fromDataflow(result.getFlow()))
+                .map(result -> ProtoApi.fromDataflow(result.getItem()))
+                .toList();
+    }
+
+    @Tool(description = "Search SDMX sources by relevance using hybrid search (BM25 + trigram).")
+    public List<WebSourceDto> mcpSearchSources(
+            @ToolArg(description = QUERY_ARG) String query,
+            @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = ANY_KEYWORD) String languages,
+            @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = "20") int maxResults
+    ) {
+        List<WebSource> sources = manager.getSources()
+                .values()
+                .stream()
+                .filter(source -> !source.isAlias())
+                .filter(Confidentiality.PUBLIC::isAllowedIn)
+                .toList();
+        return Search.ofSources(sources, Languages.parse(languages)).search(query, maxResults)
+                .stream()
+                .map(result -> ProtoWeb.fromWebSource(result.getItem()))
+                .toList();
+    }
+
+    @Tool(description = "Search SDMX databases by relevance using hybrid search (BM25 + trigram).")
+    public List<DatabaseDto> mcpSearchDatabases(
+            @ToolArg(description = SOURCE_ARG) String source,
+            @ToolArg(description = QUERY_ARG) String query,
+            @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = ANY_KEYWORD) String languages,
+            @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = "20") int maxResults
+    ) throws IOException {
+        Collection<Database> databases = manager
+                .using(getPublicSourceForMcp(source))
+                .getDatabases(SourceRequest
+                        .builder()
+                        .languagesOf(languages)
+                        .build());
+        return Search.ofDatabases(databases).search(query, maxResults)
+                .stream()
+                .map(result -> ProtoApi.fromDatabase(result.getItem()))
                 .toList();
     }
 
@@ -422,6 +459,54 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
                             name = "ECB example",
                             value = """
                                     {
+                                      "query": "european central",
+                                      "maxResults": 5
+                                    }
+                                    """
+                    )
+            )
+    )
+    @POST
+    @Path("/searchSources")
+    @Override
+    public Multi<WebSourceDto> searchSources(SearchSourcesRequestDto request) {
+        Languages languages = request.hasLanguages() ? Languages.parse(request.getLanguages()) : Languages.ANY;
+        int maxResults = request.hasMaxResults() ? request.getMaxResults() : 20;
+        Collection<WebSource> sources = manager.getSources().values();
+        return Multi.createFrom()
+                .iterable(Search.ofSources(sources, languages).search(request.getQuery(), maxResults))
+                .map(Search.Result::getItem)
+                .map(ProtoWeb::fromWebSource);
+    }
+
+    @POST
+    @Path("/searchDatabases")
+    @Override
+    public Multi<DatabaseDto> searchDatabases(SearchDatabaseRequestDto request) {
+        Languages languages = request.hasLanguages() ? Languages.parse(request.getLanguages()) : Languages.ANY;
+        int maxResults = request.hasMaxResults() ? request.getMaxResults() : 20;
+        try {
+            Collection<Database> databases = manager
+                    .usingName(request.getSource())
+                    .getDatabases(SourceRequest
+                            .builder()
+                            .languages(languages)
+                            .build());
+            return Multi.createFrom()
+                    .iterable(Search.ofDatabases(databases).search(request.getQuery(), maxResults))
+                    .map(Search.Result::getItem)
+                    .map(ProtoApi::fromDatabase);
+        } catch (IOException ex) {
+            return Multi.createFrom().failure(ex);
+        }
+    }
+
+    @RequestBody(
+            content = @Content(
+                    examples = @ExampleObject(
+                            name = "ECB example",
+                            value = """
+                                    {
                                       "source": "ECB",
                                       "query": "exchange rates",
                                       "maxResults": 5
@@ -446,8 +531,8 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
                             .languages(languages)
                             .build());
             return Multi.createFrom()
-                    .iterable(FlowSearch.of(flows).search(request.getQuery(), maxResults))
-                    .map(FlowSearch.Result::getFlow)
+                    .iterable(Search.ofFlows(flows).search(request.getQuery(), maxResults))
+                    .map(Search.Result::getItem)
                     .map(ProtoApi::fromDataflow);
         } catch (IOException ex) {
             return Multi.createFrom().failure(ex);

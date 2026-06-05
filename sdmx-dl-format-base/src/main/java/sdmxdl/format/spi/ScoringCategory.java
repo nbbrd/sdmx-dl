@@ -19,7 +19,7 @@ package sdmxdl.format.spi;
 /**
  * Classifies flow search scoring providers by their approach to matching.
  *
- * @see FlowSearchScoringProvider#getScoringCategory()
+ * @see SearchScoringProvider#getScoringCategory()
  */
 public enum ScoringCategory {
 

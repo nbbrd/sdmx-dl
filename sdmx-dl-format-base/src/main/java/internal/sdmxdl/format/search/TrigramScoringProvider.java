@@ -19,9 +19,8 @@ package internal.sdmxdl.format.search;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.Flow;
-import sdmxdl.format.spi.FlowScorer;
-import sdmxdl.format.spi.FlowSearchScoringProvider;
+import sdmxdl.format.spi.SearchScorer;
+import sdmxdl.format.spi.SearchScoringProvider;
 import sdmxdl.format.spi.ScoringCategory;
 
 import java.util.List;
@@ -29,12 +28,12 @@ import java.util.List;
 /**
  * Built-in character trigram cosine similarity scoring provider.
  * <p>
- * Builds trigram vectors from flow text and scores queries via cosine similarity.
+ * Builds trigram vectors from document text and scores queries via cosine similarity.
  * Provides typo tolerance and partial match capability.
  */
 @DirectImpl
 @ServiceProvider
-public final class TrigramScoringProvider implements FlowSearchScoringProvider {
+public final class TrigramScoringProvider implements SearchScoringProvider {
 
     @Override
     public @NonNull String getScoringId() {
@@ -52,14 +51,10 @@ public final class TrigramScoringProvider implements FlowSearchScoringProvider {
     }
 
     @Override
-    public @NonNull FlowScorer createScorer(@NonNull List<Flow> flows) {
-        String[] docs = new String[flows.size()];
-        for (int i = 0; i < flows.size(); i++) {
-            Flow flow = flows.get(i);
-            String id = flow.getRef().getId();
-            String name = flow.getName();
-            String description = flow.getDescription() != null ? flow.getDescription() : "";
-            docs[i] = id + " " + name + " " + description;
+    public @NonNull SearchScorer createScorer(@NonNull List<String[]> documents, double[] fieldWeights) {
+        String[] docs = new String[documents.size()];
+        for (int i = 0; i < documents.size(); i++) {
+            docs[i] = String.join(" ", documents.get(i));
         }
         TrigramIndex index = TrigramIndex.of(docs);
         return index::score;

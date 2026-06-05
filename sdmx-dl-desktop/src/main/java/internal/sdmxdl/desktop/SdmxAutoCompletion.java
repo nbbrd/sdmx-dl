@@ -28,7 +28,7 @@ import nbbrd.io.Resource;
 import sdmxdl.*;
 import sdmxdl.Dimension;
 import sdmxdl.desktop.MainComponent;
-import sdmxdl.format.FlowSearch;
+import sdmxdl.format.Search;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Network;
@@ -48,6 +48,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -129,14 +130,15 @@ public abstract class SdmxAutoCompletion {
         }
 
         private List<WebSource> filterAndSort(List<WebSource> list, String term) {
-            return list.stream().filter(getFilter(term)).collect(toList());
-        }
-
-        private Predicate<WebSource> getFilter(String term) {
-            Predicate<String> filter = ExtAutoCompletionSource.basicFilter(term);
-            return value -> filter.test(languages.select(value.getNames()))
-                    || filter.test(value.getId())
-                    || value.getAliases().stream().anyMatch(filter);
+            if (term == null || term.isEmpty()) {
+                return list.stream()
+                        .sorted(comparing(source -> Objects.toString(languages.select(source.getNames()))))
+                        .collect(toList());
+            }
+            return Search.ofSources(list, languages).search(term, list.size())
+                    .stream()
+                    .map(Search.Result::getItem)
+                    .collect(toList());
         }
     }
 
@@ -185,13 +187,15 @@ public abstract class SdmxAutoCompletion {
         }
 
         private List<Database> filterAndSort(List<Database> list, String term) {
-            return list.stream().filter(getFilter(term)).collect(toList());
-        }
-
-        private Predicate<Database> getFilter(String term) {
-            Predicate<String> filter = ExtAutoCompletionSource.basicFilter(term);
-            return value -> filter.test(value.getName())
-                    || filter.test(value.getRef().toString());
+            if (term == null || term.isEmpty()) {
+                return list.stream()
+                        .sorted(comparing(Database::getName))
+                        .collect(toList());
+            }
+            return Search.ofDatabases(list).search(term, list.size())
+                    .stream()
+                    .map(Search.Result::getItem)
+                    .collect(toList());
         }
 
         private String getCacheKey(String term) {
@@ -255,9 +259,9 @@ public abstract class SdmxAutoCompletion {
                         .sorted(comparing(Flow::getName))
                         .collect(toList());
             }
-            return FlowSearch.of(values).search(term, values.size())
+            return Search.ofFlows(values).search(term, values.size())
                     .stream()
-                    .map(FlowSearch.Result::getFlow)
+                    .map(Search.Result::getItem)
                     .collect(toList());
         }
 

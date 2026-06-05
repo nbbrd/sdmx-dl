@@ -1,5 +1,5 @@
 import sdmxdl.ext.Persistence;
-import sdmxdl.format.spi.FlowSearchScoringProvider;
+import sdmxdl.format.spi.SearchScoringProvider;
 
 module sdmxdl.format.base {
 
@@ -17,9 +17,9 @@ module sdmxdl.format.base {
     exports sdmxdl.format.time;
 
     uses Persistence;
-    uses FlowSearchScoringProvider;
+    uses SearchScoringProvider;
 
-    provides FlowSearchScoringProvider with
+    provides SearchScoringProvider with
             internal.sdmxdl.format.search.Bm25ScoringProvider,
             internal.sdmxdl.format.search.TrigramScoringProvider;
 }

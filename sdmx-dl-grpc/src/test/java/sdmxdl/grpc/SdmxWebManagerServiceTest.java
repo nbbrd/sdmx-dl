@@ -10,6 +10,7 @@ import io.quarkus.grpc.GrpcClient;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 import sdmxdl.Confidentiality;
+import sdmxdl.format.protobuf.DatabaseDto;
 import sdmxdl.format.protobuf.FlowDto;
 import sdmxdl.format.protobuf.ProtoApi;
 import sdmxdl.format.protobuf.ProtoWeb;
@@ -147,6 +148,136 @@ public class SdmxWebManagerServiceTest {
         McpAssured.newConnectedStreamableClient()
                 .when()
                 .toolsCall("mcpSearchFlows", Map.of("source", "INVALID_SOURCE_XYZ", "query", "test"), r -> {
+                    assertThat(r)
+                            .returns(true, ToolResponse::isError);
+                })
+                .thenAssertResults();
+    }
+
+    @Test
+    public void searchSourcesReturnsRankedResults() {
+        SearchSourcesRequestDto request = SearchSourcesRequestDto.newBuilder()
+                .setQuery("european central")
+                .setMaxResults(5)
+                .build();
+        List<WebSourceDto> response = grpc.searchSources(request).collect().asList().await().atMost(Duration.ofSeconds(5));
+        assertThat(response)
+                .isNotEmpty()
+                .hasSizeLessThanOrEqualTo(5);
+        assertThat(response.get(0).getId())
+                .isEqualTo("ECB");
+    }
+
+    @Test
+    public void searchSourcesReturnsEmptyForEmptyQuery() {
+        SearchSourcesRequestDto request = SearchSourcesRequestDto.newBuilder()
+                .setQuery("")
+                .setMaxResults(10)
+                .build();
+        List<WebSourceDto> response = grpc.searchSources(request).collect().asList().await().atMost(Duration.ofSeconds(5));
+        assertThat(response).isEmpty();
+    }
+
+    @Test
+    public void searchSourcesRespectsMaxResults() {
+        SearchSourcesRequestDto request = SearchSourcesRequestDto.newBuilder()
+                .setQuery("bank")
+                .setMaxResults(2)
+                .build();
+        List<WebSourceDto> response = grpc.searchSources(request).collect().asList().await().atMost(Duration.ofSeconds(5));
+        assertThat(response).hasSizeLessThanOrEqualTo(2);
+    }
+
+    @Test
+    public void searchSourcesFindsBySourceId() {
+        SearchSourcesRequestDto request = SearchSourcesRequestDto.newBuilder()
+                .setQuery("ECB")
+                .setMaxResults(5)
+                .build();
+        List<WebSourceDto> response = grpc.searchSources(request).collect().asList().await().atMost(Duration.ofSeconds(5));
+        assertThat(response)
+                .isNotEmpty()
+                .extracting(WebSourceDto::getId)
+                .contains("ECB");
+    }
+
+    @Test
+    public void searchDatabasesReturnsEmptyForEmptyQuery() {
+        SearchDatabaseRequestDto request = SearchDatabaseRequestDto.newBuilder()
+                .setSource("ECB")
+                .setQuery("")
+                .setMaxResults(10)
+                .build();
+        List<DatabaseDto> response = grpc.searchDatabases(request).collect().asList().await().atMost(Duration.ofSeconds(30));
+        assertThat(response).isEmpty();
+    }
+
+    @Test
+    public void mcpSearchSourcesReturnsRankedResults() {
+        McpAssured.newConnectedStreamableClient()
+                .when()
+                .toolsCall("mcpSearchSources", Map.of("query", "european central"), r -> {
+                    assertThat(r)
+                            .returns(false, ToolResponse::isError)
+                            .extracting(ToolResponse::content, list(Content.class))
+                            .isNotEmpty();
+                })
+                .thenAssertResults();
+    }
+
+    @Test
+    public void mcpSearchSourcesReturnsEmptyForEmptyQuery() {
+        McpAssured.newConnectedStreamableClient()
+                .when()
+                .toolsCall("mcpSearchSources", Map.of("query", ""), r -> {
+                    assertThat(r)
+                            .returns(false, ToolResponse::isError)
+                            .extracting(ToolResponse::content, list(Content.class))
+                            .hasSize(1)
+                            .element(0)
+                            .extracting(SdmxWebManagerServiceTest::getText, STRING)
+                            .isEqualToIgnoringWhitespace("[]");
+                })
+                .thenAssertResults();
+    }
+
+    @Test
+    public void mcpSearchSourcesFindsById() {
+        McpAssured.newConnectedStreamableClient()
+                .when()
+                .toolsCall("mcpSearchSources", Map.of("query", "ECB"), r -> {
+                    assertThat(r)
+                            .returns(false, ToolResponse::isError)
+                            .extracting(ToolResponse::content, list(Content.class))
+                            .isNotEmpty()
+                            .element(0)
+                            .extracting(SdmxWebManagerServiceTest::getText, STRING)
+                            .contains("ECB");
+                })
+                .thenAssertResults();
+    }
+
+    @Test
+    public void mcpSearchDatabasesReturnsEmptyForEmptyQuery() {
+        McpAssured.newConnectedStreamableClient()
+                .when()
+                .toolsCall("mcpSearchDatabases", Map.of("source", "ECB", "query", ""), r -> {
+                    assertThat(r)
+                            .returns(false, ToolResponse::isError)
+                            .extracting(ToolResponse::content, list(Content.class))
+                            .hasSize(1)
+                            .element(0)
+                            .extracting(SdmxWebManagerServiceTest::getText, STRING)
+                            .isEqualToIgnoringWhitespace("[]");
+                })
+                .thenAssertResults();
+    }
+
+    @Test
+    public void mcpSearchDatabasesReturnsErrorForInvalidSource() {
+        McpAssured.newConnectedStreamableClient()
+                .when()
+                .toolsCall("mcpSearchDatabases", Map.of("source", "INVALID_SOURCE_XYZ", "query", "test"), r -> {
                     assertThat(r)
                             .returns(true, ToolResponse::isError);
                 })
