@@ -20,6 +20,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - ![PROVIDER] Fix UIS SDMX API end-of-life [#901](https://github.com/nbbrd/sdmx-dl/issues/901)
+- ![CLI] Fix warnings when running CLI with Java25+ [#1256](https://github.com/nbbrd/sdmx-dl/issues/1256)
 
 ## [3.0.0] - 2026-05-22
 
