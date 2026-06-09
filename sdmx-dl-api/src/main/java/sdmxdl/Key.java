@@ -108,6 +108,20 @@ public final class Key {
         return !equals(that) && contains(that);
     }
 
+    /**
+     * Validates this key against a data structure definition.
+     * <p>
+     * A key is valid if it has at most as many dimensions as the structure and
+     * all non-wildcard codes are known in their respective coded dimensions.
+     * Partial keys (fewer dimensions than the structure) are allowed: missing
+     * trailing dimensions are implicitly treated as wildcards.
+     * <p>
+     * {@link #ALL} is always considered valid.
+     *
+     * @param dsd the data structure definition to validate against; must not be null
+     * @return {@code null} if the key is valid, or an error message describing
+     * the first violation found
+     */
     @Nullable
     public String validateOn(@NonNull Structure dsd) {
         if (this == ALL) {
@@ -116,11 +130,11 @@ public final class Key {
 
         List<Dimension> dimensions = dsd.getDimensions();
 
-        if (dimensions.size() != size()) {
-            return String.format(Locale.ROOT, "Expecting key '%s' to have %d dimensions instead of %d", this, dimensions.size(), size());
+        if (size() > dimensions.size()) {
+            return String.format(Locale.ROOT, "Expecting key '%s' to have at most %d dimension(s) instead of %d", this, dimensions.size(), size());
         }
 
-        for (int i = 0; i < dimensions.size(); i++) {
+        for (int i = 0; i < size(); i++) {
             Dimension dimension = dimensions.get(i);
             if (dimension.isCoded()) {
                 for (String code : Chars.splitToArray(get(i), OR_CHAR)) {
@@ -134,11 +148,30 @@ public final class Key {
         return null;
     }
 
+    /**
+     * Expands this key to match the full dimension count of a data structure definition.
+     * <p>
+     * If this key has fewer dimensions than the structure, trailing wildcard
+     * dimensions are appended. For example, {@code A.H_IPC.PC_HH_IACC} is
+     * expanded to {@code A.H_IPC.PC_HH_IACC.*.*} for a 5-dimension structure.
+     * <p>
+     * {@link #ALL} is expanded to an all-wildcard key with the exact number of
+     * dimensions from the structure. A key that already matches the structure
+     * dimension count is returned unchanged.
+     *
+     * @param dsd the data structure definition to expand against; must not be null
+     * @return the expanded key; never null
+     */
     public @NonNull Key expand(@NonNull Structure dsd) {
         if (equals(Key.ALL)) {
             String[] expanded = new String[dsd.getDimensions().size()];
             Arrays.fill(expanded, "");
             return Key.of(expanded);
+        }
+        if (size() < dsd.getDimensions().size()) {
+            String[] expanded = Arrays.copyOf(items, dsd.getDimensions().size());
+            Arrays.fill(expanded, size(), dsd.getDimensions().size(), WILDCARD_CODE);
+            return new Key(expanded);
         }
         return this;
     }

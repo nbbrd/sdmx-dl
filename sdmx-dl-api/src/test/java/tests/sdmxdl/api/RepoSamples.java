@@ -81,7 +81,7 @@ public class RepoSamples {
     public static final Key K1 = Key.of("M", "BE", "INDUSTRY");
     public static final Key K2 = Key.of("M", "BE", "XXX");
     public static final Key K3 = Key.of("M", "FR", "INDUSTRY");
-    public static final Key INVALID_KEY = Key.of("M", "BE");
+    public static final Key INVALID_KEY = Key.of("M", "BE", "INDUSTRY", "TOO_MANY");
 
     public static final Series S1 = Series
             .builder()

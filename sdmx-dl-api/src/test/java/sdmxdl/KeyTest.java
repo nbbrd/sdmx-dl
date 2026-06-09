@@ -426,7 +426,7 @@ public class KeyTest {
 
         assertThat(Key.of("IND"))
                 .isNot(validOn(dsd0))
-                .isNot(validOn(dsd2));
+                .is(validOn(dsd2));
 
         assertThat(Key.of("IND", "BE", "XX"))
                 .isNot(validOn(dsd0))
@@ -456,8 +456,8 @@ public class KeyTest {
                 .isNot(validOn(dsd0))
                 .isNot(validOn(dsd2));
 
-        assertThat(Key.of("IND").validateOn(dsd2))
-                .isEqualTo("Expecting key 'IND' to have 2 dimensions instead of 1");
+        assertThat(Key.of("IND", "BE", "XX").validateOn(dsd2))
+                .isEqualTo("Expecting key 'IND.BE.XX' to have at most 2 dimension(s) instead of 3");
 
         assertThat(Key.of("IND", "XX").validateOn(dsd2))
                 .isEqualTo("Expecting key 'IND.XX' to have a known code at position 2 for dimension 'REGION' instead of 'XX'");
@@ -465,6 +465,30 @@ public class KeyTest {
 
     private static Condition<Key> validOn(Structure dsd) {
         return new Condition<>(parent -> parent.validateOn(dsd) == null, "valid on dsd %s", dsd);
+    }
+
+    @Test
+    public void testExpand() {
+        assertThat(Key.ALL.expand(dsd0))
+                .isEqualTo(Key.ALL)
+                .hasToString(Key.ALL_KEYWORD);
+
+        assertThat(Key.ALL.expand(dsd2))
+                .isEqualTo(Key.of("", ""))
+                .hasToString(".");
+
+        assertThat(Key.of("IND", "BE").expand(dsd2))
+                .isEqualTo(Key.of("IND", "BE"))
+                .describedAs("Full key is not changed");
+
+        assertThat(Key.of("IND").expand(dsd2))
+                .isEqualTo(Key.of("IND", ""))
+                .describedAs("Partial key is expanded with trailing wildcards");
+
+        assertThat(Key.of().expand(dsd2))
+                .isEqualTo(Key.of("", ""))
+                .hasToString(".")
+                .describedAs("ALL key is expanded with wildcards");
     }
 
     @Test
