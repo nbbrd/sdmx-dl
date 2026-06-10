@@ -3,8 +3,10 @@ package internal.sdmxdl.format.search;
 import internal.sdmxdl.format.spi.SearchScoringProviderLoader;
 import lombok.NonNull;
 import sdmxdl.Database;
+import sdmxdl.DatabaseRef;
 import sdmxdl.Flow;
 import sdmxdl.Languages;
+import sdmxdl.format.FlowEntry;
 import sdmxdl.format.Search;
 import sdmxdl.format.spi.SearchScorer;
 import sdmxdl.format.spi.SearchScoringProvider;
@@ -41,6 +43,11 @@ public final class HybridSearch<T> implements Search<T> {
 
     public static @NonNull Search<Database> ofDatabases(@NonNull List<Database> databases) {
         return of(databases, HybridSearch::extractDatabaseFields, DATABASE_FIELD_WEIGHTS);
+    }
+
+    public static @NonNull Search<FlowEntry> ofFlowEntries(@NonNull List<FlowEntry> entries, @NonNull Languages languages) {
+        Function<FlowEntry, String[]> extractor = entry -> extractFlowEntryFields(entry, languages);
+        return of(entries, extractor, FLOW_ENTRY_FIELD_WEIGHTS);
     }
 
     private static <T> @NonNull Search<T> of(@NonNull List<T> items,
@@ -106,6 +113,8 @@ public final class HybridSearch<T> implements Search<T> {
     private static final double[] FLOW_FIELD_WEIGHTS = {3.0, 2.0, 1.0};
     private static final double[] SOURCE_FIELD_WEIGHTS = {3.0, 2.0, 1.0};
     private static final double[] DATABASE_FIELD_WEIGHTS = {3.0, 2.0};
+    // fields: flowId, flowName, sourceId, flowDescription, databaseId, sourceAliases
+    private static final double[] FLOW_ENTRY_FIELD_WEIGHTS = {4.0, 3.0, 3.0, 1.5, 1.0, 0.5};
 
     private static String[] extractFlowFields(Flow flow) {
         String id = flow.getRef().getId();
@@ -125,6 +134,23 @@ public final class HybridSearch<T> implements Search<T> {
         String id = database.getRef().getId();
         String name = database.getName();
         return new String[]{id, name};
+    }
+
+    private static String[] extractFlowEntryFields(FlowEntry entry, Languages languages) {
+        Flow flow = entry.getFlow();
+        WebSource source = entry.getSource();
+        String flowId = flow.getRef().getId();
+        String flowName = flow.getName();
+        String sourceId = source.getId();
+        String flowDescription = flow.getDescription() != null ? flow.getDescription() : "";
+        String databaseId = !DatabaseRef.NO_DATABASE.equals(entry.getDatabase())
+                ? entry.getDatabase().getId()
+                : "";
+        String sourceAliases = String.join(" ", source.getAliases());
+        String sourceName = source.getName(languages);
+        // Append source name to sourceId field so both contribute to the same slot weight
+        String sourceIdAndName = sourceName != null ? sourceId + " " + sourceName : sourceId;
+        return new String[]{flowId, flowName, sourceIdAndName, flowDescription, databaseId, sourceAliases};
     }
 
     // --- Default providers ---

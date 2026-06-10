@@ -82,5 +82,21 @@ public interface Search<T> {
     static @NonNull Search<Database> ofDatabases(@NonNull Collection<Database> databases) {
         return HybridSearch.ofDatabases(new ArrayList<>(databases));
     }
+
+    /**
+     * Creates a new hybrid search engine that ranks across source, database, and flow simultaneously.
+     * <p>
+     * This is the preferred factory when all three dimensions should contribute to the ranking,
+     * e.g. when searching across flows aggregated from multiple sources.
+     * </p>
+     *
+     * @param entries   the flow entries to index
+     * @param languages language priority for resolving source names
+     * @return a new search engine
+     */
+    @StaticFactoryMethod
+    static @NonNull Search<FlowEntry> ofFlowEntries(@NonNull Collection<FlowEntry> entries, @NonNull Languages languages) {
+        return HybridSearch.ofFlowEntries(new ArrayList<>(entries), languages);
+    }
 }
 

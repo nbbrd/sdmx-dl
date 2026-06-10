@@ -408,6 +408,11 @@ public abstract class SdmxAutoCompletion {
         return sdmxIcon;
     }
 
+    public static ImageIcon getDefaultIcon(int size) {
+        Image scaled = sdmxIcon.getImage().getScaledInstance(size, size, Image.SCALE_SMOOTH);
+        return new ImageIcon(scaled);
+    }
+
     private static final ImageIcon sdmxIcon = new ImageIcon(loadImage());
 
     private static Image loadImage() {

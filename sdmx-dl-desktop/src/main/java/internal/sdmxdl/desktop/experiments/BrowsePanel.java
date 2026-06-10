@@ -1,4 +1,4 @@
-package _test;
+package internal.sdmxdl.desktop.experiments;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import ec.util.chart.TimeSeriesChart;
@@ -8,13 +8,13 @@ import internal.sdmxdl.desktop.SdmxAutoCompletion;
 import internal.sdmxdl.desktop.util.Documents;
 import internal.sdmxdl.desktop.util.Ikons;
 import internal.sdmxdl.desktop.util.SystemLafColorScheme;
+import lombok.NonNull;
 import nbbrd.desktop.favicon.DomainName;
 import nbbrd.desktop.favicon.FaviconRef;
-import org.kordamp.ikonli.materialdesign.MaterialDesign;
-import lombok.NonNull;
 import org.jfree.data.time.Millisecond;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
+import org.kordamp.ikonli.materialdesign.MaterialDesign;
 import sdmxdl.*;
 import sdmxdl.format.Search;
 import sdmxdl.web.SdmxWebManager;
@@ -24,10 +24,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.datatransfer.StringSelection;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.NumberFormat;
@@ -214,10 +211,10 @@ public final class BrowsePanel extends JComponent {
         sourcesList.setCellRenderer(new ListItemRenderer<WebSource>(
                 (src, repaint) -> src.getWebsite() != null
                         ? SdmxAutoCompletion.FAVICONS.getOrDefault(
-                                FaviconRef.of(DomainName.of(src.getWebsite()), 32),
-                                repaint,
-                                SdmxAutoCompletion.getDefaultIcon())
-                        : SdmxAutoCompletion.getDefaultIcon(),
+                        FaviconRef.of(DomainName.of(src.getWebsite()), 32),
+                        repaint,
+                        SdmxAutoCompletion.getDefaultIcon(32))
+                        : SdmxAutoCompletion.getDefaultIcon(32),
                 WebSource::getId,
                 src -> src.getName(Languages.ANY),
                 BrowsePanel::buildSourceTooltip));
@@ -225,6 +222,15 @@ public final class BrowsePanel extends JComponent {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
                 if (e.getClickCount() == 1 && sourcesList.getSelectedIndex() >= 0) {
+                    onSourceSelected(sourcesList.getSelectedValue());
+                }
+            }
+        });
+        sourcesList.getInputMap().put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ENTER, 0), "ENTER_ACTION");
+        sourcesList.getActionMap().put("ENTER_ACTION", new AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                if (sourcesList.getSelectedIndex() >= 0) {
                     onSourceSelected(sourcesList.getSelectedValue());
                 }
             }
@@ -243,9 +249,18 @@ public final class BrowsePanel extends JComponent {
                 }
             }
         });
+        dbList.getInputMap().put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ENTER, 0), "ENTER_ACTION");
+        dbList.getActionMap().put("ENTER_ACTION", new AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                if (dbList.getSelectedIndex() >= 0) {
+                    onDatabaseSelected(dbList.getSelectedValue());
+                }
+            }
+        });
 
         flowsList.setCellRenderer(new ListItemRenderer<Flow>(
-                (flow, repaint) -> createFlowIcon(flow.getRef().toString()),
+                (flow, repaint) -> FlowIdenticonFactory.getIcon(flow.getRef().toString()),
                 flow -> flow.getRef().toString(),
                 Flow::getName,
                 BrowsePanel::buildFlowTooltip));
@@ -253,6 +268,15 @@ public final class BrowsePanel extends JComponent {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
                 if (e.getClickCount() == 1 && flowsList.getSelectedIndex() >= 0) {
+                    onFlowSelected(flowsList.getSelectedValue());
+                }
+            }
+        });
+        flowsList.getInputMap().put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ENTER, 0), "ENTER_ACTION");
+        flowsList.getActionMap().put("ENTER_ACTION", new AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                if (flowsList.getSelectedIndex() >= 0) {
                     onFlowSelected(flowsList.getSelectedValue());
                 }
             }
@@ -354,6 +378,14 @@ public final class BrowsePanel extends JComponent {
 
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         list.setFixedCellHeight(54);
+        list.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent e) {
+                if (list.getSelectedIndex() < 0 && list.getModel().getSize() > 0) {
+                    list.setSelectedIndex(0);
+                }
+            }
+        });
 
         JPanel searchPanel = new JPanel(new BorderLayout(0, 0));
         searchPanel.setBorder(new EmptyBorder(8, 8, 8, 8));
@@ -890,6 +922,17 @@ public final class BrowsePanel extends JComponent {
 
     private void showCard(String card) {
         cardLayout.show(contentPanel, card);
+        switch (card) {
+            case CARD_SOURCES:
+                SwingUtilities.invokeLater(sourcesSearch::requestFocusInWindow);
+                break;
+            case CARD_DATABASES:
+                SwingUtilities.invokeLater(dbSearch::requestFocusInWindow);
+                break;
+            case CARD_FLOWS:
+                SwingUtilities.invokeLater(flowsSearch::requestFocusInWindow);
+                break;
+        }
     }
 
     private void showLoading(String message) {
@@ -1027,7 +1070,7 @@ public final class BrowsePanel extends JComponent {
     // ==================== Tooltip builders ====================
 
     private static String buildSourceTooltip(WebSource src) {
-        StringBuilder sb = new StringBuilder("<html>");
+        StringBuilder sb = new StringBuilder("<html><body style='width:300px'>");
         sb.append("<b>").append(src.getId()).append("</b>");
         String name = src.getName(Languages.ANY);
         if (name != null && !name.isEmpty() && !name.equals(src.getId())) {
@@ -1038,23 +1081,23 @@ public final class BrowsePanel extends JComponent {
         if (src.getWebsite() != null) {
             sb.append("<br><small>Website: ").append(escapeHtml(src.getWebsite().toString())).append("</small>");
         }
-        sb.append("</html>");
+        sb.append("</body></html>");
         return sb.toString();
     }
 
     private static String buildDatabaseTooltip(Database db) {
-        StringBuilder sb = new StringBuilder("<html>");
+        StringBuilder sb = new StringBuilder("<html><body style='width:300px'>");
         sb.append("<b>").append(escapeHtml(db.getRef().getId())).append("</b>");
         String name = db.getName();
         if (name != null && !name.isEmpty() && !name.equals(db.getRef().getId())) {
             sb.append("<br>").append(escapeHtml(name));
         }
-        sb.append("</html>");
+        sb.append("</body></html>");
         return sb.toString();
     }
 
     private static String buildFlowTooltip(Flow flow) {
-        StringBuilder sb = new StringBuilder("<html>");
+        StringBuilder sb = new StringBuilder("<html><body style='width:300px'>");
         sb.append("<b>").append(escapeHtml(flow.getRef().toString())).append("</b>");
         String name = flow.getName();
         if (name != null && !name.isEmpty()) {
@@ -1062,9 +1105,9 @@ public final class BrowsePanel extends JComponent {
         }
         String description = flow.getDescription();
         if (description != null && !description.isEmpty()) {
-            sb.append("<br><small>").append(escapeHtml(description)).append("</small>");
+            sb.append("<hr>").append(escapeHtml(description));
         }
-        sb.append("</html>");
+        sb.append("</body></html>");
         return sb.toString();
     }
 
@@ -1072,241 +1115,7 @@ public final class BrowsePanel extends JComponent {
         return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
     }
 
-    // ==================== Flow identicons ====================
-
-    /** Color palette matching the one in {@code getFlowIcon()} of browse.html. */
-    private static final Color[] IDENTICON_COLORS = {
-            new Color(0x09, 0x69, 0xDA), new Color(0x1F, 0x88, 0x3D),
-            new Color(0xCF, 0x22, 0x2E), new Color(0x82, 0x50, 0xDF),
-            new Color(0xBF, 0x39, 0x89), new Color(0xFB, 0x85, 0x00),
-            new Color(0x05, 0x50, 0xAE), new Color(0x11, 0x63, 0x29),
-            new Color(0xA4, 0x0E, 0x26), new Color(0x66, 0x39, 0xBA),
-            new Color(0xD1, 0x24, 0x2F), new Color(0x09, 0x69, 0xDA),
-            new Color(0x21, 0x8B, 0xFF), new Color(0x7D, 0x4E, 0x57),
-            new Color(0x95, 0x38, 0x00), new Color(0x66, 0x39, 0xBA),
-            new Color(0x8B, 0x5C, 0xF6), new Color(0x3B, 0x82, 0xF6),
-            new Color(0x10, 0xB9, 0x81), new Color(0xF5, 0x9E, 0x0B)
-    };
-
-    private static final Map<String, Icon> FLOW_ICON_CACHE = new HashMap<>();
-
-    private static Icon createFlowIcon(String id) {
-        return FLOW_ICON_CACHE.computeIfAbsent(id, FlowIdenticonFactory::create);
-    }
-
-    /**
-     * Generates a 30×30 identicon that mimics the symmetric 5×5 pixel-art
-     * produced by {@code getFlowIcon()} in browse.html:
-     * <ul>
-     *   <li>Hash the flow ref string with the same JS-equivalent algorithm.</li>
-     *   <li>Select a base color from the palette by {@code hash % palette.length}.</li>
-     *   <li>For each of the 5×5 cells, use a seeded pseudo-random value ({@code sin}-based)
-     *       to decide fill/no-fill, then mirror left↔right so the pattern is symmetric.</li>
-     *   <li>Each filled cell gets a variable opacity in [0.7, 1.0] for depth.</li>
-     * </ul>
-     */
-    private static final class FlowIdenticonFactory {
-
-        private static final int SIZE = 30;   // icon pixel size
-        private static final int GRID = 5;    // cells per side
-        private static final int CELL = SIZE / GRID; // 6 px per cell
-
-        static Icon create(String id) {
-            int hash = flowHash(id);
-            int absHash = (hash == Integer.MIN_VALUE) ? 0 : Math.abs(hash);
-            Color base = IDENTICON_COLORS[absHash % IDENTICON_COLORS.length];
-
-            BufferedImage img = new BufferedImage(SIZE, SIZE, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g = img.createGraphics();
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-            // Background: #f6f8fa (same as HTML)
-            g.setColor(new Color(0xF6, 0xF8, 0xFA));
-            g.fillRoundRect(0, 0, SIZE, SIZE, 4, 4);
-
-            // Symmetric 5×5 grid: generate left half + centre, mirror to right
-            int halfCols = (GRID + 1) / 2; // ceil(5/2) = 3 → cols 0,1,2
-            for (int row = 0; row < GRID; row++) {
-                for (int col = 0; col < halfCols; col++) {
-                    int seed = absHash + row * GRID + col;
-                    if (seededRandom(seed) > 0.5) {
-                        double opacity = 0.7 + seededRandom(seed + 100) * 0.3;
-                        int alpha = Math.min(255, (int) (opacity * 255));
-                        g.setColor(new Color(base.getRed(), base.getGreen(), base.getBlue(), alpha));
-                        g.fillRect(col * CELL, row * CELL, CELL, CELL);
-                        // Mirror left↔right (skip the middle column)
-                        if (col < GRID / 2) {
-                            g.fillRect((GRID - 1 - col) * CELL, row * CELL, CELL, CELL);
-                        }
-                    }
-                }
-            }
-            g.dispose();
-            return new ImageIcon(img);
-        }
-
-        /** Same hash as the JS {@code hashCode(str)} in browse.html. */
-        private static int flowHash(String str) {
-            int hash = 0;
-            for (int i = 0; i < str.length(); i++) {
-                hash = ((hash << 5) - hash) + str.charAt(i);
-            }
-            return hash;
-        }
-
-        /** Same PRNG as the JS {@code seededRandom(seed)} in browse.html. */
-        private static double seededRandom(int seed) {
-            double x = Math.sin(seed) * 10_000;
-            return x - Math.floor(x);
-        }
-    }
-
     // ==================== Cell Renderers ====================
-
-    /**
-     * Icon provider for {@link ListItemRenderer}: receives the item and a {@code repaint}
-     * callback so async icons (e.g. favicons) can trigger a list repaint when they arrive.
-     */
-    @FunctionalInterface
-    public interface IconProvider<T> {
-        Icon getIcon(T item, Runnable repaint);
-    }
-
-    /**
-     * Generic list cell renderer that paints an icon, a main (bold) line and a secondary (muted)
-     * line directly via {@link Graphics2D} — no nested Swing components are composed.
-     * Long text is clipped to the available width with a trailing ellipsis,
-     * computed with a binary search over {@link FontMetrics#stringWidth}.
-     */
-    private static final class ListItemRenderer<T> extends JComponent implements ListCellRenderer<T> {
-
-        private static final int PAD_H = 10;
-        private static final int PAD_V = 6;
-        private static final int ICON_GAP = 8;
-        private static final int ACCENT_W = 3;
-        private static final int TEXT_GAP = 2;
-        private static final String ELLIPSIS = "…";
-
-        private final IconProvider<T> iconProvider;
-        private final java.util.function.Function<T, String> mainTextFn;
-        private final java.util.function.Function<T, String> secondaryTextFn;
-        private final java.util.function.Function<T, String> tooltipFn;
-
-        // Mutable rendering state — set in getListCellRendererComponent, read in paintComponent
-        private Icon currentIcon;
-        private String currentMain = "";
-        private String currentSecondary = "";
-        private boolean isSelected;
-
-        ListItemRenderer(
-                IconProvider<T> iconProvider,
-                java.util.function.Function<T, String> mainTextFn,
-                java.util.function.Function<T, String> secondaryTextFn,
-                java.util.function.Function<T, String> tooltipFn) {
-            this.iconProvider = iconProvider;
-            this.mainTextFn = mainTextFn;
-            this.secondaryTextFn = secondaryTextFn;
-            this.tooltipFn = tooltipFn;
-            setOpaque(true);
-        }
-
-        @Override
-        public java.awt.Component getListCellRendererComponent(
-                JList<? extends T> list, T value, int index, boolean selected, boolean cellHasFocus) {
-            this.currentIcon = (value != null) ? iconProvider.getIcon(value, list::repaint) : null;
-            this.currentMain = (value != null) ? mainTextFn.apply(value) : "";
-            this.currentSecondary = (value != null) ? secondaryTextFn.apply(value) : "";
-            this.isSelected = selected;
-            setBackground(selected ? list.getSelectionBackground() : list.getBackground());
-            setForeground(selected ? list.getSelectionForeground() : list.getForeground());
-            setFont(list.getFont());
-            setToolTipText((value != null && tooltipFn != null) ? tooltipFn.apply(value) : null);
-            return this;
-        }
-
-        @Override
-        protected void paintComponent(Graphics graphics) {
-            Graphics2D g = (Graphics2D) graphics.create();
-            try {
-                g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                        RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
-                g.setRenderingHint(RenderingHints.KEY_RENDERING,
-                        RenderingHints.VALUE_RENDER_QUALITY);
-
-                int w = getWidth();
-                int h = getHeight();
-
-                // Background
-                g.setColor(getBackground());
-                g.fillRect(0, 0, w, h);
-
-                // Left accent bar
-                g.setColor(PRIMARY);
-                g.fillRect(0, 0, ACCENT_W, h);
-
-                // Icon (vertically centred)
-                int contentX = ACCENT_W + PAD_H;
-                if (currentIcon != null) {
-                    int iconY = (h - currentIcon.getIconHeight()) / 2;
-                    currentIcon.paintIcon(this, g, contentX, iconY);
-                    contentX += currentIcon.getIconWidth() + ICON_GAP;
-                }
-
-                int availW = w - contentX - PAD_H;
-
-                // Fonts & metrics
-                Font mainFont = getFont().deriveFont(Font.BOLD, 13f);
-                Font secFont = getFont().deriveFont(Font.PLAIN, 11f);
-                FontMetrics mainFm = g.getFontMetrics(mainFont);
-                FontMetrics secFm = g.getFontMetrics(secFont);
-
-                // Vertical layout: centre the two-line block
-                int blockH = mainFm.getHeight() + TEXT_GAP + secFm.getHeight();
-                int blockTop = Math.max(PAD_V, (h - blockH) / 2);
-
-                // Main text
-                g.setFont(mainFont);
-                g.setColor(getForeground());
-                g.drawString(ellipsize(currentMain, mainFm, availW),
-                        contentX, blockTop + mainFm.getAscent());
-
-                // Secondary text (muted when not selected)
-                g.setFont(secFont);
-                g.setColor(isSelected ? getForeground() : new Color(0x66, 0x66, 0x66));
-                g.drawString(ellipsize(currentSecondary, secFm, availW),
-                        contentX, blockTop + mainFm.getHeight() + TEXT_GAP + secFm.getAscent());
-
-                // Bottom separator (only when not selected)
-                if (!isSelected) {
-                    g.setColor(CHIP_BORDER);
-                    g.drawLine(ACCENT_W, h - 1, w - 1, h - 1);
-                }
-            } finally {
-                g.dispose();
-            }
-        }
-
-        /** Clips {@code text} to {@code maxWidth} px using binary search, appending "…" if needed. */
-        private static String ellipsize(String text, FontMetrics fm, int maxWidth) {
-            if (text == null || text.isEmpty()) return "";
-            if (fm.stringWidth(text) <= maxWidth) return text;
-            int ellipsisW = fm.stringWidth(ELLIPSIS);
-            int available = maxWidth - ellipsisW;
-            if (available <= 0) return ELLIPSIS;
-            int lo = 0, hi = text.length();
-            while (lo < hi) {
-                int mid = (lo + hi + 1) >>> 1;
-                if (fm.stringWidth(text.substring(0, mid)) <= available) lo = mid;
-                else hi = mid - 1;
-            }
-            return text.substring(0, lo) + ELLIPSIS;
-        }
-
-        @Override
-        public java.awt.Dimension getPreferredSize() {
-            return new java.awt.Dimension(200, 54);
-        }
-    }
 
     private static final class RightAlignedRenderer extends javax.swing.table.DefaultTableCellRenderer {
         @Override
@@ -1317,75 +1126,6 @@ public final class BrowsePanel extends JComponent {
                     table, value, isSelected, hasFocus, row, column);
             label.setHorizontalAlignment(SwingConstants.TRAILING);
             return label;
-        }
-    }
-
-    // ==================== WrapLayout inner class ====================
-
-    /**
-     * A simple wrap-layout that wraps components like CSS flexbox (left-aligned).
-     */
-    private static final class WrapLayout extends FlowLayout {
-        WrapLayout(int hgap, int vgap) {
-            super(FlowLayout.LEFT, hgap, vgap);
-        }
-
-        @Override
-        public Dimension preferredLayoutSize(Container target) {
-            return layoutSize(target, true);
-        }
-
-        @Override
-        public Dimension minimumLayoutSize(Container target) {
-            Dimension minimum = layoutSize(target, false);
-            minimum.width -= (getHgap() + 1);
-            return minimum;
-        }
-
-        private Dimension layoutSize(Container target, boolean preferred) {
-            synchronized (target.getTreeLock()) {
-                Container container = target;
-                while (container.getSize().width == 0 && container.getParent() != null) {
-                    container = container.getParent();
-                }
-                int targetWidth = container.getSize().width;
-                if (targetWidth == 0) targetWidth = Integer.MAX_VALUE;
-
-                int hgap = getHgap();
-                int vgap = getVgap();
-                Insets insets = target.getInsets();
-                int maxWidth = targetWidth - (insets.left + insets.right + hgap * 2);
-
-                Dimension dim = new Dimension(0, 0);
-                int rowWidth = 0;
-                int rowHeight = 0;
-
-                int nmembers = target.getComponentCount();
-                for (int i = 0; i < nmembers; i++) {
-                    Component m = target.getComponent(i);
-                    if (m.isVisible()) {
-                        Dimension d = preferred ? m.getPreferredSize() : m.getMinimumSize();
-                        if (rowWidth + d.width > maxWidth) {
-                            addRow(dim, rowWidth, rowHeight);
-                            rowWidth = 0;
-                            rowHeight = 0;
-                        }
-                        if (rowWidth != 0) rowWidth += hgap;
-                        rowWidth += d.width;
-                        rowHeight = Math.max(rowHeight, d.height);
-                    }
-                }
-                addRow(dim, rowWidth, rowHeight);
-                dim.width += insets.left + insets.right + hgap * 2;
-                dim.height += insets.top + insets.bottom + vgap * 2;
-                return dim;
-            }
-        }
-
-        private static void addRow(Dimension dim, int rowWidth, int rowHeight) {
-            dim.width = Math.max(dim.width, rowWidth);
-            if (dim.height > 0) dim.height += /* vgap */ 6;
-            dim.height += rowHeight;
         }
     }
 
@@ -1412,18 +1152,6 @@ public final class BrowsePanel extends JComponent {
         });
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
