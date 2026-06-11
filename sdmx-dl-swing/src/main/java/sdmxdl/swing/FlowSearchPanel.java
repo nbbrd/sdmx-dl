@@ -1,15 +1,8 @@
-package internal.sdmxdl.desktop.experiments;
+package sdmxdl.swing;
 
-import com.formdev.flatlaf.FlatIconColors;
-import com.formdev.flatlaf.FlatLightLaf;
-import internal.sdmxdl.desktop.SdmxAutoCompletion;
-import internal.sdmxdl.desktop.util.Ikons;
+import internal.sdmxdl.swing.ListItemRenderer;
 import lombok.NonNull;
-import nbbrd.desktop.favicon.DomainName;
-import nbbrd.desktop.favicon.FaviconRef;
 import sdmxdl.*;
-import sdmxdl.desktop.DataSourceRef;
-import sdmxdl.desktop.Sdmxdl;
 import sdmxdl.format.FlowEntry;
 import sdmxdl.format.Search;
 import sdmxdl.web.SdmxWebManager;
@@ -17,7 +10,7 @@ import sdmxdl.web.WebSource;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentListener;
+import javax.swing.event.DocumentEvent;
 import java.awt.*;
 import java.io.IOException;
 import java.util.*;
@@ -26,13 +19,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import static internal.sdmxdl.desktop.util.Documents.documentListenerOf;
-import static org.kordamp.ikonli.materialdesign.MaterialDesign.MDI_ALERT;
-import static org.kordamp.ikonli.materialdesign.MaterialDesign.MDI_CLOSE;
-import static org.kordamp.ikonli.materialdesign.MaterialDesign.MDI_LOCK;
-import static org.kordamp.ikonli.materialdesign.MaterialDesign.MDI_REFRESH;
+import static internal.sdmxdl.swing.MoreSwing.*;
 
 /**
  * A single-panel flow browser that aggregates flows from <em>all</em> registered
@@ -44,9 +35,9 @@ import static org.kordamp.ikonli.materialdesign.MaterialDesign.MDI_REFRESH;
  * can start before all sources are done.</p>
  *
  * <p>The confirmed selection is exposed through the bound {@link #SELECTION_PROPERTY}
- * as a {@link DataSourceRef}.</p>
+ * as a {@link SourceFlowRef}.</p>
  */
-public final class MegaFlowSearchPanel extends JComponent {
+public final class FlowSearchPanel extends JComponent {
 
     public static final String SELECTION_PROPERTY = "selection";
 
@@ -55,11 +46,26 @@ public final class MegaFlowSearchPanel extends JComponent {
 
     // ==================== Selection ====================
     @lombok.Getter
-    private DataSourceRef selection = null;
+    private SourceFlowRef selection = null;
 
-    private void setSelection(DataSourceRef selection) {
+    private void setSelection(SourceFlowRef selection) {
         firePropertyChange(SELECTION_PROPERTY, this.selection, this.selection = selection);
     }
+
+    /**
+     * Retrieves an icon for a {@link WebSource}; the second argument is an async repaint callback.
+     */
+    @lombok.Getter
+    @lombok.Setter
+    private BiFunction<WebSource, Runnable, Icon> sourceIconProvider = (src, repaint) -> new SdmxLogo(32);
+
+    @lombok.Getter
+    @lombok.Setter
+    SdmxWebManager manager = SdmxWebManager.ofServiceLoader();
+
+    @lombok.Getter
+    @lombok.Setter
+    Languages languages = Languages.ANY;
 
     // ==================== State (EDT-only) ====================
     private final List<FlowEntry> allEntries = new ArrayList<>();
@@ -67,7 +73,9 @@ public final class MegaFlowSearchPanel extends JComponent {
     private int loadedSources = 0;
     private boolean loading = false;
 
-    /** Cached search index — rebuilt off-EDT whenever {@link #allEntries} grows. */
+    /**
+     * Cached search index — rebuilt off-EDT whenever {@link #allEntries} grows.
+     */
     private Search<FlowEntry> entrySearch = null;
 
     /**
@@ -105,25 +113,35 @@ public final class MegaFlowSearchPanel extends JComponent {
 
     // ==================== UI ====================
     private final JTextField searchField = new JTextField();
-    /** ✕ button embedded in the search field trailing area (#5). */
+    /**
+     * ✕ button embedded in the search field trailing area (#5).
+     */
     private final JButton clearButton = new JButton();
-    /** Flow-count badge embedded in the search field trailing area (#8). */
+    /**
+     * Flow-count badge embedded in the search field trailing area (#8).
+     */
     private final JLabel countLabel = new JLabel();
-    /** Toggle: when selected, list is filtered to non-public sources only (#6). */
+    /**
+     * Toggle: when selected, list is filtered to non-public sources only (#6).
+     */
     private final JToggleButton confidentialityToggle = new JToggleButton();
     private final JButton loadButton = new JButton();
     private final JProgressBar progressBar = new JProgressBar();
     private final JLabel statusLabel = new JLabel(" ");
-    /** Amber warning strip shown while loading is still in progress and a query is active. */
+    /**
+     * Amber warning strip shown while loading is still in progress and a query is active.
+     */
     private final JLabel partialBanner = new JLabel();
-    /** Centered message shown in place of the list when the model is empty. */
+    /**
+     * Centered message shown in place of the list when the model is empty.
+     */
     private final JLabel emptyLabel = new JLabel();
     private final CardLayout listCards = new CardLayout();
     private final JPanel listCardPanel = new JPanel(listCards);
     private final BulkListModel<FlowEntry> listModel = new BulkListModel<>();
     private final JList<FlowEntry> flowList = new JList<>(listModel);
 
-    public MegaFlowSearchPanel() {
+    public FlowSearchPanel() {
         initComponents();
     }
 
@@ -145,12 +163,11 @@ public final class MegaFlowSearchPanel extends JComponent {
         searchField.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(CHIP_BORDER),
                 new EmptyBorder(6, 8, 6, 8)));
-        searchField.getDocument().addDocumentListener(debouncedListener(200, this::applyFilter));
+        searchField.getDocument().addDocumentListener(debouncedDocumentListenerOf(200, this::applyFilter));
         // Update clear-button visibility on every keystroke (no debounce needed)
-        searchField.getDocument().addDocumentListener(documentListenerOf(
-                e -> clearButton.setVisible(!searchField.getText().isEmpty())));
+        searchField.getDocument().addDocumentListener(documentListenerOf((Consumer<? super DocumentEvent>) e1 -> clearButton.setVisible(!searchField.getText().isEmpty())));
 
-        clearButton.setIcon(Ikons.of(MDI_CLOSE, 12, FlatIconColors.ACTIONS_GREYINLINE.key));
+        clearButton.setText("✕");
         clearButton.setToolTipText("Clear search");
         clearButton.setBorderPainted(false);
         clearButton.setContentAreaFilled(false);
@@ -171,20 +188,19 @@ public final class MegaFlowSearchPanel extends JComponent {
         searchField.putClientProperty("JTextField.trailingComponent", trailingPanel);
 
         // --- Confidentiality toggle: filter to non-public sources only (#6) ---
-        confidentialityToggle.setIcon(Ikons.of(MDI_LOCK, 14, FlatIconColors.ACTIONS_GREYINLINE.key));
-        confidentialityToggle.setSelectedIcon(Ikons.of(MDI_LOCK, 14, new Color(0xFF, 0x8C, 0x00)));
+        confidentialityToggle.setText("🔒");
         confidentialityToggle.setToolTipText("Show non-public sources only");
         confidentialityToggle.setFocusPainted(false);
         confidentialityToggle.addActionListener(e -> applyFilter());
 
         // --- Load button: asks for confirmation when data is already loaded (#7) ---
-        loadButton.setIcon(Ikons.of(MDI_REFRESH, 16, FlatIconColors.ACTIONS_GREYINLINE.key));
+        loadButton.setText("↻");
         loadButton.setToolTipText("Reload flows from all sources");
         loadButton.setFocusPainted(false);
         loadButton.addActionListener(e -> {
             if (!allEntries.isEmpty()) {
                 int answer = JOptionPane.showConfirmDialog(
-                        MegaFlowSearchPanel.this,
+                        FlowSearchPanel.this,
                         "Reload will clear the current " + allEntries.size()
                                 + " flows and restart loading from scratch.\nContinue?",
                         "Reload",
@@ -207,8 +223,7 @@ public final class MegaFlowSearchPanel extends JComponent {
         updateStatus();
 
         // --- Partial results banner: visible when loading + active search query ---
-        partialBanner.setIcon(Ikons.of(MDI_ALERT, 13, new Color(0x85, 0x64, 0x00)));
-        partialBanner.setText("Results may be partial — sources still loading");
+        partialBanner.setText("⚠ Results may be partial — sources still loading");
         partialBanner.setForeground(new Color(0x85, 0x64, 0x00));
         partialBanner.setBackground(new Color(0xFF, 0xF3, 0xCD));
         partialBanner.setOpaque(true);
@@ -226,18 +241,12 @@ public final class MegaFlowSearchPanel extends JComponent {
         flowList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         flowList.setFixedCellHeight(54);
         flowList.setCellRenderer(new ListItemRenderer<>(
-                (entry, repaint) -> {
-                    Icon base = entry.getSource().getWebsite() != null
-                            ? SdmxAutoCompletion.FAVICONS.getOrDefault(
-                                    FaviconRef.of(DomainName.of(entry.getSource().getWebsite()), 32),
-                                    repaint,
-                                    SdmxAutoCompletion.getDefaultIcon(32))
-                            : SdmxAutoCompletion.getDefaultIcon(32);
-                    return withConfidentialityBadge(base, entry.getSource().getConfidentiality());
-                },
+                (entry, repaint) -> ConfidentialityBadge.wrap(
+                        sourceIconProvider.apply(entry.getSource(), repaint),
+                        entry.getSource().getConfidentiality()),
                 entry -> entry.getSource().getId() + "  ›  " + entry.getFlow().getRef().toShortString(),
                 entry -> entry.getFlow().getName(),
-                MegaFlowSearchPanel::buildEntryTooltip));
+                FlowSearchPanel::buildEntryTooltip));
 
         // Single click = highlight only; double-click or Enter = confirm (#4)
         flowList.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -327,9 +336,6 @@ public final class MegaFlowSearchPanel extends JComponent {
         loadedSources = 0;
         setSelection(null);
         loadButton.setEnabled(false);
-
-        SdmxWebManager manager = Sdmxdl.INSTANCE.getSdmxManager();
-        Languages languages = Sdmxdl.INSTANCE.getLanguages();
 
         List<WebSource> sources = manager.getSources().values().stream()
                 .filter(s -> !s.isAlias())
@@ -426,18 +432,19 @@ public final class MegaFlowSearchPanel extends JComponent {
     private void confirmSelection() {
         FlowEntry entry = flowList.getSelectedValue();
         if (entry != null) {
-            setSelection(DataSourceRef.builder()
+            setSelection(SourceFlowRef.builder()
                     .source(entry.getSource().getId())
                     .database(entry.getDatabase())
-                    .flow(entry.getFlow().getRef().toString())
-                    .languages(Sdmxdl.INSTANCE.getLanguages())
+                    .flow(entry.getFlow().getRef())
                     .build());
         }
     }
 
     // ==================== Search ====================
 
-    /** Rebuilds the search index off-EDT, then applies the current filter. */
+    /**
+     * Rebuilds the search index off-EDT, then applies the current filter.
+     */
     private void rebuildIndexAsync() {
         // Bump generation — any already-queued or running rebuild will see a stale generation
         // and discard its result without touching EDT state.
@@ -445,7 +452,6 @@ public final class MegaFlowSearchPanel extends JComponent {
 
         // Snapshot current data on the EDT so the worker is self-contained
         List<FlowEntry> snapshot = new ArrayList<>(allEntries);
-        Languages languages = Sdmxdl.INSTANCE.getLanguages();
 
         indexExecutor.submit(() -> {
             Search<FlowEntry> newSearch = Search.ofFlowEntries(snapshot, languages);
@@ -492,7 +498,9 @@ public final class MegaFlowSearchPanel extends JComponent {
         });
     }
 
-    /** Post-filters entries to non-public sources when the confidentiality toggle is active (#6). */
+    /**
+     * Post-filters entries to non-public sources when the confidentiality toggle is active (#6).
+     */
     private List<FlowEntry> applyConfidentialityFilter(@NonNull List<FlowEntry> entries) {
         if (!confidentialityToggle.isSelected()) return entries;
         return entries.stream()
@@ -553,7 +561,7 @@ public final class MegaFlowSearchPanel extends JComponent {
         StringBuilder sb = new StringBuilder("<html><body style='width:300px'>");
         sb.append("<b>").append(escapeHtml(entry.getFlow().getRef().toString())).append("</b>");
         String name = entry.getFlow().getName();
-        if (name != null && !name.isEmpty()) {
+        if (!name.isEmpty()) {
             sb.append("<br>").append(escapeHtml(name));
         }
         String description = entry.getFlow().getDescription();
@@ -571,108 +579,6 @@ public final class MegaFlowSearchPanel extends JComponent {
         sb.append("</small>");
         sb.append("</body></html>");
         return sb.toString();
-    }
-
-    private static String escapeHtml(String text) {
-        return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
-    }
-
-    /**
-     * Wraps {@code base} with a small colored dot in the bottom-right corner
-     * when the source is not fully public.  The dot color matches the ECB
-     * confidentiality regime: blue → unrestricted, amber → restricted,
-     * orange → confidential, red → secret.
-     */
-    private static Icon withConfidentialityBadge(@NonNull Icon base, @NonNull Confidentiality confidentiality) {
-        if (confidentiality == Confidentiality.PUBLIC) return base;
-        Color badgeColor = confidentialityBadgeColor(confidentiality);
-        return new Icon() {
-            @Override public int getIconWidth()  { return base.getIconWidth(); }
-            @Override public int getIconHeight() { return base.getIconHeight(); }
-            @Override
-            public void paintIcon(java.awt.Component c, Graphics g, int x, int y) {
-                base.paintIcon(c, g, x, y);
-                Graphics2D g2 = (Graphics2D) g.create();
-                try {
-                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                    int d = 10;
-                    int bx = x + base.getIconWidth()  - d;
-                    int by = y + base.getIconHeight() - d;
-                    // White border so the dot stands out on any background
-                    g2.setColor(Color.WHITE);
-                    g2.fillOval(bx - 1, by - 1, d + 2, d + 2);
-                    g2.setColor(badgeColor);
-                    g2.fillOval(bx, by, d, d);
-                } finally {
-                    g2.dispose();
-                }
-            }
-        };
-    }
-
-    private static Color confidentialityBadgeColor(@NonNull Confidentiality confidentiality) {
-        switch (confidentiality) {
-            case UNRESTRICTED: return new Color(0x00, 0x78, 0xD4); // blue
-            case RESTRICTED:   return new Color(0xFF, 0xB9, 0x00); // amber
-            case CONFIDENTIAL: return new Color(0xFF, 0x8C, 0x00); // orange
-            case SECRET:       return new Color(0xD1, 0x0F, 0x0F); // red
-            default:           return Color.GRAY;
-        }
-    }
-
-    private static DocumentListener debouncedListener(int delayMs, Runnable action) {
-        javax.swing.Timer[] slot = {null};
-        return documentListenerOf(e -> {
-            if (slot[0] != null) slot[0].stop();
-            slot[0] = new javax.swing.Timer(delayMs, evt -> action.run());
-            slot[0].setRepeats(false);
-            slot[0].start();
-        });
-    }
-
-    // ==================== Demo main ====================
-
-    public static void main(String[] args) {
-        SdmxWebManager manager = SdmxWebManager.ofServiceLoader()
-                .toBuilder()
-                .onEvent(source -> (marker, message) ->
-                        System.out.printf(Locale.ROOT, "[%s] (%s) %s%n", source.getId(), marker, message))
-                .onError(source -> (marker, message, error) ->
-                        System.err.printf(Locale.ROOT, "[%s] (%s) %s: %s%n", source.getId(), marker, message, error.getMessage()))
-                .build()
-                .warmupAsync();
-
-        Sdmxdl.INSTANCE.setSdmxManager(manager);
-
-        SwingUtilities.invokeLater(() -> {
-            FlatLightLaf.setup();
-
-            MegaFlowSearchPanel panel = new MegaFlowSearchPanel();
-
-            JLabel selectionLabel = new JLabel("selection: <none>");
-            selectionLabel.setBorder(new EmptyBorder(6, 8, 6, 8));
-            selectionLabel.setFont(selectionLabel.getFont().deriveFont(Font.PLAIN, 11f));
-            panel.addPropertyChangeListener(SELECTION_PROPERTY, evt -> {
-                DataSourceRef ref = (DataSourceRef) evt.getNewValue();
-                selectionLabel.setText(ref == null
-                        ? "selection: <none>"
-                        : "selection: source=" + ref.getSource()
-                                + "  database=" + ref.getDatabase()
-                                + "  flow=" + ref.getFlow());
-            });
-
-            JPanel content = new JPanel(new BorderLayout(0, 4));
-            content.setBorder(new EmptyBorder(8, 8, 8, 8));
-            content.add(panel, BorderLayout.CENTER);
-            content.add(selectionLabel, BorderLayout.SOUTH);
-
-            JFrame frame = new JFrame("MegaFlowSearchPanel — Demo");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setContentPane(content);
-            frame.setSize(700, 600);
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-        });
     }
 
     // ==================== BulkListModel ====================

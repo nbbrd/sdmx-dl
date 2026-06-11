@@ -24,23 +24,17 @@ import nbbrd.desktop.favicon.DomainName;
 import nbbrd.desktop.favicon.FaviconRef;
 import nbbrd.desktop.favicon.FaviconSupport;
 import nbbrd.desktop.favicon.URLConnectionFactory;
-import nbbrd.io.Resource;
 import sdmxdl.*;
-import sdmxdl.Dimension;
-import sdmxdl.desktop.MainComponent;
 import sdmxdl.format.Search;
+import sdmxdl.swing.SdmxLogo;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Network;
 import sdmxdl.web.spi.SSLFactory;
 
-import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;
 import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.net.Proxy;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -404,24 +398,15 @@ public abstract class SdmxAutoCompletion {
         }
     }
 
-    public static ImageIcon getDefaultIcon() {
-        return sdmxIcon;
+    public static Icon getDefaultIcon() {
+        return DEFAULT_ICON;
     }
 
-    public static ImageIcon getDefaultIcon(int size) {
-        Image scaled = sdmxIcon.getImage().getScaledInstance(size, size, Image.SCALE_SMOOTH);
-        return new ImageIcon(scaled);
+    public static Icon getDefaultIcon(int size) {
+        return new SdmxLogo(size);
     }
 
-    private static final ImageIcon sdmxIcon = new ImageIcon(loadImage());
-
-    private static Image loadImage() {
-        try (InputStream stream = Resource.newInputStream(MainComponent.class, "sdmx-logo.png")) {
-            return ImageIO.read(stream);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-    }
+    private static final Icon DEFAULT_ICON = new SdmxLogo(16);
 
     public static Icon getFavicon(URL website) {
         return website != null
@@ -433,6 +418,12 @@ public abstract class SdmxAutoCompletion {
         return website != null
                 ? FAVICONS.getOrDefault(FaviconRef.of(DomainName.of(website), 16), callback, getDefaultIcon())
                 : getDefaultIcon();
+    }
+
+    public static Icon getFavicon(URL website, Runnable callback, int size) {
+        return website != null
+                ? FAVICONS.getOrDefault(FaviconRef.of(DomainName.of(website), size), callback, getDefaultIcon())
+                : getDefaultIcon(size);
     }
 
     public static final FaviconSupport FAVICONS = FaviconSupport

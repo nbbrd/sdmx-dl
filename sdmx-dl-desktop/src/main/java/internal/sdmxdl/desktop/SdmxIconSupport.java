@@ -1,6 +1,5 @@
 package internal.sdmxdl.desktop;
 
-import com.formdev.flatlaf.extras.FlatSVGIcon;
 import lombok.RequiredArgsConstructor;
 import nbbrd.desktop.favicon.DomainName;
 import nbbrd.desktop.favicon.FaviconRef;
@@ -8,6 +7,7 @@ import nbbrd.desktop.favicon.FaviconSupport;
 import sdmxdl.Confidentiality;
 import sdmxdl.desktop.DataSourceRef;
 import sdmxdl.desktop.HasSdmxProperties;
+import sdmxdl.swing.SdmxLogo;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Network;
@@ -34,8 +34,6 @@ public final class SdmxIconSupport {
             .build();
 
 
-    private final ImageIcon sdmxIcon = loadImage();
-
     private URLConnection openConnection(URL url) throws IOException {
         try {
             WebSource source = WebSource.builder().id("").driver("").endpoint(url.toURI()).build();
@@ -46,10 +44,6 @@ public final class SdmxIconSupport {
         }
     }
 
-    private ImageIcon loadImage() {
-        return new FlatSVGIcon("sdmxdl/desktop/SDMX_logo.svg", 16, 16);
-    }
-
     public Icon getIcon(DataSourceRef dataSourceRef, int size, Runnable onUpdate) {
         return getIcon(dataSourceRef.toWebSource(properties.getSdmxManager()), size, onUpdate);
     }
@@ -57,8 +51,8 @@ public final class SdmxIconSupport {
     public Icon getIcon(WebSource source, int size, Runnable onUpdate) {
         URL website = source.getWebsite();
         return website != null && !isForbidden(source.getConfidentiality())
-                ? faviconSupport.getOrDefault(FaviconRef.of(DomainName.of(website), size), onUpdate, sdmxIcon)
-                : sdmxIcon;
+                ? faviconSupport.getOrDefault(FaviconRef.of(DomainName.of(website), size), onUpdate, new SdmxLogo(size))
+                : new SdmxLogo(size);
     }
 
     private static boolean isForbidden(Confidentiality confidentiality) {

@@ -1,4 +1,4 @@
-package internal.sdmxdl.desktop.experiments;
+package internal.sdmxdl.swing;
 
 import java.awt.*;
 
@@ -7,9 +7,9 @@ import java.awt.*;
  * the next row when the available width is exceeded — equivalent to CSS
  * {@code display: flex; flex-wrap: wrap; justify-content: flex-start}.
  */
-final class WrapLayout extends FlowLayout {
+public final class WrapLayout extends FlowLayout {
 
-    WrapLayout(int hgap, int vgap) {
+    public WrapLayout(int hgap, int vgap) {
         super(FlowLayout.LEFT, hgap, vgap);
     }
 

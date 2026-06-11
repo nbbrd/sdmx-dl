@@ -1,4 +1,4 @@
-package internal.sdmxdl.desktop.experiments;
+package internal.sdmxdl.swing;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,9 +18,11 @@ import java.util.Map;
  * </ul>
  * Results are cached so each id is only rendered once.
  */
-final class FlowIdenticonFactory {
+public final class IdenticonFactory {
 
-    /** Color palette matching the one in {@code getFlowIcon()} of browse.html. */
+    /**
+     * Color palette matching the one in {@code getFlowIcon()} of browse.html.
+     */
     private static final Color[] IDENTICON_COLORS = {
             new Color(0x09, 0x69, 0xDA), new Color(0x1F, 0x88, 0x3D),
             new Color(0xCF, 0x22, 0x2E), new Color(0x82, 0x50, 0xDF),
@@ -41,15 +43,15 @@ final class FlowIdenticonFactory {
 
     private static final Map<String, Icon> CACHE = new HashMap<>();
 
-    private FlowIdenticonFactory() {
+    private IdenticonFactory() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 
     /**
      * Returns the cached identicon for {@code id}, creating it on first call.
      */
-    static Icon getIcon(String id) {
-        return CACHE.computeIfAbsent(id, FlowIdenticonFactory::create);
+    public static Icon getIcon(String id) {
+        return CACHE.computeIfAbsent(id, IdenticonFactory::create);
     }
 
     private static Icon create(String id) {
@@ -86,7 +88,9 @@ final class FlowIdenticonFactory {
         return new ImageIcon(img);
     }
 
-    /** Same hash as the JS {@code hashCode(str)} in browse.html. */
+    /**
+     * Same hash as the JS {@code hashCode(str)} in browse.html.
+     */
     private static int flowHash(String str) {
         int hash = 0;
         for (int i = 0; i < str.length(); i++) {
@@ -95,7 +99,9 @@ final class FlowIdenticonFactory {
         return hash;
     }
 
-    /** Same PRNG as the JS {@code seededRandom(seed)} in browse.html. */
+    /**
+     * Same PRNG as the JS {@code seededRandom(seed)} in browse.html.
+     */
     private static double seededRandom(int seed) {
         double x = Math.sin(seed) * 10_000;
         return x - Math.floor(x);

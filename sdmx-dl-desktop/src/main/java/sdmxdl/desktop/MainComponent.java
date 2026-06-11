@@ -14,6 +14,7 @@ import internal.sdmxdl.desktop.XmlDataSetRef;
 import internal.sdmxdl.desktop.XmlDataSourceRef;
 import internal.sdmxdl.desktop.util.*;
 import lombok.NonNull;
+import nbbrd.design.MightBePromoted;
 import nbbrd.io.function.IOBiConsumer;
 import org.kordamp.ikonli.Ikon;
 import sdmxdl.FlowRequest;
@@ -27,6 +28,7 @@ import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.*;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.table.TableModel;
@@ -50,8 +52,7 @@ import java.util.stream.Stream;
 import static internal.sdmxdl.desktop.Collectors2.getSingle;
 import static internal.sdmxdl.desktop.util.Actions.hideWhenDisabled;
 import static internal.sdmxdl.desktop.util.Actions.onActionPerformed;
-import static internal.sdmxdl.desktop.util.Documents.documentListenerOf;
-import static internal.sdmxdl.desktop.util.Documents.getText;
+import static internal.sdmxdl.swing.MoreSwing.documentListenerOf;
 import static internal.sdmxdl.desktop.util.JTrees.toDefaultMutableTreeNode;
 import static internal.sdmxdl.desktop.util.MouseListeners.onDoubleClick;
 import static java.awt.event.KeyEvent.VK_ENTER;
@@ -697,6 +698,15 @@ public final class MainComponent extends JComponent {
                 default:
                     return null;
             }
+        }
+    }
+
+    @MightBePromoted
+    private static @NonNull String getText(@NonNull DocumentEvent event) {
+        try {
+            return event.getDocument().getText(0, event.getDocument().getLength());
+        } catch (javax.swing.text.BadLocationException e) {
+            throw new IllegalStateException(e);
         }
     }
 }

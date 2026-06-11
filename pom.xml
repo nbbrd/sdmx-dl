@@ -48,6 +48,7 @@
         <x.github.repo>sdmx-dl</x.github.repo>
 
         <protobuf.version>3.25.5</protobuf.version>
+        <flatlaf.version>3.7.1</flatlaf.version>
     </properties>
 
     <dependencyManagement>
@@ -100,6 +101,13 @@
             </dependency>
 
             <!-- dependencies  -->
+            <dependency>
+                <groupId>com.github.nbbrd.java-desktop-util</groupId>
+                <artifactId>java-desktop-util-bom</artifactId>
+                <version>2.7.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>com.github.nbbrd.java-io-util</groupId>
                 <artifactId>java-io-bom</artifactId>
@@ -326,6 +334,7 @@
         <module>sdmx-dl-cli</module>
         <module>sdmx-dl-desktop</module>
         <module>sdmx-dl-standalone</module>
+        <module>sdmx-dl-swing</module>
     </modules>
 
     <profiles>

@@ -1,4 +1,4 @@
-package internal.sdmxdl.desktop.experiments;
+package internal.sdmxdl.swing;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,14 +12,14 @@ import java.util.function.Function;
  *
  * @param <T> the type of value displayed by the list
  */
-final class ListItemRenderer<T> extends JComponent implements ListCellRenderer<T> {
+public final class ListItemRenderer<T> extends JComponent implements ListCellRenderer<T> {
 
     /**
      * Icon provider: receives the item and a {@code repaint} callback so async icons
      * (e.g. favicons loaded in the background) can trigger a list repaint when they arrive.
      */
     @FunctionalInterface
-    interface IconProvider<T> {
+    public interface IconProvider<T> {
         Icon getIcon(T item, Runnable repaint);
     }
 
@@ -45,7 +45,7 @@ final class ListItemRenderer<T> extends JComponent implements ListCellRenderer<T
     private String currentSecondary = "";
     private boolean isSelected;
 
-    ListItemRenderer(
+    public ListItemRenderer(
             IconProvider<T> iconProvider,
             Function<T, String> mainTextFn,
             Function<T, String> secondaryTextFn,
@@ -133,7 +133,9 @@ final class ListItemRenderer<T> extends JComponent implements ListCellRenderer<T
         }
     }
 
-    /** Clips {@code text} to {@code maxWidth} px using binary search, appending "…" if needed. */
+    /**
+     * Clips {@code text} to {@code maxWidth} px using binary search, appending "…" if needed.
+     */
     private static String ellipsize(String text, FontMetrics fm, int maxWidth) {
         if (text == null || text.isEmpty()) return "";
         if (fm.stringWidth(text) <= maxWidth) return text;

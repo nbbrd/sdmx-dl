@@ -23,7 +23,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static internal.sdmxdl.desktop.util.Documents.documentListenerOf;
+import static internal.sdmxdl.swing.MoreSwing.documentListenerOf;
 import static org.kordamp.ikonli.materialdesign.MaterialDesign.MDI_MENU_DOWN;
 
 public final class DataSourceRefPanel extends JComponent {

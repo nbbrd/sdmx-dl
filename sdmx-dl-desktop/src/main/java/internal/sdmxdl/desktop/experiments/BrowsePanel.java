@@ -5,18 +5,16 @@ import ec.util.chart.TimeSeriesChart;
 import ec.util.chart.swing.JTimeSeriesChart;
 import ec.util.chart.swing.SwingColorSchemeSupport;
 import internal.sdmxdl.desktop.SdmxAutoCompletion;
-import internal.sdmxdl.desktop.util.Documents;
-import internal.sdmxdl.desktop.util.Ikons;
 import internal.sdmxdl.desktop.util.SystemLafColorScheme;
+import internal.sdmxdl.swing.ListItemRenderer;
+import internal.sdmxdl.swing.WrapLayout;
 import lombok.NonNull;
-import nbbrd.desktop.favicon.DomainName;
-import nbbrd.desktop.favicon.FaviconRef;
 import org.jfree.data.time.Millisecond;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
-import org.kordamp.ikonli.materialdesign.MaterialDesign;
 import sdmxdl.*;
 import sdmxdl.format.Search;
+import sdmxdl.swing.SdmxLogo;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 
@@ -31,8 +29,12 @@ import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static internal.sdmxdl.swing.MoreSwing.debouncedDocumentListenerOf;
+import static internal.sdmxdl.swing.MoreSwing.escapeHtml;
 
 /**
  * A Swing panel that mirrors the functionality of {@code browse.html}: a multi-step
@@ -110,6 +112,14 @@ public final class BrowsePanel extends JComponent {
     private List<Database> allDatabases = Collections.emptyList();
     private List<Flow> allFlows = Collections.emptyList();
 
+    // ==================== Icon provider ====================
+    /**
+     * Retrieves an icon for a {@link WebSource}; the second argument is an async repaint callback.
+     */
+    @lombok.Getter
+    @lombok.Setter
+    private BiFunction<WebSource, Runnable, Icon> sourceIconProvider = (src, repaint) -> new SdmxLogo(32);
+
     // ==================== Header ====================
     private final JButton homeButton = new JButton();
     private final JButton backButton = new JButton();
@@ -170,9 +180,9 @@ public final class BrowsePanel extends JComponent {
         homeButton.setToolTipText("Home");
         backButton.setToolTipText("Back");
         forwardButton.setToolTipText("Forward");
-        styleNavButton(homeButton, MaterialDesign.MDI_HOME);
-        styleNavButton(backButton, MaterialDesign.MDI_ARROW_LEFT);
-        styleNavButton(forwardButton, MaterialDesign.MDI_ARROW_RIGHT);
+        styleNavButton(homeButton, "⌂");
+        styleNavButton(backButton, "←");
+        styleNavButton(forwardButton, "→");
 
         homeButton.addActionListener(e -> goHome());
         backButton.addActionListener(e -> goBack());
@@ -209,12 +219,7 @@ public final class BrowsePanel extends JComponent {
 
         // --- List renderers & listeners ---
         sourcesList.setCellRenderer(new ListItemRenderer<WebSource>(
-                (src, repaint) -> src.getWebsite() != null
-                        ? SdmxAutoCompletion.FAVICONS.getOrDefault(
-                        FaviconRef.of(DomainName.of(src.getWebsite()), 32),
-                        repaint,
-                        SdmxAutoCompletion.getDefaultIcon(32))
-                        : SdmxAutoCompletion.getDefaultIcon(32),
+                (src, repaint) -> sourceIconProvider.apply(src, repaint),
                 WebSource::getId,
                 src -> src.getName(Languages.ANY),
                 BrowsePanel::buildSourceTooltip));
@@ -260,7 +265,7 @@ public final class BrowsePanel extends JComponent {
         });
 
         flowsList.setCellRenderer(new ListItemRenderer<Flow>(
-                (flow, repaint) -> FlowIdenticonFactory.getIcon(flow.getRef().toString()),
+                (flow, repaint) -> internal.sdmxdl.swing.IdenticonFactory.getIcon(flow.getRef().toString()),
                 flow -> flow.getRef().toString(),
                 Flow::getName,
                 BrowsePanel::buildFlowTooltip));
@@ -283,31 +288,31 @@ public final class BrowsePanel extends JComponent {
         });
 
         // Search listeners — debounced + hybrid BM25/trigram search via Search API
-        sourcesSearch.getDocument().addDocumentListener(debouncedDocumentListener(200, () -> {
-            String text = sourcesSearch.getText().trim();
-            if (text.isEmpty()) {
+        sourcesSearch.getDocument().addDocumentListener(debouncedDocumentListenerOf(200, () -> {
+            String text2 = sourcesSearch.getText().trim();
+            if (text2.isEmpty()) {
                 updateListModel(sourcesModel, allSources);
             } else {
                 updateListModel(sourcesModel,
                         Search.ofSources(allSources, Languages.ANY)
-                                .search(text, allSources.size())
+                                .search(text2, allSources.size())
                                 .stream().map(Search.Result::getItem)
                                 .collect(Collectors.toList()));
             }
         }));
-        dbSearch.getDocument().addDocumentListener(debouncedDocumentListener(200, () -> {
-            String text = dbSearch.getText().trim();
-            if (text.isEmpty()) {
+        dbSearch.getDocument().addDocumentListener(debouncedDocumentListenerOf(200, () -> {
+            String text1 = dbSearch.getText().trim();
+            if (text1.isEmpty()) {
                 updateListModel(dbModel, allDatabases);
             } else {
                 updateListModel(dbModel,
                         Search.ofDatabases(allDatabases)
-                                .search(text, allDatabases.size())
+                                .search(text1, allDatabases.size())
                                 .stream().map(Search.Result::getItem)
                                 .collect(Collectors.toList()));
             }
         }));
-        flowsSearch.getDocument().addDocumentListener(debouncedDocumentListener(200, () -> {
+        flowsSearch.getDocument().addDocumentListener(debouncedDocumentListenerOf(200, () -> {
             String text = flowsSearch.getText().trim();
             if (text.isEmpty()) {
                 updateListModel(flowsModel, allFlows);
@@ -344,10 +349,10 @@ public final class BrowsePanel extends JComponent {
         loadSources();
     }
 
-    private static void styleNavButton(JButton btn, org.kordamp.ikonli.Ikon ikon) {
-        btn.setIcon(Ikons.of(ikon, 18, Color.WHITE));
-        btn.setDisabledIcon(Ikons.of(ikon, 18, new Color(255, 255, 255, 70)));
-        btn.setText("");
+    private static void styleNavButton(JButton btn, String symbol) {
+        btn.setText(symbol);
+        btn.setFont(btn.getFont().deriveFont(Font.PLAIN, 16f));
+        btn.setForeground(Color.WHITE);
         btn.setFocusPainted(false);
         btn.setBorderPainted(false);
         btn.setContentAreaFilled(false);
@@ -1051,22 +1056,6 @@ public final class BrowsePanel extends JComponent {
         return (msg != null && !msg.isEmpty()) ? msg : cause.getClass().getSimpleName();
     }
 
-    /**
-     * Returns a {@link javax.swing.event.DocumentListener} that fires {@code action} only after
-     * the user has stopped typing for {@code delayMs} milliseconds (debounce).
-     * Each new document event restarts the countdown, so the action is never
-     * called more frequently than once per {@code delayMs} window.
-     */
-    private static javax.swing.event.DocumentListener debouncedDocumentListener(int delayMs, Runnable action) {
-        javax.swing.Timer[] slot = {null};
-        return Documents.documentListenerOf(e -> {
-            if (slot[0] != null) slot[0].stop();
-            slot[0] = new javax.swing.Timer(delayMs, evt -> action.run());
-            slot[0].setRepeats(false);
-            slot[0].start();
-        });
-    }
-
     // ==================== Tooltip builders ====================
 
     private static String buildSourceTooltip(WebSource src) {
@@ -1111,10 +1100,6 @@ public final class BrowsePanel extends JComponent {
         return sb.toString();
     }
 
-    private static String escapeHtml(String text) {
-        return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
-    }
-
     // ==================== Cell Renderers ====================
 
     private static final class RightAlignedRenderer extends javax.swing.table.DefaultTableCellRenderer {
@@ -1143,9 +1128,11 @@ public final class BrowsePanel extends JComponent {
 
         SwingUtilities.invokeLater(() -> {
             FlatLightLaf.setup();
+            BrowsePanel panel = new BrowsePanel(manager);
+            panel.setSourceIconProvider((src, repaint) -> SdmxAutoCompletion.getFavicon(src.getWebsite(), repaint, 32));
             JFrame frame = new JFrame("SDMX Data Browser");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setContentPane(new BrowsePanel(manager));
+            frame.setContentPane(panel);
             frame.setSize(1000, 700);
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
