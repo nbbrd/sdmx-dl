@@ -79,13 +79,13 @@ final class RestConnection implements Connection {
 
         checkKey(query.getKey(), meta.getStructure());
 
-        Query expandedQuery = query.toBuilder().key(query.getKey().expand(meta.getStructure())).build();
+        Query normalizedQuery = query.toBuilder().key(query.getKey().normalize(meta.getStructure())).build();
 
-        Query realQuery = deriveDataQuery(expandedQuery, getSupportedFeatures(), meta.getStructure());
+        Query realQuery = deriveDataQuery(normalizedQuery, getSupportedFeatures(), meta.getStructure());
 
         Stream<Series> result = client.getData(DataRef.of(meta.getFlow().getRef(), realQuery), meta.getStructure());
 
-        return realQuery.equals(expandedQuery) ? result : expandedQuery.execute(result);
+        return realQuery.equals(normalizedQuery) ? result : normalizedQuery.execute(result);
     }
 
     @Override

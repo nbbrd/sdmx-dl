@@ -25,7 +25,7 @@ public class Sdmx21RestQueries implements RiRestQueries {
     @Override
     public @NonNull URLQueryBuilder getStructureQuery(@NonNull URL endpoint, @NonNull StructureRef ref) {
         return onMeta(endpoint, DEFAULT_DATASTRUCTURE_PATH, ref)
-                .param(REFERENCES_PARAM, "children")
+                .param(REFERENCES_PARAM, "descendants")
                 .trailingSlash(trailingSlashRequired);
     }
 

@@ -57,7 +57,7 @@ public class BbkDialectDriverTest {
 
         assertThat(queries.getStructureQuery(endpoint, StructureRef.parse("BBK_ERX")).build())
                 .describedAs("SdmxFix#1 + SdmxFix#2")
-                .hasToString("https://api.statistiken.bundesbank.de/rest/metadata/datastructure/BBK/BBK_ERX?references=children");
+                .hasToString("https://api.statistiken.bundesbank.de/rest/metadata/datastructure/BBK/BBK_ERX?references=descendants");
 
         assertThat(queries.getDataQuery(endpoint, DataRef.of(FlowRef.parse("BBEX3"), Query.builder().key(Key.parse("M.ISK.EUR+USD.CA.AC.A01")).detail(FULL).build()), StructureRef.parse("abc")).build())
                 .describedAs("SdmxFix#4")

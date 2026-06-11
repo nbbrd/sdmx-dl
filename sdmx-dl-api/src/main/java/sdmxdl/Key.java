@@ -149,31 +149,34 @@ public final class Key {
     }
 
     /**
-     * Expands this key to match the full dimension count of a data structure definition.
+     * Normalizes this key against a data structure definition.
      * <p>
      * If this key has fewer dimensions than the structure, trailing wildcard
      * dimensions are appended. For example, {@code A.H_IPC.PC_HH_IACC} is
-     * expanded to {@code A.H_IPC.PC_HH_IACC.*.*} for a 5-dimension structure.
+     * normalized to {@code A.H_IPC.PC_HH_IACC.*.*} for a 5-dimension structure.
      * <p>
-     * {@link #ALL} is expanded to an all-wildcard key with the exact number of
-     * dimensions from the structure. A key that already matches the structure
-     * dimension count is returned unchanged.
+     * {@link #ALL} is returned unchanged. A key whose items are all wildcards
+     * after normalization is converted to {@link #ALL}. A key that already
+     * matches the structure dimension count is returned unchanged.
      *
-     * @param dsd the data structure definition to expand against; must not be null
-     * @return the expanded key; never null
+     * @param dsd the data structure definition to normalize against; must not be null
+     * @return the normalized key; never null
      */
-    public @NonNull Key expand(@NonNull Structure dsd) {
-        if (equals(Key.ALL)) {
-            String[] expanded = new String[dsd.getDimensions().size()];
-            Arrays.fill(expanded, "");
-            return Key.of(expanded);
+    public @NonNull Key normalize(@NonNull Structure dsd) {
+        if (this == ALL) {
+            return ALL;
         }
-        if (size() < dsd.getDimensions().size()) {
-            String[] expanded = Arrays.copyOf(items, dsd.getDimensions().size());
-            Arrays.fill(expanded, size(), dsd.getDimensions().size(), WILDCARD_CODE);
-            return new Key(expanded);
+        for (String item : items) {
+            if (!isWildcardCode(item)) {
+                if (size() < dsd.getDimensions().size()) {
+                    String[] expanded = Arrays.copyOf(items, dsd.getDimensions().size());
+                    Arrays.fill(expanded, size(), dsd.getDimensions().size(), WILDCARD_CODE);
+                    return new Key(expanded);
+                }
+                return this;
+            }
         }
-        return this;
+        return ALL;
     }
 
     @Override

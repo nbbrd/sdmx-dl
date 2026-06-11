@@ -468,27 +468,28 @@ public class KeyTest {
     }
 
     @Test
-    public void testExpand() {
-        assertThat(Key.ALL.expand(dsd0))
+    public void testNormalize() {
+        assertThat(Key.ALL.normalize(dsd0))
                 .isEqualTo(Key.ALL)
                 .hasToString(Key.ALL_KEYWORD);
 
-        assertThat(Key.ALL.expand(dsd2))
-                .isEqualTo(Key.of("", ""))
-                .hasToString(".");
+        assertThat(Key.ALL.normalize(dsd2))
+                .isEqualTo(Key.ALL)
+                .hasToString(Key.ALL_KEYWORD)
+                .describedAs("ALL key is not changed");
 
-        assertThat(Key.of("IND", "BE").expand(dsd2))
+        assertThat(Key.of("IND", "BE").normalize(dsd2))
                 .isEqualTo(Key.of("IND", "BE"))
                 .describedAs("Full key is not changed");
 
-        assertThat(Key.of("IND").expand(dsd2))
+        assertThat(Key.of("IND").normalize(dsd2))
                 .isEqualTo(Key.of("IND", ""))
-                .describedAs("Partial key is expanded with trailing wildcards");
+                .describedAs("Partial key is normalized with trailing wildcards");
 
-        assertThat(Key.of().expand(dsd2))
-                .isEqualTo(Key.of("", ""))
-                .hasToString(".")
-                .describedAs("ALL key is expanded with wildcards");
+        assertThat(Key.of().normalize(dsd2))
+                .isEqualTo(Key.ALL)
+                .hasToString(Key.ALL_KEYWORD)
+                .describedAs("All-wildcard key is normalized to ALL");
     }
 
     @Test

@@ -85,9 +85,9 @@ public final class FileConnection implements Connection {
         FileInfo info = client.decode();
         checkKey(query.getKey(), info);
 
-        Query expandedQuery = query.toBuilder().key(query.getKey().expand(info.getStructure())).build();
+        Query normalizedQuery = query.toBuilder().key(query.getKey().normalize(info.getStructure())).build();
 
-        return client.loadData(info, DataRef.of(flowRef, expandedQuery));
+        return client.loadData(info, DataRef.of(flowRef, normalizedQuery));
     }
 
     @Override
