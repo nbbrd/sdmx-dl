@@ -14,10 +14,10 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl.format.search;
+package internal.sdmxdl.web;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.format.spi.SearchScorer;
+import sdmxdl.web.spi.SearchScorer;
 
 import java.util.Arrays;
 import java.util.Collections;

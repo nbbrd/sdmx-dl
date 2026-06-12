@@ -1,16 +1,16 @@
-package internal.sdmxdl.format.search;
+package internal.sdmxdl.web;
 
-import internal.sdmxdl.format.spi.SearchScoringProviderLoader;
+import internal.sdmxdl.web.spi.SearchScoringProviderLoader;
 import lombok.NonNull;
 import sdmxdl.Database;
 import sdmxdl.DatabaseRef;
 import sdmxdl.Flow;
 import sdmxdl.Languages;
-import sdmxdl.format.FlowEntry;
-import sdmxdl.format.Search;
-import sdmxdl.format.spi.SearchScorer;
-import sdmxdl.format.spi.SearchScoringProvider;
+import sdmxdl.web.FlowEntry;
+import sdmxdl.web.Search;
 import sdmxdl.web.WebSource;
+import sdmxdl.web.spi.SearchScorer;
+import sdmxdl.web.spi.SearchScoringProvider;
 
 import java.util.*;
 import java.util.function.Function;
@@ -51,15 +51,15 @@ public final class HybridSearch<T> implements Search<T> {
     }
 
     private static <T> @NonNull Search<T> of(@NonNull List<T> items,
-                                              @NonNull Function<T, String[]> extractor,
-                                              double[] fieldWeights) {
+                                             @NonNull Function<T, String[]> extractor,
+                                             double[] fieldWeights) {
         return of(items, extractor, fieldWeights, SearchScoringProviderLoader.load());
     }
 
     static <T> @NonNull Search<T> of(@NonNull List<T> items,
-                                      @NonNull Function<T, String[]> extractor,
-                                      double[] fieldWeights,
-                                      @NonNull List<SearchScoringProvider> providers) {
+                                     @NonNull Function<T, String[]> extractor,
+                                     double[] fieldWeights,
+                                     @NonNull List<SearchScoringProvider> providers) {
         List<T> immutableItems = Collections.unmodifiableList(new ArrayList<>(items));
 
         List<String[]> documents = new ArrayList<>(immutableItems.size());

@@ -14,30 +14,29 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl.format.search;
+package internal.sdmxdl.web;
 
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.format.spi.SearchScorer;
-import sdmxdl.format.spi.SearchScoringProvider;
-import sdmxdl.format.spi.ScoringCategory;
+import sdmxdl.web.spi.ScoringCategory;
+import sdmxdl.web.spi.SearchScorer;
+import sdmxdl.web.spi.SearchScoringProvider;
 
 import java.util.List;
 
 /**
- * Built-in character trigram cosine similarity scoring provider.
+ * Built-in BM25 scoring provider.
  * <p>
- * Builds trigram vectors from document text and scores queries via cosine similarity.
- * Provides typo tolerance and partial match capability.
+ * Tokenizes document fields with field weights and computes BM25 relevance scores.
  */
 @DirectImpl
 @ServiceProvider
-public final class TrigramScoringProvider implements SearchScoringProvider {
+public final class Bm25ScoringProvider implements SearchScoringProvider {
 
     @Override
     public @NonNull String getScoringId() {
-        return "TRIGRAM_COSINE";
+        return "BM25";
     }
 
     @Override
@@ -52,11 +51,7 @@ public final class TrigramScoringProvider implements SearchScoringProvider {
 
     @Override
     public @NonNull SearchScorer createScorer(@NonNull List<String[]> documents, double[] fieldWeights) {
-        String[] docs = new String[documents.size()];
-        for (int i = 0; i < documents.size(); i++) {
-            docs[i] = String.join(" ", documents.get(i));
-        }
-        TrigramIndex index = TrigramIndex.of(docs);
+        BM25Index index = BM25Index.of(documents, fieldWeights);
         return index::score;
     }
 }

@@ -3,8 +3,8 @@ package sdmxdl.swing;
 import internal.sdmxdl.swing.ListItemRenderer;
 import internal.sdmxdl.swing.MoreSwing;
 import sdmxdl.*;
-import sdmxdl.format.Search;
 import sdmxdl.web.SdmxWebManager;
+import sdmxdl.web.Search;
 import sdmxdl.web.WebSource;
 
 import javax.swing.*;

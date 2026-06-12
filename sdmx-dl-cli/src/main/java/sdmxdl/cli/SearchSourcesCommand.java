@@ -4,7 +4,7 @@ import internal.sdmxdl.cli.WebOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import picocli.CommandLine;
-import sdmxdl.format.Search;
+import sdmxdl.web.Search;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 

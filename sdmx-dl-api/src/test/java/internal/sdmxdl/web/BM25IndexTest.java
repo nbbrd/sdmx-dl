@@ -1,4 +1,4 @@
-package internal.sdmxdl.format.search;
+package internal.sdmxdl.web;
 
 import org.junit.jupiter.api.Test;
 

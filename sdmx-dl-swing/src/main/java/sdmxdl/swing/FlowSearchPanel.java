@@ -3,9 +3,9 @@ package sdmxdl.swing;
 import internal.sdmxdl.swing.ListItemRenderer;
 import lombok.NonNull;
 import sdmxdl.*;
-import sdmxdl.format.FlowEntry;
-import sdmxdl.format.Search;
+import sdmxdl.web.FlowEntry;
 import sdmxdl.web.SdmxWebManager;
+import sdmxdl.web.Search;
 import sdmxdl.web.WebSource;
 
 import javax.swing.*;

@@ -1,9 +1,8 @@
-package sdmxdl.format;
+package sdmxdl.web;
 
 import lombok.NonNull;
 import sdmxdl.DatabaseRef;
 import sdmxdl.Flow;
-import sdmxdl.web.WebSource;
 
 /**
  * A loaded flow together with its originating source and database.
@@ -15,8 +14,13 @@ import sdmxdl.web.WebSource;
 @lombok.Value
 public class FlowEntry {
 
-    @NonNull WebSource source;
-    @NonNull DatabaseRef database;
-    @NonNull Flow flow;
+    @NonNull
+    WebSource source;
+
+    @NonNull
+    DatabaseRef database;
+
+    @NonNull
+    Flow flow;
 }
 

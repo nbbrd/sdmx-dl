@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.format.spi;
+package sdmxdl.web.spi;
 
 /**
  * Classifies flow search scoring providers by their approach to matching.

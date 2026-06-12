@@ -1,4 +1,4 @@
-package sdmxdl.format.spi;
+package sdmxdl.web.spi;
 
 import lombok.NonNull;
 import nbbrd.design.ThreadSafe;

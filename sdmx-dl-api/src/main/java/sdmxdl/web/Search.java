@@ -1,12 +1,11 @@
-package sdmxdl.format;
+package sdmxdl.web;
 
-import internal.sdmxdl.format.search.HybridSearch;
+import internal.sdmxdl.web.HybridSearch;
 import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;
 import sdmxdl.Database;
 import sdmxdl.Flow;
 import sdmxdl.Languages;
-import sdmxdl.web.WebSource;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -95,7 +94,7 @@ public interface Search<T> {
      * @return a new search engine
      */
     @StaticFactoryMethod
-    static @NonNull Search<FlowEntry> ofFlowEntries(@NonNull Collection<FlowEntry> entries, @NonNull Languages languages) {
+    static @NonNull Search<sdmxdl.web.FlowEntry> ofFlowEntries(@NonNull Collection<sdmxdl.web.FlowEntry> entries, @NonNull Languages languages) {
         return HybridSearch.ofFlowEntries(new ArrayList<>(entries), languages);
     }
 }

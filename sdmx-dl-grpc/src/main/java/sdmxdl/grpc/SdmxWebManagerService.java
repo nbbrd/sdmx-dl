@@ -16,7 +16,7 @@ import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import sdmxdl.*;
-import sdmxdl.format.Search;
+import sdmxdl.web.Search;
 import sdmxdl.format.protobuf.*;
 import sdmxdl.format.protobuf.web.MonitorReportDto;
 import sdmxdl.format.protobuf.web.WebSourceDto;

@@ -36,11 +36,6 @@
             <artifactId>sdmx-dl-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-format-base</artifactId>
-            <version>${project.version}</version>
-        </dependency>
 
         <!-- test only -->
         <dependency>

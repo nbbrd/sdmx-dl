@@ -5,7 +5,7 @@ import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import picocli.CommandLine;
 import sdmxdl.Database;
-import sdmxdl.format.Search;
+import sdmxdl.web.Search;
 
 import java.io.IOException;
 import java.util.Collection;

@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl.format.search;
+package internal.sdmxdl.web;
 
 import lombok.NonNull;
 

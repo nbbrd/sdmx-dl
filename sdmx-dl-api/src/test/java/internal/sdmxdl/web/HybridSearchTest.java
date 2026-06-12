@@ -1,12 +1,12 @@
-package internal.sdmxdl.format.search;
+package internal.sdmxdl.web;
 
 import lombok.NonNull;
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
-import sdmxdl.format.Search;
-import sdmxdl.format.spi.SearchScorer;
-import sdmxdl.format.spi.SearchScoringProvider;
-import sdmxdl.format.spi.ScoringCategory;
+import sdmxdl.web.Search;
+import sdmxdl.web.spi.SearchScorer;
+import sdmxdl.web.spi.SearchScoringProvider;
+import sdmxdl.web.spi.ScoringCategory;
 import sdmxdl.web.WebSource;
 
 import java.util.Arrays;

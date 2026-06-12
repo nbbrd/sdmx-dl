@@ -13,7 +13,7 @@ import org.jfree.data.time.Millisecond;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import sdmxdl.*;
-import sdmxdl.format.Search;
+import sdmxdl.web.Search;
 import sdmxdl.swing.SdmxLogo;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
