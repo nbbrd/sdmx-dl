@@ -7,6 +7,7 @@ import sdmxdl.provider.caching.DiskCachingSupport;
 import sdmxdl.provider.ri.http.DumpingHttpClientDecorator;
 import sdmxdl.provider.ri.networking.RiNetworking;
 import sdmxdl.web.SdmxWebManager;
+import sdmxdl.web.WebFlowRequest;
 import sdmxdl.web.WebSource;
 
 import java.io.IOException;
@@ -55,6 +56,14 @@ public class DataSourceRef {
                 .database(database)
                 .flowOf(flow)
                 .languages(languages)
+                .build();
+    }
+
+    public WebFlowRequest toWebFlowRequest() {
+        return WebFlowRequest
+                .builder()
+                .source(source)
+                .request(toFlowRequest())
                 .build();
     }
 

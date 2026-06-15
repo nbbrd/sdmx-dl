@@ -9,7 +9,6 @@ import ec.util.list.swing.JLists;
 import ec.util.table.swing.JTables;
 import ec.util.various.swing.JCommand;
 import internal.sdmxdl.desktop.SdmxCommand;
-import internal.sdmxdl.desktop.SdmxUri;
 import internal.sdmxdl.desktop.XmlDataSetRef;
 import internal.sdmxdl.desktop.XmlDataSourceRef;
 import internal.sdmxdl.desktop.util.*;
@@ -17,13 +16,13 @@ import lombok.NonNull;
 import nbbrd.design.MightBePromoted;
 import nbbrd.io.function.IOBiConsumer;
 import org.kordamp.ikonli.Ikon;
-import sdmxdl.FlowRequest;
-import sdmxdl.KeyRequest;
 import sdmxdl.desktop.panels.*;
 import sdmxdl.ext.Persistence;
 import sdmxdl.provider.caching.DiskCachingSupport;
 import sdmxdl.provider.ri.http.DumpingHttpClientDecorator;
 import sdmxdl.web.SdmxWebManager;
+import sdmxdl.web.WebFlowRequest;
+import sdmxdl.web.WebKeyRequest;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.*;
 
@@ -52,9 +51,9 @@ import java.util.stream.Stream;
 import static internal.sdmxdl.desktop.Collectors2.getSingle;
 import static internal.sdmxdl.desktop.util.Actions.hideWhenDisabled;
 import static internal.sdmxdl.desktop.util.Actions.onActionPerformed;
-import static internal.sdmxdl.swing.MoreSwing.documentListenerOf;
 import static internal.sdmxdl.desktop.util.JTrees.toDefaultMutableTreeNode;
 import static internal.sdmxdl.desktop.util.MouseListeners.onDoubleClick;
+import static internal.sdmxdl.swing.MoreSwing.documentListenerOf;
 import static java.awt.event.KeyEvent.VK_ENTER;
 import static java.util.stream.Collectors.toList;
 import static javax.swing.KeyStroke.getKeyStroke;
@@ -607,28 +606,26 @@ public final class MainComponent extends JComponent {
     }
 
     private void copyPath(DataSourceRef ref) {
-        String source = ref.getSource();
-        FlowRequest flowRequest = ref.toFlowRequest();
+        WebFlowRequest request = ref.toWebFlowRequest();
         new OnDemandMenuBuilder()
-                .copyToClipboard("SDMX-DL URI", SdmxUri.fromFlowRequest(source, flowRequest).toString())
+                .copyToClipboard("SDMX-DL URI", request.toString())
                 .copyToClipboard("XML reference", XmlDataSourceRef.formatToString(ref))
                 .addSeparator()
-                .copyToClipboard("List dimensions command", SdmxCommand.listDimensions(source, flowRequest))
-                .copyToClipboard("List attributes command", SdmxCommand.listAttributes(source, flowRequest))
-                .copyToClipboard("Fetch all keys command", SdmxCommand.fetchKeys(source, KeyRequest.builderOf(flowRequest).build()))
+                .copyToClipboard("List dimensions command", SdmxCommand.listDimensions(request))
+                .copyToClipboard("List attributes command", SdmxCommand.listAttributes(request))
+                .copyToClipboard("Fetch all keys command", SdmxCommand.fetchKeys(WebKeyRequest.builderOf(request).build()))
                 .showMenuAsPopup(this);
     }
 
     private void copyPath(DataSetRef ref) {
-        String source = ref.getDataSourceRef().getSource();
-        KeyRequest keyRequest = ref.toKeyRequest();
+        WebKeyRequest request = ref.toWebKeyRequest();
         new OnDemandMenuBuilder()
-                .copyToClipboard("SDMX-DL URI", SdmxUri.fromKeyRequest(source, keyRequest).toString())
+                .copyToClipboard("SDMX-DL URI", request.toString())
                 .copyToClipboard("XML reference", XmlDataSetRef.formatToString(ref))
                 .addSeparator()
-                .copyToClipboard("Fetch data command", SdmxCommand.fetchData(source, keyRequest))
-                .copyToClipboard("Fetch meta command", SdmxCommand.fetchMeta(source, keyRequest))
-                .copyToClipboard("Fetch keys command", SdmxCommand.fetchKeys(source, keyRequest))
+                .copyToClipboard("Fetch data command", SdmxCommand.fetchData(request))
+                .copyToClipboard("Fetch meta command", SdmxCommand.fetchMeta(request))
+                .copyToClipboard("Fetch keys command", SdmxCommand.fetchKeys(request))
                 .showMenuAsPopup(this);
     }
 
