@@ -10,7 +10,6 @@ import sdmxdl.web.WebSource;
 import javax.swing.*;
 import java.net.URL;
 import java.util.Locale;
-import java.util.function.BiFunction;
 
 public class DemoUtil {
 
@@ -25,11 +24,7 @@ public class DemoUtil {
                 .warmupAsync();
     }
 
-    public static BiFunction<WebSource, Runnable, Icon> getSourceIconProvider(int size) {
-        return (src, repaint) -> DemoUtil.getFavicon(src, repaint, size);
-    }
-
-    private static Icon getFavicon(WebSource source, Runnable onUpdate, int size) {
+    public static Icon getFavicon(WebSource source, Runnable onUpdate, int size) {
         URL website = source.getWebsite();
         return website != null && !isForbidden(source.getConfidentiality())
                 ? FAVICONS.getOrDefault(FaviconRef.of(DomainName.of(website), size), onUpdate, getDefaultIcon(size))

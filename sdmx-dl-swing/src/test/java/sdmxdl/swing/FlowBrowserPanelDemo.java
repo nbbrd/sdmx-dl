@@ -5,13 +5,13 @@ import sdmxdl.DatabaseRef;
 import sdmxdl.Flow;
 import sdmxdl.Languages;
 import sdmxdl.web.SdmxWebManager;
+import sdmxdl.web.WebFlowRequest;
 import sdmxdl.web.WebSource;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
-import java.util.function.BiFunction;
 
 public class FlowBrowserPanelDemo {
 
@@ -21,19 +21,17 @@ public class FlowBrowserPanelDemo {
             com.formdev.flatlaf.FlatLightLaf.setup();
 
             FlowSelectionPanel selector = new FlowSelectionPanel();
-            selector.setSourceIconProvider(DemoUtil.getSourceIconProvider(32));
-            selector.setManager(DemoUtil.getSdmxWebManager());
 
             JLabel modelLabel = new JLabel("model: <none>");
             modelLabel.setBorder(new EmptyBorder(6, 8, 6, 8));
             modelLabel.setFont(modelLabel.getFont().deriveFont(Font.PLAIN, 11f));
             selector.addPropertyChangeListener(FlowSelectionPanel.MODEL_PROPERTY, evt -> {
-                SourceFlowRef ref = (SourceFlowRef) evt.getNewValue();
+                WebFlowRequest ref = (WebFlowRequest) evt.getNewValue();
                 modelLabel.setText(ref == null
                         ? "model: <none>"
                         : "model: source=" + ref.getSource()
-                          + "  database=" + ref.getDatabase()
-                          + "  flow=" + ref.getFlow());
+                          + "  database=" + ref.getRequest().getDatabase()
+                          + "  flow=" + ref.getRequest().getFlow());
             });
 
             JPanel content = new JPanel(new BorderLayout(0, 4));
@@ -63,7 +61,7 @@ public class FlowBrowserPanelDemo {
      * </ol>
      *
      * <p>The selected flow is exposed through the bound {@link #MODEL_PROPERTY} as a
-     * {@link SourceFlowRef} that carries the source id, database ref, and flow ref.</p>
+     * {@link WebFlowRequest} that carries the source id, database ref, and flow ref.</p>
      *
      */
     private static final class FlowSelectionPanel extends JComponent {
@@ -71,30 +69,17 @@ public class FlowBrowserPanelDemo {
         public static final String MODEL_PROPERTY = "model";
 
         @lombok.Getter
-        private SourceFlowRef model;
+        private WebFlowRequest model;
 
-        public void setModel(SourceFlowRef model) {
+        public void setModel(WebFlowRequest model) {
             firePropertyChange(MODEL_PROPERTY, this.model, this.model = model);
         }
 
         private final JLabel summaryLabel = new JLabel();
         private final JButton browseButton = new JButton();
 
-        // ==================== Icon provider ====================
-        /**
-         * Retrieves an icon for a {@link WebSource}; the second argument is an async repaint callback.
-         */
-        @lombok.Getter
-        @lombok.Setter
-        private BiFunction<WebSource, Runnable, Icon> sourceIconProvider = (src, repaint) -> new SdmxLogo(32);
-
-        @lombok.Getter
-        @lombok.Setter
-        SdmxWebManager manager = SdmxWebManager.ofServiceLoader();
-
-        @lombok.Getter
-        @lombok.Setter
-        Languages languages = Languages.ANY;
+        private final SdmxWebManager manager = DemoUtil.getSdmxWebManager();
+        private final Languages languages = Languages.ANY;
 
         public FlowSelectionPanel() {
             initComponents();
@@ -115,20 +100,18 @@ public class FlowBrowserPanelDemo {
         }
 
         private void onModelChange(PropertyChangeEvent evt) {
-            SourceFlowRef ref = (SourceFlowRef) evt.getNewValue();
+            WebFlowRequest ref = (WebFlowRequest) evt.getNewValue();
             if (ref == null || ref.getSource().isEmpty()) {
                 summaryLabel.setText("🗄 No flow selected");
             } else {
                 StringBuilder sb = new StringBuilder(ref.getSource());
-                if (!ref.getDatabase().equals(DatabaseRef.NO_DATABASE)) {
-                    sb.append(" / ").append(ref.getDatabase());
+                if (!ref.getRequest().getDatabase().equals(DatabaseRef.NO_DATABASE)) {
+                    sb.append(" / ").append(ref.getRequest().getDatabase());
                 }
-                sb.append(" / ").append(ref.getFlow());
+                sb.append(" / ").append(ref.getRequest().getFlow());
                 summaryLabel.setText(sb.toString());
                 WebSource source = manager.getSources().get(ref.getSource());
-                summaryLabel.setIcon(source != null
-                        ? sourceIconProvider.apply(source, summaryLabel::repaint)
-                        : null);
+                summaryLabel.setIcon(source != null ? DemoUtil.getFavicon(source, summaryLabel::repaint, 16) : null);
             }
         }
 
@@ -139,9 +122,9 @@ public class FlowBrowserPanelDemo {
                     : new JDialog((Dialog) owner, "Select Flow", true);
 
             FlowBrowserPanel browser = new FlowBrowserPanel();
+            browser.setSourceIconProvider((src, repaint) -> DemoUtil.getFavicon(src, repaint, 32));
             browser.setLanguages(languages);
             browser.setManager(manager);
-            browser.setSourceIconProvider(sourceIconProvider);
 
             JButton selectButton = new JButton("Select");
             selectButton.setEnabled(false);
@@ -150,7 +133,7 @@ public class FlowBrowserPanelDemo {
             browser.addPropertyChangeListener(FlowBrowserPanel.SELECTION_PROPERTY, evt -> selectButton.setEnabled(browser.getSelection() != null));
 
             selectButton.addActionListener(e -> {
-                SourceFlowRef selection = browser.getSelection();
+                WebFlowRequest selection = browser.getSelection();
                 if (selection != null) {
                     setModel(selection);
                     dialog.dispose();

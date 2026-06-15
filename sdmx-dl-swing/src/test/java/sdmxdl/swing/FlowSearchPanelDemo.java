@@ -2,6 +2,7 @@ package sdmxdl.swing;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import nbbrd.design.Demo;
+import sdmxdl.web.WebFlowRequest;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -17,19 +18,19 @@ public class FlowSearchPanelDemo {
             FlatLightLaf.setup();
 
             FlowSearchPanel panel = new FlowSearchPanel();
-            panel.setSourceIconProvider(DemoUtil.getSourceIconProvider(32));
+            panel.setSourceIconProvider((src, repaint) -> DemoUtil.getFavicon(src, repaint, 32));
             panel.setManager(DemoUtil.getSdmxWebManager());
 
             JLabel selectionLabel = new JLabel("selection: <none>");
             selectionLabel.setBorder(new EmptyBorder(6, 8, 6, 8));
             selectionLabel.setFont(selectionLabel.getFont().deriveFont(Font.PLAIN, 11f));
             panel.addPropertyChangeListener(SELECTION_PROPERTY, evt -> {
-                SourceFlowRef ref = (SourceFlowRef) evt.getNewValue();
+                WebFlowRequest ref = (WebFlowRequest) evt.getNewValue();
                 selectionLabel.setText(ref == null
                         ? "selection: <none>"
                         : "selection: source=" + ref.getSource()
-                          + "  database=" + ref.getDatabase()
-                          + "  flow=" + ref.getFlow());
+                          + "  database=" + ref.getRequest().getDatabase()
+                          + "  flow=" + ref.getRequest().getFlow());
             });
 
             JPanel content = new JPanel(new BorderLayout(0, 4));

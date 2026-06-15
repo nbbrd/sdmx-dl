@@ -114,6 +114,11 @@
                 <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <artifactId>sdmx-dl-swing</artifactId>
+                <groupId>${project.groupId}</groupId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

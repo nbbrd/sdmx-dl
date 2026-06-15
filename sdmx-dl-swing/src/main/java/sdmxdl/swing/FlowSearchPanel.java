@@ -3,10 +3,7 @@ package sdmxdl.swing;
 import internal.sdmxdl.swing.ListItemRenderer;
 import lombok.NonNull;
 import sdmxdl.*;
-import sdmxdl.web.FlowEntry;
-import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.Search;
-import sdmxdl.web.WebSource;
+import sdmxdl.web.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -35,37 +32,49 @@ import static internal.sdmxdl.swing.MoreSwing.*;
  * can start before all sources are done.</p>
  *
  * <p>The confirmed selection is exposed through the bound {@link #SELECTION_PROPERTY}
- * as a {@link SourceFlowRef}.</p>
+ * as a {@link WebFlowRequest}.</p>
  */
 public final class FlowSearchPanel extends JComponent {
-
-    public static final String SELECTION_PROPERTY = "selection";
 
     // ==================== Colors ====================
     private static final Color CHIP_BORDER = new Color(0xE0, 0xE0, 0xE0);
 
     // ==================== Selection ====================
-    @lombok.Getter
-    private SourceFlowRef selection = null;
+    public static final String SELECTION_PROPERTY = "selection";
 
-    private void setSelection(SourceFlowRef selection) {
+    @lombok.Getter
+    private WebFlowRequest selection = null;
+
+    private void setSelection(WebFlowRequest selection) {
         firePropertyChange(SELECTION_PROPERTY, this.selection, this.selection = selection);
     }
 
-    /**
-     * Retrieves an icon for a {@link WebSource}; the second argument is an async repaint callback.
-     */
+    public static final String SOURCE_ICON_PROVIDER_PROPERTY = "sourceIconProvider";
+
     @lombok.Getter
-    @lombok.Setter
     private BiFunction<WebSource, Runnable, Icon> sourceIconProvider = (src, repaint) -> new SdmxLogo(32);
 
-    @lombok.Getter
-    @lombok.Setter
-    SdmxWebManager manager = SdmxWebManager.ofServiceLoader();
+    public void setSourceIconProvider(BiFunction<WebSource, Runnable, Icon> sourceIconProvider) {
+        firePropertyChange(SOURCE_ICON_PROVIDER_PROPERTY, this.sourceIconProvider, this.sourceIconProvider = sourceIconProvider);
+    }
+
+    public static final String MANAGER_PROPERTY = "manager";
 
     @lombok.Getter
-    @lombok.Setter
-    Languages languages = Languages.ANY;
+    private SdmxWebManager manager = SdmxWebManager.ofServiceLoader();
+
+    public void setManager(SdmxWebManager manager) {
+        firePropertyChange(MANAGER_PROPERTY, this.manager, this.manager = manager);
+    }
+
+    public static final String LANGUAGES_PROPERTY = "languages";
+
+    @lombok.Getter
+    private Languages languages = Languages.ANY;
+
+    public void setLanguages(Languages languages) {
+        firePropertyChange(LANGUAGES_PROPERTY, this.languages, this.languages = languages);
+    }
 
     // ==================== State (EDT-only) ====================
     private final List<FlowEntry> allEntries = new ArrayList<>();
@@ -432,10 +441,15 @@ public final class FlowSearchPanel extends JComponent {
     private void confirmSelection() {
         FlowEntry entry = flowList.getSelectedValue();
         if (entry != null) {
-            setSelection(SourceFlowRef.builder()
+            setSelection(WebFlowRequest
+                    .builder()
                     .source(entry.getSource().getId())
-                    .database(entry.getDatabase())
-                    .flow(entry.getFlow().getRef())
+                    .request(FlowRequest
+                            .builder()
+                            .languages(languages)
+                            .database(entry.getDatabase())
+                            .flow(entry.getFlow().getRef())
+                            .build())
                     .build());
         }
     }

@@ -5,6 +5,7 @@ import internal.sdmxdl.swing.MoreSwing;
 import sdmxdl.*;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.Search;
+import sdmxdl.web.WebFlowRequest;
 import sdmxdl.web.WebSource;
 
 import javax.swing.*;
@@ -31,8 +32,6 @@ import static internal.sdmxdl.swing.MoreSwing.escapeHtml;
  */
 public final class FlowBrowserPanel extends JComponent {
 
-    public static final String SELECTION_PROPERTY = "selection";
-
     // ==================== Card names ====================
     private static final String CARD_LOADING = "loading";
     private static final String CARD_ERROR = "error";
@@ -44,25 +43,42 @@ public final class FlowBrowserPanel extends JComponent {
     private static final Color PRIMARY = new Color(0x00, 0x3D, 0x6A);
     private static final Color CHIP_BORDER = new Color(0xE0, 0xE0, 0xE0);
 
-    // ==================== Selection ====================
-    @lombok.Getter
-    private SourceFlowRef selection = null;
+    // ==================== Properties ====================
+    public static final String SELECTION_PROPERTY = "selection";
 
-    private void setSelection(SourceFlowRef selection) {
+    @lombok.Getter
+    private WebFlowRequest selection = null;
+
+    private void setSelection(WebFlowRequest selection) {
         firePropertyChange(SELECTION_PROPERTY, this.selection, this.selection = selection);
     }
 
+    public static final String SOURCE_ICON_PROVIDER_PROPERTY = "sourceIconProvider";
+
     @lombok.Getter
-    @lombok.Setter
     private BiFunction<WebSource, Runnable, Icon> sourceIconProvider = (src, repaint) -> new SdmxLogo(32);
 
-    @lombok.Getter
-    @lombok.Setter
-    SdmxWebManager manager = SdmxWebManager.ofServiceLoader();
+    public void setSourceIconProvider(BiFunction<WebSource, Runnable, Icon> sourceIconProvider) {
+        firePropertyChange(SOURCE_ICON_PROVIDER_PROPERTY, this.sourceIconProvider, this.sourceIconProvider = sourceIconProvider);
+    }
+
+    public static final String MANAGER_PROPERTY = "manager";
 
     @lombok.Getter
-    @lombok.Setter
-    Languages languages = Languages.ANY;
+    private SdmxWebManager manager = SdmxWebManager.ofServiceLoader();
+
+    public void setManager(SdmxWebManager manager) {
+        firePropertyChange(MANAGER_PROPERTY, this.manager, this.manager = manager);
+    }
+
+    public static final String LANGUAGES_PROPERTY = "languages";
+
+    @lombok.Getter
+    private Languages languages = Languages.ANY;
+
+    public void setLanguages(Languages languages) {
+        firePropertyChange(LANGUAGES_PROPERTY, this.languages, this.languages = languages);
+    }
 
     // ==================== State ====================
     private WebSource currentSource = null;
@@ -140,7 +156,7 @@ public final class FlowBrowserPanel extends JComponent {
 
         // --- Cell renderers ---
         sourcesList.setCellRenderer(new ListItemRenderer<WebSource>(
-                sourceIconProvider::apply,
+                (src, u) -> sourceIconProvider.apply(src, u),
                 WebSource::getId,
                 src -> src.getName(languages),
                 FlowBrowserPanel::buildSourceTooltip));
@@ -231,6 +247,18 @@ public final class FlowBrowserPanel extends JComponent {
         setLayout(new BorderLayout());
         add(header, BorderLayout.NORTH);
         add(contentPanel, BorderLayout.CENTER);
+
+        addPropertyChangeListener(event -> {
+            switch (event.getPropertyName()) {
+                case SOURCE_ICON_PROVIDER_PROPERTY:
+                    repaint();
+                    break;
+                case MANAGER_PROPERTY:
+                case LANGUAGES_PROPERTY:
+                    loadSources();
+                    break;
+            }
+        });
 
         loadSources();
     }
@@ -393,10 +421,15 @@ public final class FlowBrowserPanel extends JComponent {
     }
 
     private void onFlowSelected(Flow flow) {
-        setSelection(SourceFlowRef.builder()
+        setSelection(WebFlowRequest
+                .builder()
                 .source(currentSource.getId())
-                .database(currentDatabase)
-                .flow(flow.getRef())
+                .request(FlowRequest
+                        .builder()
+                        .languages(languages)
+                        .database(currentDatabase)
+                        .flow(flow.getRef())
+                        .build())
                 .build());
         updateTitle(flow.getName());
         updateBreadcrumb(currentSource, null, flow);
