@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-06-17
+
 This release improves the tool's querying capabilities and operational reliability.  
 A few sources have been added or fixed, and error reporting has been improved too.
 
@@ -632,7 +634,8 @@ production._
 
 - Initial release
 
-[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0...HEAD
+[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.1.0...HEAD
+[3.1.0]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.18...v3.0.0
 [3.0.0-beta.18]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.17...v3.0.0-beta.18
 [3.0.0-beta.17]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.16...v3.0.0-beta.17
