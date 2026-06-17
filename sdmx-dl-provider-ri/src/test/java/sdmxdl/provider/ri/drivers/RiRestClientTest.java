@@ -4,9 +4,7 @@ import lombok.NonNull;
 import nbbrd.design.MightBePromoted;
 import nbbrd.io.function.IORunnable;
 import nbbrd.io.function.IOSupplier;
-import nbbrd.io.http.HttpClient;
-import nbbrd.io.http.HttpResponse;
-import nbbrd.io.http.HttpResponseException;
+import nbbrd.io.http.*;
 import nbbrd.io.net.MediaType;
 import nbbrd.io.xml.Xml;
 import org.junit.jupiter.api.Test;
@@ -19,8 +17,7 @@ import tests.sdmxdl.format.xml.SdmxXmlSources;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.EnumSet;
 
 import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
@@ -74,10 +71,10 @@ public class RiRestClientTest {
                 );
     }
 
-    private static RiRestClient of(HttpClient executor) throws MalformedURLException {
+    private static RiRestClient of(HttpClient executor) {
         return new RiRestClient(
                 Marker.parse("abc"),
-                new URL("http://localhost"),
+                URI.create("http://localhost"),
                 Languages.ANY,
                 ObsParser::newDefault,
                 executor,
@@ -89,17 +86,36 @@ public class RiRestClientTest {
     }
 
     private static HttpClient onResponseError(int responseCode) {
-        return (httpRequest) -> {
-            throw new HttpResponseException(responseCode, "");
+        return new HttpClient() {
+
+            @Override
+            public @NonNull String getDescription() {
+                return "";
+            }
+
+            @Override
+            public @NonNull HttpResponse send(@NonNull HttpRequest httpRequest) throws IOException {
+                throw new HttpResponseException(responseCode, "");
+            }
         };
     }
 
     private static HttpClient onResponseStream(ByteSource byteSource) {
-        return (httpRequest) -> MockedResponse
-                .builder()
-                .body(byteSource::openStream)
-                .mediaType(() -> Xml.APPLICATION_XML_UTF_8)
-                .build();
+        return new HttpClient() {
+            @Override
+            public @NonNull String getDescription() {
+                return "";
+            }
+
+            @Override
+            public @NonNull HttpResponse send(@NonNull HttpRequest httpRequest) throws IOException {
+                return MockedResponse
+                        .builder()
+                        .body(byteSource::openStream)
+                        .mediaType(() -> Xml.APPLICATION_XML_UTF_8)
+                        .build();
+            }
+        };
     }
 
     @MightBePromoted
@@ -122,6 +138,16 @@ public class RiRestClientTest {
         @Override
         public @NonNull MediaType getContentType() throws IOException {
             return mediaType.getWithIO();
+        }
+
+        @Override
+        public long getContentLength() throws IOException {
+            return NO_CONTENT_LENGTH;
+        }
+
+        @Override
+        public @NonNull HttpHeaders getHeaders() throws IOException {
+            return HttpHeaders.EMPTY;
         }
 
         @Override

@@ -18,6 +18,7 @@ package sdmxdl.provider.web;
 
 import lombok.AccessLevel;
 import lombok.NonNull;
+import nbbrd.io.text.BaseProperty;
 import sdmxdl.Connection;
 import sdmxdl.Languages;
 import sdmxdl.format.design.ServiceSupport;
@@ -97,6 +98,12 @@ public final class DriverSupport implements Driver {
         @NonNull
         public Builder propertyOf(@NonNull CharSequence property) {
             return property(property.toString());
+        }
+
+        @NonNull
+        public Builder propertiesOf(@NonNull Iterable<? extends BaseProperty> properties) {
+            properties.forEach(baseProperty -> property(baseProperty.toString()));
+            return this;
         }
     }
 }

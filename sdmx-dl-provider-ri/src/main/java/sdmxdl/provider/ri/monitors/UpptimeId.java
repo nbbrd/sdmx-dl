@@ -1,12 +1,14 @@
 package sdmxdl.provider.ri.monitors;
 
-import nbbrd.io.http.URLQueryBuilder;
 import lombok.NonNull;
 import nbbrd.design.RepresentableAs;
 import nbbrd.design.StaticFactoryMethod;
+import nbbrd.io.http.URLQueryBuilder;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Locale;
 
@@ -35,24 +37,29 @@ class UpptimeId {
         return URI_SCHEME + ":/" + owner + "/" + repo + "/" + site;
     }
 
-    public @NonNull URL toSummaryURL() throws MalformedURLException {
-        return URLQueryBuilder
-                .of(new URL("https://raw.githubusercontent.com"))
-                .path(owner)
-                .path(repo)
-                .path("master")
-                .path("history")
-                .path("summary.json")
-                .build();
+    public @NonNull URI toSummaryURI() throws IOException {
+        try {
+            return URLQueryBuilder
+                    .of(new URL("https://raw.githubusercontent.com"))
+                    .path(owner)
+                    .path(repo)
+                    .path("master")
+                    .path("history")
+                    .path("summary.json")
+                    .build()
+                    .toURI();
+        } catch (URISyntaxException e) {
+            throw new IOException(e);
+        }
     }
 
-    public @NonNull URL toReportURL() throws MalformedURLException {
+    public @NonNull URI toReportURI() throws MalformedURLException {
         return URLQueryBuilder
                 .of(new URL("https://" + owner + ".github.io"))
                 .path(repo)
                 .path("history")
                 .path(getNormalizedSite())
-                .build();
+                .buildURI();
     }
 
     public @NonNull URI toURI() {

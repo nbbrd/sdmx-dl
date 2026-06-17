@@ -103,31 +103,31 @@ public class PxWebDriverTest {
     }
 
     @Test
-    public void testGetDefaultClientBaseURL() throws IOException {
+    public void testGetFullEndpoint() throws IOException {
         WebSource empty = WebSource
                 .builder().id("").driver("")
                 .endpointOf("https://localhost/_VERSION_/_LANG_")
                 .propertyOf(VERSIONS_PROPERTY, "v1")
                 .build();
 
-        assertThat(getDefaultClientBaseURL(empty, ANY)).hasToString("https://localhost/v1/en");
-        assertThat(getDefaultClientBaseURL(empty, EN)).hasToString("https://localhost/v1/en");
-        assertThat(getDefaultClientBaseURL(empty, FR_BE)).hasToString("https://localhost/v1/en");
-        assertThat(getDefaultClientBaseURL(empty, NL)).hasToString("https://localhost/v1/en");
+        assertThat(getFullEndpoint(empty, ANY)).hasToString("https://localhost/v1/en");
+        assertThat(getFullEndpoint(empty, EN)).hasToString("https://localhost/v1/en");
+        assertThat(getFullEndpoint(empty, FR_BE)).hasToString("https://localhost/v1/en");
+        assertThat(getFullEndpoint(empty, NL)).hasToString("https://localhost/v1/en");
 
         WebSource en = empty.toBuilder().propertyOf(LANGUAGES_PROPERTY, "en").build();
 
-        assertThat(getDefaultClientBaseURL(en, ANY)).hasToString("https://localhost/v1/en");
-        assertThat(getDefaultClientBaseURL(en, EN)).hasToString("https://localhost/v1/en");
-        assertThat(getDefaultClientBaseURL(en, FR_BE)).hasToString("https://localhost/v1/en");
-        assertThat(getDefaultClientBaseURL(en, NL)).hasToString("https://localhost/v1/en");
+        assertThat(getFullEndpoint(en, ANY)).hasToString("https://localhost/v1/en");
+        assertThat(getFullEndpoint(en, EN)).hasToString("https://localhost/v1/en");
+        assertThat(getFullEndpoint(en, FR_BE)).hasToString("https://localhost/v1/en");
+        assertThat(getFullEndpoint(en, NL)).hasToString("https://localhost/v1/en");
 
         WebSource fr = empty.toBuilder().propertyOf(LANGUAGES_PROPERTY, "fr").build();
 
-        assertThat(getDefaultClientBaseURL(fr, ANY)).hasToString("https://localhost/v1/fr");
-        assertThat(getDefaultClientBaseURL(fr, EN)).hasToString("https://localhost/v1/fr");
-        assertThat(getDefaultClientBaseURL(fr, FR_BE)).hasToString("https://localhost/v1/fr");
-        assertThat(getDefaultClientBaseURL(fr, NL)).hasToString("https://localhost/v1/fr");
+        assertThat(getFullEndpoint(fr, ANY)).hasToString("https://localhost/v1/fr");
+        assertThat(getFullEndpoint(fr, EN)).hasToString("https://localhost/v1/fr");
+        assertThat(getFullEndpoint(fr, FR_BE)).hasToString("https://localhost/v1/fr");
+        assertThat(getFullEndpoint(fr, NL)).hasToString("https://localhost/v1/fr");
     }
 
     @Test

@@ -23,8 +23,11 @@ import nbbrd.service.ServiceProvider;
 import sdmxdl.Feature;
 import sdmxdl.Languages;
 import sdmxdl.StructureRef;
+import sdmxdl.format.ObsParser;
+import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.SdmxFix;
 import sdmxdl.provider.ri.drivers.RiRestClient;
+import sdmxdl.provider.ri.drivers.Sdmx21RestErrors;
 import sdmxdl.provider.ri.drivers.Sdmx21RestParsers;
 import sdmxdl.provider.ri.drivers.Sdmx21RestQueries;
 import sdmxdl.provider.web.DriverSupport;
@@ -34,13 +37,12 @@ import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.EnumSet;
 
 import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
-import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
+import static sdmxdl.provider.ri.drivers.RiHttpUtils.DEFAULT_HTTP_FACTORY;
 
 /**
  * @author Philippe Charles
@@ -57,7 +59,7 @@ public final class ImfDialectDriver implements Driver {
             .id(DIALECTS_IMF)
             .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(ImfDialectDriver::newClient))
-            .properties(RI_CONNECTION_PROPERTIES)
+            .propertiesOf(DEFAULT_HTTP_FACTORY.getFactoryProperties())
             .source(WebSource
                     .builder()
                     .id("IMF")
@@ -71,8 +73,18 @@ public final class ImfDialectDriver implements Driver {
                     .build())
             .build();
 
-    private static RestClient newClient(WebSource s, Languages languages, WebContext c) throws IOException {
-        return RiRestClient.of(s, languages, c, ImfQueries.INSTANCE, Sdmx21RestParsers.DEFAULT, EnumSet.allOf(Feature.class));
+    private static RestClient newClient(WebSource s, Languages languages, WebContext c) {
+        return new RiRestClient(
+                HasMarker.of(s),
+                s.getEndpoint(),
+                languages,
+                ObsParser::newDefault,
+                DEFAULT_HTTP_FACTORY.create(s, c),
+                ImfQueries.INSTANCE,
+                Sdmx21RestParsers.DEFAULT,
+                Sdmx21RestErrors.DEFAULT,
+                EnumSet.allOf(Feature.class)
+        );
     }
 
     private static final class ImfQueries extends Sdmx21RestQueries {

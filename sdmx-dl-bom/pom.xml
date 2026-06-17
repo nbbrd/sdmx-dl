@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0</version>
+        <version>3.1.0</version>
     </parent>
 
     <artifactId>sdmx-dl-bom</artifactId>
@@ -18,7 +18,7 @@
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
     <properties>
-        <hugo-geekdoc.version>v4.1.0</hugo-geekdoc.version>
+        <hugo-geekdoc.version>v4.1.1</hugo-geekdoc.version>
     </properties>
 
     <dependencyManagement>
@@ -111,6 +111,11 @@
             </dependency>
             <dependency>
                 <artifactId>sdmx-dl-grpc</artifactId>
+                <groupId>${project.groupId}</groupId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>sdmx-dl-swing</artifactId>
                 <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
             </dependency>

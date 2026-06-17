@@ -1,10 +1,12 @@
 package sdmxdl.desktop;
 
 import com.formdev.flatlaf.FlatLightLaf;
-import com.formdev.flatlaf.extras.FlatSVGIcon;
 import ec.util.various.swing.BasicSwingLauncher;
+import lombok.NonNull;
+import nbbrd.design.MightBePromoted;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
+import sdmxdl.swing.SdmxLogo;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 
@@ -14,6 +16,7 @@ import javax.swing.event.AncestorListener;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -35,8 +38,8 @@ public class Main {
 
     private static List<Image> getIcons() {
         return IntStream.of(256, 128, 64, 48, 32, 16)
-                .mapToObj(size -> new FlatSVGIcon("sdmxdl/desktop/SDMX_logo.svg", size, size))
-                .map(FlatSVGIcon::getImage)
+                .mapToObj(SdmxLogo::new)
+                .map(Main::iconToImage)
                 .collect(toList());
     }
 
@@ -105,5 +108,22 @@ public class Main {
 
     private static void printRegistryError(String marker, CharSequence message, IOException error) {
         System.err.println("[REG] (" + marker + ") " + message + ": " + error.getMessage());
+    }
+
+    @MightBePromoted
+    private static @NonNull Image iconToImage(@NonNull Icon icon) {
+        if (icon instanceof ImageIcon) {
+            return ((ImageIcon) icon).getImage();
+        } else {
+            BufferedImage result = GraphicsEnvironment
+                    .getLocalGraphicsEnvironment()
+                    .getDefaultScreenDevice()
+                    .getDefaultConfiguration()
+                    .createCompatibleImage(icon.getIconWidth(), icon.getIconHeight(), Transparency.TRANSLUCENT);
+            Graphics2D g = result.createGraphics();
+            icon.paintIcon(null, g, 0, 0);
+            g.dispose();
+            return result;
+        }
     }
 }

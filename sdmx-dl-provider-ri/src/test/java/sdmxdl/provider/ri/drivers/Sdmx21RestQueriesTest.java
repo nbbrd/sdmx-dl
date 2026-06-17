@@ -63,14 +63,14 @@ public class Sdmx21RestQueriesTest {
         Assertions.assertThat(Sdmx21RestQueries.DEFAULT)
                 .satisfies(x -> {
                     assertThat(x.getStructureQuery(base, specificStruct))
-                            .hasToString("http://base/datastructure/ECB/EXR/1.0?references=children");
+                            .hasToString("http://base/datastructure/ECB/EXR/1.0?references=descendants");
 
                     assertThat(x.getStructureQuery(base, genericStruct))
-                            .hasToString("http://base/datastructure/all/EXR/latest?references=children");
+                            .hasToString("http://base/datastructure/all/EXR/latest?references=descendants");
                 });
 
         Assertions.assertThat(Sdmx21RestQueries.WITH_TRAILING_SLASH.getStructureQuery(base, specificStruct))
-                .hasToString("http://base/datastructure/ECB/EXR/1.0/?references=children");
+                .hasToString("http://base/datastructure/ECB/EXR/1.0/?references=descendants");
     }
 
     @Test

@@ -16,7 +16,6 @@
  */
 package internal.sdmxdl.cli;
 
-import internal.sdmxdl.cli.ext.Anchor;
 import internal.sdmxdl.cli.ext.VerboseOptions;
 import nbbrd.design.ReturnNew;
 import org.jspecify.annotations.Nullable;
@@ -100,12 +99,12 @@ public class WebOptions {
                 .onEvent(getEventListener())
                 .onError(getErrorListener())
                 .onRegistryEvent((marker, message) -> {
-                    if (verboseOptions.isVerbose())
-                        verboseOptions.reportToErrorStream(Anchor.CFG, marker + ": " + message);
+                    if (verboseOptions.isVerbose() || verboseOptions.isExplain())
+                        verboseOptions.reportToErrorStream(null, marker, message);
                 })
                 .onRegistryError((marker, message, error) -> {
-                    if (verboseOptions.isVerbose())
-                        verboseOptions.reportToErrorStream(Anchor.CFG, marker + ": " + message, error);
+                    if (verboseOptions.isVerbose() || verboseOptions.isExplain())
+                        verboseOptions.reportToErrorStream(null, marker, message, error);
                 })
                 .build();
     }
@@ -117,7 +116,17 @@ public class WebOptions {
     private Function<? super WebSource, EventListener> getEventListener() {
         Function<? super WebSource, EventListener> original = isNoLog() ? null : source -> new LoggingListener(source)::onSourceEvent;
         VerboseEventListener result = new VerboseEventListener(original, verboseOptions);
-        return source -> (marker, message) -> result.onSourceEvent(source, marker, message);
+        return source -> new EventListener() {
+            @Override
+            public void accept(@lombok.NonNull String marker, @lombok.NonNull CharSequence message) {
+                result.onSourceEvent(source, marker, message, 0);
+            }
+
+            @Override
+            public void accept(@lombok.NonNull String marker, @lombok.NonNull CharSequence message, int depth) {
+                result.onSourceEvent(source, marker, message, depth);
+            }
+        };
     }
 
     private Function<? super WebSource, ErrorListener> getErrorListener() {
@@ -153,12 +162,12 @@ public class WebOptions {
         @lombok.NonNull
         private final VerboseOptions verboseOptions;
 
-        public void onSourceEvent(WebSource source, String marker, CharSequence message) {
+        public void onSourceEvent(WebSource source, String marker, CharSequence message, int depth) {
             if (main != null) {
-                main.apply(source).accept(marker, message);
+                main.apply(source).accept(marker, message, depth);
             }
-            if (verboseOptions.isVerbose()) {
-                verboseOptions.reportToErrorStream(Anchor.WEB, source.getId() + ": " + message);
+            if (verboseOptions.isVerbose() || verboseOptions.isExplain()) {
+                verboseOptions.reportToErrorStream(source, marker, message, depth);
             }
         }
     }
@@ -175,8 +184,8 @@ public class WebOptions {
             if (main != null) {
                 main.apply(source).accept(marker, message, error);
             }
-            if (verboseOptions.isVerbose()) {
-                verboseOptions.reportToErrorStream(Anchor.WEB, source.getId() + ": " + message, error);
+            if (verboseOptions.isVerbose() || verboseOptions.isExplain()) {
+                verboseOptions.reportToErrorStream(source, marker, message, error);
             }
         }
     }

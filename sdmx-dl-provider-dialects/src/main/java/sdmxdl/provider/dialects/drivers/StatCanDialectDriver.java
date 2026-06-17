@@ -9,10 +9,7 @@ import nbbrd.design.VisibleForTesting;
 import nbbrd.io.FileParser;
 import nbbrd.io.function.IOFunction;
 import nbbrd.io.function.IOSupplier;
-import nbbrd.io.http.HttpClient;
-import nbbrd.io.http.HttpRequest;
-import nbbrd.io.http.HttpResponse;
-import nbbrd.io.http.URLQueryBuilder;
+import nbbrd.io.http.*;
 import nbbrd.io.net.MediaType;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
@@ -28,10 +25,7 @@ import sdmxdl.web.spi.WebContext;
 
 import java.io.*;
 import java.lang.reflect.Type;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -48,8 +42,7 @@ import static java.util.regex.Pattern.compile;
 import static java.util.stream.Collectors.toMap;
 import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.DataSet.toDataSet;
-import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
-import static sdmxdl.provider.ri.drivers.RiHttpUtils.newClient;
+import static sdmxdl.provider.ri.drivers.RiHttpUtils.DEFAULT_HTTP_FACTORY;
 import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
 import static sdmxdl.provider.web.WebValidators.dataflowRefOf;
 
@@ -65,7 +58,7 @@ public final class StatCanDialectDriver implements Driver {
             .id(DIALECTS_STATCAN)
             .rank(NATIVE_DRIVER_RANK)
             .connector(StatCanDialectDriver::newConnection)
-            .properties(RI_CONNECTION_PROPERTIES)
+            .propertiesOf(DEFAULT_HTTP_FACTORY.getFactoryProperties())
             .propertyOf(CACHE_TTL_PROPERTY)
             .source(WebSource
                     .builder()
@@ -85,9 +78,9 @@ public final class StatCanDialectDriver implements Driver {
     private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
         StatCanClient client = new DefaultStatCanClient(
                 HasMarker.of(source),
-                source.getEndpoint().toURL(),
+                source.getEndpoint(),
                 languages,
-                newClient(source, context)
+                DEFAULT_HTTP_FACTORY.create(source, context)
         );
 
         StatCanClient cachedClient = CachedStatCanClient.of(
@@ -169,11 +162,7 @@ public final class StatCanDialectDriver implements Driver {
 
         @Override
         public @NonNull Optional<URI> testConnection() throws IOException {
-            try {
-                return Optional.of(client.ping().toURI());
-            } catch (URISyntaxException e) {
-                throw new IOException(e);
-            }
+            return Optional.of(client.ping());
         }
 
         @Override
@@ -191,7 +180,7 @@ public final class StatCanDialectDriver implements Driver {
         DataRepository getStructAndData(int productId) throws IOException;
 
         @NonNull
-        URL ping() throws IOException;
+        URI ping() throws IOException;
     }
 
     @VisibleForTesting
@@ -200,7 +189,7 @@ public final class StatCanDialectDriver implements Driver {
 
         @lombok.Getter
         private final Marker marker;
-        private final URL endpoint;
+        private final URI endpoint;
         private final Languages langs;
         private final HttpClient client;
 
@@ -223,14 +212,14 @@ public final class StatCanDialectDriver implements Driver {
         }
 
         @Override
-        public @NonNull URL ping() throws IOException {
+        public @NonNull URI ping() throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
                     .query(URLQueryBuilder
-                            .of(endpoint)
+                            .of(endpoint.toURL())
                             .path("getAllCubesListLite")
-                            .build())
-                    .mediaType(JSON_TYPE)
+                            .buildURI())
+                    .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
                     .build();
 
             try (HttpResponse ignore = client.send(request)) {
@@ -242,10 +231,10 @@ public final class StatCanDialectDriver implements Driver {
             HttpRequest request = HttpRequest
                     .builder()
                     .query(URLQueryBuilder
-                            .of(endpoint)
+                            .of(endpoint.toURL())
                             .path("getAllCubesListLite")
-                            .build())
-                    .mediaType(JSON_TYPE)
+                            .buildURI())
+                    .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
                     .build();
 
             try (HttpResponse response = client.send(request)) {
@@ -259,11 +248,11 @@ public final class StatCanDialectDriver implements Driver {
             HttpRequest request = HttpRequest
                     .builder()
                     .query(URLQueryBuilder
-                            .of(endpoint)
+                            .of(endpoint.toURL())
                             .path("getFullTableDownloadSDMX")
                             .path(String.valueOf(productId))
-                            .build())
-                    .mediaType(JSON_TYPE)
+                            .buildURI())
+                    .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
                     .build();
 
             try (HttpResponse response = client.send(request)) {
@@ -277,7 +266,7 @@ public final class StatCanDialectDriver implements Driver {
             HttpRequest request = HttpRequest
                     .builder()
                     .query(ref.getObject())
-                    .mediaType(ZIP_TYPE)
+                    .headers(HttpHeaders.builder().mediaType(ZIP_TYPE).build())
                     .build();
 
             try (HttpResponse response = client.send(request)) {
@@ -350,7 +339,7 @@ public final class StatCanDialectDriver implements Driver {
         }
 
         @Override
-        public @NonNull URL ping() throws IOException {
+        public @NonNull URI ping() throws IOException {
             return delegate.ping();
         }
     }
@@ -386,7 +375,7 @@ public final class StatCanDialectDriver implements Driver {
     static class FullTableDownloadSDMX {
 
         String status;
-        URL object;
+        URI object;
 
         public static @NonNull FullTableDownloadSDMX parseJson(@NonNull Reader reader) {
             return GSON.fromJson(reader, FullTableDownloadSDMX.class);
@@ -398,14 +387,10 @@ public final class StatCanDialectDriver implements Driver {
 
         private static FullTableDownloadSDMX deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
             JsonObject x = json.getAsJsonObject();
-            try {
-                return new FullTableDownloadSDMX(
-                        x.get("status").getAsString(),
-                        new URL(x.get("object").getAsString())
-                );
-            } catch (MalformedURLException ex) {
-                throw new UncheckedIOException(ex);
-            }
+            return new FullTableDownloadSDMX(
+                    x.get("status").getAsString(),
+                    URI.create(x.get("object").getAsString())
+            );
         }
     }
 

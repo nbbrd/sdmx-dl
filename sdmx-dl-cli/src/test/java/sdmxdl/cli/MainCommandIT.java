@@ -15,7 +15,8 @@ public class MainCommandIT {
     @Test
     public void testHelp() throws IOException {
         assertThat(ShadedJarLauncher.builder().build().readString())
-                .contains("data", "meta", "list", "check", "setup");
+                .contains("data", "meta", "list", "check", "setup")
+                .doesNotContainIgnoringCase("warning");
     }
 
     @Test

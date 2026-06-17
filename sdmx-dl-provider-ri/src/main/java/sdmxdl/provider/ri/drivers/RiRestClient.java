@@ -24,16 +24,12 @@ import nbbrd.io.http.HttpResponseException;
 import sdmxdl.*;
 import sdmxdl.format.ObsParser;
 import sdmxdl.provider.DataRef;
-import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.Marker;
 import sdmxdl.provider.web.RestClient;
-import sdmxdl.web.WebSource;
-import sdmxdl.web.spi.WebContext;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -51,23 +47,9 @@ import static sdmxdl.provider.web.RestErrorMapping.CLIENT_NO_RESULTS_FOUND;
 @lombok.RequiredArgsConstructor
 public class RiRestClient implements RestClient {
 
-    public static @NonNull RiRestClient of(@NonNull WebSource s, @NonNull Languages languages, @NonNull WebContext c,
-                                           @NonNull RiRestQueries queries, @NonNull RiRestParsers parsers, @NonNull Set<Feature> supportedFeatures) throws IOException {
-        return new RiRestClient(
-                HasMarker.of(s),
-                s.getEndpoint().toURL(),
-                languages,
-                ObsParser::newDefault,
-                RiHttpUtils.newClient(s, c),
-                queries,
-                parsers,
-                Sdmx21RestErrors.DEFAULT,
-                supportedFeatures);
-    }
-
     @lombok.Getter
     protected final Marker marker;
-    protected final URL endpoint;
+    protected final URI endpoint;
     protected final Languages langs;
     protected final Supplier<ObsParser> obsFactory;
     protected final HttpClient httpClient;
@@ -104,26 +86,26 @@ public class RiRestClient implements RestClient {
     @NonNull
     @Override
     public Optional<URI> testClient() throws IOException {
-        HttpRequest request = RiHttpUtils.newRequest(getFlowsQuery(), parsers.getFlowsTypes(), langs);
+        HttpRequest request = RiHttpUtils.newHttpRequest(getFlowsQuery(), parsers.getFlowsTypes(), langs);
+        try (HttpResponse ignore = httpClient.send(request)) {
+            return Optional.of(request.getQuery());
+        } catch (HttpResponseException ex) {
+            return Optional.of(request.getQuery());
+        }
+    }
+
+    @NonNull
+    protected URI getFlowsQuery() throws IOException {
         try {
-            try (HttpResponse ignore = httpClient.send(request)) {
-                return Optional.of(request.getQuery().toURI());
-            } catch (HttpResponseException ex) {
-                return Optional.of(request.getQuery().toURI());
-            }
+            return queries.getFlowsQuery(endpoint.toURL()).build().toURI();
         } catch (URISyntaxException e) {
             throw new IOException(e);
         }
     }
 
     @NonNull
-    protected URL getFlowsQuery() throws IOException {
-        return queries.getFlowsQuery(endpoint).build();
-    }
-
-    @NonNull
-    protected List<Flow> getFlows(@NonNull URL url) throws IOException {
-        HttpRequest request = RiHttpUtils.newRequest(url, parsers.getFlowsTypes(), langs);
+    protected List<Flow> getFlows(@NonNull URI url) throws IOException {
+        HttpRequest request = RiHttpUtils.newHttpRequest(url, parsers.getFlowsTypes(), langs);
         try (HttpResponse response = httpClient.send(request)) {
             return parsers
                     .getFlowsParser(response.getContentType(), langs)
@@ -137,13 +119,17 @@ public class RiRestClient implements RestClient {
     }
 
     @NonNull
-    protected URL getStructureQuery(@NonNull StructureRef ref) throws IOException {
-        return queries.getStructureQuery(endpoint, ref).build();
+    protected URI getStructureQuery(@NonNull StructureRef ref) throws IOException {
+        try {
+            return queries.getStructureQuery(endpoint.toURL(), ref).build().toURI();
+        } catch (URISyntaxException e) {
+            throw new IOException(e);
+        }
     }
 
     @NonNull
-    protected Structure getStructure(@NonNull URL url, @NonNull StructureRef ref) throws IOException {
-        HttpRequest request = RiHttpUtils.newRequest(url, parsers.getStructureTypes(), langs);
+    protected Structure getStructure(@NonNull URI url, @NonNull StructureRef ref) throws IOException {
+        HttpRequest request = RiHttpUtils.newHttpRequest(url, parsers.getStructureTypes(), langs);
         try (HttpResponse response = httpClient.send(request)) {
             return parsers
                     .getStructureParser(response.getContentType(), langs, ref)
@@ -158,13 +144,17 @@ public class RiRestClient implements RestClient {
     }
 
     @NonNull
-    protected URL getDataQuery(@NonNull DataRef ref, @NonNull StructureRef dsdRef) throws IOException {
-        return queries.getDataQuery(endpoint, ref, dsdRef).build();
+    protected URI getDataQuery(@NonNull DataRef ref, @NonNull StructureRef dsdRef) throws IOException {
+        try {
+            return queries.getDataQuery(endpoint.toURL(), ref, dsdRef).build().toURI();
+        } catch (URISyntaxException e) {
+            throw new IOException(e);
+        }
     }
 
     @NonNull
-    protected Stream<Series> getData(@NonNull URL url, @NonNull Structure dsd) throws IOException {
-        HttpRequest request = RiHttpUtils.newRequest(url, parsers.getDataTypes(), langs);
+    protected Stream<Series> getData(@NonNull URI url, @NonNull Structure dsd) throws IOException {
+        HttpRequest request = RiHttpUtils.newHttpRequest(url, parsers.getDataTypes(), langs);
         try {
             HttpResponse response = httpClient.send(request);
             return parsers
@@ -180,13 +170,17 @@ public class RiRestClient implements RestClient {
     }
 
     @NonNull
-    protected URL getCodelistQuery(@NonNull CodelistRef ref) throws IOException {
-        return queries.getCodelistQuery(endpoint, ref).build();
+    protected URI getCodelistQuery(@NonNull CodelistRef ref) throws IOException {
+        try {
+            return queries.getCodelistQuery(endpoint.toURL(), ref).build().toURI();
+        } catch (URISyntaxException e) {
+            throw new IOException(e);
+        }
     }
 
     @NonNull
-    protected Codelist getCodelist(@NonNull URL url, @NonNull CodelistRef ref) throws IOException {
-        HttpRequest request = RiHttpUtils.newRequest(url, parsers.getCodelistTypes(), langs);
+    protected Codelist getCodelist(@NonNull URI url, @NonNull CodelistRef ref) throws IOException {
+        HttpRequest request = RiHttpUtils.newHttpRequest(url, parsers.getCodelistTypes(), langs);
         try (HttpResponse response = httpClient.send(request)) {
             return parsers
                     .getCodelistParser(response.getContentType(), langs, ref)

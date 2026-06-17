@@ -24,22 +24,17 @@ import nbbrd.desktop.favicon.DomainName;
 import nbbrd.desktop.favicon.FaviconRef;
 import nbbrd.desktop.favicon.FaviconSupport;
 import nbbrd.desktop.favicon.URLConnectionFactory;
-import nbbrd.io.Resource;
 import sdmxdl.*;
-import sdmxdl.Dimension;
-import sdmxdl.desktop.MainComponent;
+import sdmxdl.swing.SdmxLogo;
 import sdmxdl.web.SdmxWebManager;
+import sdmxdl.web.Search;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Network;
 import sdmxdl.web.spi.SSLFactory;
 
-import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;
 import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.net.Proxy;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -47,6 +42,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -128,14 +124,15 @@ public abstract class SdmxAutoCompletion {
         }
 
         private List<WebSource> filterAndSort(List<WebSource> list, String term) {
-            return list.stream().filter(getFilter(term)).collect(toList());
-        }
-
-        private Predicate<WebSource> getFilter(String term) {
-            Predicate<String> filter = ExtAutoCompletionSource.basicFilter(term);
-            return value -> filter.test(languages.select(value.getNames()))
-                    || filter.test(value.getId())
-                    || value.getAliases().stream().anyMatch(filter);
+            if (term == null || term.isEmpty()) {
+                return list.stream()
+                        .sorted(comparing(source -> Objects.toString(languages.select(source.getNames()))))
+                        .collect(toList());
+            }
+            return Search.ofSources(list, languages).search(term, list.size())
+                    .stream()
+                    .map(Search.Result::getItem)
+                    .collect(toList());
         }
     }
 
@@ -184,13 +181,15 @@ public abstract class SdmxAutoCompletion {
         }
 
         private List<Database> filterAndSort(List<Database> list, String term) {
-            return list.stream().filter(getFilter(term)).collect(toList());
-        }
-
-        private Predicate<Database> getFilter(String term) {
-            Predicate<String> filter = ExtAutoCompletionSource.basicFilter(term);
-            return value -> filter.test(value.getName())
-                    || filter.test(value.getRef().toString());
+            if (term == null || term.isEmpty()) {
+                return list.stream()
+                        .sorted(comparing(Database::getName))
+                        .collect(toList());
+            }
+            return Search.ofDatabases(list).search(term, list.size())
+                    .stream()
+                    .map(Search.Result::getItem)
+                    .collect(toList());
         }
 
         private String getCacheKey(String term) {
@@ -249,10 +248,14 @@ public abstract class SdmxAutoCompletion {
         }
 
         private List<Flow> filterAndSort(List<Flow> values, String term) {
-            Predicate<String> filter = ExtAutoCompletionSource.basicFilter(term);
-            return values.stream()
-                    .filter(o -> filter.test(o.getName()) || filter.test(o.getRef().getId()) || filter.test(o.getDescription()))
-                    .sorted(comparing(Flow::getName))
+            if (term == null || term.isEmpty()) {
+                return values.stream()
+                        .sorted(comparing(Flow::getName))
+                        .collect(toList());
+            }
+            return Search.ofFlows(values).search(term, values.size())
+                    .stream()
+                    .map(Search.Result::getItem)
                     .collect(toList());
         }
 
@@ -395,19 +398,15 @@ public abstract class SdmxAutoCompletion {
         }
     }
 
-    public static ImageIcon getDefaultIcon() {
-        return sdmxIcon;
+    public static Icon getDefaultIcon() {
+        return DEFAULT_ICON;
     }
 
-    private static final ImageIcon sdmxIcon = new ImageIcon(loadImage());
-
-    private static Image loadImage() {
-        try (InputStream stream = Resource.newInputStream(MainComponent.class, "sdmx-logo.png")) {
-            return ImageIO.read(stream);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
+    public static Icon getDefaultIcon(int size) {
+        return new SdmxLogo(size);
     }
+
+    private static final Icon DEFAULT_ICON = new SdmxLogo(16);
 
     public static Icon getFavicon(URL website) {
         return website != null
@@ -419,6 +418,12 @@ public abstract class SdmxAutoCompletion {
         return website != null
                 ? FAVICONS.getOrDefault(FaviconRef.of(DomainName.of(website), 16), callback, getDefaultIcon())
                 : getDefaultIcon();
+    }
+
+    public static Icon getFavicon(URL website, Runnable callback, int size) {
+        return website != null
+                ? FAVICONS.getOrDefault(FaviconRef.of(DomainName.of(website), size), callback, getDefaultIcon())
+                : getDefaultIcon(size);
     }
 
     public static final FaviconSupport FAVICONS = FaviconSupport

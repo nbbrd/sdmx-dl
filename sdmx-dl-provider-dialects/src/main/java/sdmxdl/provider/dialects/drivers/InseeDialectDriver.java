@@ -36,7 +36,10 @@ import sdmxdl.format.time.TimeFormats;
 import sdmxdl.format.xml.XmlMediaTypes;
 import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.SdmxFix;
-import sdmxdl.provider.ri.drivers.*;
+import sdmxdl.provider.ri.drivers.RiRestClient;
+import sdmxdl.provider.ri.drivers.Sdmx21RestErrors;
+import sdmxdl.provider.ri.drivers.Sdmx21RestParsers;
+import sdmxdl.provider.ri.drivers.Sdmx21RestQueries;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestConnector;
 import sdmxdl.web.WebSource;
@@ -52,7 +55,7 @@ import java.util.function.Supplier;
 import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.format.time.TimeFormats.IGNORE_ERROR;
 import static sdmxdl.provider.SdmxFix.Category.*;
-import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
+import static sdmxdl.provider.ri.drivers.RiHttpUtils.DEFAULT_HTTP_FACTORY;
 
 /**
  * @author Philippe Charles
@@ -69,7 +72,7 @@ public final class InseeDialectDriver implements Driver {
             .id(DIALECTS_INSEE)
             .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(InseeRestClient::new))
-            .properties(RI_CONNECTION_PROPERTIES)
+            .propertiesOf(DEFAULT_HTTP_FACTORY.getFactoryProperties())
             .propertyOf(NO_COMMA_ENCODING_PROPERTY)
             .source(WebSource
                     .builder()
@@ -112,13 +115,13 @@ public final class InseeDialectDriver implements Driver {
 
     private final static class InseeRestClient extends RiRestClient {
 
-        InseeRestClient(WebSource s, Languages languages, WebContext c) throws IOException {
+        InseeRestClient(WebSource s, Languages languages, WebContext c) {
             super(
                     HasMarker.of(s),
-                    s.getEndpoint().toURL(),
+                    s.getEndpoint(),
                     languages,
                     OBS_FACTORY,
-                    RiHttpUtils.newClient(s, c),
+                    DEFAULT_HTTP_FACTORY.create(s, c),
                     NO_COMMA_ENCODING_PROPERTY.get(s.getProperties())
                             ? InseeRestQueries.NO_COMMA_ENCODING
                             : InseeRestQueries.DEFAULT,

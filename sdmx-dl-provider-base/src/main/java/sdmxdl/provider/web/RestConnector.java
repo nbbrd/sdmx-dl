@@ -2,6 +2,7 @@ package sdmxdl.provider.web;
 
 import lombok.NonNull;
 import sdmxdl.Connection;
+import sdmxdl.EventListener;
 import sdmxdl.Languages;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.WebContext;
@@ -22,15 +23,43 @@ public final class RestConnector implements WebConnector {
 
     @Override
     public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
-        return RestConnection.of(getClient(source, languages, context));
+        EventListener onEvent = context.getEventListener(source);
+        RestClient restClient = buildClient(source, languages, context, onEvent);
+        Connection connection = RestConnection.of(restClient);
+        if (restClient instanceof EventRestClient) {
+            EventRestClient eventClient = (EventRestClient) restClient;
+            return new SummaryConnection(connection, eventClient);
+        }
+        return connection;
     }
 
-    private RestClient getClient(WebSource source, Languages languages, WebContext context) throws IOException {
-        return CachedRestClient.of(
+    private RestClient buildClient(WebSource source, Languages languages, WebContext context, EventListener onEvent) throws IOException {
+        RestClient result = CachedRestClient.of(
                 client.get(source, languages, context),
                 context.getDriverCache(source),
                 CACHE_TTL_PROPERTY.get(source.getProperties()),
                 source,
                 languages);
+        return EventRestClient.of(result, onEvent);
+    }
+
+    @lombok.RequiredArgsConstructor
+    private static final class SummaryConnection implements Connection {
+
+        @lombok.NonNull
+        @lombok.experimental.Delegate(types = Connection.class, excludes = AutoCloseable.class)
+        private final Connection delegate;
+
+        @lombok.NonNull
+        private final EventRestClient eventClient;
+
+        @Override
+        public void close() throws IOException {
+            try {
+                delegate.close();
+            } finally {
+                eventClient.emitSummary();
+            }
+        }
     }
 }

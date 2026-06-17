@@ -20,7 +20,6 @@ import dev.failsafe.Failsafe;
 import dev.failsafe.Fallback;
 import dev.failsafe.RetryPolicy;
 import internal.sdmxdl.cli.WebNetOptions;
-import internal.sdmxdl.cli.ext.Anchor;
 import nbbrd.console.picocli.text.TextOutputOptions;
 import picocli.CommandLine;
 import sdmxdl.Languages;
@@ -56,7 +55,7 @@ public final class ListUpptimeCommand implements Callable<Void> {
     @Override
     public Void call() throws Exception {
         try (Writer writer = output.newCharWriter()) {
-            for (UpptimeSite site : getSiteList(web.loadManager(), web.getLangs(), msg -> web.getVerboseOptions().reportToErrorStream(Anchor.WEB, msg))) {
+            for (UpptimeSite site : getSiteList(web.loadManager(), web.getLangs(), msg -> web.getVerboseOptions().reportToErrorStream(null, null, msg))) {
                 writer.write("  - name: " + site.getName() + lineSeparator());
                 writer.write("    url: " + (site.getUri() != null ? site.getUri().toString() : "N/A") + lineSeparator());
             }

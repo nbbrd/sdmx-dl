@@ -19,6 +19,7 @@ General-purpose options used by various commands.
 | Name                                                        | Shortcut | Parameter | Description                         |
 |-------------------------------------------------------------|----------|-----------|-------------------------------------|
 | <a id="verbose" href="#verbose">`--verbose`</a>             | `-v`     | -         | Enable verbose mode.                |
+| <a id="explain" href="#explain">`--explain`</a>             | -        | -         | Show execution plan on stderr.      |
 | <a id="help" href="#help">`--help`</a>                      | `-h`     | -         | Show this help message and exit.    |
 | <a id="version" href="#version">`--version`</a>             | `-V`     | -         | Print version information and exit. |
 | <a id="no-parallel" href="#no-parallel">`--no-parallel`</a> | -        | -         | Disable parallel execution.         |

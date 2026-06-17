@@ -22,7 +22,6 @@ import sdmxdl.format.time.ObservationalTimePeriod;
 import sdmxdl.format.time.TimeFormats;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.provider.*;
-import sdmxdl.provider.ri.drivers.RiHttpUtils;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
@@ -44,6 +43,7 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static nbbrd.io.Resource.newInputStream;
 import static sdmxdl.format.time.TimeFormats.IGNORE_ERROR;
+import static sdmxdl.provider.ri.drivers.RiHttpUtils.DEFAULT_HTTP_FACTORY;
 import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
 import static sdmxdl.provider.web.DriverProperties.commaSeparatedProperty;
 
@@ -81,7 +81,7 @@ public final class PxWebDriver implements Driver {
             .rank(NATIVE_DRIVER_RANK)
             .availability(ENABLE_PROPERTY::get)
             .connector(PxWebDriver::newConnection)
-            .properties(RiHttpUtils.RI_CONNECTION_PROPERTIES)
+            .propertiesOf(DEFAULT_HTTP_FACTORY.getFactoryProperties())
             .propertyOf(VERSIONS_PROPERTY)
             .propertyOf(LANGUAGES_PROPERTY)
             .propertyOf(CACHE_TTL_PROPERTY)
@@ -102,8 +102,8 @@ public final class PxWebDriver implements Driver {
     private static PxWebClient newClient(WebSource source, Languages languages, WebContext context) throws IOException {
         PxWebClient client = new DefaultPxWebClient(
                 HasMarker.of(source),
-                getDefaultClientBaseURL(source, languages),
-                RiHttpUtils.newClient(source, context)
+                getFullEndpoint(source, languages),
+                DEFAULT_HTTP_FACTORY.create(source, context)
         );
 
         return new CachedPxWebClient(
@@ -143,11 +143,7 @@ public final class PxWebDriver implements Driver {
 
         @Override
         public @NonNull Optional<URI> testConnection() throws IOException {
-            try {
-                return Optional.of(client.ping().toURI());
-            } catch (URISyntaxException e) {
-                throw new IOException(e);
-            }
+            return Optional.of(client.ping());
         }
 
         @Override
@@ -211,7 +207,7 @@ public final class PxWebDriver implements Driver {
     private interface PxWebClient extends HasMarker {
 
         @NonNull
-        URL ping() throws IOException;
+        URI ping() throws IOException;
 
         @NonNull
         Config getConfig() throws IOException;
@@ -230,12 +226,12 @@ public final class PxWebDriver implements Driver {
     }
 
     @VisibleForTesting
-    static @NonNull URL getDefaultClientBaseURL(@NonNull WebSource source, @NonNull Languages languages) throws IOException {
+    static @NonNull URI getFullEndpoint(@NonNull WebSource source, @NonNull Languages languages) throws IOException {
         Map<String, String> variables = new HashMap<>();
         variables.put(VERSION_VARIABLE, resolveVersion(source));
         variables.put(LANGUAGE_VARIABLE, resolveLanguage(source, languages));
         try {
-            return UriTemplate.expand(source.getEndpoint(), variables).toURL();
+            return UriTemplate.expand(source.getEndpoint(), variables);
         } catch (URISyntaxException ex) {
             throw new IOException(ex);
         }
@@ -249,16 +245,16 @@ public final class PxWebDriver implements Driver {
         private final Marker marker;
 
         @lombok.NonNull
-        private final URL baseURL;
+        private final URI endpoint;
 
         @lombok.NonNull
         private final HttpClient client;
 
         @Override
-        public @NonNull URL ping() throws IOException {
+        public @NonNull URI ping() throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(URLQueryBuilder.of(baseURL).param("config").build())
+                    .query(URLQueryBuilder.of(endpoint.toURL()).param("config").buildURI())
                     .build();
 
             try (HttpResponse ignore = client.send(request)) {
@@ -270,7 +266,7 @@ public final class PxWebDriver implements Driver {
         public @NonNull Config getConfig() throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(URLQueryBuilder.of(baseURL).param("config").build())
+                    .query(URLQueryBuilder.of(endpoint.toURL()).param("config").buildURI())
                     .build();
 
             try (HttpResponse response = client.send(request)) {
@@ -283,7 +279,7 @@ public final class PxWebDriver implements Driver {
         public @NonNull List<sdmxdl.Database> getDataBases() throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(baseURL)
+                    .query(endpoint)
                     .build();
 
             try (HttpResponse response = client.send(request)) {
@@ -306,11 +302,11 @@ public final class PxWebDriver implements Driver {
             HttpRequest request = HttpRequest
                     .builder()
                     .query(URLQueryBuilder
-                            .of(baseURL)
+                            .of(endpoint.toURL())
                             .path(dbId)
                             .param("query", "*")
                             .param("filter", "*")
-                            .build())
+                            .buildURI())
                     .build();
 
             try (HttpResponse response = client.send(request)) {
@@ -329,10 +325,10 @@ public final class PxWebDriver implements Driver {
             HttpRequest request = HttpRequest
                     .builder()
                     .query(URLQueryBuilder
-                            .of(baseURL)
+                            .of(endpoint.toURL())
                             .path(dbId)
                             .path(tableId)
-                            .build())
+                            .buildURI())
                     .build();
 
             try (HttpResponse response = client.send(request)) {
@@ -351,10 +347,10 @@ public final class PxWebDriver implements Driver {
             HttpRequest request = HttpRequest
                     .builder()
                     .query(URLQueryBuilder
-                            .of(baseURL)
+                            .of(endpoint.toURL())
                             .path(dbId)
                             .path(tableId)
-                            .build())
+                            .buildURI())
                     .method(HttpMethod.POST)
                     .bodyOf(TableQuery.FORMATTER.formatToString(TableQuery.fromDataStructureAndKey(dsd, key)))
                     .build();
@@ -384,22 +380,22 @@ public final class PxWebDriver implements Driver {
         private final Cache<DataRepository> cache;
 
         @lombok.NonNull
-        private final URI baseURI;
+        private final URI endpoint;
 
         @lombok.NonNull
         private final Duration ttl;
 
         @lombok.Getter(lazy = true)
-        private final TypedId<Config> idOfConfig = initIdOfConfig(baseURI);
+        private final TypedId<Config> idOfConfig = initIdOfConfig(endpoint);
 
         @lombok.Getter(lazy = true)
-        private final TypedId<List<sdmxdl.Database>> idOfDatabases = initIdOfDatabases(baseURI);
+        private final TypedId<List<sdmxdl.Database>> idOfDatabases = initIdOfDatabases(endpoint);
 
         @lombok.Getter(lazy = true)
-        private final TypedId<List<Flow>> idOfTables = initIdOfTables(baseURI);
+        private final TypedId<List<Flow>> idOfTables = initIdOfTables(endpoint);
 
         @lombok.Getter(lazy = true)
-        private final TypedId<Structure> idOfMeta = initIdOfMeta(baseURI);
+        private final TypedId<Structure> idOfMeta = initIdOfMeta(endpoint);
 
         private static TypedId<Config> initIdOfConfig(URI base) {
             return TypedId.of(base,
@@ -435,7 +431,7 @@ public final class PxWebDriver implements Driver {
         }
 
         @Override
-        public @NonNull URL ping() throws IOException {
+        public @NonNull URI ping() throws IOException {
             return delegate.ping();
         }
 

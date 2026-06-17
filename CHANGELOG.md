@@ -7,6 +7,29 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-06-17
+
+This release improves the tool's querying capabilities and operational reliability.  
+A few sources have been added or fixed, and error reporting has been improved too.
+
+### Added
+
+- ![API] Add support of partial key [#1086](https://github.com/nbbrd/sdmx-dl/issues/1086)
+- ![API] Add hybrid search [#1251](https://github.com/nbbrd/sdmx-dl/issues/1251)
+- ![PROVIDER] Add SQL EXPLAIN ANALYZE-style execution tracing [#1244](https://github.com/nbbrd/sdmx-dl/issues/1244)
+- ![PROVIDER] Add retry property for transient network errors [#1252](https://github.com/nbbrd/sdmx-dl/issues/1252)
+- ![SOURCE] Add source from State Statistics Service of Ukraine [#1257](https://github.com/nbbrd/sdmx-dl/issues/1257)
+
+### Changed
+
+- ![CLI] Improve CLI message and error reporting [#1243](https://github.com/nbbrd/sdmx-dl/issues/1243)
+
+### Fixed
+
+- ![PROVIDER] Fix UIS SDMX API end-of-life [#901](https://github.com/nbbrd/sdmx-dl/issues/901)
+- ![PROVIDER] Fix references type in structure queries and key normalization in data queries [#1258](https://github.com/nbbrd/sdmx-dl/issues/1258)
+- ![CLI] Fix warnings when running CLI with Java25+ [#1256](https://github.com/nbbrd/sdmx-dl/issues/1256)
+
 ## [3.0.0] - 2026-05-22
 
 This is the first stable release of the v3 series of **sdmx-dl**.  
@@ -611,7 +634,8 @@ production._
 
 - Initial release
 
-[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0...HEAD
+[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.1.0...HEAD
+[3.1.0]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.18...v3.0.0
 [3.0.0-beta.18]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.17...v3.0.0-beta.18
 [3.0.0-beta.17]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.16...v3.0.0-beta.17

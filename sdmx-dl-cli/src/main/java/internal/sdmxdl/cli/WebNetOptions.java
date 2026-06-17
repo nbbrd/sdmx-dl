@@ -16,7 +16,6 @@
  */
 package internal.sdmxdl.cli;
 
-import internal.sdmxdl.cli.ext.Anchor;
 import lombok.NonNull;
 import org.jspecify.annotations.Nullable;
 import picocli.CommandLine;
@@ -70,7 +69,7 @@ public class WebNetOptions extends WebOptions {
 
     public void warmup(SdmxWebManager manager) {
         Networking networking = manager.getNetworking();
-        getVerboseOptions().reportToErrorStream(Anchor.CFG, networking.getNetworkingId() + ": Warming up network");
+        getVerboseOptions().reportToErrorStream(null, networking.getNetworkingId(), "Warming up network");
         networking.warmupNetwork();
     }
 

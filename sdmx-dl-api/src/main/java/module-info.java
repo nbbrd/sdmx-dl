@@ -28,4 +28,9 @@ module sdmxdl.api {
     uses Monitor;
     uses Persistence;
     uses Registry;
+    uses SearchScoringProvider;
+
+    provides SearchScoringProvider with
+            internal.sdmxdl.web.Bm25ScoringProvider,
+            internal.sdmxdl.web.TrigramScoringProvider;
 }

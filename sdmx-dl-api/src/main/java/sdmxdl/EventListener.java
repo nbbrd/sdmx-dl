@@ -6,4 +6,8 @@ import lombok.NonNull;
 public interface EventListener {
 
     void accept(@NonNull String marker, @NonNull CharSequence message);
+
+    default void accept(@NonNull String marker, @NonNull CharSequence message, int depth) {
+        accept(marker, message);
+    }
 }
