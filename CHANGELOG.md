@@ -7,6 +7,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+This release improves the tool's querying capabilities and operational reliability.  
+A few sources have been added or fixed, and error reporting has been improved too.
+
 ### Added
 
 - ![API] Add support of partial key [#1086](https://github.com/nbbrd/sdmx-dl/issues/1086)
