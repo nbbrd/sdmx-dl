@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix missing pom.xml elements for deployment
+
 ## [3.1.0] - 2026-06-17
 
 This release improves the tool's querying capabilities and operational reliability.  

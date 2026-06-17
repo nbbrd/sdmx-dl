@@ -11,6 +11,11 @@
     </parent>
 
     <artifactId>sdmx-dl-swing</artifactId>
+    <packaging>jar</packaging>
+
+    <name>sdmx-dl-swing</name>
+    <description>Easily download official statistics - swing</description>
+    <url>https://github.com/nbbrd/sdmx-dl</url>
 
     <dependencies>
         <!-- compile only -->
