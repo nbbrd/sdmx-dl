@@ -20,6 +20,7 @@ module sdmxdl.provider.dialects {
             DotStatDialectDriver,
             EstatDialectDriver,
             ImfDialectDriver,
+            IneDialectDriver,
             InseeDialectDriver,
             StatCanDialectDriver,
             UisDialectDriver;

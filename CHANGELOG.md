@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- ![SOURCE] Add source from National Statistics Institute of Spain [#1269](https://github.com/nbbrd/sdmx-dl/issues/1269)
+
 ## [3.1.1] - 2026-06-17
 
 ### Fixed

@@ -26,6 +26,7 @@ import java.util.SortedSet;
  */
 @lombok.Value
 @lombok.Builder(toBuilder = true)
+@lombok.ToString(exclude = "obsList")
 public class Series {
 
     @lombok.NonNull

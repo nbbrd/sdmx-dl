@@ -1,0 +1,27 @@
+[
+  {
+    "COD": "IPC251852",
+    "Nombre": "National. Overall index. Index. ",
+    "MetaData": [
+      {"Id": 16473, "T3_Variable": "Regional totals", "Nombre": "National", "Codigo": "00"},
+      {"Id": 304092, "T3_Variable": "ECOICOP Groups", "Nombre": "Overall index", "Codigo": "00"},
+      {"Id": 83, "T3_Variable": "Index and rates", "Nombre": "Index", "Codigo": "0"}
+    ],
+    "Data": [
+      {"Fecha": "2025-12-01T00:00:00.000+01:00", "T3_TipoDato": "Final value", "T3_Periodo": "M12", "Anyo": 2025, "Valor": 119.942}
+    ]
+  },
+  {
+    "COD": "IPC251855",
+    "Nombre": "National. Overall index. Monthly change. ",
+    "MetaData": [
+      {"Id": 16473, "T3_Variable": "Regional totals", "Nombre": "National", "Codigo": "00"},
+      {"Id": 304092, "T3_Variable": "ECOICOP Groups", "Nombre": "Overall index", "Codigo": "00"},
+      {"Id": 84, "T3_Variable": "Index and rates", "Nombre": "Monthly change", "Codigo": "3"}
+    ],
+    "Data": [
+      {"Fecha": "2025-12-01T00:00:00.000+01:00", "T3_TipoDato": "Final value", "T3_Periodo": "M12", "Anyo": 2025, "Valor": 0.4}
+    ]
+  }
+]
+
