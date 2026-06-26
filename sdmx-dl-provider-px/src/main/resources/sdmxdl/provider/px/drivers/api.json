@@ -1,394 +1,506 @@
-//https://github.com/rOpenGov/pxweb/blob/b08f38a4d2ebca91c7f09dd889a24039b5907a71/inst/extdata/api.json
 {
 
   "apis": {
-    "api.scb.se": { 
-        "alias" : ["scb"],
-        "description" : "Statistics Sweden",
-        "citation" : {
-          "organization" : "Statistics Sweden",
-          "address" : "Stockholm, Sweden"},
-        "url" : "https://api.scb.se/OV0104/[version]/doris/[lang]",
-        "version": ["v1"], 
-        "lang": ["en", "sv"],
-        "calls_per_period": 30,
-        "period_in_seconds": 10,
-        "max_values_to_download" : 110000
-          }, 
-  
+    "api.scb.se": {
+      "alias" : ["scb"],
+      "description" : "Statistics Sweden",
+      "citation" : {
+        "organization" : "Statistics Sweden",
+        "address" : "Stockholm, Sweden"},
+      "url" : "https://api.scb.se/OV0104/[version]/doris/[lang]",
+      "version": ["v1"],
+      "lang": ["en", "sv"]
+    },
+
     "statfin.stat.fi": {
-        "alias" : ["statfi", "statfin"],
-        "description" : "Statistics Finland",
-        "citation" : {
-          "organization" : "Statistics Finland",
-          "address" : "Helsinki, Finland"},
-        "url" : "https://statfin.stat.fi/PXWeb/api/[version]/[lang]",
-        "version": ["v1"], 
-        "lang": ["en","fi","sv"],
-        "calls_per_period": 30,
-        "period_in_seconds": 10,
-        "max_values_to_download" : 120000
-              },
+      "alias" : ["statfi", "statfin"],
+      "description" : "Statistics Finland",
+      "citation" : {
+        "organization" : "Statistics Finland",
+        "address" : "Helsinki, Finland"},
+      "url" : "https://statfin.stat.fi/PXWeb/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["en","fi","sv"]
+    },
 
     "statistik.sjv.se": {
-        "alias" : ["jordbruksverket"],
-        "description" : "The Swedish Agricultural Agency",
-        "citation" : {
-          "organization" : "Swedish Board of Agriculture",
-          "address" : "Jönköping, Sweden"},        
-        "url" : "https://statistik.sjv.se/PXWeb/api/[version]/[lang]",
-        "version": ["v1"], 
-        "lang": ["sv"],
-        "calls_per_period": 1000,
-        "period_in_seconds": 10,
-        "max_values_to_download" : 1000
-              },
+      "alias" : ["jordbruksverket"],
+      "description" : "The Swedish Agricultural Agency",
+      "citation" : {
+        "organization" : "Swedish Board of Agriculture",
+        "address" : "Jönköping, Sweden"},
+      "url" : "https://statistik.sjv.se/PXWeb/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["sv"]
+    },
 
     "fohm-app.folkhalsomyndigheten.se": {
-        "alias" : ["fohm"],
-        "description" : "The Public Health Agency of Sweden",
-        "citation" : {
-          "organization" : "Public Health Agency of Sweden",
-          "address" : "Solna, Sweden"},        
-        "url" : "https://fohm-app.folkhalsomyndigheten.se/Folkhalsodata/api/[version]/[lang]",
-        "version": ["v1"], 
-        "lang": ["sv"],
-        "calls_per_period": 1000,
-        "period_in_seconds": 10,
-        "max_values_to_download" : 1000
-              },
+      "alias" : ["fohm"],
+      "description" : "The Public Health Agency of Sweden",
+      "citation" : {
+        "organization" : "Public Health Agency of Sweden",
+        "address" : "Solna, Sweden"},
+      "url" : "https://fohm-app.folkhalsomyndigheten.se/Folkhalsodata/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["sv"]
+    },
 
     "statistik.konj.se": {
-        "alias" : ["konj"],
-        "description" : "The Swedish National Institute of Economic Research",
-        "citation" : {
-          "organization" : "Swedish National Institute of Economic Research",
-          "address" : "Stockholm, Sweden"},        
-        "url" : "https://statistik.konj.se/PXWeb/api/[version]/[lang]",
-        "version": ["v1"], 
-        "lang": ["en", "sv"],
-        "calls_per_period": 10,
-        "period_in_seconds": 10,
-        "max_values_to_download" : 1000
-              },
- 
-    "prognos.konj.se": {
-                "alias" : ["konjforcast"],
-                "description" : "The Swedish national institute of economic research, forecast database",
-                "citation" : {
-          "organization" : "Swedish National Institute of Economic Research",
-          "address" : "Stockholm, Sweden"},        
-                "url" : "https://prognos.konj.se/PXWeb/api/[version]/[lang]",
-                "version" : ["v1"], 
-                "lang" : ["sv"],
-                "calls_per_period" :  10,
-                "period_in_seconds" : 10,
-                "max_values_to_download" : 1000
+      "alias" : ["konj"],
+      "description" : "The Swedish National Institute of Economic Research",
+      "citation" : {
+        "organization" : "Swedish National Institute of Economic Research",
+        "address" : "Stockholm, Sweden"},
+      "url" : "https://statistik.konj.se/PXWeb/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["en", "sv"]
     },
-    
+
+    "prognos.konj.se": {
+      "alias" : ["konjforcast"],
+      "description" : "The Swedish national institute of economic research, forecast database",
+      "citation" : {
+        "organization" : "Swedish National Institute of Economic Research",
+        "address" : "Stockholm, Sweden"},
+      "url" : "https://prognos.konj.se/PXWeb/api/[version]/[lang]",
+      "version" : ["v1"],
+      "lang" : ["sv"]
+    },
+
     "statdb.luke.fi": {
-        "alias" : ["luke"],
-        "description" : "LUKE Natural Resources Institute Finland",
-        "citation" : {
-          "organization" : "Natural Resources Institute Finland",
-          "address" : "Helsinki, Finland"},
-        "url" : "https://statdb.luke.fi/PXWeb/api/[version]/[lang]",
-        "version": ["v1"], 
-        "lang": ["en","fi","sv"],
-        "calls_per_period": 10,
-        "period_in_seconds": 10,
-        "max_values_to_download" : 10000
-              },
-              
+      "alias" : ["luke"],
+      "description" : "LUKE Natural Resources Institute Finland",
+      "citation" : {
+        "organization" : "Natural Resources Institute Finland",
+        "address" : "Helsinki, Finland"},
+      "url" : "https://statdb.luke.fi/PXWeb/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["en","fi","sv"]
+    },
+
     "vero2.stat.fi": {
-        "alias": ["vero"],
-        "description": "Verohallinto - Finnish Tax Administration",
-        "citation" : {
-          "organization" : "Finnish Tax Administration",
-          "address" : "Helsinki, Finland"},
-        "url": "https://vero2.stat.fi/PXWeb/api/[version]/[lang]",
-        "version": ["v1"],
-        "lang": ["en","fi","sv"],
-        "calls_per_period":     100,
-        "period_in_seconds":     10,
-        "max_values_to_download":  150000 
-              },
-              
+      "alias": ["vero"],
+      "description": "Verohallinto - Finnish Tax Administration",
+      "citation" : {
+        "organization" : "Finnish Tax Administration",
+        "address" : "Helsinki, Finland"},
+      "url": "https://vero2.stat.fi/PXWeb/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["en","fi","sv"]
+    },
+
     "px.hagstofa.is": {
-        "alias" : ["statice"],
-        "description" : "Statistics Iceland",
-        "citation" : {
-          "organization" : "Statistics Iceland",
-          "address" : "Reykjavík, Iceland"},
-        "url" : "https://px.hagstofa.is/px[lang]/api/[version]/[lang]",
-        "version": ["v1"], 
-        "lang": ["en","is"],
-        "calls_per_period": 30,
-        "period_in_seconds": 1,
-        "max_values_to_download" : 10000
-              },
-              
+      "alias" : ["statice"],
+      "description" : "Statistics Iceland",
+      "citation" : {
+        "organization" : "Statistics Iceland",
+        "address" : "Reykjavík, Iceland"},
+      "url" : "https://px.hagstofa.is/px[lang]/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["en","is"]
+    },
+
     "statistik.linkoping.se": {
-        "alias" : ["linkoping"],
-        "description" : "Linköping municipality in Sweden",
-        "citation" : {
-          "organization" : "City of Linköping",
-          "address" : "Linköping, Sweden"},
-        "url" : "https://statistik.linkoping.se/PXWeb/api/[version]/[lang]",
-        "version": ["v1"], 
-        "lang": ["sv"],
-        "calls_per_period": 1000,
-        "period_in_seconds": 10,
-        "max_values_to_download" : 1000
-              },
-              
+      "alias" : ["linkoping"],
+      "description" : "Linköping municipality in Sweden",
+      "citation" : {
+        "organization" : "City of Linköping",
+        "address" : "Linköping, Sweden"},
+      "url" : "https://statistik.linkoping.se/PXWeb/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["sv"]
+    },
+
     "pxweb2022.vgregion.se": {
-        "alias" : ["vgregion"],
-        "description" : "Vastra Gotaland Region in Sweden",
-        "citation" : {
-          "organization" : "Region Västra Götaland",
-          "address" : "Vänersborg, Sweden"},
-        "url" : "https://pxweb2022.vgregion.se/Pxwebb/api/[version]/[lang]",
-        "version": ["v1"], 
-        "lang": ["sv"],
-        "calls_per_period": 10,
-        "period_in_seconds": 10,
-        "max_values_to_download" : 1000
-              },
-              
+      "alias" : ["vgregion"],
+      "description" : "Vastra Gotaland Region in Sweden",
+      "citation" : {
+        "organization" : "Region Västra Götaland",
+        "address" : "Vänersborg, Sweden"},
+      "url" : "https://pxweb2022.vgregion.se/Pxwebb/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["sv"]
+    },
+
     "bank.stat.gl": {
-        "alias" : ["greenland"],
-        "description" : "Statbank Greenland",
-        "citation" : {
-          "organization" : "Statistics Greenland",
-          "address" : "Nuuk, Greenland"},
-        "url" : "https://bank.stat.gl/api/[version]/[lang]",
-        "version": ["v1"], 
-        "lang": ["en","kl","da"],
-        "calls_per_period": 10000,
-        "period_in_seconds": 10,
-        "max_values_to_download" : 1000000
-              },
+      "alias" : ["greenland"],
+      "description" : "Statbank Greenland",
+      "citation" : {
+        "organization" : "Statistics Greenland",
+        "address" : "Nuuk, Greenland"},
+      "url" : "https://bank.stat.gl/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["en","kl","da"]
+    },
 
     "statbank.hagstova.fo": {
-        "alias" : ["hagstovan"],
-        "description" : "Statistics Faroe Islands",
-        "citation" : {
-          "organization" : "Statistics Faroe Islands",
-          "address" : "Argir, Faroe Islands"},
-        "url" : "https://statbank.hagstova.fo:443/api/[version]/[lang]",
-        "version": ["v1"], 
-        "lang": ["en","fo"],
-        "calls_per_period": 1000000,
-        "period_in_seconds": 1000000,
-        "max_values_to_download" : 100000
-    },
-    
-    "data.ssb.no": { 
-      "alias" : ["ssb"],
-      "description" : "Statistics Norway",
+      "alias" : ["hagstovan"],
+      "description" : "Statistics Faroe Islands",
       "citation" : {
-          "organization" : "Statistics Norway",
-          "address" : "Oslo, Norway"},
-      "url" : "https://data.ssb.no/api/[version]/[lang]",
-      "version": ["v0"], 
-      "lang": ["en","no"],
-      "calls_per_period": 30,
-      "period_in_seconds": 60,
-      "max_values_to_download" : 30000
+        "organization" : "Statistics Faroe Islands",
+        "address" : "Argir, Faroe Islands"},
+      "url" : "https://statbank.hagstova.fo:443/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["en","fo"]
     },
 
     "pxweb.asub.ax": {
-        "alias" : ["asub"],
-        "description" : "Statistics Aland",
-        "citation" : {
-          "organization" : "Statistics Åland",
-          "address" : "Mariehamn, Finland"},
-        "url" : "https://pxweb.asub.ax/PXWeb/api/[version]/[lang]/",
-        "version": ["v1"], 
-        "lang": ["en","sv"],
-        "calls_per_period": 10,
-        "period_in_seconds": 10,
-        "max_values_to_download" : 1000
+      "alias" : ["asub"],
+      "description" : "Statistics Aland",
+      "citation" : {
+        "organization" : "Statistics Åland",
+        "address" : "Mariehamn, Finland"},
+      "url" : "https://pxweb.asub.ax/PXWeb/api/[version]/[lang]/",
+      "version": ["v1"],
+      "lang": ["en","sv"]
     },
 
     "makstat.stat.gov.mk": {
       "alias" : ["makstat"],
       "description" : "State Statistical Office of the Republic of Macedonia",
       "citation" : {
-          "organization" : "State Statistical Office of the Republic of Macedonia",
-          "address" : "Skopje, Macedonia"},
+        "organization" : "State Statistical Office of the Republic of Macedonia",
+        "address" : "Skopje, Macedonia"},
       "url" : "https://makstat.stat.gov.mk/PXWeb/api/[version]/[lang]",
-      "version": ["v1"], 
-      "lang": ["en", "mk"],
-      "calls_per_period": 30,
-      "period_in_seconds": 1,
-      "max_values_to_download" : 10000
+      "version": ["v1"],
+      "lang": ["en", "mk"]
     },
-    
+
     "data.stat.gov.lv": {
       "alias" : ["csb_lv"],
       "description" : "Latvia - official statistics",
       "citation" : {
-          "organization" : "Statistics Latvia",
-          "address" : "Riga, Latvia"},
+        "organization" : "Statistics Latvia",
+        "address" : "Riga, Latvia"},
       "url" : "https://data.stat.gov.lv/api/[version]/[lang]/",
-      "version": ["v1"], 
-      "lang": ["en", "lv"],
-      "calls_per_period": 100,
-      "period_in_seconds": 10,
-      "max_values_to_download" : 3800
+      "version": ["v1"],
+      "lang": ["en", "lv"]
     },
 
     "statbank.statistica.md": {
       "alias" : ["statistica_md"],
       "description" : "Statistics Moldova",
       "citation" : {
-          "organization" : "Statistics Moldova",
-          "address" : "Chisinau, Republic of Moldova"},
+        "organization" : "Statistics Moldova",
+        "address" : "Chisinau, Republic of Moldova"},
       "url" : "https://statbank.statistica.md/pxweb/api/[version]/[lang]/",
-      "version": ["v1"], 
-      "lang": ["en", "ro"],
-      "calls_per_period": 10,
-      "period_in_seconds": 10,
-      "max_values_to_download" : 1000
+      "version": ["v1"],
+      "lang": ["en", "ro"]
     },
-    
+
     "www.pxweb.bfs.admin.ch": {
-        "alias" : ["switzerland"],
-        "description" : "Statistics Switzerland",
-        "citation" : {
-          "organization" : "Swiss Federal Statistical Office",
-          "address" : "Neuchâtel, Switzerland"},
-        "url" : "https://www.pxweb.bfs.admin.ch/api/[version]/[lang]",
-        "version": ["v1"], 
-        "lang": ["en", "de", "fr"],
-        "calls_per_period": 10,
-        "period_in_seconds": 10,
-        "max_values_to_download" : 5000
+      "alias" : ["switzerland"],
+      "description" : "Statistics Switzerland",
+      "citation" : {
+        "organization" : "Swiss Federal Statistical Office",
+        "address" : "Neuchâtel, Switzerland"},
+      "url" : "https://www.pxweb.bfs.admin.ch/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["en", "de", "fr"]
     },
-    
+
     "askdata.rks-gov.net": {
       "alias" : ["askdata"],
       "description" : "Statistics Kosovo",
       "citation" : {
-          "organization" : "Kosovo Agency of Statistics",
-          "address" : "Pristina, Kosovo"},
+        "organization" : "Kosovo Agency of Statistics",
+        "address" : "Pristina, Kosovo"},
       "url" : "https://askdata.rks-gov.net/api/[version]/[lang]/",
-      "version": ["v1"], 
-      "lang": ["en"],
-      "calls_per_period": 10,
-      "period_in_seconds": 10,
-      "max_values_to_download" : 1000
+      "version": ["v1"],
+      "lang": ["en"]
     },
-    
+
     "trafi2.stat.fi": {
       "alias" : ["trafi2"],
       "description" : "Finnish Transport Safety Agency",
       "citation" : {
-          "organization" : "Finnish Transport Safety Agency",
-          "address" : "Helsinki, Finland"},
+        "organization" : "Finnish Transport Safety Agency",
+        "address" : "Helsinki, Finland"},
       "url" : "https://trafi2.stat.fi/PXWeb/api/[version]/[lang]/",
-      "version": ["v1"], 
-      "lang": ["en", "sv", "fi"],
-      "calls_per_period": 100,
-      "period_in_seconds": 10,
-      "max_values_to_download" : 110000
+      "version": ["v1"],
+      "lang": ["en", "sv", "fi"]
     },
-    
+
     "w3.unece.org": {
       "alias" : ["unece"],
       "description" : "United Nations Economic Commission for Europe",
       "citation" : {
-          "organization" : "United Nations Economic Commission for Europe",
-          "address" : "Geneva, Switzerland"},
+        "organization" : "United Nations Economic Commission for Europe",
+        "address" : "Geneva, Switzerland"},
       "url" : "https://w3.unece.org/PXWeb2015/api/[version]/[lang]/",
-      "version": ["v1"], 
-      "lang": ["en"],
-      "calls_per_period": 10,
-      "period_in_seconds": 10,
-      "max_values_to_download" : 100000
+      "version": ["v1"],
+      "lang": ["en"]
     },
 
     "www.grande-region.lu": {
       "alias" : ["grande-region"],
       "description" : "Portail statistique de la Grande Région",
       "citation" : {
-          "organization" : "Portail statistique de la Grande Région",
-          "address" : "Esch-sur-Alzette, Luxembourg"},
+        "organization" : "Portail statistique de la Grande Région",
+        "address" : "Esch-sur-Alzette, Luxembourg"},
       "url" : "https://www.grande-region.lu/pxweb/api/[version]/[lang]",
-      "version": ["v1"], 
-      "lang": ["fr", "de"],
-      "calls_per_period": 10,
-      "period_in_seconds": 10,
-      "max_values_to_download" : 1000
+      "version": ["v1"],
+      "lang": ["fr", "de"]
     },
 
     "visitfinland.stat.fi": {
-        "description" : "Visit Finland (Rudolf service)",
-        "citation" : {
-          "organization" : "Business Finland / Statistics Finland",
-          "address" : "Helsinki, Finland"},
-        "url" : "https://visitfinland.stat.fi/PXWeb/api/[version]/[lang]",
-        "version": ["v1"], 
-        "lang": ["fi"],
-        "calls_per_period": 20,
-        "period_in_seconds": 10,
-        "max_values_to_download" : 110000
+      "description" : "Visit Finland (Rudolf service)",
+      "citation" : {
+        "organization" : "Business Finland / Statistics Finland",
+        "address" : "Helsinki, Finland"},
+      "url" : "https://visitfinland.stat.fi/PXWeb/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["fi"]
     },
-    
+
     "stat.hel.fi": {
-        "description" : "Helsingin seudun aluesarjat -tilastotietokanta",
-        "citation" : {
-          "organization" : "City of Helsinki",
-          "address" : "Helsinki, Finland"},
-        "url" : "https://stat.hel.fi/api/[version]/[lang]",
-        "version": ["v1"], 
-        "lang": ["fi"],
-        "calls_per_period": 1000,
-        "period_in_seconds": 10,
-        "max_values_to_download": 100000
+      "description" : "Helsingin seudun aluesarjat -tilastotietokanta",
+      "citation" : {
+        "organization" : "City of Helsinki",
+        "address" : "Helsinki, Finland"},
+      "url" : "https://stat.hel.fi/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["fi"]
     },
-    
+
     "andmed.stat.ee": {
-        "alias" : ["stat_ee"],
-        "description" : "Estonia - official statistics",
-        "citation" : {
-          "organization" : "Statistics Estonia",
-          "address" : "Tallinn, Estonia"},
-        "url" : "https://andmed.stat.ee/api/[version]/[lang]",
-        "version": ["v1"], 
-        "lang": ["en", "et"],
-        "calls_per_period": 1000,
-        "period_in_seconds": 10,
-        "max_values_to_download" : 1000000
+      "alias" : ["stat_ee"],
+      "description" : "Estonia - official statistics",
+      "citation" : {
+        "organization" : "Statistics Estonia",
+        "address" : "Tallinn, Estonia"},
+      "url" : "https://andmed.stat.ee/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["en", "et"]
     },
-    
+
     "pxweb.nordicstatistics.org": {
-        "description" : "Nordic Statistics Database",
-        "citation" : {
-          "organization" : "Nordic Statistics database"
-          },
-        "url" : "https://pxweb.nordicstatistics.org/api/[version]/[lang]/",
-        "version": ["v1"], 
-        "lang": ["en"],
-        "calls_per_period": 10,
-        "period_in_seconds": 10,
-        "max_values_to_download" : 1000
+      "description" : "Nordic Statistics Database",
+      "citation" : {
+        "organization" : "Nordic Statistics database"
+      },
+      "url" : "https://pxweb.nordicstatistics.org/api/[version]/[lang]/",
+      "version": ["v1"],
+      "lang": ["en"]
     },
 
     "pxweb.stat.si": {
-        "description" : "SiStat Database",
-        "citation" : {
-          "organization" : "Statistical Office of the Republic of Slovenia",
-          "address" : "Ljubljana, Slovenia"
-          },
-        "url" : "https://pxweb.stat.si/SiStatData/api/[version]/[lang]",
-        "version": ["v1"],
-        "lang": ["sl"],
-        "calls_per_period": 100,
-        "period_in_seconds": 10,
-        "max_values_to_download" : 10000000
+      "description" : "SiStat Database",
+      "citation" : {
+        "organization" : "Statistical Office of the Republic of Slovenia",
+        "address" : "Ljubljana, Slovenia"
+      },
+      "url" : "https://pxweb.stat.si/SiStatData/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["sl"]
+    },
+
+    "statistik.csn.se": {
+      "alias" : ["csn"],
+      "description" : "Swedish Board of Student Finance",
+      "citation" : {
+        "organization" : "Swedish Board of Student Finance",
+        "address" : "Sundsvall, Sweden"},
+      "url" : "https://statistik.csn.se/PXWeb/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["sv"]
+    },
+
+    "m02-http-pxwebb.login.sundsvall.se": {
+      "alias" : ["sundsvall"],
+      "description" : "Sundsvall municipality in Sweden",
+      "citation" : {
+        "organization" : "City of Sundsvall",
+        "address" : "Sundsvall, Sweden"},
+      "url" : "https://m02-http-pxwebb.login.sundsvall.se/PXWeb_Ext/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["sv"]
+    },
+
+    "statistik.vasteras.se": {
+      "alias" : ["vasteras"],
+      "description" : "Vasteras municipality in Sweden",
+      "citation" : {
+        "organization" : "City of Vasteras",
+        "address" : "Vasteras, Sweden"},
+      "url" : "https://statistik.vasteras.se/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["sv"]
+    },
+
+    "pxweb.nhwstat.org": {
+      "alias" : ["nhwstat"],
+      "description" : "Nordic Health and Welfare Statistics",
+      "citation" : {
+        "organization" : "Nordic Health and Welfare Statistics"},
+      "url" : "https://pxweb.nhwstat.org/Prod/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["en"]
+    },
+
+    "web.dzs.hr": {
+      "alias" : ["croatia", "dzs"],
+      "description" : "Croatian Bureau of Statistics",
+      "citation" : {
+        "organization" : "Croatian Bureau of Statistics",
+        "address" : "Zagreb, Croatia"},
+      "url" : "https://web.dzs.hr/PXWeb/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["en"]
+    },
+
+    "etab.llv.li": {
+      "alias" : ["liechtenstein"],
+      "description" : "Statistics Liechtenstein",
+      "citation" : {
+        "organization" : "Office of Statistics Liechtenstein",
+        "address" : "Vaduz, Liechtenstein"},
+      "url" : "https://etab.llv.li/PXWeb/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["en"]
+    },
+
+    "www6.poderjudicial.es": {
+      "alias" : ["poderjudicial"],
+      "description" : "Judicial statistics, Spain",
+      "citation" : {
+        "organization" : "General Council of the Judiciary",
+        "address" : "Madrid, Spain"},
+      "url" : "https://www6.poderjudicial.es/PxWeb-20252-v1/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["es"]
+    },
+
+    "openstat.psa.gov.ph": {
+      "alias" : ["psa", "openstat"],
+      "description" : "Philippine Statistics Authority OpenSTAT",
+      "citation" : {
+        "organization" : "Philippine Statistics Authority",
+        "address" : "Quezon City, Philippines"},
+      "url" : "https://openstat.psa.gov.ph/PXWeb/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["en"]
+    },
+
+    "px.web.ined.fr": {
+      "alias" : ["ggp", "ined"],
+      "description" : "Generations and Gender Contextual Database",
+      "citation" : {
+        "organization" : "Institut national d'études démographiques",
+        "address" : "Paris, France"},
+      "url" : "https://px.web.ined.fr/GGP/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["en"]
+    },
+
+    "statistika.spkc.gov.lv": {
+      "alias" : ["spkc", "latvia_health"],
+      "description" : "Latvian Health Statistics Database",
+      "citation" : {
+        "organization" : "Centre for Disease Prevention and Control of Latvia",
+        "address" : "Riga, Latvia"},
+      "url" : "https://statistika.spkc.gov.lv/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["en"]
+    },
+
+    "pxweb.irena.org": {
+      "alias" : ["irena"],
+      "description" : "International Renewable Energy Agency",
+      "citation" : {
+        "organization" : "International Renewable Energy Agency",
+        "address" : "Abu Dhabi, United Arab Emirates"},
+      "url" : "https://pxweb.irena.org/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["en"]
+    },
+
+    "tilastot.etk.fi": {
+      "alias" : ["etk"],
+      "description" : "Finnish Centre for Pensions",
+      "citation" : {
+        "organization" : "Finnish Centre for Pensions",
+        "address" : "Helsinki, Finland"},
+      "url" : "https://tilastot.etk.fi/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["en"]
+    },
+
+    "pc-axis.geostat.ge": {
+      "alias" : ["geostat"],
+      "description" : "Geostat Statistics Database",
+      "citation" : {
+        "organization" : "National Statistics Office of Georgia",
+        "address" : "Tbilisi, Georgia"},
+      "url" : "http://pc-axis.geostat.ge/PXweb/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["en"]
+    },
+
+    "statistika.tai.ee": {
+      "alias" : ["tai", "estonia_health"],
+      "description" : "Estonian Health Statistics and Health Research Database",
+      "citation" : {
+        "organization" : "National Institute for Health Development",
+        "address" : "Tallinn, Estonia"},
+      "url" : "https://statistika.tai.ee/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["en"]
+    },
+
+    "pxexternal.energimyndigheten.se": {
+      "alias" : ["energimyndigheten"],
+      "description" : "Swedish Energy Agency",
+      "citation" : {
+        "organization" : "Swedish Energy Agency",
+        "address" : "Eskilstuna, Sweden"},
+      "url" : "https://pxexternal.energimyndigheten.se/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["en"]
+    },
+
+    "skogsstatistik.slu.se": {
+      "alias" : ["slu", "riksskogstaxeringen"],
+      "description" : "Swedish University of Agricultural Sciences forest statistics",
+      "citation" : {
+        "organization" : "Swedish University of Agricultural Sciences",
+        "address" : "Umea, Sweden"},
+      "url" : "https://skogsstatistik.slu.se/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["en"]
+    },
+
+    "pxweb.skogsstyrelsen.se": {
+      "alias" : ["skogsstyrelsen"],
+      "description" : "The Swedish Forest Agency",
+      "citation" : {
+        "organization" : "Swedish Forest Agency",
+        "address" : "Jonkoping, Sweden"},
+      "url" : "https://pxweb.skogsstyrelsen.se/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["en"]
+    },
+
+    "tilastot.tela.fi": {
+      "alias" : ["tela"],
+      "description" : "Finnish Pension Alliance statistics",
+      "citation" : {
+        "organization" : "Finnish Pension Alliance TELA",
+        "address" : "Helsinki, Finland"},
+      "url" : "https://tilastot.tela.fi/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["en"]
+    },
+
+    "statistik.tillvaxtanalys.se": {
+      "alias" : ["tva", "tillvaxtanalys"],
+      "description" : "Swedish Agency for Growth Policy Analysis (Tillväxtanalys)",
+      "citation" : {
+        "organization" : "Myndigheten för tillväxtpolitiska utvärderingar och analyser",
+        "address" : "Östersund, Sweden"},
+      "url" : "https://statistik.tillvaxtanalys.se/PxWeb/api/[version]/[lang]",
+      "version": ["v1"],
+      "lang": ["sv"]
     }
   },
   "local_apis": {}

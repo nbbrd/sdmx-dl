@@ -27,7 +27,7 @@ public class PxWebDriverTest {
     }
 
     @Test
-    public void testConfig() throws IOException {
+    public void testConfigDto() throws IOException {
         Config sample = new Config(120000, 120012, 30, 10);
 
         assertThat(PxWebDriver.Config.JSON_PARSER.parseResource(PxWebDriverTest.class, "statfin-config.json", UTF_8))
@@ -38,21 +38,21 @@ public class PxWebDriverTest {
     }
 
     @Test
-    public void testDatabases() throws IOException {
+    public void testDatabaseDto() throws IOException {
         assertThat(PxWebDriver.Database.JSON_PARSER.parseResource(PxWebDriverTest.class, "statfin-databases.json", UTF_8))
                 .contains(new PxWebDriver.Database("SDG", "SDG"))
                 .hasSize(12);
     }
 
     @Test
-    public void testTables() throws IOException {
+    public void testTableDto() throws IOException {
         assertThat(PxWebDriver.Table.JSON_PARSER.parseResource(PxWebDriverTest.class, "statfin-tables.json", UTF_8))
                 .contains(new PxWebDriver.Table("statfin_matk_pxt_117s.px", "/matk", "117s -- Accommodation establishment capacity by municipality, 1995-2022*"))
                 .hasSize(3);
     }
 
     @Test
-    public void testTableMeta() throws IOException {
+    public void testTableMetaDto() throws IOException {
         PxWebDriver.TableMeta meta = PxWebDriver.TableMeta.JSON_PARSER.parseResource(PxWebDriverTest.class, "statfin-table-meta.json", UTF_8);
         assertThat(meta.getTitle())
                 .isEqualTo("Accommodation establishment capacity by municipality by Municipality, Type of establishment, Year and Information");
@@ -195,6 +195,14 @@ public class PxWebDriverTest {
 
         assertThat(PxWebDriver.PxWebSdmxDataCursor.convertDimensionNameToId("Underlying cause of death (86-group short list)"))
                 .isEqualTo("Underlyingcauseofdeath86-groupshortlist");
+    }
+
+    @Test
+    public void testWebsitesInBuildInSources() {
+        assertThat(new PxWebDriver().getDefaultSources())
+                .filteredOn(source -> source.getWebsite() == null)
+                .extracting(WebSource::getEndpoint)
+                .isEmpty();
     }
 
     private static <T> Set<T> setOf(T... values) {
