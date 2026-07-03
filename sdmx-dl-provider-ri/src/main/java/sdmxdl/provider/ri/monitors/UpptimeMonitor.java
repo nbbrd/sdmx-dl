@@ -7,7 +7,7 @@ import nbbrd.io.http.HttpClient;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.ext.Cache;
-import sdmxdl.provider.ri.drivers.RiHttpUtils;
+import sdmxdl.provider.ri.http.HttpManager;
 import sdmxdl.provider.web.WebMonitors;
 import sdmxdl.web.MonitorReport;
 import sdmxdl.web.MonitorReports;
@@ -50,7 +50,7 @@ public final class UpptimeMonitor implements Monitor {
         MonitorReports reports = cache.get(key);
 
         if (reports == null) {
-            reports = createReports(RiHttpUtils.DEFAULT_HTTP_FACTORY.create(source, context), id, cache.getClock());
+            reports = createReports(HttpManager.getDefaultHttpFactory().create(source, context), id, cache.getClock());
             cache.put(key, reports);
         }
 

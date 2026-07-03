@@ -19,7 +19,7 @@ import java.util.List;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ByteCountingHttpClientDecoratorTest {
+public class ByteCountingWrapperTest {
 
     private final WebSource source = WebSource
             .builder()
@@ -30,15 +30,15 @@ public class ByteCountingHttpClientDecoratorTest {
 
     @Test
     public void clientIsWrappedWhenEventListenerIsPresent() {
-        ByteCountingHttpClientDecorator decorator = new ByteCountingHttpClientDecorator();
+        ByteCountingDecoration decorator = new ByteCountingDecoration();
         List<String> events = new ArrayList<>();
 
         WebContext context = WebContext.builder()
                 .onEvent(s -> (marker, message) -> events.add(message.toString()))
                 .build();
 
-        HttpClientFactory base = stubFactory(stubClient("hello world".getBytes(UTF_8)));
-        HttpClientFactory decorated = decorator.decorate(base);
+        HttpFactory base = stubFactory(stubClient("hello world".getBytes(UTF_8)));
+        HttpFactory decorated = decorator.decorate(base);
         HttpClient client = decorated.create(source, context);
 
         assertThat(client.getDescription()).contains("Byte counting");
@@ -46,12 +46,12 @@ public class ByteCountingHttpClientDecoratorTest {
 
     @Test
     public void clientIsNotWrappedWhenEventListenerIsAbsent() {
-        ByteCountingHttpClientDecorator decorator = new ByteCountingHttpClientDecorator();
+        ByteCountingDecoration decorator = new ByteCountingDecoration();
 
         WebContext context = WebContext.builder().build();
 
-        HttpClientFactory base = stubFactory(stubClient("data".getBytes(UTF_8)));
-        HttpClientFactory decorated = decorator.decorate(base);
+        HttpFactory base = stubFactory(stubClient("data".getBytes(UTF_8)));
+        HttpFactory decorated = decorator.decorate(base);
         HttpClient client = decorated.create(source, context);
 
         assertThat(client.getDescription()).doesNotContain("Byte counting");
@@ -59,7 +59,7 @@ public class ByteCountingHttpClientDecoratorTest {
 
     @Test
     public void bytesReadAreReportedOnClose() throws IOException {
-        ByteCountingHttpClientDecorator decorator = new ByteCountingHttpClientDecorator();
+        ByteCountingDecoration decorator = new ByteCountingDecoration();
         List<String> events = new ArrayList<>();
 
         WebContext context = WebContext.builder()
@@ -67,8 +67,8 @@ public class ByteCountingHttpClientDecoratorTest {
                 .build();
 
         byte[] data = "hello world".getBytes(UTF_8);
-        HttpClientFactory base = stubFactory(stubClient(data));
-        HttpClientFactory decorated = decorator.decorate(base);
+        HttpFactory base = stubFactory(stubClient(data));
+        HttpFactory decorated = decorator.decorate(base);
         HttpClient client = decorated.create(source, context);
 
         HttpRequest request = HttpRequest.builder()
@@ -90,15 +90,15 @@ public class ByteCountingHttpClientDecoratorTest {
 
     @Test
     public void zeroBytesReadAreNotReported() throws IOException {
-        ByteCountingHttpClientDecorator decorator = new ByteCountingHttpClientDecorator();
+        ByteCountingDecoration decorator = new ByteCountingDecoration();
         List<String> events = new ArrayList<>();
 
         WebContext context = WebContext.builder()
                 .onEvent(s -> (marker, message) -> events.add(message.toString()))
                 .build();
 
-        HttpClientFactory base = stubFactory(stubClient(new byte[0]));
-        HttpClientFactory decorated = decorator.decorate(base);
+        HttpFactory base = stubFactory(stubClient(new byte[0]));
+        HttpFactory decorated = decorator.decorate(base);
         HttpClient client = decorated.create(source, context);
 
         HttpRequest request = HttpRequest.builder()
@@ -117,7 +117,7 @@ public class ByteCountingHttpClientDecoratorTest {
 
     @Test
     public void bytesReadFormatsKilobytes() throws IOException {
-        ByteCountingHttpClientDecorator decorator = new ByteCountingHttpClientDecorator();
+        ByteCountingDecoration decorator = new ByteCountingDecoration();
         List<String> events = new ArrayList<>();
 
         WebContext context = WebContext.builder()
@@ -125,8 +125,8 @@ public class ByteCountingHttpClientDecoratorTest {
                 .build();
 
         byte[] data = new byte[2048];
-        HttpClientFactory base = stubFactory(stubClient(data));
-        HttpClientFactory decorated = decorator.decorate(base);
+        HttpFactory base = stubFactory(stubClient(data));
+        HttpFactory decorated = decorator.decorate(base);
         HttpClient client = decorated.create(source, context);
 
         HttpRequest request = HttpRequest.builder()
@@ -148,7 +148,7 @@ public class ByteCountingHttpClientDecoratorTest {
 
     @Test
     public void singleByteReadsAreCounted() throws IOException {
-        ByteCountingHttpClientDecorator decorator = new ByteCountingHttpClientDecorator();
+        ByteCountingDecoration decorator = new ByteCountingDecoration();
         List<String> events = new ArrayList<>();
 
         WebContext context = WebContext.builder()
@@ -156,8 +156,8 @@ public class ByteCountingHttpClientDecoratorTest {
                 .build();
 
         byte[] data = {1, 2, 3};
-        HttpClientFactory base = stubFactory(stubClient(data));
-        HttpClientFactory decorated = decorator.decorate(base);
+        HttpFactory base = stubFactory(stubClient(data));
+        HttpFactory decorated = decorator.decorate(base);
         HttpClient client = decorated.create(source, context);
 
         HttpRequest request = HttpRequest.builder()
@@ -178,7 +178,7 @@ public class ByteCountingHttpClientDecoratorTest {
 
     @Test
     public void decoratorHasNoProperties() {
-        ByteCountingHttpClientDecorator decorator = new ByteCountingHttpClientDecorator();
+        ByteCountingDecoration decorator = new ByteCountingDecoration();
         assertThat(decorator.getDecoratorProperties()).isEmpty();
     }
 
@@ -208,6 +208,16 @@ public class ByteCountingHttpClientDecoratorTest {
                     }
 
                     @Override
+                    public int getStatusCode() {
+                        return NO_STATUS_CODE;
+                    }
+
+                    @Override
+                    public @NonNull String getReasonPhrase() {
+                        return "";
+                    }
+
+                    @Override
                     public @NonNull InputStream getBody() {
                         return new ByteArrayInputStream(data);
                     }
@@ -220,8 +230,8 @@ public class ByteCountingHttpClientDecoratorTest {
         };
     }
 
-    private static HttpClientFactory stubFactory(HttpClient client) {
-        return HttpClientFactorySupport.builder()
+    private static HttpFactory stubFactory(HttpClient client) {
+        return HttpFactorySupport.builder()
                 .name("StubFactory")
                 .supplier((s, c) -> client)
                 .build();

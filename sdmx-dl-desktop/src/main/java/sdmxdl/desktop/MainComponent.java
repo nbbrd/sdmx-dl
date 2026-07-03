@@ -19,7 +19,7 @@ import org.kordamp.ikonli.Ikon;
 import sdmxdl.desktop.panels.*;
 import sdmxdl.ext.Persistence;
 import sdmxdl.provider.caching.DiskCachingSupport;
-import sdmxdl.provider.ri.http.DumpingHttpClientDecorator;
+import sdmxdl.provider.ri.http.DumpingDecoration;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebFlowRequest;
 import sdmxdl.web.WebKeyRequest;
@@ -601,7 +601,7 @@ public final class MainComponent extends JComponent {
         WebSource source = ref.toWebSource(Sdmxdl.INSTANCE.getSdmxManager());
         new OnDemandMenuBuilder()
                 .openFolder("Open cache folder", DiskCachingSupport.CACHE_FOLDER_PROPERTY.get(source.getProperties()))
-                .openFolder("Open dump folder", DumpingHttpClientDecorator.DUMP_FOLDER_PROPERTY.get(source.getProperties()))
+                .openFolder("Open dump folder", DumpingDecoration.DUMP_FOLDER_PROPERTY.get(source.getProperties()))
                 .showMenuAsPopup(this);
     }
 

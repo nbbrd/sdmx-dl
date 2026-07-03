@@ -5,7 +5,7 @@ import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;
 import nbbrd.io.sys.SystemProperties;
 import sdmxdl.About;
-import sdmxdl.provider.ri.http.DumpingHttpClientDecorator;
+import sdmxdl.provider.ri.http.DumpingDecoration;
 
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -47,7 +47,7 @@ public class SpecialProperties {
 
     public static void enableHttpDump(Properties properties) {
         Path dumpFolder = requireNonNull(SystemProperties.DEFAULT.getJavaIoTmpdir()).resolve(About.NAME).resolve("dump");
-        properties.setProperty(DumpingHttpClientDecorator.DUMP_FOLDER_PROPERTY.getKey(), dumpFolder.toString());
+        properties.setProperty(DumpingDecoration.DUMP_FOLDER_PROPERTY.getKey(), dumpFolder.toString());
     }
 
     public static void disableAnsi(Properties properties) {

@@ -9,18 +9,18 @@ import sdmxdl.web.spi.WebContext;
 import java.util.List;
 
 /**
- * Support implementation for building {@link HttpClientFactory} instances.
+ * Support implementation for building {@link HttpFactory} instances.
  * <p>
  * Provides a builder pattern for creating factory instances with a name, optional properties,
  * and a supplier function for creating HTTP clients. This simplifies the implementation
  * of custom factories by delegating common boilerplate via {@code @lombok.experimental.Delegate}.
  * </p>
  *
- * @see HttpClientFactory
- * @see UrlConnectionHttpClientFactory
+ * @see HttpFactory
+ * @see UrlConnectionHttpFactory
  */
 @lombok.Builder
-public final class HttpClientFactorySupport implements HttpClientFactory {
+public final class HttpFactorySupport implements HttpFactory {
 
     /**
      * The name of this factory.

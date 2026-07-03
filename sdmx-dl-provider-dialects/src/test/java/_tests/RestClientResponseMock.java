@@ -41,6 +41,16 @@ public final class RestClientResponseMock implements HttpResponse {
     }
 
     @Override
+    public int getStatusCode() throws IOException {
+        return NO_STATUS_CODE;
+    }
+
+    @Override
+    public @NonNull String getReasonPhrase() throws IOException {
+        return "";
+    }
+
+    @Override
     public @NonNull InputStream getBody() throws IOException {
         return body.getWithIO();
     }

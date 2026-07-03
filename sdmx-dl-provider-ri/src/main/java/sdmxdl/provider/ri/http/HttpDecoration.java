@@ -7,7 +7,7 @@ import nbbrd.io.text.BaseProperty;
 import java.util.List;
 
 /**
- * Decorator interface for enhancing {@link HttpClientFactory} with additional capabilities.
+ * Decorator interface for enhancing {@link HttpFactory} with additional capabilities.
  * <p>
  * Implementations provide a way to wrap an existing HTTP client factory with additional
  * behavior such as caching, logging, byte counting, or other cross-cutting concerns.
@@ -15,7 +15,7 @@ import java.util.List;
  * </p>
  */
 @ThreadSafe
-public interface HttpClientDecorator {
+public interface HttpDecoration {
 
     /**
      * Gets the name of this decorator.
@@ -44,5 +44,5 @@ public interface HttpClientDecorator {
      * @return a decorated factory combining both the original and decorator behavior, never null
      */
     @NonNull
-    HttpClientFactory decorate(@NonNull HttpClientFactory factory);
+    HttpFactory decorate(@NonNull HttpFactory factory);
 }

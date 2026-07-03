@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
-public class HttpClientFactorySupportTest {
+public class HttpFactorySupportTest {
 
     private final WebSource source = WebSource
             .builder()
@@ -33,9 +33,9 @@ public class HttpClientFactorySupportTest {
 
     @Test
     public void factoryNameIsExposed() {
-        HttpClientFactorySupport factory = HttpClientFactorySupport.builder()
+        HttpFactorySupport factory = HttpFactorySupport.builder()
                 .name("TestFactory")
-                .supplier(HttpClientFactorySupportTest::stubClient)
+                .supplier(HttpFactorySupportTest::stubClient)
                 .build();
 
         assertThat(factory.getFactoryName()).isEqualTo("TestFactory");
@@ -43,9 +43,9 @@ public class HttpClientFactorySupportTest {
 
     @Test
     public void propertiesAreEmptyByDefault() {
-        HttpClientFactorySupport factory = HttpClientFactorySupport.builder()
+        HttpFactorySupport factory = HttpFactorySupport.builder()
                 .name("TestFactory")
-                .supplier(HttpClientFactorySupportTest::stubClient)
+                .supplier(HttpFactorySupportTest::stubClient)
                 .build();
 
         assertThat(factory.getFactoryProperties()).isEmpty();
@@ -56,11 +56,11 @@ public class HttpClientFactorySupportTest {
         Property<String> prop1 = Property.of("prop1", "default1", Parser.onString(), Formatter.onString());
         Property<String> prop2 = Property.of("prop2", "default2", Parser.onString(), Formatter.onString());
 
-        HttpClientFactorySupport factory = HttpClientFactorySupport.builder()
+        HttpFactorySupport factory = HttpFactorySupport.builder()
                 .name("TestFactory")
                 .property(prop1)
                 .property(prop2)
-                .supplier(HttpClientFactorySupportTest::stubClient)
+                .supplier(HttpFactorySupportTest::stubClient)
                 .build();
 
         assertThat(factory.getFactoryProperties())
@@ -72,7 +72,7 @@ public class HttpClientFactorySupportTest {
     public void createDelegatesToSupplier() {
         AtomicBoolean supplierCalled = new AtomicBoolean(false);
 
-        HttpClientFactorySupport factory = HttpClientFactorySupport.builder()
+        HttpFactorySupport factory = HttpFactorySupport.builder()
                 .name("TestFactory")
                 .supplier((s, c) -> {
                     supplierCalled.set(true);
@@ -90,7 +90,7 @@ public class HttpClientFactorySupportTest {
         AtomicReference<WebSource> capturedSource = new AtomicReference<>();
         AtomicReference<WebContext> capturedContext = new AtomicReference<>();
 
-        HttpClientFactorySupport factory = HttpClientFactorySupport.builder()
+        HttpFactorySupport factory = HttpFactorySupport.builder()
                 .name("TestFactory")
                 .supplier((s, c) -> {
                     capturedSource.set(s);
@@ -109,9 +109,9 @@ public class HttpClientFactorySupportTest {
     @Test
     public void builderRejectsNullName() {
         assertThatNullPointerException().isThrownBy(() ->
-                HttpClientFactorySupport.builder()
+                HttpFactorySupport.builder()
                         .name(null)
-                        .supplier(HttpClientFactorySupportTest::stubClient)
+                        .supplier(HttpFactorySupportTest::stubClient)
                         .build()
         );
     }
@@ -120,7 +120,7 @@ public class HttpClientFactorySupportTest {
     @Test
     public void builderRejectsNullSupplier() {
         assertThatNullPointerException().isThrownBy(() ->
-                HttpClientFactorySupport.builder()
+                HttpFactorySupport.builder()
                         .name("TestFactory")
                         .supplier(null)
                         .build()
@@ -131,10 +131,10 @@ public class HttpClientFactorySupportTest {
     public void propertiesListIsImmutable() {
         Property<String> prop = Property.of("prop", "default", Parser.onString(), Formatter.onString());
 
-        HttpClientFactorySupport factory = HttpClientFactorySupport.builder()
+        HttpFactorySupport factory = HttpFactorySupport.builder()
                 .name("TestFactory")
                 .property(prop)
-                .supplier(HttpClientFactorySupportTest::stubClient)
+                .supplier(HttpFactorySupportTest::stubClient)
                 .build();
 
         assertThat(factory.getFactoryProperties()).isUnmodifiable();

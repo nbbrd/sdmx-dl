@@ -40,6 +40,7 @@ import sdmxdl.provider.ri.drivers.RiRestClient;
 import sdmxdl.provider.ri.drivers.Sdmx21RestErrors;
 import sdmxdl.provider.ri.drivers.Sdmx21RestParsers;
 import sdmxdl.provider.ri.drivers.Sdmx21RestQueries;
+import sdmxdl.provider.ri.http.HttpManager;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestConnector;
 import sdmxdl.web.WebSource;
@@ -55,7 +56,6 @@ import java.util.function.Supplier;
 import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.format.time.TimeFormats.IGNORE_ERROR;
 import static sdmxdl.provider.SdmxFix.Category.*;
-import static sdmxdl.provider.ri.drivers.RiHttpUtils.DEFAULT_HTTP_FACTORY;
 
 /**
  * @author Philippe Charles
@@ -72,7 +72,7 @@ public final class InseeDialectDriver implements Driver {
             .id(DIALECTS_INSEE)
             .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(InseeRestClient::new))
-            .propertiesOf(DEFAULT_HTTP_FACTORY.getFactoryProperties())
+            .propertiesOf(HttpManager.getHttpFactory().getFactoryProperties())
             .propertyOf(NO_COMMA_ENCODING_PROPERTY)
             .source(WebSource
                     .builder()
@@ -121,7 +121,7 @@ public final class InseeDialectDriver implements Driver {
                     s.getEndpoint(),
                     languages,
                     OBS_FACTORY,
-                    DEFAULT_HTTP_FACTORY.create(s, c),
+                    HttpManager.getHttpFactory().create(s, c),
                     NO_COMMA_ENCODING_PROPERTY.get(s.getProperties())
                             ? InseeRestQueries.NO_COMMA_ENCODING
                             : InseeRestQueries.DEFAULT,

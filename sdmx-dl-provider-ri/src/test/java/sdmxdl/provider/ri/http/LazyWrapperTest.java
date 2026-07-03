@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class LazyHttpClientDecoratorTest {
+public class LazyWrapperTest {
 
     private final WebSource source = WebSource
             .builder()
@@ -27,10 +27,10 @@ public class LazyHttpClientDecoratorTest {
 
     @Test
     public void clientIsNotCreatedUntilFirstUse() throws IOException {
-        LazyHttpClientDecorator decorator = new LazyHttpClientDecorator();
+        LazyDecoration decorator = new LazyDecoration();
         AtomicInteger createCount = new AtomicInteger(0);
 
-        HttpClientFactory base = HttpClientFactorySupport.builder()
+        HttpFactory base = HttpFactorySupport.builder()
                 .name("CountingFactory")
                 .supplier((s, c) -> {
                     createCount.incrementAndGet();
@@ -38,7 +38,7 @@ public class LazyHttpClientDecoratorTest {
                 })
                 .build();
 
-        HttpClientFactory decorated = decorator.decorate(base);
+        HttpFactory decorated = decorator.decorate(base);
         HttpClient client = decorated.create(source, context);
 
         assertThat(createCount).hasValue(0);
@@ -50,10 +50,10 @@ public class LazyHttpClientDecoratorTest {
 
     @Test
     public void clientIsCreatedOnlyOnce() throws IOException {
-        LazyHttpClientDecorator decorator = new LazyHttpClientDecorator();
+        LazyDecoration decorator = new LazyDecoration();
         AtomicInteger createCount = new AtomicInteger(0);
 
-        HttpClientFactory base = HttpClientFactorySupport.builder()
+        HttpFactory base = HttpFactorySupport.builder()
                 .name("CountingFactory")
                 .supplier((s, c) -> {
                     createCount.incrementAndGet();
@@ -61,7 +61,7 @@ public class LazyHttpClientDecoratorTest {
                 })
                 .build();
 
-        HttpClientFactory decorated = decorator.decorate(base);
+        HttpFactory decorated = decorator.decorate(base);
         HttpClient client = decorated.create(source, context);
 
         client.getDescription();
@@ -72,7 +72,7 @@ public class LazyHttpClientDecoratorTest {
 
     @Test
     public void decoratorHasNoProperties() {
-        LazyHttpClientDecorator decorator = new LazyHttpClientDecorator();
+        LazyDecoration decorator = new LazyDecoration();
         assertThat(decorator.getDecoratorProperties()).isEmpty();
     }
 

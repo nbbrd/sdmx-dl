@@ -17,7 +17,7 @@ import java.util.List;
  * </p>
  */
 @ThreadSafe
-public interface HttpClientFactory {
+public interface HttpFactory {
 
     /**
      * Gets the name of this factory.

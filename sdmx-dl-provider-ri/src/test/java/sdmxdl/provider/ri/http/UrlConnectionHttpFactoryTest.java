@@ -20,9 +20,9 @@ import static nbbrd.io.http.HttpAuthScheme.BASIC;
 import static nbbrd.io.http.HttpAuthScheme.NONE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
-import static sdmxdl.provider.ri.http.UrlConnectionHttpClientFactory.newUrlConnectionHttpClient;
+import static sdmxdl.provider.ri.http.UrlConnectionHttpFactory.newUrlConnectionHttpClient;
 
-public class UrlConnectionHttpClientFactoryTest {
+public class UrlConnectionHttpFactoryTest {
 
     WebSource source = WebSource
             .builder()

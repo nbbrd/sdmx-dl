@@ -1,7 +1,7 @@
 package sdmxdl.provider.ri.monitors;
 
 import com.google.gson.*;
-import sdmxdl.provider.ri.drivers.RiHttpUtils;
+import sdmxdl.provider.ri.http.HttpManager;
 import nbbrd.io.http.HttpClient;
 import nbbrd.io.http.HttpResponse;
 import lombok.NonNull;
@@ -30,7 +30,7 @@ class UpptimeSummary {
     }
 
     static @NonNull List<UpptimeSummary> request(@NonNull HttpClient client, @NonNull URI summaryURI) throws IOException {
-        try (HttpResponse response = client.send(RiHttpUtils.newHttpRequest(summaryURI, MEDIA_TYPES, ANY))) {
+        try (HttpResponse response = client.send(HttpManager.newHttpRequest(summaryURI, MEDIA_TYPES, ANY))) {
             try (Reader reader = response.getBodyAsReader()) {
                 return parseAll(reader);
             }

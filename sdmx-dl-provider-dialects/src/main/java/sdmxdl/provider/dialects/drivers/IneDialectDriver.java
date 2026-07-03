@@ -21,6 +21,7 @@ import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.http.*;
+import nbbrd.io.http.ext.ThrowingStatusException;
 import nbbrd.io.net.MediaType;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
@@ -29,6 +30,7 @@ import sdmxdl.provider.ConnectionSupport;
 import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.Marker;
 import sdmxdl.provider.TypedId;
+import sdmxdl.provider.ri.http.HttpManager;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
@@ -47,7 +49,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static sdmxdl.Confidentiality.PUBLIC;
-import static sdmxdl.provider.ri.drivers.RiHttpUtils.DEFAULT_HTTP_FACTORY;
 import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
 
 /**
@@ -78,7 +79,7 @@ public final class IneDialectDriver implements Driver {
             .id(DIALECTS_INE)
             .rank(NATIVE_DRIVER_RANK)
             .connector(IneDialectDriver::newConnection)
-            .propertiesOf(DEFAULT_HTTP_FACTORY.getFactoryProperties())
+            .propertiesOf(HttpManager.getHttpFactory().getFactoryProperties())
             .propertyOf(CACHE_TTL_PROPERTY)
             .source(WebSource
                     .builder()
@@ -101,7 +102,7 @@ public final class IneDialectDriver implements Driver {
                 HasMarker.of(source),
                 source.getEndpoint(),
                 lang,
-                DEFAULT_HTTP_FACTORY.create(source, context)
+                HttpManager.getHttpFactory().create(source, context)
         );
 
         IneClient cachedClient = CachedIneClient.of(
@@ -286,7 +287,7 @@ public final class IneDialectDriver implements Driver {
                 try (Reader reader = response.getBodyAsReader()) {
                     return Converter.buildDataSet(flowRef, SeriesEntry.parseAll(reader));
                 }
-            } catch (HttpResponseException ex) {
+            } catch (ThrowingStatusException ex) {
                 if (ex.getResponseCode() == HttpURLConnection.HTTP_INTERNAL_ERROR) {
                     return DataSet.builder().ref(flowRef).query(Query.ALL).build();
                 }

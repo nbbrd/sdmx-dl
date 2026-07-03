@@ -25,6 +25,7 @@ import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.SdmxFix;
 import sdmxdl.provider.ri.drivers.RiRestClient;
 import sdmxdl.provider.ri.drivers.Sdmx21RestErrors;
+import sdmxdl.provider.ri.http.HttpManager;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestClient;
 import sdmxdl.provider.web.RestConnector;
@@ -37,7 +38,6 @@ import java.util.Set;
 
 import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
-import static sdmxdl.provider.ri.drivers.RiHttpUtils.DEFAULT_HTTP_FACTORY;
 
 /**
  * @author Philippe Charles
@@ -54,7 +54,7 @@ public final class DotStatDialectDriver implements Driver {
             .id(DIALECTS_DOTSTAT)
             .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(DotStatDialectDriver::newClient))
-            .propertiesOf(DEFAULT_HTTP_FACTORY.getFactoryProperties())
+            .propertiesOf(HttpManager.getHttpFactory().getFactoryProperties())
             .source(WebSource
                     .builder()
                     .id("UKDS")
@@ -74,7 +74,7 @@ public final class DotStatDialectDriver implements Driver {
                 s.getEndpoint(),
                 languages,
                 ObsParser::newDefault,
-                DEFAULT_HTTP_FACTORY.create(s, c),
+                HttpManager.getHttpFactory().create(s, c),
                 DotStatRestQueries.DEFAULT,
                 DotStatRestParsers.DEFAULT,
                 Sdmx21RestErrors.DEFAULT,

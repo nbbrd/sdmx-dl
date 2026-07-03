@@ -28,6 +28,7 @@ import sdmxdl.provider.ri.drivers.RiRestClient;
 import sdmxdl.provider.ri.drivers.Sdmx21RestErrors;
 import sdmxdl.provider.ri.drivers.Sdmx21RestParsers;
 import sdmxdl.provider.ri.drivers.Sdmx21RestQueries;
+import sdmxdl.provider.ri.http.HttpManager;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestConnector;
 import sdmxdl.web.WebSource;
@@ -40,7 +41,6 @@ import java.util.Set;
 
 import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
-import static sdmxdl.provider.ri.drivers.RiHttpUtils.DEFAULT_HTTP_FACTORY;
 
 /**
  * @author Philippe Charles
@@ -57,7 +57,7 @@ public final class BbkDialectDriver implements Driver {
             .id(DIALECTS_BBK)
             .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(BbkDialectDriver::newClient))
-            .propertiesOf(DEFAULT_HTTP_FACTORY.getFactoryProperties())
+            .propertiesOf(HttpManager.getHttpFactory().getFactoryProperties())
             .source(WebSource
                     .builder()
                     .id("BBK")
@@ -78,7 +78,7 @@ public final class BbkDialectDriver implements Driver {
                 s.getEndpoint(),
                 languages,
                 ObsParser::newDefault,
-                DEFAULT_HTTP_FACTORY.create(s, c),
+                HttpManager.getHttpFactory().create(s, c),
                 BbkQueries.INSTANCE,
                 Sdmx21RestParsers.DEFAULT,
                 Sdmx21RestErrors.DEFAULT,

@@ -1,9 +1,15 @@
 package sdmxdl.provider.ri.http;
 
+import lombok.AccessLevel;
+import lombok.NonNull;
 import nbbrd.io.http.HttpClient;
-import nbbrd.io.http.ext.LazyHttpClient;
+import nbbrd.io.http.HttpRequest;
+import nbbrd.io.http.HttpResponse;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.WebContext;
+
+import java.io.IOException;
+import java.util.function.Supplier;
 
 /**
  * Decorator for {@link HttpClient} that implements lazy initialization.
@@ -13,15 +19,15 @@ import sdmxdl.web.spi.WebContext;
  * multiple clients may not be immediately used.
  * </p>
  */
-public final class LazyHttpClientDecorator implements HttpClientDecorator {
+public final class LazyDecoration implements HttpDecoration {
 
     /**
      * Delegates HTTP client decoration to the support implementation.
      */
     @lombok.experimental.Delegate
-    private final HttpClientDecorator support = HttpClientDecoratorSupport.builder()
+    private final HttpDecoration support = HttpDecorationSupport.builder()
             .name("Lazy")
-            .superFactory(LazyHttpClientDecorator::decorate)
+            .superFactory(LazyDecoration::decorate)
             .build();
 
     /**
@@ -36,7 +42,26 @@ public final class LazyHttpClientDecorator implements HttpClientDecorator {
      * @param c the web context containing runtime configuration
      * @return a lazy HTTP client that creates the underlying client on first use
      */
-    private static HttpClient decorate(HttpClientFactory d, WebSource s, WebContext c) {
+    private static HttpClient decorate(HttpFactory d, WebSource s, WebContext c) {
         return new LazyHttpClient(() -> d.create(s, c));
+    }
+
+    @lombok.AllArgsConstructor
+    private static final class LazyHttpClient implements HttpClient {
+
+        private final Supplier<HttpClient> delegateSupplier;
+
+        @lombok.Getter(value = AccessLevel.PRIVATE, lazy = true)
+        private final HttpClient delegate = delegateSupplier.get();
+
+        @Override
+        public @NonNull String getDescription() {
+            return "Lazy " + getDelegate().getDescription();
+        }
+
+        @Override
+        public @NonNull HttpResponse send(@NonNull HttpRequest request) throws IOException {
+            return getDelegate().send(request);
+        }
     }
 }

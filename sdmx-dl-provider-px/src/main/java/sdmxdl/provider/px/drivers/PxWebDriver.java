@@ -22,6 +22,7 @@ import sdmxdl.format.time.ObservationalTimePeriod;
 import sdmxdl.format.time.TimeFormats;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.provider.*;
+import sdmxdl.provider.ri.http.HttpManager;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
@@ -43,7 +44,6 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static nbbrd.io.Resource.newInputStream;
 import static sdmxdl.format.time.TimeFormats.IGNORE_ERROR;
-import static sdmxdl.provider.ri.drivers.RiHttpUtils.DEFAULT_HTTP_FACTORY;
 import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
 import static sdmxdl.provider.web.DriverProperties.commaSeparatedProperty;
 
@@ -81,7 +81,7 @@ public final class PxWebDriver implements Driver {
             .rank(NATIVE_DRIVER_RANK)
             .availability(ENABLE_PROPERTY::get)
             .connector(PxWebDriver::newConnection)
-            .propertiesOf(DEFAULT_HTTP_FACTORY.getFactoryProperties())
+            .propertiesOf(HttpManager.getHttpFactory().getFactoryProperties())
             .propertyOf(VERSIONS_PROPERTY)
             .propertyOf(LANGUAGES_PROPERTY)
             .propertyOf(CACHE_TTL_PROPERTY)
@@ -103,7 +103,7 @@ public final class PxWebDriver implements Driver {
         PxWebClient client = new DefaultPxWebClient(
                 HasMarker.of(source),
                 getFullEndpoint(source, languages),
-                DEFAULT_HTTP_FACTORY.create(source, context)
+                HttpManager.getHttpFactory().create(source, context)
         );
 
         return new CachedPxWebClient(

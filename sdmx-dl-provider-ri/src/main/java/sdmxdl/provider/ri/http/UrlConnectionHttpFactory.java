@@ -38,7 +38,7 @@ import static sdmxdl.web.spi.Driver.DRIVER_PROPERTY_PREFIX;
  * web source properties and context settings.
  * </p>
  */
-public final class UrlConnectionHttpClientFactory implements HttpClientFactory {
+public final class UrlConnectionHttpFactory implements HttpFactory {
 
     /**
      * Property defining the maximum number of automatic retries for transient network errors.
@@ -58,7 +58,7 @@ public final class UrlConnectionHttpClientFactory implements HttpClientFactory {
             IntProperty.of(DRIVER_PROPERTY_PREFIX + ".maxRetries", 3);
 
     @lombok.experimental.Delegate
-    private final HttpClientFactory support = HttpClientFactorySupport
+    private final HttpFactory support = HttpFactorySupport
             .builder()
             .name("UrlConnectionHttpClientFactory")
             .property(CONNECT_TIMEOUT_PROPERTY)
@@ -67,7 +67,7 @@ public final class UrlConnectionHttpClientFactory implements HttpClientFactory {
             .property(AUTH_SCHEME_PROPERTY)
             .property(USER_AGENT_PROPERTY)
             .property(MAX_RETRIES_PROPERTY)
-            .supplier(UrlConnectionHttpClientFactory::newUrlConnectionHttpClient)
+            .supplier(UrlConnectionHttpFactory::newUrlConnectionHttpClient)
             .build();
 
     /**

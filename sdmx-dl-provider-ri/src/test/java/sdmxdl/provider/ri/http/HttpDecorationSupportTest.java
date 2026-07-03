@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
-public class HttpClientDecoratorSupportTest {
+public class HttpDecorationSupportTest {
 
     private final WebSource source = WebSource
             .builder()
@@ -34,13 +34,13 @@ public class HttpClientDecoratorSupportTest {
 
     @Test
     public void decoratedFactoryNameCombinesBothNames() {
-        HttpClientDecoratorSupport decorator = HttpClientDecoratorSupport.builder()
+        HttpDecorationSupport decorator = HttpDecorationSupport.builder()
                 .name("MyDecorator")
-                .superFactory(HttpClientFactory::create)
+                .superFactory(HttpFactory::create)
                 .build();
 
-        HttpClientFactory base = stubFactory("BaseFactory");
-        HttpClientFactory decorated = decorator.decorate(base);
+        HttpFactory base = stubFactory("BaseFactory");
+        HttpFactory decorated = decorator.decorate(base);
 
         assertThat(decorated.getFactoryName()).isEqualTo("BaseFactory with MyDecorator");
     }
@@ -50,14 +50,14 @@ public class HttpClientDecoratorSupportTest {
         Property<String> decoratorProp = Property.of("dec.prop", "default", Parser.onString(), Formatter.onString());
         Property<String> factoryProp = Property.of("fac.prop", "default", Parser.onString(), Formatter.onString());
 
-        HttpClientDecoratorSupport decorator = HttpClientDecoratorSupport.builder()
+        HttpDecorationSupport decorator = HttpDecorationSupport.builder()
                 .name("MyDecorator")
                 .property(decoratorProp)
-                .superFactory(HttpClientFactory::create)
+                .superFactory(HttpFactory::create)
                 .build();
 
-        HttpClientFactory base = stubFactory("BaseFactory", Collections.singletonList(factoryProp));
-        HttpClientFactory decorated = decorator.decorate(base);
+        HttpFactory base = stubFactory("BaseFactory", Collections.singletonList(factoryProp));
+        HttpFactory decorated = decorator.decorate(base);
 
         assertThat(decorated.getFactoryProperties())
                 .extracting(BaseProperty::getKey)
@@ -68,7 +68,7 @@ public class HttpClientDecoratorSupportTest {
     public void decoratedFactoryDelegatesCreateToSuperFactory() {
         AtomicBoolean superFactoryCalled = new AtomicBoolean(false);
 
-        HttpClientDecoratorSupport decorator = HttpClientDecoratorSupport.builder()
+        HttpDecorationSupport decorator = HttpDecorationSupport.builder()
                 .name("MyDecorator")
                 .superFactory((d, s, c) -> {
                     superFactoryCalled.set(true);
@@ -76,7 +76,7 @@ public class HttpClientDecoratorSupportTest {
                 })
                 .build();
 
-        HttpClientFactory decorated = decorator.decorate(stubFactory("BaseFactory"));
+        HttpFactory decorated = decorator.decorate(stubFactory("BaseFactory"));
         decorated.create(source, context);
 
         assertThat(superFactoryCalled).isTrue();
@@ -84,9 +84,9 @@ public class HttpClientDecoratorSupportTest {
 
     @Test
     public void decoratorPropertiesAreEmptyByDefault() {
-        HttpClientDecoratorSupport decorator = HttpClientDecoratorSupport.builder()
+        HttpDecorationSupport decorator = HttpDecorationSupport.builder()
                 .name("Empty")
-                .superFactory(HttpClientFactory::create)
+                .superFactory(HttpFactory::create)
                 .build();
 
         assertThat(decorator.getDecoratorProperties()).isEmpty();
@@ -94,9 +94,9 @@ public class HttpClientDecoratorSupportTest {
 
     @Test
     public void decoratorNameIsExposed() {
-        HttpClientDecoratorSupport decorator = HttpClientDecoratorSupport.builder()
+        HttpDecorationSupport decorator = HttpDecorationSupport.builder()
                 .name("TestName")
-                .superFactory(HttpClientFactory::create)
+                .superFactory(HttpFactory::create)
                 .build();
 
         assertThat(decorator.getDecoratorName()).isEqualTo("TestName");
@@ -105,9 +105,9 @@ public class HttpClientDecoratorSupportTest {
     @SuppressWarnings({"ResultOfMethodCallIgnored", "DataFlowIssue"})
     @Test
     public void decorateRejectsNullFactory() {
-        HttpClientDecoratorSupport decorator = HttpClientDecoratorSupport.builder()
+        HttpDecorationSupport decorator = HttpDecorationSupport.builder()
                 .name("MyDecorator")
-                .superFactory(HttpClientFactory::create)
+                .superFactory(HttpFactory::create)
                 .build();
 
         assertThatNullPointerException().isThrownBy(() -> decorator.decorate(null));
@@ -115,31 +115,31 @@ public class HttpClientDecoratorSupportTest {
 
     @Test
     public void chainingMultipleDecorators() {
-        HttpClientDecoratorSupport first = HttpClientDecoratorSupport.builder()
+        HttpDecorationSupport first = HttpDecorationSupport.builder()
                 .name("First")
-                .superFactory(HttpClientFactory::create)
+                .superFactory(HttpFactory::create)
                 .build();
 
-        HttpClientDecoratorSupport second = HttpClientDecoratorSupport.builder()
+        HttpDecorationSupport second = HttpDecorationSupport.builder()
                 .name("Second")
-                .superFactory(HttpClientFactory::create)
+                .superFactory(HttpFactory::create)
                 .build();
 
-        HttpClientFactory base = stubFactory("Base");
-        HttpClientFactory decorated = second.decorate(first.decorate(base));
+        HttpFactory base = stubFactory("Base");
+        HttpFactory decorated = second.decorate(first.decorate(base));
 
         assertThat(decorated.getFactoryName()).isEqualTo("Base with First with Second");
     }
 
-    static HttpClientFactory stubFactory(String name) {
-        return HttpClientFactorySupport.builder()
+    static HttpFactory stubFactory(String name) {
+        return HttpFactorySupport.builder()
                 .name(name)
                 .supplier((s, c) -> stubClient(name))
                 .build();
     }
 
-    static HttpClientFactory stubFactory(String name, List<? extends BaseProperty> properties) {
-        HttpClientFactorySupport.Builder builder = HttpClientFactorySupport.builder()
+    static HttpFactory stubFactory(String name, List<? extends BaseProperty> properties) {
+        HttpFactorySupport.Builder builder = HttpFactorySupport.builder()
                 .name(name)
                 .supplier((s, c) -> stubClient(name));
         properties.forEach(builder::property);

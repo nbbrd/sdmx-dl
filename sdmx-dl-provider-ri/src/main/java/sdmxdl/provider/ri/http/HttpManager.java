@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.provider.ri.drivers;
+package sdmxdl.provider.ri.http;
 
 import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;
@@ -22,25 +22,37 @@ import nbbrd.io.http.HttpHeaders;
 import nbbrd.io.http.HttpRequest;
 import nbbrd.io.net.MediaType;
 import sdmxdl.Languages;
-import sdmxdl.provider.ri.http.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author Philippe Charles
  */
 @lombok.experimental.UtilityClass
-public class RiHttpUtils {
+public final class HttpManager {
 
-    public static final HttpClientFactory DEFAULT_HTTP_FACTORY =
-            new ByteCountingHttpClientDecorator().decorate(
-                    new DumpingHttpClientDecorator().decorate(
-                            new LazyHttpClientDecorator().decorate(
-                                    new UrlConnectionHttpClientFactory()
+    private static final HttpFactory DEFAULT_HTTP_FACTORY =
+            new ByteCountingDecoration().decorate(
+                    new DumpingDecoration().decorate(
+                            new ThrowingStatusDecoration().decorate(
+                                    new LazyDecoration().decorate(
+                                            new UrlConnectionHttpFactory()
+                                    )
                             )
                     )
             );
+
+    private final AtomicReference<HttpFactory> FACTORY = new AtomicReference<>(getDefaultHttpFactory());
+
+    public static @NonNull HttpFactory getHttpFactory() {
+        return FACTORY.get();
+    }
+
+    public static void setHttpFactory(@NonNull HttpFactory httpFactory) {
+        FACTORY.set(httpFactory);
+    }
 
     @StaticFactoryMethod(HttpRequest.class)
     public static @NonNull HttpRequest newHttpRequest(@NonNull URI query, @NonNull List<MediaType> mediaTypes, @NonNull Languages languages) {
@@ -53,5 +65,9 @@ public class RiHttpUtils {
                         .languages(languages.toString())
                         .build())
                 .build();
+    }
+
+    public static HttpFactory getDefaultHttpFactory() {
+        return DEFAULT_HTTP_FACTORY;
     }
 }

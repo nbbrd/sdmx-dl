@@ -18,6 +18,7 @@ import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.provider.*;
+import sdmxdl.provider.ri.http.HttpManager;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
@@ -42,7 +43,6 @@ import static java.util.regex.Pattern.compile;
 import static java.util.stream.Collectors.toMap;
 import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.DataSet.toDataSet;
-import static sdmxdl.provider.ri.drivers.RiHttpUtils.DEFAULT_HTTP_FACTORY;
 import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
 import static sdmxdl.provider.web.WebValidators.dataflowRefOf;
 
@@ -58,7 +58,7 @@ public final class StatCanDialectDriver implements Driver {
             .id(DIALECTS_STATCAN)
             .rank(NATIVE_DRIVER_RANK)
             .connector(StatCanDialectDriver::newConnection)
-            .propertiesOf(DEFAULT_HTTP_FACTORY.getFactoryProperties())
+            .propertiesOf(HttpManager.getHttpFactory().getFactoryProperties())
             .propertyOf(CACHE_TTL_PROPERTY)
             .source(WebSource
                     .builder()
@@ -80,7 +80,7 @@ public final class StatCanDialectDriver implements Driver {
                 HasMarker.of(source),
                 source.getEndpoint(),
                 languages,
-                DEFAULT_HTTP_FACTORY.create(source, context)
+                HttpManager.getHttpFactory().create(source, context)
         );
 
         StatCanClient cachedClient = CachedStatCanClient.of(

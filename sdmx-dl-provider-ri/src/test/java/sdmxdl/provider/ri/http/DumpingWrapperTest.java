@@ -17,7 +17,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DumpingHttpClientDecoratorTest {
+public class DumpingWrapperTest {
 
     private final WebSource source = WebSource
             .builder()
@@ -30,11 +30,11 @@ public class DumpingHttpClientDecoratorTest {
 
     @Test
     public void clientIsNotWrappedWhenDumpFolderIsNotSet() {
-        DumpingHttpClientDecorator decorator = new DumpingHttpClientDecorator();
+        DumpingDecoration decorator = new DumpingDecoration();
 
         HttpClient stubClient = stubClient();
-        HttpClientFactory base = stubFactory(stubClient);
-        HttpClientFactory decorated = decorator.decorate(base);
+        HttpFactory base = stubFactory(stubClient);
+        HttpFactory decorated = decorator.decorate(base);
         HttpClient client = decorated.create(source, context);
 
         assertThat(client).isSameAs(stubClient);
@@ -42,15 +42,15 @@ public class DumpingHttpClientDecoratorTest {
 
     @Test
     public void clientIsWrappedWhenDumpFolderIsSet(@TempDir Path tempDir) {
-        DumpingHttpClientDecorator decorator = new DumpingHttpClientDecorator();
+        DumpingDecoration decorator = new DumpingDecoration();
 
         WebSource sourceWithDump = source.toBuilder()
-                .property(DumpingHttpClientDecorator.DUMP_FOLDER_PROPERTY.getKey(), tempDir.toString())
+                .property(DumpingDecoration.DUMP_FOLDER_PROPERTY.getKey(), tempDir.toString())
                 .build();
 
         HttpClient stubClient = stubClient();
-        HttpClientFactory base = stubFactory(stubClient);
-        HttpClientFactory decorated = decorator.decorate(base);
+        HttpFactory base = stubFactory(stubClient);
+        HttpFactory decorated = decorator.decorate(base);
         HttpClient client = decorated.create(sourceWithDump, context);
 
         assertThat(client).isNotSameAs(stubClient);
@@ -58,35 +58,35 @@ public class DumpingHttpClientDecoratorTest {
 
     @Test
     public void dumpFolderPropertyHasExpectedKey() {
-        assertThat(DumpingHttpClientDecorator.DUMP_FOLDER_PROPERTY.getKey())
+        assertThat(DumpingDecoration.DUMP_FOLDER_PROPERTY.getKey())
                 .startsWith("sdmxdl.driver.")
                 .endsWith(".dumpFolder");
     }
 
     @Test
     public void decoratorExposesProperty() {
-        DumpingHttpClientDecorator decorator = new DumpingHttpClientDecorator();
+        DumpingDecoration decorator = new DumpingDecoration();
         assertThat(decorator.getDecoratorProperties())
                 .hasSize(1)
                 .first()
-                .satisfies(p -> assertThat(p.getKey()).isEqualTo(DumpingHttpClientDecorator.DUMP_FOLDER_PROPERTY.getKey()));
+                .satisfies(p -> assertThat(p.getKey()).isEqualTo(DumpingDecoration.DUMP_FOLDER_PROPERTY.getKey()));
     }
 
     @Test
     public void eventsAreReportedWhenDumpingWithListener(@TempDir Path tempDir) {
-        DumpingHttpClientDecorator decorator = new DumpingHttpClientDecorator();
+        DumpingDecoration decorator = new DumpingDecoration();
         List<String> events = new ArrayList<>();
 
         WebSource sourceWithDump = source.toBuilder()
-                .property(DumpingHttpClientDecorator.DUMP_FOLDER_PROPERTY.getKey(), tempDir.toString())
+                .property(DumpingDecoration.DUMP_FOLDER_PROPERTY.getKey(), tempDir.toString())
                 .build();
 
         WebContext contextWithListener = WebContext.builder()
                 .onEvent(s -> (marker, message) -> events.add(marker + ": " + message))
                 .build();
 
-        HttpClientFactory base = stubFactory(stubClient());
-        HttpClientFactory decorated = decorator.decorate(base);
+        HttpFactory base = stubFactory(stubClient());
+        HttpFactory decorated = decorator.decorate(base);
         HttpClient client = decorated.create(sourceWithDump, contextWithListener);
 
         assertThat(client).isNotSameAs(stubClient());
@@ -106,8 +106,8 @@ public class DumpingHttpClientDecoratorTest {
         };
     }
 
-    private static HttpClientFactory stubFactory(HttpClient client) {
-        return HttpClientFactorySupport.builder()
+    private static HttpFactory stubFactory(HttpClient client) {
+        return HttpFactorySupport.builder()
                 .name("StubFactory")
                 .supplier((s, c) -> client)
                 .build();

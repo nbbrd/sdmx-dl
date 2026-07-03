@@ -16,11 +16,11 @@ import static java.util.stream.Collectors.toList;
  * <p>
  * Provides a builder pattern for creating decorators with optional properties and a factory
  * method for creating and decorating HTTP clients. This class implements both
- * {@link HttpClientDecorator} and {@link HttpClientFactory} to simplify decorator implementation.
+ * {@link HttpDecoration} and {@link HttpFactory} to simplify decorator implementation.
  * </p>
  */
 @lombok.Builder
-public final class HttpClientDecoratorSupport implements HttpClientDecorator {
+public final class HttpDecorationSupport implements HttpDecoration {
 
     /**
      * The name of this decorator.
@@ -69,8 +69,8 @@ public final class HttpClientDecoratorSupport implements HttpClientDecorator {
      * @return a decorated factory combining both the original and decorator behavior
      */
     @Override
-    public @NonNull HttpClientFactory decorate(@NonNull HttpClientFactory factory) {
-        return new HttpClientFactory() {
+    public @NonNull HttpFactory decorate(@NonNull HttpFactory factory) {
+        return new HttpFactory() {
 
             /**
              * Gets the decorated factory name.
@@ -125,6 +125,6 @@ public final class HttpClientDecoratorSupport implements HttpClientDecorator {
          * @return a decorated HTTP client
          */
         @NonNull
-        HttpClient createAndDecorate(@NonNull HttpClientFactory delegate, @NonNull WebSource source, @NonNull WebContext context);
+        HttpClient createAndDecorate(@NonNull HttpFactory delegate, @NonNull WebSource source, @NonNull WebContext context);
     }
 }
