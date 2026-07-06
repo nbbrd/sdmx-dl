@@ -18,7 +18,7 @@ package sdmxdl.provider.dialects.drivers;
 
 import nbbrd.design.DirectImpl;
 import nbbrd.design.VisibleForTesting;
-import nbbrd.io.http.URLQueryBuilder;
+import nbbrd.io.http.UriQueryBuilder;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
 import sdmxdl.format.ObsParser;
@@ -35,7 +35,7 @@ import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -108,8 +108,8 @@ public final class BbkDialectDriver implements Driver {
 
         @SdmxFix(id = 1, category = QUERY, cause = "Meta uses custom resources path")
         @Override
-        protected URLQueryBuilder onMeta(URL endpoint, String resourcePath, ResourceRef<?> ref) {
-            URLQueryBuilder result = URLQueryBuilder
+        protected UriQueryBuilder onMeta(URI endpoint, String resourcePath, ResourceRef<?> ref) {
+            UriQueryBuilder result = UriQueryBuilder
                     .of(endpoint)
                     .path("metadata")
                     .path(resourcePath)
@@ -122,8 +122,8 @@ public final class BbkDialectDriver implements Driver {
 
         @SdmxFix(id = 4, category = QUERY, cause = "Data does not support providerRef")
         @Override
-        protected URLQueryBuilder onData(URL endpoint, String resourcePath, FlowRef flowRef, Key key, String providerRef) {
-            return URLQueryBuilder
+        protected UriQueryBuilder onData(URI endpoint, String resourcePath, FlowRef flowRef, Key key, String providerRef) {
+            return UriQueryBuilder
                     .of(endpoint)
                     .path(resourcePath)
                     .path(flowRef.getId())
@@ -132,7 +132,7 @@ public final class BbkDialectDriver implements Driver {
 
         @SdmxFix(id = 5, category = QUERY, cause = "Data detail parameter for series-keys-only has a typo")
         @Override
-        protected void applyFilter(Detail detail, URLQueryBuilder result) {
+        protected void applyFilter(Detail detail, UriQueryBuilder result) {
             if (detail.equals(Detail.SERIES_KEYS_ONLY)) {
                 result.param(DETAIL_PARAM, "serieskeyonly");
             } else {

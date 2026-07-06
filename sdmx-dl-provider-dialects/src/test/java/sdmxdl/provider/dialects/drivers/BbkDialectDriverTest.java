@@ -21,15 +21,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
 import sdmxdl.*;
-import sdmxdl.provider.caching.MemCachingSupport;
 import sdmxdl.provider.DataRef;
+import sdmxdl.provider.caching.MemCachingSupport;
 import sdmxdl.provider.ri.networking.RiNetworking;
 import sdmxdl.web.spi.WebContext;
 import tests.sdmxdl.web.spi.DriverAssert;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static sdmxdl.Detail.FULL;
@@ -46,8 +45,8 @@ public class BbkDialectDriverTest {
     }
 
     @Test
-    public void testQueries() throws MalformedURLException {
-        URL endpoint = new URL(" https://api.statistiken.bundesbank.de/rest");
+    public void testQueries() {
+        URI endpoint = URI.create("https://api.statistiken.bundesbank.de/rest");
 
         BbkDialectDriver.BbkQueries queries = BbkDialectDriver.BbkQueries.INSTANCE;
 

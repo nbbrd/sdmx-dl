@@ -24,7 +24,9 @@ import nbbrd.io.net.MediaType;
 import sdmxdl.Languages;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -33,16 +35,27 @@ import java.util.concurrent.atomic.AtomicReference;
 @lombok.experimental.UtilityClass
 public final class HttpManager {
 
-    private static final HttpFactory DEFAULT_HTTP_FACTORY =
-            new ByteCountingDecoration().decorate(
-                    new DumpingDecoration().decorate(
-                            new ThrowingStatusDecoration().decorate(
-                                    new LazyDecoration().decorate(
-                                            new UrlConnectionHttpFactory()
-                                    )
-                            )
-                    )
-            );
+    private static final List<HttpDecoration> DECORATIONS = Arrays.asList(
+            new ByteCountingDecoration(),
+            new DumpingDecoration(),
+            new ThrowingStatusDecoration(),
+            new RateLimitingDecoration(),
+            new RetryDecoration(),
+            new RedirectDecoration(),
+            new AuthenticatingDecoration(),
+            new LazyDecoration()
+    );
+
+    private static HttpFactory decorate(HttpFactory httpFactory) {
+        HttpFactory result = httpFactory;
+        ListIterator<HttpDecoration> iterator = DECORATIONS.listIterator(DECORATIONS.size());
+        while (iterator.hasPrevious()) {
+            result = iterator.previous().decorate(result);
+        }
+        return result;
+    }
+
+    private static final HttpFactory DEFAULT_HTTP_FACTORY = decorate(new UrlConnectionHttpFactory());
 
     private final AtomicReference<HttpFactory> FACTORY = new AtomicReference<>(getDefaultHttpFactory());
 

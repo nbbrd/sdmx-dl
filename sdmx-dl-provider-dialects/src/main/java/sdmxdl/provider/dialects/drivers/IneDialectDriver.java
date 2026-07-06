@@ -206,11 +206,11 @@ public final class IneDialectDriver implements Driver {
         public @NonNull List<Database> getOperations() throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(URLQueryBuilder
-                            .of(endpoint.toURL())
+                    .query(UriQueryBuilder
+                            .of(endpoint)
                             .path(lang)
                             .path("OPERACIONES_DISPONIBLES")
-                            .buildURI())
+                            .build())
                     .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
                     .build();
 
@@ -225,13 +225,13 @@ public final class IneDialectDriver implements Driver {
         public @NonNull List<Flow> getTables(@NonNull String opCode) throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(URLQueryBuilder
-                            .of(endpoint.toURL())
+                    .query(UriQueryBuilder
+                            .of(endpoint)
                             .path(lang)
                             .path("TABLAS_OPERACION")
                             .path(opCode)
                             .param("tip", "A")
-                            .buildURI())
+                            .build())
                     .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
                     .build();
 
@@ -249,14 +249,14 @@ public final class IneDialectDriver implements Driver {
             // metadata (T3_Variable / value Id) needed to build the virtual DSD.
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(URLQueryBuilder
-                            .of(endpoint.toURL())
+                    .query(UriQueryBuilder
+                            .of(endpoint)
                             .path(lang)
                             .path("DATOS_TABLA")
                             .path(tableId)
                             .param("tip", "AM")
                             .param("nult", "1")
-                            .buildURI())
+                            .build())
                     .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
                     .build();
 
@@ -273,13 +273,13 @@ public final class IneDialectDriver implements Driver {
             // (T3_Variable / value Id) is what allows the series key to be reconstructed.
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(URLQueryBuilder
-                            .of(endpoint.toURL())
+                    .query(UriQueryBuilder
+                            .of(endpoint)
                             .path(lang)
                             .path("DATOS_TABLA")
                             .path(tableId)
                             .param("tip", "AM")
-                            .buildURI())
+                            .build())
                     .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
                     .build();
 
@@ -299,11 +299,11 @@ public final class IneDialectDriver implements Driver {
         public @NonNull URI ping() throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(URLQueryBuilder
-                            .of(endpoint.toURL())
+                    .query(UriQueryBuilder
+                            .of(endpoint)
                             .path(lang)
                             .path("OPERACIONES_DISPONIBLES")
-                            .buildURI())
+                            .build())
                     .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
                     .build();
 

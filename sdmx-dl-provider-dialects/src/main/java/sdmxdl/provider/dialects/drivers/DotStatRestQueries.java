@@ -2,13 +2,13 @@ package sdmxdl.provider.dialects.drivers;
 
 import lombok.AccessLevel;
 import lombok.NonNull;
-import nbbrd.io.http.URLQueryBuilder;
+import nbbrd.io.http.UriQueryBuilder;
 import sdmxdl.CodelistRef;
 import sdmxdl.StructureRef;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.ri.drivers.RiRestQueries;
 
-import java.net.URL;
+import java.net.URI;
 
 @lombok.AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class DotStatRestQueries implements RiRestQueries {
@@ -16,24 +16,24 @@ public class DotStatRestQueries implements RiRestQueries {
     public static final DotStatRestQueries DEFAULT = new DotStatRestQueries();
 
     @Override
-    public @NonNull URLQueryBuilder getFlowsQuery(@NonNull URL endpoint) {
-        return URLQueryBuilder
+    public @NonNull UriQueryBuilder getFlowsQuery(@NonNull URI endpoint) {
+        return UriQueryBuilder
                 .of(endpoint)
                 .path(DATASTRUCTURE_RESOURCE)
                 .path("ALL");
     }
 
     @Override
-    public @NonNull URLQueryBuilder getStructureQuery(@NonNull URL endpoint, @NonNull StructureRef ref) {
-        return URLQueryBuilder
+    public @NonNull UriQueryBuilder getStructureQuery(@NonNull URI endpoint, @NonNull StructureRef ref) {
+        return UriQueryBuilder
                 .of(endpoint)
                 .path(DATASTRUCTURE_RESOURCE)
                 .path(ref.getId());
     }
 
     @Override
-    public @NonNull URLQueryBuilder getDataQuery(@NonNull URL endpoint, @NonNull DataRef ref, @NonNull StructureRef dsdRef) {
-        return URLQueryBuilder
+    public @NonNull UriQueryBuilder getDataQuery(@NonNull URI endpoint, @NonNull DataRef ref, @NonNull StructureRef dsdRef) {
+        return UriQueryBuilder
                 .of(endpoint)
                 .path(DATA_RESOURCE)
                 .path(ref.getFlowRef().getId())
@@ -42,7 +42,7 @@ public class DotStatRestQueries implements RiRestQueries {
     }
 
     @Override
-    public @NonNull URLQueryBuilder getCodelistQuery(@NonNull URL endpoint, @NonNull CodelistRef ref) {
+    public @NonNull UriQueryBuilder getCodelistQuery(@NonNull URI endpoint, @NonNull CodelistRef ref) {
         throw new UnsupportedOperationException("codelist");
     }
 

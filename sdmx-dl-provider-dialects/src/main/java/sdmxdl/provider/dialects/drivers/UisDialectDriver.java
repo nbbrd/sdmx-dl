@@ -182,10 +182,10 @@ public final class UisDialectDriver implements Driver {
         public @NonNull List<Flow> getIndicators() throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(URLQueryBuilder
-                            .of(endpoint.toURL())
+                    .query(UriQueryBuilder
+                            .of(endpoint)
                             .path("api").path("public").path("definitions").path("indicators")
-                            .buildURI())
+                            .build())
                     .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
                     .build();
 
@@ -200,10 +200,10 @@ public final class UisDialectDriver implements Driver {
         public @NonNull Structure getStructure() throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(URLQueryBuilder
-                            .of(endpoint.toURL())
+                    .query(UriQueryBuilder
+                            .of(endpoint)
                             .path("api").path("public").path("definitions").path("geounits")
-                            .buildURI())
+                            .build())
                     .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
                     .build();
 
@@ -218,11 +218,11 @@ public final class UisDialectDriver implements Driver {
         public @NonNull DataSet getData(@NonNull String indicatorCode) throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(URLQueryBuilder
-                            .of(endpoint.toURL())
+                    .query(UriQueryBuilder
+                            .of(endpoint)
                             .path("api").path("public").path("data").path("indicators")
                             .param("indicator", indicatorCode)
-                            .buildURI())
+                            .build())
                     .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
                     .build();
 
@@ -240,10 +240,10 @@ public final class UisDialectDriver implements Driver {
         public @NonNull URI ping() throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(URLQueryBuilder
-                            .of(endpoint.toURL())
+                    .query(UriQueryBuilder
+                            .of(endpoint)
                             .path("api").path("public").path("versions").path("default")
-                            .buildURI())
+                            .build())
                     .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
                     .build();
 

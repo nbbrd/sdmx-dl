@@ -30,7 +30,6 @@ import sdmxdl.provider.web.RestClient;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -98,8 +97,8 @@ public class RiRestClient implements RestClient {
     @NonNull
     protected URI getFlowsQuery() throws IOException {
         try {
-            return queries.getFlowsQuery(endpoint.toURL()).build().toURI();
-        } catch (URISyntaxException e) {
+            return queries.getFlowsQuery(endpoint).build();
+        } catch (IllegalArgumentException e) {
             throw new IOException(e);
         }
     }
@@ -122,8 +121,8 @@ public class RiRestClient implements RestClient {
     @NonNull
     protected URI getStructureQuery(@NonNull StructureRef ref) throws IOException {
         try {
-            return queries.getStructureQuery(endpoint.toURL(), ref).build().toURI();
-        } catch (URISyntaxException e) {
+            return queries.getStructureQuery(endpoint, ref).build();
+        } catch (IllegalArgumentException e) {
             throw new IOException(e);
         }
     }
@@ -147,8 +146,8 @@ public class RiRestClient implements RestClient {
     @NonNull
     protected URI getDataQuery(@NonNull DataRef ref, @NonNull StructureRef dsdRef) throws IOException {
         try {
-            return queries.getDataQuery(endpoint.toURL(), ref, dsdRef).build().toURI();
-        } catch (URISyntaxException e) {
+            return queries.getDataQuery(endpoint, ref, dsdRef).build();
+        } catch (IllegalArgumentException e) {
             throw new IOException(e);
         }
     }
@@ -173,8 +172,8 @@ public class RiRestClient implements RestClient {
     @NonNull
     protected URI getCodelistQuery(@NonNull CodelistRef ref) throws IOException {
         try {
-            return queries.getCodelistQuery(endpoint.toURL(), ref).build().toURI();
-        } catch (URISyntaxException e) {
+            return queries.getCodelistQuery(endpoint, ref).build();
+        } catch (IllegalArgumentException e) {
             throw new IOException(e);
         }
     }

@@ -11,13 +11,14 @@ import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.WebContext;
 import tests.sdmxdl.web.spi.DriverAssert;
 
-import java.net.*;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
+import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
 import static java.net.Proxy.NO_PROXY;
-import static nbbrd.io.http.HttpAuthScheme.BASIC;
-import static nbbrd.io.http.HttpAuthScheme.NONE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static sdmxdl.provider.ri.http.UrlConnectionHttpFactory.newUrlConnectionHttpClient;
@@ -60,14 +61,8 @@ public class UrlConnectionHttpFactoryTest {
 
         assertThatNullPointerException().isThrownBy(() -> x.onEvent(null));
         assertThatNullPointerException().isThrownBy(() -> x.onSuccess(null));
-        assertThatNullPointerException().isThrownBy(() -> x.onOpen(null, NO_PROXY, BASIC));
-        assertThatNullPointerException().isThrownBy(() -> x.onOpen(request, null, BASIC));
-        assertThatNullPointerException().isThrownBy(() -> x.onOpen(request, NO_PROXY, null));
-        assertThatNullPointerException().isThrownBy(() -> x.onRedirection(null, source.getEndpoint().toURL()));
-        assertThatNullPointerException().isThrownBy(() -> x.onRedirection(source.getEndpoint().toURL(), null));
-        assertThatNullPointerException().isThrownBy(() -> x.onUnauthorized(null, NONE, BASIC));
-        assertThatNullPointerException().isThrownBy(() -> x.onUnauthorized(source.getEndpoint().toURL(), null, BASIC));
-        assertThatNullPointerException().isThrownBy(() -> x.onUnauthorized(source.getEndpoint().toURL(), NONE, null));
+        assertThatNullPointerException().isThrownBy(() -> x.onOpen(null, NO_PROXY));
+        assertThatNullPointerException().isThrownBy(() -> x.onOpen(request, null));
 
         x.onEvent("hello");
         assertThat(events.pop()).containsExactly(new Event(source, "hello"));
@@ -78,23 +73,17 @@ public class UrlConnectionHttpFactoryTest {
             assertThat(event.getMessage()).startsWith("Parsing '*/*' content-type (").endsWith("ms)");
         });
 
-        x.onOpen(request, NO_PROXY, NONE);
+        x.onOpen(request, NO_PROXY);
         assertThat(events.pop()).containsExactly(new Event(source, "HTTP GET http://localhost"));
 
-        x.onOpen(request, NO_PROXY, BASIC);
-        assertThat(events.pop()).containsExactly(new Event(source, "HTTP GET http://localhost with auth 'BASIC'"));
+        x.onOpen(request, NO_PROXY);
+        assertThat(events.pop()).containsExactly(new Event(source, "HTTP GET http://localhost"));
 
-        x.onOpen(request, customProxy, NONE);
+        x.onOpen(request, customProxy);
         assertThat(events.pop()).containsExactly(new Event(source, "HTTP GET http://localhost with proxy 'HTTP @ 0.0.0.0/0.0.0.0:123'"));
 
-        x.onOpen(request, customProxy, BASIC);
-        assertThat(events.pop()).containsExactly(new Event(source, "HTTP GET http://localhost with proxy 'HTTP @ 0.0.0.0/0.0.0.0:123' with auth 'BASIC'"));
-
-        x.onRedirection(source.getEndpoint().toURL(), new URL("http://other"));
-        assertThat(events.pop()).containsExactly(new Event(source, "Redirecting to http://other"));
-
-        x.onUnauthorized(source.getEndpoint().toURL(), NONE, BASIC);
-        assertThat(events.pop()).containsExactly(new Event(source, "Authenticating http://localhost with 'BASIC'"));
+        x.onOpen(request, customProxy);
+        assertThat(events.pop()).containsExactly(new Event(source, "HTTP GET http://localhost with proxy 'HTTP @ 0.0.0.0/0.0.0.0:123'"));
     }
 
     @lombok.Value

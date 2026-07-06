@@ -18,7 +18,7 @@ package sdmxdl.provider.dialects.drivers;
 
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
-import nbbrd.io.http.URLQueryBuilder;
+import nbbrd.io.http.UriQueryBuilder;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.Feature;
 import sdmxdl.Languages;
@@ -38,7 +38,7 @@ import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.EnumSet;
 
 import static sdmxdl.Confidentiality.PUBLIC;
@@ -97,7 +97,7 @@ public final class ImfDialectDriver implements Driver {
 
         @SdmxFix(id = 1, category = QUERY, cause = "Children reference does not return codelists")
         @Override
-        public @NonNull URLQueryBuilder getStructureQuery(@NonNull URL endpoint, @NonNull StructureRef ref) {
+        public @NonNull UriQueryBuilder getStructureQuery(@NonNull URI endpoint, @NonNull StructureRef ref) {
             return onMeta(endpoint, DEFAULT_DATASTRUCTURE_PATH, ref)
                     .param(REFERENCES_PARAM, "descendants");
         }

@@ -1,20 +1,20 @@
 package sdmxdl.provider.ri.drivers;
 
 import lombok.NonNull;
-import nbbrd.io.http.URLQueryBuilder;
+import nbbrd.io.http.UriQueryBuilder;
 import sdmxdl.CodelistRef;
 import sdmxdl.StructureRef;
 import sdmxdl.provider.DataRef;
 
-import java.net.URL;
+import java.net.URI;
 
 public interface RiRestQueries {
 
-    @NonNull URLQueryBuilder getFlowsQuery(@NonNull URL endpoint);
+    @NonNull UriQueryBuilder getFlowsQuery(@NonNull URI endpoint);
 
-    @NonNull URLQueryBuilder getStructureQuery(@NonNull URL endpoint, @NonNull StructureRef ref);
+    @NonNull UriQueryBuilder getStructureQuery(@NonNull URI endpoint, @NonNull StructureRef ref);
 
-    @NonNull URLQueryBuilder getDataQuery(@NonNull URL endpoint, @NonNull DataRef ref, @NonNull StructureRef dsdRef);
+    @NonNull UriQueryBuilder getDataQuery(@NonNull URI endpoint, @NonNull DataRef ref, @NonNull StructureRef dsdRef);
 
-    @NonNull URLQueryBuilder getCodelistQuery(@NonNull URL endpoint, @NonNull CodelistRef ref);
+    @NonNull UriQueryBuilder getCodelistQuery(@NonNull URI endpoint, @NonNull CodelistRef ref);
 }

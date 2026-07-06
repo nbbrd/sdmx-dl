@@ -215,10 +215,10 @@ public final class StatCanDialectDriver implements Driver {
         public @NonNull URI ping() throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(URLQueryBuilder
-                            .of(endpoint.toURL())
+                    .query(UriQueryBuilder
+                            .of(endpoint)
                             .path("getAllCubesListLite")
-                            .buildURI())
+                            .build())
                     .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
                     .build();
 
@@ -230,10 +230,10 @@ public final class StatCanDialectDriver implements Driver {
         private DataTable[] getAllCubesListLite() throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(URLQueryBuilder
-                            .of(endpoint.toURL())
+                    .query(UriQueryBuilder
+                            .of(endpoint)
                             .path("getAllCubesListLite")
-                            .buildURI())
+                            .build())
                     .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
                     .build();
 
@@ -247,11 +247,11 @@ public final class StatCanDialectDriver implements Driver {
         private FullTableDownloadSDMX getFullTableDownloadSDMX(int productId) throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(URLQueryBuilder
-                            .of(endpoint.toURL())
+                    .query(UriQueryBuilder
+                            .of(endpoint)
                             .path("getFullTableDownloadSDMX")
                             .path(String.valueOf(productId))
-                            .buildURI())
+                            .build())
                     .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
                     .build();
 

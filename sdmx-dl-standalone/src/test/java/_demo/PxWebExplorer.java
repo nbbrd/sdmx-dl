@@ -38,39 +38,56 @@ public class PxWebExplorer {
     private static Report explore(Provider<WebSource> p) {
         try {
             p.testConnection(SourceRequest.builder().build());
-        } catch (Exception e) {
-            return new Report(p.getSource().getId(), Status.CONNECTION_FAILURE, e.getClass().getSimpleName(), e.getMessage());
+        } catch (Exception fatal) {
+            return Report.of(p.getSource(), Status.CONNECTION_FAILURE, fatal);
         }
 
+        SourceRequest sourceRequest;
         List<Database> databases;
         try {
-            databases = p.getDatabases(SourceRequest.builder().build())
-                    .stream().sorted(comparing(Objects::toString)).collect(toList());
-        } catch (Exception e) {
-            return new Report(p.getSource().getId(), Status.DB_FAILURE, e.getClass().getSimpleName(), e.getMessage());
+            sourceRequest = SourceRequest.builder().build();
+            databases = p.getDatabases(sourceRequest).stream().sorted(comparing(Objects::toString)).collect(toList());
+        } catch (Exception fatal) {
+            return Report.of(p.getSource(), Status.DB_FAILURE, fatal);
         }
 
         if (databases.isEmpty()) {
-            return new Report(p.getSource().getId(), Status.NO_DB, null, null);
+            return Report.of(p.getSource(), Status.NO_DB);
         }
 
-        List<Flow> flows;
+        DatabaseRequest databaseRequest;
         Iterator<Database> db = databases.iterator();
+        List<Flow> flows;
         do {
             try {
-                flows = p.getFlows(DatabaseRequest.builder().database(db.next().getRef()).build())
-                        .stream().sorted(comparing(Objects::toString)).collect(toList());
-            } catch (Exception e) {
-                return new Report(p.getSource().getId(), Status.FLOW_FAILURE, e.getClass().getSimpleName(), e.getMessage());
+                databaseRequest = DatabaseRequest.builderOf(sourceRequest).database(db.next().getRef()).build();
+                flows = p.getFlows(databaseRequest).stream().sorted(comparing(Objects::toString)).collect(toList());
+            } catch (Exception fatal) {
+                return Report.of(p.getSource(), Status.FLOW_FAILURE, fatal);
             }
-        } while (flows.isEmpty() && db.hasNext());
+        } while (db.hasNext() && flows.isEmpty());
 
         if (flows.isEmpty()) {
-            return new Report(p.getSource().getId(), Status.NO_FLOW, null, null);
+            return Report.of(p.getSource(), Status.NO_FLOW);
         }
 
-        return new Report(p.getSource().getId(), Status.SUCCESS, null, null);
+//        FlowRequest flowRequest;
+//        Iterator<Flow> flow = flows.iterator();
+//        MetaSet metaSet;
+//        do {
+//            try {
+//                flowRequest = FlowRequest.builderOf(databaseRequest).flow(flow.next().getRef()).build();
+//                metaSet = p.getMeta(flowRequest);
+//            } catch (Exception fatal) {
+//                return Report.of(p.getSource(), Status.META_FAILURE, fatal);
+//            }
+//        } while (flow.hasNext());
+//
+//        if (!isValidStructure(metaSet)) {
+//            return Report.of(p.getSource(), Status.NO_META, new IllegalStateException("Invalid structure: some dimensions have no codes"));
+//        }
 
+        return Report.of(p.getSource(), Status.SUCCESS);
     }
 
     private static void print(Map.Entry<Status, List<Report>> entry) {
@@ -80,19 +97,35 @@ public class PxWebExplorer {
     }
 
     enum Status {
-        SUCCESS,
         CONNECTION_FAILURE,
         DB_FAILURE,
         NO_DB,
         FLOW_FAILURE,
-        NO_FLOW
+        NO_FLOW,
+        META_FAILURE,
+        NO_META,
+        SUCCESS
     }
 
     @lombok.Value
     private static class Report {
+
+        static Report of(WebSource source, Status status, Exception fatal) {
+            return new Report(source.getId(), status, fatal.getClass().getSimpleName(), fatal.getMessage());
+        }
+
+        static Report of(WebSource source, Status status) {
+            return new Report(source.getId(), status, null, null);
+        }
+
         String source;
         Status status;
         String error;
         String message;
+    }
+
+    private static boolean isValidStructure(MetaSet metaSet) {
+        return metaSet.getStructure().getDimensions().stream()
+                .noneMatch(dimension -> dimension.getCodelist().getCodes().isEmpty());
     }
 }

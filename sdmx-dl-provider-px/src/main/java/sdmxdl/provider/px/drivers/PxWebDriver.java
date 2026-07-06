@@ -254,7 +254,7 @@ public final class PxWebDriver implements Driver {
         public @NonNull URI ping() throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(URLQueryBuilder.of(endpoint.toURL()).param("config").buildURI())
+                    .query(UriQueryBuilder.of(endpoint).param("config").build())
                     .build();
 
             try (HttpResponse ignore = client.send(request)) {
@@ -266,7 +266,7 @@ public final class PxWebDriver implements Driver {
         public @NonNull Config getConfig() throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(URLQueryBuilder.of(endpoint.toURL()).param("config").buildURI())
+                    .query(UriQueryBuilder.of(endpoint).param("config").build())
                     .build();
 
             try (HttpResponse response = client.send(request)) {
@@ -301,12 +301,12 @@ public final class PxWebDriver implements Driver {
         public @NonNull List<Flow> getTables(@NonNull String dbId) throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(URLQueryBuilder
-                            .of(endpoint.toURL())
+                    .query(UriQueryBuilder
+                            .of(endpoint)
                             .path(dbId)
                             .param("query", "*")
                             .param("filter", "*")
-                            .buildURI())
+                            .build())
                     .build();
 
             try (HttpResponse response = client.send(request)) {
@@ -324,11 +324,11 @@ public final class PxWebDriver implements Driver {
         public @NonNull Structure getMeta(@NonNull String dbId, @NonNull String tableId) throws IOException, IllegalArgumentException {
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(URLQueryBuilder
-                            .of(endpoint.toURL())
+                    .query(UriQueryBuilder
+                            .of(endpoint)
                             .path(dbId)
                             .path(tableId)
-                            .buildURI())
+                            .build())
                     .build();
 
             try (HttpResponse response = client.send(request)) {
@@ -346,11 +346,11 @@ public final class PxWebDriver implements Driver {
         public @NonNull DataCursor getData(@NonNull String dbId, @NonNull String tableId, @NonNull Structure dsd, @NonNull Key key) throws IOException, IllegalArgumentException {
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(URLQueryBuilder
-                            .of(endpoint.toURL())
+                    .query(UriQueryBuilder
+                            .of(endpoint)
                             .path(dbId)
                             .path(tableId)
-                            .buildURI())
+                            .build())
                     .method(HttpMethod.POST)
                     .bodyOf(TableQuery.FORMATTER.formatToString(TableQuery.fromDataStructureAndKey(dsd, key)))
                     .build();

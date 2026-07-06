@@ -21,7 +21,7 @@ import nbbrd.design.DirectImpl;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.FileParser;
 import nbbrd.io.function.IOFunction;
-import nbbrd.io.http.URLQueryBuilder;
+import nbbrd.io.http.UriQueryBuilder;
 import nbbrd.io.net.MediaType;
 import nbbrd.io.text.BooleanProperty;
 import nbbrd.io.text.Parser;
@@ -48,8 +48,7 @@ import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.EnumSet;
 import java.util.function.Supplier;
 
@@ -155,13 +154,13 @@ public final class InseeDialectDriver implements Driver {
         }
 
         @Override
-        protected URLQueryBuilder onData(URL endpoint, String resourcePath, FlowRef flowRef, Key key, String providerRef) {
-            URLQueryBuilder result = super.onData(endpoint, resourcePath, flowRef, key, providerRef);
+        protected UriQueryBuilder onData(URI endpoint, String resourcePath, FlowRef flowRef, Key key, String providerRef) {
+            UriQueryBuilder result = super.onData(endpoint, resourcePath, flowRef, key, providerRef);
             if (noCommaEncoding) {
                 String fixedURL = result.toString().replace("%2C", ",");
                 try {
-                    return URLQueryBuilder.of(new URL(fixedURL));
-                } catch (MalformedURLException e) {
+                    return UriQueryBuilder.of(URI.create(fixedURL));
+                } catch (IllegalArgumentException e) {
                     return result;
                 }
             }
