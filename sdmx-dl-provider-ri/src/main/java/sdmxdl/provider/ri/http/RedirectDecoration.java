@@ -27,7 +27,7 @@ public final class RedirectDecoration implements HttpDecoration {
 
     private static RedirectListener toListener(EventListener onEvent) {
         return onEvent != null
-                ? (oldUri, newUri) -> onEvent.accept("RI_HTTP", "Redirecting request from " + oldUri + " to " + newUri, 1)
+                ? (oldUri, newUri) -> onEvent.accept(MARKER, "Redirecting request from " + oldUri + " to " + newUri, 1)
                 : RedirectListener.noOp();
     }
 }

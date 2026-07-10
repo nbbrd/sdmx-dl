@@ -44,7 +44,7 @@ public final class AuthenticatingDecoration implements HttpDecoration {
 
     private static AuthenticatingListener toListener(EventListener onEvent) {
         return onEvent != null
-                ? (uri, oldScheme, newScheme) -> onEvent.accept("RI_HTTP", "Authentication scheme changed for " + uri + ": " + oldScheme + " → " + newScheme)
+                ? (uri, oldScheme, newScheme) -> onEvent.accept(MARKER, "Authentication scheme changed for " + uri + ": " + oldScheme + " → " + newScheme)
                 : AuthenticatingListener.noOp();
     }
 

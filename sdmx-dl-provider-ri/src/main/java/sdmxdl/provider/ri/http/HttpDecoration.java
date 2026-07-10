@@ -45,4 +45,6 @@ public interface HttpDecoration {
      */
     @NonNull
     HttpFactory decorate(@NonNull HttpFactory factory);
+
+    String MARKER = "RI_HTTP";
 }

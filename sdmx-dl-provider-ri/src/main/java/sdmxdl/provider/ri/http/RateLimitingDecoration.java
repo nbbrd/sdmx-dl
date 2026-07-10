@@ -42,12 +42,12 @@ public final class RateLimitingDecoration implements HttpDecoration {
 
         @Override
         public void onRateAdjusted(double oldRate, double newRate) {
-            onEvent.accept("RI_HTTP", "Rate adjusted from " + oldRate + " to " + newRate, 1);
+            onEvent.accept(MARKER, "Rate adjusted from " + oldRate + " to " + newRate, 1);
         }
 
         @Override
         public void onRateLimited(@NonNull HttpRequest request, @NonNull Duration waitTime) {
-            onEvent.accept("RI_HTTP", "Rate limited request to " + request.getQuery() + ", waiting for " + waitTime, 1);
+            onEvent.accept(MARKER, "Rate limited request to " + request.getQuery() + ", waiting for " + waitTime, 1);
         }
     }
 }

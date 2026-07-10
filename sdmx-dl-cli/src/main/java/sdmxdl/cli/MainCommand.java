@@ -25,6 +25,7 @@ import picocli.CommandLine;
 import picocli.jansi.graalvm.AnsiConsole;
 import sdmxdl.About;
 import sdmxdl.cli.experimental.DebugCommand;
+import sdmxdl.cli.experimental.ExploreCommand;
 
 import java.util.Map;
 import java.util.Properties;
@@ -51,7 +52,8 @@ import java.util.concurrent.Callable;
                 SearchCommand.class,
                 CheckCommand.class,
                 SetupCommand.class,
-                DebugCommand.class
+                DebugCommand.class,
+                ExploreCommand.class
         }
 )
 public final class MainCommand implements Callable<Void> {

@@ -59,7 +59,7 @@ public final class DumpingDecoration implements HttpDecoration {
         File dumpFolder = DUMP_FOLDER_PROPERTY.get(s.getProperties());
         if (dumpFolder != null) {
             EventListener onEvent = c.getEventListener(s);
-            return new DumpingDecorator(original, dumpFolder.toPath(), onEvent != null ? file -> onEvent.accept("RI_HTTP", "Dumping " + file.toUri()) : ignore -> {
+            return new DumpingDecorator(original, dumpFolder.toPath(), onEvent != null ? file -> onEvent.accept(MARKER, "Dumping " + file.toUri()) : ignore -> {
             });
         }
         return original;

@@ -26,7 +26,7 @@ public final class CachingDecoration implements HttpDecoration {
                 .decorated(original)
                 .listener(
                         onEvent != null
-                                ? CacheEventListener.basic(msg -> onEvent.accept("HTTP_CACHE", msg))
+                                ? CacheEventListener.basic(msg -> onEvent.accept(MARKER, msg))
                                 : CacheEventListener.noOp()
                 )
                 .store(sharedStore)

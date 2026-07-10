@@ -42,7 +42,7 @@ public final class ByteCountingDecoration implements HttpDecoration {
         HttpClient original = d.create(s, c);
         EventListener onEvent = c.getEventListener(s);
         if (onEvent != null) {
-            return new ByteCountingDecorator(original, bytes -> onEvent.accept("RI_HTTP", "Read " + formatBytes(bytes), 1));
+            return new ByteCountingDecorator(original, bytes -> onEvent.accept(MARKER, "Read " + formatBytes(bytes), 1));
         }
         return original;
     }

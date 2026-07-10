@@ -47,7 +47,7 @@ public final class RetryDecoration implements HttpDecoration {
 
     private static RetryListener toListener(EventListener onEvent) {
         return onEvent != null
-                ? (request, attempt, cause) -> onEvent.accept("RI_HTTP", "Retrying request to " + request.getQuery() + " (attempt " + attempt + ") due to: " + cause, 1)
+                ? (request, attempt, cause) -> onEvent.accept(MARKER, "Retrying request to " + request.getQuery() + " (attempt " + attempt + ") due to: " + cause, 1)
                 : RetryListener.noOp();
     }
 }
