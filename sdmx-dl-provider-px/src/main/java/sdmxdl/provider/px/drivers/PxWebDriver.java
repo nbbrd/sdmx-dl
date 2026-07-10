@@ -2,10 +2,7 @@ package sdmxdl.provider.px.drivers;
 
 import com.google.gson.*;
 import lombok.NonNull;
-import nbbrd.design.DirectImpl;
-import nbbrd.design.MightBeGenerated;
-import nbbrd.design.NonNegative;
-import nbbrd.design.VisibleForTesting;
+import nbbrd.design.*;
 import nbbrd.io.FileParser;
 import nbbrd.io.function.IOSupplier;
 import nbbrd.io.http.*;
@@ -35,6 +32,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.MonthDay;
+import java.time.Year;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoField;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -703,7 +705,7 @@ public final class PxWebDriver implements Driver {
         String title;
         List<TableVariable> variables;
 
-        Structure toStructure(StructureRef ref) {
+        Structure toStructure(StructureRef ref) throws IOException {
             TableVariable timeVariable = getTimeVariable();
             return Structure
                     .builder()
@@ -717,16 +719,16 @@ public final class PxWebDriver implements Driver {
         }
 
         @VisibleForTesting
-        TableVariable getTimeVariable() {
-            return variables
-                    .stream()
-                    .filter(TableVariable::isTime)
-                    .findFirst()
-                    .orElseGet(() -> variables
-                            .stream()
-                            .filter(variable -> variable.getValueTexts().stream().map(TIME_PERIOD_PARSER::parse).allMatch(Objects::nonNull))
-                            .findFirst()
-                            .orElseThrow(() -> new IllegalStateException("Time variable not found")));
+        TableVariable getTimeVariable() throws IOException {
+            {
+                TableVariable main = variables.stream().filter(TableVariable::isTime).findFirst().orElse(null);
+                if (main != null) return main;
+            }
+            {
+                TableVariable fallback = variables.stream().filter(TableVariable::hasTimeValues).findFirst().orElse(null);
+                if (fallback != null) return fallback;
+            }
+            throw new IOException("Time variable not found");
         }
 
         List<Dimension> toDimensionList(TableVariable timeVariable) {
@@ -744,8 +746,6 @@ public final class PxWebDriver implements Driver {
                 .name("Unit measure")
                 .relationship(AttributeRelationship.SERIES)
                 .build();
-
-        static final Parser<ObservationalTimePeriod> TIME_PERIOD_PARSER = TimeFormats.getObservationalTimePeriod(IGNORE_ERROR);
 
         static final TextParser<TableMeta> JSON_PARSER = GsonIO.GsonParser
                 .builder(TableMeta.class)
@@ -786,6 +786,14 @@ public final class PxWebDriver implements Driver {
                             .build())
                     .build();
         }
+
+        boolean hasTimeValues() {
+            return getValueTexts().stream().map(TIME_PERIOD_PARSER::parse).allMatch(Objects::nonNull);
+        }
+
+        static final Parser<ObservationalTimePeriod> TIME_PERIOD_PARSER = TimeFormats
+                .getObservationalTimePeriod(IGNORE_ERROR)
+                .orElse(TimeFormats.onParser(YearRange::isParsable, YearRange::parse, IGNORE_ERROR));
 
         @MightBeGenerated
         static TableVariable deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -849,6 +857,48 @@ public final class PxWebDriver implements Driver {
             result.add("response", response);
 
             return result;
+        }
+    }
+
+    @VisibleForTesting
+    @RepresentableAsString
+    @lombok.Value(staticConstructor = "of")
+    static class YearRange implements ObservationalTimePeriod {
+
+        @StaticFactoryMethod
+        public static @NonNull YearRange parse(@NonNull CharSequence text) throws DateTimeParseException {
+            if (!isParsable(text)) throw new DateTimeParseException("Cannot parse year range", text, 0);
+            Year start = Year.parse(text.subSequence(0, 4));
+            Year end = Year.parse(text.subSequence(4 + 1, text.length()));
+            if (start.isAfter(end)) throw new DateTimeParseException("Cannot parse year range", text, 0);
+            return new YearRange(start, end);
+        }
+
+        public static boolean isParsable(@Nullable CharSequence text) {
+            return text != null
+                    && text.length() == 9
+                    && text.charAt(4) == '-';
+        }
+
+        @NonNull
+        Year includedStartYear;
+
+        @NonNull
+        Year includedEndYear;
+
+        @Override
+        public @NonNull LocalDateTime toStartTime(@Nullable MonthDay ignore) {
+            return includedStartYear.atDay(1).atStartOfDay();
+        }
+
+        @Override
+        public sdmxdl.@NonNull Duration getDuration() {
+            return sdmxdl.Duration.P1Y.multipliedBy(includedEndYear.compareTo(includedStartYear) + 1);
+        }
+
+        @Override
+        public String toString() {
+            return includedStartYear.get(ChronoField.YEAR) + "-" + includedEndYear.get(ChronoField.YEAR);
         }
     }
 }

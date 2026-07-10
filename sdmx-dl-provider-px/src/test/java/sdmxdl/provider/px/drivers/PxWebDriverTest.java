@@ -2,20 +2,24 @@ package sdmxdl.provider.px.drivers;
 
 import org.assertj.core.data.Index;
 import org.junit.jupiter.api.Test;
+import sdmxdl.Duration;
 import sdmxdl.Languages;
 import sdmxdl.StructureRef;
 import sdmxdl.web.WebSource;
 import tests.sdmxdl.web.spi.DriverAssert;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.Year;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.atIndex;
+import static org.assertj.core.api.Assertions.*;
 import static sdmxdl.Languages.ANY;
 import static sdmxdl.provider.px.drivers.PxWebDriver.*;
 
@@ -82,10 +86,15 @@ public class PxWebDriverTest {
     @Test
     public void testGetTimeVariable() throws IOException {
         assertThat(TableMeta.JSON_PARSER.parseResource(PxWebDriverTest.class, "statfin-table-meta.json", UTF_8).getTimeVariable())
+                .describedAs("with time attribute")
                 .returns("Vuosi", TableVariable::getCode);
 
         assertThat(TableMeta.JSON_PARSER.parseResource(PxWebDriverTest.class, "grande-region-a301-table-meta.json", UTF_8).getTimeVariable())
+                .describedAs("without time attribute but all values represent years")
                 .returns("Année", TableVariable::getCode);
+
+        assertThat(TableMeta.JSON_PARSER.parseResource(PxWebDriverTest.class, "stat-si-0156101S.table-meta.json", UTF_8).getTimeVariable())
+                .returns("OBDOBJE, LETO", TableVariable::getCode);
     }
 
     @Test
@@ -203,6 +212,38 @@ public class PxWebDriverTest {
                 .filteredOn(source -> source.getWebsite() == null)
                 .extracting(WebSource::getEndpoint)
                 .isEmpty();
+    }
+
+    @SuppressWarnings("DataFlowIssue")
+    @Test
+    public void testYearRange() {
+        assertThat(YearRange.isParsable(null)).isFalse();
+        assertThat(YearRange.isParsable("")).isFalse();
+        assertThat(YearRange.isParsable("12-34")).isFalse();
+        assertThat(YearRange.isParsable("1981/1990")).isFalse();
+        assertThat(YearRange.isParsable("1981-1990")).isTrue();
+
+        assertThat(YearRange.parse("1981-1990"))
+                .returns(Year.of(1981), YearRange::getIncludedStartYear)
+                .returns(Year.of(1990), YearRange::getIncludedEndYear)
+                .returns(Duration.parse("P10Y"), YearRange::getDuration)
+                .returns(LocalDate.of(1981, Month.JANUARY, 1).atStartOfDay(), range -> range.toStartTime(null))
+                .hasToString("1981-1990");
+
+        assertThatNullPointerException()
+                .isThrownBy(() -> YearRange.parse(null));
+
+        assertThatExceptionOfType(DateTimeParseException.class)
+                .isThrownBy(() -> YearRange.parse(""));
+
+        assertThatExceptionOfType(DateTimeParseException.class)
+                .isThrownBy(() -> YearRange.parse("12-34"));
+
+        assertThatExceptionOfType(DateTimeParseException.class)
+                .isThrownBy(() -> YearRange.parse("1981/1990"));
+
+        assertThatExceptionOfType(DateTimeParseException.class)
+                .isThrownBy(() -> YearRange.parse("1990-1981"));
     }
 
     private static <T> Set<T> setOf(T... values) {

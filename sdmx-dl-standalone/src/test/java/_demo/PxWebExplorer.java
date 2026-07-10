@@ -1,13 +1,12 @@
 package _demo;
 
+import lombok.NonNull;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.*;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
@@ -39,16 +38,18 @@ public class PxWebExplorer {
         try {
             p.testConnection(SourceRequest.builder().build());
         } catch (Exception fatal) {
-            return Report.of(p.getSource(), Status.CONNECTION_FAILURE, fatal);
+            return Report.of(p.getSource(), Status.CONNECTION_FAILURE, fatal, SourceRequest.builder().build());
         }
 
         SourceRequest sourceRequest;
         List<Database> databases;
-        try {
+        {
             sourceRequest = SourceRequest.builder().build();
-            databases = p.getDatabases(sourceRequest).stream().sorted(comparing(Objects::toString)).collect(toList());
-        } catch (Exception fatal) {
-            return Report.of(p.getSource(), Status.DB_FAILURE, fatal);
+            try {
+                databases = p.getDatabases(sourceRequest).stream().sorted(comparing(Objects::toString)).collect(toList());
+            } catch (Exception fatal) {
+                return Report.of(p.getSource(), Status.DB_FAILURE, fatal, sourceRequest);
+            }
         }
 
         if (databases.isEmpty()) {
@@ -56,36 +57,58 @@ public class PxWebExplorer {
         }
 
         DatabaseRequest databaseRequest;
-        Iterator<Database> db = databases.iterator();
         List<Flow> flows;
-        do {
-            try {
+        {
+            Iterator<Database> db = databases.iterator();
+            do {
                 databaseRequest = DatabaseRequest.builderOf(sourceRequest).database(db.next().getRef()).build();
-                flows = p.getFlows(databaseRequest).stream().sorted(comparing(Objects::toString)).collect(toList());
-            } catch (Exception fatal) {
-                return Report.of(p.getSource(), Status.FLOW_FAILURE, fatal);
-            }
-        } while (db.hasNext() && flows.isEmpty());
+                try {
+                    flows = p.getFlows(databaseRequest).stream().sorted(comparing(Objects::toString)).collect(toList());
+                } catch (Exception fatal) {
+                    return Report.of(p.getSource(), Status.FLOW_FAILURE, fatal, databaseRequest);
+                }
+            } while (db.hasNext() && flows.isEmpty());
+        }
 
         if (flows.isEmpty()) {
             return Report.of(p.getSource(), Status.NO_FLOW);
         }
 
-//        FlowRequest flowRequest;
-//        Iterator<Flow> flow = flows.iterator();
-//        MetaSet metaSet;
-//        do {
-//            try {
-//                flowRequest = FlowRequest.builderOf(databaseRequest).flow(flow.next().getRef()).build();
-//                metaSet = p.getMeta(flowRequest);
-//            } catch (Exception fatal) {
-//                return Report.of(p.getSource(), Status.META_FAILURE, fatal);
-//            }
-//        } while (flow.hasNext());
-//
-//        if (!isValidStructure(metaSet)) {
-//            return Report.of(p.getSource(), Status.NO_META, new IllegalStateException("Invalid structure: some dimensions have no codes"));
-//        }
+        FlowRequest flowRequest;
+        MetaSet metaSet;
+        {
+            Iterator<Flow> flow = flows.iterator();
+            do {
+                flowRequest = FlowRequest.builderOf(databaseRequest).flow(flow.next().getRef()).build();
+                try {
+                    metaSet = p.getMeta(flowRequest);
+                } catch (Exception fatal) {
+                    return Report.of(p.getSource(), Status.META_FAILURE, fatal, flowRequest);
+                }
+            } while (flow.hasNext() && isInvalidStructure(metaSet));
+        }
+
+        if (isInvalidStructure(metaSet)) {
+            return Report.of(p.getSource(), Status.NO_META);
+        }
+
+        KeyRequest keyRequest;
+        DataSet dataSet;
+        {
+            Iterator<Key> key = keyIterator(metaSet.getStructure());
+            do {
+                keyRequest = KeyRequest.builderOf(flowRequest).key(key.next()).build();
+                try {
+                    dataSet = p.getData(keyRequest);
+                } catch (Exception fatal) {
+                    return Report.of(p.getSource(), Status.DATA_FAILURE, fatal, keyRequest);
+                }
+            } while (key.hasNext() && dataSet.getData().isEmpty());
+        }
+
+        if (dataSet.getData().isEmpty()) {
+            return Report.of(p.getSource(), Status.NO_DATA);
+        }
 
         return Report.of(p.getSource(), Status.SUCCESS);
     }
@@ -104,28 +127,48 @@ public class PxWebExplorer {
         NO_FLOW,
         META_FAILURE,
         NO_META,
+        DATA_FAILURE,
+        NO_DATA,
         SUCCESS
     }
 
     @lombok.Value
     private static class Report {
 
-        static Report of(WebSource source, Status status, Exception fatal) {
-            return new Report(source.getId(), status, fatal.getClass().getSimpleName(), fatal.getMessage());
+        static Report of(WebSource source, Status status, Exception fatal, Object request) {
+            return new Report(source.getId(), status, fatal.getClass().getSimpleName(), fatal.getMessage(), request);
         }
 
         static Report of(WebSource source, Status status) {
-            return new Report(source.getId(), status, null, null);
+            return new Report(source.getId(), status, null, null, null);
         }
 
+        @NonNull
         String source;
+
+        @NonNull
         Status status;
+
+        @Nullable
         String error;
+
+        @Nullable
         String message;
+
+        @Nullable
+        Object request;
     }
 
-    private static boolean isValidStructure(MetaSet metaSet) {
+    private static boolean isInvalidStructure(MetaSet metaSet) {
         return metaSet.getStructure().getDimensions().stream()
-                .noneMatch(dimension -> dimension.getCodelist().getCodes().isEmpty());
+                .anyMatch(dimension -> dimension.getCodelist().getCodes().isEmpty());
+    }
+
+    private static Iterator<Key> keyIterator(Structure structure) {
+        Key.Builder key = Key.builder(structure);
+        for (Dimension dimension : structure.getDimensions()) {
+            key.put(dimension.getId(), dimension.getCodelist().getCodes().keySet().stream().findFirst().orElseThrow(() -> new RuntimeException("boom")));
+        }
+        return Collections.singletonList(key.build()).iterator();
     }
 }

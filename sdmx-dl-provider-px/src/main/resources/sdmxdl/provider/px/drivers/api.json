@@ -432,7 +432,7 @@
       "citation" : {
         "organization" : "National Statistics Office of Georgia",
         "address" : "Tbilisi, Georgia"},
-      "url" : "http://pc-axis.geostat.ge/PXweb/api/[version]/[lang]",
+      "url" : "https://pc-axis.geostat.ge/PXweb/api/[version]/[lang]",
       "version": ["v1"],
       "lang": ["en"]
     },
