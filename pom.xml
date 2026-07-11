@@ -48,7 +48,7 @@
         <x.github.repo>sdmx-dl</x.github.repo>
 
         <protobuf.version>3.25.5</protobuf.version>
-        <flatlaf.version>3.7.1</flatlaf.version>
+        <flatlaf.version>3.7.2</flatlaf.version>
         <heylogs.version>0.19.1</heylogs.version>
     </properties>
 
