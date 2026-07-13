@@ -25,41 +25,15 @@ public final class RestConnector implements WebConnector {
     public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
         EventListener onEvent = context.getEventListener(source);
         RestClient restClient = buildClient(source, languages, context, onEvent);
-        Connection connection = RestConnection.of(restClient);
-        if (restClient instanceof EventRestClient) {
-            EventRestClient eventClient = (EventRestClient) restClient;
-            return new SummaryConnection(connection, eventClient);
-        }
-        return connection;
+        return RestConnection.of(restClient);
     }
 
     private RestClient buildClient(WebSource source, Languages languages, WebContext context, EventListener onEvent) throws IOException {
-        RestClient result = CachedRestClient.of(
-                client.get(source, languages, context),
+        return CachedRestClient.of(
+                EventRestClient.of(client.get(source, languages, context), onEvent),
                 context.getDriverCache(source),
                 CACHE_TTL_PROPERTY.get(source.getProperties()),
                 source,
                 languages);
-        return EventRestClient.of(result, onEvent);
-    }
-
-    @lombok.RequiredArgsConstructor
-    private static final class SummaryConnection implements Connection {
-
-        @lombok.NonNull
-        @lombok.experimental.Delegate(types = Connection.class, excludes = AutoCloseable.class)
-        private final Connection delegate;
-
-        @lombok.NonNull
-        private final EventRestClient eventClient;
-
-        @Override
-        public void close() throws IOException {
-            try {
-                delegate.close();
-            } finally {
-                eventClient.emitSummary();
-            }
-        }
     }
 }

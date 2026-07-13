@@ -21,7 +21,6 @@ import java.util.stream.Stream;
 final class EventRestClient implements RestClient {
 
     private static final String QUERY_MARKER = "QUERY";
-    private static final String SUMMARY_MARKER = "SUMMARY";
     private static final int DEPTH = 0;
 
     static @NonNull RestClient of(@NonNull RestClient delegate, @Nullable EventListener onEvent) {
@@ -34,14 +33,9 @@ final class EventRestClient implements RestClient {
     @lombok.NonNull
     private final EventListener onEvent;
 
-    private final long connectionStart;
-    private final AtomicLong networkMs = new AtomicLong();
-    private final AtomicLong queryCount = new AtomicLong();
-
     EventRestClient(@NonNull RestClient delegate, @NonNull EventListener onEvent) {
         this.delegate = delegate;
         this.onEvent = onEvent;
-        this.connectionStart = System.currentTimeMillis();
     }
 
     @Override
@@ -55,8 +49,6 @@ final class EventRestClient implements RestClient {
         long start = System.currentTimeMillis();
         List<Flow> result = delegate.getFlows();
         long elapsed = System.currentTimeMillis() - start;
-        networkMs.addAndGet(elapsed);
-        queryCount.incrementAndGet();
         onEvent.accept(QUERY_MARKER, String.format(Locale.ROOT, "Got %d flows (%dms)", result.size(), elapsed), DEPTH);
         return result;
     }
@@ -67,8 +59,6 @@ final class EventRestClient implements RestClient {
         long start = System.currentTimeMillis();
         Structure result = delegate.getStructure(ref);
         long elapsed = System.currentTimeMillis() - start;
-        networkMs.addAndGet(elapsed);
-        queryCount.incrementAndGet();
         onEvent.accept(QUERY_MARKER, String.format(Locale.ROOT, "Got structure with %d dimensions (%dms)", result.getDimensions().size(), elapsed), DEPTH);
         return result;
     }
@@ -80,7 +70,6 @@ final class EventRestClient implements RestClient {
         Stream<Series> result = delegate.getData(ref, dsd);
         AtomicLong seriesCount = new AtomicLong();
         AtomicLong obsCount = new AtomicLong();
-        queryCount.incrementAndGet();
         return result
                 .peek(series -> {
                     seriesCount.incrementAndGet();
@@ -88,7 +77,6 @@ final class EventRestClient implements RestClient {
                 })
                 .onClose(() -> {
                     long elapsed = System.currentTimeMillis() - start;
-                    networkMs.addAndGet(elapsed);
                     onEvent.accept(QUERY_MARKER, WebEvents.onDataReceived(seriesCount.get(), obsCount.get(), elapsed), DEPTH);
                 });
     }
@@ -107,14 +95,5 @@ final class EventRestClient implements RestClient {
     @Override
     public Optional<URI> testClient() throws IOException {
         return delegate.testClient();
-    }
-
-    void emitSummary() {
-        long totalElapsed = System.currentTimeMillis() - connectionStart;
-        onEvent.accept(SUMMARY_MARKER, String.format(Locale.ROOT,
-                "Completed %d %s in %dms",
-                queryCount.get(),
-                queryCount.get() == 1 ? "query" : "queries",
-                totalElapsed), DEPTH);
     }
 }

@@ -13,7 +13,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- Fix parsing of year range in PxWebDriver
+- ![PROVIDER] Fix parsing of year range in PxWebDriver
+- ![PROVIDER] Fix logs verbosity
 
 ## [3.1.1] - 2026-06-17
 

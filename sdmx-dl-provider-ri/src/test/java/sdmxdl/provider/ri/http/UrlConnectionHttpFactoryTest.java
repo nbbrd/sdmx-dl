@@ -74,16 +74,16 @@ public class UrlConnectionHttpFactoryTest {
         });
 
         x.onOpen(request, NO_PROXY);
-        assertThat(events.pop()).containsExactly(new Event(source, "HTTP GET http://localhost"));
+        assertThat(events.pop()).containsExactly(new Event(source, "GET http://localhost"));
 
         x.onOpen(request, NO_PROXY);
-        assertThat(events.pop()).containsExactly(new Event(source, "HTTP GET http://localhost"));
+        assertThat(events.pop()).containsExactly(new Event(source, "GET http://localhost"));
 
         x.onOpen(request, customProxy);
-        assertThat(events.pop()).containsExactly(new Event(source, "HTTP GET http://localhost with proxy 'HTTP @ 0.0.0.0/0.0.0.0:123'"));
+        assertThat(events.pop()).containsExactly(new Event(source, "GET http://localhost with proxy 'HTTP @ 0.0.0.0/0.0.0.0:123'"));
 
         x.onOpen(request, customProxy);
-        assertThat(events.pop()).containsExactly(new Event(source, "HTTP GET http://localhost with proxy 'HTTP @ 0.0.0.0/0.0.0.0:123'"));
+        assertThat(events.pop()).containsExactly(new Event(source, "GET http://localhost with proxy 'HTTP @ 0.0.0.0/0.0.0.0:123'"));
     }
 
     @lombok.Value
