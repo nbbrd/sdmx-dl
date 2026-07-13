@@ -39,7 +39,7 @@ public class ByteCountingWrapperTest {
 
         HttpFactory base = stubFactory(stubClient("hello world".getBytes(UTF_8)));
         HttpFactory decorated = decorator.decorate(base);
-        HttpClient client = decorated.create(source, context);
+        HttpClient client = decorated.createHttpClient(source, context);
 
         assertThat(client.getDescription()).contains("Byte counting");
     }
@@ -52,7 +52,7 @@ public class ByteCountingWrapperTest {
 
         HttpFactory base = stubFactory(stubClient("data".getBytes(UTF_8)));
         HttpFactory decorated = decorator.decorate(base);
-        HttpClient client = decorated.create(source, context);
+        HttpClient client = decorated.createHttpClient(source, context);
 
         assertThat(client.getDescription()).doesNotContain("Byte counting");
     }
@@ -69,7 +69,7 @@ public class ByteCountingWrapperTest {
         byte[] data = "hello world".getBytes(UTF_8);
         HttpFactory base = stubFactory(stubClient(data));
         HttpFactory decorated = decorator.decorate(base);
-        HttpClient client = decorated.create(source, context);
+        HttpClient client = decorated.createHttpClient(source, context);
 
         HttpRequest request = HttpRequest.builder()
                 .query(source.getEndpoint())
@@ -89,7 +89,7 @@ public class ByteCountingWrapperTest {
     }
 
     @Test
-    public void zeroBytesReadAreNotReported() throws IOException {
+    public void zeroBytesReadAreReported() throws IOException {
         ByteCountingDecoration decorator = new ByteCountingDecoration();
         List<String> events = new ArrayList<>();
 
@@ -99,7 +99,7 @@ public class ByteCountingWrapperTest {
 
         HttpFactory base = stubFactory(stubClient(new byte[0]));
         HttpFactory decorated = decorator.decorate(base);
-        HttpClient client = decorated.create(source, context);
+        HttpClient client = decorated.createHttpClient(source, context);
 
         HttpRequest request = HttpRequest.builder()
                 .query(source.getEndpoint())
@@ -112,7 +112,7 @@ public class ByteCountingWrapperTest {
             }
         }
 
-        assertThat(events).noneMatch(e -> e.contains("Read"));
+        assertThat(events).anyMatch(e -> e.contains("Read 0B"));
     }
 
     @Test
@@ -127,7 +127,7 @@ public class ByteCountingWrapperTest {
         byte[] data = new byte[2048];
         HttpFactory base = stubFactory(stubClient(data));
         HttpFactory decorated = decorator.decorate(base);
-        HttpClient client = decorated.create(source, context);
+        HttpClient client = decorated.createHttpClient(source, context);
 
         HttpRequest request = HttpRequest.builder()
                 .query(source.getEndpoint())
@@ -158,7 +158,7 @@ public class ByteCountingWrapperTest {
         byte[] data = {1, 2, 3};
         HttpFactory base = stubFactory(stubClient(data));
         HttpFactory decorated = decorator.decorate(base);
-        HttpClient client = decorated.create(source, context);
+        HttpClient client = decorated.createHttpClient(source, context);
 
         HttpRequest request = HttpRequest.builder()
                 .query(source.getEndpoint())

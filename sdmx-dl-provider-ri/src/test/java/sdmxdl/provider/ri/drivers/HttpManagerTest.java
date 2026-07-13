@@ -14,7 +14,7 @@ public class HttpManagerTest {
     @Test
     public void testFactory() {
         assertThatNullPointerException()
-                .isThrownBy(() -> HttpManager.getHttpFactory().create(null, null));
+                .isThrownBy(() -> HttpManager.getHttpFactory().createHttpClient(null, null));
     }
 
     @Test
@@ -22,7 +22,7 @@ public class HttpManagerTest {
         assertThat(HttpManager.getHttpFactory().getFactoryName())
                 .isEqualTo("UrlConnectionHttpClientFactory with Lazy with Authenticating with Redirect with Retry with Rate-limiting with Throwing with Dumping with ByteCounting");
 
-        assertThat(HttpManager.getHttpFactory().getFactoryProperties())
+        assertThat(HttpManager.getHttpFactory().getHttpClientProperties())
                 .hasSize(7)
                 .extracting(BaseProperty::getKey)
                 .contains(DumpingDecoration.DUMP_FOLDER_PROPERTY.getKey())

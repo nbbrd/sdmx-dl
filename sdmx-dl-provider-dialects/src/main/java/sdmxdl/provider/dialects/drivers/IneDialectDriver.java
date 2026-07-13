@@ -23,14 +23,14 @@ import nbbrd.design.VisibleForTesting;
 import nbbrd.io.http.*;
 import nbbrd.io.http.ext.ThrowingStatusException;
 import nbbrd.io.net.MediaType;
+import nbbrd.io.text.BaseProperty;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
 import sdmxdl.ext.Cache;
-import sdmxdl.provider.ConnectionSupport;
-import sdmxdl.provider.HasMarker;
-import sdmxdl.provider.Marker;
-import sdmxdl.provider.TypedId;
+import sdmxdl.provider.*;
+import sdmxdl.provider.ri.http.HttpFactory;
 import sdmxdl.provider.ri.http.HttpManager;
+import sdmxdl.provider.web.ConnectionFactory;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
@@ -78,9 +78,7 @@ public final class IneDialectDriver implements Driver {
             .builder()
             .id(DIALECTS_INE)
             .rank(NATIVE_DRIVER_RANK)
-            .connector(IneDialectDriver::newConnection)
-            .propertiesOf(HttpManager.getHttpFactory().getFactoryProperties())
-            .propertyOf(CACHE_TTL_PROPERTY)
+            .connector(new IneConnectionFactory())
             .source(WebSource
                     .builder()
                     .id("INE")
@@ -95,23 +93,32 @@ public final class IneDialectDriver implements Driver {
                     .build())
             .build();
 
-    private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) {
-        String lang = Converter.toLangCode(languages);
+    private static final class IneConnectionFactory implements ConnectionFactory {
 
-        IneClient client = new DefaultIneClient(
-                HasMarker.of(source),
-                source.getEndpoint(),
-                lang,
-                HttpManager.getHttpFactory().create(source, context)
-        );
+        public final HttpFactory httpFactory = HttpManager.getHttpFactory();
 
-        IneClient cachedClient = CachedIneClient.of(
-                client,
-                context.getDriverCache(source), CACHE_TTL_PROPERTY.get(source.getProperties()),
-                source, languages
-        );
+        @Override
+        public @NonNull List<BaseProperty> getConnectionProperties() {
+            return PropertiesSupport.merge(httpFactory.getHttpClientProperties(), CACHE_TTL_PROPERTY);
+        }
 
-        return new IneConnection(cachedClient);
+        @Override
+        public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) {
+            IneClient client = new DefaultIneClient(
+                    HasMarker.of(source),
+                    source.getEndpoint(),
+                    Converter.toLangCode(languages),
+                    httpFactory.createHttpClient(source, context)
+            );
+
+            IneClient cachedClient = CachedIneClient.of(
+                    client,
+                    context.getDriverCache(source), CACHE_TTL_PROPERTY.get(source.getProperties()),
+                    source, languages
+            );
+
+            return new IneConnection(cachedClient);
+        }
     }
 
     @lombok.AllArgsConstructor

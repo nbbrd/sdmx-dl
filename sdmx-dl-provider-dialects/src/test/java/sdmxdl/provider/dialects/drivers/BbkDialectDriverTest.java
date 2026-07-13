@@ -30,9 +30,13 @@ import tests.sdmxdl.web.spi.DriverAssert;
 import java.io.IOException;
 import java.net.URI;
 
+import static nbbrd.io.text.BaseProperty.keysOf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static sdmxdl.Detail.FULL;
 import static sdmxdl.Detail.SERIES_KEYS_ONLY;
+import static sdmxdl.provider.ri.http.DumpingDecoration.DUMP_FOLDER_PROPERTY;
+import static sdmxdl.provider.ri.http.RetryDecoration.MAX_RETRIES_PROPERTY;
+import static sdmxdl.provider.web.DriverProperties.*;
 
 /**
  * @author Philippe Charles
@@ -42,6 +46,22 @@ public class BbkDialectDriverTest {
     @Test
     public void testCompliance() {
         DriverAssert.assertCompliance(new BbkDialectDriver());
+    }
+
+    @Test
+    public void testProperties() {
+        assertThat(new BbkDialectDriver().getDriverPropertyNames())
+                .containsExactlyInAnyOrderElementsOf(
+                        keysOf(
+                                CONNECT_TIMEOUT_PROPERTY,
+                                READ_TIMEOUT_PROPERTY,
+                                USER_AGENT_PROPERTY,
+                                AUTH_SCHEME_PROPERTY,
+                                MAX_REDIRECTS_PROPERTY,
+                                MAX_RETRIES_PROPERTY,
+                                DUMP_FOLDER_PROPERTY,
+                                CACHE_TTL_PROPERTY)
+                );
     }
 
     @Test

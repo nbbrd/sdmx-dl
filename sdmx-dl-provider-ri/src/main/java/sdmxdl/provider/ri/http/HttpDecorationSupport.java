@@ -3,13 +3,11 @@ package sdmxdl.provider.ri.http;
 import lombok.NonNull;
 import nbbrd.io.http.HttpClient;
 import nbbrd.io.text.BaseProperty;
+import sdmxdl.provider.PropertiesSupport;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.WebContext;
 
 import java.util.List;
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * Support implementation for building decorator instances.
@@ -88,8 +86,8 @@ public final class HttpDecorationSupport implements HttpDecoration {
              * @return the combined list of properties
              */
             @Override
-            public @NonNull List<BaseProperty> getFactoryProperties() {
-                return Stream.concat(factory.getFactoryProperties().stream(), getDecoratorProperties().stream()).collect(toList());
+            public @NonNull List<BaseProperty> getHttpClientProperties() {
+                return PropertiesSupport.merge(factory.getHttpClientProperties(), getDecoratorProperties());
             }
 
             /**
@@ -100,7 +98,7 @@ public final class HttpDecorationSupport implements HttpDecoration {
              * @return a decorated HTTP client
              */
             @Override
-            public @NonNull HttpClient create(@NonNull WebSource source, @NonNull WebContext context) {
+            public @NonNull HttpClient createHttpClient(@NonNull WebSource source, @NonNull WebContext context) {
                 return superFactory.createAndDecorate(factory, source, context);
             }
         };
@@ -120,8 +118,8 @@ public final class HttpDecorationSupport implements HttpDecoration {
          * Creates an HTTP client and applies decorator-specific functionality.
          *
          * @param delegate the underlying HTTP client factory
-         * @param source the web source configuration
-         * @param context the web context
+         * @param source   the web source configuration
+         * @param context  the web context
          * @return a decorated HTTP client
          */
         @NonNull

@@ -27,6 +27,7 @@ import nbbrd.io.http.ext.InterceptingDecorator;
 import nbbrd.io.http.ext.InterceptingFunction;
 import nbbrd.io.http.ext.ThrowingStatusException;
 import nbbrd.io.net.MediaType;
+import nbbrd.io.text.BaseProperty;
 import nbbrd.io.text.IntProperty;
 import nbbrd.io.text.LongProperty;
 import nbbrd.io.text.Parser;
@@ -51,7 +52,7 @@ import sdmxdl.provider.ri.http.HttpFactory;
 import sdmxdl.provider.ri.http.HttpManager;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestClient;
-import sdmxdl.provider.web.RestConnector;
+import sdmxdl.provider.web.RestClientFactory;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
@@ -60,10 +61,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.util.EnumSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.zip.ZipInputStream;
 
 import static java.util.Collections.singletonList;
@@ -87,8 +85,7 @@ public final class EstatDialectDriver implements Driver {
             .builder()
             .id(DIALECTS_ESTAT)
             .rank(NATIVE_DRIVER_RANK)
-            .connector(RestConnector.of(EstatDialectDriver::newClient))
-            .propertiesOf(ESTAT_HTTP_FACTORY.getFactoryProperties())
+            .connectorOf(new EstatRestClientFactory())
             .source(WebSource
                     .builder()
                     .id("ESTAT")
@@ -171,29 +168,35 @@ public final class EstatDialectDriver implements Driver {
                     .build())
             .build();
 
-    private static RestClient newClient(WebSource s, Languages languages, WebContext c) {
-        return new RiRestClient(
-                HasMarker.of(s),
-                s.getEndpoint(),
-                languages,
-                ObsParser::newDefault,
-                ESTAT_HTTP_FACTORY.create(s, c),
-                Sdmx21RestQueries.DEFAULT,
-                Sdmx21RestParsers.DEFAULT,
-                Sdmx21RestErrors.DEFAULT,
-                ESTAT_FEATURES
-        );
+    private static final class EstatRestClientFactory implements RestClientFactory {
+
+        private final HttpFactory httpFactory = new AsyncDecoration().decorate(HttpManager.getHttpFactory());
+
+        @Override
+        public @NonNull List<BaseProperty> getRestClientProperties() {
+            return httpFactory.getHttpClientProperties();
+        }
+
+        @Override
+        public @NonNull RestClient createRestClient(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) {
+            return new RiRestClient(
+                    HasMarker.of(source),
+                    source.getEndpoint(),
+                    languages,
+                    ObsParser::newDefault,
+                    httpFactory.createHttpClient(source, context),
+                    Sdmx21RestQueries.DEFAULT,
+                    Sdmx21RestParsers.DEFAULT,
+                    Sdmx21RestErrors.DEFAULT,
+                    ESTAT_FEATURES
+            );
+        }
     }
 
     @SdmxFix(id = 4, category = QUERY, cause = "Data key parameter does not support 'all' keyword")
     private static final Set<Feature> ESTAT_FEATURES = EnumSet.of(Feature.DATA_QUERY_DETAIL);
 
-    private static final HttpFactory ESTAT_HTTP_FACTORY =
-            new AsyncDecoration().decorate(
-                    HttpManager.getHttpFactory()
-            );
-
-    private static final class AsyncDecoration implements HttpDecoration {
+    public static final class AsyncDecoration implements HttpDecoration {
 
         @PropertyDefinition
         public static final IntProperty ASYNC_MAX_RETRIES_PROPERTY =
@@ -214,7 +217,7 @@ public final class EstatDialectDriver implements Driver {
 
         private static HttpClient decorate(HttpFactory d, WebSource s, WebContext c) {
             return new InterceptingDecorator(
-                    d.create(s, c),
+                    d.createHttpClient(s, c),
                     getInterceptor(
                             ASYNC_SLEEP_TIME_PROPERTY.get(s.getProperties()),
                             ASYNC_MAX_RETRIES_PROPERTY.get(s.getProperties()),

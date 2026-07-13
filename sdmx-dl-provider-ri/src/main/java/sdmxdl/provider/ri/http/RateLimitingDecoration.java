@@ -25,7 +25,7 @@ public final class RateLimitingDecoration implements HttpDecoration {
     private static HttpClient decorate(HttpFactory d, WebSource s, WebContext c) {
         return RateLimitingDecorator
                 .builder()
-                .decorated(d.create(s, c))
+                .decorated(d.createHttpClient(s, c))
                 .rateLimiterProvider(RateLimiterProvider.perHost(REGISTRY))
                 .listener(toListener(c.getEventListener(s)))
                 .build();

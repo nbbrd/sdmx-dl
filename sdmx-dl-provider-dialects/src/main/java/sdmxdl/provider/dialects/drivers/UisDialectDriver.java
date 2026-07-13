@@ -22,14 +22,14 @@ import nbbrd.design.DirectImpl;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.http.*;
 import nbbrd.io.net.MediaType;
+import nbbrd.io.text.BaseProperty;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
 import sdmxdl.ext.Cache;
-import sdmxdl.provider.ConnectionSupport;
-import sdmxdl.provider.HasMarker;
-import sdmxdl.provider.Marker;
-import sdmxdl.provider.TypedId;
+import sdmxdl.provider.*;
+import sdmxdl.provider.ri.http.HttpFactory;
 import sdmxdl.provider.ri.http.HttpManager;
+import sdmxdl.provider.web.ConnectionFactory;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
@@ -44,6 +44,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Collections.emptyList;
 import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
 
@@ -67,9 +68,7 @@ public final class UisDialectDriver implements Driver {
             .builder()
             .id(DIALECTS_UIS)
             .rank(NATIVE_DRIVER_RANK)
-            .connector(UisDialectDriver::newConnection)
-            .propertiesOf(HttpManager.getHttpFactory().getFactoryProperties())
-            .propertyOf(CACHE_TTL_PROPERTY)
+            .connector(new UisConnectionFactory())
             .source(WebSource
                     .builder()
                     .id("UIS")
@@ -84,20 +83,31 @@ public final class UisDialectDriver implements Driver {
                     .build())
             .build();
 
-    private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
-        UisClient client = new DefaultUisClient(
-                HasMarker.of(source),
-                source.getEndpoint(),
-                HttpManager.getHttpFactory().create(source, context)
-        );
+    private static final class UisConnectionFactory implements ConnectionFactory {
 
-        UisClient cachedClient = CachedUisClient.of(
-                client,
-                context.getDriverCache(source), CACHE_TTL_PROPERTY.get(source.getProperties()),
-                source, languages
-        );
+        public final HttpFactory httpFactory = HttpManager.getHttpFactory();
 
-        return new UisConnection(cachedClient);
+        @Override
+        public @NonNull List<BaseProperty> getConnectionProperties() {
+            return PropertiesSupport.merge(httpFactory.getHttpClientProperties(), CACHE_TTL_PROPERTY);
+        }
+
+        @Override
+        public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) {
+            UisClient client = new DefaultUisClient(
+                    HasMarker.of(source),
+                    source.getEndpoint(),
+                    httpFactory.createHttpClient(source, context)
+            );
+
+            UisClient cachedClient = CachedUisClient.of(
+                    client,
+                    context.getDriverCache(source), CACHE_TTL_PROPERTY.get(source.getProperties()),
+                    source, languages
+            );
+
+            return new UisConnection(cachedClient);
+        }
     }
 
     @lombok.AllArgsConstructor
@@ -107,8 +117,8 @@ public final class UisDialectDriver implements Driver {
         private final UisClient client;
 
         @Override
-        public @NonNull Collection<Database> getDatabases() throws IOException {
-            return Collections.emptyList();
+        public @NonNull Collection<Database> getDatabases() {
+            return emptyList();
         }
 
         @Override

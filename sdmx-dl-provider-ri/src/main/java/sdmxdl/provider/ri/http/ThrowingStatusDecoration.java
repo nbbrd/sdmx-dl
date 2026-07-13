@@ -14,6 +14,6 @@ public final class ThrowingStatusDecoration implements HttpDecoration {
             .build();
 
     private static HttpClient decorate(HttpFactory d, WebSource s, WebContext c) {
-        return new ThrowingStatusDecorator(d.create(s, c), ThrowingStatusDecorator.DEFAULT_SHOULD_THROW);
+        return new ThrowingStatusDecorator(d.createHttpClient(s, c), ThrowingStatusDecorator.DEFAULT_SHOULD_THROW);
     }
 }

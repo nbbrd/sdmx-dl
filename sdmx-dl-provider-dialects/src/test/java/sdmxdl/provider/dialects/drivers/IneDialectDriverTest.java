@@ -8,47 +8,41 @@ import org.junit.jupiter.params.provider.CsvFileSource;
 import sdmxdl.*;
 import sdmxdl.provider.caching.MemCachingSupport;
 import sdmxdl.provider.ri.networking.RiNetworking;
-import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
-import sdmxdl.web.spi.WebCaching;
 import sdmxdl.web.spi.WebContext;
 import tests.sdmxdl.web.spi.DriverAssert;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import static nbbrd.io.text.BaseProperty.keysOf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static sdmxdl.provider.dialects.drivers.IneDialectDriver.Converter.*;
+import static sdmxdl.provider.ri.http.DumpingDecoration.DUMP_FOLDER_PROPERTY;
+import static sdmxdl.provider.ri.http.RetryDecoration.MAX_RETRIES_PROPERTY;
+import static sdmxdl.provider.web.DriverProperties.*;
 
 public class IneDialectDriverTest {
-
-    @nbbrd.design.Demo
-    public static void main(String[] args) throws IOException {
-
-        Provider<WebSource> ine = SdmxWebManager.ofServiceLoader()
-                .toBuilder()
-                .onEvent(SdmxWebManager::printEvent)
-                .onError(SdmxWebManager::printError)
-                .caching(WebCaching.noOp())
-                .build()
-                .usingName("INE");
-
-        SourceRequest sourceRequest = SourceRequest.builder().languagesOf("en").build();
-//        ine.getDatabases(sourceRequest).forEach(System.out::println);
-
-        DatabaseRequest databaseRequest = DatabaseRequest.builderOf(sourceRequest).databaseOf("IPC").build();
-//        ine.getFlows(databaseRequest).forEach(System.out::println);
-
-        FlowRequest flowRequest = FlowRequest.builderOf(databaseRequest).flowOf("INE,24077,1.0").build();
-//        ine.getMeta(flowRequest).getStructure().getDimensions().forEach(System.out::println);
-
-        KeyRequest keyRequest = KeyRequest.builderOf(flowRequest).build();
-        ine.getData(keyRequest).getData().stream().limit(3).forEach(System.out::println);
-    }
 
     @Test
     public void testCompliance() {
         DriverAssert.assertCompliance(new IneDialectDriver());
+    }
+
+    @Test
+    public void testProperties() {
+        assertThat(new IneDialectDriver().getDriverPropertyNames())
+                .containsExactlyInAnyOrderElementsOf(
+                        keysOf(
+                                CONNECT_TIMEOUT_PROPERTY,
+                                READ_TIMEOUT_PROPERTY,
+                                USER_AGENT_PROPERTY,
+                                AUTH_SCHEME_PROPERTY,
+                                MAX_REDIRECTS_PROPERTY,
+                                MAX_RETRIES_PROPERTY,
+                                DUMP_FOLDER_PROPERTY,
+                                CACHE_TTL_PROPERTY)
+                );
     }
 
     @Test

@@ -36,7 +36,7 @@ public final class AuthenticatingDecoration implements HttpDecoration {
         EventListener onEvent = c.getEventListener(s);
         ErrorListener onError = c.getErrorListener(s);
         return new AuthenticatingDecorator(
-                d.create(s, c),
+                d.createHttpClient(s, c),
                 new RiHttpAuthenticator(s, c.getAuthenticators(), c.getCaching(), onEvent, onError),
                 toHttpAuthScheme(AUTH_SCHEME_PROPERTY.get(s.getProperties())),
                 toListener(onEvent));

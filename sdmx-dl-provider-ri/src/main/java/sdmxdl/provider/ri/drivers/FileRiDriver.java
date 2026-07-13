@@ -3,10 +3,7 @@ package sdmxdl.provider.ri.drivers;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.design.VisibleForTesting;
-import nbbrd.io.text.BooleanProperty;
-import nbbrd.io.text.Formatter;
-import nbbrd.io.text.Parser;
-import nbbrd.io.text.Property;
+import nbbrd.io.text.*;
 import nbbrd.service.ServiceProvider;
 import org.jspecify.annotations.Nullable;
 import sdmxdl.*;
@@ -15,6 +12,7 @@ import sdmxdl.file.FileSource;
 import sdmxdl.file.SdmxFileManager;
 import sdmxdl.file.spi.FileCaching;
 import sdmxdl.format.design.PropertyDefinition;
+import sdmxdl.provider.web.ConnectionFactory;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
@@ -27,6 +25,10 @@ import java.net.URI;
 import java.nio.file.Paths;
 import java.time.Clock;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+import static java.util.Collections.singletonList;
 
 @DirectImpl
 @ServiceProvider
@@ -48,22 +50,51 @@ public final class FileRiDriver implements Driver {
             .id(RI_FILE)
             .rank(NATIVE_DRIVER_RANK)
             .availability(ENABLE_PROPERTY::get)
-            .connector(this::newConnection)
-            .propertyOf(STRUCTURE_URI_PROPERTY)
+            .connector(new FileConnectionFactory())
             .build();
 
-    private final SdmxFileManager fileManager = SdmxFileManager.ofServiceLoader();
+    @VisibleForTesting
+    static final class FileConnectionFactory implements ConnectionFactory {
 
-    private @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException, IllegalArgumentException {
-        EventListener eventListener = context.getEventListener(source);
-        ErrorListener errorListener = context.getErrorListener(source);
-        return fileManager
-                .toBuilder()
-                .onEvent(eventListener != null ? (fileSource) -> eventListener : null)
-                .onError(errorListener != null ? (fileSource) -> errorListener : null)
-                .caching(new FileCachingAdapter(context.getCaching(), source, eventListener, errorListener))
-                .build()
-                .getConnection(toFileSource(source), languages);
+        private final SdmxFileManager fileManager = SdmxFileManager.ofServiceLoader();
+
+        @Override
+        public @NonNull List<BaseProperty> getConnectionProperties() {
+            return singletonList(STRUCTURE_URI_PROPERTY);
+        }
+
+        @Override
+        public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
+            EventListener eventListener = context.getEventListener(source);
+            ErrorListener errorListener = context.getErrorListener(source);
+            return fileManager
+                    .toBuilder()
+                    .onEvent(eventListener != null ? (fileSource) -> eventListener : null)
+                    .onError(errorListener != null ? (fileSource) -> errorListener : null)
+                    .caching(new FileCachingAdapter(context.getCaching(), source, eventListener, errorListener))
+                    .build()
+                    .getConnection(toFileSource(source), languages);
+        }
+
+        private static FileSource toFileSource(WebSource source) throws IOException {
+            return FileSource
+                    .builder()
+                    .data(toFile(source.getEndpoint()))
+                    .structure(toFile(STRUCTURE_URI_PROPERTY.get(source.getProperties())))
+                    .build();
+        }
+
+        @VisibleForTesting
+        static File toFile(URI endpoint) throws IOException {
+            if (endpoint != null) {
+                try {
+                    return Paths.get(endpoint).toFile();
+                } catch (IllegalArgumentException ex) {
+                    throw new IOException("Invalid file name: '" + endpoint + "'", ex);
+                }
+            }
+            return null;
+        }
     }
 
     @lombok.AllArgsConstructor
@@ -120,25 +151,5 @@ public final class FileRiDriver implements Driver {
         public void put(@NonNull String key, @Nullable DataRepository value) {
             delegate.put(key, value);
         }
-    }
-
-    private static FileSource toFileSource(WebSource source) throws IOException {
-        return FileSource
-                .builder()
-                .data(toFile(source.getEndpoint()))
-                .structure(toFile(STRUCTURE_URI_PROPERTY.get(source.getProperties())))
-                .build();
-    }
-
-    @VisibleForTesting
-    static File toFile(URI endpoint) throws IOException {
-        if (endpoint != null) {
-            try {
-                return Paths.get(endpoint).toFile();
-            } catch (IllegalArgumentException ex) {
-                throw new IOException("Invalid file name: '" + endpoint + "'", ex);
-            }
-        }
-        return null;
     }
 }

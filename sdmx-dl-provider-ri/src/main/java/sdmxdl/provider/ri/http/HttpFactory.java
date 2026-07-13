@@ -33,7 +33,7 @@ public interface HttpFactory {
      * @return list of properties supported by this factory, never null
      */
     @NonNull
-    List<BaseProperty> getFactoryProperties();
+    List<BaseProperty> getHttpClientProperties();
 
     /**
      * Creates a new HTTP client configured for the given web source and context.
@@ -43,5 +43,5 @@ public interface HttpFactory {
      * @return a configured HTTP client, never null
      */
     @NonNull
-    HttpClient create(@NonNull WebSource source, @NonNull WebContext context);
+    HttpClient createHttpClient(@NonNull WebSource source, @NonNull WebContext context);
 }

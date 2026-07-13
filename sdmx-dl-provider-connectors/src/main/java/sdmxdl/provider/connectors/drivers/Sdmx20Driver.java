@@ -21,14 +21,12 @@ import nbbrd.design.DirectImpl;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.provider.web.DriverSupport;
-import sdmxdl.provider.web.RestConnector;
 import sdmxdl.web.spi.Driver;
 
 import java.net.URI;
 import java.util.Map;
 
 import static sdmxdl.provider.connectors.drivers.Connectors.NEEDS_CREDENTIALS_PROPERTY;
-import static sdmxdl.provider.connectors.drivers.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
 
 /**
  * @author Philippe Charles
@@ -45,9 +43,11 @@ public final class Sdmx20Driver implements Driver {
             .builder()
             .id(CONNECTORS_SDMX_20)
             .rank(WRAPPED_DRIVER_RANK)
-            .connector(RestConnector.of(ConnectorsRestClient.ofGeneric(Sdmx20Client::new)))
-            .properties(CONNECTORS_CONNECTION_PROPERTIES)
-            .propertyOf(NEEDS_CREDENTIALS_PROPERTY)
+            .connectorOf(GenericRestClientFactory
+                    .builder()
+                    .supplier(Sdmx20Client::new)
+                    .property(NEEDS_CREDENTIALS_PROPERTY)
+                    .build())
             .build();
 
     private static final class Sdmx20Client extends RestSdmx20Client {

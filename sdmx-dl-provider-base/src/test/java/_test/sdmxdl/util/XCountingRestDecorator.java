@@ -21,6 +21,7 @@ import sdmxdl.*;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.Marker;
 import sdmxdl.provider.web.RestClient;
+import sdmxdl.provider.web.RestClientDecorator;
 
 import java.io.IOException;
 import java.net.URI;
@@ -34,51 +35,52 @@ import java.util.stream.Stream;
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor(staticName = "of")
-public final class XCountingRestClient implements RestClient {
+public final class XCountingRestDecorator implements RestClientDecorator {
 
+    @lombok.Getter
     @lombok.NonNull
-    private final RestClient delegate;
+    private final RestClient decorated;
 
     @lombok.NonNull
     private final AtomicInteger count;
 
     @Override
     public @NonNull Marker getMarker() {
-        return delegate.getMarker();
+        return decorated.getMarker();
     }
 
     @Override
     public @NonNull List<Flow> getFlows() throws IOException {
         count.incrementAndGet();
-        return delegate.getFlows();
+        return decorated.getFlows();
     }
 
     @Override
     public @NonNull Structure getStructure(@NonNull StructureRef ref) throws IOException {
         count.incrementAndGet();
-        return delegate.getStructure(ref);
+        return decorated.getStructure(ref);
     }
 
     @Override
     public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull Structure dsd) throws IOException {
         count.incrementAndGet();
-        return delegate.getData(ref, dsd);
+        return decorated.getData(ref, dsd);
     }
 
     @Override
     public @NonNull Codelist getCodelist(@NonNull CodelistRef ref) throws IOException {
         count.incrementAndGet();
-        return delegate.getCodelist(ref);
+        return decorated.getCodelist(ref);
     }
 
     @Override
     public @NonNull Set<Feature> getSupportedFeatures() throws IOException {
-        return delegate.getSupportedFeatures();
+        return decorated.getSupportedFeatures();
     }
 
     @NonNull
     @Override
     public Optional<URI> testClient() throws IOException {
-        return delegate.testClient();
+        return decorated.testClient();
     }
 }

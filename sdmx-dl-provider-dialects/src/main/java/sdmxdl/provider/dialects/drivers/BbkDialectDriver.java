@@ -16,9 +16,11 @@
  */
 package sdmxdl.provider.dialects.drivers;
 
+import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.http.UriQueryBuilder;
+import nbbrd.io.text.BaseProperty;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
 import sdmxdl.format.ObsParser;
@@ -28,15 +30,18 @@ import sdmxdl.provider.ri.drivers.RiRestClient;
 import sdmxdl.provider.ri.drivers.Sdmx21RestErrors;
 import sdmxdl.provider.ri.drivers.Sdmx21RestParsers;
 import sdmxdl.provider.ri.drivers.Sdmx21RestQueries;
+import sdmxdl.provider.ri.http.HttpFactory;
 import sdmxdl.provider.ri.http.HttpManager;
 import sdmxdl.provider.web.DriverSupport;
-import sdmxdl.provider.web.RestConnector;
+import sdmxdl.provider.web.RestClient;
+import sdmxdl.provider.web.RestClientFactory;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
 import java.net.URI;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 import static sdmxdl.Confidentiality.PUBLIC;
@@ -56,8 +61,7 @@ public final class BbkDialectDriver implements Driver {
             .builder()
             .id(DIALECTS_BBK)
             .rank(NATIVE_DRIVER_RANK)
-            .connector(RestConnector.of(BbkDialectDriver::newClient))
-            .propertiesOf(HttpManager.getHttpFactory().getFactoryProperties())
+            .connectorOf(new BbkRestClientFactory())
             .source(WebSource
                     .builder()
                     .id("BBK")
@@ -72,18 +76,29 @@ public final class BbkDialectDriver implements Driver {
                     .build())
             .build();
 
-    private static RiRestClient newClient(WebSource s, Languages languages, WebContext c) {
-        return new RiRestClient(
-                HasMarker.of(s),
-                s.getEndpoint(),
-                languages,
-                ObsParser::newDefault,
-                HttpManager.getHttpFactory().create(s, c),
-                BbkQueries.INSTANCE,
-                Sdmx21RestParsers.DEFAULT,
-                Sdmx21RestErrors.DEFAULT,
-                BBK_FEATURES
-        );
+    private static final class BbkRestClientFactory implements RestClientFactory {
+
+        private final HttpFactory httpFactory = HttpManager.getHttpFactory();
+
+        @Override
+        public @NonNull List<BaseProperty> getRestClientProperties() {
+            return httpFactory.getHttpClientProperties();
+        }
+
+        @Override
+        public @NonNull RestClient createRestClient(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) {
+            return new RiRestClient(
+                    HasMarker.of(source),
+                    source.getEndpoint(),
+                    languages,
+                    ObsParser::newDefault,
+                    httpFactory.createHttpClient(source, context),
+                    BbkQueries.INSTANCE,
+                    Sdmx21RestParsers.DEFAULT,
+                    Sdmx21RestErrors.DEFAULT,
+                    BBK_FEATURES
+            );
+        }
     }
 
     @SdmxFix(id = 6, category = QUERY, cause = "Data key parameter does not support 'all' keyword")

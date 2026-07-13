@@ -19,9 +19,14 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
+import static nbbrd.io.text.BaseProperty.keysOf;
 import static org.assertj.core.api.Assertions.*;
 import static sdmxdl.Languages.ANY;
 import static sdmxdl.provider.px.drivers.PxWebDriver.*;
+import static sdmxdl.provider.px.drivers.PxWebDriver.PxWebConnectionFactory.*;
+import static sdmxdl.provider.ri.http.DumpingDecoration.DUMP_FOLDER_PROPERTY;
+import static sdmxdl.provider.ri.http.RetryDecoration.MAX_RETRIES_PROPERTY;
+import static sdmxdl.provider.web.DriverProperties.*;
 
 public class PxWebDriverTest {
 
@@ -31,13 +36,31 @@ public class PxWebDriverTest {
     }
 
     @Test
+    public void testProperties() {
+        assertThat(new PxWebDriver().getDriverPropertyNames())
+                .containsExactlyInAnyOrderElementsOf(
+                        keysOf(
+                                CONNECT_TIMEOUT_PROPERTY,
+                                READ_TIMEOUT_PROPERTY,
+                                USER_AGENT_PROPERTY,
+                                AUTH_SCHEME_PROPERTY,
+                                MAX_REDIRECTS_PROPERTY,
+                                MAX_RETRIES_PROPERTY,
+                                DUMP_FOLDER_PROPERTY,
+                                CACHE_TTL_PROPERTY,
+                                VERSIONS_PROPERTY,
+                                LANGUAGES_PROPERTY)
+                );
+    }
+
+    @Test
     public void testConfigDto() throws IOException {
         Config sample = new Config(120000, 120012, 30, 10);
 
-        assertThat(PxWebDriver.Config.JSON_PARSER.parseResource(PxWebDriverTest.class, "statfin-config.json", UTF_8))
+        assertThat(Config.JSON_PARSER.parseResource(PxWebDriverTest.class, "statfin-config.json", UTF_8))
                 .isEqualTo(sample);
 
-        assertThat(Config.JSON_PARSER.parseChars(PxWebDriver.Config.JSON_FORMATTER.formatToString(sample)))
+        assertThat(Config.JSON_PARSER.parseChars(Config.JSON_FORMATTER.formatToString(sample)))
                 .isEqualTo(sample);
     }
 

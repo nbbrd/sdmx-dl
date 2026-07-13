@@ -39,12 +39,12 @@ import static sdmxdl.DataSet.toDataSet;
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor
-final class CachedRestClient implements RestClient {
+final class CachedRestClientDecorator implements RestClientDecorator {
 
-    static @NonNull RestClient of(
+    static @NonNull CachedRestClientDecorator of(
             @NonNull RestClient client, @NonNull Cache<DataRepository> cache, long ttlInMillis,
             @NonNull WebSource source, @NonNull Languages languages) {
-        return new CachedRestClient(client, cache, getBase(source, languages), Duration.ofMillis(ttlInMillis));
+        return new CachedRestClientDecorator(client, cache, getBase(source, languages), Duration.ofMillis(ttlInMillis));
     }
 
     @VisibleForTesting
@@ -52,8 +52,9 @@ final class CachedRestClient implements RestClient {
         return TypedId.resolveURI(URI.create("cache:rest"), TypedId.getUniqueID(source), languages.toString());
     }
 
+    @lombok.Getter
     @lombok.NonNull
-    private final RestClient delegate;
+    private final RestClient decorated;
 
     @lombok.NonNull
     private final Cache<DataRepository> cache;
@@ -106,7 +107,7 @@ final class CachedRestClient implements RestClient {
 
     @Override
     public @NonNull Marker getMarker() {
-        return delegate.getMarker();
+        return decorated.getMarker();
     }
 
     @Override
@@ -122,7 +123,7 @@ final class CachedRestClient implements RestClient {
     @Override
     public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull Structure dsd) throws IOException {
         if (!ref.getQuery().getDetail().isIgnoreData()) {
-            return delegate.getData(ref, dsd);
+            return decorated.getData(ref, dsd);
         }
         DataSet result = ref.getQuery().getDetail().isIgnoreMeta()
                 ? loadSeriesKeysOnlyWithCache(ref, dsd)
@@ -132,27 +133,27 @@ final class CachedRestClient implements RestClient {
 
     @Override
     public @NonNull Codelist getCodelist(@NonNull CodelistRef ref) throws IOException {
-        return delegate.getCodelist(ref);
+        return decorated.getCodelist(ref);
     }
 
     @Override
     public @NonNull Set<Feature> getSupportedFeatures() throws IOException {
-        return delegate.getSupportedFeatures();
+        return decorated.getSupportedFeatures();
     }
 
     @NonNull
     @Override
     public Optional<URI> testClient() throws IOException {
-        return delegate.testClient();
+        return decorated.testClient();
     }
 
     private List<Flow> loadDataflowsWithCache() throws IOException {
-        return getIdOfFlows().load(cache, delegate::getFlows, this::getTtl);
+        return getIdOfFlows().load(cache, decorated::getFlows, this::getTtl);
     }
 
     private Structure loadDataStructureWithCache(StructureRef ref) throws IOException {
         TypedId<Structure> id = getIdOfStruct().with(ref);
-        return id.load(cache, () -> delegate.getStructure(ref), this::getTtl);
+        return id.load(cache, () -> decorated.getStructure(ref), this::getTtl);
     }
 
     private DataSet loadSeriesKeysOnlyWithCache(DataRef ref, Structure dsd) throws IOException {
@@ -170,7 +171,7 @@ final class CachedRestClient implements RestClient {
     }
 
     private DataSet copyData(DataRef ref, Structure structure) throws IOException {
-        try (Stream<Series> stream = delegate.getData(ref, structure)) {
+        try (Stream<Series> stream = decorated.getData(ref, structure)) {
             return stream.collect(toDataSet(ref.getFlowRef(), ref.getQuery()));
         }
     }

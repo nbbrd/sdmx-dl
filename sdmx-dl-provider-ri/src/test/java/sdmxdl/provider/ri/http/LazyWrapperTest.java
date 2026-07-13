@@ -39,7 +39,7 @@ public class LazyWrapperTest {
                 .build();
 
         HttpFactory decorated = decorator.decorate(base);
-        HttpClient client = decorated.create(source, context);
+        HttpClient client = decorated.createHttpClient(source, context);
 
         assertThat(createCount).hasValue(0);
 
@@ -62,7 +62,7 @@ public class LazyWrapperTest {
                 .build();
 
         HttpFactory decorated = decorator.decorate(base);
-        HttpClient client = decorated.create(source, context);
+        HttpClient client = decorated.createHttpClient(source, context);
 
         client.getDescription();
         client.getDescription();

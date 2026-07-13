@@ -5,6 +5,7 @@ import nbbrd.design.DirectImpl;
 import nbbrd.design.NonNegative;
 import nbbrd.design.RepresentableAs;
 import nbbrd.design.StaticFactoryMethod;
+import nbbrd.io.text.BaseProperty;
 import nbbrd.io.text.BooleanProperty;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
@@ -13,6 +14,7 @@ import sdmxdl.format.design.PropertyDefinition;
 import sdmxdl.provider.ConnectionSupport;
 import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.Marker;
+import sdmxdl.provider.web.ConnectionFactory;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
@@ -51,7 +53,7 @@ public final class RngRiDriver implements Driver {
             .id(RI_RNG)
             .rank(NATIVE_DRIVER_RANK)
             .availability(ENABLE_PROPERTY::get)
-            .connector(RngRiDriver::newConnection)
+            .connector(new RngConnectionFactory())
             .source(WebSource
                     .builder()
                     .id("RNG")
@@ -62,10 +64,19 @@ public final class RngRiDriver implements Driver {
                     .build())
             .build();
 
-    private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) {
-        RngDriverId config = RngDriverId.parse(source.getEndpoint());
+    private static final class RngConnectionFactory implements ConnectionFactory {
 
-        return new RngConnection(HasMarker.of(source), config);
+        @Override
+        public @NonNull List<BaseProperty> getConnectionProperties() {
+            return emptyList();
+        }
+
+        @Override
+        public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
+            RngDriverId config = RngDriverId.parse(source.getEndpoint());
+
+            return new RngConnection(HasMarker.of(source), config);
+        }
     }
 
     @RepresentableAs(URI.class)

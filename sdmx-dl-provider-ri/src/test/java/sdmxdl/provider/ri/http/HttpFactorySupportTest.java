@@ -48,7 +48,7 @@ public class HttpFactorySupportTest {
                 .supplier(HttpFactorySupportTest::stubClient)
                 .build();
 
-        assertThat(factory.getFactoryProperties()).isEmpty();
+        assertThat(factory.getHttpClientProperties()).isEmpty();
     }
 
     @Test
@@ -63,7 +63,7 @@ public class HttpFactorySupportTest {
                 .supplier(HttpFactorySupportTest::stubClient)
                 .build();
 
-        assertThat(factory.getFactoryProperties())
+        assertThat(factory.getHttpClientProperties())
                 .extracting(BaseProperty::getKey)
                 .containsExactly("prop1", "prop2");
     }
@@ -80,7 +80,7 @@ public class HttpFactorySupportTest {
                 })
                 .build();
 
-        factory.create(source, context);
+        factory.createHttpClient(source, context);
 
         assertThat(supplierCalled).isTrue();
     }
@@ -99,7 +99,7 @@ public class HttpFactorySupportTest {
                 })
                 .build();
 
-        factory.create(source, context);
+        factory.createHttpClient(source, context);
 
         assertThat(capturedSource).hasValue(source);
         assertThat(capturedContext).hasValue(context);
@@ -137,7 +137,7 @@ public class HttpFactorySupportTest {
                 .supplier(HttpFactorySupportTest::stubClient)
                 .build();
 
-        assertThat(factory.getFactoryProperties()).isUnmodifiable();
+        assertThat(factory.getHttpClientProperties()).isUnmodifiable();
     }
 
     private static HttpClient stubClient(WebSource source, WebContext context) {

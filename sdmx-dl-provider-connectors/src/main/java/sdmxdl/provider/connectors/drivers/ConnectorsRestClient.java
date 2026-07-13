@@ -23,7 +23,6 @@ import it.bancaditalia.oss.sdmx.event.RedirectionEvent;
 import it.bancaditalia.oss.sdmx.event.RestSdmxEvent;
 import it.bancaditalia.oss.sdmx.event.RestSdmxEventListener;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
-import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.io.text.BaseProperty;
 import org.jspecify.annotations.Nullable;
@@ -31,10 +30,8 @@ import sdmxdl.*;
 import sdmxdl.EventListener;
 import sdmxdl.format.ObsParser;
 import sdmxdl.provider.DataRef;
-import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.Marker;
 import sdmxdl.provider.web.RestClient;
-import sdmxdl.provider.web.RestClientSupplier;
 import sdmxdl.provider.web.WebEvents;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Network;
@@ -43,62 +40,20 @@ import sdmxdl.web.spi.WebContext;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
 import static sdmxdl.provider.web.DriverProperties.*;
 
 /**
  * @author Philippe Charles
  */
-@lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class ConnectorsRestClient implements RestClient {
-
-    @FunctionalInterface
-    public interface SpecificSupplier {
-
-        @NonNull
-        RestSdmxClient get() throws URISyntaxException;
-    }
-
-    @FunctionalInterface
-    public interface GenericSupplier {
-
-        @NonNull
-        RestSdmxClient get(@NonNull URI endpoint, @NonNull Map<String, String> properties);
-    }
-
-    public static @NonNull RestClientSupplier ofSpecific(@NonNull SpecificSupplier supplier) {
-        return ofSpecific(supplier, ObsParser::newDefault);
-    }
-
-    public static @NonNull RestClientSupplier ofSpecific(@NonNull SpecificSupplier supplier, @NonNull Supplier<ObsParser> obsFactory) {
-        return (source, languages, context) -> {
-            try {
-                RestSdmxClient client = supplier.get();
-                client.setEndpoint(source.getEndpoint());
-                configure(client, source, context);
-                return new ConnectorsRestClient(HasMarker.of(source), client, obsFactory);
-            } catch (URISyntaxException ex) {
-                throw new RuntimeException(ex);
-            }
-        };
-    }
-
-    public static @NonNull RestClientSupplier ofGeneric(@NonNull GenericSupplier supplier) {
-        return ofGeneric(supplier, ObsParser::newDefault);
-    }
-
-    public static @NonNull RestClientSupplier ofGeneric(@NonNull GenericSupplier supplier, @NonNull Supplier<ObsParser> obsFactory) {
-        return (source, languages, context) -> {
-            RestSdmxClient client = supplier.get(source.getEndpoint(), source.getProperties());
-            configure(client, source, context);
-            return new ConnectorsRestClient(HasMarker.of(source), client, obsFactory);
-        };
-    }
+@lombok.AllArgsConstructor
+final class ConnectorsRestClient implements RestClient {
 
     @lombok.NonNull
     private final Marker marker;
@@ -182,11 +137,11 @@ public final class ConnectorsRestClient implements RestClient {
         return Optional.empty();
     }
 
-    public static final List<String> CONNECTORS_CONNECTION_PROPERTIES = BaseProperty.keysOf(
+    public static final List<BaseProperty> CONNECTORS_CONNECTION_PROPERTIES = unmodifiableList(asList(
             CONNECT_TIMEOUT_PROPERTY,
             READ_TIMEOUT_PROPERTY,
             MAX_REDIRECTS_PROPERTY
-    );
+    ));
 
     private static List<PortableTimeSeries<Double>> getData(RestSdmxClient connector, DataRef ref, Structure dsd) throws SdmxException {
         return connector.getTimeSeries(
@@ -201,7 +156,7 @@ public final class ConnectorsRestClient implements RestClient {
         return new IOException(String.format(Locale.ROOT, format, args), ex);
     }
 
-    private static void configure(RestSdmxClient client, WebSource source, WebContext context) {
+    static void configure(RestSdmxClient client, WebSource source, WebContext context) {
 //        client.setLanguages(Connectors.fromLanguages(context.getLanguages()));
         client.setConnectTimeout(CONNECT_TIMEOUT_PROPERTY.get(source.getProperties()));
         client.setReadTimeout(READ_TIMEOUT_PROPERTY.get(source.getProperties()));

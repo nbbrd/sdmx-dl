@@ -43,7 +43,7 @@ public final class LazyDecoration implements HttpDecoration {
      * @return a lazy HTTP client that creates the underlying client on first use
      */
     private static HttpClient decorate(HttpFactory d, WebSource s, WebContext c) {
-        return new LazyHttpClient(() -> d.create(s, c));
+        return new LazyHttpClient(() -> d.createHttpClient(s, c));
     }
 
     @lombok.AllArgsConstructor

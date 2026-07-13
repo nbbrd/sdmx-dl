@@ -23,6 +23,7 @@ import nbbrd.io.FileParser;
 import nbbrd.io.function.IOFunction;
 import nbbrd.io.http.UriQueryBuilder;
 import nbbrd.io.net.MediaType;
+import nbbrd.io.text.BaseProperty;
 import nbbrd.io.text.BooleanProperty;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
@@ -35,14 +36,17 @@ import sdmxdl.format.time.StandardReportingFormat;
 import sdmxdl.format.time.TimeFormats;
 import sdmxdl.format.xml.XmlMediaTypes;
 import sdmxdl.provider.HasMarker;
+import sdmxdl.provider.PropertiesSupport;
 import sdmxdl.provider.SdmxFix;
 import sdmxdl.provider.ri.drivers.RiRestClient;
 import sdmxdl.provider.ri.drivers.Sdmx21RestErrors;
 import sdmxdl.provider.ri.drivers.Sdmx21RestParsers;
 import sdmxdl.provider.ri.drivers.Sdmx21RestQueries;
+import sdmxdl.provider.ri.http.HttpFactory;
 import sdmxdl.provider.ri.http.HttpManager;
 import sdmxdl.provider.web.DriverSupport;
-import sdmxdl.provider.web.RestConnector;
+import sdmxdl.provider.web.RestClient;
+import sdmxdl.provider.web.RestClientFactory;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
@@ -50,6 +54,7 @@ import sdmxdl.web.spi.WebContext;
 import java.io.IOException;
 import java.net.URI;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.function.Supplier;
 
 import static sdmxdl.Confidentiality.PUBLIC;
@@ -70,9 +75,7 @@ public final class InseeDialectDriver implements Driver {
             .builder()
             .id(DIALECTS_INSEE)
             .rank(NATIVE_DRIVER_RANK)
-            .connector(RestConnector.of(InseeRestClient::new))
-            .propertiesOf(HttpManager.getHttpFactory().getFactoryProperties())
-            .propertyOf(NO_COMMA_ENCODING_PROPERTY)
+            .connectorOf(new InseeRestClientFactory())
             .source(WebSource
                     .builder()
                     .id("INSEE")
@@ -109,18 +112,36 @@ public final class InseeDialectDriver implements Driver {
 
     @SdmxFix(id = 6, category = QUERY, cause = "Since October 2025, encoded comma in URL triggers HTTP 500 error")
     @PropertyDefinition
-    private static final BooleanProperty NO_COMMA_ENCODING_PROPERTY =
+    public static final BooleanProperty NO_COMMA_ENCODING_PROPERTY =
             BooleanProperty.of(DRIVER_PROPERTY_PREFIX + ".noCommaEncoding", false);
+
+    private static final class InseeRestClientFactory implements RestClientFactory {
+
+        private final HttpFactory httpFactory = HttpManager.getHttpFactory();
+
+        @Override
+        public @NonNull List<BaseProperty> getRestClientProperties() {
+            return PropertiesSupport.merge(
+                    httpFactory.getHttpClientProperties(),
+                    NO_COMMA_ENCODING_PROPERTY
+            );
+        }
+
+        @Override
+        public @NonNull RestClient createRestClient(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) {
+            return new InseeRestClient(source, languages, context, httpFactory);
+        }
+    }
 
     private final static class InseeRestClient extends RiRestClient {
 
-        InseeRestClient(WebSource s, Languages languages, WebContext c) {
+        InseeRestClient(WebSource s, Languages languages, WebContext c, HttpFactory httpFactory) {
             super(
                     HasMarker.of(s),
                     s.getEndpoint(),
                     languages,
                     OBS_FACTORY,
-                    HttpManager.getHttpFactory().create(s, c),
+                    httpFactory.createHttpClient(s, c),
                     NO_COMMA_ENCODING_PROPERTY.get(s.getProperties())
                             ? InseeRestQueries.NO_COMMA_ENCODING
                             : InseeRestQueries.DEFAULT,

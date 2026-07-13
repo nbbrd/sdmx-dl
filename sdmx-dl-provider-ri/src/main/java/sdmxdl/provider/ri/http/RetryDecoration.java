@@ -40,7 +40,7 @@ public final class RetryDecoration implements HttpDecoration {
 
     private static HttpClient decorate(HttpFactory d, WebSource s, WebContext c) {
         return new RetryDecorator(
-                d.create(s, c),
+                d.createHttpClient(s, c),
                 MAX_RETRIES_PROPERTY.get(s.getProperties()),
                 toListener(c.getEventListener(s)));
     }

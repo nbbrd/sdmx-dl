@@ -20,7 +20,7 @@ public final class RedirectDecoration implements HttpDecoration {
 
     private static HttpClient decorate(HttpFactory d, WebSource s, WebContext c) {
         return new RedirectDecorator(
-                d.create(s, c),
+                d.createHttpClient(s, c),
                 MAX_REDIRECTS_PROPERTY.get(s.getProperties()),
                 toListener(c.getEventListener(s)));
     }

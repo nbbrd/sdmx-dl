@@ -19,7 +19,9 @@ import sdmxdl.format.time.ObservationalTimePeriod;
 import sdmxdl.format.time.TimeFormats;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.provider.*;
+import sdmxdl.provider.ri.http.HttpFactory;
 import sdmxdl.provider.ri.http.HttpManager;
+import sdmxdl.provider.web.ConnectionFactory;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
@@ -82,11 +84,7 @@ public final class PxWebDriver implements Driver {
             .id(PX_PXWEB)
             .rank(NATIVE_DRIVER_RANK)
             .availability(ENABLE_PROPERTY::get)
-            .connector(PxWebDriver::newConnection)
-            .propertiesOf(HttpManager.getHttpFactory().getFactoryProperties())
-            .propertyOf(VERSIONS_PROPERTY)
-            .propertyOf(LANGUAGES_PROPERTY)
-            .propertyOf(CACHE_TTL_PROPERTY)
+            .connector(new PxWebConnectionFactory())
             .sources(IOSupplier.unchecked(PxWebDriver::loadDefaultSources).get())
             .build();
 
@@ -101,40 +99,72 @@ public final class PxWebDriver implements Driver {
         }
     }
 
-    private static PxWebClient newClient(WebSource source, Languages languages, WebContext context) throws IOException {
-        PxWebClient client = new DefaultPxWebClient(
-                HasMarker.of(source),
-                getFullEndpoint(source, languages),
-                HttpManager.getHttpFactory().create(source, context)
-        );
-
-        return new CachedPxWebClient(
-                client,
-                context.getDriverCache(source),
-                getCachedClientBaseURI(source, languages),
-                Duration.ofMillis(CACHE_TTL_PROPERTY.get(source.getProperties()))
-        );
-    }
-
-    private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
-        return new PxWebConnection(newClient(source, languages, context));
-    }
-
-    private static String resolveVersion(WebSource source) {
-        List<String> versions = VERSIONS_PROPERTY.get(source.getProperties());
-        return versions != null && !versions.isEmpty() ? versions.get(0) : DEFAULT_VERSION;
-    }
-
-    private static String resolveLanguage(WebSource source, Languages requested) {
-        List<String> availableLanguages = LANGUAGES_PROPERTY.get(source.getProperties());
-        String language = availableLanguages != null ? lookupLanguage(availableLanguages, requested) : null;
-        return language != null ? language : DEFAULT_LANG;
-    }
-
     @VisibleForTesting
-    static @Nullable String lookupLanguage(@NonNull Collection<String> available, @NonNull Languages requested) {
-        String result = requested.lookupTag(available);
-        return result != null ? result : available.stream().findFirst().orElse(null);
+    static final class PxWebConnectionFactory implements ConnectionFactory {
+
+        public final HttpFactory httpFactory = HttpManager.getHttpFactory();
+
+        @Override
+        public @NonNull List<BaseProperty> getConnectionProperties() {
+            return PropertiesSupport.merge(
+                    httpFactory.getHttpClientProperties(),
+                    VERSIONS_PROPERTY,
+                    LANGUAGES_PROPERTY,
+                    CACHE_TTL_PROPERTY
+            );
+        }
+
+        @Override
+        public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
+            PxWebClient client = new DefaultPxWebClient(
+                    HasMarker.of(source),
+                    getFullEndpoint(source, languages),
+                    httpFactory.createHttpClient(source, context)
+            );
+
+            PxWebClient cachedClient = new CachedPxWebClient(
+                    client,
+                    context.getDriverCache(source),
+                    getCachedClientBaseURI(source, languages),
+                    Duration.ofMillis(CACHE_TTL_PROPERTY.get(source.getProperties()))
+            );
+
+            return new PxWebConnection(cachedClient);
+        }
+
+        @VisibleForTesting
+        static @NonNull URI getFullEndpoint(@NonNull WebSource source, @NonNull Languages languages) throws IOException {
+            Map<String, String> variables = new HashMap<>();
+            variables.put(VERSION_VARIABLE, resolveVersion(source));
+            variables.put(LANGUAGE_VARIABLE, resolveLanguage(source, languages));
+            try {
+                return UriTemplate.expand(source.getEndpoint(), variables);
+            } catch (URISyntaxException ex) {
+                throw new IOException(ex);
+            }
+        }
+
+        private static String resolveVersion(WebSource source) {
+            List<String> versions = VERSIONS_PROPERTY.get(source.getProperties());
+            return versions != null && !versions.isEmpty() ? versions.get(0) : DEFAULT_VERSION;
+        }
+
+        private static String resolveLanguage(WebSource source, Languages requested) {
+            List<String> availableLanguages = LANGUAGES_PROPERTY.get(source.getProperties());
+            String language = availableLanguages != null ? lookupLanguage(availableLanguages, requested) : null;
+            return language != null ? language : DEFAULT_LANG;
+        }
+
+        @VisibleForTesting
+        static @Nullable String lookupLanguage(@NonNull Collection<String> available, @NonNull Languages requested) {
+            String result = requested.lookupTag(available);
+            return result != null ? result : available.stream().findFirst().orElse(null);
+        }
+
+        @VisibleForTesting
+        static URI getCachedClientBaseURI(WebSource source, Languages languages) {
+            return TypedId.resolveURI(URI.create("cache:pxweb"), TypedId.getUniqueID(source), resolveLanguage(source, languages));
+        }
     }
 
     @lombok.AllArgsConstructor
@@ -225,18 +255,6 @@ public final class PxWebDriver implements Driver {
 
         @NonNull
         DataCursor getData(@NonNull String dbId, @NonNull String tableId, @NonNull Structure dsd, @NonNull Key key) throws IOException, IllegalArgumentException;
-    }
-
-    @VisibleForTesting
-    static @NonNull URI getFullEndpoint(@NonNull WebSource source, @NonNull Languages languages) throws IOException {
-        Map<String, String> variables = new HashMap<>();
-        variables.put(VERSION_VARIABLE, resolveVersion(source));
-        variables.put(LANGUAGE_VARIABLE, resolveLanguage(source, languages));
-        try {
-            return UriTemplate.expand(source.getEndpoint(), variables);
-        } catch (URISyntaxException ex) {
-            throw new IOException(ex);
-        }
     }
 
     @lombok.AllArgsConstructor
@@ -365,11 +383,6 @@ public final class PxWebDriver implements Driver {
         private FileParser<DataCursor> getDataParser(Structure dsd, MediaType ignore) {
             return PxWebSdmxDataCursor.parserOf(dsd);
         }
-    }
-
-    @VisibleForTesting
-    static URI getCachedClientBaseURI(WebSource source, Languages languages) {
-        return TypedId.resolveURI(URI.create("cache:pxweb"), TypedId.getUniqueID(source), resolveLanguage(source, languages));
     }
 
     @lombok.AllArgsConstructor

@@ -17,7 +17,7 @@
 package sdmxdl.provider.web;
 
 import _test.sdmxdl.util.CachingAssert;
-import _test.sdmxdl.util.XCountingRestClient;
+import _test.sdmxdl.util.XCountingRestDecorator;
 import _test.sdmxdl.util.XRepoRestClient;
 import nbbrd.io.function.IOConsumer;
 import nbbrd.io.function.IOFunction;
@@ -42,14 +42,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static sdmxdl.Languages.ANY;
-import static sdmxdl.provider.web.CachedRestClient.getBase;
+import static sdmxdl.provider.web.CachedRestClientDecorator.getBase;
 import static tests.sdmxdl.api.KeyAssert.keys;
 import static tests.sdmxdl.api.RepoSamples.*;
 
 /**
  * @author Philippe Charles
  */
-public class CachedRestClientTest {
+public class CachedRestClientDecoratorTest {
 
     private final URI base = URI.create("cache:rest");
     private final Duration ttl = Duration.ofMillis(100);
@@ -60,19 +60,19 @@ public class CachedRestClientTest {
     private final String seriesKeysOnlyId = TypedId.resolveURI(base, "seriesKeysOnly", FLOW_REF.toString()).toString();
     private final String noDataId = TypedId.resolveURI(base, "noData", FLOW_REF.toString()).toString();
 
-    private CachedRestClient getClient(CachingAssert.Context ctx) {
+    private CachedRestClientDecorator getClient(CachingAssert.Context ctx) {
         RestClient original = XRepoRestClient.of(RepoSamples.REPO);
-        RestClient counting = XCountingRestClient.of(original, ctx.getCount());
-        return new CachedRestClient(counting, ctx.newCache(), base, ttl);
+        RestClient counting = XCountingRestDecorator.of(original, ctx.getCount());
+        return new CachedRestClientDecorator(counting, ctx.newCache(), base, ttl);
     }
 
     @FunctionalInterface
-    private interface Method<T> extends IOFunction<CachedRestClient, T> {
+    private interface Method<T> extends IOFunction<CachedRestClientDecorator, T> {
     }
 
     @Test
     public void testGetFlows() throws IOException {
-        Method<List<Flow>> x = CachedRestClient::getFlows;
+        Method<List<Flow>> x = CachedRestClientDecorator::getFlows;
 
         checkCacheHit(this::getClient, x, new HamcrestCondition<>(hasItem(FLOW)), flowsId, ttl);
     }
@@ -115,7 +115,7 @@ public class CachedRestClientTest {
     @Test
     public void testNarrowerRequest() throws IOException {
         Context ctx = new Context();
-        CachedRestClient client = getClient(ctx);
+        CachedRestClientDecorator client = getClient(ctx);
 
         for (Detail filter : new Detail[]{Detail.SERIES_KEYS_ONLY, Detail.NO_DATA}) {
             IOConsumer<Key> method = key -> client.getData(DataRef.of(FLOW_REF, Query.builder().key(key).detail(filter).build()), STRUCT).close();

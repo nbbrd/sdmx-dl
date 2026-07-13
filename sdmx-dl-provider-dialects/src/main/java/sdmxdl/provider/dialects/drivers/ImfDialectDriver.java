@@ -19,6 +19,7 @@ package sdmxdl.provider.dialects.drivers;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.io.http.UriQueryBuilder;
+import nbbrd.io.text.BaseProperty;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.Feature;
 import sdmxdl.Languages;
@@ -30,16 +31,18 @@ import sdmxdl.provider.ri.drivers.RiRestClient;
 import sdmxdl.provider.ri.drivers.Sdmx21RestErrors;
 import sdmxdl.provider.ri.drivers.Sdmx21RestParsers;
 import sdmxdl.provider.ri.drivers.Sdmx21RestQueries;
+import sdmxdl.provider.ri.http.HttpFactory;
 import sdmxdl.provider.ri.http.HttpManager;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestClient;
-import sdmxdl.provider.web.RestConnector;
+import sdmxdl.provider.web.RestClientFactory;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
 import java.net.URI;
 import java.util.EnumSet;
+import java.util.List;
 
 import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
@@ -58,8 +61,7 @@ public final class ImfDialectDriver implements Driver {
             .builder()
             .id(DIALECTS_IMF)
             .rank(NATIVE_DRIVER_RANK)
-            .connector(RestConnector.of(ImfDialectDriver::newClient))
-            .propertiesOf(HttpManager.getHttpFactory().getFactoryProperties())
+            .connectorOf(new ImfRestClientFactory())
             .source(WebSource
                     .builder()
                     .id("IMF")
@@ -73,18 +75,29 @@ public final class ImfDialectDriver implements Driver {
                     .build())
             .build();
 
-    private static RestClient newClient(WebSource s, Languages languages, WebContext c) {
-        return new RiRestClient(
-                HasMarker.of(s),
-                s.getEndpoint(),
-                languages,
-                ObsParser::newDefault,
-                HttpManager.getHttpFactory().create(s, c),
-                ImfQueries.INSTANCE,
-                Sdmx21RestParsers.DEFAULT,
-                Sdmx21RestErrors.DEFAULT,
-                EnumSet.allOf(Feature.class)
-        );
+    private static final class ImfRestClientFactory implements RestClientFactory {
+
+        private final HttpFactory httpFactory = HttpManager.getHttpFactory();
+
+        @Override
+        public @NonNull List<BaseProperty> getRestClientProperties() {
+            return httpFactory.getHttpClientProperties();
+        }
+
+        @Override
+        public @NonNull RestClient createRestClient(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) {
+            return new RiRestClient(
+                    HasMarker.of(source),
+                    source.getEndpoint(),
+                    languages,
+                    ObsParser::newDefault,
+                    httpFactory.createHttpClient(source, context),
+                    ImfQueries.INSTANCE,
+                    Sdmx21RestParsers.DEFAULT,
+                    Sdmx21RestErrors.DEFAULT,
+                    EnumSet.allOf(Feature.class)
+            );
+        }
     }
 
     private static final class ImfQueries extends Sdmx21RestQueries {

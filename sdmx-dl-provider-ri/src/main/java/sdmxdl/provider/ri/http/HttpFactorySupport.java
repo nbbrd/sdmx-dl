@@ -54,7 +54,7 @@ public final class HttpFactorySupport implements HttpFactory {
      * @return the list of properties
      */
     @Override
-    public @NonNull List<BaseProperty> getFactoryProperties() {
+    public @NonNull List<BaseProperty> getHttpClientProperties() {
         return properties;
     }
 
@@ -69,7 +69,7 @@ public final class HttpFactorySupport implements HttpFactory {
      * @return a configured HTTP client
      */
     @Override
-    public @NonNull HttpClient create(@NonNull WebSource source, @NonNull WebContext context) {
+    public @NonNull HttpClient createHttpClient(@NonNull WebSource source, @NonNull WebContext context) {
         return supplier.create(source, context);
     }
 

@@ -16,10 +16,9 @@
  */
 package sdmxdl.provider.connectors.drivers;
 
-import nbbrd.design.DirectImpl;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
+import nbbrd.design.DirectImpl;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.provider.web.RestConnector;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
@@ -29,7 +28,6 @@ import java.util.Map;
 
 import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.provider.connectors.drivers.Connectors.*;
-import static sdmxdl.provider.connectors.drivers.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
 import static sdmxdl.provider.web.DriverProperties.DETAIL_SUPPORTED_PROPERTY;
 
 /**
@@ -46,12 +44,14 @@ public final class Sdmx21Driver implements Driver {
             .builder()
             .id(CONNECTORS_SDMX_21)
             .rank(WRAPPED_DRIVER_RANK)
-            .connector(RestConnector.of(ConnectorsRestClient.ofGeneric(Sdmx21Client::new)))
-            .properties(CONNECTORS_CONNECTION_PROPERTIES)
-            .propertyOf(NEEDS_CREDENTIALS_PROPERTY)
-            .propertyOf(NEEDS_URL_ENCODING_PROPERTY)
-            .propertyOf(SUPPORTS_COMPRESSION_PROPERTY)
-            .propertyOf(DETAIL_SUPPORTED_PROPERTY)
+            .connectorOf(GenericRestClientFactory
+                    .builder()
+                    .supplier(Sdmx21Client::new)
+                    .property(NEEDS_CREDENTIALS_PROPERTY)
+                    .property(NEEDS_URL_ENCODING_PROPERTY)
+                    .property(SUPPORTS_COMPRESSION_PROPERTY)
+                    .property(DETAIL_SUPPORTED_PROPERTY)
+                    .build())
             .source(WebSource
                     .builder()
                     .id("ABS")

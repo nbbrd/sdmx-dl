@@ -32,6 +32,8 @@ import java.util.Collection;
 import java.util.Properties;
 import java.util.function.Predicate;
 
+import static java.util.stream.Collectors.toList;
+
 /**
  * @author Philippe Charles
  */
@@ -46,13 +48,10 @@ public final class DriverSupport implements Driver {
     private final int rank = UNKNOWN_DRIVER_RANK;
 
     @NonNull
-    private final WebConnector connector;
+    private final ConnectionFactory connector;
 
     @lombok.Singular
     private final Collection<WebSource> sources;
-
-    @lombok.Singular
-    private final Collection<String> properties;
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -90,20 +89,16 @@ public final class DriverSupport implements Driver {
 
     @Override
     public @NonNull Collection<String> getDriverPropertyNames() {
-        return properties;
+        return connector.getConnectionProperties()
+                .stream()
+                .map(BaseProperty::toString)
+                .collect(toList());
     }
 
     public static final class Builder {
 
-        @NonNull
-        public Builder propertyOf(@NonNull CharSequence property) {
-            return property(property.toString());
-        }
-
-        @NonNull
-        public Builder propertiesOf(@NonNull Iterable<? extends BaseProperty> properties) {
-            properties.forEach(baseProperty -> property(baseProperty.toString()));
-            return this;
+        public @NonNull Builder connectorOf(@NonNull RestClientFactory connectorFactory) {
+            return connector(RestConnectionFactory.of(connectorFactory));
         }
     }
 }

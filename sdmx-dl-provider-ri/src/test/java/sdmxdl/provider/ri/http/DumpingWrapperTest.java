@@ -35,7 +35,7 @@ public class DumpingWrapperTest {
         HttpClient stubClient = stubClient();
         HttpFactory base = stubFactory(stubClient);
         HttpFactory decorated = decorator.decorate(base);
-        HttpClient client = decorated.create(source, context);
+        HttpClient client = decorated.createHttpClient(source, context);
 
         assertThat(client).isSameAs(stubClient);
     }
@@ -51,7 +51,7 @@ public class DumpingWrapperTest {
         HttpClient stubClient = stubClient();
         HttpFactory base = stubFactory(stubClient);
         HttpFactory decorated = decorator.decorate(base);
-        HttpClient client = decorated.create(sourceWithDump, context);
+        HttpClient client = decorated.createHttpClient(sourceWithDump, context);
 
         assertThat(client).isNotSameAs(stubClient);
     }
@@ -87,7 +87,7 @@ public class DumpingWrapperTest {
 
         HttpFactory base = stubFactory(stubClient());
         HttpFactory decorated = decorator.decorate(base);
-        HttpClient client = decorated.create(sourceWithDump, contextWithListener);
+        HttpClient client = decorated.createHttpClient(sourceWithDump, contextWithListener);
 
         assertThat(client).isNotSameAs(stubClient());
     }

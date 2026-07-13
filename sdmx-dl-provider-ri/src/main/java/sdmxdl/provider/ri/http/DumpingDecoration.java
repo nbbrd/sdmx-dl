@@ -55,7 +55,7 @@ public final class DumpingDecoration implements HttpDecoration {
      * @return an HTTP client, optionally wrapped with dumping functionality
      */
     private static HttpClient decorate(HttpFactory d, WebSource s, WebContext c) {
-        HttpClient original = d.create(s, c);
+        HttpClient original = d.createHttpClient(s, c);
         File dumpFolder = DUMP_FOLDER_PROPERTY.get(s.getProperties());
         if (dumpFolder != null) {
             EventListener onEvent = c.getEventListener(s);

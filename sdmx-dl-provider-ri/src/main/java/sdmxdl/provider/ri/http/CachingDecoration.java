@@ -19,7 +19,7 @@ public final class CachingDecoration implements HttpDecoration {
     private final CacheStore sharedStore = CacheStore.ofInMemory();
 
     private HttpClient decorate(HttpFactory d, WebSource s, WebContext c) {
-        HttpClient original = d.create(s, c);
+        HttpClient original = d.createHttpClient(s, c);
         EventListener onEvent = c.getEventListener(s);
         return CachingDecorator
                 .builder()
