@@ -35,8 +35,8 @@ import java.util.concurrent.atomic.AtomicReference;
 @lombok.experimental.UtilityClass
 public final class HttpManager {
 
-    private static final List<HttpDecoration> DECORATION_PIPELINE = Arrays.asList(
-            new ByteCountingDecoration(),
+    private static final List<HttpDecoration> HTTP_PIPELINE = Arrays.asList(
+            new MetricsDecoration(),
             new DumpingDecoration(),
             new ThrowingStatusDecoration(),
             new RateLimitingDecoration(),
@@ -48,7 +48,7 @@ public final class HttpManager {
 
     private static HttpFactory decorate(HttpFactory httpFactory) {
         HttpFactory result = httpFactory;
-        ListIterator<HttpDecoration> iterator = DECORATION_PIPELINE.listIterator(DECORATION_PIPELINE.size());
+        ListIterator<HttpDecoration> iterator = HTTP_PIPELINE.listIterator(HTTP_PIPELINE.size());
         while (iterator.hasPrevious()) {
             result = iterator.previous().decorate(result);
         }

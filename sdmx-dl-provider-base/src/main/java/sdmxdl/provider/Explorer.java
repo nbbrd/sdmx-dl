@@ -23,6 +23,7 @@ public final class Explorer {
     }
 
     public static SortedMap<Status, List<Report>> explore(@NonNull SdmxWebManager manager, @NonNull Predicate<? super WebSource> filter) {
+        manager.getNetworking().warmupNetwork();
         return manager.getSources()
                 .values()
                 .parallelStream()
