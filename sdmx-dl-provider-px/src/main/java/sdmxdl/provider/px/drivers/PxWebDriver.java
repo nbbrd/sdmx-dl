@@ -838,7 +838,7 @@ public final class PxWebDriver implements Driver {
 
         static Collection<String> fromDimensionAndKey(CollectionUtil.IndexedElement<Dimension> dimension, Key key) {
             return Key.ALL.equals(key) || key.isWildcard(dimension.getIndex())
-                    ? dimension.getElement().getCodelist().getCodes().keySet()
+                    ? dimension.getElement().getCodes().keySet()
                     : Arrays.asList(key.get(dimension.getIndex()).split("\\+", -1));
         }
 

@@ -81,12 +81,13 @@ public class ProtoApi {
     }
 
     public static DimensionDto fromDimension(Dimension value) {
-        return DimensionDto
+        DimensionDto.Builder result = DimensionDto
                 .newBuilder()
                 .setId(value.getId())
-                .setName(value.getName())
-                .setCodelist(fromCodelist(value.getCodelist()))
-                .build();
+                .setName(value.getName());
+        if (value.getCodelist() != null)
+            result.setCodelist(fromCodelist(value.getCodelist()));
+        return result.build();
     }
 
     public static Dimension toDimension(DimensionDto value) {
@@ -94,7 +95,7 @@ public class ProtoApi {
                 .builder()
                 .id(value.getId())
                 .name(value.getName())
-                .codelist(toCodelist(value.getCodelist()))
+                .codelist(value.hasCodelist() ? toCodelist(value.getCodelist()) : null)
                 .build();
     }
 

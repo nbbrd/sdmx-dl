@@ -91,4 +91,49 @@ public class XMLStreamStructure21Test {
             });
         });
     }
+
+    @Test
+    public void testNonEnumeratedDimension() throws IOException {
+        Xml.Parser<List<Structure>> parser = SdmxXmlStreams.struct21(Languages.ANY);
+
+        assertThat(parser.parseReader(() -> newBufferedReader(SdmxXmlSources.class, "other/BBK_AQFA2010.xml", UTF_8))).singleElement().satisfies(o -> {
+            assertThat(o.getRef()).isEqualTo(StructureRef.of("BBK", "BBK_AQFA2010", "1.0"));
+            assertThat(o.getDimensions()).hasSize(10);
+
+            assertThat(o.getDimensions()).filteredOn(Dimension::getId, "BBK_STD_FREQ").singleElement().satisfies(x -> {
+                assertThat(x.isCoded()).isTrue();
+                assertThat(x.getCodelist().getRef()).isEqualTo(CodelistRef.of("BBK", "CL_BBK_STD_FREQ", "1.0"));
+            });
+
+            assertThat(o.getDimensions()).filteredOn(Dimension::getId, "BBK_FA_CUSTOM_BREAKDOWN").singleElement().satisfies(x -> {
+                assertThat(x.isCoded()).isFalse();
+                assertThat(x.getCodelist()).isNull();
+                assertThat(x.getCodes()).isEmpty();
+            });
+        });
+    }
+
+    @Test
+    public void testConceptCoreRepresentation() throws IOException {
+        Xml.Parser<List<Structure>> parser = SdmxXmlStreams.struct21(Languages.ANY);
+
+        assertThat(parser.parseReader(() -> newBufferedReader(SdmxXmlSources.class, "other/Generated_ConceptTextFormat21.xml", UTF_8))).singleElement().satisfies(o -> {
+            assertThat(o.getRef()).isEqualTo(StructureRef.of("XX", "DSD_TEST", "1.0"));
+            assertThat(o.getDimensions()).hasSize(2);
+
+            // Enumerated dimension inheriting a codelist from the concept's core representation
+            assertThat(o.getDimensions()).filteredOn(Dimension::getId, "ENUM_DIM").singleElement().satisfies(x -> {
+                assertThat(x.isCoded()).isTrue();
+                assertThat(x.getCodelist().getRef()).isEqualTo(CodelistRef.of("XX", "CL_A", "1.0"));
+                assertThat(x.getCodes()).containsEntry("X", "Value X");
+            });
+
+            // Non-enumerated dimension inheriting a text format from the concept's core representation
+            assertThat(o.getDimensions()).filteredOn(Dimension::getId, "TEXT_DIM").singleElement().satisfies(x -> {
+                assertThat(x.isCoded()).isFalse();
+                assertThat(x.getCodelist()).isNull();
+                assertThat(x.getCodes()).isEmpty();
+            });
+        });
+    }
 }

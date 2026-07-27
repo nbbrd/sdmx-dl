@@ -8,6 +8,9 @@ import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.UncheckedIOException;
 import java.util.*;
 import java.util.function.Predicate;
 
@@ -123,11 +126,12 @@ public final class Explorer {
             return Report.of(source, Status.SUCCESS);
 
         } catch (Exception fatal) {
-            return Report.of(source, Status.CONNECTION_FAILURE, fatal, SourceRequest.builder().build());
+            return Report.of(source, Status.UNEXPECTED_FAILURE, fatal, stackTraceToString(fatal));
         }
     }
 
     public enum Status {
+        UNEXPECTED_FAILURE,
         CONNECTION_FAILURE,
         DB_FAILURE,
         NO_DB,
@@ -145,7 +149,7 @@ public final class Explorer {
 
         @StaticFactoryMethod
         public static @NonNull Report of(@NonNull WebSource source, @NonNull Status status, @NonNull Exception fatal, @NonNull Object request) {
-            return new Report(source.getId(), status, fatal.getClass().getSimpleName(), fatal.getMessage(), request);
+            return new Report(source.getId(), status, request, fatal.getClass().getSimpleName(), fatal.getMessage());
         }
 
         @StaticFactoryMethod
@@ -160,27 +164,40 @@ public final class Explorer {
         Status status;
 
         @Nullable
+        Object request;
+
+        @Nullable
         String error;
 
         @Nullable
         String message;
-
-        @Nullable
-        Object request;
     }
 
     private static boolean isInvalidStructure(MetaSet metaSet) {
         return metaSet.getStructure().getDimensions().stream()
-                .anyMatch(dimension -> dimension.getCodelist().getCodes().isEmpty());
+                .allMatch(dimension -> dimension.getCodes().isEmpty());
     }
 
     private static Iterator<Key> keyIterator(Connection c, DatabaseRef db, FlowRef flow, Structure structure) throws IOException {
         Key.Builder key = Key.builder(structure);
         List<Dimension> dimensions = structure.getDimensions();
         for (int i = 0; i < dimensions.size(); i++) {
-            Collection<String> availableDimensionCodes = c.getAvailableDimensionCodes(db, flow, key.build(), i);
-            key.put(dimensions.get(i).getId(), availableDimensionCodes.iterator().next());
+            Iterator<String> availableDimensionCodes = c.getAvailableDimensionCodes(db, flow, key.build(), i).iterator();
+            if (availableDimensionCodes.hasNext()) {
+                key.put(dimensions.get(i).getId(), availableDimensionCodes.next());
+            }
         }
         return singletonList(key.build()).iterator();
+    }
+
+    private static String stackTraceToString(Exception e) {
+        try (StringWriter sw = new StringWriter()) {
+            try (PrintWriter pw = new PrintWriter(sw)) {
+                e.printStackTrace(pw);
+                return sw.toString();
+            }
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
     }
 }

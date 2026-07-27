@@ -142,7 +142,7 @@ public final class XMLStreamStructure20 {
         while (XMLStreamUtil.nextTag(reader, CONCEPT_TAG, NAME_TAG)) {
             parseNameTag(reader, label);
         }
-        concepts.add(new Concept(id, label.build(id), null, null, null));
+        concepts.add(new Concept(id, label.build(id), null, false, null, null));
     }
 
     private void parseDataStructures(XMLStreamReader reader, List<Structure> result, DsdContext context) throws XMLStreamException {

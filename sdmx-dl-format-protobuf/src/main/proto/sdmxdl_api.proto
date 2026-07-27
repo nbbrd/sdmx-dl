@@ -72,7 +72,7 @@ enum DetailDto {
 message DimensionDto {
   string id = 1;
   string name = 2;
-  CodelistDto codelist = 3;
+  optional CodelistDto codelist = 3;
 }
 
 enum FeatureDto {
