@@ -99,7 +99,7 @@ public class RiRestClientTest {
 
             @Override
             public @NonNull HttpResponse send(@NonNull HttpRequest httpRequest) throws IOException {
-                throw new ThrowingStatusException(responseCode, "");
+                throw new ThrowingStatusException(responseCode);
             }
         };
     }
@@ -157,11 +157,6 @@ public class RiRestClientTest {
         @Override
         public int getStatusCode() throws IOException {
             return NO_STATUS_CODE;
-        }
-
-        @Override
-        public @NonNull String getReasonPhrase() throws IOException {
-            return "";
         }
 
         @Override

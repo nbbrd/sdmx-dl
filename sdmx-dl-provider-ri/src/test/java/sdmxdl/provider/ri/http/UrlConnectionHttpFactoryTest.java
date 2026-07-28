@@ -3,7 +3,7 @@ package sdmxdl.provider.ri.http;
 import lombok.NonNull;
 import nbbrd.io.http.HttpHeaders;
 import nbbrd.io.http.HttpRequest;
-import nbbrd.io.http.UrlConnectionListener;
+import nbbrd.io.http.urlconnection.UrlConnectionListener;
 import nbbrd.io.net.MediaType;
 import org.junit.jupiter.api.Test;
 import sdmxdl.provider.web.DriverProperties;

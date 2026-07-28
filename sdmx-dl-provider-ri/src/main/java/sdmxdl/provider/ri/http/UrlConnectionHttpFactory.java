@@ -3,8 +3,8 @@ package sdmxdl.provider.ri.http;
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.http.HttpRequest;
-import nbbrd.io.http.UrlConnectionHttpClient;
-import nbbrd.io.http.UrlConnectionListener;
+import nbbrd.io.http.urlconnection.UrlConnectionHttpClient;
+import nbbrd.io.http.urlconnection.UrlConnectionListener;
 import sdmxdl.EventListener;
 import sdmxdl.provider.web.WebEvents;
 import sdmxdl.web.WebSource;
@@ -64,7 +64,7 @@ public final class UrlConnectionHttpFactory implements HttpFactory {
                 .proxySelector(network.getProxySelector())
                 .sslSocketFactory(network.getSSLFactory().getSSLSocketFactory())
                 .hostnameVerifier(network.getSSLFactory().getHostnameVerifier())
-                .urlConnectionFactory(network.getURLConnectionFactory()::openConnection)
+//                .urlConnectionFactory(network.getURLConnectionFactory()::openConnection)
                 .listener(onEvent != null ? new RiHttpEventListener(message -> onEvent.accept("RI_HTTP", message, 1)) : UrlConnectionListener.noOp())
                 .userAgent(USER_AGENT_PROPERTY.get(source.getProperties()))
                 .build();

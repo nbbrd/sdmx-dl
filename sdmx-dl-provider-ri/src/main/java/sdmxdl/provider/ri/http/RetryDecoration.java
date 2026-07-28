@@ -1,7 +1,6 @@
 package sdmxdl.provider.ri.http;
 
 import nbbrd.io.http.HttpClient;
-import nbbrd.io.http.UrlConnectionHttpClient;
 import nbbrd.io.http.ext.RetryDecorator;
 import nbbrd.io.http.ext.RetryListener;
 import nbbrd.io.text.IntProperty;
@@ -24,8 +23,6 @@ public final class RetryDecoration implements HttpDecoration {
      * <p>
      * Default value: 3 retries
      * </p>
-     *
-     * @see UrlConnectionHttpClient for retry behavior details
      */
     @PropertyDefinition
     public static final IntProperty MAX_RETRIES_PROPERTY =

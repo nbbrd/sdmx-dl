@@ -255,7 +255,7 @@ public final class EstatDialectDriver implements Driver {
         }
 
         private static ThrowingStatusException getResponseException(MessageFooter messageFooter) {
-            return new ThrowingStatusException(messageFooter.getCode(), String.join(System.lineSeparator(), messageFooter.getTexts()));
+            return new ThrowingStatusException(messageFooter.getCode());
         }
 
         private static Optional<URI> getAsyncURI(MessageFooter messageFooter) {
@@ -311,11 +311,6 @@ public final class EstatDialectDriver implements Driver {
             @Override
             public int getStatusCode() throws IOException {
                 return zipResponse.getStatusCode();
-            }
-
-            @Override
-            public @NonNull String getReasonPhrase() throws IOException {
-                return zipResponse.getReasonPhrase();
             }
 
             @Override
