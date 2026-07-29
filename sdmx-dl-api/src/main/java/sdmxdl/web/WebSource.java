@@ -87,7 +87,7 @@ public class WebSource extends Source {
 
         public @NonNull Builder websiteOf(@Nullable CharSequence website) throws IllegalArgumentException {
             try {
-                return website(website != null ? new URL(website.toString()) : null);
+                return website(website != null ? URI.create(website.toString()).toURL() : null);
             } catch (MalformedURLException ex) {
                 throw new IllegalArgumentException(ex);
             }
@@ -99,7 +99,7 @@ public class WebSource extends Source {
 
         public @NonNull Builder monitorWebsiteOf(@Nullable CharSequence monitorWebsite) throws IllegalArgumentException {
             try {
-                return monitorWebsite(monitorWebsite != null ? new URL(monitorWebsite.toString()) : null);
+                return monitorWebsite(monitorWebsite != null ? URI.create(monitorWebsite.toString()).toURL() : null);
             } catch (MalformedURLException ex) {
                 throw new IllegalArgumentException(ex);
             }

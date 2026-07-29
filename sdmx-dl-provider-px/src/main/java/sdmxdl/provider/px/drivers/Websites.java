@@ -4,6 +4,7 @@ import nbbrd.io.picocsv.Picocsv;
 import nbbrd.picocsv.Csv;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +31,7 @@ final class Websites {
                 if (!reader.readField()) throw new IOException("Invalid format, expecting host");
                 String host = reader.toString();
                 if (!reader.readField()) throw new IOException("Invalid format, expecting URL");
-                URL url = reader.length() > 0 ? new URL(reader.toString()) : null;
+                URL url = reader.length() > 0 ? URI.create(reader.toString()).toURL() : null;
                 if (reader.readField()) throw new IOException("Invalid format, unexpected field");
                 result.put(host, url);
             }
