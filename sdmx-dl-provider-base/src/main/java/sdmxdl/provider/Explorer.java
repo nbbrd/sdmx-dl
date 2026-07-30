@@ -84,7 +84,7 @@ public final class Explorer {
             }
 
             if (flows.isEmpty()) {
-                return Report.of(source, Status.NO_FLOW);
+                return Report.of(source, Status.NO_FLOW, databaseRequest);
             }
 
             FlowRequest flowRequest;
@@ -102,7 +102,7 @@ public final class Explorer {
             }
 
             if (isInvalidStructure(metaSet)) {
-                return Report.of(source, Status.NO_META);
+                return Report.of(source, Status.NO_META, flowRequest);
             }
 
             KeyRequest keyRequest;
@@ -120,10 +120,10 @@ public final class Explorer {
             }
 
             if (dataSet.getData().isEmpty()) {
-                return Report.of(source, Status.NO_DATA);
+                return Report.of(source, Status.NO_DATA, keyRequest);
             }
 
-            return Report.of(source, Status.SUCCESS);
+            return Report.of(source, Status.SUCCESS, keyRequest);
 
         } catch (Exception fatal) {
             return Report.of(source, Status.UNEXPECTED_FAILURE, fatal, stackTraceToString(fatal));
@@ -153,8 +153,8 @@ public final class Explorer {
         }
 
         @StaticFactoryMethod
-        public static @NonNull Report of(@NonNull WebSource source, @NonNull Status status) {
-            return new Report(source.getId(), status, null, null, null);
+        public static @NonNull Report of(@NonNull WebSource source, @NonNull Status status, @NonNull Object request) {
+            return new Report(source.getId(), status, request, null, null);
         }
 
         @NonNull
@@ -163,7 +163,7 @@ public final class Explorer {
         @NonNull
         Status status;
 
-        @Nullable
+        @NonNull
         Object request;
 
         @Nullable

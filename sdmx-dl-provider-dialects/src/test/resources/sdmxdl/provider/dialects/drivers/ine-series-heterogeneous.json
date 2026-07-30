@@ -1,0 +1,27 @@
+[
+  {
+    "COD": "IPC290750",
+    "Nombre": "National. Overall index. Annual change. ",
+    "MetaData": [
+      {"Id": 16473, "T3_Variable": "Regional totals", "Nombre": "National", "Codigo": "00"},
+      {"Id": 304092, "T3_Variable": "ECOICOP Groups", "Nombre": "Overall index", "Codigo": "00"},
+      {"Id": 74, "T3_Variable": "Index and rates", "Nombre": "Annual change", "Codigo": "2"}
+    ],
+    "Data": [
+      {"Fecha": "2026-07-01T00:00:00.000+02:00", "T3_TipoDato": "Preview", "T3_Periodo": "M07", "Anyo": 2026, "Valor": 3.5}
+    ]
+  },
+  {
+    "COD": "IPC293603",
+    "Nombre": "Melilla. Overall index. Annual change. ",
+    "MetaData": [
+      {"Id": 8995, "T3_Variable": "Autonomous Communities and Cities", "Nombre": "Melilla", "Codigo": "18"},
+      {"Id": 304092, "T3_Variable": "ECOICOP Groups", "Nombre": "Overall index", "Codigo": "00"},
+      {"Id": 74, "T3_Variable": "Index and rates", "Nombre": "Annual change", "Codigo": "2"}
+    ],
+    "Data": [
+      {"Fecha": "2026-07-01T00:00:00.000+02:00", "T3_TipoDato": "Preview", "T3_Periodo": "M07", "Anyo": 2026, "Valor": 2.9}
+    ]
+  }
+]
+

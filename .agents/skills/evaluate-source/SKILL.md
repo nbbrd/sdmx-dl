@@ -167,6 +167,8 @@ Produce an explicit mapping table. The sdmx-dl `Connection` operations you must 
 | `getData(...)` → `Series`/`Obs`  | Series keys + observations (period + value)            |
 
 For each, record the exact endpoint, parameters, and the response fields used.
+Also note any listing field that **distinguishes otherwise same-named entries** (frequency,
+variant/base-year code, covered period, …) and map it to `Flow.description` — see 5b item 6.
 
 ### 5b. Resolve the hard questions — each must be answered from live data
 
@@ -182,30 +184,79 @@ These are the questions that, if guessed, break the driver at runtime:
 3. **Field presence differs per endpoint.** A field available in the structure endpoint
    may be absent (or renamed) in the data endpoint. Pick fields available in *both*, or
    reconcile them, so structure and data stay consistent.
-4. **Dimension ordering must be deterministic.** Choose an explicit, reproducible order
-   (e.g. natural order of an id/name) and use the *same* order when building the DSD and
-   the keys.
-5. **Period/frequency derivation.** Confirm where granularity comes from (an explicit
+4. **Period/frequency derivation.** Confirm where granularity comes from (an explicit
    periodicity id, or a period token like `M12`/`QI`, or the timestamp shape). Use the
    timestamp for the period start.
-6. **Reachable-by-id ≠ listed.** An item may resolve by direct id yet not appear in its
+5. **Reachable-by-id ≠ listed.** An item may resolve by direct id yet not appear in its
    parent listing (so flow validation rejects it). Pick a test example that is actually
    returned by the listing endpoint.
+6. **Display names are often not unique.** Several flows in one source can share an
+   *identical* name (e.g. a quarterly and an annual table, or base-year/classification
+   variants). The name alone then cannot tell them apart. Check the listing response for
+   the fields that *do* distinguish them (frequency, variant/base-year code, covered
+   period, publication) and surface them — map them to `Flow.description` rather than
+   discarding them. Accept that a few entries may be indistinguishable by metadata alone;
+   only their ref id and actual content separate those. **Do not drop fields you don't
+   immediately map** — a field that looks redundant is often the only discriminator.
 7. **Error semantics.** Find out how "no match"/"empty" is signalled. Some APIs return
    HTTP 500 (not an empty 200) for unknown filter values — the driver must translate that
    into an empty dataset, and/or pre-validate keys against the DSD.
 8. **Language selection.** Header (`Accept-Language`) vs path/parameter vs parallel base
    URLs — confirm by comparing responses.
-9. **Pagination & limits.** Check page sizes and how to cap payloads for structure-only
-   calls (fetch metadata without all observations).
+9. **Pagination & limits.** Check page sizes and how to cap payloads. Beware of very
+   large payloads: **stream the parse** rather than buffering the whole body (huge tables
+   can cause `OutOfMemoryError`), and cap slow/large fetches with a timeout.
+10. **Transient "busy" responses.** Some APIs return **HTTP 200 with a status/placeholder
+    body** ("request in process", empty object, …) instead of the real payload. Detect
+    these and turn them into a retryable error — don't parse them as data.
 
-### 5c. Capture fixtures
+### 5c. Deriving the dimension model — the hardest part (do not shortcut)
+
+When there is no pre-built DSD, you must *infer* dimensions and codelists from series
+metadata. This is where naïve implementations silently return no data. **You cannot infer
+the model from one series** — you must inspect *many* series across the table. Confirm each
+of the following against live data, because they are frequently all true at once:
+
+1. **Series are heterogeneous.** Different series in the *same* table can carry different
+   variable sets (different arity, different variables). Never assume a single series is
+   representative.
+2. **Metadata order is not stable.** The same variable may appear at different positions
+   across series. **Do not key dimensions by position** — key them by identity, then order
+   deterministically.
+3. **Mutually-exclusive variables must be merged.** Several variables can be alternatives
+   for the same conceptual dimension and never co-occur (e.g. *National totals* vs
+   *Regions* vs *Municipalities* for geography). If you make each a separate dimension,
+   every series leaves the others empty and **no fully-specified key can ever match**.
+   Merge variables that provably never co-occur into one dimension whose codelist is the
+   union of their values.
+4. **The same variable name can repeat within one series.** That legitimately means two
+   distinct dimensions — keying by name alone collapses them and makes keys collide.
+5. **Robust approach — co-occurrence signature.** Model each metadata item as
+   `(variable identity, occurrence rank within the series)`. Items that share the identical
+   set of co-occurring items (⇒ provably never co-occur) merge into one dimension; repeated
+   names split into distinct dimensions. This is order-independent, merges alternatives, and
+   handles repeats — all at once.
+6. **A wildcard/empty code is not a valid key component.** In sdmx-dl an empty string is
+   the wildcard code; a *series* key must be fully specified. If a merged/absent slot has
+   no natural value, fill it with an explicit "not applicable" sentinel code registered in
+   the codelist — never leave it empty.
+
+### 5d. Single-fetch consistency
+
+Where feasible, build **both** the `Structure` and the `DataSet` from **one** response.
+Sources can return *different labels for the same variable* across two separate calls
+(structure call vs data call), which misaligns dimensions. One cached fetch that feeds
+both `getMeta` and `getData` guarantees they can never disagree.
+
+### 5e. Capture fixtures
 
 Save the real responses for: the database list, the flow list, a structure-bearing
 response, and a small data response. These become the unit-test resources
-(`src/test/resources/.../xxx-*.json`) and the evidence for the mapping.
+(`src/test/resources/.../xxx-*.json`) and the evidence for the mapping. **Capture at
+least one table whose series are heterogeneous** (mixed variables / mutually-exclusive
+alternatives) — it is the regression fixture that locks the dimension model.
 
-### 5d. Plan the implementation
+### 5f. Plan the implementation
 
 List the classes/changes required, mirroring an existing dialect driver:
 the `Driver` SPI class (declaring the `WebSource` via `DriverSupport`), an HTTP client
@@ -230,6 +281,27 @@ record one concrete working example:
 - [ ] Record the working tuple: `source / database / flow / key` + expected counts
 
 This working tuple feeds the web-query test (CSV row) and the runnable demo.
+
+### 6a. Don't stop at a few hand-picked examples — sample randomly and check invariants
+
+A handful of curated examples can pass by luck while the model is still wrong for other
+flows (this is exactly what happened with INE). For any source with an **inferred**
+dimension model, add a seeded, random-sampling test (tagged so it only runs on demand)
+that fetches many live tables and asserts the properties that **must** hold if the model
+is correct — rather than checking specific values:
+
+- key size **==** dimension count
+- every series key is **fully specified** (no accidental wildcard slot)
+- every code in every key is **known to the DSD** (validate the key against the structure)
+- keys are **unique** across the table (no silent series collisions)
+- each key **round-trips** to exactly its own series
+
+Make it reproducible and bounded: a fixed **seed** (overridable), a cap on the number of
+tables, a **per-table timeout** (report oversized tables as skipped instead of hanging),
+and an overall **wall-clock budget**. On failure, print the offending flow id and the
+exact invariant broken so it is directly actionable. This invariant harness is what turns
+"seems to work" into evidence — it repeatedly surfaced structural bugs that no curated
+example did.
 
 ## 7. Source ID, names, confidentiality
 
@@ -345,18 +417,29 @@ Before declaring an evaluation done, sanity-check against these recurring traps:
 - [ ] The **endpoint mode/flags** that return the needed metadata are confirmed
 - [ ] The **key code component is unique** (no collisions across dimensions)
 - [ ] Fields used exist in **both** the structure and data responses (or are reconciled)
-- [ ] **Dimension order** is deterministic and identical for DSD and keys
+- [ ] The dimension model was inferred from **many series, not one** (heterogeneity checked)
+- [ ] Metadata **order instability** handled — dimensions keyed by identity, not position
+- [ ] **Mutually-exclusive** variables are merged into one dimension (not split)
+- [ ] **Repeated variable names** within a series map to distinct dimensions
+- [ ] Absent/merged slots use an explicit **"not applicable" code**, never an empty wildcard
+- [ ] Structure and data are **consistent** (ideally built from a single fetch)
 - [ ] **Period granularity** source is confirmed (id / token / timestamp shape)
 - [ ] The test example is **listed by its parent**, not only reachable by id
+- [ ] **Non-unique display names** handled — distinguishing fields kept in `description`
 - [ ] **Empty/error semantics** (e.g. HTTP 500 for unknown values) are handled
-- [ ] Raw response **fixtures were saved** for tests
+- [ ] **Transient "busy"** 200 responses are detected and made retryable
+- [ ] Very large payloads are **streamed** (no whole-body buffering / OOM)
+- [ ] A **random-sampling invariant test** passes across many live flows (not just a few)
+- [ ] Raw response **fixtures were saved** for tests (incl. a heterogeneous table)
 - [ ] Discrepancies between docs and live behaviour are **documented**
 
 ### Case study: INE (proprietary JSON, new dialect)
 
 The INE source (Spain) was initially evaluated and implemented from documentation and an
-R reference client. It compiled but returned **no data at runtime** because several
-documented assumptions were wrong against the live API:
+R reference client. It compiled but returned **no data at runtime**, and each subsequent
+"fix" revealed a deeper wrong assumption. The full sequence:
+
+**Field/endpoint assumptions (first round):**
 
 - The structure endpoint suggested by docs (`SERIES_TABLA`, `det=1` nested `Variable`)
   did not return usable fields; data had to be built from the **data endpoint in
@@ -369,6 +452,42 @@ documented assumptions were wrong against the live API:
   rejected the documented example; a different, listed table was required.
 - Unknown filter values returned **HTTP 500**, not an empty 200.
 
-The fix was to drive every decision from captured live payloads and to verify the full
-databases→flows→structure→data path end-to-end. This checklist exists so the next
-evaluation catches these at evaluation time, not after implementation.
+**Dimension-model assumptions (the hard part — several more rounds):**
+
+- Series in one table are **heterogeneous**: some tables split geography into
+  mutually-exclusive variables (National totals vs Autonomous Communities), so the
+  union-of-variables DSD left every series with an empty slot and **no key ever matched**.
+- Modelling those as separate dimensions was wrong — they had to be **merged**; an empty
+  slot is a wildcard, which is illegal for a series key, so absent slots needed an explicit
+  `_Z` "not applicable" code.
+- A "positional" model (dimension = metadata slot index) then broke because INE returns
+  metadata **in inconsistent order** across series.
+- Keying purely by variable **name** broke a table that repeats the same variable name
+  twice in one series (two genuine dimensions collapsed into one).
+- The final model keys dimensions by **co-occurrence signature** (variable identity +
+  occurrence rank), which is order-independent, merges alternatives, and splits repeats.
+- The structure and data calls sometimes returned **different labels for the same
+  variable**; the driver was changed to build both from a **single cached fetch**.
+- Large tables caused **OOM** (whole-body buffering) and the API occasionally returned a
+  **busy status object with HTTP 200** — handled by streaming the parse and a retryable
+  error.
+
+**Non-unique names (found later, in normal use):**
+
+- Two flows with the same name and similar data turned out to be a **quarterly** and an
+  **annual** table. Investigation showed *all 9* tables of that operation share the exact
+  same name — the driver had parsed only id + name and **discarded** the fields that
+  distinguish them (frequency, base-year/classification code, covered period, publication).
+  The fix mapped those fields to `Flow.description`. A residual set of tables remained
+  identical across *all* listing metadata — only their ref id and content differ, which is
+  an inherent limit worth documenting rather than hiding.
+
+**How it was finally trusted:** curated examples kept passing while the model was still
+wrong, so a **seeded random-sampling invariant test** was added (key size == dim count,
+fully-specified & DSD-valid keys, unique keys, round-trip), bounded by per-table timeouts
+and a wall-clock budget. That harness is what actually caught each structural bug.
+
+The lesson: drive every decision from captured live payloads, infer the dimension model
+from **many** series, and prove correctness with **invariants over random samples** — not
+a few hand-picked keys. This checklist exists so the next evaluation catches these at
+evaluation time, not after implementation.

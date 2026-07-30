@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 National Bank of Belgium
+ * Copyright 2026 National Bank of Belgium
  *
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
@@ -144,20 +144,20 @@ public final class IneDialectDriver implements Driver {
         public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
             Flow flow = ConnectionSupport.getFlowFromFlows(database, flowRef, this, client);
             String tableId = Converter.flowRefToTableId(flowRef);
-            Structure structure = client.getStructure(tableId);
+            Structure structure = client.getTable(tableId).getStructures().get(0);
             return MetaSet.builder().flow(flow).structure(structure).build();
         }
 
         @Override
         public @NonNull DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
             String tableId = Converter.flowRefToTableId(flowRef);
-            return client.getData(tableId, flowRef).getData(query);
+            return client.getTable(tableId).getDataSets().get(0).getData(query);
         }
 
         @Override
         public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
             String tableId = Converter.flowRefToTableId(flowRef);
-            return client.getData(tableId, flowRef).getData(query).stream();
+            return client.getTable(tableId).getDataSets().get(0).getData(query).stream();
         }
 
         @Override
@@ -189,11 +189,11 @@ public final class IneDialectDriver implements Driver {
         @NonNull
         List<Flow> getTables(@NonNull String opCode) throws IOException;
 
+        // Structure and data are built from ONE response so that getMeta and getData can never disagree
+        // on the dimension set/order. This matters because INE may return different variable labels for
+        // the same table between two calls (e.g. nult=1 vs full, or different backend nodes).
         @NonNull
-        Structure getStructure(@NonNull String tableId) throws IOException;
-
-        @NonNull
-        DataSet getData(@NonNull String tableId, @NonNull FlowRef flowRef) throws IOException;
+        DataRepository getTable(@NonNull String tableId) throws IOException;
 
         @NonNull
         URI ping() throws IOException;
@@ -209,6 +209,35 @@ public final class IneDialectDriver implements Driver {
         private final String lang;
         private final HttpClient client;
 
+        // INE occasionally answers HTTP 200 with a status object instead of the expected JSON array
+        // while it computes/caches a (usually large) table, e.g.
+        // {"status":"Peticion en proceso. Actualice pagina pasados unos minutos."}. We peek only the
+        // first non-whitespace character and, if it is not '[', raise a clean, retryable IOException.
+        // The character is pushed back so the (possibly very large) body can then be streamed straight
+        // to the parser WITHOUT buffering it all in memory (buffering huge tables caused OutOfMemory).
+        private @NonNull Reader openArrayReader(@NonNull HttpResponse response) throws IOException {
+            java.io.PushbackReader reader = new java.io.PushbackReader(response.getBodyAsReader(), 1);
+            int c;
+            do {
+                c = reader.read();
+            } while (c != -1 && Character.isWhitespace(c));
+            if (c != '[') {
+                StringBuilder snippet = new StringBuilder();
+                if (c != -1) {
+                    snippet.append((char) c);
+                    for (int i = 0; i < 160; i++) {
+                        int next = reader.read();
+                        if (next == -1) break;
+                        snippet.append((char) next);
+                    }
+                }
+                reader.close();
+                throw new IOException("INE did not return a JSON array (service busy or table unavailable): " + snippet);
+            }
+            reader.unread(c);
+            return reader;
+        }
+
         @Override
         public @NonNull List<Database> getOperations() throws IOException {
             HttpRequest request = HttpRequest
@@ -222,7 +251,7 @@ public final class IneDialectDriver implements Driver {
                     .build();
 
             try (HttpResponse response = client.send(request)) {
-                try (Reader reader = response.getBodyAsReader()) {
+                try (Reader reader = openArrayReader(response)) {
                     return Converter.toOperationList(Operation.parseAll(reader));
                 }
             }
@@ -243,41 +272,18 @@ public final class IneDialectDriver implements Driver {
                     .build();
 
             try (HttpResponse response = client.send(request)) {
-                try (Reader reader = response.getBodyAsReader()) {
+                try (Reader reader = openArrayReader(response)) {
                     return Converter.toTableList(Table.parseAll(reader), opCode);
                 }
             }
         }
 
         @Override
-        public @NonNull Structure getStructure(@NonNull String tableId) throws IOException {
-            // Structure is assembled from DATOS_TABLA in friendly+metadata mode (tip=AM).
-            // nult=1 caps observations to one per series while still returning the full
-            // metadata (T3_Variable / value Id) needed to build the virtual DSD.
-            HttpRequest request = HttpRequest
-                    .builder()
-                    .query(UriQueryBuilder
-                            .of(endpoint)
-                            .path(lang)
-                            .path("DATOS_TABLA")
-                            .path(tableId)
-                            .param("tip", "AM")
-                            .param("nult", "1")
-                            .build())
-                    .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
-                    .build();
-
-            try (HttpResponse response = client.send(request)) {
-                try (Reader reader = response.getBodyAsReader()) {
-                    return Converter.toStructure(SeriesEntry.parseAll(reader), tableId);
-                }
-            }
-        }
-
-        @Override
-        public @NonNull DataSet getData(@NonNull String tableId, @NonNull FlowRef flowRef) throws IOException {
+        public @NonNull DataRepository getTable(@NonNull String tableId) throws IOException {
             // Friendly+metadata mode (tip=AM) is required: the per-series MetaData array
-            // (T3_Variable / value Id) is what allows the series key to be reconstructed.
+            // (T3_Variable / value Id) is what allows the series key to be reconstructed. The full
+            // response (no nult) is used for BOTH the structure and the data so that they are always
+            // consistent, since INE may otherwise return different variable labels between calls.
             HttpRequest request = HttpRequest
                     .builder()
                     .query(UriQueryBuilder
@@ -290,13 +296,23 @@ public final class IneDialectDriver implements Driver {
                     .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
                     .build();
 
+            FlowRef flowRef = FlowRef.of(Converter.AGENCY, tableId, Converter.VERSION);
             try (HttpResponse response = client.send(request)) {
-                try (Reader reader = response.getBodyAsReader()) {
-                    return Converter.buildDataSet(flowRef, SeriesEntry.parseAll(reader));
+                try (Reader reader = openArrayReader(response)) {
+                    SeriesEntry[] series = SeriesEntry.parseAll(reader);
+                    return DataRepository
+                            .builder()
+                            .structure(Converter.toStructure(series, tableId))
+                            .dataSet(Converter.buildDataSet(flowRef, series))
+                            .build();
                 }
             } catch (ThrowingStatusException ex) {
                 if (ex.getResponseCode() == HttpURLConnection.HTTP_INTERNAL_ERROR) {
-                    return DataSet.builder().ref(flowRef).query(Query.ALL).build();
+                    return DataRepository
+                            .builder()
+                            .structure(Converter.toStructure(new SeriesEntry[0], tableId))
+                            .dataSet(DataSet.builder().ref(flowRef).query(Query.ALL).build())
+                            .build();
                 }
                 throw ex;
             }
@@ -353,10 +369,7 @@ public final class IneDialectDriver implements Driver {
         private final TypedId<List<Flow>> idOfTables = initIdOfTables(base);
 
         @lombok.Getter(lazy = true)
-        private final TypedId<DataRepository> idOfStructure = initIdOfStructure(base);
-
-        @lombok.Getter(lazy = true)
-        private final TypedId<DataSet> idOfData = initIdOfData(base);
+        private final TypedId<DataRepository> idOfTable = initIdOfTable(base);
 
         private static TypedId<List<Database>> initIdOfOperations(URI base) {
             return TypedId.of(base,
@@ -372,15 +385,10 @@ public final class IneDialectDriver implements Driver {
             ).with("tables");
         }
 
-        private static TypedId<DataRepository> initIdOfStructure(URI base) {
-            return TypedId.of(base, repo -> repo, repo -> repo).with("structure");
-        }
-
-        private static TypedId<DataSet> initIdOfData(URI base) {
-            return TypedId.of(base,
-                    repo -> repo.getDataSets().isEmpty() ? null : repo.getDataSets().get(0),
-                    dataSet -> DataRepository.builder().dataSet(dataSet).build()
-            ).with("data");
+        private static TypedId<DataRepository> initIdOfTable(URI base) {
+            // The whole table (structure + dataset) is cached as a single entry so that both are always
+            // served from the exact same fetch.
+            return TypedId.of(base, repo -> repo, repo -> repo).with("table");
         }
 
         @Override
@@ -399,18 +407,8 @@ public final class IneDialectDriver implements Driver {
         }
 
         @Override
-        public @NonNull Structure getStructure(@NonNull String tableId) throws IOException {
-            DataRepository repo = getIdOfStructure().with(tableId).load(
-                    cache,
-                    () -> DataRepository.builder().structure(delegate.getStructure(tableId)).build(),
-                    o -> ttl
-            );
-            return repo.getStructures().get(0);
-        }
-
-        @Override
-        public @NonNull DataSet getData(@NonNull String tableId, @NonNull FlowRef flowRef) throws IOException {
-            return getIdOfData().with(tableId).load(cache, () -> delegate.getData(tableId, flowRef), o -> ttl);
+        public @NonNull DataRepository getTable(@NonNull String tableId) throws IOException {
+            return getIdOfTable().with(tableId).load(cache, () -> delegate.getTable(tableId), o -> ttl);
         }
 
         @Override
@@ -453,6 +451,16 @@ public final class IneDialectDriver implements Driver {
 
         int id;
         String nombre;
+        // Distinguishing fields: many INE tables share an identical Nombre (e.g. all 9 IPS
+        // tables), so these are needed to tell them apart (frequency, base-year/classification
+        // variant, publication, covered period). They may be absent in older responses.
+        @org.jspecify.annotations.Nullable String codigo;
+        @org.jspecify.annotations.Nullable String periodicidad;
+        @org.jspecify.annotations.Nullable String publicacion;
+        @org.jspecify.annotations.Nullable String periodoIni;
+        @org.jspecify.annotations.Nullable String anyoIni;
+        @org.jspecify.annotations.Nullable String periodoFin;
+        @org.jspecify.annotations.Nullable String anyoFin;
 
         static @NonNull Table[] parseAll(@NonNull Reader reader) {
             return GSON.fromJson(reader, Table[].class);
@@ -466,8 +474,25 @@ public final class IneDialectDriver implements Driver {
             JsonObject x = json.getAsJsonObject();
             return new Table(
                     x.get("Id").getAsInt(),
-                    x.get("Nombre").getAsString()
+                    x.get("Nombre").getAsString(),
+                    stringOrNull(x, "Codigo"),
+                    stringOrNull(x, "T3_Periodicidad"),
+                    stringOrNull(x, "T3_Publicacion"),
+                    stringOrNull(x, "T3_Periodo_ini"),
+                    stringOrNull(x, "Anyo_Periodo_ini"),
+                    stringOrNull(x, "T3_Periodo_fin"),
+                    stringOrNull(x, "Anyo_Periodo_fin")
             );
+        }
+
+        @org.jspecify.annotations.Nullable
+        private static String stringOrNull(JsonObject x, String field) {
+            JsonElement elem = x.get(field);
+            if (elem == null || elem.isJsonNull()) {
+                return null;
+            }
+            String value = elem.getAsString().trim();
+            return value.isEmpty() ? null : value;
         }
     }
 
@@ -601,11 +626,63 @@ public final class IneDialectDriver implements Driver {
             String tableId = String.valueOf(table.getId());
             FlowRef flowRef = FlowRef.of(AGENCY, tableId, VERSION);
             StructureRef structRef = toStructureRef(tableId);
-            return Flow.builder()
+            Flow.Builder builder = Flow.builder()
                     .ref(flowRef)
                     .structureRef(structRef)
-                    .name(table.getNombre())
-                    .build();
+                    .name(table.getNombre());
+            String description = toFlowDescription(table);
+            if (description != null) {
+                builder.description(description);
+            }
+            return builder.build();
+        }
+
+        // Many INE tables share the same Nombre (e.g. all 9 IPS tables are "Services sector
+        // price index by sectors"), so the name alone cannot tell flows apart. Surface the
+        // distinguishing metadata (frequency, variant code, covered period) in the description.
+        // Note: a few tables remain indistinguishable even here (same name, code and period);
+        // only the FlowRef id and their actual content separate those.
+        @org.jspecify.annotations.Nullable
+        static String toFlowDescription(@NonNull Table table) {
+            List<String> parts = new ArrayList<>();
+            if (table.getPeriodicidad() != null) {
+                parts.add(table.getPeriodicidad());
+            }
+            if (table.getCodigo() != null) {
+                parts.add(table.getCodigo());
+            }
+            String period = toPeriodRange(table);
+            if (period != null) {
+                parts.add(period);
+            }
+            if (table.getPublicacion() != null && !table.getPublicacion().equals(table.getNombre())) {
+                parts.add(table.getPublicacion());
+            }
+            return parts.isEmpty() ? null : String.join(" \u00b7 ", parts);
+        }
+
+        @org.jspecify.annotations.Nullable
+        private static String toPeriodRange(@NonNull Table table) {
+            String start = joinPeriod(table.getPeriodoIni(), table.getAnyoIni());
+            String end = joinPeriod(table.getPeriodoFin(), table.getAnyoFin());
+            if (start == null && end == null) {
+                return null;
+            }
+            if (end == null || end.equals(start)) {
+                return start;
+            }
+            if (start == null) {
+                return end;
+            }
+            return start + "\u2013" + end;
+        }
+
+        @org.jspecify.annotations.Nullable
+        private static String joinPeriod(@org.jspecify.annotations.Nullable String period, @org.jspecify.annotations.Nullable String year) {
+            if (year == null) {
+                return period;
+            }
+            return period == null ? year : period + " " + year;
         }
 
         static @NonNull StructureRef toStructureRef(@NonNull String tableId) {
@@ -617,9 +694,16 @@ public final class IneDialectDriver implements Driver {
         }
 
         static @NonNull Structure toStructure(@NonNull SeriesEntry[] series, @NonNull String tableId) {
-            // Group values by their variable name (T3_Variable); codes are the unique value Id
-            // (the value Codigo cannot be used because it collides across variables, e.g. "00").
-            LinkedHashMap<String, LinkedHashMap<String, String>> codelistsByVar = collectCodelists(series);
+            // Dimensions are built from a co-occurrence analysis of the variables (see groupVariables):
+            // each dimension is a set of variables that never appear together and therefore represent
+            // alternative breakdowns of one concept (e.g. "Districts / Municipalities / Sections", or
+            // "Countries and Continents / Geographical Areas of the Rest of the World"). This is robust
+            // to three INE quirks that break simpler approaches: (a) grouping by variable name alone
+            // over-splits a table into a DSD where no real key exists; (b) grouping by MetaData position
+            // is wrong because INE does NOT return MetaData in a consistent order across series; (c) the
+            // same variable name can appear several times in one series, so identity must include an
+            // occurrence rank.
+            List<VarGroup> groups = groupVariables(series);
 
             Structure.Builder builder = Structure.builder()
                     .ref(toStructureRef(tableId))
@@ -627,17 +711,22 @@ public final class IneDialectDriver implements Driver {
                     .primaryMeasureId(OBS_VALUE_ID)
                     .name(tableId);
 
-            // Dimensions are ordered deterministically by variable name so that the order
-            // matches the one used when building keys in buildDataSet (both use natural order).
-            for (String varName : sortedVariableNames(series)) {
-                String dimId = toDimensionId(varName);
+            Set<String> usedIds = new HashSet<>();
+            for (VarGroup group : groups) {
+                String dimId = uniqueDimensionId(usedIds, group.getName());
+                LinkedHashMap<String, String> codes = group.getCodes();
+                if (group.isPartial()) {
+                    // A series that carries no variable of this dimension is keyed with an explicit
+                    // "not applicable" code (see toKey), which must exist in the codelist.
+                    codes.put(NOT_APPLICABLE_CODE, NOT_APPLICABLE_LABEL);
+                }
                 Codelist codelist = Codelist.builder()
                         .ref(CodelistRef.of(AGENCY, "CL_" + dimId, VERSION))
-                        .codes(codelistsByVar.get(varName))
+                        .codes(codes)
                         .build();
                 builder.dimension(Dimension.builder()
                         .id(dimId)
-                        .name(varName)
+                        .name(group.getName())
                         .codelist(codelist)
                         .build());
             }
@@ -645,25 +734,118 @@ public final class IneDialectDriver implements Driver {
             return builder.build();
         }
 
-        private static LinkedHashMap<String, LinkedHashMap<String, String>> collectCodelists(SeriesEntry[] series) {
-            LinkedHashMap<String, LinkedHashMap<String, String>> result = new LinkedHashMap<>();
+        // Partitions the table's "items" into dimensions using their co-occurrence signature: the set of
+        // other items an item ever shares a series with. An item is a (variable name, occurrence rank)
+        // pair, so a variable reused several times in one series contributes several items. Two items
+        // with the same signature provably never co-occur (an item is never in its own signature), so
+        // they are alternative breakdowns of a single dimension and are merged; their codelist is the
+        // union of their value Ids (Id is used because the value Codigo collides across variables, e.g.
+        // "00"). Dimensions are ordered by name so getMeta and getData always agree on the order.
+        private static List<VarGroup> groupVariables(SeriesEntry[] series) {
+            Map<String, Set<String>> coOccurrence = new LinkedHashMap<>();
             for (SeriesEntry entry : series) {
-                for (MetaValue mv : entry.getMetaData()) {
-                    result.computeIfAbsent(mv.getVariable(), k -> new LinkedHashMap<>())
-                            .put(String.valueOf(mv.getId()), mv.getNombre());
+                List<String> items = itemsOf(entry);
+                for (String item : items) {
+                    coOccurrence.computeIfAbsent(item, k -> new HashSet<>());
+                }
+                for (String a : items) {
+                    for (String b : items) {
+                        if (!a.equals(b)) {
+                            coOccurrence.get(a).add(b);
+                        }
+                    }
+                }
+            }
+
+            Map<Set<String>, Set<String>> bySignature = new LinkedHashMap<>();
+            for (Map.Entry<String, Set<String>> e : coOccurrence.entrySet()) {
+                bySignature.computeIfAbsent(e.getValue(), k -> new TreeSet<>()).add(e.getKey());
+            }
+
+            List<Set<String>> groupItems = new ArrayList<>(bySignature.values());
+            groupItems.sort(Comparator.comparing(Converter::groupDisplayName));
+
+            int groupCount = groupItems.size();
+            Map<String, Integer> itemToGroup = new HashMap<>();
+            List<LinkedHashMap<String, String>> codes = new ArrayList<>();
+            for (int i = 0; i < groupCount; i++) {
+                codes.add(new LinkedHashMap<>());
+                for (String item : groupItems.get(i)) {
+                    itemToGroup.put(item, i);
+                }
+            }
+
+            int[] seriesWithGroup = new int[groupCount];
+            for (SeriesEntry entry : series) {
+                List<String> items = itemsOf(entry);
+                List<MetaValue> meta = entry.getMetaData();
+                boolean[] present = new boolean[groupCount];
+                for (int k = 0; k < items.size(); k++) {
+                    int gi = itemToGroup.get(items.get(k));
+                    codes.get(gi).put(String.valueOf(meta.get(k).getId()), meta.get(k).getNombre());
+                    present[gi] = true;
+                }
+                for (int i = 0; i < groupCount; i++) {
+                    if (present[i]) seriesWithGroup[i]++;
+                }
+            }
+
+            List<VarGroup> result = new ArrayList<>();
+            for (int i = 0; i < groupCount; i++) {
+                boolean partial = seriesWithGroup[i] < series.length;
+                result.add(new VarGroup(groupDisplayName(groupItems.get(i)), groupItems.get(i), codes.get(i), partial));
+            }
+            return result;
+        }
+
+        // The items of a series: one per MetaData entry, identified by variable name + occurrence rank
+        // (0-based) among same-named entries in this series, in encounter order.
+        private static List<String> itemsOf(SeriesEntry entry) {
+            Map<String, Integer> counts = new HashMap<>();
+            List<String> items = new ArrayList<>();
+            for (MetaValue mv : entry.getMetaData()) {
+                int rank = counts.merge(mv.getVariable(), 1, Integer::sum) - 1;
+                items.add(mv.getVariable() + ITEM_SEP + rank);
+            }
+            return items;
+        }
+
+        private static String itemDisplayName(String item) {
+            int i = item.indexOf(ITEM_SEP);
+            String name = item.substring(0, i);
+            int rank = Integer.parseInt(item.substring(i + ITEM_SEP.length()));
+            return rank == 0 ? name : name + " (" + (rank + 1) + ")";
+        }
+
+        private static String groupDisplayName(Set<String> items) {
+            return items.stream().map(Converter::itemDisplayName).distinct().sorted().collect(Collectors.joining(" / "));
+        }
+
+        private static Map<String, Integer> variableToGroupIndex(List<VarGroup> groups) {
+            Map<String, Integer> result = new HashMap<>();
+            for (int i = 0; i < groups.size(); i++) {
+                for (String item : groups.get(i).getVariables()) {
+                    result.put(item, i);
                 }
             }
             return result;
         }
 
-        private static List<String> sortedVariableNames(SeriesEntry[] series) {
-            Set<String> names = new TreeSet<>();
-            for (SeriesEntry entry : series) {
-                for (MetaValue mv : entry.getMetaData()) {
-                    names.add(mv.getVariable());
-                }
+        private static String uniqueDimensionId(Set<String> usedIds, String name) {
+            String base = toDimensionId(name);
+            String id = base;
+            for (int suffix = 2; !usedIds.add(id); suffix++) {
+                id = base + "_" + suffix;
             }
-            return new ArrayList<>(names);
+            return id;
+        }
+
+        @lombok.Value
+        private static class VarGroup {
+            String name;
+            Set<String> variables;
+            LinkedHashMap<String, String> codes;
+            boolean partial;
         }
 
         static @NonNull String toDimensionId(@NonNull String variableName) {
@@ -673,25 +855,17 @@ public final class IneDialectDriver implements Driver {
         }
 
         static @NonNull DataSet buildDataSet(@NonNull FlowRef flowRef, @NonNull SeriesEntry[] series) {
-            Map<String, Integer> varOrder = buildVarOrder(series);
+            List<VarGroup> groups = groupVariables(series);
+            Map<String, Integer> variableToGroup = variableToGroupIndex(groups);
+            int dimCount = groups.size();
 
             return Arrays.stream(series)
-                    .map(entry -> toSeries(entry, varOrder))
+                    .map(entry -> toSeries(entry, variableToGroup, dimCount))
                     .collect(DataSet.toDataSet(flowRef, Query.ALL));
         }
 
-        private static Map<String, Integer> buildVarOrder(SeriesEntry[] series) {
-            // Same natural ordering as toStructure so that key positions match dimension order.
-            Map<String, Integer> order = new LinkedHashMap<>();
-            int idx = 0;
-            for (String name : sortedVariableNames(series)) {
-                order.put(name, idx++);
-            }
-            return order;
-        }
-
-        private static Series toSeries(SeriesEntry entry, Map<String, Integer> varOrder) {
-            Key key = toKey(entry, varOrder);
+        private static Series toSeries(SeriesEntry entry, Map<String, Integer> variableToGroup, int dimCount) {
+            Key key = toKey(entry, variableToGroup, dimCount);
             Series.Builder builder = Series.builder().key(key);
             if (!entry.getNombre().trim().isEmpty()) {
                 builder.meta(SERIES_TITLE, entry.getNombre().trim());
@@ -705,13 +879,19 @@ public final class IneDialectDriver implements Driver {
             return builder.build();
         }
 
-        private static @NonNull Key toKey(SeriesEntry entry, Map<String, Integer> varOrder) {
-            String[] components = new String[varOrder.size()];
-            Arrays.fill(components, "");
-            for (MetaValue mv : entry.getMetaData()) {
-                Integer position = varOrder.get(mv.getVariable());
-                if (position != null) {
-                    components[position] = String.valueOf(mv.getId());
+        private static @NonNull Key toKey(SeriesEntry entry, Map<String, Integer> itemToGroup, int dimCount) {
+            // Each component is the value Id of the item (variable + occurrence rank) that fills that
+            // dimension. A dimension not carried by this series (partial dimension) gets an explicit
+            // "not applicable" code rather than an empty string, which Key treats as a wildcard and
+            // would make the series unmatchable by a fully specified key.
+            String[] components = new String[dimCount];
+            Arrays.fill(components, NOT_APPLICABLE_CODE);
+            List<String> items = itemsOf(entry);
+            List<MetaValue> meta = entry.getMetaData();
+            for (int k = 0; k < items.size(); k++) {
+                Integer group = itemToGroup.get(items.get(k));
+                if (group != null) {
+                    components[group] = String.valueOf(meta.get(k).getId());
                 }
             }
             return Key.of(components);
@@ -774,6 +954,10 @@ public final class IneDialectDriver implements Driver {
     static final String OBS_VALUE_ID = "OBS_VALUE";
     static final String SERIES_TITLE = "TITLE";
     static final String OBS_STATUS = "OBS_STATUS";
+    static final String NOT_APPLICABLE_CODE = "_Z";
+    static final String NOT_APPLICABLE_LABEL = "Not applicable";
+    // Separator between a variable name and its occurrence rank inside an internal "item" identifier.
+    static final String ITEM_SEP = "\u0001";
     static final sdmxdl.Duration ANNUAL_DURATION = sdmxdl.Duration.parse("P1Y");
     static final sdmxdl.Duration SEMI_ANNUAL_DURATION = sdmxdl.Duration.parse("P6M");
     static final sdmxdl.Duration QUARTERLY_DURATION = sdmxdl.Duration.parse("P3M");
@@ -782,9 +966,3 @@ public final class IneDialectDriver implements Driver {
     static final sdmxdl.Duration DAILY_DURATION = sdmxdl.Duration.parse("P1D");
     static final MediaType JSON_TYPE = MediaType.builder().type("application").subtype("json").build();
 }
-
-
-
-
-
-

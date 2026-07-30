@@ -1,7 +1,7 @@
 # Evaluation: Instituto Nacional de Estadística (INE)
 
 > **Status**: Implemented — `IneDialectDriver` in `sdmx-dl-provider-dialects`  
-> **Date**: 2026-06-24 (evaluated), 2026-06-26 (implementation corrections)  
+> **Date**: 2026-06-24 (evaluated), 2026-06-26 (implementation corrections), 2026-07-30 (co-occurrence dimension model + random-sampling validation), 2026-07-31 (flow description for same-name tables)  
 > **Scope**: Tempus3 tables only (v1); PC-Axis and tpx excluded  
 > **Flow granularity**: Tables (not Operations)
 
@@ -36,6 +36,63 @@
 >    is a confirmed working IPC example.
 > 7. **`tv=` server-side filtering is not implemented in v1.** `getData` fetches the whole table and
 >    filters in memory; this avoids the HTTP 500 returned for unknown value ids.
+> 8. **Dimensions are derived by CO-OCCURRENCE, not by name and not by position.** This is the single
+>    most important correction; it went through three iterations, each disproved by random sampling of
+>    live tables (see the `testRandomTablesInvariants` harness):
+>    - *Name-based grouping* (one dimension per distinct variable name) over-splits tables that use
+>      several **mutually-exclusive** variables for one concept (e.g. `76136` geography =
+>      `Regional totals` **or** `Autonomous Communities and Cities`; `30656` territory = `Districts`
+>      **or** `Municipalities` **or** `Sections`). The resulting DSD has phantom dimensions and **no
+>      real series key can exist** — the reported failures for `76136` and `30656`.
+>    - *Positional grouping* (one dimension per `MetaData` slot index) is also wrong: INE does **not**
+>      return `MetaData` in a consistent order across series (confirmed on `36641`, `73035`, `71109`).
+>    - **Final model — co-occurrence signature.** Each `MetaData` entry is an *item* = (variable name,
+>      occurrence rank within the series). Two items that share the exact same set of co-occurring items
+>      provably never co-occur, so they are alternative breakdowns of one dimension and are merged; the
+>      dimension codelist is the union of their value Ids. This is order-independent and handles all
+>      observed cases. Dimensions are ordered by name so `getMeta`/`getData` always agree.
+>    - The **occurrence rank** matters because INE reuses the same variable name several times in one
+>      series for different roles (e.g. `20252` has `Type of marriage dissolution` twice). Keying by
+>      name alone overwrote one value and collapsed distinct series onto one key; the rank keeps them
+>      apart.
+>    - A `_Z` ("not applicable") code is kept as a defensive fallback for a dimension a series does not
+>      carry; an empty component must never be emitted because `Key` treats it as a wildcard.
+> 9. **Structure and data MUST come from one fetch.** INE can return different variable **labels** for
+>    the same table between two calls (observed on `70712`: `Salary/Labour Line Items` vs
+>    `Wage/labour concepts`, and between `nult=1` and full responses). Different labels change the
+>    grouping/order, so a separate `nult=1` structure fetch could misalign with the full data fetch.
+>    The driver now builds both the `Structure` and the `DataSet` from a **single** `DATOS_TABLA?tip=AM`
+>    response cached as one entry (`getTable`). The `nult=1` optimization was dropped; since `getData`
+>    needs the full response anyway, this is one fetch instead of two for the common case.
+> 10. **`DATOS_TABLA` can answer HTTP 200 with a status object while it computes a table**, e.g.
+> 	`{"status":"Peticion en proceso. Actualice pagina pasados unos minutos."}`. The driver detects a
+> 	non-array body and raises a clean, retryable `IOException` instead of an opaque
+> 	`JsonSyntaxException`.
+> 11. **Table `Nombre` is NOT unique within an operation, so flows need a `description`.** Many operations
+> 	return several tables sharing an identical name — e.g. **all 9 `IPS` tables** are
+> 	`"Services sector price index by sectors"`. `TABLAS_OPERACION` exposes the discriminating fields
+> 	(`T3_Periodicidad` = `Quarterly`/`Annual`, `Codigo` = base-year/classification variant such as
+> 	`2015_NAC` vs `2015_NAC_M` vs `2021-CNAE2009_NAC`, `T3_Publicacion`, and the covered period
+> 	`T3_Periodo_ini`/`Anyo_Periodo_ini`…`T3_Periodo_fin`/`Anyo_Periodo_fin`). The driver originally
+> 	dropped all of these (parsing only `Id` + `Nombre`), leaving `28481` and `28482` indistinguishable.
+> 	`toFlow` now sets `Flow.description` to a `·`-joined summary (frequency · variant code · covered
+> 	period · publication when it differs from the name). **Limitation**: some tables remain identical
+> 	even across *all* table-level metadata (e.g. `79673`, `59973`, `67159`: same name, `Codigo`,
+> 	periodicity and start period); only the FlowRef id and their actual DSD/content separate those.
+>
+> **Validation approach.** Confidence does not come from a few hand-picked tables (they hid all of the
+> above). `IneDialectDriverTest#testRandomTablesInvariants` randomly samples many live tables and, for
+> each, asserts the invariants that MUST hold if the model is correct: key size == dimension count,
+> every key fully specified, every code known to the DSD (`Key.validateOn`), keys unique across the
+> table, and each key round-trips to exactly its own series. Each iteration of the model above was
+> rejected by this harness before the co-occurrence model passed it.
+>
+> **Cost control.** Whole tables are downloaded and their size is unknown before the fetch, so the sweep
+> is bounded by two time budgets: `-Dine.perTableSeconds` cancels a table that is too slow to
+> fetch/process (a proxy for "too large") and reports it as `SKIP-oversized`; `-Dine.budgetSeconds`
+> caps the overall wall-clock time. Sampling is also bounded by `-Dine.maxTables` / `-Dine.tablesPerDb`
+> and is reproducible via `-Dine.seed`. Example:
+> `mvn test -pl sdmx-dl-provider-dialects -Pyolo,webQueries -Dtest=IneDialectDriverTest#testRandomTablesInvariants -Dine.maxTables=40 -Dine.perTableSeconds=15 -Dine.budgetSeconds=180`.
 
 ---
 
@@ -146,8 +203,9 @@ The INE API is completely proprietary. None of the existing drivers can be reuse
 | **Operation** (`OPERACION.Codigo`, e.g. `IPC`) | `Database` / `DatabaseRef` | Natural two-level grouping; maps directly onto the `Connection.getDatabases()` / `getFlows(DatabaseRef)` split |
 | **Operation name** (`OPERACION.Nombre`) | `Database.name` | English when using `/EN/` base URL |
 | **Table** (`TABLA.Id`, e.g. `50902`) | `Flow` | The primary addressable unit, scoped to a `DatabaseRef` |
-| **Table name** (`Nombre`) | `Flow.name` | English when using `/EN/` base URL |
-| **Variable** (`VARIABLE.Id`) | `Dimension` | Each table has 1–N variables as dimensions |
+| **Table name** (`Nombre`) | `Flow.name` | English when using `/EN/` base URL. **Not unique** within an operation (see correction #11) |
+| **Table metadata** (`T3_Periodicidad`, `Codigo`, `T3_Publicacion`, period range) | `Flow.description` | `·`-joined summary that distinguishes same-name tables (frequency / variant / covered period / publication) |
+| **Variable** (`VARIABLE.Id`) | `Dimension` | Dimensions are derived by **co-occurrence signature** (see correction #8): each `MetaData` item (variable name + occurrence rank) is grouped with items it never co-occurs with. Mutually-exclusive variables (e.g. Districts/Municipalities/Sections) merge into one dimension; a variable reused within a series yields several dimensions. Codes are the union of value Ids |
 | **Value** (`VALOR.Id`) | `Code` in a codelist | Has `Id` (int), `Nombre` (label), `Codigo` (official code, may be null) |
 | **Series** (`COD`, e.g. `IPC251856`) | `Series` | Identified by key (variable value combination) |
 | **Series name** (`Nombre`) | `Series.name` | Dot-separated concatenation of dimension value labels |
@@ -181,6 +239,14 @@ There is no pre-built DSD. The structure for a table is assembled by calling
 3. Take the union of all `(Variable.Id, value.Id)` pairs across all series.
 4. Each distinct `Variable.Id` becomes one **Dimension**, ordered by ascending variable ID.
 5. The set of `value.Id` entries for a given `Variable.Id` becomes its **Codelist**.
+
+> **Correction (see #1, #2, #8, #9 above)**: the implemented driver builds both the structure and the
+> data from a **single** `DATOS_TABLA?tip=AM` response (cached as one entry), not from `SERIES_TABLA`
+> and not from a separate `nult=1` call. Dimensions are formed by **co-occurrence signature** over
+> `MetaData` items (variable name + occurrence rank), which merges mutually-exclusive variables (e.g.
+> Districts/Municipalities/Sections) into one dimension and splits a reused variable name into several.
+> Series keys are fully specified; `_Z` ("not applicable") is only a defensive fallback for a dimension
+> a series does not carry.
 
 > **Note**: The top-level `FK_Variable` field in each Metadata entry is always empty (confirmed
 > live). The variable ID is only available through the nested `Variable` sub-object exposed by
