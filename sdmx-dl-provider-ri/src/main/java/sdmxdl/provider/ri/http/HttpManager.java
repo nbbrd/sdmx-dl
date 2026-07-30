@@ -55,7 +55,7 @@ public final class HttpManager {
         return result;
     }
 
-    private static final HttpFactory DEFAULT_HTTP_FACTORY = decorate(new UrlConnectionHttpFactory());
+    private static final HttpFactory DEFAULT_HTTP_FACTORY = decorate(new DefaultHttpFactory());
 
     private final AtomicReference<HttpFactory> FACTORY = new AtomicReference<>(getDefaultHttpFactory());
 

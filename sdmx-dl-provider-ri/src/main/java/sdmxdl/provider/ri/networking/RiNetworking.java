@@ -44,7 +44,7 @@ public final class RiNetworking implements Networking {
     // Set networking URL backend
     @PropertyDefinition
     public static final Property<String> URL_BACKEND_PROPERTY
-            = Property.of("sdmxdl.networking.urlBackend", RiNetwork.DEFAULT_URL_BACKEND, Parser.onString(), Formatter.onString());
+            = Property.of("sdmxdl.networking.urlBackend", Network.DEFAULT_URL_BACKEND, Parser.onString(), Formatter.onString());
 
     @Override
     public @NonNull String getNetworkingId() {
@@ -78,6 +78,7 @@ public final class RiNetworking implements Networking {
         network.getSSLFactory().getLazyDelegate();
         network.getProxySelector();
         network.getURLConnectionFactory();
+        network.getUrlBackend();
     }
 
     @Override
@@ -102,6 +103,6 @@ public final class RiNetworking implements Networking {
 
     private static String getUrlBackend(Function<? super String, ? extends CharSequence> properties) {
         String result = URL_BACKEND_PROPERTY.get(properties);
-        return result != null ? result : RiNetwork.DEFAULT_URL_BACKEND;
+        return result != null ? result : Network.DEFAULT_URL_BACKEND;
     }
 }

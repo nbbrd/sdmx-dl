@@ -17,7 +17,7 @@ import java.util.List;
  * </p>
  *
  * @see HttpFactory
- * @see UrlConnectionHttpFactory
+ * @see DefaultHttpFactory
  */
 @lombok.Builder
 public final class HttpFactorySupport implements HttpFactory {

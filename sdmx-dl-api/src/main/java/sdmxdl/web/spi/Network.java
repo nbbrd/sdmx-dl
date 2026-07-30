@@ -10,14 +10,24 @@ import java.net.ProxySelector;
 @NotThreadSafe
 public interface Network {
 
-    @NonNull ProxySelector getProxySelector();
+    @NonNull
+    ProxySelector getProxySelector();
 
-    @NonNull SSLFactory getSSLFactory();
+    @NonNull
+    SSLFactory getSSLFactory();
 
-    @NonNull URLConnectionFactory getURLConnectionFactory();
+    @NonNull
+    URLConnectionFactory getURLConnectionFactory();
+
+    @NonNull
+    String getUrlBackend();
 
     @StaticFactoryMethod
     static @NonNull Network getDefault() {
         return DefaultNetwork.INSTANCE;
     }
+
+    String JDK_URL_BACKEND = "JDK";
+    String CURL_URL_BACKEND = "CURL";
+    String DEFAULT_URL_BACKEND = JDK_URL_BACKEND;
 }

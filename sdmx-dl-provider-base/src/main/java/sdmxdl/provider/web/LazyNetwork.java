@@ -20,6 +20,9 @@ public final class LazyNetwork implements Network {
     @lombok.Builder.Default
     private final @NonNull Supplier<? extends URLConnectionFactory> urlConnectionFactory = Network.getDefault()::getURLConnectionFactory;
 
+    @lombok.Builder.Default
+    private final @NonNull Supplier<String> urlBackend = () -> DEFAULT_URL_BACKEND;
+
     @Override
     public @NonNull ProxySelector getProxySelector() {
         return proxySelector.get();
@@ -33,5 +36,10 @@ public final class LazyNetwork implements Network {
     @Override
     public @NonNull URLConnectionFactory getURLConnectionFactory() {
         return urlConnectionFactory.get();
+    }
+
+    @Override
+    public @NonNull String getUrlBackend() {
+        return urlBackend.get();
     }
 }

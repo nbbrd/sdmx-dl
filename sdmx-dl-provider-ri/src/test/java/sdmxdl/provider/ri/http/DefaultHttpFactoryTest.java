@@ -3,6 +3,7 @@ package sdmxdl.provider.ri.http;
 import lombok.NonNull;
 import nbbrd.io.http.HttpHeaders;
 import nbbrd.io.http.HttpRequest;
+import nbbrd.io.http.urlconnection.UrlConnectionHttpClient;
 import nbbrd.io.http.urlconnection.UrlConnectionListener;
 import nbbrd.io.net.MediaType;
 import org.junit.jupiter.api.Test;
@@ -21,9 +22,9 @@ import java.util.List;
 import static java.net.Proxy.NO_PROXY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
-import static sdmxdl.provider.ri.http.UrlConnectionHttpFactory.newUrlConnectionHttpClient;
+import static sdmxdl.provider.ri.http.DefaultHttpFactory.newHttpClient;
 
-public class UrlConnectionHttpFactoryTest {
+public class DefaultHttpFactoryTest {
 
     WebSource source = WebSource
             .builder()
@@ -34,10 +35,10 @@ public class UrlConnectionHttpFactoryTest {
 
     @Test
     public void testUserAgent() {
-        assertThat(newUrlConnectionHttpClient(source, DriverAssert.noOpWebContext()).getUserAgent())
+        assertThat(((UrlConnectionHttpClient) newHttpClient(source, DriverAssert.noOpWebContext())).getUserAgent())
                 .startsWith("sdmx-dl/");
 
-        assertThat(newUrlConnectionHttpClient(source.toBuilder().property(DriverProperties.USER_AGENT_PROPERTY.getKey(), "hello world").build(), DriverAssert.noOpWebContext()).getUserAgent())
+        assertThat(((UrlConnectionHttpClient) newHttpClient(source.toBuilder().property(DriverProperties.USER_AGENT_PROPERTY.getKey(), "hello world").build(), DriverAssert.noOpWebContext())).getUserAgent())
                 .startsWith("hello world");
     }
 
@@ -51,7 +52,7 @@ public class UrlConnectionHttpFactoryTest {
                 .onEvent(source -> (marker, message) -> events.onSourceEvent(source, marker, message))
                 .build();
 
-        UrlConnectionListener x = newUrlConnectionHttpClient(source, webContext).getListener();
+        UrlConnectionListener x = ((UrlConnectionHttpClient) newHttpClient(source, webContext)).getListener();
 
         HttpRequest request = HttpRequest
                 .builder()

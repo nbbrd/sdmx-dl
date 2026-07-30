@@ -11,6 +11,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - ![SOURCE] Add source from National Statistics Institute of Spain [#1269](https://github.com/nbbrd/sdmx-dl/issues/1269)
 - ![API] Add support of non-enumerated dimension representation [#1283](https://github.com/nbbrd/sdmx-dl/issues/1283)
+- ![API] Add `Network#urlBackend` parameter
 
 ### Changed
 

@@ -2,10 +2,14 @@ package sdmxdl.provider.ri.http;
 
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
+import nbbrd.io.http.HttpClient;
 import nbbrd.io.http.HttpRequest;
+import nbbrd.io.http.curl.CurlHttpClient;
 import nbbrd.io.http.urlconnection.UrlConnectionHttpClient;
 import nbbrd.io.http.urlconnection.UrlConnectionListener;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.EventListener;
+import sdmxdl.provider.Slow;
 import sdmxdl.provider.web.WebEvents;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Network;
@@ -14,19 +18,20 @@ import sdmxdl.web.spi.WebContext;
 import java.net.Proxy;
 import java.util.Locale;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static sdmxdl.provider.web.DriverProperties.*;
 
 /**
- * Factory for creating {@link UrlConnectionHttpClient} instances.
+ * Factory for creating {@link HttpClient} instances.
  * <p>
- * This factory builds HTTP clients using Java's {@link java.net.URLConnection} API, with support for
+ * This factory builds HTTP clients with support for
  * authentication, SSL/TLS, proxies, and event/error listening. It configures clients based on
  * web source properties and context settings.
  * </p>
  */
-public final class UrlConnectionHttpFactory implements HttpFactory {
+public final class DefaultHttpFactory implements HttpFactory {
 
     @lombok.experimental.Delegate
     private final HttpFactory support = HttpFactorySupport
@@ -35,11 +40,11 @@ public final class UrlConnectionHttpFactory implements HttpFactory {
             .property(CONNECT_TIMEOUT_PROPERTY)
             .property(READ_TIMEOUT_PROPERTY)
             .property(USER_AGENT_PROPERTY)
-            .supplier(UrlConnectionHttpFactory::newUrlConnectionHttpClient)
+            .supplier(DefaultHttpFactory::newHttpClient)
             .build();
 
     /**
-     * Creates a new {@link UrlConnectionHttpClient} configured for the given web source and context.
+     * Creates a new {@link HttpClient} configured for the given web source and context.
      * <p>
      * Configures the client with:
      * <ul>
@@ -53,21 +58,43 @@ public final class UrlConnectionHttpFactory implements HttpFactory {
      * @param context the web context containing network, authentication, and event listeners
      * @return a configured HTTP client for the specified source
      */
+    @Slow
     @VisibleForTesting
-    static UrlConnectionHttpClient newUrlConnectionHttpClient(@NonNull WebSource source, @NonNull WebContext context) {
-        Network network = context.getNetwork(source);
-        EventListener onEvent = context.getEventListener(source);
-        return UrlConnectionHttpClient
-                .builder()
-                .connectTimeout(CONNECT_TIMEOUT_PROPERTY.get(source.getProperties()))
-                .readTimeout(READ_TIMEOUT_PROPERTY.get(source.getProperties()))
-                .proxySelector(network.getProxySelector())
-                .sslSocketFactory(network.getSSLFactory().getSSLSocketFactory())
-                .hostnameVerifier(network.getSSLFactory().getHostnameVerifier())
-//                .urlConnectionFactory(network.getURLConnectionFactory()::openConnection)
-                .listener(onEvent != null ? new RiHttpEventListener(message -> onEvent.accept("RI_HTTP", message, 1)) : UrlConnectionListener.noOp())
-                .userAgent(USER_AGENT_PROPERTY.get(source.getProperties()))
-                .build();
+    static HttpClient newHttpClient(@NonNull WebSource source, @NonNull WebContext context) {
+        return newHttpClient(
+                context.getNetwork(source),
+                source.getProperties()::get,
+                context.getEventListener(source)
+        );
+    }
+
+    public static @NonNull HttpClient newHttpClient(
+            @NonNull Network network,
+            @NonNull Function<? super String, ? extends CharSequence> properties,
+            @Nullable EventListener onEvent
+    ) {
+        switch (network.getUrlBackend()) {
+            case Network.CURL_URL_BACKEND:
+                return CurlHttpClient
+                        .builder()
+                        .connectTimeout(CONNECT_TIMEOUT_PROPERTY.get(properties))
+                        .readTimeout(READ_TIMEOUT_PROPERTY.get(properties))
+                        .proxySelector(network.getProxySelector())
+                        .userAgent(USER_AGENT_PROPERTY.get(properties))
+                        .followRedirects(false)
+                        .build();
+            default:
+                return UrlConnectionHttpClient
+                        .builder()
+                        .connectTimeout(CONNECT_TIMEOUT_PROPERTY.get(properties))
+                        .readTimeout(READ_TIMEOUT_PROPERTY.get(properties))
+                        .proxySelector(network.getProxySelector())
+                        .sslSocketFactory(network.getSSLFactory().getSSLSocketFactory())
+                        .hostnameVerifier(network.getSSLFactory().getHostnameVerifier())
+                        .listener(onEvent != null ? new RiHttpEventListener(message -> onEvent.accept(HttpDecoration.MARKER, message, 1)) : UrlConnectionListener.noOp())
+                        .userAgent(USER_AGENT_PROPERTY.get(properties))
+                        .build();
+        }
     }
 
     /**
