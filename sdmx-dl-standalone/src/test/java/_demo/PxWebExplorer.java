@@ -30,7 +30,7 @@ public class PxWebExplorer {
 
     private static void print(Explorer.Status status, List<Explorer.Report> reports) {
         System.out.println("==== " + status + " ====");
-        reports.forEach(r -> System.out.println("[" + r.getSource() + "] error=" + r.getError() + " message=" + r.getMessage() + " request=" + r.getRequest()));
+        reports.forEach(r -> System.out.println(r.toSummaryLine()));
         System.out.println();
     }
 }
