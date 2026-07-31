@@ -17,8 +17,8 @@ public class PxWebExplorer {
         SdmxWebManager manager = SdmxWebManager
                 .ofServiceLoader()
                 .toBuilder()
-//                .onEvent(SdmxWebManager::printEvent)
-//                .onError(SdmxWebManager::printError)
+                .onEvent(SdmxWebManager::printEvent)
+                .onError(SdmxWebManager::printError)
                 .build();
 
         Explorer.explore(manager, PxWebExplorer::isPxWebSource).forEach(PxWebExplorer::print);

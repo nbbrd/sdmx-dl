@@ -12,7 +12,7 @@ import java.time.Duration;
 
 public final class RateLimitingDecoration implements HttpDecoration {
 
-    private static final @lombok.NonNull RateLimiter DEFAULT_RATE_LIMITER = RateLimiter.unlimitedAdaptive(Duration.ofSeconds(60));
+    private static final @lombok.NonNull RateLimiter DEFAULT_RATE_LIMITER = RateLimiter.unlimitedAdaptive(Duration.ofSeconds(120));
 
     @lombok.experimental.Delegate
     private final HttpDecoration support = HttpDecorationSupport.builder()

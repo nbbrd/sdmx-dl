@@ -6,12 +6,15 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import nbbrd.design.MightBePromoted;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 @MightBePromoted
@@ -28,6 +31,13 @@ class GsonUtil {
         return asStream(obj.getAsJsonArray(memberName))
                 .map(JsonElement::getAsString)
                 .toArray(String[]::new);
+    }
+
+    public static List<String> getAsStringList(JsonObject obj, String memberName) {
+        if (!obj.has(memberName) || obj.get(memberName).isJsonNull()) return Collections.emptyList();
+        return asStream(obj.getAsJsonArray(memberName))
+                .map(JsonElement::getAsString)
+                .collect(toList());
     }
 
     public static <V> Map<String, V> getAsMap(JsonObject obj, String memberName, JsonDeserializationContext context, Class<V> valueType) {
