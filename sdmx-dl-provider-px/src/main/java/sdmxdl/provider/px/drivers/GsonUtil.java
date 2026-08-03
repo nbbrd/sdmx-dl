@@ -26,6 +26,12 @@ class GsonUtil {
         throw new NoSuchElementException(memberName);
     }
 
+    public static int getAsInt(JsonObject obj, String memberName, int defaultValue) {
+        return obj.has(memberName) && !obj.get(memberName).isJsonNull()
+                ? obj.get(memberName).getAsInt()
+                : defaultValue;
+    }
+
     public static String[] getAsStringArray(JsonObject obj, String memberName) {
         if (!obj.has(memberName)) return null;
         return asStream(obj.getAsJsonArray(memberName))

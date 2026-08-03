@@ -4,34 +4,56 @@ import lombok.NonNull;
 import nbbrd.io.http.HttpClient;
 import nbbrd.io.http.HttpRequest;
 import nbbrd.io.http.ext.*;
+import nbbrd.io.text.BooleanProperty;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.EventListener;
+import sdmxdl.format.design.PropertyDefinition;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.WebContext;
 
 import java.time.Duration;
 
+import static sdmxdl.web.spi.Driver.DRIVER_PROPERTY_PREFIX;
+
 public final class RateLimitingDecoration implements HttpDecoration {
+
+    /**
+     * Property that enables (default) or disables client-side HTTP rate limiting.
+     * <p>
+     * When disabled, requests bypass the rate limiter entirely, losing both proactive
+     * throttling and reactive {@code 429 Retry-After} back-off. This is mainly intended
+     * for sources that enforce their own rate limiting.
+     * </p>
+     */
+    @PropertyDefinition
+    public static final BooleanProperty RATE_LIMITING_PROPERTY =
+            BooleanProperty.of(DRIVER_PROPERTY_PREFIX + ".rateLimiting", true);
 
     private static final @lombok.NonNull RateLimiter DEFAULT_RATE_LIMITER = RateLimiter.unlimitedAdaptive(Duration.ofSeconds(120));
 
     @lombok.experimental.Delegate
     private final HttpDecoration support = HttpDecorationSupport.builder()
             .name("Rate-limiting")
+            .property(RATE_LIMITING_PROPERTY)
             .superFactory(RateLimitingDecoration::decorate)
             .build();
 
     private static final RateLimiterRegistry REGISTRY = RateLimiterRegistry.of(() -> DEFAULT_RATE_LIMITER);
 
     private static HttpClient decorate(HttpFactory d, WebSource s, WebContext c) {
+        HttpClient original = d.createHttpClient(s, c);
+        if (!RATE_LIMITING_PROPERTY.get(s.getProperties())) {
+            return original;
+        }
         return RateLimitingDecorator
                 .builder()
-                .decorated(d.createHttpClient(s, c))
+                .decorated(original)
                 .rateLimiterProvider(RateLimiterProvider.perHost(REGISTRY))
                 .listener(toListener(c.getEventListener(s)))
                 .build();
     }
 
-    private static RateLimitingListener toListener(EventListener onEvent) {
+    public static @NonNull RateLimitingListener toListener(@Nullable EventListener onEvent) {
         return onEvent != null ? new EventListenerAdapter(onEvent) : RateLimitingListener.noOp();
     }
 

@@ -28,6 +28,7 @@ import static nbbrd.io.text.BaseProperty.keysOf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static sdmxdl.provider.dialects.drivers.IneDialectDriver.Converter.*;
 import static sdmxdl.provider.ri.http.DumpingDecoration.DUMP_FOLDER_PROPERTY;
+import static sdmxdl.provider.ri.http.RateLimitingDecoration.RATE_LIMITING_PROPERTY;
 import static sdmxdl.provider.ri.http.RetryDecoration.MAX_RETRIES_PROPERTY;
 import static sdmxdl.provider.web.DriverProperties.*;
 
@@ -50,7 +51,8 @@ public class IneDialectDriverTest {
                                 MAX_REDIRECTS_PROPERTY,
                                 MAX_RETRIES_PROPERTY,
                                 DUMP_FOLDER_PROPERTY,
-                                CACHE_TTL_PROPERTY)
+                                CACHE_TTL_PROPERTY,
+                                RATE_LIMITING_PROPERTY)
                 );
     }
 

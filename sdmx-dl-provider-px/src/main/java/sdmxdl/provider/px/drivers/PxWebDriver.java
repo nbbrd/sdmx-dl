@@ -6,6 +6,8 @@ import nbbrd.design.*;
 import nbbrd.io.FileParser;
 import nbbrd.io.function.IOSupplier;
 import nbbrd.io.http.*;
+import nbbrd.io.http.ext.RateLimiter;
+import nbbrd.io.http.ext.RateLimitingDecorator;
 import nbbrd.io.net.MediaType;
 import nbbrd.io.text.*;
 import nbbrd.service.ServiceProvider;
@@ -21,6 +23,7 @@ import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.provider.*;
 import sdmxdl.provider.ri.http.HttpFactory;
 import sdmxdl.provider.ri.http.HttpManager;
+import sdmxdl.provider.ri.http.RateLimitingDecoration;
 import sdmxdl.provider.web.ConnectionFactory;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.WebSource;
@@ -98,6 +101,34 @@ public final class PxWebDriver implements Driver {
 
     static final String LANGUAGE_VARIABLE = UriTemplate.getVariable("lang");
 
+    /**
+     * Upper bound on how long a request may wait for a rate-limiting permit before failing.
+     */
+    static final Duration RATE_LIMIT_MAX_WAIT = Duration.ofSeconds(120);
+
+    /**
+     * Fallback used when the server-declared rate limit cannot be determined; it never
+     * throttles proactively and only reacts to {@code 429} responses.
+     */
+    @VisibleForTesting
+    static final RateLimiter FALLBACK_RATE_LIMITER = RateLimiter.unlimitedAdaptive(RATE_LIMIT_MAX_WAIT);
+
+    /**
+     * Builds a fixed rate limiter from the server-declared configuration ({@code maxCalls} per
+     * {@code timeWindow} seconds), falling back to a non-throttling limiter when the configuration
+     * is invalid.
+     */
+    @VisibleForTesting
+    static @NonNull RateLimiter toRateLimiter(@NonNull Config config) {
+        if (config.getMaxCalls() <= 0 || config.getTimeWindow() <= 0) {
+            return FALLBACK_RATE_LIMITER;
+        }
+        return RateLimiter.fixed(
+                config.getMaxCalls() / (double) config.getTimeWindow(),
+                config.getMaxCalls(),
+                RATE_LIMIT_MAX_WAIT);
+    }
+
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport
             .builder()
@@ -137,8 +168,13 @@ public final class PxWebDriver implements Driver {
 
         @Override
         public @NonNull List<BaseProperty> getConnectionProperties() {
+            // Hide the rate-limiting toggle: this driver forces it internally (see connect).
+            List<BaseProperty> httpProperties = httpFactory.getHttpClientProperties()
+                    .stream()
+                    .filter(property -> !property.getKey().equals(RateLimitingDecoration.RATE_LIMITING_PROPERTY.getKey()))
+                    .collect(toList());
             return PropertiesSupport.merge(
-                    httpFactory.getHttpClientProperties(),
+                    httpProperties,
                     VERSIONS_PROPERTY,
                     LANGUAGES_PROPERTY,
                     TABLE_LISTING_PROPERTY,
@@ -148,21 +184,50 @@ public final class PxWebDriver implements Driver {
 
         @Override
         public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
-            PxWebClient client = new DefaultPxWebClient(
-                    HasMarker.of(source),
-                    getFullEndpoint(source, languages),
-                    httpFactory.createHttpClient(source, context),
-                    TABLE_LISTING_PROPERTY.get(source.getProperties())
+            Marker marker = HasMarker.of(source);
+            URI endpoint = getFullEndpoint(source, languages);
+            TableListing configuredListing = TABLE_LISTING_PROPERTY.get(source.getProperties());
+            TableListing listing = configuredListing != null ? configuredListing : TableListing.AUTO;
+
+            Cache<DataRepository> cache = context.getDriverCache(source);
+            URI cacheBase = getCachedClientBaseURI(source, languages);
+            Duration ttl = Duration.ofMillis(CACHE_TTL_PROPERTY.get(source.getProperties()));
+
+            // Disable the shared HTTP rate limiter for this client and enforce instead the
+            // server-declared limit (see PxWeb config endpoint) to avoid double rate-limiting.
+            WebSource httpSource = source
+                    .toBuilder()
+                    .propertyOf(RateLimitingDecoration.RATE_LIMITING_PROPERTY, false)
+                    .build();
+            HttpClient httpClient = httpFactory.createHttpClient(httpSource, context);
+
+            HttpClient rateLimitedClient = RateLimitingDecorator
+                    .builder()
+                    .decorated(httpClient)
+                    .rateLimiter(resolveRateLimiter(cache, cacheBase, ttl, httpClient, endpoint))
+                    .listener(RateLimitingDecoration.toListener(context.getEventListener(source)))
+                    .build();
+
+            PxWebClient client = new CachedPxWebClient(
+                    new DefaultPxWebClient(marker, endpoint, rateLimitedClient, listing),
+                    cache,
+                    cacheBase,
+                    ttl
             );
 
-            PxWebClient cachedClient = new CachedPxWebClient(
-                    client,
-                    context.getDriverCache(source),
-                    getCachedClientBaseURI(source, languages),
-                    Duration.ofMillis(CACHE_TTL_PROPERTY.get(source.getProperties()))
-            );
+            return new PxWebConnection(client);
+        }
 
-            return new PxWebConnection(cachedClient);
+        // Resolves the server-declared rate limit from the driver cache, fetching and caching it
+        // once when absent; falls back to a non-throttling limiter when it cannot be determined.
+        private static RateLimiter resolveRateLimiter(Cache<DataRepository> cache, URI cacheBase, Duration ttl, HttpClient httpClient, URI endpoint) {
+            try {
+                Config config = CachedPxWebClient.initIdOfConfig(cacheBase)
+                        .load(cache, () -> DefaultPxWebClient.fetchConfig(httpClient, endpoint), ignore -> ttl);
+                return toRateLimiter(config);
+            } catch (IOException ex) {
+                return FALLBACK_RATE_LIMITER;
+            }
         }
 
         @VisibleForTesting
@@ -320,14 +385,17 @@ public final class PxWebDriver implements Driver {
 
         @Override
         public @NonNull Config getConfig() throws IOException {
+            return fetchConfig(client, endpoint);
+        }
+
+        static @NonNull Config fetchConfig(@NonNull HttpClient client, @NonNull URI endpoint) throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
                     .query(UriQueryBuilder.of(endpoint).param("config").build())
                     .build();
 
             try (HttpResponse response = client.send(request)) {
-                return getConfigParser(response.getContentType())
-                        .parseReader(response::getBodyAsReader);
+                return Config.JSON_PARSER.parseReader(response::getBodyAsReader);
             }
         }
 
@@ -342,10 +410,6 @@ public final class PxWebDriver implements Driver {
                 return getDatabasesParser(response.getContentType())
                         .parseReader(response::getBodyAsReader);
             }
-        }
-
-        private TextParser<Config> getConfigParser(MediaType ignore) {
-            return Config.JSON_PARSER;
         }
 
         private TextParser<List<sdmxdl.Database>> getDatabasesParser(MediaType ignore) {
@@ -706,10 +770,10 @@ public final class PxWebDriver implements Driver {
         static Config deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject x = json.getAsJsonObject();
             return new Config(
-                    x.get("maxValues").getAsInt(),
-                    x.get("maxCells").getAsInt(),
-                    x.get("maxCalls").getAsInt(),
-                    x.get("timeWindow").getAsInt()
+                    GsonUtil.getAsInt(x, "maxValues", 0),
+                    GsonUtil.getAsInt(x, "maxCells", 0),
+                    GsonUtil.getAsInt(x, "maxCalls", 0),
+                    GsonUtil.getAsInt(x, "timeWindow", 0)
             );
         }
 

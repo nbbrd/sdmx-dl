@@ -68,6 +68,30 @@ public class PxWebDriverTest {
     }
 
     @Test
+    public void testConfigDtoWithMissingFields() throws IOException {
+        // Some servers (e.g. GEOSTAT, LIECHTENSTEIN, PSA, VASTERAS) omit maxCells field.
+        assertThat(Config.JSON_PARSER.parseChars("{\"maxCalls\":30,\"timeWindow\":10}"))
+                .isEqualTo(new Config(0, 0, 30, 10));
+        assertThat(Config.JSON_PARSER.parseChars("{}"))
+                .isEqualTo(new Config(0, 0, 0, 0));
+    }
+
+    @Test
+    public void testRateLimiterFromValidConfig() {
+        assertThat(toRateLimiter(new Config(0, 0, 30, 10)))
+                .isNotNull()
+                .isNotSameAs(FALLBACK_RATE_LIMITER);
+    }
+
+    @Test
+    public void testRateLimiterFallsBackOnInvalidConfig() {
+        assertThat(toRateLimiter(new Config(0, 0, 30, 0)))
+                .as("zero timeWindow yields the non-throttling fallback").isSameAs(FALLBACK_RATE_LIMITER);
+        assertThat(toRateLimiter(new Config(0, 0, 0, 10)))
+                .as("zero maxCalls yields the non-throttling fallback").isSameAs(FALLBACK_RATE_LIMITER);
+    }
+
+    @Test
     public void testDatabaseDto() throws IOException {
         assertThat(PxWebDriver.Database.JSON_PARSER.parseResource(PxWebDriverTest.class, "statfin-databases.json", UTF_8))
                 .contains(new PxWebDriver.Database("SDG", "SDG"))
