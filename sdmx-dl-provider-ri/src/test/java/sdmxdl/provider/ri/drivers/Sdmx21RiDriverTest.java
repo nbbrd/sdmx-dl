@@ -30,6 +30,7 @@ import java.io.IOException;
 
 import static nbbrd.io.text.BaseProperty.keysOf;
 import static org.assertj.core.api.Assertions.assertThat;
+import static sdmxdl.provider.ri.http.CookieDecoration.COOKIE_PROPERTY;
 import static sdmxdl.provider.ri.http.DumpingDecoration.DUMP_FOLDER_PROPERTY;
 import static sdmxdl.provider.ri.http.RateLimitingDecoration.RATE_LIMITING_PROPERTY;
 import static sdmxdl.provider.ri.http.RetryDecoration.MAX_RETRIES_PROPERTY;
@@ -60,7 +61,8 @@ public class Sdmx21RiDriverTest {
                                 DETAIL_SUPPORTED_PROPERTY,
                                 TRAILING_SLASH_PROPERTY,
                                 CACHE_TTL_PROPERTY,
-                                RATE_LIMITING_PROPERTY)
+                                RATE_LIMITING_PROPERTY,
+                                COOKIE_PROPERTY)
                 );
     }
 

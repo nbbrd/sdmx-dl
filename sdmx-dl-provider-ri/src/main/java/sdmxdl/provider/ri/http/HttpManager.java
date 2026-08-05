@@ -42,6 +42,7 @@ public final class HttpManager {
             new RateLimitingDecoration(),
             new RetryDecoration(),
             new RedirectDecoration(),
+            new CookieDecoration(),
             new AuthenticatingDecoration(),
             new LazyDecoration()
     );

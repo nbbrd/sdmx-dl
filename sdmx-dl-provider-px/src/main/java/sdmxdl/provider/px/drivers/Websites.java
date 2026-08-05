@@ -28,6 +28,7 @@ final class Websites {
     static class Website {
         URL url;
         String listing;
+        boolean cookie;
     }
 
     private static Map<String, Website> parseCsv(Csv.Reader reader) throws IOException {
@@ -39,11 +40,15 @@ final class Websites {
                 if (!reader.readField()) throw new IOException("Invalid format, expecting URL");
                 URL url = reader.length() > 0 ? URI.create(reader.toString()).toURL() : null;
                 String listing = null;
+                boolean cookie = false;
                 if (reader.readField()) {
                     listing = reader.length() > 0 ? reader.toString() : null;
-                    if (reader.readField()) throw new IOException("Invalid format, unexpected field");
+                    if (reader.readField()) {
+                        cookie = reader.length() > 0 && Boolean.parseBoolean(reader.toString());
+                        if (reader.readField()) throw new IOException("Invalid format, unexpected field");
+                    }
                 }
-                result.put(host, new Website(url, listing));
+                result.put(host, new Website(url, listing, cookie));
             }
         }
         return result;

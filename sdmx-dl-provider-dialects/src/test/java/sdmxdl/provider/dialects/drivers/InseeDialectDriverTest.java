@@ -24,6 +24,7 @@ import static sdmxdl.format.time.StandardReportingFormat.REPORTING_SEMESTER;
 import static sdmxdl.format.time.TimeFormats.IGNORE_ERROR;
 import static sdmxdl.provider.dialects.drivers.InseeDialectDriver.NO_COMMA_ENCODING_PROPERTY;
 import static sdmxdl.provider.dialects.drivers.InseeDialectDriver.REPORTING_TWO_MONTH;
+import static sdmxdl.provider.ri.http.CookieDecoration.COOKIE_PROPERTY;
 import static sdmxdl.provider.ri.http.DumpingDecoration.DUMP_FOLDER_PROPERTY;
 import static sdmxdl.provider.ri.http.RateLimitingDecoration.RATE_LIMITING_PROPERTY;
 import static sdmxdl.provider.ri.http.RetryDecoration.MAX_RETRIES_PROPERTY;
@@ -48,6 +49,7 @@ public class InseeDialectDriverTest {
                                 MAX_REDIRECTS_PROPERTY,
                                 MAX_RETRIES_PROPERTY,
                                 DUMP_FOLDER_PROPERTY,
+                                COOKIE_PROPERTY,
                                 CACHE_TTL_PROPERTY,
                                 RATE_LIMITING_PROPERTY,
                                 NO_COMMA_ENCODING_PROPERTY)

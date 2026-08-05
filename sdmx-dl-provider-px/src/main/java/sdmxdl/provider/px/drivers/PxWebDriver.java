@@ -21,6 +21,7 @@ import sdmxdl.format.time.ObservationalTimePeriod;
 import sdmxdl.format.time.TimeFormats;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.provider.*;
+import sdmxdl.provider.ri.http.CookieDecoration;
 import sdmxdl.provider.ri.http.HttpFactory;
 import sdmxdl.provider.ri.http.HttpManager;
 import sdmxdl.provider.ri.http.RateLimitingDecoration;
@@ -157,6 +158,9 @@ public final class PxWebDriver implements Driver {
         WebSource.Builder result = source.toBuilder().website(website.getUrl());
         if (website.getListing() != null) {
             result.propertyOf(TABLE_LISTING_PROPERTY, website.getListing());
+        }
+        if (website.isCookie()) {
+            result.propertyOf(CookieDecoration.COOKIE_PROPERTY, true);
         }
         return result.build();
     }

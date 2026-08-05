@@ -26,6 +26,7 @@ import static org.assertj.core.api.Assertions.*;
 import static sdmxdl.Languages.ANY;
 import static sdmxdl.provider.px.drivers.PxWebDriver.*;
 import static sdmxdl.provider.px.drivers.PxWebDriver.PxWebConnectionFactory.*;
+import static sdmxdl.provider.ri.http.CookieDecoration.COOKIE_PROPERTY;
 import static sdmxdl.provider.ri.http.DumpingDecoration.DUMP_FOLDER_PROPERTY;
 import static sdmxdl.provider.ri.http.RetryDecoration.MAX_RETRIES_PROPERTY;
 import static sdmxdl.provider.web.DriverProperties.*;
@@ -49,6 +50,7 @@ public class PxWebDriverTest {
                                 MAX_REDIRECTS_PROPERTY,
                                 MAX_RETRIES_PROPERTY,
                                 DUMP_FOLDER_PROPERTY,
+                                COOKIE_PROPERTY,
                                 CACHE_TTL_PROPERTY,
                                 VERSIONS_PROPERTY,
                                 LANGUAGES_PROPERTY,
@@ -426,6 +428,23 @@ public class PxWebDriverTest {
                 .filter(source -> source.getId().equals(sourceId))
                 .findFirst()
                 .map(source -> TABLE_LISTING_PROPERTY.get(source.getProperties()))
+                .orElseThrow(() -> new AssertionError("Source not found: " + sourceId));
+    }
+
+    @Test
+    public void testCookieInBuiltInSources() {
+        // SUNDSVALL sits behind a cookie-challenge gateway and must enable cookie handling.
+        assertThat(cookieEnabled("SUNDSVALL")).isTrue();
+
+        // Others keep the default (disabled).
+        assertThat(cookieEnabled("STATFI")).isFalse();
+    }
+
+    private static boolean cookieEnabled(String sourceId) {
+        return new PxWebDriver().getDefaultSources().stream()
+                .filter(source -> source.getId().equals(sourceId))
+                .findFirst()
+                .map(source -> COOKIE_PROPERTY.get(source.getProperties()))
                 .orElseThrow(() -> new AssertionError("Source not found: " + sourceId));
     }
 

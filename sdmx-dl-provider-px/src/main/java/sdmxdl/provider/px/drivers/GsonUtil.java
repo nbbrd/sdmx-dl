@@ -58,6 +58,7 @@ class GsonUtil {
         throw new NoSuchElementException(memberName);
     }
 
+
     public static Stream<JsonElement> asStream(JsonArray array) {
         return StreamSupport.stream(array.spliterator(), false);
     }

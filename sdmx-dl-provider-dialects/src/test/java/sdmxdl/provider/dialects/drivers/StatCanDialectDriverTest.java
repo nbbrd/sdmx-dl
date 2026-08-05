@@ -30,6 +30,7 @@ import static org.assertj.core.api.Assertions.*;
 import static sdmxdl.DatabaseRef.NO_DATABASE;
 import static sdmxdl.Languages.ANY;
 import static sdmxdl.provider.dialects.drivers.StatCanDialectDriver.Converter.*;
+import static sdmxdl.provider.ri.http.CookieDecoration.COOKIE_PROPERTY;
 import static sdmxdl.provider.ri.http.DumpingDecoration.DUMP_FOLDER_PROPERTY;
 import static sdmxdl.provider.ri.http.RateLimitingDecoration.RATE_LIMITING_PROPERTY;
 import static sdmxdl.provider.ri.http.RetryDecoration.MAX_RETRIES_PROPERTY;
@@ -56,6 +57,7 @@ public class StatCanDialectDriverTest {
                                 MAX_REDIRECTS_PROPERTY,
                                 MAX_RETRIES_PROPERTY,
                                 DUMP_FOLDER_PROPERTY,
+                                COOKIE_PROPERTY,
                                 CACHE_TTL_PROPERTY,
                                 RATE_LIMITING_PROPERTY)
                 );
