@@ -1,4 +1,4 @@
-package sdmxdl.provider.px.drivers;
+package internal.sdmxdl.provider.px.drivers;
 
 import lombok.NonNull;
 import nbbrd.design.MightBePromoted;
@@ -9,7 +9,7 @@ import java.util.Locale;
 import java.util.Map;
 
 @MightBePromoted
-final class UriTemplate {
+public final class UriTemplate {
 
     private UriTemplate() {
         // static class

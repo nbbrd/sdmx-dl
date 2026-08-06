@@ -1,4 +1,4 @@
-package sdmxdl.provider.px.drivers;
+package internal.sdmxdl.provider.px.drivers;
 
 import com.google.gson.*;
 import lombok.NonNull;
@@ -12,7 +12,7 @@ import java.util.Map;
 
 @MightBePromoted
 @lombok.experimental.UtilityClass
-class GsonIO {
+public class GsonIO {
 
     @lombok.Builder
     public static final class GsonParser<T> implements TextParser<T> {

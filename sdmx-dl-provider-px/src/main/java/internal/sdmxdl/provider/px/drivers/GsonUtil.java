@@ -1,4 +1,4 @@
-package sdmxdl.provider.px.drivers;
+package internal.sdmxdl.provider.px.drivers;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
@@ -19,7 +19,7 @@ import static java.util.stream.Collectors.toMap;
 
 @MightBePromoted
 @lombok.experimental.UtilityClass
-class GsonUtil {
+public class GsonUtil {
 
     public static String getAsString(JsonObject obj, String memberName) {
         if (obj.has(memberName)) return obj.get(memberName).getAsString();
