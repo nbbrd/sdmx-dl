@@ -20,10 +20,10 @@ public class HttpManagerTest {
     @Test
     public void testDefaultFactory() {
         assertThat(HttpManager.getHttpFactory().getFactoryName())
-                .isEqualTo("UrlConnectionHttpClientFactory with Lazy with Authenticating with Redirect with Retry with Rate-limiting with Throwing with Dumping with Metrics");
+                .isEqualTo("UrlConnectionHttpClientFactory with Lazy with Authenticating with Cookie with Redirect with Retry with Rate-limiting with Throwing with Dumping with Metrics");
 
         assertThat(HttpManager.getHttpFactory().getHttpClientProperties())
-                .hasSize(7)
+                .hasSize(9)
                 .extracting(BaseProperty::getKey)
                 .contains(DumpingDecoration.DUMP_FOLDER_PROPERTY.getKey())
                 .contains(RetryDecoration.MAX_RETRIES_PROPERTY.getKey());

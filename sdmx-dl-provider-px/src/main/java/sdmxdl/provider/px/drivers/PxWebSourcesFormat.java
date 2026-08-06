@@ -90,7 +90,7 @@ final class PxWebSourcesFormat implements FileFormat<WebSources> {
                 sourceId = normalizeId(host);
                 sourceAliases = Collections.emptyList();
             }
-            return WebSource
+            WebSource.Builder result = WebSource
                     .builder()
                     .id(sourceId)
                     .driver(PX_PXWEB)
@@ -99,8 +99,8 @@ final class PxWebSourcesFormat implements FileFormat<WebSources> {
                     .aliases(sourceAliases)
                     .name(DEFAULT_LANG, description)
                     .propertyOf(VERSIONS_PROPERTY, String.join(",", version))
-                    .propertyOf(LANGUAGES_PROPERTY, String.join(",", lang))
-                    .build();
+                    .propertyOf(LANGUAGES_PROPERTY, String.join(",", lang));
+            return result.build();
         }
 
         private static @NonNull String normalizeId(@NonNull String id) {

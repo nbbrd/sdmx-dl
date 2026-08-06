@@ -2,6 +2,8 @@ package sdmxdl.provider;
 
 import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;
+import nbbrd.io.text.Formatter;
+import nbbrd.io.text.StylishWriter;
 import org.jspecify.annotations.Nullable;
 import sdmxdl.*;
 import sdmxdl.Flow;
@@ -73,10 +75,6 @@ public final class Explorer {
         int maxKeysSampled = 2;
     }
 
-    public static SortedMap<Status, List<Report>> explore(@NonNull SdmxWebManager manager, @NonNull Predicate<? super WebSource> filter) {
-        return explore(manager, filter, Options.DEFAULT);
-    }
-
     public static SortedMap<Status, List<Report>> explore(@NonNull SdmxWebManager manager, @NonNull Predicate<? super WebSource> filter, @NonNull Options options) {
         manager.getNetworking().warmupNetwork();
         List<WebSource> sources = manager.getSources()
@@ -135,10 +133,6 @@ public final class Explorer {
         }
     }
 
-    public static @NonNull Report explore(@NonNull SdmxWebManager manager, @NonNull WebSource source) {
-        return explore(manager, source, Options.DEFAULT);
-    }
-
     public static @NonNull Report explore(@NonNull SdmxWebManager manager, @NonNull WebSource source, @NonNull Options options) {
         long start = System.nanoTime();
         Report report = doExplore(manager, source, options);
@@ -183,14 +177,14 @@ public final class Explorer {
                                 .collect(toList());
                     } catch (Exception fatal) {
                         return Report.of(source, Status.FLOW_FAILURE, fatal, databaseRequest)
-                                .withCoverage(databases.size(), 0, 0, 0, 0);
+                                .withCoverage(Coverage.of(databases.size(), 0, 0, 0, 0));
                     }
                 } while (db.hasNext() && flows.isEmpty());
             }
 
             if (flows.isEmpty()) {
                 return Report.of(source, Status.NO_FLOW, databaseRequest)
-                        .withCoverage(databases.size(), 0, 0, 0, 0);
+                        .withCoverage(Coverage.of(databases.size(), 0, 0, 0, 0));
             }
 
             // Sample several flows (not just the first) so the report reflects how broadly the
@@ -217,10 +211,10 @@ public final class Explorer {
             if (best == null) {
                 // Defensive: sample is never empty here (flows is non-empty), but keep a safe fallback.
                 return Report.of(source, Status.NO_FLOW, databaseRequest)
-                        .withCoverage(databases.size(), flows.size(), 0, 0, 0);
+                        .withCoverage(Coverage.of(databases.size(), flows.size(), 0, 0, 0));
             }
 
-            return best.withCoverage(databases.size(), flows.size(), sample.size(), flowsWithStructure, flowsWithData);
+            return best.withCoverage(Coverage.of(databases.size(), flows.size(), sample.size(), flowsWithStructure, flowsWithData));
 
         } catch (Throwable fatal) {
             return Report.of(source, Status.UNEXPECTED_FAILURE, fatal, stackTraceToString(fatal));
@@ -262,99 +256,6 @@ public final class Explorer {
     // A structure was usable (coded dimensions) whenever the data stage was reached.
     private static boolean hasStructure(Status status) {
         return status == Status.DATA_FAILURE || status == Status.NO_DATA || status == Status.SUCCESS;
-    }
-
-    public enum Status {
-        UNEXPECTED_FAILURE,
-        TIMEOUT,
-        CONNECTION_FAILURE,
-        DB_FAILURE,
-        FLOW_FAILURE,
-        NO_FLOW,
-        META_FAILURE,
-        NO_META,
-        DATA_FAILURE,
-        NO_DATA,
-        SUCCESS
-    }
-
-    @lombok.Value(staticConstructor = "of")
-    public static class Report {
-
-        @StaticFactoryMethod
-        public static @NonNull Report of(@NonNull WebSource source, @NonNull Status status, @NonNull Throwable fatal, @NonNull Object request) {
-            return new Report(source.getId(), status, request, fatal.getClass().getSimpleName(), fatal.getMessage(), 0, 0, 0, 0, 0, 0);
-        }
-
-        @StaticFactoryMethod
-        public static @NonNull Report of(@NonNull WebSource source, @NonNull Status status, @NonNull Object request) {
-            return new Report(source.getId(), status, request, null, null, 0, 0, 0, 0, 0, 0);
-        }
-
-        @NonNull
-        String source;
-
-        @NonNull
-        Status status;
-
-        @NonNull
-        Object request;
-
-        @Nullable
-        String error;
-
-        @Nullable
-        String message;
-
-        /**
-         * Total time spent probing the source, in milliseconds (0 when not measured).
-         */
-        @lombok.With
-        long durationMillis;
-
-        /**
-         * Number of databases discovered on the source.
-         */
-        int databaseCount;
-
-        /**
-         * Number of flows discovered in the probed database.
-         */
-        int flowCount;
-
-        /**
-         * Number of flows actually sampled (bounded by {@link Options#getMaxFlowsSampled()}).
-         */
-        int flowsSampled;
-
-        /**
-         * Number of sampled flows that yielded a usable (coded) structure.
-         */
-        int flowsWithStructure;
-
-        /**
-         * Number of sampled flows that returned at least one observation.
-         */
-        int flowsWithData;
-
-        @NonNull
-        Report withCoverage(int databaseCount, int flowCount, int flowsSampled, int flowsWithStructure, int flowsWithData) {
-            return new Report(source, status, request, error, message, durationMillis,
-                    databaseCount, flowCount, flowsSampled, flowsWithStructure, flowsWithData);
-        }
-
-        /**
-         * Formats a single human-readable line describing this report, shared by all consumers.
-         */
-        public @NonNull String toSummaryLine() {
-            return "[" + source + "] "
-                    + "error=" + error + " "
-                    + "message=" + message + " "
-                    + "request=" + request + " "
-                    + "coverage=" + flowsWithData + "/" + flowsWithStructure + "/" + flowsSampled + " of " + flowCount + " flows"
-                    + (databaseCount > 0 ? ", " + databaseCount + " db" : "") + " "
-                    + "(" + durationMillis + "ms)";
-        }
     }
 
     private static boolean isInvalidStructure(MetaSet metaSet) {
@@ -406,6 +307,134 @@ public final class Explorer {
         return key.build();
     }
 
+    public enum Status {
+        UNEXPECTED_FAILURE,
+        TIMEOUT,
+        CONNECTION_FAILURE,
+        DB_FAILURE,
+        FLOW_FAILURE,
+        NO_FLOW,
+        META_FAILURE,
+        NO_META,
+        DATA_FAILURE,
+        NO_DATA,
+        SUCCESS
+    }
+
+    @lombok.Value(staticConstructor = "of")
+    public static class Report {
+
+        @StaticFactoryMethod
+        public static @NonNull Report of(@NonNull WebSource source, @NonNull Status status, @NonNull Throwable fatal, @NonNull Object request) {
+            return new Report(source.getId(), status, request, fatal.getClass().getSimpleName(), fatal.getMessage(), Coverage.NO_COVERAGE, 0);
+        }
+
+        @StaticFactoryMethod
+        public static @NonNull Report of(@NonNull WebSource source, @NonNull Status status, @NonNull Object request) {
+            return new Report(source.getId(), status, request, null, null, Coverage.NO_COVERAGE, 0);
+        }
+
+        @NonNull
+        String source;
+
+        @NonNull
+        Status status;
+
+        @NonNull
+        Object request;
+
+        @Nullable
+        String error;
+
+        @Nullable
+        String message;
+
+        @NonNull
+        @lombok.With
+        Coverage coverage;
+
+        /**
+         * Total time spent probing the source, in milliseconds (0 when not measured).
+         */
+        @lombok.With
+        long durationMillis;
+
+        /**
+         * Formats a single human-readable line describing this report, shared by all consumers.
+         */
+        public @NonNull String toSummaryLine() {
+            return "[" + source + "] "
+                    + "error=" + error + " "
+                    + "message=" + message + " "
+                    + "request=" + request + " "
+                    + "coverage=" + coverage.toShortString()
+                    + " (" + durationMillis + "ms)";
+        }
+
+        public @NonNull String toShortError() {
+            if (error != null && error.equals("ThrowingStatusException")) {
+                return message != null ? message : "-";
+            }
+            return error != null ? (error + ": " + message) : "-";
+        }
+
+        public @NonNull String toShortRequest() {
+            if (request instanceof SourceRequest) {
+                return "-";
+            } else if (request instanceof DatabaseRequest) {
+                DatabaseRequest databaseRequest = (DatabaseRequest) request;
+                return databaseRequest.getDatabase().toString();
+            } else if (request instanceof FlowRequest) {
+                FlowRequest flowRequest = (FlowRequest) request;
+                String database = flowRequest.getDatabase().equals(DatabaseRef.NO_DATABASE) ? "" : flowRequest.getDatabase() + " > ";
+                return database + flowRequest.getFlow().toShortString();
+            } else if (request instanceof KeyRequest) {
+                KeyRequest keyRequest = (KeyRequest) request;
+                String database = keyRequest.getDatabase().equals(DatabaseRef.NO_DATABASE) ? "" : keyRequest.getDatabase() + " > ";
+                return database + keyRequest.getFlow().toShortString() + " > " + keyRequest.getKey();
+            }
+            return Objects.toString(request, "-");
+        }
+    }
+
+    @lombok.Value(staticConstructor = "of")
+    public static class Coverage implements HasShortString {
+
+        public static final Coverage NO_COVERAGE = new Coverage(0, 0, 0, 0, 0);
+
+        /**
+         * Number of databases discovered on the source.
+         */
+        int databaseCount;
+
+        /**
+         * Number of flows discovered in the probed database.
+         */
+        int flowCount;
+
+        /**
+         * Number of flows actually sampled (bounded by {@link Options#getMaxFlowsSampled()}).
+         */
+        int flowsSampled;
+
+        /**
+         * Number of sampled flows that yielded a usable (coded) structure.
+         */
+        int flowsWithStructure;
+
+        /**
+         * Number of sampled flows that returned at least one observation.
+         */
+        int flowsWithData;
+
+        @Override
+        public @NonNull String toShortString() {
+            return getFlowsWithData() + "/" + getFlowsWithStructure() + "/" + getFlowsSampled()
+                    + " of " + getFlowCount() + " flows"
+                    + (getDatabaseCount() > 0 ? ", " + getDatabaseCount() + " db" : "");
+        }
+    }
+
     private static String stackTraceToString(Throwable e) {
         try (StringWriter sw = new StringWriter()) {
             try (PrintWriter pw = new PrintWriter(sw)) {
@@ -415,5 +444,56 @@ public final class Explorer {
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
+    }
+
+    private static final String ANSI_RESET = "\u001B[0m";
+    private static final String ANSI_RED = "\u001B[31m";
+    private static final String ANSI_GREEN = "\u001B[32m";
+    private static final String ANSI_YELLOW = "\u001B[33m";
+    private static final String ANSI_MAGENTA = "\u001B[35m";
+
+    private static String ansiColorOf(Status status) {
+        switch (status) {
+            case SUCCESS:
+                return ANSI_GREEN;
+            case TIMEOUT:
+                return ANSI_MAGENTA;
+            case NO_FLOW:
+            case NO_META:
+            case NO_DATA:
+                return ANSI_YELLOW;
+            default:
+                return ANSI_RED;
+        }
+    }
+    
+    /**
+     * Prints the given reports to an appendable using the
+     * <a href="https://eslint.org/docs/latest/user-guide/formatters/#stylish">stylish</a> format,
+     * with reports grouped by {@link Status} (each status forming a section).
+     *
+     * @param appendable the target to write to
+     * @param reports    the reports to print
+     * @param useAnsi    whether to apply ANSI color codes to section headers
+     * @throws IOException if an I/O error occurs while writing
+     */
+    public static void printStylish(@NonNull Appendable appendable, @NonNull SortedMap<Status, List<Report>> reports, boolean useAnsi) throws IOException {
+        StylishWriter<Report> writer = StylishWriter.<Report>builder()
+                .column(Formatter.of(Report::getSource))
+                .column(Formatter.of(Report::toShortError))
+                .column(Formatter.of(Report::toShortRequest))
+                .column(Formatter.of(report -> report.getCoverage().toShortString()))
+                .column(Formatter.of(report -> report.getDurationMillis() + "ms"))
+                .build();
+
+        writer.writeAll(
+                appendable,
+                new ArrayList<>(reports.entrySet()),
+                entry -> useAnsi
+                        ? ansiColorOf(entry.getKey()) + entry.getKey().name() + ANSI_RESET
+                        : entry.getKey().name(),
+                Map.Entry::getValue,
+                entry -> entry.getValue().size() + (entry.getValue().size() == 1 ? " source" : " sources")
+        );
     }
 }

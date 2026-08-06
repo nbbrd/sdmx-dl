@@ -6,6 +6,8 @@ import sdmxdl.Confidentiality;
 import sdmxdl.provider.Explorer;
 import sdmxdl.web.WebSource;
 
+import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -20,31 +22,69 @@ public final class ExploreCommand implements Callable<Void> {
     private WebNetOptions web;
 
     @CommandLine.Option(
-            names = {"--driver"}
+            names = {"-d", "--driver"}
     )
-    private String driver;
+    private List<String> driver = Collections.emptyList();
 
     @CommandLine.Option(
-            names = {"--source"}
+            names = {"-q", "--source"}
     )
-    private String sourceId;
+    private List<String> sourceId = Collections.emptyList();
+
+    @CommandLine.Option(
+            names = {"--per-source-timeout"},
+            defaultValue = "PT60S",
+            descriptionKey = "cli.explore.perSourceTimeout"
+    )
+    private Duration perSourceTimeout;
+
+    @CommandLine.Option(
+            names = {"--total-budget"},
+            defaultValue = "PT30M",
+            descriptionKey = "cli.explore.totalBudget"
+    )
+    private Duration totalBudget;
+
+    @CommandLine.Option(
+            names = {"--max-concurrency"},
+            descriptionKey = "cli.explore.maxConcurrency"
+    )
+    private int maxConcurrency = Math.max(1, Runtime.getRuntime().availableProcessors());
+
+    @CommandLine.Option(
+            names = {"--max-flows-sampled"},
+            defaultValue = "5",
+            descriptionKey = "cli.explore.maxFlowsSampled"
+    )
+    private int maxFlowsSampled;
+
+    @CommandLine.Option(
+            names = {"--max-keys-sampled"},
+            defaultValue = "2",
+            descriptionKey = "cli.explore.maxKeysSampled"
+    )
+    private int maxKeysSampled;
 
     @Override
     public Void call() throws Exception {
-        Explorer.explore(web.loadManager(), this::filter).forEach(this::print);
+        Explorer.printStylish(System.out, Explorer.explore(web.loadManager(), this::filter, getExplorerOptions()), true);
         return null;
     }
 
     private boolean filter(WebSource source) {
         return !source.isAlias()
                 && source.getConfidentiality().equals(Confidentiality.PUBLIC)
-                && (driver == null || source.getDriver().contains(driver))
-                && (sourceId == null || source.getId().contains(sourceId));
+                && (driver.isEmpty() || driver.contains(source.getDriver()))
+                && (sourceId.isEmpty() || sourceId.contains(source.getId()));
     }
 
-    private void print(Explorer.Status status, List<Explorer.Report> reports) {
-        System.out.println("==== " + status + " ====");
-        reports.forEach(r -> System.out.println(r.toSummaryLine()));
-        System.out.println();
+    private Explorer.Options getExplorerOptions() {
+        return Explorer.Options.builder()
+                .perSourceTimeout(perSourceTimeout)
+                .totalBudget(totalBudget)
+                .maxConcurrency(maxConcurrency)
+                .maxFlowsSampled(maxFlowsSampled)
+                .maxKeysSampled(maxKeysSampled)
+                .build();
     }
 }

@@ -6,6 +6,8 @@ import nbbrd.design.*;
 import nbbrd.io.FileParser;
 import nbbrd.io.function.IOSupplier;
 import nbbrd.io.http.*;
+import nbbrd.io.http.ext.RateLimiter;
+import nbbrd.io.http.ext.RateLimitingDecorator;
 import nbbrd.io.net.MediaType;
 import nbbrd.io.text.*;
 import nbbrd.service.ServiceProvider;
@@ -19,8 +21,10 @@ import sdmxdl.format.time.ObservationalTimePeriod;
 import sdmxdl.format.time.TimeFormats;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.provider.*;
+import sdmxdl.provider.ri.http.CookieDecoration;
 import sdmxdl.provider.ri.http.HttpFactory;
 import sdmxdl.provider.ri.http.HttpManager;
+import sdmxdl.provider.ri.http.RateLimitingDecoration;
 import sdmxdl.provider.web.ConnectionFactory;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.WebSource;
@@ -32,7 +36,6 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.MonthDay;
@@ -70,6 +73,27 @@ public final class PxWebDriver implements Driver {
     static final BooleanProperty ENABLE_PROPERTY =
             BooleanProperty.of("enablePxWebDriver", false);
 
+    /**
+     * Strategy used to list the tables (flows) of a database.
+     * <ul>
+     *     <li>{@link #FLAT}: single fast query ({@code ?query=*&filter=*}); works only on
+     *     servers that support the search endpoint and keep a fresh index.</li>
+     *     <li>{@link #TREE}: reliable but slower folder-tree navigation.</li>
+     *     <li>{@link #AUTO}: try {@code FLAT} first and fall back to {@code TREE} when the
+     *     search endpoint is unsupported (e.g. HTTP 400) or returns nothing.</li>
+     * </ul>
+     * Note that {@code AUTO} cannot detect a <em>stale</em> search index (HTTP 200 with
+     * outdated entries); such sources must be pinned to {@code TREE}.
+     */
+    @VisibleForTesting
+    enum TableListing {
+        AUTO, FLAT, TREE
+    }
+
+    @PropertyDefinition
+    static final Property<TableListing> TABLE_LISTING_PROPERTY =
+            Property.of(DRIVER_PROPERTY_PREFIX + ".tableListing", TableListing.AUTO, Parser.onEnum(TableListing.class), nbbrd.io.text.Formatter.onEnum());
+
     static final String DEFAULT_VERSION = "v1";
 
     static final String VERSION_VARIABLE = UriTemplate.getVariable("version");
@@ -77,6 +101,34 @@ public final class PxWebDriver implements Driver {
     static final String DEFAULT_LANG = "en";
 
     static final String LANGUAGE_VARIABLE = UriTemplate.getVariable("lang");
+
+    /**
+     * Upper bound on how long a request may wait for a rate-limiting permit before failing.
+     */
+    static final Duration RATE_LIMIT_MAX_WAIT = Duration.ofSeconds(120);
+
+    /**
+     * Fallback used when the server-declared rate limit cannot be determined; it never
+     * throttles proactively and only reacts to {@code 429} responses.
+     */
+    @VisibleForTesting
+    static final RateLimiter FALLBACK_RATE_LIMITER = RateLimiter.unlimitedAdaptive(RATE_LIMIT_MAX_WAIT);
+
+    /**
+     * Builds a fixed rate limiter from the server-declared configuration ({@code maxCalls} per
+     * {@code timeWindow} seconds), falling back to a non-throttling limiter when the configuration
+     * is invalid.
+     */
+    @VisibleForTesting
+    static @NonNull RateLimiter toRateLimiter(@NonNull Config config) {
+        if (config.getMaxCalls() <= 0 || config.getTimeWindow() <= 0) {
+            return FALLBACK_RATE_LIMITER;
+        }
+        return RateLimiter.fixed(
+                config.getMaxCalls() / (double) config.getTimeWindow(),
+                config.getMaxCalls(),
+                RATE_LIMIT_MAX_WAIT);
+    }
 
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport
@@ -89,14 +141,28 @@ public final class PxWebDriver implements Driver {
             .build();
 
     private static List<WebSource> loadDefaultSources() throws IOException {
-        Map<String, URL> websiteByHost = Websites.PARSER.parseResource(PxWebDriver.class, "websites.csv", UTF_8);
+        Map<String, Websites.Website> websiteByHost = Websites.PARSER.parseResource(PxWebDriver.class, "websites.csv", UTF_8);
         try (InputStream stream = newInputStream(PxWebDriver.class, "api.json")) {
             return PxWebSourcesFormat.INSTANCE.parseStream(stream)
                     .getSources()
                     .stream()
-                    .map(source -> source.toBuilder().website(websiteByHost.get(source.getEndpoint().getHost())).build())
+                    .map(source -> applyWebsite(source, websiteByHost.get(source.getEndpoint().getHost())))
                     .collect(toList());
         }
+    }
+
+    private static WebSource applyWebsite(WebSource source, Websites.Website website) {
+        if (website == null) {
+            return source;
+        }
+        WebSource.Builder result = source.toBuilder().website(website.getUrl());
+        if (website.getListing() != null) {
+            result.propertyOf(TABLE_LISTING_PROPERTY, website.getListing());
+        }
+        if (website.isCookie()) {
+            result.propertyOf(CookieDecoration.COOKIE_PROPERTY, true);
+        }
+        return result.build();
     }
 
     @VisibleForTesting
@@ -106,30 +172,66 @@ public final class PxWebDriver implements Driver {
 
         @Override
         public @NonNull List<BaseProperty> getConnectionProperties() {
+            // Hide the rate-limiting toggle: this driver forces it internally (see connect).
+            List<BaseProperty> httpProperties = httpFactory.getHttpClientProperties()
+                    .stream()
+                    .filter(property -> !property.getKey().equals(RateLimitingDecoration.RATE_LIMITING_PROPERTY.getKey()))
+                    .collect(toList());
             return PropertiesSupport.merge(
-                    httpFactory.getHttpClientProperties(),
+                    httpProperties,
                     VERSIONS_PROPERTY,
                     LANGUAGES_PROPERTY,
+                    TABLE_LISTING_PROPERTY,
                     CACHE_TTL_PROPERTY
             );
         }
 
         @Override
         public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
-            PxWebClient client = new DefaultPxWebClient(
-                    HasMarker.of(source),
-                    getFullEndpoint(source, languages),
-                    httpFactory.createHttpClient(source, context)
+            Marker marker = HasMarker.of(source);
+            URI endpoint = getFullEndpoint(source, languages);
+            TableListing configuredListing = TABLE_LISTING_PROPERTY.get(source.getProperties());
+            TableListing listing = configuredListing != null ? configuredListing : TableListing.AUTO;
+
+            Cache<DataRepository> cache = context.getDriverCache(source);
+            URI cacheBase = getCachedClientBaseURI(source, languages);
+            Duration ttl = Duration.ofMillis(CACHE_TTL_PROPERTY.get(source.getProperties()));
+
+            // Disable the shared HTTP rate limiter for this client and enforce instead the
+            // server-declared limit (see PxWeb config endpoint) to avoid double rate-limiting.
+            WebSource httpSource = source
+                    .toBuilder()
+                    .propertyOf(RateLimitingDecoration.RATE_LIMITING_PROPERTY, false)
+                    .build();
+            HttpClient httpClient = httpFactory.createHttpClient(httpSource, context);
+
+            HttpClient rateLimitedClient = RateLimitingDecorator
+                    .builder()
+                    .decorated(httpClient)
+                    .rateLimiter(resolveRateLimiter(cache, cacheBase, ttl, httpClient, endpoint))
+                    .listener(RateLimitingDecoration.toListener(context.getEventListener(source)))
+                    .build();
+
+            PxWebClient client = new CachedPxWebClient(
+                    new DefaultPxWebClient(marker, endpoint, rateLimitedClient, listing),
+                    cache,
+                    cacheBase,
+                    ttl
             );
 
-            PxWebClient cachedClient = new CachedPxWebClient(
-                    client,
-                    context.getDriverCache(source),
-                    getCachedClientBaseURI(source, languages),
-                    Duration.ofMillis(CACHE_TTL_PROPERTY.get(source.getProperties()))
-            );
+            return new PxWebConnection(client);
+        }
 
-            return new PxWebConnection(cachedClient);
+        // Resolves the server-declared rate limit from the driver cache, fetching and caching it
+        // once when absent; falls back to a non-throttling limiter when it cannot be determined.
+        private static RateLimiter resolveRateLimiter(Cache<DataRepository> cache, URI cacheBase, Duration ttl, HttpClient httpClient, URI endpoint) {
+            try {
+                Config config = CachedPxWebClient.initIdOfConfig(cacheBase)
+                        .load(cache, () -> DefaultPxWebClient.fetchConfig(httpClient, endpoint), ignore -> ttl);
+                return toRateLimiter(config);
+            } catch (IOException ex) {
+                return FALLBACK_RATE_LIMITER;
+            }
         }
 
         @VisibleForTesting
@@ -192,11 +294,11 @@ public final class PxWebDriver implements Driver {
         @Override
         public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
             checkDatabase(database);
-            String tableId = Converter.flowRefToTableId(flowRef);
+            String tablePath = Converter.flowRefToTablePath(flowRef);
             return MetaSet
                     .builder()
                     .flow(ConnectionSupport.getFlowFromFlows(database, flowRef, this, client))
-                    .structure(client.getMeta(database.getId(), tableId))
+                    .structure(client.getMeta(database.getId(), tablePath))
                     .build();
         }
 
@@ -209,9 +311,9 @@ public final class PxWebDriver implements Driver {
         @Override
         public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
             checkDatabase(database);
-            String tableId = Converter.flowRefToTableId(flowRef);
-            Structure dsd = client.getMeta(database.getId(), tableId);
-            DataCursor dataCursor = client.getData(database.getId(), tableId, dsd, query.getKey());
+            String tablePath = Converter.flowRefToTablePath(flowRef);
+            Structure dsd = client.getMeta(database.getId(), tablePath);
+            DataCursor dataCursor = client.getData(database.getId(), tablePath, dsd, query.getKey());
             return query.execute(dataCursor.asCloseableStream());
         }
 
@@ -251,10 +353,10 @@ public final class PxWebDriver implements Driver {
         List<Flow> getTables(@NonNull String dbId) throws IOException;
 
         @NonNull
-        Structure getMeta(@NonNull String dbId, @NonNull String tableId) throws IOException, IllegalArgumentException;
+        Structure getMeta(@NonNull String dbId, @NonNull String tablePath) throws IOException, IllegalArgumentException;
 
         @NonNull
-        DataCursor getData(@NonNull String dbId, @NonNull String tableId, @NonNull Structure dsd, @NonNull Key key) throws IOException, IllegalArgumentException;
+        DataCursor getData(@NonNull String dbId, @NonNull String tablePath, @NonNull Structure dsd, @NonNull Key key) throws IOException, IllegalArgumentException;
     }
 
     @lombok.AllArgsConstructor
@@ -270,6 +372,9 @@ public final class PxWebDriver implements Driver {
         @lombok.NonNull
         private final HttpClient client;
 
+        @lombok.NonNull
+        private final TableListing listing;
+
         @Override
         public @NonNull URI ping() throws IOException {
             HttpRequest request = HttpRequest
@@ -284,14 +389,17 @@ public final class PxWebDriver implements Driver {
 
         @Override
         public @NonNull Config getConfig() throws IOException {
+            return fetchConfig(client, endpoint);
+        }
+
+        static @NonNull Config fetchConfig(@NonNull HttpClient client, @NonNull URI endpoint) throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
                     .query(UriQueryBuilder.of(endpoint).param("config").build())
                     .build();
 
             try (HttpResponse response = client.send(request)) {
-                return getConfigParser(response.getContentType())
-                        .parseReader(response::getBodyAsReader);
+                return Config.JSON_PARSER.parseReader(response::getBodyAsReader);
             }
         }
 
@@ -308,10 +416,6 @@ public final class PxWebDriver implements Driver {
             }
         }
 
-        private TextParser<Config> getConfigParser(MediaType ignore) {
-            return Config.JSON_PARSER;
-        }
-
         private TextParser<List<sdmxdl.Database>> getDatabasesParser(MediaType ignore) {
             return PxWebDriver.Database.JSON_PARSER
                     .andThen(tables -> Stream.of(tables).map(PxWebDriver.Database::toDatabase).collect(toList()));
@@ -319,6 +423,15 @@ public final class PxWebDriver implements Driver {
 
         @Override
         public @NonNull List<Flow> getTables(@NonNull String dbId) throws IOException {
+            // The flat "?query=*&filter=*" search is fast but unreliable (rejected by some
+            // servers, stale index on others), so it is combined with the reliable folder-tree
+            // navigation according to the configured strategy.
+            return selectTables(listing,
+                    () -> getFlatTables(dbId),
+                    () -> collectTables(folder -> getNodes(dbId, folder)));
+        }
+
+        private List<Flow> getFlatTables(String dbId) throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
                     .query(UriQueryBuilder
@@ -330,46 +443,66 @@ public final class PxWebDriver implements Driver {
                     .build();
 
             try (HttpResponse response = client.send(request)) {
-                return getTablesParser(response.getContentType())
+                return getFlatTablesParser(response.getContentType())
                         .parseReader(response::getBodyAsReader);
             }
         }
 
-        private TextParser<List<Flow>> getTablesParser(MediaType ignore) {
-            return Table.JSON_PARSER
-                    .andThen(tables -> Stream.of(tables).map(Table::toDataflow).collect(toList()));
+        private TextParser<List<Flow>> getFlatTablesParser(MediaType ignore) {
+            return SearchTable.JSON_PARSER
+                    .andThen(tables -> Stream.of(tables).map(SearchTable::toFlow).collect(toList()));
         }
 
-        @Override
-        public @NonNull Structure getMeta(@NonNull String dbId, @NonNull String tableId) throws IOException, IllegalArgumentException {
+        private List<Node> getNodes(String dbId, List<String> folder) throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
                     .query(UriQueryBuilder
                             .of(endpoint)
                             .path(dbId)
-                            .path(tableId)
+                            .path(folder)
                             .build())
                     .build();
 
             try (HttpResponse response = client.send(request)) {
-                return getMetaParser(tableId, response.getContentType())
+                return getNodesParser(response.getContentType())
                         .parseReader(response::getBodyAsReader);
             }
         }
 
-        private TextParser<Structure> getMetaParser(String tableId, MediaType ignore) {
-            return TableMeta.JSON_PARSER
-                    .andThen(tableMeta -> tableMeta.toStructure(Converter.tableIdToStructureRef(tableId)));
+        private TextParser<List<Node>> getNodesParser(MediaType ignore) {
+            return Node.JSON_PARSER.andThen(Arrays::asList);
         }
 
         @Override
-        public @NonNull DataCursor getData(@NonNull String dbId, @NonNull String tableId, @NonNull Structure dsd, @NonNull Key key) throws IOException, IllegalArgumentException {
+        public @NonNull Structure getMeta(@NonNull String dbId, @NonNull String tablePath) throws IOException, IllegalArgumentException {
             HttpRequest request = HttpRequest
                     .builder()
                     .query(UriQueryBuilder
                             .of(endpoint)
                             .path(dbId)
-                            .path(tableId)
+                            .path(Converter.tablePathToSegments(tablePath))
+                            .build())
+                    .build();
+
+            try (HttpResponse response = client.send(request)) {
+                return getMetaParser(tablePath, response.getContentType())
+                        .parseReader(response::getBodyAsReader);
+            }
+        }
+
+        private TextParser<Structure> getMetaParser(String tablePath, MediaType ignore) {
+            return TableMeta.JSON_PARSER
+                    .andThen(tableMeta -> tableMeta.toStructure(Converter.tablePathToStructureRef(tablePath)));
+        }
+
+        @Override
+        public @NonNull DataCursor getData(@NonNull String dbId, @NonNull String tablePath, @NonNull Structure dsd, @NonNull Key key) throws IOException, IllegalArgumentException {
+            HttpRequest request = HttpRequest
+                    .builder()
+                    .query(UriQueryBuilder
+                            .of(endpoint)
+                            .path(dbId)
+                            .path(Converter.tablePathToSegments(tablePath))
                             .build())
                     .method(HttpMethod.POST)
                     .bodyOf(TableQuery.FORMATTER.formatToString(TableQuery.fromDataStructureAndKey(dsd, key)))
@@ -594,20 +727,32 @@ public final class PxWebDriver implements Driver {
     @lombok.experimental.UtilityClass
     static class Converter {
 
-        static FlowRef tableIdToFlowRef(String id) {
-            return FlowRef.of(null, URIs.encode(id), null);
+        // A "table path" is the location of a table relative to its database: the ordered
+        // folder (level) ids followed by the table id, joined by '/'. It is stored URL-encoded
+        // inside the flow/structure ref id so that it survives as a single opaque token.
+
+        static FlowRef tablePathToFlowRef(String tablePath) {
+            return FlowRef.of(null, URIs.encode(tablePath), null);
         }
 
-        static String flowRefToTableId(FlowRef ref) {
+        static String flowRefToTablePath(FlowRef ref) {
             return URIs.decode(ref.getId());
         }
 
-        static StructureRef tableIdToStructureRef(String id) {
-            return StructureRef.of(null, URIs.encode(id), null);
+        static StructureRef tablePathToStructureRef(String tablePath) {
+            return StructureRef.of(null, URIs.encode(tablePath), null);
         }
 
-        static String structureRefToTableId(StructureRef ref) {
+        static String structureRefToTablePath(StructureRef ref) {
             return URIs.decode(ref.getId());
+        }
+
+        static List<String> tablePathToSegments(String tablePath) {
+            return Arrays.asList(tablePath.split("/", -1));
+        }
+
+        static String segmentsToTablePath(List<String> segments) {
+            return String.join("/", segments);
         }
     }
 
@@ -629,10 +774,10 @@ public final class PxWebDriver implements Driver {
         static Config deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject x = json.getAsJsonObject();
             return new Config(
-                    x.get("maxValues").getAsInt(),
-                    x.get("maxCells").getAsInt(),
-                    x.get("maxCalls").getAsInt(),
-                    x.get("timeWindow").getAsInt()
+                    GsonUtil.getAsInt(x, "maxValues", 0),
+                    GsonUtil.getAsInt(x, "maxCells", 0),
+                    GsonUtil.getAsInt(x, "maxCalls", 0),
+                    GsonUtil.getAsInt(x, "timeWindow", 0)
             );
         }
 
@@ -678,34 +823,158 @@ public final class PxWebDriver implements Driver {
         }
     }
 
+    @FunctionalInterface
+    @VisibleForTesting
+    interface NodeLister {
+        @NonNull
+        List<Node> list(@NonNull List<String> folder) throws IOException;
+    }
+
+    /**
+     * Selects the table listing according to the configured strategy, combining the fast flat
+     * search with the reliable tree navigation. In {@link TableListing#AUTO}, the flat search
+     * is tried first and the tree navigation is used as a fallback when the search is
+     * unsupported (throws) or returns nothing.
+     */
+    @VisibleForTesting
+    static List<Flow> selectTables(@NonNull TableListing listing, @NonNull IOSupplier<List<Flow>> flat, @NonNull IOSupplier<List<Flow>> tree) throws IOException {
+        switch (listing) {
+            case FLAT:
+                return flat.getWithIO();
+            case TREE:
+                return tree.getWithIO();
+            case AUTO:
+            default:
+                try {
+                    List<Flow> result = flat.getWithIO();
+                    if (!result.isEmpty()) return result;
+                } catch (IOException ex) {
+                    // Flat search unsupported by this server; fall back to tree navigation.
+                }
+                return tree.getWithIO();
+        }
+    }
+
+    /**
+     * Defensive bound on the number of folder listings issued while navigating a database tree,
+     * so that a misbehaving or cyclic source cannot trigger an unbounded number of requests.
+     */
+    @VisibleForTesting
+    static final int MAX_FOLDER_REQUESTS = 10_000;
+
+    /**
+     * Navigates a PxWeb database folder tree breadth-first and collects every table as a flow,
+     * keeping the full folder path required to later fetch its metadata and data.
+     * <p>
+     * The listing of the database root propagates its failure (a genuine flow failure), but a
+     * single unreachable sub-folder is skipped so that it cannot abort the whole catalog.
+     */
+    @VisibleForTesting
+    static List<Flow> collectTables(@NonNull NodeLister lister) throws IOException {
+        List<Flow> result = new ArrayList<>();
+        Deque<List<String>> pending = new ArrayDeque<>();
+        collectNodes(lister.list(emptyList()), emptyList(), result, pending);
+        int requests = 1;
+        while (!pending.isEmpty() && requests < MAX_FOLDER_REQUESTS) {
+            requests++;
+            List<String> folder = pending.removeFirst();
+            List<Node> nodes;
+            try {
+                nodes = lister.list(folder);
+            } catch (IOException ex) {
+                // A single unreachable sub-folder must not abort the whole catalog listing.
+                continue;
+            }
+            collectNodes(nodes, folder, result, pending);
+        }
+        return result;
+    }
+
+    private static void collectNodes(List<Node> nodes, List<String> folder, List<Flow> result, Deque<List<String>> pending) {
+        for (Node node : nodes) {
+            List<String> childPath = new ArrayList<>(folder);
+            childPath.add(node.getId());
+            if (node.isTable()) {
+                result.add(node.toFlow(Converter.segmentsToTablePath(childPath)));
+            } else if (node.isLevel()) {
+                pending.add(childPath);
+            }
+        }
+    }
+
     @VisibleForTesting
     @lombok.Value
-    static class Table {
+    static class Node {
+
+        static final String LEVEL_TYPE = "l";
+        static final String TABLE_TYPE = "t";
 
         String id;
-        String path;
-        String title;
+        String type;
+        String text;
 
-        Flow toDataflow() {
+        boolean isLevel() {
+            return LEVEL_TYPE.equals(type);
+        }
+
+        boolean isTable() {
+            return TABLE_TYPE.equals(type);
+        }
+
+        Flow toFlow(String tablePath) {
             return Flow
                     .builder()
-                    .ref(Converter.tableIdToFlowRef(id))
-                    .structureRef(Converter.tableIdToStructureRef(id))
+                    .ref(Converter.tablePathToFlowRef(tablePath))
+                    .structureRef(Converter.tablePathToStructureRef(tablePath))
+                    .name(text)
+                    .build();
+        }
+
+        static final TextParser<Node[]> JSON_PARSER = GsonIO.GsonParser
+                .builder(Node[].class)
+                .deserializer(Node.class, Node::deserialize)
+                .build();
+
+        @MightBeGenerated
+        static Node deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            JsonObject obj = json.getAsJsonObject();
+            return new Node(
+                    GsonUtil.getAsString(obj, "id"),
+                    GsonUtil.getAsString(obj, "type"),
+                    GsonUtil.getAsString(obj, "text")
+            );
+        }
+    }
+
+    @VisibleForTesting
+    @lombok.Value
+    static class SearchTable {
+
+        String id;
+        String title;
+
+        Flow toFlow() {
+            // The flat search identifies tables by id only; its "path" field is decorative and
+            // inconsistent across servers. Tables listed this way are addressed directly by id
+            // (single-segment table path).
+            return Flow
+                    .builder()
+                    .ref(Converter.tablePathToFlowRef(id))
+                    .structureRef(Converter.tablePathToStructureRef(id))
                     .name(title)
                     .build();
         }
 
-        static final TextParser<Table[]> JSON_PARSER = GsonIO.GsonParser
-                .builder(Table[].class)
-                .deserializer(Table.class, Table::deserialize)
+        static final TextParser<SearchTable[]> JSON_PARSER = GsonIO.GsonParser
+                .builder(SearchTable[].class)
+                .deserializer(SearchTable.class, SearchTable::deserialize)
                 .build();
 
         @MightBeGenerated
-        static Table deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        static SearchTable deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject obj = json.getAsJsonObject();
-            return new Table(
+            return new SearchTable(
                     GsonUtil.getAsString(obj, "id"),
-                    GsonUtil.getAsString(obj, "path"),
                     GsonUtil.getAsString(obj, "title")
             );
         }
@@ -814,8 +1083,8 @@ public final class PxWebDriver implements Driver {
             return new TableVariable(
                     GsonUtil.getAsString(x, "code"),
                     GsonUtil.getAsString(x, "text"),
-                    GsonUtil.asStream(x.getAsJsonArray("values")).map(JsonElement::getAsString).collect(toList()),
-                    GsonUtil.asStream(x.getAsJsonArray("valueTexts")).map(JsonElement::getAsString).collect(toList()),
+                    GsonUtil.getAsStringList(x, "values"),
+                    GsonUtil.getAsStringList(x, "valueTexts"),
                     x.has("time") && x.get("time").getAsBoolean()
             );
         }
