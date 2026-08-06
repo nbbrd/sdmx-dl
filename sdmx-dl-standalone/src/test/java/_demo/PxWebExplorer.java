@@ -4,12 +4,12 @@ import sdmxdl.provider.Explorer;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 
-import java.util.List;
+import java.io.IOException;
 
 public class PxWebExplorer {
 
     @nbbrd.design.Demo
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         System.setProperty("enablePxWebDriver", "true");
 
@@ -21,16 +21,10 @@ public class PxWebExplorer {
                 .onError(SdmxWebManager::printError)
                 .build();
 
-        Explorer.explore(manager, PxWebExplorer::isPxWebSource).forEach(PxWebExplorer::print);
+        Explorer.printStylish(System.out, Explorer.explore(manager, PxWebExplorer::isPxWebSource, Explorer.Options.DEFAULT), true);
     }
 
     private static boolean isPxWebSource(WebSource source) {
         return !source.isAlias() && source.getDriver().equals("PX_PXWEB");
-    }
-
-    private static void print(Explorer.Status status, List<Explorer.Report> reports) {
-        System.out.println("==== " + status + " ====");
-        reports.forEach(r -> System.out.println(r.toSummaryLine()));
-        System.out.println();
     }
 }
