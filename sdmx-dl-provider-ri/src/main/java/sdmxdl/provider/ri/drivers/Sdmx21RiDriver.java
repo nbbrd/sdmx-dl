@@ -220,7 +220,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .name("en", "SDMX Global Registry")
                     .driver(RI_SDMX_21)
                     .confidentiality(PUBLIC)
-                    .endpointOf("https://registry.sdmx.org/ws/rest")
+                    .endpointOf("https://registry.sdmx.org/ws/public/sdmxapi/rest")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://registry.sdmx.org/overview.html")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/SGR")
