@@ -347,6 +347,18 @@ public final class Sdmx21RiDriver implements Driver {
 //                    .build())
             .source(WebSource
                     .builder()
+                    .id("UKDS")
+                    .name("en", "UK Data Service")
+                    .driver(RI_SDMX_21)
+                    .confidentiality(PUBLIC)
+                    .endpointOf("https://open.data.dataexplorer.ukdataservice.ac.uk/rest")
+                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                    .websiteOf("https://dataexplorer.ukdataservice.ac.uk/")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/UKDS")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ukds")
+                    .build())
+            .source(WebSource
+                    .builder()
                     .id("UNDATA")
                     .name("en", "Data access system to UN databases")
                     .driver(RI_SDMX_21)

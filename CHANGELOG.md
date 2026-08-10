@@ -22,6 +22,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![PROVIDER] Fix parsing of year range in PxWebDriver
 - ![PROVIDER] Fix logs verbosity
 - ![SOURCE] Fix SGR endpoint [#1298](https://github.com/nbbrd/sdmx-dl/issues/1298)
+- ![SOURCE] Fix UKDS endpoint [#1065](https://github.com/nbbrd/sdmx-dl/issues/1065)
 
 ## [3.1.1] - 2026-06-17
 

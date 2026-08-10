@@ -40,7 +40,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
 
 /**
@@ -58,17 +57,6 @@ public final class DotStatDialectDriver implements Driver {
             .id(DIALECTS_DOTSTAT)
             .rank(NATIVE_DRIVER_RANK)
             .connectorOf(new DotStatRestClientFactory())
-            .source(WebSource
-                    .builder()
-                    .id("UKDS")
-                    .name("en", "UK Data Service")
-                    .driver(DIALECTS_DOTSTAT)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("https://stats2.digitalresources.jisc.ac.uk/restsdmx/sdmx.ashx")
-                    .websiteOf("https://stats2.digitalresources.jisc.ac.uk/")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/UKDS")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ukds")
-                    .build())
             .build();
 
     private static final class DotStatRestClientFactory implements RestClientFactory {
