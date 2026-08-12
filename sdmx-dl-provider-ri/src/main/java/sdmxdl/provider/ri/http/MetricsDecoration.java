@@ -2,7 +2,6 @@ package sdmxdl.provider.ri.http;
 
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.http.HttpClient;
-import nbbrd.io.http.HttpResponse;
 import nbbrd.io.http.ext.MetricsDecorator;
 import nbbrd.io.http.ext.MetricsEvent;
 import sdmxdl.EventListener;
@@ -39,8 +38,8 @@ public final class MetricsDecoration implements HttpDecoration {
     /**
      * Formats a {@link MetricsEvent} into a concise, human-readable string.
      *
-     * <p>Format: {@code <status> | <bytes> | ttfb=<networkTime> total=<totalTime>}</p>
-     * <p>Example: {@code 200 | 1.5MB | ttfb=342ms total=1.2s}</p>
+     * <p>Format: {@code read=<bytes> ttfb=<networkTime> total=<totalTime>}</p>
+     * <p>Example: {@code read=1.5MB ttfb=342ms total=1.2s}</p>
      *
      * <p>The URI and request method are intentionally omitted because they are
      * already reported by other decorators.</p>
@@ -50,13 +49,9 @@ public final class MetricsDecoration implements HttpDecoration {
      */
     @VisibleForTesting
     static String formatEvent(MetricsEvent event) {
-        StringBuilder sb = new StringBuilder();
-        int status = event.getResponseStatusCode();
-        sb.append(status != HttpResponse.NO_STATUS_CODE ? status : "???");
-        sb.append(" | ").append(formatBytes(event.getResponseBytesRead()));
-        sb.append(" | ttfb=").append(formatDuration(event.getNetworkNanos()));
-        sb.append(" total=").append(formatDuration(event.getTotalNanos()));
-        return sb.toString();
+        return "read=" + formatBytes(event.getResponseBytesRead()) +
+                " ttfb=" + formatDuration(event.getNetworkNanos()) +
+                " total=" + formatDuration(event.getTotalNanos());
     }
 
     /**

@@ -35,6 +35,8 @@ import java.util.concurrent.atomic.AtomicReference;
 @lombok.experimental.UtilityClass
 public final class HttpManager {
 
+    // HTTP pipeline decorations, in order of application (first to last).
+    // Beware, order matter!
     private static final List<HttpDecoration> HTTP_PIPELINE = Arrays.asList(
             new MetricsDecoration(),
             new DumpingDecoration(),
@@ -43,6 +45,7 @@ public final class HttpManager {
             new RetryDecoration(),
             new RedirectDecoration(),
             new CookieDecoration(),
+            new LoggingDecoration(),
             new AuthenticatingDecoration(),
             new LazyDecoration()
     );

@@ -1,7 +1,6 @@
 package internal.sdmxdl.provider.px.drivers;
 
 import lombok.NonNull;
-import nbbrd.design.VisibleForTesting;
 import nbbrd.io.FileParser;
 import nbbrd.io.function.IOSupplier;
 import nbbrd.io.http.*;
@@ -41,48 +40,17 @@ public final class DefaultPxWebClient implements PxWebClient {
 
     @Override
     public @NonNull URI ping() throws IOException {
-        HttpRequest request = HttpRequest
-                .builder()
-                .query(UriQueryBuilder.of(endpoint).param("config").build())
-                .build();
-
-        try (HttpResponse ignore = client.send(request)) {
-            return request.getQuery();
-        }
-    }
-
-    @Override
-    public @NonNull PxConfig getConfig() throws IOException {
-        return fetchConfig(client, endpoint);
-    }
-
-    public static @NonNull PxConfig fetchConfig(@NonNull HttpClient client, @NonNull URI endpoint) throws IOException {
-        HttpRequest request = HttpRequest
-                .builder()
-                .query(UriQueryBuilder.of(endpoint).param("config").build())
-                .build();
-
-        try (HttpResponse response = client.send(request)) {
-            return PxConfig.JSON_PARSER.parseReader(response::getBodyAsReader);
+        try (HttpResponse ignore = client.send(getConfigRequest(endpoint))) {
+            return getConfigRequest(endpoint).getQuery();
         }
     }
 
     @Override
     public @NonNull List<Database> getDataBases() throws IOException {
-        HttpRequest request = HttpRequest
-                .builder()
-                .query(endpoint)
-                .build();
-
-        try (HttpResponse response = client.send(request)) {
+        try (HttpResponse response = client.send(getDataBasesRequest(endpoint))) {
             return getDatabasesParser(response.getContentType())
                     .parseReader(response::getBodyAsReader);
         }
-    }
-
-    private TextParser<List<Database>> getDatabasesParser(MediaType ignore) {
-        return PxDatabase.JSON_PARSER
-                .andThen(tables -> Stream.of(tables).map(PxDatabase::toDatabase).collect(toList()));
     }
 
     @Override
@@ -167,11 +135,6 @@ public final class DefaultPxWebClient implements PxWebClient {
         }
     }
 
-    private TextParser<List<Flow>> getFlatTablesParser(MediaType ignore) {
-        return PxSearchTable.JSON_PARSER
-                .andThen(tables -> Stream.of(tables).map(PxSearchTable::toFlow).collect(toList()));
-    }
-
     private List<PxNode> getNodes(String dbId, List<String> folder) throws IOException {
         HttpRequest request = HttpRequest
                 .builder()
@@ -186,10 +149,6 @@ public final class DefaultPxWebClient implements PxWebClient {
             return getNodesParser(response.getContentType())
                     .parseReader(response::getBodyAsReader);
         }
-    }
-
-    private TextParser<List<PxNode>> getNodesParser(MediaType ignore) {
-        return PxNode.JSON_PARSER.andThen(Arrays::asList);
     }
 
     @Override
@@ -209,11 +168,6 @@ public final class DefaultPxWebClient implements PxWebClient {
         }
     }
 
-    private TextParser<Structure> getMetaParser(String tablePath, MediaType ignore) {
-        return PxTableMeta.JSON_PARSER
-                .andThen(tableMeta -> tableMeta.toStructure(PxConverter.tablePathToStructureRef(tablePath)));
-    }
-
     @Override
     public @NonNull DataCursor getData(@NonNull String dbId, @NonNull String tablePath, @NonNull Structure dsd, @NonNull Key key) throws IOException, IllegalArgumentException {
         HttpRequest request = HttpRequest
@@ -230,10 +184,6 @@ public final class DefaultPxWebClient implements PxWebClient {
         HttpResponse response = client.send(request);
         return getDataParser(dsd, response.getContentType())
                 .parseStream(response::asDisconnectingInputStream);
-    }
-
-    private FileParser<DataCursor> getDataParser(Structure dsd, MediaType ignore) {
-        return PxWebSdmxDataCursor.parserOf(dsd);
     }
 
     /**
@@ -259,5 +209,48 @@ public final class DefaultPxWebClient implements PxWebClient {
                 }
                 return tree.getWithIO();
         }
+    }
+
+    public static @NonNull PxConfig fetchConfig(@NonNull HttpClient client, @NonNull URI endpoint) throws IOException {
+        try (HttpResponse response = client.send(getConfigRequest(endpoint))) {
+            return PxConfig.JSON_PARSER.parseReader(response::getBodyAsReader);
+        }
+    }
+
+    private static HttpRequest getConfigRequest(URI endpoint) {
+        return HttpRequest
+                .builder()
+                .query(UriQueryBuilder.of(endpoint).param("config").build())
+                .build();
+    }
+
+    private static HttpRequest getDataBasesRequest(URI endpoint) {
+        return HttpRequest
+                .builder()
+                .query(endpoint)
+                .build();
+    }
+
+    private static TextParser<List<Database>> getDatabasesParser(MediaType ignore) {
+        return PxDatabase.JSON_PARSER
+                .andThen(tables -> Stream.of(tables).map(PxDatabase::toDatabase).collect(toList()));
+    }
+
+    private static TextParser<List<Flow>> getFlatTablesParser(MediaType ignore) {
+        return PxSearchTable.JSON_PARSER
+                .andThen(tables -> Stream.of(tables).map(PxSearchTable::toFlow).collect(toList()));
+    }
+
+    private static TextParser<List<PxNode>> getNodesParser(MediaType ignore) {
+        return PxNode.JSON_PARSER.andThen(Arrays::asList);
+    }
+
+    private static TextParser<Structure> getMetaParser(String tablePath, MediaType ignore) {
+        return PxTableMeta.JSON_PARSER
+                .andThen(tableMeta -> tableMeta.toStructure(PxConverter.tablePathToStructureRef(tablePath)));
+    }
+
+    private static FileParser<DataCursor> getDataParser(Structure dsd, MediaType ignore) {
+        return PxWebSdmxDataCursor.parserOf(dsd);
     }
 }

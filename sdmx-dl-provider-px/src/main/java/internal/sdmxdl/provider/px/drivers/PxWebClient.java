@@ -18,9 +18,6 @@ public interface PxWebClient extends HasMarker {
     URI ping() throws IOException;
 
     @NonNull
-    PxConfig getConfig() throws IOException;
-
-    @NonNull
     List<Database> getDataBases() throws IOException;
 
     @NonNull

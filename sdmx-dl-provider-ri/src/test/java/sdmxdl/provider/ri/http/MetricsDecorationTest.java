@@ -61,14 +61,13 @@ public class MetricsDecorationTest {
     public void formatEventWithKnownStatus() {
         MetricsEvent event = sampleEvent(200, 1536, 342_000_000L, 1_200_000_000L);
         assertThat(formatEvent(event))
-                .isEqualTo("200 | 1.5KB | ttfb=342ms total=1.2s");
+                .isEqualTo("read=1.5KB ttfb=342ms total=1.2s");
     }
 
     @Test
     public void formatEventWithUnknownStatus() {
         MetricsEvent event = sampleEvent(HttpResponse.NO_STATUS_CODE, 0, 500_000L, 1_000_000L);
-        assertThat(formatEvent(event))
-                .startsWith("???");
+        assertThat(formatEvent(event)).startsWith("read=0B ttfb=500µs total=1ms");
     }
 
     @Test

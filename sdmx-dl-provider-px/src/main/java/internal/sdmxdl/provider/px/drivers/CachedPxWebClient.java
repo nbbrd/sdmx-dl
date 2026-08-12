@@ -28,9 +28,6 @@ public final class CachedPxWebClient implements PxWebClient {
     private final Duration ttl;
 
     @lombok.Getter(lazy = true)
-    private final TypedId<PxConfig> idOfConfig = initIdOfConfig(endpoint);
-
-    @lombok.Getter(lazy = true)
     private final TypedId<List<Database>> idOfDatabases = initIdOfDatabases(endpoint);
 
     @lombok.Getter(lazy = true)
@@ -75,12 +72,6 @@ public final class CachedPxWebClient implements PxWebClient {
     @Override
     public @NonNull URI ping() throws IOException {
         return delegate.ping();
-    }
-
-    @Override
-    public @NonNull PxConfig getConfig() throws IOException {
-        return getIdOfConfig()
-                .load(cache, delegate::getConfig, ignore -> ttl);
     }
 
     @Override

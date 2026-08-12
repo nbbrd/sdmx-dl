@@ -4,11 +4,7 @@ import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.http.HttpClient;
 import nbbrd.io.http.curl.CurlHttpClient;
-import nbbrd.io.http.ext.LoggingDecorator;
-import nbbrd.io.http.ext.LoggingHandler;
 import nbbrd.io.http.urlconnection.UrlConnectionHttpClient;
-import org.jspecify.annotations.Nullable;
-import sdmxdl.EventListener;
 import sdmxdl.provider.Slow;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Network;
@@ -56,47 +52,31 @@ public final class DefaultHttpFactory implements HttpFactory {
     @Slow
     @VisibleForTesting
     static HttpClient newHttpClient(@NonNull WebSource source, @NonNull WebContext context) {
-        return newHttpClient(
-                context.getNetwork(source),
-                source.getProperties()::get,
-                context.getEventListener(source)
-        );
+        return newHttpClient(context.getNetwork(source), source.getProperties()::get);
     }
 
     public static @NonNull HttpClient newHttpClient(
             @NonNull Network network,
-            @NonNull Function<? super String, ? extends CharSequence> properties,
-            @Nullable EventListener onEvent
+            @NonNull Function<? super String, ? extends CharSequence> properties
     ) {
-        HttpClient client = resolveHttpClient(network, properties);
-        if (onEvent != null) {
-            client = new LoggingDecorator(client, LoggingHandler.basic(message -> onEvent.accept(HttpDecoration.MARKER, message, 1)));
+        if (network.getUrlBackend().equals(Network.CURL_URL_BACKEND)) {
+            return CurlHttpClient
+                    .builder()
+                    .connectTimeout(CONNECT_TIMEOUT_PROPERTY.get(properties))
+                    .readTimeout(READ_TIMEOUT_PROPERTY.get(properties))
+                    .proxySelector(network.getProxySelector())
+                    .userAgent(USER_AGENT_PROPERTY.get(properties))
+                    .followRedirects(false)
+                    .build();
         }
-        return client;
-    }
-
-    @SuppressWarnings("SwitchStatementWithTooFewBranches")
-    private static @NonNull HttpClient resolveHttpClient(@NonNull Network network, @NonNull Function<? super String, ? extends CharSequence> properties) {
-        switch (network.getUrlBackend()) {
-            case Network.CURL_URL_BACKEND:
-                return CurlHttpClient
-                        .builder()
-                        .connectTimeout(CONNECT_TIMEOUT_PROPERTY.get(properties))
-                        .readTimeout(READ_TIMEOUT_PROPERTY.get(properties))
-                        .proxySelector(network.getProxySelector())
-                        .userAgent(USER_AGENT_PROPERTY.get(properties))
-                        .followRedirects(false)
-                        .build();
-            default:
-                return UrlConnectionHttpClient
-                        .builder()
-                        .connectTimeout(CONNECT_TIMEOUT_PROPERTY.get(properties))
-                        .readTimeout(READ_TIMEOUT_PROPERTY.get(properties))
-                        .proxySelector(network.getProxySelector())
-                        .sslSocketFactory(network.getSSLFactory().getSSLSocketFactory())
-                        .hostnameVerifier(network.getSSLFactory().getHostnameVerifier())
-                        .userAgent(USER_AGENT_PROPERTY.get(properties))
-                        .build();
-        }
+        return UrlConnectionHttpClient
+                .builder()
+                .connectTimeout(CONNECT_TIMEOUT_PROPERTY.get(properties))
+                .readTimeout(READ_TIMEOUT_PROPERTY.get(properties))
+                .proxySelector(network.getProxySelector())
+                .sslSocketFactory(network.getSSLFactory().getSSLSocketFactory())
+                .hostnameVerifier(network.getSSLFactory().getHostnameVerifier())
+                .userAgent(USER_AGENT_PROPERTY.get(properties))
+                .build();
     }
 }

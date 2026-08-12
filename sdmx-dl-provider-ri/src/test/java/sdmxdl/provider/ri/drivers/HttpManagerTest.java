@@ -20,7 +20,7 @@ public class HttpManagerTest {
     @Test
     public void testDefaultFactory() {
         assertThat(HttpManager.getHttpFactory().getFactoryName())
-                .isEqualTo("UrlConnectionHttpClientFactory with Lazy with Authenticating with Cookie with Redirect with Retry with Rate-limiting with Throwing with Dumping with Metrics");
+                .isEqualTo("UrlConnectionHttpClientFactory with Lazy with Authenticating with Logging with Cookie with Redirect with Retry with Rate-limiting with Throwing with Dumping with Metrics");
 
         assertThat(HttpManager.getHttpFactory().getHttpClientProperties())
                 .hasSize(9)

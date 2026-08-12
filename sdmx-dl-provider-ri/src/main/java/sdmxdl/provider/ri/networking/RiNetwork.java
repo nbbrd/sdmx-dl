@@ -45,7 +45,7 @@ class RiNetwork implements Network {
 
     @Override
     public @NonNull URLConnectionFactory getURLConnectionFactory() {
-        return (url, proxy) -> HttpClientURLConnection.of(DefaultHttpFactory.newHttpClient(this, System::getProperty, null), url);
+        return (url, proxy) -> HttpClientURLConnection.of(DefaultHttpFactory.newHttpClient(this, System::getProperty), url);
     }
 
     @Override
