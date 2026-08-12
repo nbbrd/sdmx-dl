@@ -11,7 +11,10 @@ import sdmxdl.format.design.PropertyDefinition;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.WebContext;
 
+import java.net.URI;
 import java.time.Duration;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static sdmxdl.web.spi.Driver.DRIVER_PROPERTY_PREFIX;
 
@@ -40,6 +43,26 @@ public final class RateLimitingDecoration implements HttpDecoration {
 
     private static final RateLimiterRegistry REGISTRY = RateLimiterRegistry.of(() -> DEFAULT_RATE_LIMITER);
 
+    // Per-host limiter overrides supplied by drivers that know a source-specific limit
+    // (e.g. a server-declared rate); consulted before the shared default limiter.
+    private static final Map<String, RateLimiter> OVERRIDES = new ConcurrentHashMap<>();
+
+    /**
+     * Registers a per-host {@link RateLimiter} to be used by this decoration instead of the
+     * shared default, unless one is already registered for that host.
+     * <p>
+     * This lets a driver enforce a source-specific limit (for example, a server-declared rate)
+     * while still benefiting from the correct pipeline order, where rate limiting is applied
+     * <em>before</em> error statuses (such as {@code 429}) are turned into exceptions.
+     * </p>
+     *
+     * @param host    the request host the limiter applies to
+     * @param limiter the limiter to associate with the host
+     */
+    public static void putRateLimiterIfAbsent(@NonNull String host, @NonNull RateLimiter limiter) {
+        OVERRIDES.putIfAbsent(host, limiter);
+    }
+
     private static HttpClient decorate(HttpFactory d, WebSource s, WebContext c) {
         HttpClient original = d.createHttpClient(s, c);
         if (!RATE_LIMITING_PROPERTY.get(s.getProperties())) {
@@ -48,9 +71,25 @@ public final class RateLimitingDecoration implements HttpDecoration {
         return RateLimitingDecorator
                 .builder()
                 .decorated(original)
-                .rateLimiterProvider(RateLimiterProvider.perHost(REGISTRY))
+                .rateLimiterProvider(RateLimitingDecoration::resolveRateLimiter)
                 .listener(toListener(c.getEventListener(s)))
                 .build();
+    }
+
+    private static RateLimiter resolveRateLimiter(HttpRequest request) {
+        String host = hostOf(request.getQuery());
+        RateLimiter override = OVERRIDES.get(host);
+        return override != null ? override : REGISTRY.forKey(host);
+    }
+
+    // Mirrors the host-extraction logic of RateLimiterProvider.perHost.
+    private static String hostOf(URI uri) {
+        String host = uri.getHost();
+        if (host != null) {
+            return host;
+        }
+        String authority = uri.getAuthority();
+        return authority != null ? authority : uri.toString();
     }
 
     public static @NonNull RateLimitingListener toListener(@Nullable EventListener onEvent) {

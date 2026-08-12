@@ -8,7 +8,6 @@ import nbbrd.design.VisibleForTesting;
 import nbbrd.io.function.IOSupplier;
 import nbbrd.io.http.HttpClient;
 import nbbrd.io.http.ext.RateLimiter;
-import nbbrd.io.http.ext.RateLimitingDecorator;
 import nbbrd.io.text.BaseProperty;
 import nbbrd.io.text.BooleanProperty;
 import nbbrd.io.text.Parser;
@@ -163,7 +162,8 @@ public final class PxWebDriver implements Driver {
 
         @Override
         public @NonNull List<BaseProperty> getConnectionProperties() {
-            // Hide the rate-limiting toggle: this driver forces it internally (see connect).
+            // Hide the rate-limiting toggle: this driver forces it on and supplies a
+            // server-declared per-host limiter internally (see connect).
             List<BaseProperty> httpProperties = httpFactory.getHttpClientProperties()
                     .stream()
                     .filter(property -> !property.getKey().equals(RateLimitingDecoration.RATE_LIMITING_PROPERTY.getKey()))
@@ -188,23 +188,19 @@ public final class PxWebDriver implements Driver {
             URI cacheBase = getCachedClientBaseURI(source, languages);
             Duration ttl = Duration.ofMillis(CACHE_TTL_PROPERTY.get(source.getProperties()));
 
-            // Disable the shared HTTP rate limiter for this client and enforce instead the
-            // server-declared limit (see PxWeb config endpoint) to avoid double rate-limiting.
-            WebSource httpSource = source
-                    .toBuilder()
-                    .propertyOf(RateLimitingDecoration.RATE_LIMITING_PROPERTY, false)
-                    .build();
-            HttpClient httpClient = httpFactory.createHttpClient(httpSource, context);
+            // Build the client through the shared HTTP pipeline so that rate limiting is applied
+            // in the correct order (before 429 responses are turned into exceptions).
+            HttpClient httpClient = httpFactory.createHttpClient(source, context);
 
-            HttpClient rateLimitedClient = RateLimitingDecorator
-                    .builder()
-                    .decorated(httpClient)
-                    .rateLimiter(resolveRateLimiter(cache, cacheBase, ttl, httpClient, endpoint))
-                    .listener(RateLimitingDecoration.toListener(context.getEventListener(source)))
-                    .build();
+            // Enforce the server-declared limit (see PxWeb config endpoint) by registering it as
+            // the per-host limiter used by the shared rate-limiting decoration.
+            String host = endpoint.getHost();
+            if (host != null) {
+                RateLimitingDecoration.putRateLimiterIfAbsent(host, resolveRateLimiter(cache, cacheBase, ttl, httpClient, endpoint));
+            }
 
             PxWebClient client = new CachedPxWebClient(
-                    new DefaultPxWebClient(marker, endpoint, rateLimitedClient, listing),
+                    new DefaultPxWebClient(marker, endpoint, httpClient, listing),
                     cache,
                     cacheBase,
                     ttl
