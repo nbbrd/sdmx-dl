@@ -27,7 +27,7 @@ public final class DefaultHttpFactory implements HttpFactory {
     @lombok.experimental.Delegate
     private final HttpFactory support = HttpFactorySupport
             .builder()
-            .name("UrlConnectionHttpClientFactory")
+            .name("DefaultFactory")
             .property(CONNECT_TIMEOUT_PROPERTY)
             .property(READ_TIMEOUT_PROPERTY)
             .property(USER_AGENT_PROPERTY)

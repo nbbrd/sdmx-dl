@@ -30,6 +30,7 @@ import java.io.IOException;
 
 import static nbbrd.io.text.BaseProperty.keysOf;
 import static org.assertj.core.api.Assertions.assertThat;
+import static sdmxdl.provider.ri.http.CachingDecoration.HTTP_CACHING_PROPERTY;
 import static sdmxdl.provider.ri.http.CookieDecoration.COOKIE_PROPERTY;
 import static sdmxdl.provider.ri.http.DumpingDecoration.DUMP_FOLDER_PROPERTY;
 import static sdmxdl.provider.ri.http.RateLimitingDecoration.RATE_LIMITING_PROPERTY;
@@ -60,6 +61,7 @@ public class DotStatDialectDriverTest {
                                 DUMP_FOLDER_PROPERTY,
                                 COOKIE_PROPERTY,
                                 CACHE_TTL_PROPERTY,
+                                HTTP_CACHING_PROPERTY,
                                 RATE_LIMITING_PROPERTY)
                 );
     }

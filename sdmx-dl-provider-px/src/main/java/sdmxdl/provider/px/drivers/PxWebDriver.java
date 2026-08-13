@@ -19,10 +19,7 @@ import sdmxdl.ext.Cache;
 import sdmxdl.format.DataCursor;
 import sdmxdl.format.design.PropertyDefinition;
 import sdmxdl.provider.*;
-import sdmxdl.provider.ri.http.CookieDecoration;
-import sdmxdl.provider.ri.http.HttpFactory;
-import sdmxdl.provider.ri.http.HttpManager;
-import sdmxdl.provider.ri.http.RateLimitingDecoration;
+import sdmxdl.provider.ri.http.*;
 import sdmxdl.provider.web.ConnectionFactory;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.WebSource;
@@ -164,9 +161,13 @@ public final class PxWebDriver implements Driver {
         public @NonNull List<BaseProperty> getConnectionProperties() {
             // Hide the rate-limiting toggle: this driver forces it on and supplies a
             // server-declared per-host limiter internally (see connect).
+            // Hide the caching toggle: this driver disables the shared HTTP caching because
+            // the PxWeb API uses both GET and POST on the same URL, which invalidates any
+            // HTTP cache (see connect).
             List<BaseProperty> httpProperties = httpFactory.getHttpClientProperties()
                     .stream()
                     .filter(property -> !property.getKey().equals(RateLimitingDecoration.RATE_LIMITING_PROPERTY.getKey()))
+                    .filter(property -> !property.getKey().equals(CachingDecoration.HTTP_CACHING_PROPERTY.getKey()))
                     .collect(toList());
             return PropertiesSupport.merge(
                     httpProperties,
@@ -188,9 +189,15 @@ public final class PxWebDriver implements Driver {
             URI cacheBase = getCachedClientBaseURI(source, languages);
             Duration ttl = Duration.ofMillis(CACHE_TTL_PROPERTY.get(source.getProperties()));
 
+            // Disable the shared HTTP caching decoration: the PxWeb API uses both GET and POST
+            // on the same URL, which invalidates any HTTP cache.
+            WebSource httpSource = source.toBuilder()
+                    .propertyOf(CachingDecoration.HTTP_CACHING_PROPERTY, false)
+                    .build();
+
             // Build the client through the shared HTTP pipeline so that rate limiting is applied
             // in the correct order (before 429 responses are turned into exceptions).
-            HttpClient httpClient = httpFactory.createHttpClient(source, context);
+            HttpClient httpClient = httpFactory.createHttpClient(httpSource, context);
 
             // Enforce the server-declared limit (see PxWeb config endpoint) by registering it as
             // the per-host limiter used by the shared rate-limiting decoration.
@@ -199,14 +206,12 @@ public final class PxWebDriver implements Driver {
                 RateLimitingDecoration.putRateLimiterIfAbsent(host, resolveRateLimiter(cache, cacheBase, ttl, httpClient, endpoint));
             }
 
-            PxWebClient client = new CachedPxWebClient(
-                    new DefaultPxWebClient(marker, endpoint, httpClient, listing),
-                    cache,
-                    cacheBase,
-                    ttl
+            return new PxWebConnection(
+                    new CachedPxWebClient(
+                            new DefaultPxWebClient(marker, endpoint, httpClient, listing),
+                            cache, cacheBase, ttl
+                    )
             );
-
-            return new PxWebConnection(client);
         }
 
         // Resolves the server-declared rate limit from the driver cache, fetching and caching it

@@ -41,6 +41,7 @@ public final class HttpManager {
             new MetricsDecoration(),
             new DumpingDecoration(),
             new ThrowingStatusDecoration(),
+            new CachingDecoration(),
             new RateLimitingDecoration(),
             new RetryDecoration(),
             new RedirectDecoration(),
