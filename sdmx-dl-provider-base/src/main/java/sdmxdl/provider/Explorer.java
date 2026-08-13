@@ -2,6 +2,7 @@ package sdmxdl.provider;
 
 import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;
+import nbbrd.design.VisibleForTesting;
 import nbbrd.io.text.Formatter;
 import nbbrd.io.text.StylishWriter;
 import org.jspecify.annotations.Nullable;
@@ -45,7 +46,7 @@ public final class Explorer {
          */
         @lombok.NonNull
         @lombok.Builder.Default
-        Duration perSourceTimeout = Duration.ofSeconds(60);
+        Duration perSourceTimeout = Duration.ofMinutes(2);
 
         /**
          * Overall wall-clock budget for the whole run; sources not completed within it are
@@ -73,6 +74,21 @@ public final class Explorer {
          */
         @lombok.Builder.Default
         int maxKeysSampled = 2;
+
+        /**
+         * Maximum number of databases probed per source. Databases are tried in order and the
+         * search stops early as soon as one yields data, so a healthy source whose first database
+         * works costs a single database probe. Databases with no flows are skipped without
+         * consuming this budget.
+         * <p>
+         * This bounds the extra requests spent recovering from a source whose first database is a
+         * dummy/placeholder one (e.g. a health-check database that lists tables but serves no data):
+         * without it, such a source would be wrongly reported as a failure even though other
+         * databases work. Keeping the value small ensures the overview stays fast and does not
+         * overwhelm the remote server.
+         */
+        @lombok.Builder.Default
+        int maxDatabasesSampled = 4;
     }
 
     public static SortedMap<Status, List<Report>> explore(@NonNull SdmxWebManager manager, @NonNull Predicate<? super WebSource> filter, @NonNull Options options) {
@@ -142,83 +158,112 @@ public final class Explorer {
 
     private static @NonNull Report doExplore(@NonNull SdmxWebManager manager, @NonNull WebSource source, @NonNull Options options) {
         try (Connection c = manager.getConnection(source, Languages.ANY)) {
-
-            try {
-                c.testConnection();
-            } catch (Exception fatal) {
-                return Report.of(source, Status.CONNECTION_FAILURE, fatal, SourceRequest.builder().build());
-            }
-
-            SourceRequest sourceRequest = SourceRequest.builder().build();
-            List<DatabaseRef> databases;
-            try {
-                databases = c.getDatabases()
-                        .stream()
-                        .map(Database::getRef)
-                        .sorted(comparing(Objects::toString))
-                        .collect(toList());
-            } catch (Exception fatal) {
-                return Report.of(source, Status.DB_FAILURE, fatal, sourceRequest);
-            }
-
-            DatabaseRequest databaseRequest;
-            List<FlowRef> flows;
-            {
-                Iterator<DatabaseRef> db = databases.isEmpty()
-                        ? singletonList(DatabaseRef.NO_DATABASE).iterator()
-                        : databases.stream().iterator();
-                do {
-                    databaseRequest = DatabaseRequest.builderOf(sourceRequest).database(db.next()).build();
-                    try {
-                        flows = c.getFlows(databaseRequest.getDatabase())
-                                .stream()
-                                .map(Flow::getRef)
-                                .sorted(comparing(Objects::toString))
-                                .collect(toList());
-                    } catch (Exception fatal) {
-                        return Report.of(source, Status.FLOW_FAILURE, fatal, databaseRequest)
-                                .withCoverage(Coverage.of(databases.size(), 0, 0, 0, 0));
-                    }
-                } while (db.hasNext() && flows.isEmpty());
-            }
-
-            if (flows.isEmpty()) {
-                return Report.of(source, Status.NO_FLOW, databaseRequest)
-                        .withCoverage(Coverage.of(databases.size(), 0, 0, 0, 0));
-            }
-
-            // Sample several flows (not just the first) so the report reflects how broadly the
-            // driver works, not whether a single lucky flow happens to succeed.
-            List<FlowRef> sample = sampleFlows(flows, options.getMaxFlowsSampled());
-            int flowsWithStructure = 0;
-            int flowsWithData = 0;
-            Report best = null;
-            for (FlowRef flowRef : sample) {
-                FlowRequest flowRequest = FlowRequest.builderOf(databaseRequest).flow(flowRef).build();
-                Report outcome = exploreFlow(c, source, flowRequest, options);
-                if (hasStructure(outcome.getStatus())) {
-                    flowsWithStructure++;
-                }
-                if (outcome.getStatus() == Status.SUCCESS) {
-                    flowsWithData++;
-                }
-                // Keep the furthest-stage outcome as the representative status for the source.
-                if (best == null || outcome.getStatus().ordinal() > best.getStatus().ordinal()) {
-                    best = outcome;
-                }
-            }
-
-            if (best == null) {
-                // Defensive: sample is never empty here (flows is non-empty), but keep a safe fallback.
-                return Report.of(source, Status.NO_FLOW, databaseRequest)
-                        .withCoverage(Coverage.of(databases.size(), flows.size(), 0, 0, 0));
-            }
-
-            return best.withCoverage(Coverage.of(databases.size(), flows.size(), sample.size(), flowsWithStructure, flowsWithData));
-
+            return doExplore(c, source, options);
         } catch (Throwable fatal) {
             return Report.of(source, Status.UNEXPECTED_FAILURE, fatal, stackTraceToString(fatal));
         }
+    }
+
+    @VisibleForTesting
+    static @NonNull Report doExplore(@NonNull Connection c, @NonNull WebSource source, @NonNull Options options) {
+        try {
+            c.testConnection();
+        } catch (Exception fatal) {
+            return Report.of(source, Status.CONNECTION_FAILURE, fatal, SourceRequest.builder().build());
+        }
+
+        SourceRequest sourceRequest = SourceRequest.builder().build();
+        List<DatabaseRef> databases;
+        try {
+            databases = c.getDatabases()
+                    .stream()
+                    .map(Database::getRef)
+                    .sorted(comparing(Objects::toString))
+                    .collect(toList());
+        } catch (Exception fatal) {
+            return Report.of(source, Status.DB_FAILURE, fatal, sourceRequest);
+        }
+
+        // Probe several databases (not just the first non-empty one) so that a source whose
+        // leading database is a dummy/placeholder one (listing tables but serving no data) is not
+        // wrongly reported as a failure. The number of probed databases is bounded and the search
+        // stops early on the first success, so a healthy source keeps its single-database cost and
+        // remote servers are not overwhelmed.
+        List<DatabaseRef> candidates = databases.isEmpty()
+                ? singletonList(DatabaseRef.NO_DATABASE)
+                : databases;
+        int maxDatabases = Math.max(1, options.getMaxDatabasesSampled());
+        Report best = null;
+        DatabaseRequest lastDatabaseRequest = null;
+        int databasesProbed = 0;
+        for (DatabaseRef databaseRef : candidates) {
+            DatabaseRequest databaseRequest = DatabaseRequest.builderOf(sourceRequest).database(databaseRef).build();
+            lastDatabaseRequest = databaseRequest;
+
+            List<FlowRef> flows;
+            try {
+                flows = c.getFlows(databaseRef)
+                        .stream()
+                        .map(Flow::getRef)
+                        .sorted(comparing(Objects::toString))
+                        .collect(toList());
+            } catch (Exception fatal) {
+                Report failure = Report.of(source, Status.FLOW_FAILURE, fatal, databaseRequest)
+                        .withCoverage(Coverage.of(databases.size(), 0, 0, 0, 0));
+                best = furthest(best, failure);
+                if (++databasesProbed >= maxDatabases) break;
+                continue;
+            }
+
+            // A database with no flows is skipped so we keep looking for a usable one, without
+            // spending part of the (small) database budget on it.
+            if (flows.isEmpty()) {
+                continue;
+            }
+
+            best = furthest(best, exploreDatabase(c, source, databaseRequest, flows, databases.size(), options));
+            if (best.getStatus() == Status.SUCCESS) break;
+            if (++databasesProbed >= maxDatabases) break;
+        }
+
+        if (best == null) {
+            // No database yielded any flow (all databases were empty).
+            return Report.of(source, Status.NO_FLOW, lastDatabaseRequest)
+                    .withCoverage(Coverage.of(databases.size(), 0, 0, 0, 0));
+        }
+
+        return best;
+    }
+
+    private static Report exploreDatabase(Connection c, WebSource source, DatabaseRequest databaseRequest, List<FlowRef> flows, int databaseCount, Options options) {
+        // Sample several flows (not just the first) so the report reflects how broadly the
+        // driver works, not whether a single lucky flow happens to succeed.
+        List<FlowRef> sample = sampleFlows(flows, options.getMaxFlowsSampled());
+        int flowsWithStructure = 0;
+        int flowsWithData = 0;
+        Report best = null;
+        for (FlowRef flowRef : sample) {
+            FlowRequest flowRequest = FlowRequest.builderOf(databaseRequest).flow(flowRef).build();
+            Report outcome = exploreFlow(c, source, flowRequest, options);
+            if (hasStructure(outcome.getStatus())) {
+                flowsWithStructure++;
+            }
+            if (outcome.getStatus() == Status.SUCCESS) {
+                flowsWithData++;
+            }
+            // Keep the furthest-stage outcome as the representative status for the database.
+            if (best == null || outcome.getStatus().ordinal() > best.getStatus().ordinal()) {
+                best = outcome;
+            }
+        }
+        // sample is never empty here (flows is non-empty).
+        return best.withCoverage(Coverage.of(databaseCount, flows.size(), sample.size(), flowsWithStructure, flowsWithData));
+    }
+
+    // Keeps the furthest-stage report so that a later database yielding data (or getting further)
+    // supersedes an earlier failing one; ties keep the earlier (already selected) database.
+    private static Report furthest(@Nullable Report current, @NonNull Report candidate) {
+        return current == null || candidate.getStatus().ordinal() > current.getStatus().ordinal() ? candidate : current;
     }
 
     private static Report exploreFlow(Connection c, WebSource source, FlowRequest flowRequest, Options options) {

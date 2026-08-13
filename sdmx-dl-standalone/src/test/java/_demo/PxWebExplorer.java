@@ -20,14 +20,12 @@ public class PxWebExplorer {
                 .toBuilder()
                 .onEvent(SdmxWebManager::printEvent)
                 .onError(SdmxWebManager::printError)
-                .caching(WebCaching.noOp())
                 .build();
 
         Explorer.printStylish(System.out, Explorer.explore(manager, PxWebExplorer::isPxWebSource, Explorer.Options.DEFAULT), true);
     }
 
     private static boolean isPxWebSource(WebSource source) {
-        return !source.isAlias() && source.getDriver().equals("PX_PXWEB")
-                && source.getId().equals("UNECE");
+        return !source.isAlias() && source.getDriver().equals("PX_PXWEB");
     }
 }
