@@ -7,6 +7,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+This release adds support for SDMX-specific representations and a new, more reliable network backend.  
+Several sources have been added or updated, and the driver implementations have been refactored for clarity.
+
 ### Added
 
 - ![SOURCE] Add source from National Statistics Institute of Spain [#1269](https://github.com/nbbrd/sdmx-dl/issues/1269)
