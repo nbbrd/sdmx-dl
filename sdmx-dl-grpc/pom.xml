@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.1.1</version>
+        <version>3.2.0</version>
     </parent>
 
     <artifactId>sdmx-dl-grpc</artifactId>
@@ -23,8 +23,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-        <quarkus.platform.version>3.36.2</quarkus.platform.version>
-        <quarkus.mcp.version>1.13.0</quarkus.mcp.version>
+        <quarkus.platform.version>3.38.1</quarkus.platform.version>
+        <quarkus.mcp.version>1.13.1</quarkus.mcp.version>
         <quarkus.package.jar.type>uber-jar</quarkus.package.jar.type>
         <skipITs>true</skipITs>
         <enforcer.skip>true</enforcer.skip>
@@ -139,7 +139,7 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
-            <version>4.44.0</version>
+            <version>4.47.0</version>
             <scope>test</scope>
         </dependency>
         <!-- WebDriverManager for automatic driver management -->

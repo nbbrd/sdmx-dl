@@ -31,7 +31,7 @@ public enum DataSetRefRenderer implements Renderer<DataSetRef> {
     public String toText(DataSetRef value, Runnable onUpdate) {
         MetaSet metaSet = Sdmxdl.INSTANCE.getMetaSetAsyncSupport().getOrNull(value.getDataSourceRef(), onUpdate);
         return metaSet != null
-                ? getDimension(value, metaSet).getCodelist().getCodes().get(value.getKey().get(value.getDimensionIndex()))
+                ? getDimension(value, metaSet).getCodes().get(value.getKey().get(value.getDimensionIndex()))
                 : getKeyText(value);
     }
 

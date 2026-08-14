@@ -1,10 +1,10 @@
 package _tests;
 
-import nbbrd.io.http.HttpHeaders;
-import nbbrd.io.http.HttpResponse;
 import lombok.NonNull;
 import nbbrd.io.function.IORunnable;
 import nbbrd.io.function.IOSupplier;
+import nbbrd.io.http.HttpHeaders;
+import nbbrd.io.http.HttpResponse;
 import nbbrd.io.net.MediaType;
 
 import java.io.IOException;
@@ -38,6 +38,11 @@ public final class RestClientResponseMock implements HttpResponse {
     @Override
     public @NonNull HttpHeaders getHeaders() throws IOException {
         return HttpHeaders.EMPTY;
+    }
+
+    @Override
+    public int getStatusCode() throws IOException {
+        return NO_STATUS_CODE;
     }
 
     @Override

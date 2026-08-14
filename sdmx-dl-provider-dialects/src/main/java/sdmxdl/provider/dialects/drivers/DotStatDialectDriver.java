@@ -16,7 +16,9 @@
  */
 package sdmxdl.provider.dialects.drivers;
 
+import lombok.NonNull;
 import nbbrd.design.DirectImpl;
+import nbbrd.io.text.BaseProperty;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.Feature;
 import sdmxdl.Languages;
@@ -25,19 +27,20 @@ import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.SdmxFix;
 import sdmxdl.provider.ri.drivers.RiRestClient;
 import sdmxdl.provider.ri.drivers.Sdmx21RestErrors;
+import sdmxdl.provider.ri.http.HttpFactory;
+import sdmxdl.provider.ri.http.HttpManager;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestClient;
-import sdmxdl.provider.web.RestConnector;
+import sdmxdl.provider.web.RestClientFactory;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
-import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
-import static sdmxdl.provider.ri.drivers.RiHttpUtils.DEFAULT_HTTP_FACTORY;
 
 /**
  * @author Philippe Charles
@@ -53,33 +56,32 @@ public final class DotStatDialectDriver implements Driver {
             .builder()
             .id(DIALECTS_DOTSTAT)
             .rank(NATIVE_DRIVER_RANK)
-            .connector(RestConnector.of(DotStatDialectDriver::newClient))
-            .propertiesOf(DEFAULT_HTTP_FACTORY.getFactoryProperties())
-            .source(WebSource
-                    .builder()
-                    .id("UKDS")
-                    .name("en", "UK Data Service")
-                    .driver(DIALECTS_DOTSTAT)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("https://stats2.digitalresources.jisc.ac.uk/restsdmx/sdmx.ashx")
-                    .websiteOf("https://stats2.digitalresources.jisc.ac.uk/")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/UKDS")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ukds")
-                    .build())
+            .connectorOf(new DotStatRestClientFactory())
             .build();
 
-    private static RestClient newClient(WebSource s, Languages languages, WebContext c) {
-        return new RiRestClient(
-                HasMarker.of(s),
-                s.getEndpoint(),
-                languages,
-                ObsParser::newDefault,
-                DEFAULT_HTTP_FACTORY.create(s, c),
-                DotStatRestQueries.DEFAULT,
-                DotStatRestParsers.DEFAULT,
-                Sdmx21RestErrors.DEFAULT,
-                DOTSTAT_FEATURES
-        );
+    private static final class DotStatRestClientFactory implements RestClientFactory {
+
+        private final HttpFactory httpFactory = HttpManager.getHttpFactory();
+
+        @Override
+        public @NonNull List<BaseProperty> getRestClientProperties() {
+            return httpFactory.getHttpClientProperties();
+        }
+
+        @Override
+        public @NonNull RestClient createRestClient(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) {
+            return new RiRestClient(
+                    HasMarker.of(source),
+                    source.getEndpoint(),
+                    languages,
+                    ObsParser::newDefault,
+                    httpFactory.createHttpClient(source, context),
+                    DotStatRestQueries.DEFAULT,
+                    DotStatRestParsers.DEFAULT,
+                    Sdmx21RestErrors.DEFAULT,
+                    DOTSTAT_FEATURES
+            );
+        }
     }
 
     @SdmxFix(id = 1, category = QUERY, cause = "Data detail parameter not supported")

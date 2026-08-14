@@ -19,6 +19,12 @@ class Concept {
     @Nullable
     CodelistRef coreRef;
 
+    /**
+     * Indicates that the concept's core representation is a non-enumerated text
+     * format (as opposed to an enumeration/codelist).
+     */
+    boolean coreTextFormat;
+
     @Nullable
     String parentID;
 
@@ -27,5 +33,15 @@ class Concept {
 
     public Optional<CodelistRef> resolveRef(@Nullable CodelistRef localRef) {
         return Optional.ofNullable(localRef != null ? localRef : coreRef);
+    }
+
+    /**
+     * Checks whether this concept defines a non-enumerated text format core
+     * representation.
+     *
+     * @return true if the core representation is a text format, false otherwise
+     */
+    public boolean hasTextFormat() {
+        return coreTextFormat;
     }
 }

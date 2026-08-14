@@ -2,15 +2,38 @@
 name: evaluate-source
 
 description: >-
-  Evaluate a candidate SDMX data source for inclusion in sdmx-dl.
-  Use when the user wants to assess, onboard, or create a Forge issue for a new SDMX web source.
+  Evaluate a candidate data source for inclusion in sdmx-dl, whether it is a standard
+  SDMX REST service or a proprietary (non-SDMX) API that needs a custom dialect driver.
+  Use when the user wants to assess, onboard, or create a Forge issue for a new web source.
 ---
 
-# Evaluate a new SDMX data source
+# Evaluate a new data source
 
-Collect information about a candidate SDMX web source, probe its REST endpoint,
-determine the best driver, and produce a Forge-issue-ready summary that can be
-used directly to add the source to sdmx-dl.
+Collect information about a candidate web source, probe its endpoint **end-to-end**,
+determine the best driver (existing or new), and produce a summary that can be used
+directly to add the source to sdmx-dl.
+
+## Guiding principles (read first)
+
+These rules are the difference between an evaluation that *looks* done and one that
+actually works at runtime. They were learned the hard way (see the INE case study at
+the end).
+
+1. **Trust live responses, not documentation.** Documentation and reference clients are
+   frequently wrong, outdated, or describe a different endpoint mode. Every claim in the
+   evaluation must be backed by an actual response you captured. When docs and live data
+   disagree, the live data wins — and note the discrepancy.
+2. **Verify the whole data path, not just reachability.** A source that lists flows can
+   still fail to return a single observation. Always probe the full chain:
+   `databases → flows → structure (DSD) → data`, and confirm at least one real
+   observation comes back.
+3. **Capture raw payloads as you go.** Save the actual JSON/XML responses you rely on;
+   they become the unit-test fixtures and the evidence behind every mapping decision.
+4. **Prefer the smallest real example.** Identify one concrete, confirmed-working
+   `database / flow / key` tuple with few series and a known observation. It drives the
+   web-query test and the demo.
+5. **Flag unknowns explicitly.** Accuracy beats completeness. Mark anything you could not
+   confirm rather than guessing.
 
 ## 1. Gather inputs from the user
 
@@ -18,30 +41,36 @@ Ask the user for the following before doing anything else:
 
 | Field                 | Required | Description                                                             |
 |-----------------------|----------|-------------------------------------------------------------------------|
-| **Endpoint**          | ✅        | Base URL of the SDMX REST API (e.g. `https://data.api.abs.gov.au/rest`) |
+| **Endpoint**          | ✅        | Base URL of the API (e.g. `https://data.api.abs.gov.au/rest`)           |
 | **Website**           | ✅        | URL of the public data portal (e.g. `https://explore.data.abs.gov.au`)  |
 | **API documentation** | ❌        | URL of the API/developer documentation, if any                          |
+| **Reference client**  | ❌        | Any existing client library (R/Python package, etc.) worth cross-checking |
 
 ## 2. Read the API documentation
 
 If an API documentation URL was provided, fetch and read it **before** issuing
 any requests to the endpoint. Look for:
 
-- SDMX version (2.0, 2.1, 3.0)
-- Any non-standard behavior, custom headers, authentication scheme
-- Rate-limiting or quota information
+- Whether it is SDMX at all, and which version (2.0, 2.1, 3.0)
+- The exact base URL of the REST endpoint (may differ from what the user provided)
+- Authentication scheme, custom headers, rate-limiting or quota information
 - Whether the service is based on a known platform
   (.Stat Suite, Fusion Metadata Registry, SDMX Global Registry, etc.)
-- The exact base URL of the REST endpoint (may differ from what the user provided)
+- For proprietary APIs: the response format, how series are identified, how language is
+  selected, and any pagination scheme
+
+> Treat documentation as a hypothesis to verify, not a fact. Note its version/date so you
+> can later record where it diverged from live behaviour.
 
 If no documentation URL was provided, proceed directly to probing.
 
-## 3. Probe the endpoint
+## 3. Probe reachability and classify the source
 
-Issue the following HTTP GET requests in order.
-If HTTP tools are unavailable, ask the user to run them manually (e.g. with `curl` or a browser) and paste the responses.
+Issue requests with HTTP tools. If HTTP tools are unavailable, ask the user to run them
+(e.g. with `curl` or a browser) and paste the responses. **Save each response body** you
+will rely on.
 
-### 3a. List all dataflows (baseline reachability)
+### 3a. SDMX baseline — list all dataflows
 
 ```
 GET {endpoint}/dataflow/all/all/all
@@ -49,15 +78,26 @@ Accept: application/xml
 ```
 
 Observe:
-- **HTTP status** — 200 means the endpoint is reachable and speaks SDMX 2.1 REST.
-  A 404 or HTML error page may indicate an SDMX 2.0 endpoint or a non-standard path.
-- **Response `Content-Type`** — should be `application/xml` or
-  `application/vnd.sdmx.structure+xml`.
-- **Languages** — collect the `xml:lang` attributes present in `Name` elements
-  across the response (e.g. `en`, `fr`, `de`).
+- **HTTP status** — 200 means reachable and likely SDMX 2.1 REST. A 404, an HTML error
+  page, or a JSON body means it is *not* a standard SDMX 2.1 endpoint.
+- **Response `Content-Type`** — `application/xml` or `application/vnd.sdmx.structure+xml`
+  for SDMX; anything else (`application/json`, …) signals a proprietary API.
+- **Languages** — collect the `xml:lang` attributes present in `Name` elements.
 - **Authentication** — a 401/403 means credentials are required.
 
-### 3b. Test `detail` parameter support
+### 3b. Classify
+
+- **SDMX 2.1 REST** (XML structure response, 200) → continue with **Section 4 (SDMX path)**.
+- **Proprietary / non-SDMX** (JSON, HTML, non-standard paths, 404 on the SDMX path) →
+  continue with **Section 5 (Custom dialect path)**.
+- **SDMX 2.0 or legacy** → use a `CONNECTORS_*` driver (see Section 4 table) and verify
+  end-to-end as in Section 6.
+
+---
+
+## 4. SDMX path — confirm quirks and select a driver
+
+### 4a. Test `detail` parameter support
 
 ```
 GET {endpoint}/dataflow/all/all/all?detail=allcompletestubs
@@ -66,7 +106,7 @@ GET {endpoint}/dataflow/all/all/all?detail=allcompletestubs
 - **200** → `detailSupported=true`
 - **400 / 501 / ignored** → `detailSupported=false`
 
-### 3c. Test trailing-slash quirk
+### 4b. Test trailing-slash quirk
 
 ```
 GET {endpoint}/dataflow/all/all/all/
@@ -75,10 +115,10 @@ GET {endpoint}/dataflow/all/all/all/
 - If this returns 200 but `{endpoint}/dataflow/all/all/all` (no slash) returns 404
   → `trailingSlash=true`
 
-## 4. Select the driver
+### 4c. Select the driver
 
-Choose **exactly one** driver based on the table below.
-Prefer `RI_SDMX21` whenever the endpoint is a standard SDMX 2.1 REST service.
+Choose **exactly one** driver. Prefer `RI_SDMX21` whenever the endpoint is a standard
+SDMX 2.1 REST service.
 
 | Driver              | When to use                                                            |
 |---------------------|------------------------------------------------------------------------|
@@ -93,38 +133,192 @@ Prefer `RI_SDMX21` whenever the endpoint is a standard SDMX 2.1 REST service.
 | `CONNECTORS_SDMX21` | Legacy SDMX 2.1 endpoint that does not conform to the RI client        |
 | `CONNECTORS_SDMX20` | SDMX 2.0 endpoint                                                      |
 
-> If the API documentation or probe reveals that the service is built on a
-> well-known platform listed above, prefer the matching dialect driver.
+> If docs or probes reveal a well-known platform listed above, prefer the matching dialect.
 
-## 5. Determine source properties
-
-Based on the probe results, decide which optional properties to include:
+### 4d. Source properties
 
 | Property                        | Value  | When to set                                  |
 |---------------------------------|--------|----------------------------------------------|
-| `sdmxdl.driver.detailSupported` | `true` | Probe 3b returned 200                        |
-| `sdmxdl.driver.trailingSlash`   | `true` | Probe 3c revealed trailing-slash requirement |
+| `sdmxdl.driver.detailSupported` | `true` | Probe 4a returned 200                        |
+| `sdmxdl.driver.trailingSlash`   | `true` | Probe 4b revealed trailing-slash requirement |
 
 Leave properties out entirely if not needed — do not set them to `false`.
 
-## 6. Suggest a source ID
+Then go to **Section 6 (end-to-end verification)** and **Section 7 (output)**.
 
-Derive a short, unique ID in `SCREAMING_SNAKE_CASE` from the organization acronym
-or a well-known abbreviation (e.g. `ABS`, `ECB`, `SWISS_STAT`).
+---
 
-Check `docs/assets/sources.csv` in the sdmx-dl repository to confirm the ID is
-not already taken.
+## 5. Custom dialect path — proprietary / non-SDMX sources
 
-## 7. Collect display names
+When no existing driver fits, the source needs a **new dialect driver** in
+`sdmx-dl-provider-dialects` (e.g. `sdmxdl.provider.dialects.drivers.XxxDialectDriver`).
+This is a larger effort; the evaluation must de-risk it by mapping and **verifying every
+operation against live responses**.
 
-From the probe responses and the website, collect the official name of the
-organization in every language whose `xml:lang` appeared in the dataflow response.
-Always include English (`en`).
+### 5a. Map the proprietary model onto the sdmx-dl model
 
-## 8. Produce the Forge issue summary
+Produce an explicit mapping table. The sdmx-dl `Connection` operations you must satisfy:
 
-Print a Markdown document with the following structure, filling every section
-with the information gathered above.
+| sdmx-dl operation                | What it needs from the source                          |
+|----------------------------------|--------------------------------------------------------|
+| `getDatabases()`                 | The top-level grouping (optional; may be a single one) |
+| `getFlows(DatabaseRef)`          | The list of addressable datasets (flows)               |
+| `getMeta(...)` → `Structure`     | The DSD: ordered dimensions + codelists                |
+| `getData(...)` → `Series`/`Obs`  | Series keys + observations (period + value)            |
+
+For each, record the exact endpoint, parameters, and the response fields used.
+Also note any listing field that **distinguishes otherwise same-named entries** (frequency,
+variant/base-year code, covered period, …) and map it to `Flow.description` — see 5b item 6.
+
+### 5b. Resolve the hard questions — each must be answered from live data
+
+These are the questions that, if guessed, break the driver at runtime:
+
+1. **Endpoint mode matters.** The same endpoint may have several modes/flags
+   (e.g. "friendly" vs "with-metadata"). Confirm *which mode returns the fields you need*.
+   A response that omits the metadata array makes series keys impossible to build.
+2. **Series-key identity.** Determine exactly which field identifies each dimension and
+   each code. **Verify the code component is unique** within its dimension — labels or
+   "official codes" often collide and cannot be used as keys; an internal numeric id may
+   be the only safe choice.
+3. **Field presence differs per endpoint.** A field available in the structure endpoint
+   may be absent (or renamed) in the data endpoint. Pick fields available in *both*, or
+   reconcile them, so structure and data stay consistent.
+4. **Period/frequency derivation.** Confirm where granularity comes from (an explicit
+   periodicity id, or a period token like `M12`/`QI`, or the timestamp shape). Use the
+   timestamp for the period start.
+5. **Reachable-by-id ≠ listed.** An item may resolve by direct id yet not appear in its
+   parent listing (so flow validation rejects it). Pick a test example that is actually
+   returned by the listing endpoint.
+6. **Display names are often not unique.** Several flows in one source can share an
+   *identical* name (e.g. a quarterly and an annual table, or base-year/classification
+   variants). The name alone then cannot tell them apart. Check the listing response for
+   the fields that *do* distinguish them (frequency, variant/base-year code, covered
+   period, publication) and surface them — map them to `Flow.description` rather than
+   discarding them. Accept that a few entries may be indistinguishable by metadata alone;
+   only their ref id and actual content separate those. **Do not drop fields you don't
+   immediately map** — a field that looks redundant is often the only discriminator.
+7. **Error semantics.** Find out how "no match"/"empty" is signalled. Some APIs return
+   HTTP 500 (not an empty 200) for unknown filter values — the driver must translate that
+   into an empty dataset, and/or pre-validate keys against the DSD.
+8. **Language selection.** Header (`Accept-Language`) vs path/parameter vs parallel base
+   URLs — confirm by comparing responses.
+9. **Pagination & limits.** Check page sizes and how to cap payloads. Beware of very
+   large payloads: **stream the parse** rather than buffering the whole body (huge tables
+   can cause `OutOfMemoryError`), and cap slow/large fetches with a timeout.
+10. **Transient "busy" responses.** Some APIs return **HTTP 200 with a status/placeholder
+    body** ("request in process", empty object, …) instead of the real payload. Detect
+    these and turn them into a retryable error — don't parse them as data.
+
+### 5c. Deriving the dimension model — the hardest part (do not shortcut)
+
+When there is no pre-built DSD, you must *infer* dimensions and codelists from series
+metadata. This is where naïve implementations silently return no data. **You cannot infer
+the model from one series** — you must inspect *many* series across the table. Confirm each
+of the following against live data, because they are frequently all true at once:
+
+1. **Series are heterogeneous.** Different series in the *same* table can carry different
+   variable sets (different arity, different variables). Never assume a single series is
+   representative.
+2. **Metadata order is not stable.** The same variable may appear at different positions
+   across series. **Do not key dimensions by position** — key them by identity, then order
+   deterministically.
+3. **Mutually-exclusive variables must be merged.** Several variables can be alternatives
+   for the same conceptual dimension and never co-occur (e.g. *National totals* vs
+   *Regions* vs *Municipalities* for geography). If you make each a separate dimension,
+   every series leaves the others empty and **no fully-specified key can ever match**.
+   Merge variables that provably never co-occur into one dimension whose codelist is the
+   union of their values.
+4. **The same variable name can repeat within one series.** That legitimately means two
+   distinct dimensions — keying by name alone collapses them and makes keys collide.
+5. **Robust approach — co-occurrence signature.** Model each metadata item as
+   `(variable identity, occurrence rank within the series)`. Items that share the identical
+   set of co-occurring items (⇒ provably never co-occur) merge into one dimension; repeated
+   names split into distinct dimensions. This is order-independent, merges alternatives, and
+   handles repeats — all at once.
+6. **A wildcard/empty code is not a valid key component.** In sdmx-dl an empty string is
+   the wildcard code; a *series* key must be fully specified. If a merged/absent slot has
+   no natural value, fill it with an explicit "not applicable" sentinel code registered in
+   the codelist — never leave it empty.
+
+### 5d. Single-fetch consistency
+
+Where feasible, build **both** the `Structure` and the `DataSet` from **one** response.
+Sources can return *different labels for the same variable* across two separate calls
+(structure call vs data call), which misaligns dimensions. One cached fetch that feeds
+both `getMeta` and `getData` guarantees they can never disagree.
+
+### 5e. Capture fixtures
+
+Save the real responses for: the database list, the flow list, a structure-bearing
+response, and a small data response. These become the unit-test resources
+(`src/test/resources/.../xxx-*.json`) and the evidence for the mapping. **Capture at
+least one table whose series are heterogeneous** (mixed variables / mutually-exclusive
+alternatives) — it is the regression fixture that locks the dimension model.
+
+### 5f. Plan the implementation
+
+List the classes/changes required, mirroring an existing dialect driver:
+the `Driver` SPI class (declaring the `WebSource` via `DriverSupport`), an HTTP client
+wrapping the endpoints, JSON/XML parsing, period parsing, plus updating
+`module-info.java` and `META-INF/services/sdmxdl.web.spi.Driver`.
+
+> `docs/assets/sources.csv` is **generated** from the `WebSource` declarations in the
+> driver classes — never edit it by hand.
+
+---
+
+## 6. End-to-end verification (mandatory for every source)
+
+Before writing the summary, confirm the **entire** data path against the live service and
+record one concrete working example:
+
+- [ ] `getDatabases()` returns at least the expected grouping (or N/A)
+- [ ] `getFlows(...)` returns the target flow **in its listing**
+- [ ] `getMeta(...)` yields a structure with the expected dimension count
+- [ ] `getData(...)` returns ≥ 1 series with ≥ 1 real observation (period + value)
+- [ ] The chosen key components are unique and reproduce the same key on re-fetch
+- [ ] Record the working tuple: `source / database / flow / key` + expected counts
+
+This working tuple feeds the web-query test (CSV row) and the runnable demo.
+
+### 6a. Don't stop at a few hand-picked examples — sample randomly and check invariants
+
+A handful of curated examples can pass by luck while the model is still wrong for other
+flows (this is exactly what happened with INE). For any source with an **inferred**
+dimension model, add a seeded, random-sampling test (tagged so it only runs on demand)
+that fetches many live tables and asserts the properties that **must** hold if the model
+is correct — rather than checking specific values:
+
+- key size **==** dimension count
+- every series key is **fully specified** (no accidental wildcard slot)
+- every code in every key is **known to the DSD** (validate the key against the structure)
+- keys are **unique** across the table (no silent series collisions)
+- each key **round-trips** to exactly its own series
+
+Make it reproducible and bounded: a fixed **seed** (overridable), a cap on the number of
+tables, a **per-table timeout** (report oversized tables as skipped instead of hanging),
+and an overall **wall-clock budget**. On failure, print the offending flow id and the
+exact invariant broken so it is directly actionable. This invariant harness is what turns
+"seems to work" into evidence — it repeatedly surfaced structural bugs that no curated
+example did.
+
+## 7. Source ID, names, confidentiality
+
+- **ID**: short, unique `SCREAMING_SNAKE_CASE` from the org acronym (e.g. `ABS`, `ECB`).
+  Check `docs/assets/sources.csv` to confirm it is not already taken, and watch for
+  collisions with similarly named organisations.
+- **Display names**: official name in every language confirmed from responses/website;
+  always include English (`en`).
+- **Confidentiality**: `PUBLIC` unless authentication is required.
+
+## 8. Produce the output
+
+For an **existing-driver SDMX source**, print the Forge issue summary below.
+For a **new dialect**, additionally write a full evaluation document under
+`.agents/evaluations/<ID>.md` capturing the Section 5 mapping, the resolved hard
+questions (with live evidence), the fixtures, the request-cost model, and the
+implementation work items.
 
 ---
 
@@ -136,7 +330,7 @@ with the information gathered above.
 | Field | Value |
 |-------|-------|
 | **ID** | `<SCREAMING_SNAKE_CASE>` |
-| **Driver** | `<DRIVER_ID>` |
+| **Driver** | `<DRIVER_ID or "new dialect: XxxDialectDriver">` |
 | **Endpoint** | `<endpoint URL>` |
 | **Website** | `<website URL>` |
 | **Languages** | `<comma-separated BCP 47 language tags>` |
@@ -148,15 +342,24 @@ with the information gathered above.
 | Check | Result |
 |-------|--------|
 | Reachability | ✅ / ❌ |
-| SDMX version | 2.1 / 2.0 / unknown |
-| `detail` parameter supported | ✅ / ❌ |
-| Trailing-slash required | ✅ / ❌ |
+| Protocol | SDMX 2.1 / SDMX 2.0 / proprietary (<format>) |
+| `detail` parameter supported | ✅ / ❌ / N/A |
+| Trailing-slash required | ✅ / ❌ / N/A |
 | Authentication required | ✅ / ❌ |
+
+### End-to-end verification
+
+| Step | Result |
+|------|--------|
+| Databases | ✅ / ❌ / N/A |
+| Flows (target listed) | ✅ / ❌ |
+| Structure (dimension count) | ✅ <n> / ❌ |
+| Data (≥1 obs) | ✅ / ❌ |
+| Confirmed example | `<source> / <database> / <flow> / <key>` |
 
 ### Properties
 
-<!-- List only the properties that need to be set, one per line.
-     Leave this section empty if no properties are needed. -->
+<!-- List only the properties that need to be set, one per line. Leave empty if none. -->
 - `sdmxdl.driver.detailSupported=true`
 
 ### Display names
@@ -189,18 +392,102 @@ To be added in the appropriate driver class
 
 <!-- State which Java file should be edited to register this source. -->
 - For standard SDMX 2.1: `sdmx-dl-provider-ri/src/main/java/sdmxdl/provider/ri/drivers/Sdmx21RiDriver.java`
-- For a dialect: the matching class in `sdmx-dl-provider-dialects/`
-- For a new dialect: a new class must be created under `sdmx-dl-provider-dialects/`
+- For an existing dialect: the matching class in `sdmx-dl-provider-dialects/`
+- For a new dialect: a new class under `sdmx-dl-provider-dialects/` plus a
+  `.agents/evaluations/<ID>.md` design document
 
 ### Open questions
 
 <!-- List any uncertainties that need follow-up before the source can be merged. -->
 - [ ] Confirm endpoint stability / official support
 - [ ] Verify all supported languages
-
 ```
 ---
 
 > Omit any table row or section for which no information is available.
 > Prefer accuracy to completeness — flag unknowns explicitly.
 
+## Common pitfalls checklist (lessons learned)
+
+Before declaring an evaluation done, sanity-check against these recurring traps:
+
+- [ ] Mapping is based on **live responses**, not just docs or a reference client
+- [ ] The **full path** databases→flows→structure→data was exercised, not just listing
+- [ ] At least **one real observation** was retrieved with the proposed mapping
+- [ ] The **endpoint mode/flags** that return the needed metadata are confirmed
+- [ ] The **key code component is unique** (no collisions across dimensions)
+- [ ] Fields used exist in **both** the structure and data responses (or are reconciled)
+- [ ] The dimension model was inferred from **many series, not one** (heterogeneity checked)
+- [ ] Metadata **order instability** handled — dimensions keyed by identity, not position
+- [ ] **Mutually-exclusive** variables are merged into one dimension (not split)
+- [ ] **Repeated variable names** within a series map to distinct dimensions
+- [ ] Absent/merged slots use an explicit **"not applicable" code**, never an empty wildcard
+- [ ] Structure and data are **consistent** (ideally built from a single fetch)
+- [ ] **Period granularity** source is confirmed (id / token / timestamp shape)
+- [ ] The test example is **listed by its parent**, not only reachable by id
+- [ ] **Non-unique display names** handled — distinguishing fields kept in `description`
+- [ ] **Empty/error semantics** (e.g. HTTP 500 for unknown values) are handled
+- [ ] **Transient "busy"** 200 responses are detected and made retryable
+- [ ] Very large payloads are **streamed** (no whole-body buffering / OOM)
+- [ ] A **random-sampling invariant test** passes across many live flows (not just a few)
+- [ ] Raw response **fixtures were saved** for tests (incl. a heterogeneous table)
+- [ ] Discrepancies between docs and live behaviour are **documented**
+
+### Case study: INE (proprietary JSON, new dialect)
+
+The INE source (Spain) was initially evaluated and implemented from documentation and an
+R reference client. It compiled but returned **no data at runtime**, and each subsequent
+"fix" revealed a deeper wrong assumption. The full sequence:
+
+**Field/endpoint assumptions (first round):**
+
+- The structure endpoint suggested by docs (`SERIES_TABLA`, `det=1` nested `Variable`)
+  did not return usable fields; data had to be built from the **data endpoint in
+  metadata mode** (`DATOS_TABLA?tip=AM`) — the friendly mode omitted the metadata array.
+- The variable was a flat **name string** in the data endpoint, not a nested id object.
+- The "official code" collided across variables (`"00"` reused); the **value id** was the
+  only safe key component.
+- Periodicity was **not** in an id field; it had to be derived from the period token.
+- A table was reachable by id but **not listed** under its operation, so flow validation
+  rejected the documented example; a different, listed table was required.
+- Unknown filter values returned **HTTP 500**, not an empty 200.
+
+**Dimension-model assumptions (the hard part — several more rounds):**
+
+- Series in one table are **heterogeneous**: some tables split geography into
+  mutually-exclusive variables (National totals vs Autonomous Communities), so the
+  union-of-variables DSD left every series with an empty slot and **no key ever matched**.
+- Modelling those as separate dimensions was wrong — they had to be **merged**; an empty
+  slot is a wildcard, which is illegal for a series key, so absent slots needed an explicit
+  `_Z` "not applicable" code.
+- A "positional" model (dimension = metadata slot index) then broke because INE returns
+  metadata **in inconsistent order** across series.
+- Keying purely by variable **name** broke a table that repeats the same variable name
+  twice in one series (two genuine dimensions collapsed into one).
+- The final model keys dimensions by **co-occurrence signature** (variable identity +
+  occurrence rank), which is order-independent, merges alternatives, and splits repeats.
+- The structure and data calls sometimes returned **different labels for the same
+  variable**; the driver was changed to build both from a **single cached fetch**.
+- Large tables caused **OOM** (whole-body buffering) and the API occasionally returned a
+  **busy status object with HTTP 200** — handled by streaming the parse and a retryable
+  error.
+
+**Non-unique names (found later, in normal use):**
+
+- Two flows with the same name and similar data turned out to be a **quarterly** and an
+  **annual** table. Investigation showed *all 9* tables of that operation share the exact
+  same name — the driver had parsed only id + name and **discarded** the fields that
+  distinguish them (frequency, base-year/classification code, covered period, publication).
+  The fix mapped those fields to `Flow.description`. A residual set of tables remained
+  identical across *all* listing metadata — only their ref id and content differ, which is
+  an inherent limit worth documenting rather than hiding.
+
+**How it was finally trusted:** curated examples kept passing while the model was still
+wrong, so a **seeded random-sampling invariant test** was added (key size == dim count,
+fully-specified & DSD-valid keys, unique keys, round-trip), bounded by per-table timeouts
+and a wall-clock budget. That harness is what actually caught each structural bug.
+
+The lesson: drive every decision from captured live payloads, infer the dimension model
+from **many** series, and prove correctness with **invariants over random samples** — not
+a few hand-picked keys. This checklist exists so the next evaluation catches these at
+evaluation time, not after implementation.

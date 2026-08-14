@@ -1,15 +1,16 @@
 package sdmxdl.provider;
 
 import lombok.NonNull;
+import nbbrd.io.text.BaseProperty;
 import org.jspecify.annotations.Nullable;
 import sdmxdl.file.FileSource;
 import sdmxdl.web.WebSource;
 
-import java.util.Collections;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 @lombok.experimental.UtilityClass
 public class PropertiesSupport {
@@ -42,5 +43,13 @@ public class PropertiesSupport {
 
     public static String toEnvKey(String key) {
         return key.replace('.', '_').toUpperCase(Locale.ROOT);
+    }
+
+    public static @NonNull List<BaseProperty> merge(@NonNull List<BaseProperty> first, @NonNull BaseProperty... second) {
+        return Stream.concat(first.stream(), Stream.of(second)).collect(toList());
+    }
+
+    public static @NonNull List<BaseProperty> merge(@NonNull List<BaseProperty> first, @NonNull List<BaseProperty> second) {
+        return Stream.concat(first.stream(), second.stream()).collect(toList());
     }
 }

@@ -7,6 +7,28 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.2.0] - 2026-08-14
+
+This release adds support for SDMX-specific representations and a new, more reliable network backend.  
+Several sources have been added or updated, and the driver implementations have been refactored for clarity.
+
+### Added
+
+- ![SOURCE] Add source from National Statistics Institute of Spain [#1269](https://github.com/nbbrd/sdmx-dl/issues/1269)
+- ![API] Add support of non-enumerated dimension representation [#1283](https://github.com/nbbrd/sdmx-dl/issues/1283)
+- ![API] Add `Network#urlBackend` parameter
+
+### Changed
+
+- ![PROVIDER] Refactor Driver implementation layers
+
+### Fixed
+
+- ![PROVIDER] Fix parsing of year range in PxWebDriver
+- ![PROVIDER] Fix logs verbosity
+- ![SOURCE] Fix SGR endpoint [#1298](https://github.com/nbbrd/sdmx-dl/issues/1298)
+- ![SOURCE] Fix UKDS endpoint [#1065](https://github.com/nbbrd/sdmx-dl/issues/1065)
+
 ## [3.1.1] - 2026-06-17
 
 ### Fixed
@@ -60,6 +82,12 @@ This release focuses on improving the authentication mechanism.
 
 - ![SOURCE] Add sources from Directorates General of the European Commission [#1137](https://github.com/nbbrd/sdmx-dl/issues/1137)
 
+### Changed
+
+- ![API] Modify Cache API to allow key invalidation
+- ![API] Modify WebCaching API to handle credentials
+- ![API] Remove Persistence from FileCaching and WebCaching API
+
 ### Fixed
 
 - ![PROVIDER] Fix field overflow in MsalAuthenticator [#1138](https://github.com/nbbrd/sdmx-dl/issues/1138)
@@ -67,12 +95,6 @@ This release focuses on improving the authentication mechanism.
 - ![PROVIDER] Fix MsalAnthenticator performances [#1151](https://github.com/nbbrd/sdmx-dl/issues/1151)
 - ![PROVIDER] Fix potential secret leak in WindowsVaultService [#1152](https://github.com/nbbrd/sdmx-dl/issues/1152)
 - ![GRPC] Fix CORS problems for localhost pages
-
-### Changed
-
-- ![API] Modify Cache API to allow key invalidation
-- ![API] Modify WebCaching API to handle credentials
-- ![API] Remove Persistence from FileCaching and WebCaching API
 
 ## [3.0.0-beta.17] - 2026-01-22
 
@@ -129,13 +151,6 @@ As usual, it also adds and updates a few sources.
 - ![SOURCE] Add source from Canadian Census Profile Data [#1056](https://github.com/nbbrd/sdmx-dl/issues/1056)
 - ![GRPC] Add dimension code availability in protobuf service [#912](https://github.com/nbbrd/sdmx-dl/issues/912)
 
-### Fixed
-
-- ![CLI] Fix network warmup in check access duration [#1072](https://github.com/nbbrd/sdmx-dl/issues/1072)
-- ![SOURCE] Replace IMF source with new endpoint [#1064](https://github.com/nbbrd/sdmx-dl/issues/1064)
-- ![FORMAT] Fix parsing core representation codelist ref in XML structures [#1069](https://github.com/nbbrd/sdmx-dl/issues/1069)
-- ![PROVIDER] Fix URL comma encoding in INSEE driver [#1070](https://github.com/nbbrd/sdmx-dl/issues/1070)
-
 ### Changed
 
 - ![API] Modify TimeInterval to closely follow ISO-8601
@@ -151,6 +166,13 @@ As usual, it also adds and updates a few sources.
 - ![BUILD] Migrate OSSRH to Central Portal
 - ![BUILD] Move testing module to test units
 - ![BUILD] Apply zero-dependency principle to standalone module [#1028](https://github.com/nbbrd/sdmx-dl/issues/1028)
+
+### Fixed
+
+- ![CLI] Fix network warmup in check access duration [#1072](https://github.com/nbbrd/sdmx-dl/issues/1072)
+- ![SOURCE] Replace IMF source with new endpoint [#1064](https://github.com/nbbrd/sdmx-dl/issues/1064)
+- ![FORMAT] Fix parsing core representation codelist ref in XML structures [#1069](https://github.com/nbbrd/sdmx-dl/issues/1069)
+- ![PROVIDER] Fix URL comma encoding in INSEE driver [#1070](https://github.com/nbbrd/sdmx-dl/issues/1070)
 
 ## [3.0.0-beta.14] - 2025-02-24
 
@@ -248,10 +270,6 @@ The ECB endpoint has also been updated.
   variables [#516](https://github.com/nbbrd/sdmx-dl/issues/516)
 - ![PROVIDER] Allow caching & networking configuration per source [#493](https://github.com/nbbrd/sdmx-dl/issues/493)
 
-### Fixed
-
-- ![PROVIDER] Fix file locking in cache
-
 ### Changed
 
 - ![API] Refactor cache API [#500](https://github.com/nbbrd/sdmx-dl/issues/500)
@@ -269,6 +287,10 @@ The ECB endpoint has also been updated.
 - ![PROVIDER] Move dialects drivers to their own module
 - ![CLI] Use environment variables as default values
 - ![GRPC] Migrate gRPC module to Quarkus framework
+
+### Fixed
+
+- ![PROVIDER] Fix file locking in cache
 
 ## [3.0.0-beta.11] - 2023-06-02
 
@@ -288,11 +310,6 @@ It also improves performance of several drivers alongside the usual bug fixes.
   Commission [#414](https://github.com/nbbrd/sdmx-dl/issues/414)
 - ![SOURCE] Add source from Eurostat International trade in goods [#415](https://github.com/nbbrd/sdmx-dl/issues/415)
 
-### Fixed
-
-- ![PROVIDER] Fix URL squashing in curl backend [#417](https://github.com/nbbrd/sdmx-dl/issues/417)
-- ![PROVIDER] Fix cache when two sources share the same host [#413](https://github.com/nbbrd/sdmx-dl/issues/413)
-
 ### Changed
 
 - ![API] Improve request for available key codes
@@ -306,6 +323,11 @@ It also improves performance of several drivers alongside the usual bug fixes.
 ### Removed
 
 - ![API] Remove feature descriptor `DATA_QUERY_KEY`
+
+### Fixed
+
+- ![PROVIDER] Fix URL squashing in curl backend [#417](https://github.com/nbbrd/sdmx-dl/issues/417)
+- ![PROVIDER] Fix cache when two sources share the same host [#413](https://github.com/nbbrd/sdmx-dl/issues/413)
 
 ## [3.0.0-beta.10] - 2023-02-13
 
@@ -640,7 +662,8 @@ production._
 
 - Initial release
 
-[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.1.1...HEAD
+[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.2.0...HEAD
+[3.2.0]: https://github.com/nbbrd/sdmx-dl/compare/v3.1.1...v3.2.0
 [3.1.1]: https://github.com/nbbrd/sdmx-dl/compare/v3.1.0...v3.1.1
 [3.1.0]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.18...v3.0.0
@@ -666,8 +689,8 @@ production._
 [BUILD]: https://img.shields.io/badge/-BUILD-e4e669
 [CLI]: https://img.shields.io/badge/-CLI-F813F7
 [DESKTOP]: https://img.shields.io/badge/-DESKTOP-F813F7
-[GRPC]: https://img.shields.io/badge/-GRPC-F813F7
+[DOC]: https://img.shields.io/badge/-DOC-e4e669
 [FORMAT]: https://img.shields.io/badge/-FORMAT-5319E7
+[GRPC]: https://img.shields.io/badge/-GRPC-F813F7
 [PROVIDER]: https://img.shields.io/badge/-PROVIDER-BC0250
 [SOURCE]: https://img.shields.io/badge/-SOURCE-E2BC4A
-[DOC]: https://img.shields.io/badge/-DOC-e4e669

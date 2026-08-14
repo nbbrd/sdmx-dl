@@ -97,7 +97,7 @@ public final class DiskCache<V extends HasExpiration & HasPersistence> implement
     }
 
     private void reportRead(String key, DiskCacheEvent event, long elapsedMs) {
-        if (onEvent != null) onEvent.accept(id, String.format(Locale.ROOT, "%s %s (%dms)", event.name(), key, elapsedMs), 1);
+        if (onEvent != null) onEvent.accept(id, String.format(Locale.ROOT, "%s %s (%dms)", event.name(), key, elapsedMs), 0);
     }
 
     private V readFile(Path file) {

@@ -20,16 +20,16 @@ import lombok.NonNull;
 import nbbrd.io.http.HttpClient;
 import nbbrd.io.http.HttpRequest;
 import nbbrd.io.http.HttpResponse;
-import nbbrd.io.http.HttpResponseException;
+import nbbrd.io.http.ext.ThrowingStatusException;
 import sdmxdl.*;
 import sdmxdl.format.ObsParser;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.Marker;
+import sdmxdl.provider.ri.http.HttpManager;
 import sdmxdl.provider.web.RestClient;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -86,10 +86,10 @@ public class RiRestClient implements RestClient {
     @NonNull
     @Override
     public Optional<URI> testClient() throws IOException {
-        HttpRequest request = RiHttpUtils.newHttpRequest(getFlowsQuery(), parsers.getFlowsTypes(), langs);
+        HttpRequest request = HttpManager.newHttpRequest(getFlowsQuery(), parsers.getFlowsTypes(), langs);
         try (HttpResponse ignore = httpClient.send(request)) {
             return Optional.of(request.getQuery());
-        } catch (HttpResponseException ex) {
+        } catch (ThrowingStatusException ex) {
             return Optional.of(request.getQuery());
         }
     }
@@ -97,20 +97,20 @@ public class RiRestClient implements RestClient {
     @NonNull
     protected URI getFlowsQuery() throws IOException {
         try {
-            return queries.getFlowsQuery(endpoint.toURL()).build().toURI();
-        } catch (URISyntaxException e) {
+            return queries.getFlowsQuery(endpoint).build();
+        } catch (IllegalArgumentException e) {
             throw new IOException(e);
         }
     }
 
     @NonNull
     protected List<Flow> getFlows(@NonNull URI url) throws IOException {
-        HttpRequest request = RiHttpUtils.newHttpRequest(url, parsers.getFlowsTypes(), langs);
+        HttpRequest request = HttpManager.newHttpRequest(url, parsers.getFlowsTypes(), langs);
         try (HttpResponse response = httpClient.send(request)) {
             return parsers
                     .getFlowsParser(response.getContentType(), langs)
                     .parseStream(response::getBody);
-        } catch (HttpResponseException ex) {
+        } catch (ThrowingStatusException ex) {
             if (errors.getFlowsError(ex) == CLIENT_NO_RESULTS_FOUND) {
                 return Collections.emptyList();
             }
@@ -121,21 +121,21 @@ public class RiRestClient implements RestClient {
     @NonNull
     protected URI getStructureQuery(@NonNull StructureRef ref) throws IOException {
         try {
-            return queries.getStructureQuery(endpoint.toURL(), ref).build().toURI();
-        } catch (URISyntaxException e) {
+            return queries.getStructureQuery(endpoint, ref).build();
+        } catch (IllegalArgumentException e) {
             throw new IOException(e);
         }
     }
 
     @NonNull
     protected Structure getStructure(@NonNull URI url, @NonNull StructureRef ref) throws IOException {
-        HttpRequest request = RiHttpUtils.newHttpRequest(url, parsers.getStructureTypes(), langs);
+        HttpRequest request = HttpManager.newHttpRequest(url, parsers.getStructureTypes(), langs);
         try (HttpResponse response = httpClient.send(request)) {
             return parsers
                     .getStructureParser(response.getContentType(), langs, ref)
                     .parseStream(response::getBody)
                     .orElseThrow(() -> missingStructure(this, ref));
-        } catch (HttpResponseException ex) {
+        } catch (ThrowingStatusException ex) {
             if (errors.getStructureError(ex) == CLIENT_NO_RESULTS_FOUND) {
                 throw missingStructure(this, ref);
             }
@@ -146,22 +146,22 @@ public class RiRestClient implements RestClient {
     @NonNull
     protected URI getDataQuery(@NonNull DataRef ref, @NonNull StructureRef dsdRef) throws IOException {
         try {
-            return queries.getDataQuery(endpoint.toURL(), ref, dsdRef).build().toURI();
-        } catch (URISyntaxException e) {
+            return queries.getDataQuery(endpoint, ref, dsdRef).build();
+        } catch (IllegalArgumentException e) {
             throw new IOException(e);
         }
     }
 
     @NonNull
     protected Stream<Series> getData(@NonNull URI url, @NonNull Structure dsd) throws IOException {
-        HttpRequest request = RiHttpUtils.newHttpRequest(url, parsers.getDataTypes(), langs);
+        HttpRequest request = HttpManager.newHttpRequest(url, parsers.getDataTypes(), langs);
         try {
             HttpResponse response = httpClient.send(request);
             return parsers
                     .getDataParser(response.getContentType(), dsd, obsFactory)
                     .parseStream(response::asDisconnectingInputStream)
                     .asCloseableStream();
-        } catch (HttpResponseException ex) {
+        } catch (ThrowingStatusException ex) {
             if (errors.getDataError(ex) == CLIENT_NO_RESULTS_FOUND) {
                 return Stream.empty();
             }
@@ -172,21 +172,21 @@ public class RiRestClient implements RestClient {
     @NonNull
     protected URI getCodelistQuery(@NonNull CodelistRef ref) throws IOException {
         try {
-            return queries.getCodelistQuery(endpoint.toURL(), ref).build().toURI();
-        } catch (URISyntaxException e) {
+            return queries.getCodelistQuery(endpoint, ref).build();
+        } catch (IllegalArgumentException e) {
             throw new IOException(e);
         }
     }
 
     @NonNull
     protected Codelist getCodelist(@NonNull URI url, @NonNull CodelistRef ref) throws IOException {
-        HttpRequest request = RiHttpUtils.newHttpRequest(url, parsers.getCodelistTypes(), langs);
+        HttpRequest request = HttpManager.newHttpRequest(url, parsers.getCodelistTypes(), langs);
         try (HttpResponse response = httpClient.send(request)) {
             return parsers
                     .getCodelistParser(response.getContentType(), langs, ref)
                     .parseStream(response::getBody)
                     .orElseThrow(() -> missingCodelist(this, ref));
-        } catch (HttpResponseException ex) {
+        } catch (ThrowingStatusException ex) {
             if (errors.getCodelistError(ex) == CLIENT_NO_RESULTS_FOUND) {
                 throw missingCodelist(this, ref);
             }

@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
 import sdmxdl.KeyRequest;
-import sdmxdl.provider.caching.MemCachingSupport;
 import sdmxdl.format.time.*;
+import sdmxdl.provider.caching.MemCachingSupport;
 import sdmxdl.provider.ri.networking.RiNetworking;
 import sdmxdl.web.spi.WebContext;
 import tests.sdmxdl.web.spi.DriverAssert;
@@ -17,17 +17,45 @@ import java.io.IOException;
 import java.time.Year;
 import java.time.YearMonth;
 
+import static nbbrd.io.text.BaseProperty.keysOf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static sdmxdl.format.time.StandardReportingFormat.REPORTING_QUARTER;
 import static sdmxdl.format.time.StandardReportingFormat.REPORTING_SEMESTER;
 import static sdmxdl.format.time.TimeFormats.IGNORE_ERROR;
+import static sdmxdl.provider.dialects.drivers.InseeDialectDriver.NO_COMMA_ENCODING_PROPERTY;
 import static sdmxdl.provider.dialects.drivers.InseeDialectDriver.REPORTING_TWO_MONTH;
+import static sdmxdl.provider.ri.http.CachingDecoration.HTTP_CACHING_PROPERTY;
+import static sdmxdl.provider.ri.http.CookieDecoration.COOKIE_PROPERTY;
+import static sdmxdl.provider.ri.http.DumpingDecoration.DUMP_FOLDER_PROPERTY;
+import static sdmxdl.provider.ri.http.RateLimitingDecoration.RATE_LIMITING_PROPERTY;
+import static sdmxdl.provider.ri.http.RetryDecoration.MAX_RETRIES_PROPERTY;
+import static sdmxdl.provider.web.DriverProperties.*;
 
 public class InseeDialectDriverTest {
 
     @Test
     public void testCompliance() {
         DriverAssert.assertCompliance(new InseeDialectDriver());
+    }
+
+    @Test
+    public void testProperties() {
+        assertThat(new InseeDialectDriver().getDriverPropertyNames())
+                .containsExactlyInAnyOrderElementsOf(
+                        keysOf(
+                                CONNECT_TIMEOUT_PROPERTY,
+                                READ_TIMEOUT_PROPERTY,
+                                USER_AGENT_PROPERTY,
+                                AUTH_SCHEME_PROPERTY,
+                                MAX_REDIRECTS_PROPERTY,
+                                MAX_RETRIES_PROPERTY,
+                                DUMP_FOLDER_PROPERTY,
+                                COOKIE_PROPERTY,
+                                CACHE_TTL_PROPERTY,
+                                HTTP_CACHING_PROPERTY,
+                                RATE_LIMITING_PROPERTY,
+                                NO_COMMA_ENCODING_PROPERTY)
+                );
     }
 
     @Test

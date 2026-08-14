@@ -26,6 +26,7 @@ enum AttributeRelationshipDto {
 message CodelistDto {
   string ref = 1; /* Representation of CodelistRef */
   map<string, string> codes = 2;
+  int32 code_count = 3; /* Total number of codes; may be greater than the size of 'codes' when the list is filtered or omitted */
 }
 
 enum ConfidentialityDto {
@@ -72,7 +73,7 @@ enum DetailDto {
 message DimensionDto {
   string id = 1;
   string name = 2;
-  CodelistDto codelist = 3;
+  optional CodelistDto codelist = 3;
 }
 
 enum FeatureDto {

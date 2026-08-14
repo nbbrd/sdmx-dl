@@ -16,16 +16,14 @@
  */
 package sdmxdl.provider.connectors.drivers;
 
-import nbbrd.design.DirectImpl;
 import it.bancaditalia.oss.sdmx.client.custom.IMF2;
+import nbbrd.design.DirectImpl;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.provider.web.DriverSupport;
-import sdmxdl.provider.web.RestConnector;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 
 import static sdmxdl.Confidentiality.PUBLIC;
-import static sdmxdl.provider.connectors.drivers.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
 
 /**
  * @author Philippe Charles
@@ -41,8 +39,10 @@ public final class ImfDriver implements Driver {
             .builder()
             .id(CONNECTORS_IMF)
             .rank(WRAPPED_DRIVER_RANK)
-            .connector(RestConnector.of(ConnectorsRestClient.ofSpecific(IMF2::new)))
-            .properties(CONNECTORS_CONNECTION_PROPERTIES)
+            .connectorOf(SpecificRestClientFactory
+                    .builder()
+                    .supplier(IMF2::new)
+                    .build())
             .source(WebSource
                     .builder()
                     .id("IMF")

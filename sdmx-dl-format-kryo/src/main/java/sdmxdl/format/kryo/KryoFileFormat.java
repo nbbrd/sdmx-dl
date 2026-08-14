@@ -22,7 +22,6 @@ import com.esotericsoftware.kryo.kryo5.io.Input;
 import com.esotericsoftware.kryo.kryo5.io.Output;
 import com.esotericsoftware.kryo.kryo5.serializers.*;
 import com.esotericsoftware.kryo.kryo5.util.Pool;
-import lombok.AccessLevel;
 import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.FileFormat;
@@ -584,7 +583,7 @@ public final class KryoFileFormat<T extends HasPersistence> implements FileForma
         public void write(Kryo kryo, Output output, Dimension t) {
             output.writeString(t.getId());
             output.writeString(t.getName());
-            kryo.writeObject(output, t.getCodelist());
+            kryo.writeObjectOrNull(output, t.getCodelist(), Codelist.class);
         }
 
         @SuppressWarnings("unchecked")
@@ -594,7 +593,7 @@ public final class KryoFileFormat<T extends HasPersistence> implements FileForma
                     .builder()
                     .id(input.readString())
                     .name(input.readString())
-                    .codelist(kryo.readObject(input, Codelist.class))
+                    .codelist(kryo.readObjectOrNull(input, Codelist.class))
                     .build();
         }
     }

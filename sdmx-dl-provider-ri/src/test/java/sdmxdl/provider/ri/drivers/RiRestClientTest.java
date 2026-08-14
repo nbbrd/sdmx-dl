@@ -4,7 +4,11 @@ import lombok.NonNull;
 import nbbrd.design.MightBePromoted;
 import nbbrd.io.function.IORunnable;
 import nbbrd.io.function.IOSupplier;
-import nbbrd.io.http.*;
+import nbbrd.io.http.HttpClient;
+import nbbrd.io.http.HttpHeaders;
+import nbbrd.io.http.HttpRequest;
+import nbbrd.io.http.HttpResponse;
+import nbbrd.io.http.ext.ThrowingStatusException;
 import nbbrd.io.net.MediaType;
 import nbbrd.io.xml.Xml;
 import org.junit.jupiter.api.Test;
@@ -35,7 +39,7 @@ public class RiRestClientTest {
                 .isThrownBy(() -> of(onResponseError(HTTP_NOT_FOUND)).getStructure(BAD_STRUCT_REF))
                 .withMessageContaining(BAD_STRUCT_REF.toString());
 
-        assertThatExceptionOfType(HttpResponseException.class)
+        assertThatExceptionOfType(ThrowingStatusException.class)
                 .isThrownBy(() -> of(onResponseError(HTTP_FORBIDDEN)).getStructure(BAD_STRUCT_REF))
                 .withMessageContaining(String.valueOf(HTTP_FORBIDDEN));
 
@@ -53,7 +57,7 @@ public class RiRestClientTest {
                 .isThrownBy(() -> of(onResponseError(HTTP_NOT_FOUND)).getCodelist(BAD_CODELIST_REF))
                 .withMessageContaining(BAD_CODELIST_REF.toString());
 
-        assertThatExceptionOfType(HttpResponseException.class)
+        assertThatExceptionOfType(ThrowingStatusException.class)
                 .isThrownBy(() -> of(onResponseError(HTTP_FORBIDDEN)).getCodelist(BAD_CODELIST_REF))
                 .withMessageContaining(String.valueOf(HTTP_FORBIDDEN));
 
@@ -95,7 +99,7 @@ public class RiRestClientTest {
 
             @Override
             public @NonNull HttpResponse send(@NonNull HttpRequest httpRequest) throws IOException {
-                throw new HttpResponseException(responseCode, "");
+                throw new ThrowingStatusException(responseCode);
             }
         };
     }
@@ -148,6 +152,11 @@ public class RiRestClientTest {
         @Override
         public @NonNull HttpHeaders getHeaders() throws IOException {
             return HttpHeaders.EMPTY;
+        }
+
+        @Override
+        public int getStatusCode() throws IOException {
+            return NO_STATUS_CODE;
         }
 
         @Override

@@ -32,7 +32,6 @@ import sdmxdl.format.time.StandardReportingFormat;
 import sdmxdl.format.time.TimeFormats;
 import sdmxdl.provider.SdmxFix;
 import sdmxdl.provider.web.DriverSupport;
-import sdmxdl.provider.web.RestConnector;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 
@@ -44,7 +43,6 @@ import java.util.logging.Level;
 import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.format.time.TimeFormats.IGNORE_ERROR;
 import static sdmxdl.provider.SdmxFix.Category.CONTENT;
-import static sdmxdl.provider.connectors.drivers.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
 
 /**
  * @author Philippe Charles
@@ -60,8 +58,11 @@ public final class InseeDriver implements Driver {
             .builder()
             .id(CONNECTORS_INSEE)
             .rank(WRAPPED_DRIVER_RANK)
-            .connector(RestConnector.of(ConnectorsRestClient.ofGeneric(InseeClient::new, OBS_FACTORY)))
-            .properties(CONNECTORS_CONNECTION_PROPERTIES)
+            .connectorOf(GenericRestClientFactory
+                    .builder()
+                    .supplier(InseeClient::new)
+                    .obsFactory(OBS_FACTORY)
+                    .build())
             .source(WebSource
                     .builder()
                     .id("INSEE")

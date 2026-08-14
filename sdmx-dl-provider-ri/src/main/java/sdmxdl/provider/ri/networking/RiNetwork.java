@@ -1,9 +1,10 @@
 package sdmxdl.provider.ri.networking;
 
 import lombok.NonNull;
-import nbbrd.io.curl.CurlHttpURLConnection;
+import nbbrd.io.http.urlconnection.HttpClientURLConnection;
 import nbbrd.net.proxy.SystemProxySelector;
 import sdmxdl.provider.Slow;
+import sdmxdl.provider.ri.http.DefaultHttpFactory;
 import sdmxdl.web.spi.Network;
 import sdmxdl.web.spi.URLConnectionFactory;
 
@@ -15,10 +16,6 @@ import static sdmxdl.provider.Suppliers.memoize;
 @lombok.Builder
 @lombok.ToString
 class RiNetwork implements Network {
-
-    public static final String JDK_URL_BACKEND = "JDK";
-    public static final String CURL_URL_BACKEND = "CURL";
-    public static final String DEFAULT_URL_BACKEND = JDK_URL_BACKEND;
 
     @lombok.Builder.Default
     private final boolean autoProxy = false;
@@ -48,7 +45,12 @@ class RiNetwork implements Network {
 
     @Override
     public @NonNull URLConnectionFactory getURLConnectionFactory() {
-        return urlBackend.equals(CURL_URL_BACKEND) ? CurlHttpURLConnection::of : URLConnectionFactory.getDefault();
+        return (url, proxy) -> HttpClientURLConnection.of(DefaultHttpFactory.newHttpClient(this, System::getProperty), url);
+    }
+
+    @Override
+    public @NonNull String getUrlBackend() {
+        return urlBackend;
     }
 
     @Slow

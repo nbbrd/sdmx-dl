@@ -13,7 +13,7 @@ import java.util.Set;
 public class VerboseOptions {
 
     private static final Set<String> EXPLAIN_MARKERS = new HashSet<>(Arrays.asList(
-            "DRIVER", "QUERY", "SUMMARY", "NETWORK", "RI_CACHING", "RI_HTTP"
+            "DRIVER", "QUERY", "NETWORK", "RI_CACHING", "HTTP"
     ));
 
     @CommandLine.Option(

@@ -16,24 +16,29 @@
  */
 package sdmxdl.provider.ri.drivers;
 
+import lombok.NonNull;
 import nbbrd.design.DirectImpl;
+import nbbrd.io.text.BaseProperty;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.Feature;
 import sdmxdl.Languages;
 import sdmxdl.format.ObsParser;
 import sdmxdl.provider.HasMarker;
+import sdmxdl.provider.PropertiesSupport;
+import sdmxdl.provider.ri.http.HttpFactory;
+import sdmxdl.provider.ri.http.HttpManager;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestClient;
-import sdmxdl.provider.web.RestConnector;
+import sdmxdl.provider.web.RestClientFactory;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 import static sdmxdl.Confidentiality.PUBLIC;
-import static sdmxdl.provider.ri.drivers.RiHttpUtils.DEFAULT_HTTP_FACTORY;
 import static sdmxdl.provider.web.DriverProperties.DETAIL_SUPPORTED_PROPERTY;
 import static sdmxdl.provider.web.DriverProperties.TRAILING_SLASH_PROPERTY;
 
@@ -51,10 +56,7 @@ public final class Sdmx21RiDriver implements Driver {
             .builder()
             .id(RI_SDMX_21)
             .rank(NATIVE_DRIVER_RANK)
-            .connector(RestConnector.of(Sdmx21RiDriver::newClient))
-            .propertiesOf(DEFAULT_HTTP_FACTORY.getFactoryProperties())
-            .propertyOf(DETAIL_SUPPORTED_PROPERTY)
-            .propertyOf(TRAILING_SLASH_PROPERTY)
+            .connectorOf(new Sdmx21RiRestClientFactory())
             .source(WebSource
                     .builder()
                     .id("ABS")
@@ -218,7 +220,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .name("en", "SDMX Global Registry")
                     .driver(RI_SDMX_21)
                     .confidentiality(PUBLIC)
-                    .endpointOf("https://registry.sdmx.org/ws/rest")
+                    .endpointOf("https://registry.sdmx.org/ws/public/sdmxapi/rest")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://registry.sdmx.org/overview.html")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/SGR")
@@ -345,6 +347,18 @@ public final class Sdmx21RiDriver implements Driver {
 //                    .build())
             .source(WebSource
                     .builder()
+                    .id("UKDS")
+                    .name("en", "UK Data Service")
+                    .driver(RI_SDMX_21)
+                    .confidentiality(PUBLIC)
+                    .endpointOf("https://open.data.dataexplorer.ukdataservice.ac.uk/rest")
+                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                    .websiteOf("https://dataexplorer.ukdataservice.ac.uk/")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/UKDS")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ukds")
+                    .build())
+            .source(WebSource
+                    .builder()
                     .id("UNDATA")
                     .name("en", "Data access system to UN databases")
                     .driver(RI_SDMX_21)
@@ -397,32 +411,47 @@ public final class Sdmx21RiDriver implements Driver {
                     .build())
             .build();
 
-    private static RestClient newClient(WebSource s, Languages languages, WebContext c) {
-        return new RiRestClient(
-                HasMarker.of(s),
-                s.getEndpoint(),
-                languages,
-                ObsParser::newDefault,
-                DEFAULT_HTTP_FACTORY.create(s, c),
-                getQueries(s),
-                getParsers(s),
-                Sdmx21RestErrors.DEFAULT,
-                getSupportedFeatures(s));
-    }
+    private static final class Sdmx21RiRestClientFactory implements RestClientFactory {
 
-    private static Sdmx21RestQueries getQueries(WebSource s) {
-        return TRAILING_SLASH_PROPERTY.get(s.getProperties())
-                ? Sdmx21RestQueries.WITH_TRAILING_SLASH
-                : Sdmx21RestQueries.DEFAULT;
-    }
+        private final HttpFactory httpFactory = HttpManager.getHttpFactory();
 
-    private static Sdmx21RestParsers getParsers(WebSource s) {
-        return Sdmx21RestParsers.DEFAULT;
-    }
+        @Override
+        public @NonNull List<BaseProperty> getRestClientProperties() {
+            return PropertiesSupport.merge(
+                    httpFactory.getHttpClientProperties(),
+                    DETAIL_SUPPORTED_PROPERTY,
+                    TRAILING_SLASH_PROPERTY
+            );
+        }
 
-    private static Set<Feature> getSupportedFeatures(WebSource s) {
-        return DETAIL_SUPPORTED_PROPERTY.get(s.getProperties())
-                ? EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD, Feature.DATA_QUERY_DETAIL)
-                : EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD);
+        @Override
+        public @NonNull RestClient createRestClient(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) {
+            return new RiRestClient(
+                    HasMarker.of(source),
+                    source.getEndpoint(),
+                    languages,
+                    ObsParser::newDefault,
+                    httpFactory.createHttpClient(source, context),
+                    getQueries(source),
+                    getParsers(source),
+                    Sdmx21RestErrors.DEFAULT,
+                    getSupportedFeatures(source));
+        }
+
+        private static Sdmx21RestQueries getQueries(WebSource s) {
+            return TRAILING_SLASH_PROPERTY.get(s.getProperties())
+                    ? Sdmx21RestQueries.WITH_TRAILING_SLASH
+                    : Sdmx21RestQueries.DEFAULT;
+        }
+
+        private static Sdmx21RestParsers getParsers(WebSource s) {
+            return Sdmx21RestParsers.DEFAULT;
+        }
+
+        private static Set<Feature> getSupportedFeatures(WebSource s) {
+            return DETAIL_SUPPORTED_PROPERTY.get(s.getProperties())
+                    ? EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD, Feature.DATA_QUERY_DETAIL)
+                    : EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD);
+        }
     }
 }

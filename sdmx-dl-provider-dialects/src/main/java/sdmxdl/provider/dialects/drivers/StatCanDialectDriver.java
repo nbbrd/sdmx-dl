@@ -11,6 +11,7 @@ import nbbrd.io.function.IOFunction;
 import nbbrd.io.function.IOSupplier;
 import nbbrd.io.http.*;
 import nbbrd.io.net.MediaType;
+import nbbrd.io.text.BaseProperty;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
 import sdmxdl.ext.Cache;
@@ -18,6 +19,9 @@ import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.provider.*;
+import sdmxdl.provider.ri.http.HttpFactory;
+import sdmxdl.provider.ri.http.HttpManager;
+import sdmxdl.provider.web.ConnectionFactory;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
@@ -42,7 +46,6 @@ import static java.util.regex.Pattern.compile;
 import static java.util.stream.Collectors.toMap;
 import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.DataSet.toDataSet;
-import static sdmxdl.provider.ri.drivers.RiHttpUtils.DEFAULT_HTTP_FACTORY;
 import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
 import static sdmxdl.provider.web.WebValidators.dataflowRefOf;
 
@@ -57,9 +60,7 @@ public final class StatCanDialectDriver implements Driver {
             .builder()
             .id(DIALECTS_STATCAN)
             .rank(NATIVE_DRIVER_RANK)
-            .connector(StatCanDialectDriver::newConnection)
-            .propertiesOf(DEFAULT_HTTP_FACTORY.getFactoryProperties())
-            .propertyOf(CACHE_TTL_PROPERTY)
+            .connector(new StatCanConnectionFactory())
             .source(WebSource
                     .builder()
                     .id("STATCAN")
@@ -75,21 +76,32 @@ public final class StatCanDialectDriver implements Driver {
                     .build())
             .build();
 
-    private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
-        StatCanClient client = new DefaultStatCanClient(
-                HasMarker.of(source),
-                source.getEndpoint(),
-                languages,
-                DEFAULT_HTTP_FACTORY.create(source, context)
-        );
+    private static final class StatCanConnectionFactory implements ConnectionFactory {
 
-        StatCanClient cachedClient = CachedStatCanClient.of(
-                client,
-                context.getDriverCache(source), CACHE_TTL_PROPERTY.get(source.getProperties()),
-                source, languages
-        );
+        public final HttpFactory httpFactory = HttpManager.getHttpFactory();
 
-        return new StatCanConnection(cachedClient);
+        @Override
+        public @NonNull List<BaseProperty> getConnectionProperties() {
+            return PropertiesSupport.merge(httpFactory.getHttpClientProperties(), CACHE_TTL_PROPERTY);
+        }
+
+        @Override
+        public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
+            StatCanClient client = new DefaultStatCanClient(
+                    HasMarker.of(source),
+                    source.getEndpoint(),
+                    languages,
+                    httpFactory.createHttpClient(source, context)
+            );
+
+            StatCanClient cachedClient = CachedStatCanClient.of(
+                    client,
+                    context.getDriverCache(source), CACHE_TTL_PROPERTY.get(source.getProperties()),
+                    source, languages
+            );
+
+            return new StatCanConnection(cachedClient);
+        }
     }
 
     @lombok.AllArgsConstructor
@@ -215,10 +227,10 @@ public final class StatCanDialectDriver implements Driver {
         public @NonNull URI ping() throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(URLQueryBuilder
-                            .of(endpoint.toURL())
+                    .query(UriQueryBuilder
+                            .of(endpoint)
                             .path("getAllCubesListLite")
-                            .buildURI())
+                            .build())
                     .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
                     .build();
 
@@ -230,10 +242,10 @@ public final class StatCanDialectDriver implements Driver {
         private DataTable[] getAllCubesListLite() throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(URLQueryBuilder
-                            .of(endpoint.toURL())
+                    .query(UriQueryBuilder
+                            .of(endpoint)
                             .path("getAllCubesListLite")
-                            .buildURI())
+                            .build())
                     .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
                     .build();
 
@@ -247,11 +259,11 @@ public final class StatCanDialectDriver implements Driver {
         private FullTableDownloadSDMX getFullTableDownloadSDMX(int productId) throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(URLQueryBuilder
-                            .of(endpoint.toURL())
+                    .query(UriQueryBuilder
+                            .of(endpoint)
                             .path("getFullTableDownloadSDMX")
                             .path(String.valueOf(productId))
-                            .buildURI())
+                            .build())
                     .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
                     .build();
 

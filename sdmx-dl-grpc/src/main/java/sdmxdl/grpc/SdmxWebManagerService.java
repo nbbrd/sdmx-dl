@@ -1,6 +1,7 @@
 package sdmxdl.grpc;
 
-import io.quarkiverse.mcp.server.*;
+import io.quarkiverse.mcp.server.WrapBusinessError;
+import io.quarkus.arc.Arc;
 import io.quarkus.grpc.GrpcService;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import io.smallrye.mutiny.Multi;
@@ -16,22 +17,17 @@ import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import sdmxdl.*;
-import sdmxdl.web.Search;
 import sdmxdl.format.protobuf.*;
 import sdmxdl.format.protobuf.web.MonitorReportDto;
 import sdmxdl.format.protobuf.web.WebSourceDto;
-import sdmxdl.format.protobuf.web.WebSourcesDto;
 import sdmxdl.web.SdmxWebManager;
+import sdmxdl.web.Search;
 import sdmxdl.web.WebSource;
-import sdmxdl.web.WebSources;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
-import static sdmxdl.DatabaseRef.NO_DATABASE_KEYWORD;
-import static sdmxdl.Languages.ANY_KEYWORD;
 
 @Path("/sdmx-dl")
 @Consumes(APPLICATION_JSON)
@@ -41,7 +37,10 @@ import static sdmxdl.Languages.ANY_KEYWORD;
 @WrapBusinessError({IOException.class, IllegalArgumentException.class})
 public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
 
-    private final SdmxWebManager manager = SdmxWebManager.ofServiceLoader().warmupAsync();
+    // This class is both a @GrpcService bean and a JAX-RS resource. RESTEasy Reactive instantiates
+    // the resource via a no-arg constructor (not through CDI), so the shared SdmxWebManager singleton
+    // is resolved programmatically to guarantee a single instance across gRPC, REST and MCP.
+    private final SdmxWebManager manager = Arc.container().select(SdmxWebManager.class).get();
 
     public record ErrorResponse(String type, String message) {
         private static ErrorResponse of(Exception x) {
@@ -170,193 +169,6 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
                 .item(ProtoApi.fromAbout());
     }
 
-    private WebSource getPublicSourceForMcp(String source) {
-        WebSource webSource = manager.getSources().get(source);
-        if (webSource == null || !Confidentiality.PUBLIC.isAllowedIn(webSource)) {
-            throw new IllegalArgumentException("Cannot find source: " + source);
-        }
-        return webSource;
-    }
-
-    @Prompt(description = "List SDMX sources IDs.", name = "listSourceIds")
-    public PromptResponse mcpSourceIds() {
-        return PromptResponse.withMessages(manager.getSources()
-                .values()
-                .stream()
-                .filter(source -> !source.isAlias())
-                .filter(Confidentiality.PUBLIC::isAllowedIn)
-                .map(WebSource::getId)
-                .map(PromptMessage::withUserRole)
-                .toList()
-        );
-    }
-
-    private static final String SOURCE_ARG = "SDMX source ID";
-    private static final String LANGUAGES_ARG = "Language priority list";
-    private static final String DATABASE_ARG = "Database ref";
-    private static final String FLOW_ARG = "SDMX flow ref";
-    private static final String KEY_ARG = "SDMX key";
-    private static final String DETAIL_ARG = "Amount of information to retrieve (FULL, DATA_ONLY, SERIES_KEYS_ONLY, NO_DATA)";
-    private static final String QUERY_ARG = "Search query (free text)";
-    private static final String MAX_RESULTS_ARG = "Maximum number of results to return";
-
-    @Tool(description = "Get description of SDMX-DL.")
-    public AboutDto mcpAbout() {
-        return ProtoApi.fromAbout();
-    }
-
-    @Tool(description = "List SDMX sources.")
-    public WebSourcesDto mcpSources() {
-        return ProtoWeb.fromWebSources(WebSources.builder().sources(
-                manager.getSources()
-                        .values()
-                        .stream()
-                        .filter(source -> !source.isAlias())
-                        .filter(Confidentiality.PUBLIC::isAllowedIn)
-                        .toList()
-        ).build());
-    }
-
-    @Tool(description = "List SDMX databases.")
-    public List<DatabaseDto> mcpDatabases(
-            @ToolArg(description = SOURCE_ARG) String source,
-            @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = ANY_KEYWORD) String languages
-    ) throws IOException {
-        return manager.using(getPublicSourceForMcp(source))
-                .getDatabases(SourceRequest
-                        .builder()
-                        .languagesOf(languages)
-                        .build())
-                .stream()
-                .map(ProtoApi::fromDatabase)
-                .toList();
-    }
-
-    @Tool(description = "List SDMX data flows.")
-    public List<FlowDto> mcpFlows(
-            @ToolArg(description = SOURCE_ARG) String source,
-            @ToolArg(description = DATABASE_ARG, required = false, defaultValue = NO_DATABASE_KEYWORD) String database,
-            @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = ANY_KEYWORD) String languages
-    ) throws IOException {
-        return manager
-                .using(getPublicSourceForMcp(source))
-                .getFlows(DatabaseRequest
-                        .builder()
-                        .databaseOf(database)
-                        .languagesOf(languages)
-                        .build())
-                .stream()
-                .map(ProtoApi::fromDataflow)
-                .map(SdmxWebManagerService::cleanDescription)
-                .toList();
-    }
-
-    private static FlowDto cleanDescription(FlowDto flowDto) {
-        return flowDto.toBuilder()
-                .clearDescription()
-//                .clearName()
-//                .clearStructureRef()
-//                .setDescription(flowDto.getDescription().replaceAll("<[^>]*>", ""))
-                .build();
-    }
-
-    @Tool(description = "Search SDMX data flows by relevance using hybrid search (BM25 + trigram).")
-    public List<FlowDto> mcpSearchFlows(
-            @ToolArg(description = SOURCE_ARG) String source,
-            @ToolArg(description = QUERY_ARG) String query,
-            @ToolArg(description = DATABASE_ARG, required = false, defaultValue = NO_DATABASE_KEYWORD) String database,
-            @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = ANY_KEYWORD) String languages,
-            @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = "20") int maxResults
-    ) throws IOException {
-        Collection<Flow> flows = manager
-                .using(getPublicSourceForMcp(source))
-                .getFlows(DatabaseRequest
-                        .builder()
-                        .databaseOf(database)
-                        .languagesOf(languages)
-                        .build());
-        return Search.ofFlows(flows).search(query, maxResults)
-                .stream()
-                .map(result -> ProtoApi.fromDataflow(result.getItem()))
-                .toList();
-    }
-
-    @Tool(description = "Search SDMX sources by relevance using hybrid search (BM25 + trigram).")
-    public List<WebSourceDto> mcpSearchSources(
-            @ToolArg(description = QUERY_ARG) String query,
-            @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = ANY_KEYWORD) String languages,
-            @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = "20") int maxResults
-    ) {
-        List<WebSource> sources = manager.getSources()
-                .values()
-                .stream()
-                .filter(source -> !source.isAlias())
-                .filter(Confidentiality.PUBLIC::isAllowedIn)
-                .toList();
-        return Search.ofSources(sources, Languages.parse(languages)).search(query, maxResults)
-                .stream()
-                .map(result -> ProtoWeb.fromWebSource(result.getItem()))
-                .toList();
-    }
-
-    @Tool(description = "Search SDMX databases by relevance using hybrid search (BM25 + trigram).")
-    public List<DatabaseDto> mcpSearchDatabases(
-            @ToolArg(description = SOURCE_ARG) String source,
-            @ToolArg(description = QUERY_ARG) String query,
-            @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = ANY_KEYWORD) String languages,
-            @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = "20") int maxResults
-    ) throws IOException {
-        Collection<Database> databases = manager
-                .using(getPublicSourceForMcp(source))
-                .getDatabases(SourceRequest
-                        .builder()
-                        .languagesOf(languages)
-                        .build());
-        return Search.ofDatabases(databases).search(query, maxResults)
-                .stream()
-                .map(result -> ProtoApi.fromDatabase(result.getItem()))
-                .toList();
-    }
-
-    @Tool(description = "Get SDMX metadata such as flow and structure.")
-    public MetaSetDto mcpMeta(
-            @ToolArg(description = SOURCE_ARG) String source,
-            @ToolArg(description = FLOW_ARG) String flow,
-            @ToolArg(description = DATABASE_ARG, required = false, defaultValue = NO_DATABASE_KEYWORD) String database,
-            @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = ANY_KEYWORD) String languages
-    ) throws IOException {
-        return ProtoApi.fromMetaSet(manager
-                .using(getPublicSourceForMcp(source))
-                .getMeta(FlowRequest
-                        .builder()
-                        .flowOf(flow)
-                        .databaseOf(database)
-                        .languagesOf(languages)
-                        .build())
-        );
-    }
-
-    @Tool(description = "Get SDMX data series alongside their flow reference and the query used to get them.")
-    public DataSetDto mcpData(
-            @ToolArg(description = SOURCE_ARG) String source,
-            @ToolArg(description = FLOW_ARG) String flow,
-            @ToolArg(description = KEY_ARG) String key,
-            @ToolArg(description = DETAIL_ARG) String detail,
-            @ToolArg(description = DATABASE_ARG, required = false, defaultValue = NO_DATABASE_KEYWORD) String database,
-            @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = ANY_KEYWORD) String languages
-    ) throws IOException {
-        return ProtoApi.fromDataSet(manager
-                .using(getPublicSourceForMcp(source))
-                .getData(KeyRequest
-                        .builder()
-                        .flowOf(flow)
-                        .keyOf(key)
-                        .detailOf(detail)
-                        .databaseOf(database)
-                        .languagesOf(languages)
-                        .build())
-        );
-    }
 
     @POST
     @Path("/sources")

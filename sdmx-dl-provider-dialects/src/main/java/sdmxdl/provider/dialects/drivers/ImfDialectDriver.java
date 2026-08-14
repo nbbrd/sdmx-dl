@@ -18,7 +18,8 @@ package sdmxdl.provider.dialects.drivers;
 
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
-import nbbrd.io.http.URLQueryBuilder;
+import nbbrd.io.http.UriQueryBuilder;
+import nbbrd.io.text.BaseProperty;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.Feature;
 import sdmxdl.Languages;
@@ -30,19 +31,21 @@ import sdmxdl.provider.ri.drivers.RiRestClient;
 import sdmxdl.provider.ri.drivers.Sdmx21RestErrors;
 import sdmxdl.provider.ri.drivers.Sdmx21RestParsers;
 import sdmxdl.provider.ri.drivers.Sdmx21RestQueries;
+import sdmxdl.provider.ri.http.HttpFactory;
+import sdmxdl.provider.ri.http.HttpManager;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestClient;
-import sdmxdl.provider.web.RestConnector;
+import sdmxdl.provider.web.RestClientFactory;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.EnumSet;
+import java.util.List;
 
 import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
-import static sdmxdl.provider.ri.drivers.RiHttpUtils.DEFAULT_HTTP_FACTORY;
 
 /**
  * @author Philippe Charles
@@ -58,8 +61,7 @@ public final class ImfDialectDriver implements Driver {
             .builder()
             .id(DIALECTS_IMF)
             .rank(NATIVE_DRIVER_RANK)
-            .connector(RestConnector.of(ImfDialectDriver::newClient))
-            .propertiesOf(DEFAULT_HTTP_FACTORY.getFactoryProperties())
+            .connectorOf(new ImfRestClientFactory())
             .source(WebSource
                     .builder()
                     .id("IMF")
@@ -73,18 +75,29 @@ public final class ImfDialectDriver implements Driver {
                     .build())
             .build();
 
-    private static RestClient newClient(WebSource s, Languages languages, WebContext c) {
-        return new RiRestClient(
-                HasMarker.of(s),
-                s.getEndpoint(),
-                languages,
-                ObsParser::newDefault,
-                DEFAULT_HTTP_FACTORY.create(s, c),
-                ImfQueries.INSTANCE,
-                Sdmx21RestParsers.DEFAULT,
-                Sdmx21RestErrors.DEFAULT,
-                EnumSet.allOf(Feature.class)
-        );
+    private static final class ImfRestClientFactory implements RestClientFactory {
+
+        private final HttpFactory httpFactory = HttpManager.getHttpFactory();
+
+        @Override
+        public @NonNull List<BaseProperty> getRestClientProperties() {
+            return httpFactory.getHttpClientProperties();
+        }
+
+        @Override
+        public @NonNull RestClient createRestClient(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) {
+            return new RiRestClient(
+                    HasMarker.of(source),
+                    source.getEndpoint(),
+                    languages,
+                    ObsParser::newDefault,
+                    httpFactory.createHttpClient(source, context),
+                    ImfQueries.INSTANCE,
+                    Sdmx21RestParsers.DEFAULT,
+                    Sdmx21RestErrors.DEFAULT,
+                    EnumSet.allOf(Feature.class)
+            );
+        }
     }
 
     private static final class ImfQueries extends Sdmx21RestQueries {
@@ -97,7 +110,7 @@ public final class ImfDialectDriver implements Driver {
 
         @SdmxFix(id = 1, category = QUERY, cause = "Children reference does not return codelists")
         @Override
-        public @NonNull URLQueryBuilder getStructureQuery(@NonNull URL endpoint, @NonNull StructureRef ref) {
+        public @NonNull UriQueryBuilder getStructureQuery(@NonNull URI endpoint, @NonNull StructureRef ref) {
             return onMeta(endpoint, DEFAULT_DATASTRUCTURE_PATH, ref)
                     .param(REFERENCES_PARAM, "descendants");
         }

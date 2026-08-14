@@ -16,16 +16,14 @@
  */
 package sdmxdl.provider.connectors.drivers;
 
-import nbbrd.design.DirectImpl;
 import it.bancaditalia.oss.sdmx.client.custom.OECD;
+import nbbrd.design.DirectImpl;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.provider.web.DriverSupport;
-import sdmxdl.provider.web.RestConnector;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 
 import static sdmxdl.Confidentiality.PUBLIC;
-import static sdmxdl.provider.connectors.drivers.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
 
 /**
  * @author Philippe Charles
@@ -41,8 +39,10 @@ public final class OecdDriver implements Driver {
             .builder()
             .id(CONNECTORS_OECD)
             .rank(WRAPPED_DRIVER_RANK)
-            .connector(RestConnector.of(ConnectorsRestClient.ofSpecific(OECD::new)))
-            .properties(CONNECTORS_CONNECTION_PROPERTIES)
+            .connectorOf(SpecificRestClientFactory
+                    .builder()
+                    .supplier(OECD::new)
+                    .build())
             .source(WebSource
                     .builder()
                     .id("OECD")

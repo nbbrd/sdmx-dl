@@ -21,19 +21,26 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
 import sdmxdl.*;
-import sdmxdl.provider.caching.MemCachingSupport;
 import sdmxdl.provider.DataRef;
+import sdmxdl.provider.caching.MemCachingSupport;
+import sdmxdl.provider.ri.http.RateLimitingDecoration;
 import sdmxdl.provider.ri.networking.RiNetworking;
 import sdmxdl.web.spi.WebContext;
 import tests.sdmxdl.web.spi.DriverAssert;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 
+import static nbbrd.io.text.BaseProperty.keysOf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static sdmxdl.Detail.FULL;
 import static sdmxdl.Detail.SERIES_KEYS_ONLY;
+import static sdmxdl.provider.ri.http.CachingDecoration.HTTP_CACHING_PROPERTY;
+import static sdmxdl.provider.ri.http.CookieDecoration.COOKIE_PROPERTY;
+import static sdmxdl.provider.ri.http.DumpingDecoration.DUMP_FOLDER_PROPERTY;
+import static sdmxdl.provider.ri.http.RateLimitingDecoration.RATE_LIMITING_PROPERTY;
+import static sdmxdl.provider.ri.http.RetryDecoration.MAX_RETRIES_PROPERTY;
+import static sdmxdl.provider.web.DriverProperties.*;
 
 /**
  * @author Philippe Charles
@@ -46,8 +53,27 @@ public class BbkDialectDriverTest {
     }
 
     @Test
-    public void testQueries() throws MalformedURLException {
-        URL endpoint = new URL(" https://api.statistiken.bundesbank.de/rest");
+    public void testProperties() {
+        assertThat(new BbkDialectDriver().getDriverPropertyNames())
+                .containsExactlyInAnyOrderElementsOf(
+                        keysOf(
+                                CONNECT_TIMEOUT_PROPERTY,
+                                READ_TIMEOUT_PROPERTY,
+                                USER_AGENT_PROPERTY,
+                                AUTH_SCHEME_PROPERTY,
+                                MAX_REDIRECTS_PROPERTY,
+                                MAX_RETRIES_PROPERTY,
+                                DUMP_FOLDER_PROPERTY,
+                                COOKIE_PROPERTY,
+                                CACHE_TTL_PROPERTY,
+                                HTTP_CACHING_PROPERTY,
+                                RATE_LIMITING_PROPERTY)
+                );
+    }
+
+    @Test
+    public void testQueries() {
+        URI endpoint = URI.create("https://api.statistiken.bundesbank.de/rest");
 
         BbkDialectDriver.BbkQueries queries = BbkDialectDriver.BbkQueries.INSTANCE;
 

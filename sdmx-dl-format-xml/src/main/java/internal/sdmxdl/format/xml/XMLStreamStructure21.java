@@ -51,6 +51,8 @@ public final class XMLStreamStructure21 {
     private static final String NAME_TAG = "Name";
     private static final String CORE_REPRESENTATION_TAG = "CoreRepresentation";
     private static final String LOCAL_REPRESENTATION_TAG = "LocalRepresentation";
+    private static final String ENUMERATION_TAG = "Enumeration";
+    private static final String TEXT_FORMAT_TAG = "TextFormat";
     private static final String CONCEPT_IDENTITY_TAG = "ConceptIdentity";
     private static final String REF_TAG = "Ref";
     private static final String ATTRIBUTE_LIST_TAG = "AttributeList";
@@ -167,7 +169,7 @@ public final class XMLStreamStructure21 {
         XMLStreamUtil.check(id != null, reader, "Missing Concept id");
 
         label.clear();
-        CodelistRef coreRepresentation = null;
+        Representation coreRepresentation = null;
         while (XMLStreamUtil.nextTags(reader, CONCEPT_TAG)) {
             switch (reader.getLocalName()) {
                 case NAME_TAG:
@@ -178,7 +180,9 @@ public final class XMLStreamStructure21 {
                     break;
             }
         }
-        concepts.add(new Concept(id, label.build(id), coreRepresentation, conceptSchemeID, conceptSchemeVersion));
+        CodelistRef coreRef = coreRepresentation != null ? coreRepresentation.getEnumeration() : null;
+        boolean coreTextFormat = coreRepresentation != null && coreRepresentation.isTextFormat();
+        concepts.add(new Concept(id, label.build(id), coreRef, coreTextFormat, conceptSchemeID, conceptSchemeVersion));
     }
 
     private void parseDataStructures(XMLStreamReader reader, List<Structure> result, DsdContext context) throws XMLStreamException {
@@ -242,7 +246,7 @@ public final class XMLStreamStructure21 {
         XMLStreamUtil.check(id != null, reader, "Missing Dimension id");
 
         ConceptIdentity conceptIdentity = null;
-        CodelistRef localRepresentation = null;
+        Representation localRepresentation = null;
         while (XMLStreamUtil.nextTags(reader, DIMENSION_TAG)) {
             switch (reader.getLocalName()) {
                 case CONCEPT_IDENTITY_TAG:
@@ -257,13 +261,21 @@ public final class XMLStreamStructure21 {
         XMLStreamUtil.check(conceptIdentity != null, reader, "Missing Concept identity for Dimension '%s'", id);
 
         Concept concept = context.findConceptByConceptIdentity(conceptIdentity).orElseGet(missingConceptFallback(conceptIdentity));
-        CodelistRef ref = concept.resolveRef(localRepresentation).orElseThrow(missingCodelistRefError(conceptIdentity, id));
+        CodelistRef ref = concept.resolveRef(localRepresentation != null ? localRepresentation.getEnumeration() : null).orElse(NO_CODELIST_REF);
+
+        if (ref == NO_CODELIST_REF) {
+            // Non-enumerated dimension: valid only if a TextFormat representation is provided,
+            // either locally on the dimension or inherited from the concept's core representation
+            boolean textFormat = (localRepresentation != null && localRepresentation.isTextFormat()) || concept.hasTextFormat();
+            XMLStreamUtil.check(textFormat, reader,
+                    "Missing Codelist or TextFormat representation for Dimension '%s'", id);
+        }
 
         ds.dimension(Dimension
                 .builder()
                 .id(id)
                 .name(concept.getName())
-                .codelist(context.findCodelistByRef(ref).orElse(emptyCodelistFallback(ref)))
+                .codelist(ref != NO_CODELIST_REF ? context.findCodelistByRef(ref).orElse(emptyCodelistFallback(ref)) : NO_CODELIST)
                 .build()
         );
 
@@ -286,26 +298,37 @@ public final class XMLStreamStructure21 {
         return null;
     }
 
-    private CodelistRef parseLocalRepresentation(XMLStreamReader reader) throws XMLStreamException {
-        if (XMLStreamUtil.nextTag(reader, LOCAL_REPRESENTATION_TAG, REF_TAG)) {
-            String id = reader.getAttributeValue(null, ID_ATTR);
-            String version = reader.getAttributeValue(null, VERSION_ATTR);
-            String agencyID = reader.getAttributeValue(null, AGENCY_ID_ATTR);
-
-            XMLStreamUtil.check(id != null, reader, "Missing Local Codelist id");
-
-            return CodelistRef.of(agencyID, id, version);
-        }
-        return null;
+    private Representation parseLocalRepresentation(XMLStreamReader reader) throws XMLStreamException {
+        return parseRepresentation(reader, LOCAL_REPRESENTATION_TAG);
     }
 
-    private CodelistRef parseCoreRepresentation(XMLStreamReader reader) throws XMLStreamException {
-        if (XMLStreamUtil.nextTag(reader, CORE_REPRESENTATION_TAG, REF_TAG)) {
+    private Representation parseCoreRepresentation(XMLStreamReader reader) throws XMLStreamException {
+        return parseRepresentation(reader, CORE_REPRESENTATION_TAG);
+    }
+
+    private Representation parseRepresentation(XMLStreamReader reader, String representationTag) throws XMLStreamException {
+        CodelistRef enumeration = null;
+        boolean textFormat = false;
+        while (XMLStreamUtil.nextTags(reader, representationTag)) {
+            switch (reader.getLocalName()) {
+                case ENUMERATION_TAG:
+                    enumeration = parseEnumerationRef(reader);
+                    break;
+                case TEXT_FORMAT_TAG:
+                    textFormat = true;
+                    break;
+            }
+        }
+        return new Representation(enumeration, textFormat);
+    }
+
+    private CodelistRef parseEnumerationRef(XMLStreamReader reader) throws XMLStreamException {
+        if (XMLStreamUtil.nextTag(reader, ENUMERATION_TAG, REF_TAG)) {
             String id = reader.getAttributeValue(null, ID_ATTR);
             String version = reader.getAttributeValue(null, VERSION_ATTR);
             String agencyID = reader.getAttributeValue(null, AGENCY_ID_ATTR);
 
-            XMLStreamUtil.check(id != null, reader, "Missing Core Codelist id");
+            XMLStreamUtil.check(id != null, reader, "Missing Codelist id");
 
             return CodelistRef.of(agencyID, id, version);
         }
@@ -350,7 +373,7 @@ public final class XMLStreamStructure21 {
         XMLStreamUtil.check(id != null, reader, "Missing Attribute id");
 
         ConceptIdentity conceptIdentity = null;
-        CodelistRef localRepresentation = null;
+        Representation localRepresentation = null;
         AttributeRelationship attributeRelationship = AttributeRelationship.DATAFLOW;
         while (XMLStreamUtil.nextTags(reader, ATTRIBUTE_TAG)) {
             switch (reader.getLocalName()) {
@@ -369,7 +392,7 @@ public final class XMLStreamStructure21 {
         XMLStreamUtil.check(conceptIdentity != null, reader, "Missing Concept identity for Attribute '%s'", id);
 
         Concept concept = context.findConceptByConceptIdentity(conceptIdentity).orElseGet(missingConceptFallback(conceptIdentity));
-        CodelistRef ref = concept.resolveRef(localRepresentation).orElse(NO_CODELIST_REF);
+        CodelistRef ref = concept.resolveRef(localRepresentation != null ? localRepresentation.getEnumeration() : null).orElse(NO_CODELIST_REF);
 
         ds.attribute(Attribute
                 .builder()
@@ -405,13 +428,18 @@ public final class XMLStreamStructure21 {
     }
 
     private static @NonNull Supplier<Concept> missingConceptFallback(@NonNull ConceptIdentity conceptIdentity) {
-        return () -> new Concept(conceptIdentity.getId(), conceptIdentity.getId(), null, null, null);
-    }
-
-    private static @NonNull Supplier<XMLStreamException> missingCodelistRefError(ConceptIdentity conceptIdentity, String dimensionId) {
-        return () -> new XMLStreamException("Cannot resolve CodelistRef for Concept '" + conceptIdentity.getId() + "' Dimension '" + dimensionId + "'");
+        return () -> new Concept(conceptIdentity.getId(), conceptIdentity.getId(), null, false, null, null);
     }
 
     private static final CodelistRef NO_CODELIST_REF = null;
     private static final Codelist NO_CODELIST = null;
+
+    @lombok.Value
+    private static class Representation {
+
+        @org.jspecify.annotations.Nullable
+        CodelistRef enumeration;
+
+        boolean textFormat;
+    }
 }

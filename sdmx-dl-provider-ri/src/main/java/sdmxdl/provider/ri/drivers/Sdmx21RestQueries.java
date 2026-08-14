@@ -2,10 +2,11 @@ package sdmxdl.provider.ri.drivers;
 
 import lombok.AccessLevel;
 import lombok.NonNull;
-import nbbrd.io.http.URLQueryBuilder;
+import nbbrd.io.http.UriQueryBuilder;
 import sdmxdl.*;
 import sdmxdl.provider.DataRef;
 
+import java.net.URI;
 import java.net.URL;
 
 @lombok.AllArgsConstructor(access = AccessLevel.PROTECTED)
@@ -17,32 +18,32 @@ public class Sdmx21RestQueries implements RiRestQueries {
     private final boolean trailingSlashRequired;
 
     @Override
-    public @NonNull URLQueryBuilder getFlowsQuery(@NonNull URL endpoint) {
+    public @NonNull UriQueryBuilder getFlowsQuery(@NonNull URI endpoint) {
         return onMeta(endpoint, DEFAULT_DATAFLOW_PATH, FLOWS)
                 .trailingSlash(trailingSlashRequired);
     }
 
     @Override
-    public @NonNull URLQueryBuilder getStructureQuery(@NonNull URL endpoint, @NonNull StructureRef ref) {
+    public @NonNull UriQueryBuilder getStructureQuery(@NonNull URI endpoint, @NonNull StructureRef ref) {
         return onMeta(endpoint, DEFAULT_DATASTRUCTURE_PATH, ref)
                 .param(REFERENCES_PARAM, "descendants")
                 .trailingSlash(trailingSlashRequired);
     }
 
     @Override
-    public @NonNull URLQueryBuilder getDataQuery(@NonNull URL endpoint, @NonNull DataRef ref, @NonNull StructureRef dsdRef) {
-        URLQueryBuilder result = onData(endpoint, DEFAULT_DATA_PATH, ref.getFlowRef(), ref.getQuery().getKey(), DEFAULT_PROVIDER_REF);
+    public @NonNull UriQueryBuilder getDataQuery(@NonNull URI endpoint, @NonNull DataRef ref, @NonNull StructureRef dsdRef) {
+        UriQueryBuilder result = onData(endpoint, DEFAULT_DATA_PATH, ref.getFlowRef(), ref.getQuery().getKey(), DEFAULT_PROVIDER_REF);
         applyFilter(ref.getQuery().getDetail(), result);
         return result.trailingSlash(trailingSlashRequired);
     }
 
     @Override
-    public @NonNull URLQueryBuilder getCodelistQuery(@NonNull URL endpoint, @NonNull CodelistRef ref) {
+    public @NonNull UriQueryBuilder getCodelistQuery(@NonNull URI endpoint, @NonNull CodelistRef ref) {
         return onMeta(endpoint, DEFAULT_CODELIST_PATH, ref)
                 .trailingSlash(trailingSlashRequired);
     }
 
-    protected void applyFilter(Detail detail, URLQueryBuilder result) {
+    protected void applyFilter(Detail detail, UriQueryBuilder result) {
         switch (detail) {
             case SERIES_KEYS_ONLY:
                 result.param(DETAIL_PARAM, "serieskeysonly");
@@ -56,8 +57,8 @@ public class Sdmx21RestQueries implements RiRestQueries {
         }
     }
 
-    protected URLQueryBuilder onMeta(URL endpoint, String resourcePath, ResourceRef<?> ref) {
-        return URLQueryBuilder
+    protected UriQueryBuilder onMeta(URI endpoint, String resourcePath, ResourceRef<?> ref) {
+        return UriQueryBuilder
                 .of(endpoint)
                 .path(resourcePath)
                 .path(ref.getAgency())
@@ -65,8 +66,8 @@ public class Sdmx21RestQueries implements RiRestQueries {
                 .path(ref.getVersion());
     }
 
-    protected URLQueryBuilder onData(URL endpoint, String resourcePath, FlowRef flowRef, Key key, String providerRef) {
-        return URLQueryBuilder
+    protected UriQueryBuilder onData(URI endpoint, String resourcePath, FlowRef flowRef, Key key, String providerRef) {
+        return UriQueryBuilder
                 .of(endpoint)
                 .path(resourcePath)
                 .path(flowRef.toString())

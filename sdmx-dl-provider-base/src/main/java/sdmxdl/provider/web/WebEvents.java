@@ -20,7 +20,7 @@ public class WebEvents {
     }
 
     private static String onQuery(String method, String query, Proxy proxy) {
-        String result = "HTTP " + method + " " + query;
+        String result = method + " " + query;
         if (!proxy.equals(Proxy.NO_PROXY)) {
             result += " with proxy '" + proxy + "'";
         }

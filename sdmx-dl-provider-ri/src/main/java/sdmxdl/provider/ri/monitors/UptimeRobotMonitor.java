@@ -7,7 +7,7 @@ import nbbrd.io.text.Parser;
 import nbbrd.io.xml.Stax;
 import nbbrd.io.xml.Xml;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.provider.ri.drivers.RiHttpUtils;
+import sdmxdl.provider.ri.http.HttpManager;
 import sdmxdl.provider.web.WebMonitors;
 import sdmxdl.web.MonitorReport;
 import sdmxdl.web.MonitorStatus;
@@ -59,7 +59,7 @@ public final class UptimeRobotMonitor implements Monitor {
                 .bodyOf(id.toBody())
                 .build();
 
-        HttpClient client = RiHttpUtils.DEFAULT_HTTP_FACTORY.create(source, context);
+        HttpClient client = HttpManager.getDefaultHttpFactory().createHttpClient(source, context);
 
         Xml.Parser<MonitorReport> parser = Stax.StreamParser.valueOf(UptimeRobotMonitor::parseReport);
         try (HttpResponse response = client.send(request)) {

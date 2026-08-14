@@ -1,0 +1,29 @@
+[
+  {
+    "COD": "ENSD314",
+    "Nombre": "Annulments. National Total. Base data. Total. ",
+    "MetaData": [
+      {"Id": 303980, "T3_Variable": "Type of marriage dissolution", "Nombre": "Annulments", "Codigo": ""},
+      {"Id": 16473, "T3_Variable": "National Total", "Nombre": "National Total", "Codigo": "00"},
+      {"Id": 72, "T3_Variable": "Type of data", "Nombre": "Base data", "Codigo": ""},
+      {"Id": 303990, "T3_Variable": "Type of marriage dissolution", "Nombre": "Total", "Codigo": ""}
+    ],
+    "Data": [
+      {"Fecha": "2024-01-01T00:00:00.000+01:00", "T3_TipoDato": "Final value", "T3_Periodo": "A1", "Anyo": 2024, "Valor": 100}
+    ]
+  },
+  {
+    "COD": "ENSD320",
+    "Nombre": "Divorces. National Total. Base data. Total. ",
+    "MetaData": [
+      {"Id": 303985, "T3_Variable": "Type of marriage dissolution", "Nombre": "Divorces", "Codigo": ""},
+      {"Id": 16473, "T3_Variable": "National Total", "Nombre": "National Total", "Codigo": "00"},
+      {"Id": 72, "T3_Variable": "Type of data", "Nombre": "Base data", "Codigo": ""},
+      {"Id": 303990, "T3_Variable": "Type of marriage dissolution", "Nombre": "Total", "Codigo": ""}
+    ],
+    "Data": [
+      {"Fecha": "2024-01-01T00:00:00.000+01:00", "T3_TipoDato": "Final value", "T3_Periodo": "A1", "Anyo": 2024, "Valor": 50}
+    ]
+  }
+]
+

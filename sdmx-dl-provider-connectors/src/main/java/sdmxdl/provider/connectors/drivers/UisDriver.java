@@ -21,7 +21,6 @@ import nbbrd.design.DirectImpl;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.provider.SdmxFix;
 import sdmxdl.provider.web.DriverSupport;
-import sdmxdl.provider.web.RestConnector;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 
@@ -45,8 +44,10 @@ public final class UisDriver implements Driver {
             .builder()
             .id(CONNECTORS_UIS)
             .rank(WRAPPED_DRIVER_RANK)
-            .connector(RestConnector.of(ConnectorsRestClient.ofGeneric(UIS2::new)))
-            .properties(ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES)
+            .connectorOf(GenericRestClientFactory
+                    .builder()
+                    .supplier(UIS2::new)
+                    .build())
             .source(WebSource
                     .builder()
                     .id("UIS")

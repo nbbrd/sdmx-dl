@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mes:Structure xmlns:mes="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message"
+               xmlns:str="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/structure"
+               xmlns:com="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common">
+    <mes:Header>
+        <mes:ID>test</mes:ID>
+        <mes:Test>true</mes:Test>
+        <mes:Prepared>2026-01-01T00:00:00</mes:Prepared>
+        <mes:Sender id="XX"/>
+    </mes:Header>
+    <mes:Structures>
+        <str:Codelists>
+            <str:Codelist agencyID="XX" id="CL_A" version="1.0">
+                <com:Name xml:lang="en">Codelist A</com:Name>
+                <str:Code id="X">
+                    <com:Name xml:lang="en">Value X</com:Name>
+                </str:Code>
+            </str:Codelist>
+        </str:Codelists>
+        <str:Concepts>
+            <str:ConceptScheme agencyID="XX" id="CS" version="1.0">
+                <str:Concept id="ENUM_DIM">
+                    <com:Name xml:lang="en">Enumerated dimension</com:Name>
+                    <str:CoreRepresentation>
+                        <str:Enumeration>
+                            <Ref agencyID="XX" id="CL_A" version="1.0" package="codelist" class="Codelist"/>
+                        </str:Enumeration>
+                    </str:CoreRepresentation>
+                </str:Concept>
+                <str:Concept id="TEXT_DIM">
+                    <com:Name xml:lang="en">Non-enumerated dimension</com:Name>
+                    <str:CoreRepresentation>
+                        <str:TextFormat textType="String" minLength="1" maxLength="20"/>
+                    </str:CoreRepresentation>
+                </str:Concept>
+                <str:Concept id="TIME_PERIOD">
+                    <com:Name xml:lang="en">Time period</com:Name>
+                    <str:CoreRepresentation>
+                        <str:TextFormat textType="ObservationalTimePeriod"/>
+                    </str:CoreRepresentation>
+                </str:Concept>
+                <str:Concept id="OBS_VALUE">
+                    <com:Name xml:lang="en">Observation value</com:Name>
+                </str:Concept>
+            </str:ConceptScheme>
+        </str:Concepts>
+        <str:DataStructures>
+            <str:DataStructure agencyID="XX" id="DSD_TEST" version="1.0">
+                <com:Name xml:lang="en">Test data structure</com:Name>
+                <str:DataStructureComponents>
+                    <str:DimensionList id="DimensionDescriptor">
+                        <str:Dimension id="ENUM_DIM" position="1">
+                            <str:ConceptIdentity>
+                                <Ref maintainableParentID="CS" maintainableParentVersion="1.0" agencyID="XX" id="ENUM_DIM" package="conceptscheme" class="Concept"/>
+                            </str:ConceptIdentity>
+                        </str:Dimension>
+                        <str:Dimension id="TEXT_DIM" position="2">
+                            <str:ConceptIdentity>
+                                <Ref maintainableParentID="CS" maintainableParentVersion="1.0" agencyID="XX" id="TEXT_DIM" package="conceptscheme" class="Concept"/>
+                            </str:ConceptIdentity>
+                        </str:Dimension>
+                        <str:TimeDimension id="TIME_PERIOD" position="3">
+                            <str:ConceptIdentity>
+                                <Ref maintainableParentID="CS" maintainableParentVersion="1.0" agencyID="XX" id="TIME_PERIOD" package="conceptscheme" class="Concept"/>
+                            </str:ConceptIdentity>
+                            <str:LocalRepresentation>
+                                <str:TextFormat textType="ObservationalTimePeriod"/>
+                            </str:LocalRepresentation>
+                        </str:TimeDimension>
+                    </str:DimensionList>
+                    <str:MeasureList id="MeasureDescriptor">
+                        <str:PrimaryMeasure id="OBS_VALUE">
+                            <str:ConceptIdentity>
+                                <Ref maintainableParentID="CS" maintainableParentVersion="1.0" agencyID="XX" id="OBS_VALUE" package="conceptscheme" class="Concept"/>
+                            </str:ConceptIdentity>
+                        </str:PrimaryMeasure>
+                    </str:MeasureList>
+                </str:DataStructureComponents>
+            </str:DataStructure>
+        </str:DataStructures>
+    </mes:Structures>
+</mes:Structure>
+

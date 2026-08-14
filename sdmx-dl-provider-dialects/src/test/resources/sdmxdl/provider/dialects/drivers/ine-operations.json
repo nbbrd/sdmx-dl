@@ -1,0 +1,15 @@
+[
+  {
+    "Id": 25,
+    "Cod_IOE": "30138",
+    "Nombre": "Consumer Price Index (CPI)",
+    "Codigo": "IPC"
+  },
+  {
+    "Id": 4,
+    "Cod_IOE": "30147",
+    "Nombre": "Statistics on Unpaid Bills",
+    "Codigo": "EI"
+  }
+]
+

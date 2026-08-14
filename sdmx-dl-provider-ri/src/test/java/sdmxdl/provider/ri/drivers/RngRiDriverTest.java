@@ -9,6 +9,7 @@ import tests.sdmxdl.web.spi.DriverAssert;
 
 import java.io.IOException;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static sdmxdl.DatabaseRef.NO_DATABASE;
 import static sdmxdl.Languages.ANY;
 
@@ -17,6 +18,12 @@ public class RngRiDriverTest {
     @Test
     public void testCompliance() {
         DriverAssert.assertCompliance(new RngRiDriver());
+    }
+
+    @Test
+    public void testProperties() {
+        assertThat(new RngRiDriver().getDriverPropertyNames())
+                .isEmpty();
     }
 
     public static void main(String[] args) throws IOException {

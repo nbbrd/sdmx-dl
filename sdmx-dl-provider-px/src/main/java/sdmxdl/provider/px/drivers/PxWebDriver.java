@@ -1,27 +1,26 @@
 package sdmxdl.provider.px.drivers;
 
-import com.google.gson.*;
+import internal.sdmxdl.provider.px.drivers.*;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
-import nbbrd.design.MightBeGenerated;
 import nbbrd.design.NonNegative;
 import nbbrd.design.VisibleForTesting;
-import nbbrd.io.FileParser;
 import nbbrd.io.function.IOSupplier;
-import nbbrd.io.http.*;
-import nbbrd.io.net.MediaType;
-import nbbrd.io.text.*;
+import nbbrd.io.http.HttpClient;
+import nbbrd.io.http.ext.RateLimiter;
+import nbbrd.io.text.BaseProperty;
+import nbbrd.io.text.BooleanProperty;
+import nbbrd.io.text.Parser;
+import nbbrd.io.text.Property;
 import nbbrd.service.ServiceProvider;
 import org.jspecify.annotations.Nullable;
 import sdmxdl.*;
 import sdmxdl.ext.Cache;
 import sdmxdl.format.DataCursor;
-import sdmxdl.format.ObsParser;
 import sdmxdl.format.design.PropertyDefinition;
-import sdmxdl.format.time.ObservationalTimePeriod;
-import sdmxdl.format.time.TimeFormats;
-import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.provider.*;
+import sdmxdl.provider.ri.http.*;
+import sdmxdl.provider.web.ConnectionFactory;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
@@ -29,21 +28,16 @@ import sdmxdl.web.spi.WebContext;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.time.Duration;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static nbbrd.io.Resource.newInputStream;
-import static sdmxdl.format.time.TimeFormats.IGNORE_ERROR;
-import static sdmxdl.provider.ri.drivers.RiHttpUtils.DEFAULT_HTTP_FACTORY;
 import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
 import static sdmxdl.provider.web.DriverProperties.commaSeparatedProperty;
 
@@ -66,6 +60,27 @@ public final class PxWebDriver implements Driver {
     static final BooleanProperty ENABLE_PROPERTY =
             BooleanProperty.of("enablePxWebDriver", false);
 
+    /**
+     * Strategy used to list the tables (flows) of a database.
+     * <ul>
+     *     <li>{@link #FLAT}: single fast query ({@code ?query=*&filter=*}); works only on
+     *     servers that support the search endpoint and keep a fresh index.</li>
+     *     <li>{@link #TREE}: reliable but slower folder-tree navigation.</li>
+     *     <li>{@link #AUTO}: try {@code FLAT} first and fall back to {@code TREE} when the
+     *     search endpoint is unsupported (e.g. HTTP 400) or returns nothing.</li>
+     * </ul>
+     * Note that {@code AUTO} cannot detect a <em>stale</em> search index (HTTP 200 with
+     * outdated entries); such sources must be pinned to {@code TREE}.
+     */
+    @VisibleForTesting
+    public enum TableListing {
+        AUTO, FLAT, TREE
+    }
+
+    @PropertyDefinition
+    static final Property<TableListing> TABLE_LISTING_PROPERTY =
+            Property.of(DRIVER_PROPERTY_PREFIX + ".tableListing", TableListing.AUTO, Parser.onEnum(TableListing.class), nbbrd.io.text.Formatter.onEnum());
+
     static final String DEFAULT_VERSION = "v1";
 
     static final String VERSION_VARIABLE = UriTemplate.getVariable("version");
@@ -74,65 +89,176 @@ public final class PxWebDriver implements Driver {
 
     static final String LANGUAGE_VARIABLE = UriTemplate.getVariable("lang");
 
+    /**
+     * Upper bound on how long a request may wait for a rate-limiting permit before failing.
+     */
+    static final Duration RATE_LIMIT_MAX_WAIT = Duration.ofSeconds(120);
+
+    /**
+     * Fallback used when the server-declared rate limit cannot be determined; it never
+     * throttles proactively and only reacts to {@code 429} responses.
+     */
+    @VisibleForTesting
+    static final RateLimiter FALLBACK_RATE_LIMITER = RateLimiter.unlimitedAdaptive(RATE_LIMIT_MAX_WAIT);
+
+    /**
+     * Builds a fixed rate limiter from the server-declared configuration ({@code maxCalls} per
+     * {@code timeWindow} seconds), falling back to a non-throttling limiter when the configuration
+     * is invalid.
+     */
+    @VisibleForTesting
+    static @NonNull RateLimiter toRateLimiter(@NonNull PxConfig config) {
+        if (config.getMaxCalls() <= 0 || config.getTimeWindow() <= 0) {
+            return FALLBACK_RATE_LIMITER;
+        }
+        return RateLimiter.fixed(
+                config.getMaxCalls() / (double) config.getTimeWindow(),
+                config.getMaxCalls(),
+                RATE_LIMIT_MAX_WAIT);
+    }
+
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport
             .builder()
             .id(PX_PXWEB)
             .rank(NATIVE_DRIVER_RANK)
             .availability(ENABLE_PROPERTY::get)
-            .connector(PxWebDriver::newConnection)
-            .propertiesOf(DEFAULT_HTTP_FACTORY.getFactoryProperties())
-            .propertyOf(VERSIONS_PROPERTY)
-            .propertyOf(LANGUAGES_PROPERTY)
-            .propertyOf(CACHE_TTL_PROPERTY)
+            .connector(new PxWebConnectionFactory())
             .sources(IOSupplier.unchecked(PxWebDriver::loadDefaultSources).get())
             .build();
 
     private static List<WebSource> loadDefaultSources() throws IOException {
-        Map<String, URL> websiteByHost = Websites.PARSER.parseResource(PxWebDriver.class, "websites.csv", UTF_8);
+        Map<String, Websites.Website> websiteByHost = Websites.PARSER.parseResource(PxWebDriver.class, "websites.csv", UTF_8);
         try (InputStream stream = newInputStream(PxWebDriver.class, "api.json")) {
             return PxWebSourcesFormat.INSTANCE.parseStream(stream)
                     .getSources()
                     .stream()
-                    .map(source -> source.toBuilder().website(websiteByHost.get(source.getEndpoint().getHost())).build())
+                    .map(source -> applyWebsite(source, websiteByHost.get(source.getEndpoint().getHost())))
                     .collect(toList());
         }
     }
 
-    private static PxWebClient newClient(WebSource source, Languages languages, WebContext context) throws IOException {
-        PxWebClient client = new DefaultPxWebClient(
-                HasMarker.of(source),
-                getFullEndpoint(source, languages),
-                DEFAULT_HTTP_FACTORY.create(source, context)
-        );
-
-        return new CachedPxWebClient(
-                client,
-                context.getDriverCache(source),
-                getCachedClientBaseURI(source, languages),
-                Duration.ofMillis(CACHE_TTL_PROPERTY.get(source.getProperties()))
-        );
-    }
-
-    private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
-        return new PxWebConnection(newClient(source, languages, context));
-    }
-
-    private static String resolveVersion(WebSource source) {
-        List<String> versions = VERSIONS_PROPERTY.get(source.getProperties());
-        return versions != null && !versions.isEmpty() ? versions.get(0) : DEFAULT_VERSION;
-    }
-
-    private static String resolveLanguage(WebSource source, Languages requested) {
-        List<String> availableLanguages = LANGUAGES_PROPERTY.get(source.getProperties());
-        String language = availableLanguages != null ? lookupLanguage(availableLanguages, requested) : null;
-        return language != null ? language : DEFAULT_LANG;
+    private static WebSource applyWebsite(WebSource source, Websites.Website website) {
+        if (website == null) {
+            return source;
+        }
+        WebSource.Builder result = source.toBuilder().website(website.getUrl());
+        if (website.getListing() != null) {
+            result.propertyOf(TABLE_LISTING_PROPERTY, website.getListing());
+        }
+        if (website.isCookie()) {
+            result.propertyOf(CookieDecoration.COOKIE_PROPERTY, true);
+        }
+        return result.build();
     }
 
     @VisibleForTesting
-    static @Nullable String lookupLanguage(@NonNull Collection<String> available, @NonNull Languages requested) {
-        String result = requested.lookupTag(available);
-        return result != null ? result : available.stream().findFirst().orElse(null);
+    static final class PxWebConnectionFactory implements ConnectionFactory {
+
+        public final HttpFactory httpFactory = HttpManager.getHttpFactory();
+
+        @Override
+        public @NonNull List<BaseProperty> getConnectionProperties() {
+            // Hide the rate-limiting toggle: this driver forces it on and supplies a
+            // server-declared per-host limiter internally (see connect).
+            // Hide the caching toggle: this driver disables the shared HTTP caching because
+            // the PxWeb API uses both GET and POST on the same URL, which invalidates any
+            // HTTP cache (see connect).
+            List<BaseProperty> httpProperties = httpFactory.getHttpClientProperties()
+                    .stream()
+                    .filter(property -> !property.getKey().equals(RateLimitingDecoration.RATE_LIMITING_PROPERTY.getKey()))
+                    .filter(property -> !property.getKey().equals(CachingDecoration.HTTP_CACHING_PROPERTY.getKey()))
+                    .collect(toList());
+            return PropertiesSupport.merge(
+                    httpProperties,
+                    VERSIONS_PROPERTY,
+                    LANGUAGES_PROPERTY,
+                    TABLE_LISTING_PROPERTY,
+                    CACHE_TTL_PROPERTY
+            );
+        }
+
+        @Override
+        public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
+            Marker marker = HasMarker.of(source);
+            URI endpoint = getFullEndpoint(source, languages);
+            TableListing configuredListing = TABLE_LISTING_PROPERTY.get(source.getProperties());
+            TableListing listing = configuredListing != null ? configuredListing : TableListing.AUTO;
+
+            Cache<DataRepository> cache = context.getDriverCache(source);
+            URI cacheBase = getCachedClientBaseURI(source, languages);
+            Duration ttl = Duration.ofMillis(CACHE_TTL_PROPERTY.get(source.getProperties()));
+
+            // Disable the shared HTTP caching decoration: the PxWeb API uses both GET and POST
+            // on the same URL, which invalidates any HTTP cache.
+            WebSource httpSource = source.toBuilder()
+                    .propertyOf(CachingDecoration.HTTP_CACHING_PROPERTY, false)
+                    .build();
+
+            // Build the client through the shared HTTP pipeline so that rate limiting is applied
+            // in the correct order (before 429 responses are turned into exceptions).
+            HttpClient httpClient = httpFactory.createHttpClient(httpSource, context);
+
+            // Enforce the server-declared limit (see PxWeb config endpoint) by registering it as
+            // the per-host limiter used by the shared rate-limiting decoration.
+            String host = endpoint.getHost();
+            if (host != null) {
+                RateLimitingDecoration.putRateLimiterIfAbsent(host, resolveRateLimiter(cache, cacheBase, ttl, httpClient, endpoint));
+            }
+
+            return new PxWebConnection(
+                    new CachedPxWebClient(
+                            new DefaultPxWebClient(marker, endpoint, httpClient, listing),
+                            cache, cacheBase, ttl
+                    )
+            );
+        }
+
+        // Resolves the server-declared rate limit from the driver cache, fetching and caching it
+        // once when absent; falls back to a non-throttling limiter when it cannot be determined.
+        private static RateLimiter resolveRateLimiter(Cache<DataRepository> cache, URI cacheBase, Duration ttl, HttpClient httpClient, URI endpoint) {
+            try {
+                PxConfig config = CachedPxWebClient.initIdOfConfig(cacheBase)
+                        .load(cache, () -> DefaultPxWebClient.fetchConfig(httpClient, endpoint), ignore -> ttl);
+                return toRateLimiter(config);
+            } catch (IOException ex) {
+                return FALLBACK_RATE_LIMITER;
+            }
+        }
+
+        @VisibleForTesting
+        static @NonNull URI getFullEndpoint(@NonNull WebSource source, @NonNull Languages languages) throws IOException {
+            Map<String, String> variables = new HashMap<>();
+            variables.put(VERSION_VARIABLE, resolveVersion(source));
+            variables.put(LANGUAGE_VARIABLE, resolveLanguage(source, languages));
+            try {
+                return UriTemplate.expand(source.getEndpoint(), variables);
+            } catch (URISyntaxException ex) {
+                throw new IOException(ex);
+            }
+        }
+
+        private static String resolveVersion(WebSource source) {
+            List<String> versions = VERSIONS_PROPERTY.get(source.getProperties());
+            return versions != null && !versions.isEmpty() ? versions.get(0) : DEFAULT_VERSION;
+        }
+
+        private static String resolveLanguage(WebSource source, Languages requested) {
+            List<String> availableLanguages = LANGUAGES_PROPERTY.get(source.getProperties());
+            String language = availableLanguages != null ? lookupLanguage(availableLanguages, requested) : null;
+            return language != null ? language : DEFAULT_LANG;
+        }
+
+        @VisibleForTesting
+        static @Nullable String lookupLanguage(@NonNull Collection<String> available, @NonNull Languages requested) {
+            String result = requested.lookupTag(available);
+            return result != null ? result : available.stream().findFirst().orElse(null);
+        }
+
+        @VisibleForTesting
+        static URI getCachedClientBaseURI(WebSource source, Languages languages) {
+            return TypedId.resolveURI(URI.create("cache:pxweb"), TypedId.getUniqueID(source), resolveLanguage(source, languages));
+        }
     }
 
     @lombok.AllArgsConstructor
@@ -160,11 +286,11 @@ public final class PxWebDriver implements Driver {
         @Override
         public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
             checkDatabase(database);
-            String tableId = Converter.flowRefToTableId(flowRef);
+            String tablePath = PxConverter.flowRefToTablePath(flowRef);
             return MetaSet
                     .builder()
                     .flow(ConnectionSupport.getFlowFromFlows(database, flowRef, this, client))
-                    .structure(client.getMeta(database.getId(), tableId))
+                    .structure(client.getMeta(database.getId(), tablePath))
                     .build();
         }
 
@@ -177,9 +303,9 @@ public final class PxWebDriver implements Driver {
         @Override
         public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
             checkDatabase(database);
-            String tableId = Converter.flowRefToTableId(flowRef);
-            Structure dsd = client.getMeta(database.getId(), tableId);
-            DataCursor dataCursor = client.getData(database.getId(), tableId, dsd, query.getKey());
+            String tablePath = PxConverter.flowRefToTablePath(flowRef);
+            Structure dsd = client.getMeta(database.getId(), tablePath);
+            DataCursor dataCursor = client.getData(database.getId(), tablePath, dsd, query.getKey());
             return query.execute(dataCursor.asCloseableStream());
         }
 
@@ -201,654 +327,6 @@ public final class PxWebDriver implements Driver {
             if (database.equals(DatabaseRef.NO_DATABASE)) {
                 throw new IOException("Database reference is required");
             }
-        }
-    }
-
-    private interface PxWebClient extends HasMarker {
-
-        @NonNull
-        URI ping() throws IOException;
-
-        @NonNull
-        Config getConfig() throws IOException;
-
-        @NonNull
-        List<sdmxdl.Database> getDataBases() throws IOException;
-
-        @NonNull
-        List<Flow> getTables(@NonNull String dbId) throws IOException;
-
-        @NonNull
-        Structure getMeta(@NonNull String dbId, @NonNull String tableId) throws IOException, IllegalArgumentException;
-
-        @NonNull
-        DataCursor getData(@NonNull String dbId, @NonNull String tableId, @NonNull Structure dsd, @NonNull Key key) throws IOException, IllegalArgumentException;
-    }
-
-    @VisibleForTesting
-    static @NonNull URI getFullEndpoint(@NonNull WebSource source, @NonNull Languages languages) throws IOException {
-        Map<String, String> variables = new HashMap<>();
-        variables.put(VERSION_VARIABLE, resolveVersion(source));
-        variables.put(LANGUAGE_VARIABLE, resolveLanguage(source, languages));
-        try {
-            return UriTemplate.expand(source.getEndpoint(), variables);
-        } catch (URISyntaxException ex) {
-            throw new IOException(ex);
-        }
-    }
-
-    @lombok.AllArgsConstructor
-    private static final class DefaultPxWebClient implements PxWebClient {
-
-        @lombok.Getter
-        @lombok.NonNull
-        private final Marker marker;
-
-        @lombok.NonNull
-        private final URI endpoint;
-
-        @lombok.NonNull
-        private final HttpClient client;
-
-        @Override
-        public @NonNull URI ping() throws IOException {
-            HttpRequest request = HttpRequest
-                    .builder()
-                    .query(URLQueryBuilder.of(endpoint.toURL()).param("config").buildURI())
-                    .build();
-
-            try (HttpResponse ignore = client.send(request)) {
-                return request.getQuery();
-            }
-        }
-
-        @Override
-        public @NonNull Config getConfig() throws IOException {
-            HttpRequest request = HttpRequest
-                    .builder()
-                    .query(URLQueryBuilder.of(endpoint.toURL()).param("config").buildURI())
-                    .build();
-
-            try (HttpResponse response = client.send(request)) {
-                return getConfigParser(response.getContentType())
-                        .parseReader(response::getBodyAsReader);
-            }
-        }
-
-        @Override
-        public @NonNull List<sdmxdl.Database> getDataBases() throws IOException {
-            HttpRequest request = HttpRequest
-                    .builder()
-                    .query(endpoint)
-                    .build();
-
-            try (HttpResponse response = client.send(request)) {
-                return getDatabasesParser(response.getContentType())
-                        .parseReader(response::getBodyAsReader);
-            }
-        }
-
-        private TextParser<Config> getConfigParser(MediaType ignore) {
-            return Config.JSON_PARSER;
-        }
-
-        private TextParser<List<sdmxdl.Database>> getDatabasesParser(MediaType ignore) {
-            return PxWebDriver.Database.JSON_PARSER
-                    .andThen(tables -> Stream.of(tables).map(PxWebDriver.Database::toDatabase).collect(toList()));
-        }
-
-        @Override
-        public @NonNull List<Flow> getTables(@NonNull String dbId) throws IOException {
-            HttpRequest request = HttpRequest
-                    .builder()
-                    .query(URLQueryBuilder
-                            .of(endpoint.toURL())
-                            .path(dbId)
-                            .param("query", "*")
-                            .param("filter", "*")
-                            .buildURI())
-                    .build();
-
-            try (HttpResponse response = client.send(request)) {
-                return getTablesParser(response.getContentType())
-                        .parseReader(response::getBodyAsReader);
-            }
-        }
-
-        private TextParser<List<Flow>> getTablesParser(MediaType ignore) {
-            return Table.JSON_PARSER
-                    .andThen(tables -> Stream.of(tables).map(Table::toDataflow).collect(toList()));
-        }
-
-        @Override
-        public @NonNull Structure getMeta(@NonNull String dbId, @NonNull String tableId) throws IOException, IllegalArgumentException {
-            HttpRequest request = HttpRequest
-                    .builder()
-                    .query(URLQueryBuilder
-                            .of(endpoint.toURL())
-                            .path(dbId)
-                            .path(tableId)
-                            .buildURI())
-                    .build();
-
-            try (HttpResponse response = client.send(request)) {
-                return getMetaParser(tableId, response.getContentType())
-                        .parseReader(response::getBodyAsReader);
-            }
-        }
-
-        private TextParser<Structure> getMetaParser(String tableId, MediaType ignore) {
-            return TableMeta.JSON_PARSER
-                    .andThen(tableMeta -> tableMeta.toStructure(Converter.tableIdToStructureRef(tableId)));
-        }
-
-        @Override
-        public @NonNull DataCursor getData(@NonNull String dbId, @NonNull String tableId, @NonNull Structure dsd, @NonNull Key key) throws IOException, IllegalArgumentException {
-            HttpRequest request = HttpRequest
-                    .builder()
-                    .query(URLQueryBuilder
-                            .of(endpoint.toURL())
-                            .path(dbId)
-                            .path(tableId)
-                            .buildURI())
-                    .method(HttpMethod.POST)
-                    .bodyOf(TableQuery.FORMATTER.formatToString(TableQuery.fromDataStructureAndKey(dsd, key)))
-                    .build();
-
-            HttpResponse response = client.send(request);
-            return getDataParser(dsd, response.getContentType())
-                    .parseStream(response::asDisconnectingInputStream);
-        }
-
-        private FileParser<DataCursor> getDataParser(Structure dsd, MediaType ignore) {
-            return PxWebSdmxDataCursor.parserOf(dsd);
-        }
-    }
-
-    @VisibleForTesting
-    static URI getCachedClientBaseURI(WebSource source, Languages languages) {
-        return TypedId.resolveURI(URI.create("cache:pxweb"), TypedId.getUniqueID(source), resolveLanguage(source, languages));
-    }
-
-    @lombok.AllArgsConstructor
-    private static final class CachedPxWebClient implements PxWebClient {
-
-        @lombok.NonNull
-        private final PxWebClient delegate;
-
-        @lombok.NonNull
-        private final Cache<DataRepository> cache;
-
-        @lombok.NonNull
-        private final URI endpoint;
-
-        @lombok.NonNull
-        private final Duration ttl;
-
-        @lombok.Getter(lazy = true)
-        private final TypedId<Config> idOfConfig = initIdOfConfig(endpoint);
-
-        @lombok.Getter(lazy = true)
-        private final TypedId<List<sdmxdl.Database>> idOfDatabases = initIdOfDatabases(endpoint);
-
-        @lombok.Getter(lazy = true)
-        private final TypedId<List<Flow>> idOfTables = initIdOfTables(endpoint);
-
-        @lombok.Getter(lazy = true)
-        private final TypedId<Structure> idOfMeta = initIdOfMeta(endpoint);
-
-        private static TypedId<Config> initIdOfConfig(URI base) {
-            return TypedId.of(base,
-                    repo -> Config.JSON_PARSER.asParser().parse(repo.getName()),
-                    config -> DataRepository.builder().name(Config.JSON_FORMATTER.asFormatter().formatValueAsString(config).orElse("")).build()
-            ).with("config");
-        }
-
-        private static TypedId<List<sdmxdl.Database>> initIdOfDatabases(URI base) {
-            return TypedId.of(base,
-                    DataRepository::getDatabases,
-                    databases -> DataRepository.builder().databases(databases).build()
-            ).with("databases");
-        }
-
-        private static TypedId<List<Flow>> initIdOfTables(URI base) {
-            return TypedId.of(base,
-                    DataRepository::getFlows,
-                    flows -> DataRepository.builder().flows(flows).build()
-            ).with("tables");
-        }
-
-        private static TypedId<Structure> initIdOfMeta(URI base) {
-            return TypedId.of(base,
-                    repo -> repo.getStructures().stream().findFirst().orElse(null),
-                    struct -> DataRepository.builder().structure(struct).build()
-            ).with("meta");
-        }
-
-        @Override
-        public @NonNull Marker getMarker() {
-            return delegate.getMarker();
-        }
-
-        @Override
-        public @NonNull URI ping() throws IOException {
-            return delegate.ping();
-        }
-
-        @Override
-        public @NonNull Config getConfig() throws IOException {
-            return getIdOfConfig()
-                    .load(cache, delegate::getConfig, ignore -> ttl);
-        }
-
-        @Override
-        public @NonNull List<sdmxdl.Database> getDataBases() throws IOException {
-            return getIdOfDatabases()
-                    .load(cache, delegate::getDataBases, ignore -> ttl);
-        }
-
-        @Override
-        public @NonNull List<Flow> getTables(@NonNull String dbId) throws IOException {
-            return getIdOfTables()
-                    .with(dbId)
-                    .load(cache, () -> delegate.getTables(dbId), ignore -> ttl);
-        }
-
-        @Override
-        public @NonNull Structure getMeta(@NonNull String dbId, @NonNull String tableId) throws IOException, IllegalArgumentException {
-            return getIdOfMeta()
-                    .with(dbId)
-                    .with(tableId)
-                    .load(cache, () -> delegate.getMeta(dbId, tableId), ignore -> ttl);
-        }
-
-        @Override
-        public @NonNull DataCursor getData(@NonNull String dbId, @NonNull String tableId, @NonNull Structure dsd, @NonNull Key key) throws IOException, IllegalArgumentException {
-            return delegate.getData(dbId, tableId, dsd, key);
-        }
-    }
-
-    @VisibleForTesting
-    @lombok.AllArgsConstructor
-    static final class PxWebSdmxDataCursor implements DataCursor {
-
-        public static @NonNull FileParser<DataCursor> parserOf(@NonNull Structure dsd) {
-            return SdmxXmlStreams
-                    .genericData20(fixStructureDimensions(dsd), ObsParser::newDefault)
-                    .andThen(PxWebSdmxDataCursor::new);
-        }
-
-        private final @NonNull DataCursor delegate;
-
-        @Override
-        public boolean nextSeries() throws IOException {
-            return delegate.nextSeries();
-        }
-
-        @Override
-        public @NonNull Key getSeriesKey() throws IOException, IllegalStateException {
-            String keyAsString = delegate.getSeriesKey().toString();
-            return Key.parse(keyAsString.substring(keyAsString.indexOf('.') + 1));
-        }
-
-        @Override
-        @Nullable
-        public String getSeriesAttribute(@NonNull String key) throws IOException, IllegalStateException {
-            return delegate.getSeriesAttribute(key);
-        }
-
-        @Override
-        @NonNull
-        public Map<String, String> getSeriesAttributes() throws IOException, IllegalStateException {
-            return delegate.getSeriesAttributes();
-        }
-
-        @Override
-        public boolean nextObs() throws IOException, IllegalStateException {
-            return delegate.nextObs();
-        }
-
-        @Override
-        public @Nullable ObservationalTimePeriod getObsPeriod() throws IOException, IllegalStateException {
-            return delegate.getObsPeriod();
-        }
-
-        @Override
-        public @Nullable Double getObsValue() throws IOException, IllegalStateException {
-            return delegate.getObsValue();
-        }
-
-        @Override
-        @NonNull
-        public Map<String, String> getObsAttributes() throws IllegalStateException {
-            return Collections.emptyMap();
-        }
-
-        @Override
-        public @Nullable String getObsAttribute(@NonNull String key) throws IllegalStateException {
-            return null;
-        }
-
-        @Override
-        public void close() throws IOException {
-            delegate.close();
-        }
-
-        private static Structure fixStructureDimensions(Structure dsd) {
-            return dsd
-                    .toBuilder()
-                    .clearDimensions()
-                    .dimension(MANDATORY_FREQ_AS_FIRST_DIMENSION)
-                    .dimensions(dsd.getDimensions()
-                            .stream()
-                            .map(dimension -> dimension
-                                    .toBuilder()
-                                    .id(convertDimensionNameToId(dimension.getName()))
-                                    .build())
-                            .collect(toList()))
-                    .build();
-        }
-
-        /**
-         * Convert a PxWeb variable text to an SDMX dimension ID.
-         * <p>
-         * Surprisingly, PxWeb variable code is not used as SDMX dimension ID when getting data.
-         * The PxWeb variable text is used instead after being normalized to a valid SDMX ID.
-         * Note that the PxWeb variable text is dependent of the requested language.
-         *
-         * @param name the name to be converted
-         * @return the converted ID
-         */
-        @VisibleForTesting
-        static String convertDimensionNameToId(String name) {
-            return name.replaceAll("[^a-zA-Z0-9_\\-]", "");
-        }
-
-        private static final Dimension MANDATORY_FREQ_AS_FIRST_DIMENSION = Dimension
-                .builder()
-                .id("FREQ")
-                .name("")
-                .codelist(Codelist
-                        .builder()
-                        .ref(CodelistRef.parse("FREQ"))
-                        .build())
-                .build();
-    }
-
-    @VisibleForTesting
-    @lombok.experimental.UtilityClass
-    static class Converter {
-
-        static FlowRef tableIdToFlowRef(String id) {
-            return FlowRef.of(null, URIs.encode(id), null);
-        }
-
-        static String flowRefToTableId(FlowRef ref) {
-            return URIs.decode(ref.getId());
-        }
-
-        static StructureRef tableIdToStructureRef(String id) {
-            return StructureRef.of(null, URIs.encode(id), null);
-        }
-
-        static String structureRefToTableId(StructureRef ref) {
-            return URIs.decode(ref.getId());
-        }
-    }
-
-    @VisibleForTesting
-    @lombok.Value
-    static class Config {
-
-        int maxValues;
-        int maxCells;
-        int maxCalls;
-        int timeWindow;
-
-        static final TextParser<Config> JSON_PARSER = GsonIO.GsonParser
-                .builder(Config.class)
-                .deserializer(Config.class, Config::deserialize)
-                .build();
-
-        @MightBeGenerated
-        static Config deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            JsonObject x = json.getAsJsonObject();
-            return new Config(
-                    x.get("maxValues").getAsInt(),
-                    x.get("maxCells").getAsInt(),
-                    x.get("maxCalls").getAsInt(),
-                    x.get("timeWindow").getAsInt()
-            );
-        }
-
-        static final TextFormatter<Config> JSON_FORMATTER = GsonIO.GsonFormatter
-                .builder(Config.class)
-                .serializer(Config.class, Config::serialize)
-                .build();
-
-        @MightBeGenerated
-        static JsonElement serialize(Config src, Type typeOfSrc, JsonSerializationContext context) {
-            JsonObject result = new JsonObject();
-            result.addProperty("maxValues", src.maxValues);
-            result.addProperty("maxCells", src.maxCells);
-            result.addProperty("maxCalls", src.maxCalls);
-            result.addProperty("timeWindow", src.timeWindow);
-            return result;
-        }
-    }
-
-    @VisibleForTesting
-    @lombok.Value
-    static class Database {
-
-        String dbId;
-        String text;
-
-        sdmxdl.Database toDatabase() {
-            return new sdmxdl.Database(DatabaseRef.parse(dbId), text);
-        }
-
-        static final TextParser<Database[]> JSON_PARSER = GsonIO.GsonParser
-                .builder(Database[].class)
-                .deserializer(Database.class, PxWebDriver.Database::deserialize)
-                .build();
-
-        @MightBeGenerated
-        static Database deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            JsonObject obj = json.getAsJsonObject();
-            return new Database(
-                    GsonUtil.getAsString(obj, "dbid"),
-                    GsonUtil.getAsString(obj, "text")
-            );
-        }
-    }
-
-    @VisibleForTesting
-    @lombok.Value
-    static class Table {
-
-        String id;
-        String path;
-        String title;
-
-        Flow toDataflow() {
-            return Flow
-                    .builder()
-                    .ref(Converter.tableIdToFlowRef(id))
-                    .structureRef(Converter.tableIdToStructureRef(id))
-                    .name(title)
-                    .build();
-        }
-
-        static final TextParser<Table[]> JSON_PARSER = GsonIO.GsonParser
-                .builder(Table[].class)
-                .deserializer(Table.class, Table::deserialize)
-                .build();
-
-        @MightBeGenerated
-        static Table deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            JsonObject obj = json.getAsJsonObject();
-            return new Table(
-                    GsonUtil.getAsString(obj, "id"),
-                    GsonUtil.getAsString(obj, "path"),
-                    GsonUtil.getAsString(obj, "title")
-            );
-        }
-    }
-
-    @VisibleForTesting
-    @lombok.Value
-    static class TableMeta {
-
-        String title;
-        List<TableVariable> variables;
-
-        Structure toStructure(StructureRef ref) {
-            TableVariable timeVariable = getTimeVariable();
-            return Structure
-                    .builder()
-                    .ref(ref)
-                    .timeDimensionId(timeVariable.getCode())
-                    .primaryMeasureId(DEFAULT_PRIMARY_MEASURE)
-                    .name(title)
-                    .dimensions(toDimensionList(timeVariable))
-                    .attribute(UNIT_MEASURE_ATTRIBUTE)
-                    .build();
-        }
-
-        @VisibleForTesting
-        TableVariable getTimeVariable() {
-            return variables
-                    .stream()
-                    .filter(TableVariable::isTime)
-                    .findFirst()
-                    .orElseGet(() -> variables
-                            .stream()
-                            .filter(variable -> variable.getValueTexts().stream().map(TIME_PERIOD_PARSER::parse).allMatch(Objects::nonNull))
-                            .findFirst()
-                            .orElseThrow(() -> new IllegalStateException("Time variable not found")));
-        }
-
-        List<Dimension> toDimensionList(TableVariable timeVariable) {
-            return variables.stream()
-                    .filter(item -> !timeVariable.equals(item))
-                    .map(item -> item.toDimension())
-                    .collect(Collectors.toList());
-        }
-
-        static final String DEFAULT_PRIMARY_MEASURE = "OBS_VALUE";
-
-        static final Attribute UNIT_MEASURE_ATTRIBUTE = Attribute
-                .builder()
-                .id("UNIT_MEASURE")
-                .name("Unit measure")
-                .relationship(AttributeRelationship.SERIES)
-                .build();
-
-        static final Parser<ObservationalTimePeriod> TIME_PERIOD_PARSER = TimeFormats.getObservationalTimePeriod(IGNORE_ERROR);
-
-        static final TextParser<TableMeta> JSON_PARSER = GsonIO.GsonParser
-                .builder(TableMeta.class)
-                .deserializer(TableMeta.class, TableMeta::deserialize)
-                .deserializer(TableVariable.class, TableVariable::deserialize)
-                .build();
-
-        @MightBeGenerated
-        static TableMeta deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            JsonObject x = json.getAsJsonObject();
-            JsonArray y = x.getAsJsonArray("variables");
-            return new TableMeta(
-                    x.get("title").getAsString(),
-                    GsonUtil.asStream(y).map(o -> context.<TableVariable>deserialize(o, TableVariable.class)).collect(toList())
-            );
-        }
-    }
-
-    @VisibleForTesting
-    @lombok.Value
-    static class TableVariable {
-
-        String code;
-        String text;
-        List<String> values;
-        List<String> valueTexts;
-        boolean time;
-
-        Dimension toDimension() {
-            return Dimension
-                    .builder()
-                    .id(code)
-                    .name(text)
-                    .codelist(Codelist
-                            .builder()
-                            .ref(CodelistRef.parse(code))
-                            .codes(CollectionUtil.zip(values, valueTexts))
-                            .build())
-                    .build();
-        }
-
-        @MightBeGenerated
-        static TableVariable deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            JsonObject x = json.getAsJsonObject();
-            return new TableVariable(
-                    GsonUtil.getAsString(x, "code"),
-                    GsonUtil.getAsString(x, "text"),
-                    GsonUtil.asStream(x.getAsJsonArray("values")).map(JsonElement::getAsString).collect(toList()),
-                    GsonUtil.asStream(x.getAsJsonArray("valueTexts")).map(JsonElement::getAsString).collect(toList()),
-                    x.has("time") && x.get("time").getAsBoolean()
-            );
-        }
-    }
-
-    @VisibleForTesting
-    @lombok.Value
-    static class TableQuery {
-
-        @lombok.Singular
-        Map<String, Collection<String>> itemFilters;
-
-        static TableQuery fromDataStructureAndKey(Structure dsd, Key key) {
-            return new TableQuery(CollectionUtil.indexedStreamOf(dsd.getDimensions())
-                    .collect(Collectors.toMap(
-                            dimension -> dimension.getElement().getId(),
-                            dimension -> fromDimensionAndKey(dimension, key))
-                    ));
-        }
-
-        static Collection<String> fromDimensionAndKey(CollectionUtil.IndexedElement<Dimension> dimension, Key key) {
-            return Key.ALL.equals(key) || key.isWildcard(dimension.getIndex())
-                    ? dimension.getElement().getCodelist().getCodes().keySet()
-                    : Arrays.asList(key.get(dimension.getIndex()).split("\\+", -1));
-        }
-
-        static final TextFormatter<TableQuery> FORMATTER = GsonIO.GsonFormatter
-                .builder(TableQuery.class)
-                .serializer(TableQuery.class, TableQuery::serialize)
-                .build();
-
-        @MightBeGenerated
-        static JsonElement serialize(TableQuery src, Type typeOfSrc, JsonSerializationContext context) {
-            JsonObject result = new JsonObject();
-
-            JsonArray query = new JsonArray();
-            src.getItemFilters().forEach((code, items) -> {
-                JsonObject item = new JsonObject();
-                item.addProperty("code", code);
-                JsonObject selection = new JsonObject();
-                selection.addProperty("filter", "item");
-                JsonArray values = new JsonArray();
-                items.forEach(values::add);
-                selection.add("values", values);
-                item.add("selection", selection);
-                query.add(item);
-            });
-            result.add("query", query);
-
-            JsonObject response = new JsonObject();
-            response.addProperty("format", "sdmx");
-            result.add("response", response);
-
-            return result;
         }
     }
 }

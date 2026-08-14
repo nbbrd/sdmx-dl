@@ -47,6 +47,14 @@ public class DimensionTest {
     }
 
     @Test
+    public void testNonEnumerated() {
+        assertThat(Dimension.builder().id(someId).name(someLabel).build())
+                .hasFieldOrPropertyWithValue("codelist", null)
+                .returns(false, Dimension::isCoded)
+                .satisfies(dimension -> assertThat(dimension.getCodes()).isEmpty());
+    }
+
+    @Test
     public void testEquals() {
         assertThat(Dimension.builder().id("id").name("label").codelist(someCodelist).build())
                 .isEqualTo(Dimension.builder().id("id").name("label").codelist(someCodelist).build());

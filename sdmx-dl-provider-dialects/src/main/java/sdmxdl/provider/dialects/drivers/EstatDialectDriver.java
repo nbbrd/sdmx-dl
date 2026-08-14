@@ -19,9 +19,15 @@ package sdmxdl.provider.dialects.drivers;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.io.Resource;
-import nbbrd.io.http.*;
-import nbbrd.io.http.ext.InterceptingHttpClient;
+import nbbrd.io.http.HttpClient;
+import nbbrd.io.http.HttpHeaders;
+import nbbrd.io.http.HttpRequest;
+import nbbrd.io.http.HttpResponse;
+import nbbrd.io.http.ext.InterceptingDecorator;
+import nbbrd.io.http.ext.InterceptingFunction;
+import nbbrd.io.http.ext.ThrowingStatusException;
 import nbbrd.io.net.MediaType;
+import nbbrd.io.text.BaseProperty;
 import nbbrd.io.text.IntProperty;
 import nbbrd.io.text.LongProperty;
 import nbbrd.io.text.Parser;
@@ -36,13 +42,17 @@ import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.format.xml.XmlMediaTypes;
 import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.SdmxFix;
-import sdmxdl.provider.ri.drivers.*;
-import sdmxdl.provider.ri.http.HttpClientDecorator;
-import sdmxdl.provider.ri.http.HttpClientDecoratorSupport;
-import sdmxdl.provider.ri.http.HttpClientFactory;
+import sdmxdl.provider.ri.drivers.RiRestClient;
+import sdmxdl.provider.ri.drivers.Sdmx21RestErrors;
+import sdmxdl.provider.ri.drivers.Sdmx21RestParsers;
+import sdmxdl.provider.ri.drivers.Sdmx21RestQueries;
+import sdmxdl.provider.ri.http.HttpDecoration;
+import sdmxdl.provider.ri.http.HttpDecorationSupport;
+import sdmxdl.provider.ri.http.HttpFactory;
+import sdmxdl.provider.ri.http.HttpManager;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestClient;
-import sdmxdl.provider.web.RestConnector;
+import sdmxdl.provider.web.RestClientFactory;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
@@ -51,10 +61,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.util.EnumSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.zip.ZipInputStream;
 
 import static java.util.Collections.singletonList;
@@ -62,7 +69,6 @@ import static sdmxdl.Confidentiality.PUBLIC;
 import static sdmxdl.Languages.ANY;
 import static sdmxdl.provider.SdmxFix.Category.PROTOCOL;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
-import static sdmxdl.provider.ri.drivers.RiHttpUtils.DEFAULT_HTTP_FACTORY;
 import static sdmxdl.provider.ri.drivers.Sdmx21RestParsers.withCharset;
 
 /**
@@ -79,8 +85,7 @@ public final class EstatDialectDriver implements Driver {
             .builder()
             .id(DIALECTS_ESTAT)
             .rank(NATIVE_DRIVER_RANK)
-            .connector(RestConnector.of(EstatDialectDriver::newClient))
-            .propertiesOf(ESTAT_HTTP_FACTORY.getFactoryProperties())
+            .connectorOf(new EstatRestClientFactory())
             .source(WebSource
                     .builder()
                     .id("ESTAT")
@@ -163,29 +168,35 @@ public final class EstatDialectDriver implements Driver {
                     .build())
             .build();
 
-    private static RestClient newClient(WebSource s, Languages languages, WebContext c) {
-        return new RiRestClient(
-                HasMarker.of(s),
-                s.getEndpoint(),
-                languages,
-                ObsParser::newDefault,
-                ESTAT_HTTP_FACTORY.create(s, c),
-                Sdmx21RestQueries.DEFAULT,
-                Sdmx21RestParsers.DEFAULT,
-                Sdmx21RestErrors.DEFAULT,
-                ESTAT_FEATURES
-        );
+    private static final class EstatRestClientFactory implements RestClientFactory {
+
+        private final HttpFactory httpFactory = new AsyncDecoration().decorate(HttpManager.getHttpFactory());
+
+        @Override
+        public @NonNull List<BaseProperty> getRestClientProperties() {
+            return httpFactory.getHttpClientProperties();
+        }
+
+        @Override
+        public @NonNull RestClient createRestClient(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) {
+            return new RiRestClient(
+                    HasMarker.of(source),
+                    source.getEndpoint(),
+                    languages,
+                    ObsParser::newDefault,
+                    httpFactory.createHttpClient(source, context),
+                    Sdmx21RestQueries.DEFAULT,
+                    Sdmx21RestParsers.DEFAULT,
+                    Sdmx21RestErrors.DEFAULT,
+                    ESTAT_FEATURES
+            );
+        }
     }
 
     @SdmxFix(id = 4, category = QUERY, cause = "Data key parameter does not support 'all' keyword")
     private static final Set<Feature> ESTAT_FEATURES = EnumSet.of(Feature.DATA_QUERY_DETAIL);
 
-    private static final HttpClientFactory ESTAT_HTTP_FACTORY =
-            new AsyncHttpClientDecorator().decorate(
-                    DEFAULT_HTTP_FACTORY
-            );
-
-    private static final class AsyncHttpClientDecorator implements HttpClientDecorator {
+    public static final class AsyncDecoration implements HttpDecoration {
 
         @PropertyDefinition
         public static final IntProperty ASYNC_MAX_RETRIES_PROPERTY =
@@ -196,17 +207,17 @@ public final class EstatDialectDriver implements Driver {
                 LongProperty.of(DRIVER_PROPERTY_PREFIX + ".asyncSleepTime", 6000);
 
         @lombok.experimental.Delegate
-        private final HttpClientDecorator support = HttpClientDecoratorSupport
+        private final HttpDecoration support = HttpDecorationSupport
                 .builder()
                 .name("async")
                 .property(ASYNC_MAX_RETRIES_PROPERTY)
                 .property(ASYNC_SLEEP_TIME_PROPERTY)
-                .superFactory(AsyncHttpClientDecorator::decorate)
+                .superFactory(AsyncDecoration::decorate)
                 .build();
 
-        private static HttpClient decorate(HttpClientFactory d, WebSource s, WebContext c) {
-            return new InterceptingHttpClient(
-                    d.create(s, c),
+        private static HttpClient decorate(HttpFactory d, WebSource s, WebContext c) {
+            return new InterceptingDecorator(
+                    d.createHttpClient(s, c),
                     getInterceptor(
                             ASYNC_SLEEP_TIME_PROPERTY.get(s.getProperties()),
                             ASYNC_MAX_RETRIES_PROPERTY.get(s.getProperties()),
@@ -215,7 +226,7 @@ public final class EstatDialectDriver implements Driver {
             );
         }
 
-        private static InterceptingHttpClient.Interceptor getInterceptor(long asyncSleepTime, int asyncMaxRetries, EventListener onEvent) {
+        private static InterceptingFunction getInterceptor(long asyncSleepTime, int asyncMaxRetries, EventListener onEvent) {
             return (client, request, response) -> checkCodesInMessageFooter(client, response, asyncSleepTime, asyncMaxRetries, onEvent);
         }
 
@@ -243,8 +254,8 @@ public final class EstatDialectDriver implements Driver {
                     .parseStream(result::getBody);
         }
 
-        private static HttpResponseException getResponseException(MessageFooter messageFooter) {
-            return new HttpResponseException(messageFooter.getCode(), String.join(System.lineSeparator(), messageFooter.getTexts()));
+        private static ThrowingStatusException getResponseException(MessageFooter messageFooter) {
+            return new ThrowingStatusException(messageFooter.getCode());
         }
 
         private static Optional<URI> getAsyncURI(MessageFooter messageFooter) {
@@ -254,12 +265,12 @@ public final class EstatDialectDriver implements Driver {
         }
 
         private static HttpResponse requestAsync(HttpClient client, URI url, long sleepTimeInMillis, int retries) throws IOException {
-            HttpRequest request = RiHttpUtils.newHttpRequest(url, singletonList(MediaType.ANY_TYPE), ANY);
+            HttpRequest request = HttpManager.newHttpRequest(url, singletonList(MediaType.ANY_TYPE), ANY);
             for (int i = 1; i <= retries; i++) {
                 sleep(sleepTimeInMillis);
                 try {
                     return new AsyncResponse(client.send(request));
-                } catch (HttpResponseException ex) {
+                } catch (ThrowingStatusException ex) {
                     if (ex.getResponseCode() != HttpURLConnection.HTTP_NOT_FOUND) {
                         throw ex;
                     }
@@ -295,6 +306,11 @@ public final class EstatDialectDriver implements Driver {
             @Override
             public @NonNull HttpHeaders getHeaders() throws IOException {
                 return zipResponse.getHeaders();
+            }
+
+            @Override
+            public int getStatusCode() throws IOException {
+                return zipResponse.getStatusCode();
             }
 
             @Override

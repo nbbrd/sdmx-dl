@@ -25,4 +25,9 @@ public enum DefaultNetwork implements Network {
     public @NonNull URLConnectionFactory getURLConnectionFactory() {
         return URLConnectionFactory.getDefault();
     }
+
+    @Override
+    public @NonNull String getUrlBackend() {
+        return DEFAULT_URL_BACKEND;
+    }
 }

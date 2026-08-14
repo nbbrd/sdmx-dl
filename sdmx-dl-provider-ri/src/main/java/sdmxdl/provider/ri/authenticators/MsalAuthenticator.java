@@ -39,7 +39,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static java.util.Collections.emptyList;
-import static nbbrd.io.http.HttpAuthenticator.newToken;
+import static nbbrd.io.http.ext.Authenticator.newToken;
 import static nbbrd.io.text.BaseProperty.keysOf;
 import static sdmxdl.provider.web.DriverProperties.commaSeparatedProperty;
 

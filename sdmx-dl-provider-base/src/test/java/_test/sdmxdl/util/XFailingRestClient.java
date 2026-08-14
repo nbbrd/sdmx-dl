@@ -33,6 +33,7 @@ import java.util.stream.Stream;
 /**
  * @author Philippe Charles
  */
+@SuppressWarnings("DataFlowIssue")
 public enum XFailingRestClient implements RestClient {
 
     TEST_EXPECTED {

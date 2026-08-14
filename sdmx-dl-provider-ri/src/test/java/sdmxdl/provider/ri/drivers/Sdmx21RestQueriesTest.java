@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 import sdmxdl.*;
 import sdmxdl.provider.DataRef;
 
-import java.net.URL;
+import java.net.URI;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
@@ -97,7 +97,7 @@ public class Sdmx21RestQueriesTest {
                 .hasToString("http://base/data/ECB%2CEXR%2C1.0/all/all/");
     }
 
-    private final URL base = Parser.onURL().parseValue("http://base").orElseThrow(RuntimeException::new);
+    private final URI base = Parser.onURI().parseValue("http://base").orElseThrow(RuntimeException::new);
     private final FlowRef specificFlow = FlowRef.of("ECB", "EXR", "1.0");
     private final FlowRef genericFlow = FlowRef.of(null, "EXR", null);
     private final StructureRef specificStruct = StructureRef.of("ECB", "EXR", "1.0");

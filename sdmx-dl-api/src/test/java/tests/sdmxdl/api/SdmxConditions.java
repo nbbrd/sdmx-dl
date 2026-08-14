@@ -61,10 +61,8 @@ public class SdmxConditions {
 
     public static @NonNull Condition<Dimension> validDimension() {
         return Assertions.allOf(
-                validComponent(),
-                new Condition<>(Component::isCoded, "a dimension must be coded"),
+                validComponent()
                 //new Condition<>(dimension -> dimension.getPosition() > 0, "a dimension must have a positive position"),
-                new Condition<>(dimension -> !dimension.getCodes().isEmpty(), "a dimension must have codes")
         );
     }
 

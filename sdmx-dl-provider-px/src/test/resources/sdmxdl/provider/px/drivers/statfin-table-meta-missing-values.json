@@ -1,0 +1,23 @@
+{
+  "title": "Test table with variables missing values arrays",
+  "variables": [
+    {
+      "code": "Alue",
+      "text": "Region"
+    },
+    {
+      "code": "Vuosi",
+      "text": "Year",
+      "values": ["2020", "2021"],
+      "valueTexts": ["2020", "2021"],
+      "time": true
+    },
+    {
+      "code": "Tiedot",
+      "text": "Information",
+      "values": null,
+      "valueTexts": null
+    }
+  ]
+}
+

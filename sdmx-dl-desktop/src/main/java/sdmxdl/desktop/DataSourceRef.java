@@ -4,7 +4,7 @@ import lombok.NonNull;
 import nbbrd.io.sys.SystemProperties;
 import sdmxdl.*;
 import sdmxdl.provider.caching.DiskCachingSupport;
-import sdmxdl.provider.ri.http.DumpingHttpClientDecorator;
+import sdmxdl.provider.ri.http.DumpingDecoration;
 import sdmxdl.provider.ri.networking.RiNetworking;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebFlowRequest;
@@ -77,7 +77,7 @@ public class DataSourceRef {
         WebSource.Builder builder = result.toBuilder().properties(properties);
         if (debug) {
             Path tmp = requireNonNull(SystemProperties.DEFAULT.getJavaIoTmpdir()).resolve(About.NAME).resolve("debug_" + source);
-            builder.property(DumpingHttpClientDecorator.DUMP_FOLDER_PROPERTY.getKey(), tmp.resolve("dump").toString());
+            builder.property(DumpingDecoration.DUMP_FOLDER_PROPERTY.getKey(), tmp.resolve("dump").toString());
             builder.property(DiskCachingSupport.CACHE_FOLDER_PROPERTY.getKey(), tmp.resolve("cache").toString());
             builder.property(DiskCachingSupport.NO_COMPRESSION_PROPERTY.getKey(), "true");
         }

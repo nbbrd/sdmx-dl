@@ -20,9 +20,13 @@ import org.junit.jupiter.api.Test;
 import sdmxdl.web.WebSource;
 import tests.sdmxdl.web.spi.DriverAssert;
 
+import static nbbrd.io.text.BaseProperty.keysOf;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static sdmxdl.Languages.ANY;
+import static sdmxdl.provider.connectors.drivers.Connectors.NEEDS_CREDENTIALS_PROPERTY;
 import static sdmxdl.provider.connectors.drivers.Sdmx20Driver.CONNECTORS_SDMX_20;
+import static sdmxdl.provider.web.DriverProperties.*;
 
 /**
  * @author Philippe Charles
@@ -32,6 +36,19 @@ public class Sdmx20DriverTest {
     @Test
     public void testCompliance() {
         DriverAssert.assertCompliance(new Sdmx20Driver());
+    }
+
+    @Test
+    public void testProperties() {
+        assertThat(new Sdmx20Driver().getDriverPropertyNames())
+                .containsExactlyInAnyOrderElementsOf(
+                        keysOf(
+                                CONNECT_TIMEOUT_PROPERTY,
+                                READ_TIMEOUT_PROPERTY,
+                                MAX_REDIRECTS_PROPERTY,
+                                CACHE_TTL_PROPERTY,
+                                NEEDS_CREDENTIALS_PROPERTY)
+                );
     }
 
     @Test

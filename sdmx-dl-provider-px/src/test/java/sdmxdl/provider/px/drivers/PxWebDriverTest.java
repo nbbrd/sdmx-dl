@@ -1,23 +1,36 @@
 package sdmxdl.provider.px.drivers;
 
+import internal.sdmxdl.provider.px.drivers.*;
 import org.assertj.core.data.Index;
 import org.junit.jupiter.api.Test;
+import sdmxdl.Duration;
+import sdmxdl.Flow;
 import sdmxdl.Languages;
 import sdmxdl.StructureRef;
 import sdmxdl.web.WebSource;
 import tests.sdmxdl.web.spi.DriverAssert;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.Year;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.atIndex;
+import static nbbrd.io.text.BaseProperty.keysOf;
+import static org.assertj.core.api.Assertions.*;
 import static sdmxdl.Languages.ANY;
 import static sdmxdl.provider.px.drivers.PxWebDriver.*;
+import static sdmxdl.provider.px.drivers.PxWebDriver.PxWebConnectionFactory.*;
+import static sdmxdl.provider.ri.http.CookieDecoration.COOKIE_PROPERTY;
+import static sdmxdl.provider.ri.http.DumpingDecoration.DUMP_FOLDER_PROPERTY;
+import static sdmxdl.provider.ri.http.RetryDecoration.MAX_RETRIES_PROPERTY;
+import static sdmxdl.provider.web.DriverProperties.*;
 
 public class PxWebDriverTest {
 
@@ -27,33 +40,219 @@ public class PxWebDriverTest {
     }
 
     @Test
-    public void testConfig() throws IOException {
-        Config sample = new Config(120000, 120012, 30, 10);
+    public void testProperties() {
+        assertThat(new PxWebDriver().getDriverPropertyNames())
+                .containsExactlyInAnyOrderElementsOf(
+                        keysOf(
+                                CONNECT_TIMEOUT_PROPERTY,
+                                READ_TIMEOUT_PROPERTY,
+                                USER_AGENT_PROPERTY,
+                                AUTH_SCHEME_PROPERTY,
+                                MAX_REDIRECTS_PROPERTY,
+                                MAX_RETRIES_PROPERTY,
+                                DUMP_FOLDER_PROPERTY,
+                                COOKIE_PROPERTY,
+                                CACHE_TTL_PROPERTY,
+                                VERSIONS_PROPERTY,
+                                LANGUAGES_PROPERTY,
+                                TABLE_LISTING_PROPERTY)
+                );
+    }
 
-        assertThat(PxWebDriver.Config.JSON_PARSER.parseResource(PxWebDriverTest.class, "statfin-config.json", UTF_8))
+    @Test
+    public void testConfigDto() throws IOException {
+        PxConfig sample = new PxConfig(120000, 120012, 30, 10);
+
+        assertThat(PxConfig.JSON_PARSER.parseResource(PxWebDriverTest.class, "statfin-config.json", UTF_8))
                 .isEqualTo(sample);
 
-        assertThat(Config.JSON_PARSER.parseChars(PxWebDriver.Config.JSON_FORMATTER.formatToString(sample)))
+        assertThat(PxConfig.JSON_PARSER.parseChars(PxConfig.JSON_FORMATTER.formatToString(sample)))
                 .isEqualTo(sample);
     }
 
     @Test
-    public void testDatabases() throws IOException {
-        assertThat(PxWebDriver.Database.JSON_PARSER.parseResource(PxWebDriverTest.class, "statfin-databases.json", UTF_8))
-                .contains(new PxWebDriver.Database("SDG", "SDG"))
+    public void testConfigDtoWithMissingFields() throws IOException {
+        // Some servers (e.g. GEOSTAT, LIECHTENSTEIN, PSA, VASTERAS) omit maxCells field.
+        assertThat(PxConfig.JSON_PARSER.parseChars("{\"maxCalls\":30,\"timeWindow\":10}"))
+                .isEqualTo(new PxConfig(0, 0, 30, 10));
+        assertThat(PxConfig.JSON_PARSER.parseChars("{}"))
+                .isEqualTo(new PxConfig(0, 0, 0, 0));
+    }
+
+    @Test
+    public void testRateLimiterFromValidConfig() {
+        assertThat(toRateLimiter(new PxConfig(0, 0, 30, 10)))
+                .isNotNull()
+                .isNotSameAs(FALLBACK_RATE_LIMITER);
+    }
+
+    @Test
+    public void testRateLimiterFallsBackOnInvalidConfig() {
+        assertThat(toRateLimiter(new PxConfig(0, 0, 30, 0)))
+                .as("zero timeWindow yields the non-throttling fallback").isSameAs(FALLBACK_RATE_LIMITER);
+        assertThat(toRateLimiter(new PxConfig(0, 0, 0, 10)))
+                .as("zero maxCalls yields the non-throttling fallback").isSameAs(FALLBACK_RATE_LIMITER);
+    }
+
+    @Test
+    public void testDatabaseDto() throws IOException {
+        assertThat(PxDatabase.JSON_PARSER.parseResource(PxWebDriverTest.class, "statfin-databases.json", UTF_8))
+                .contains(new PxDatabase("SDG", "SDG"))
                 .hasSize(12);
     }
 
     @Test
-    public void testTables() throws IOException {
-        assertThat(PxWebDriver.Table.JSON_PARSER.parseResource(PxWebDriverTest.class, "statfin-tables.json", UTF_8))
-                .contains(new PxWebDriver.Table("statfin_matk_pxt_117s.px", "/matk", "117s -- Accommodation establishment capacity by municipality, 1995-2022*"))
-                .hasSize(3);
+    public void testNodeDto() throws IOException {
+        assertThat(PxNode.JSON_PARSER.parseResource(PxWebDriverTest.class, "statfin-nodes.json", UTF_8))
+                .hasSize(2)
+                .contains(new PxNode("matk", "l", "Accommodation statistics"), atIndex(0))
+                .contains(new PxNode("statfin_matk_pxt_117s.px", "t", "117s -- Accommodation establishment capacity by municipality, 1995-2022*"), atIndex(1));
+
+        assertThat(new PxNode("matk", "l", "Accommodation statistics"))
+                .returns(true, PxNode::isLevel)
+                .returns(false, PxNode::isTable);
+
+        assertThat(new PxNode("x.px", "t", "X"))
+                .returns(false, PxNode::isLevel)
+                .returns(true, PxNode::isTable);
     }
 
     @Test
-    public void testTableMeta() throws IOException {
-        PxWebDriver.TableMeta meta = PxWebDriver.TableMeta.JSON_PARSER.parseResource(PxWebDriverTest.class, "statfin-table-meta.json", UTF_8);
+    public void testSearchTableDto() throws IOException {
+        // The flat search identifies tables by id only (its "path" field is not used).
+        assertThat(PxSearchTable.JSON_PARSER.parseResource(PxWebDriverTest.class, "statfin-search.json", UTF_8))
+                .hasSize(3)
+                .contains(new PxSearchTable("statfin_matk_pxt_117s.px", "117s -- Accommodation establishment capacity by municipality, 1995-2022*"), atIndex(0));
+
+        assertThat(new PxSearchTable("statfin_matk_pxt_117s.px", "Title").toFlow())
+                .returns("statfin_matk_pxt_117s.px", flow -> PxConverter.flowRefToTablePath(flow.getRef()))
+                .returns("Title", Flow::getName);
+    }
+
+    @Test
+    public void testSelectTables() throws IOException {
+        List<Flow> flat = singletonList(new PxSearchTable("flat.px", "Flat").toFlow());
+        List<Flow> tree = singletonList(new PxNode("tree.px", "t", "Tree").toFlow("tree.px"));
+        java.io.IOException boom = new java.io.IOException("unsupported");
+
+        // FLAT: always the flat result, even when empty.
+        assertThat(DefaultPxWebClient.selectTables(TableListing.FLAT, () -> flat, () -> tree)).isEqualTo(flat);
+        assertThat(DefaultPxWebClient.selectTables(PxWebDriver.TableListing.FLAT, () -> emptyList(), () -> tree)).isEmpty();
+
+        // TREE: always the tree result (flat is never called).
+        assertThat(DefaultPxWebClient.selectTables(PxWebDriver.TableListing.TREE, () -> { throw boom; }, () -> tree)).isEqualTo(tree);
+
+        // AUTO: flat when it succeeds and is non-empty...
+        assertThat(DefaultPxWebClient.selectTables(PxWebDriver.TableListing.AUTO, () -> flat, () -> tree)).isEqualTo(flat);
+        // ...fall back to tree when flat is empty...
+        assertThat(DefaultPxWebClient.selectTables(PxWebDriver.TableListing.AUTO, () -> emptyList(), () -> tree)).isEqualTo(tree);
+        // ...fall back to tree when flat is unsupported (throws).
+        assertThat(DefaultPxWebClient.selectTables(PxWebDriver.TableListing.AUTO, () -> { throw boom; }, () -> tree)).isEqualTo(tree);
+    }
+
+    @Test
+    public void testTablePathConverter() {
+        assertThat(PxConverter.flowRefToTablePath(PxConverter.tablePathToFlowRef("matk/statfin_matk_pxt_117s.px")))
+                .isEqualTo("matk/statfin_matk_pxt_117s.px");
+
+        assertThat(PxConverter.structureRefToTablePath(PxConverter.tablePathToStructureRef("Population/Reference date 31 December/211.001e.px")))
+                .describedAs("path with spaces must round-trip through the structure ref")
+                .isEqualTo("Population/Reference date 31 December/211.001e.px");
+
+        assertThat(PxConverter.tablePathToSegments("Population/Reference date 31 December/211.001e.px"))
+                .containsExactly("Population", "Reference date 31 December", "211.001e.px");
+
+        assertThat(PxConverter.segmentsToTablePath(asList("a", "b c", "d.px")))
+                .isEqualTo("a/b c/d.px");
+    }
+
+    @Test
+    public void testCollectTables() throws IOException {
+        // A small tree: root has one level "matk" (containing a table) and one root-level table.
+        Map<List<String>, List<PxNode>> tree = new HashMap<>();
+        tree.put(emptyList(), asList(
+                new PxNode("matk", "l", "Accommodation"),
+                new PxNode("root_table.px", "t", "Root table")));
+        tree.put(singletonList("matk"), singletonList(
+                new PxNode("nested_table.px", "t", "Nested table")));
+
+        List<Flow> tables = DefaultPxWebClient.collectTables(folder -> tree.getOrDefault(folder, emptyList()));
+
+        assertThat(tables)
+                .describedAs("both the root and the nested table must be discovered with their full path")
+                .extracting(flow -> PxConverter.flowRefToTablePath(flow.getRef()))
+                .containsExactlyInAnyOrder("root_table.px", "matk/nested_table.px");
+    }
+
+    @Test
+    public void testCollectTablesIsBounded() throws IOException {
+        int[] counter = {0};
+        DefaultPxWebClient.NodeLister infinite = folder -> {            counter[0]++;
+            return singletonList(new PxNode("level" + counter[0], "l", "Level"));
+        };
+
+        DefaultPxWebClient.collectTables(infinite);
+
+        assertThat(counter[0])
+                .describedAs("tree navigation must stop at the defensive request bound")
+                .isEqualTo(DefaultPxWebClient.MAX_FOLDER_REQUESTS);
+    }
+
+    @Test
+    public void testCollectTablesSkipsUnreachableSubFolder() throws IOException {
+        // One sub-folder is unreachable (e.g. HTTP 404 mid-traversal); it must be skipped,
+        // not abort the whole catalog listing.
+        DefaultPxWebClient.NodeLister lister = folder -> {
+            if (folder.isEmpty()) {
+                return asList(
+                        new PxNode("broken", "l", "Broken level"),
+                        new PxNode("ok", "l", "Ok level"),
+                        new PxNode("root_table.px", "t", "Root table"));
+            }
+            if (folder.equals(singletonList("broken"))) {
+                throw new IOException("404");
+            }
+            if (folder.equals(singletonList("ok"))) {
+                return singletonList(new PxNode("ok_table.px", "t", "Ok table"));
+            }
+            return emptyList();
+        };
+
+        assertThat(DefaultPxWebClient.collectTables(lister))
+                .extracting(flow -> PxConverter.flowRefToTablePath(flow.getRef()))
+                .containsExactlyInAnyOrder("root_table.px", "ok/ok_table.px");
+    }
+
+    @Test
+    public void testCollectTablesPropagatesRootFailure() {
+        // A failure to list the database root is a genuine flow failure and must propagate.
+        DefaultPxWebClient.NodeLister lister = folder -> {
+            throw new IOException("root is down");
+        };
+
+        assertThatIOException()
+                .isThrownBy(() -> DefaultPxWebClient.collectTables(lister));
+    }
+
+    @Test
+    public void testTableMetaWithMissingValues() throws IOException {
+        PxTableMeta meta = PxTableMeta.JSON_PARSER.parseResource(PxWebDriverTest.class, "statfin-table-meta-missing-values.json", UTF_8);
+
+        assertThat(meta.getVariables())
+                .describedAs("variables without 'values'/'valueTexts' arrays must parse as empty lists, not crash")
+                .hasSize(3)
+                .allSatisfy(variable -> {
+                    assertThat(variable.getValues()).isNotNull();
+                    assertThat(variable.getValueTexts()).isNotNull();
+                });
+
+        assertThat(meta.toStructure(StructureRef.parse("hello")).getDimensions())
+                .hasSize(2);
+    }
+
+    @Test
+    public void testTableMetaDto() throws IOException {
+        PxTableMeta meta = PxTableMeta.JSON_PARSER.parseResource(PxWebDriverTest.class, "statfin-table-meta.json", UTF_8);
         assertThat(meta.getTitle())
                 .isEqualTo("Accommodation establishment capacity by municipality by Municipality, Type of establishment, Year and Information");
         assertThat(meta.getVariables())
@@ -81,11 +280,16 @@ public class PxWebDriverTest {
 
     @Test
     public void testGetTimeVariable() throws IOException {
-        assertThat(TableMeta.JSON_PARSER.parseResource(PxWebDriverTest.class, "statfin-table-meta.json", UTF_8).getTimeVariable())
-                .returns("Vuosi", TableVariable::getCode);
+        assertThat(PxTableMeta.JSON_PARSER.parseResource(PxWebDriverTest.class, "statfin-table-meta.json", UTF_8).getTimeVariable())
+                .describedAs("with time attribute")
+                .returns("Vuosi", PxTableVariable::getCode);
 
-        assertThat(TableMeta.JSON_PARSER.parseResource(PxWebDriverTest.class, "grande-region-a301-table-meta.json", UTF_8).getTimeVariable())
-                .returns("Année", TableVariable::getCode);
+        assertThat(PxTableMeta.JSON_PARSER.parseResource(PxWebDriverTest.class, "grande-region-a301-table-meta.json", UTF_8).getTimeVariable())
+                .describedAs("without time attribute but all values represent years")
+                .returns("Année", PxTableVariable::getCode);
+
+        assertThat(PxTableMeta.JSON_PARSER.parseResource(PxWebDriverTest.class, "stat-si-0156101S.table-meta.json", UTF_8).getTimeVariable())
+                .returns("OBDOBJE, LETO", PxTableVariable::getCode);
     }
 
     @Test
@@ -94,7 +298,7 @@ public class PxWebDriverTest {
         itemFilters.put("kon", asList("1", "2"));
         itemFilters.put("ContentsCode", singletonList("BE0101N1"));
 
-        PxWebDriver.TableQuery query = new PxWebDriver.TableQuery(itemFilters);
+        PxTableQuery query = new PxTableQuery(itemFilters);
 
 //        System.out.println(PxWebDriver.TableQuery.FORMATTER.formatToString(query));
 
@@ -178,23 +382,103 @@ public class PxWebDriverTest {
 
     @Test
     public void testConvertDimensionNameToId() {
-        assertThat(PxWebDriver.PxWebSdmxDataCursor.convertDimensionNameToId("Tuotteet toimialoittain (CPA 2015)"))
+        assertThat(PxWebSdmxDataCursor.convertDimensionNameToId("Tuotteet toimialoittain (CPA 2015)"))
                 .isEqualTo("TuotteettoimialoittainCPA2015");
 
-        assertThat(PxWebDriver.PxWebSdmxDataCursor.convertDimensionNameToId("Palvelun kohde"))
+        assertThat(PxWebSdmxDataCursor.convertDimensionNameToId("Palvelun kohde"))
                 .isEqualTo("Palvelunkohde");
 
-        assertThat(PxWebDriver.PxWebSdmxDataCursor.convertDimensionNameToId("Tiedot"))
+        assertThat(PxWebSdmxDataCursor.convertDimensionNameToId("Tiedot"))
                 .isEqualTo("Tiedot");
 
-        assertThat(PxWebDriver.PxWebSdmxDataCursor.convertDimensionNameToId("Koulutusala ja koulutuksen sisältö"))
+        assertThat(PxWebSdmxDataCursor.convertDimensionNameToId("Koulutusala ja koulutuksen sisältö"))
                 .isEqualTo("Koulutusalajakoulutuksensislt");
 
-        assertThat(PxWebDriver.PxWebSdmxDataCursor.convertDimensionNameToId("Industries_luok"))
+        assertThat(PxWebSdmxDataCursor.convertDimensionNameToId("Industries_luok"))
                 .isEqualTo("Industries_luok");
 
-        assertThat(PxWebDriver.PxWebSdmxDataCursor.convertDimensionNameToId("Underlying cause of death (86-group short list)"))
+        assertThat(PxWebSdmxDataCursor.convertDimensionNameToId("Underlying cause of death (86-group short list)"))
                 .isEqualTo("Underlyingcauseofdeath86-groupshortlist");
+    }
+
+    @Test
+    public void testWebsitesInBuildInSources() {
+        assertThat(new PxWebDriver().getDefaultSources())
+                .filteredOn(source -> source.getWebsite() == null)
+                .extracting(WebSource::getEndpoint)
+                .isEmpty();
+    }
+
+    @Test
+    public void testTableListingInBuiltInSources() {
+        assertThat(new PxWebDriver().getDefaultSources())
+                .filteredOn(source -> !source.isAlias())
+                .allSatisfy(source -> assertThat(TABLE_LISTING_PROPERTY.get(source.getProperties())).isNotNull());
+
+        // Sources with a known stale flat search index are pinned to reliable tree navigation.
+        assertThat(pinnedListing("IRENA")).isEqualTo(TableListing.TREE);
+        assertThat(pinnedListing("LIECHTENSTEIN")).isEqualTo(TableListing.TREE);
+        assertThat(pinnedListing("GEOSTAT")).isEqualTo(TableListing.TREE);
+
+        // Others keep the default (fast flat search with fallback).
+        assertThat(pinnedListing("STATFI")).isEqualTo(TableListing.AUTO);
+    }
+
+    private static TableListing pinnedListing(String sourceId) {
+        return new PxWebDriver().getDefaultSources().stream()
+                .filter(source -> source.getId().equals(sourceId))
+                .findFirst()
+                .map(source -> TABLE_LISTING_PROPERTY.get(source.getProperties()))
+                .orElseThrow(() -> new AssertionError("Source not found: " + sourceId));
+    }
+
+    @Test
+    public void testCookieInBuiltInSources() {
+        // SUNDSVALL sits behind a cookie-challenge gateway and must enable cookie handling.
+        assertThat(cookieEnabled("SUNDSVALL")).isTrue();
+
+        // Others keep the default (disabled).
+        assertThat(cookieEnabled("STATFI")).isFalse();
+    }
+
+    private static boolean cookieEnabled(String sourceId) {
+        return new PxWebDriver().getDefaultSources().stream()
+                .filter(source -> source.getId().equals(sourceId))
+                .findFirst()
+                .map(source -> COOKIE_PROPERTY.get(source.getProperties()))
+                .orElseThrow(() -> new AssertionError("Source not found: " + sourceId));
+    }
+
+    @SuppressWarnings("DataFlowIssue")
+    @Test
+    public void testYearRange() {
+        assertThat(YearRange.isParsable(null)).isFalse();
+        assertThat(YearRange.isParsable("")).isFalse();
+        assertThat(YearRange.isParsable("12-34")).isFalse();
+        assertThat(YearRange.isParsable("1981/1990")).isFalse();
+        assertThat(YearRange.isParsable("1981-1990")).isTrue();
+
+        assertThat(YearRange.parse("1981-1990"))
+                .returns(Year.of(1981), YearRange::getIncludedStartYear)
+                .returns(Year.of(1990), YearRange::getIncludedEndYear)
+                .returns(Duration.parse("P10Y"), YearRange::getDuration)
+                .returns(LocalDate.of(1981, Month.JANUARY, 1).atStartOfDay(), range -> range.toStartTime(null))
+                .hasToString("1981-1990");
+
+        assertThatNullPointerException()
+                .isThrownBy(() -> YearRange.parse(null));
+
+        assertThatExceptionOfType(DateTimeParseException.class)
+                .isThrownBy(() -> YearRange.parse(""));
+
+        assertThatExceptionOfType(DateTimeParseException.class)
+                .isThrownBy(() -> YearRange.parse("12-34"));
+
+        assertThatExceptionOfType(DateTimeParseException.class)
+                .isThrownBy(() -> YearRange.parse("1981/1990"));
+
+        assertThatExceptionOfType(DateTimeParseException.class)
+                .isThrownBy(() -> YearRange.parse("1990-1981"));
     }
 
     private static <T> Set<T> setOf(T... values) {

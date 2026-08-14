@@ -22,8 +22,10 @@ import tests.sdmxdl.web.spi.DriverAssert;
 import java.io.IOException;
 import java.net.URI;
 
+import static nbbrd.io.text.BaseProperty.keysOf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIOException;
+import static sdmxdl.provider.ri.drivers.FileRiDriver.STRUCTURE_URI_PROPERTY;
 
 /**
  * @author Philippe Charles
@@ -36,12 +38,22 @@ public class FileRiDriverTest {
     }
 
     @Test
+    public void testProperties() {
+        assertThat(new FileRiDriver().getDriverPropertyNames())
+                .containsExactlyInAnyOrderElementsOf(
+                        keysOf(
+                                STRUCTURE_URI_PROPERTY
+                        )
+                );
+    }
+
+    @Test
     public void testToFile() throws IOException {
-        assertThat(FileRiDriver.toFile(URI.create("file:/C:/temp/x.xml"))).isNotNull();
+        assertThat(FileRiDriver.FileConnectionFactory.toFile(URI.create("file:/C:/temp/x.xml"))).isNotNull();
 
         URI illegal = URI.create("file://C:temp/x.xml");
         assertThatIOException()
-                .isThrownBy(() -> FileRiDriver.toFile(illegal))
+                .isThrownBy(() -> FileRiDriver.FileConnectionFactory.toFile(illegal))
                 .withMessageStartingWith("Invalid file name: ")
                 .withMessageContaining(illegal.toString())
                 .withCauseExactlyInstanceOf(IllegalArgumentException.class);
