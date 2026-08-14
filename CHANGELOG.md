@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.2.0] - 2026-08-14
+
 This release adds support for SDMX-specific representations and a new, more reliable network backend.  
 Several sources have been added or updated, and the driver implementations have been refactored for clarity.
 
@@ -660,7 +662,8 @@ production._
 
 - Initial release
 
-[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.1.1...HEAD
+[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.2.0...HEAD
+[3.2.0]: https://github.com/nbbrd/sdmx-dl/compare/v3.1.1...v3.2.0
 [3.1.1]: https://github.com/nbbrd/sdmx-dl/compare/v3.1.0...v3.1.1
 [3.1.0]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.18...v3.0.0
