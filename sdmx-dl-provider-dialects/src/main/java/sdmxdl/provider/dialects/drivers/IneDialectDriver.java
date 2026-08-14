@@ -86,7 +86,7 @@ public final class IneDialectDriver implements Driver {
                     .name("es", "Instituto Nacional de Estadística")
                     .driver(DIALECTS_INE)
                     .confidentiality(PUBLIC)
-                    .endpointOf("https://servicios.ine.es/wstempus/js")
+                    .endpointOf("https://servicios.ine.es/wstempus/jsCache")
                     .websiteOf("https://www.ine.es/dyngs/INEbase/listaoperaciones.htm")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/INE")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ine")
