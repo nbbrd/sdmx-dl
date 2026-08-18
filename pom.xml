@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.nbbrd.sdmx-dl</groupId>
@@ -12,7 +11,6 @@
     <description>Easily download official statistics</description>
     <url>https://github.com/${x.github.user}/${x.github.repo}</url>
     <inceptionYear>2020</inceptionYear>
-
     <licenses>
         <license>
             <name>European Union Public Licence (EUPL)</name>
@@ -28,6 +26,24 @@
             <organizationUrl>https://www.nbb.be</organizationUrl>
         </developer>
     </developers>
+
+    <modules>
+        <module>sdmx-dl-api</module>
+        <module>sdmx-dl-format-base</module>
+        <module>sdmx-dl-format-csv</module>
+        <module>sdmx-dl-format-kryo</module>
+        <module>sdmx-dl-format-protobuf</module>
+        <module>sdmx-dl-format-xml</module>
+        <module>sdmx-dl-provider-base</module>
+        <module>sdmx-dl-provider-ri</module>
+        <module>sdmx-dl-provider-dialects</module>
+        <module>sdmx-dl-provider-connectors</module>
+        <module>sdmx-dl-provider-px</module>
+        <module>sdmx-dl-cli</module>
+        <module>sdmx-dl-desktop</module>
+        <module>sdmx-dl-standalone</module>
+        <module>sdmx-dl-swing</module>
+    </modules>
 
     <scm>
         <connection>scm:git:git://github.com/${x.github.user}/${x.github.repo}.git</connection>
@@ -123,6 +139,28 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <!-- Custom repositories: order matters! -->
+    <!-- Maven Central is enforced at top to prevent dependabot to use snapshots as releases -->
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>central-snapshots</id>
+            <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <build>
         <pluginManagement>
@@ -240,6 +278,11 @@
                     <version>0.8.15</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>tidy-maven-plugin</artifactId>
+                    <version>1.4.0</version>
+                </plugin>
+                <plugin>
                     <groupId>org.jreleaser</groupId>
                     <artifactId>jreleaser-maven-plugin</artifactId>
                     <version>1.25.0</version>
@@ -304,26 +347,20 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>tidy-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
-
-    <modules>
-        <module>sdmx-dl-api</module>
-        <module>sdmx-dl-format-base</module>
-        <module>sdmx-dl-format-csv</module>
-        <module>sdmx-dl-format-kryo</module>
-        <module>sdmx-dl-format-protobuf</module>
-        <module>sdmx-dl-format-xml</module>
-        <module>sdmx-dl-provider-base</module>
-        <module>sdmx-dl-provider-ri</module>
-        <module>sdmx-dl-provider-dialects</module>
-        <module>sdmx-dl-provider-connectors</module>
-        <module>sdmx-dl-provider-px</module>
-        <module>sdmx-dl-cli</module>
-        <module>sdmx-dl-desktop</module>
-        <module>sdmx-dl-standalone</module>
-        <module>sdmx-dl-swing</module>
-    </modules>
 
     <profiles>
         <!-- Java17 modules -->
@@ -828,6 +865,7 @@
                 <forbiddenapis.skip>true</forbiddenapis.skip>
                 <jacoco.skip>true</jacoco.skip>
                 <heylogs.skip>true</heylogs.skip>
+                <tidy.skip>true</tidy.skip>
             </properties>
         </profile>
 
@@ -846,26 +884,4 @@
             </build>
         </profile>
     </profiles>
-
-    <!-- Custom repositories: order matters! -->
-    <!-- Maven Central is enforced at top to prevent dependabot to use snapshots as releases -->
-    <repositories>
-        <repository>
-            <id>central</id>
-            <url>https://repo.maven.apache.org/maven2</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>central-snapshots</id>
-            <url>https://central.sonatype.com/repository/maven-snapshots/</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 </project>
