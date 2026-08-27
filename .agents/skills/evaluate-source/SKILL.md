@@ -16,8 +16,8 @@ directly to add the source to sdmx-dl.
 ## Guiding principles (read first)
 
 These rules are the difference between an evaluation that *looks* done and one that
-actually works at runtime. They were learned the hard way (see the INE case study at
-the end).
+actually works at runtime. They were learned the hard way (see the ASTAT and INE case
+studies at the end).
 
 1. **Trust live responses, not documentation.** Documentation and reference clients are
    frequently wrong, outdated, or describe a different endpoint mode. Every claim in the
@@ -32,7 +32,13 @@ the end).
 4. **Prefer the smallest real example.** Identify one concrete, confirmed-working
    `database / flow / key` tuple with few series and a known observation. It drives the
    web-query test and the demo.
-5. **Flag unknowns explicitly.** Accuracy beats completeness. Mark anything you could not
+5. **One working example proves nothing about the catalog.** A hand-picked flow can work
+   while a large fraction of the source is broken. *Always* sample several flows across the
+   listing — this applies to **standard SDMX sources too**, not only to inferred models.
+6. **Read the whole issue, including comments.** When the source comes from a tracker issue,
+   fetch the comments as well: earlier investigations often already recorded the quirk that
+   invalidates the naive reading of the issue body.
+7. **Flag unknowns explicitly.** Accuracy beats completeness. Mark anything you could not
    confirm rather than guessing.
 
 ## 1. Gather inputs from the user
@@ -45,6 +51,18 @@ Ask the user for the following before doing anything else:
 | **Website**           | ✅        | URL of the public data portal (e.g. `https://explore.data.abs.gov.au`)  |
 | **API documentation** | ❌        | URL of the API/developer documentation, if any                          |
 | **Reference client**  | ❌        | Any existing client library (R/Python package, etc.) worth cross-checking |
+| **Tracker issue**     | ❌        | Issue describing the source                                             |
+
+If a tracker issue is given, read **the body *and* every comment** before probing:
+
+```
+GET https://api.github.com/repos/<owner>/<repo>/issues/<n>
+GET https://api.github.com/repos/<owner>/<repo>/issues/<n>/comments
+```
+
+Comments frequently contain a prior investigation that contradicts the body (wrong driver,
+non-standard structure query, broken endpoint). Treat the issue body as a *proposal*, not a
+specification — in particular the suggested driver and endpoint must be re-verified.
 
 ## 2. Read the API documentation
 
@@ -115,7 +133,52 @@ GET {endpoint}/dataflow/all/all/all/
 - If this returns 200 but `{endpoint}/dataflow/all/all/all` (no slash) returns 404
   → `trailingSlash=true`
 
-### 4c. Select the driver
+### 4c. Audit the catalog — do **not** skip this
+
+A 200 on the flow listing only proves the *listing* works. Before trusting the endpoint,
+inspect the DSD reference of **every** flow in the listing and group them:
+
+```
+//structure:Dataflow/structure:Structure/Ref/@agencyID + '/' + @id
+```
+
+Then check for these red flags:
+
+1. **Placeholder / shared DSD.** If many flows point at the *same* reference — especially
+   one named `VIRTUAL*`, `GENERIC*`, `DEFAULT*`, or owned by a different agency than the
+   flows — fetch it. A DSD with 1–2 dimensions serving hundreds of flows is a **stub**, and
+   those flows are unusable: `getMeta` returns garbage and `getData` typically 404s.
+2. **Unresolvable references.** Resolve a few distinct refs with
+   `/datastructure/{agency}/{id}/{version}?references=children`. A 404 means the flow is
+   listed but not usable.
+3. **Quantify the damage.** Report the split explicitly, e.g. *"260 flows listed, 122 point
+   at `MDM:VIRTUALDSD` → broken"*. A source where a large fraction of flows cannot return
+   data must not be registered as-is.
+
+### 4d. Look for sibling deployments
+
+When part of the catalog is broken, the missing structures often live on a **parallel
+deployment of the same host** — a different path segment, subdomain, or service name
+(`/dsm/…` vs `/esd/…`, `…/public/` vs `…/internal/`, `ws1` vs `ws2`). Probe the variants
+before concluding a custom dialect is needed.
+
+If a sibling exists, characterise the relationship precisely, because it drives the design:
+
+| Question | How to answer |
+|----------|---------------|
+| Are the catalogs **disjoint, overlapping, or nested**? | Diff the two flow-id sets |
+| Does data work on each side? | Sample-fetch flows from both |
+| Are shared flows exposed under the **same ids**? | Compare the intersection; watch for prefixed variants like `DF_X` vs `DF_ISTAT_X` |
+
+Outcomes:
+
+- **Nested** (one is a superset and fully works) → register only that one, plain driver.
+- **Disjoint / complementary** → either register **two sources**, or write a dialect that
+  routes per flow. Prefer two sources unless the split is invisible to users.
+- **Overlapping with id mismatches** → merging requires an id-mapping table; document the
+  maintenance cost before choosing it.
+
+### 4e. Select the driver
 
 Choose **exactly one** driver. Prefer `RI_SDMX21` whenever the endpoint is a standard
 SDMX 2.1 REST service.
@@ -135,7 +198,11 @@ SDMX 2.1 REST service.
 
 > If docs or probes reveal a well-known platform listed above, prefer the matching dialect.
 
-### 4d. Source properties
+> A recognised platform (NSI WS, .Stat Suite, Fusion, …) is **not** a guarantee of a healthy
+> catalog. The platform tells you the *protocol*; sections 4c/4d tell you whether the
+> *deployment* actually serves its flows. Run both.
+
+### 4f. Source properties
 
 | Property                        | Value  | When to set                                  |
 |---------------------------------|--------|----------------------------------------------|
@@ -278,17 +345,33 @@ record one concrete working example:
 - [ ] `getMeta(...)` yields a structure with the expected dimension count
 - [ ] `getData(...)` returns ≥ 1 series with ≥ 1 real observation (period + value)
 - [ ] The chosen key components are unique and reproduce the same key on re-fetch
+- [ ] **A random sample of other flows also returns data** (see 6a) — not just the example
 - [ ] Record the working tuple: `source / database / flow / key` + expected counts
+- [ ] Record the **share of the catalog that works**, if it is not 100 %
 
 This working tuple feeds the web-query test (CSV row) and the runnable demo.
 
 ### 6a. Don't stop at a few hand-picked examples — sample randomly and check invariants
 
-A handful of curated examples can pass by luck while the model is still wrong for other
-flows (this is exactly what happened with INE). For any source with an **inferred**
-dimension model, add a seeded, random-sampling test (tagged so it only runs on demand)
-that fetches many live tables and asserts the properties that **must** hold if the model
-is correct — rather than checking specific values:
+A handful of curated examples can pass by luck while a large part of the source is broken.
+This bit both INE (wrong inferred model) and ASTAT (half the flows unusable), so **sample
+for every source**, standard or not.
+
+**Minimal sample (every source, done during evaluation).** Pick ~10 flows with a fixed seed,
+stratified over whatever grouping the audit in 4c revealed (e.g. per DSD, or
+placeholder-DSD vs real-DSD), and for each run
+`data/{flow}/all/all?lastNObservations=1`. Assert:
+
+- HTTP 200 (record every 404/500 — they mean the flow is listed but not served)
+- ≥ 1 series returned
+- **key size == dimension count** of the flow's DSD
+
+Report the results as a table. A stratified sample is what turns "it works" into
+"138 of 260 flows work".
+
+**Full harness (sources with an *inferred* dimension model).** Add a seeded, random-sampling
+test (tagged so it only runs on demand) that fetches many live tables and asserts the
+properties that **must** hold if the model is correct — rather than checking specific values:
 
 - key size **==** dimension count
 - every series key is **fully specified** (no accidental wildcard slot)
@@ -315,10 +398,18 @@ example did.
 ## 8. Produce the output
 
 For an **existing-driver SDMX source**, print the Forge issue summary below.
-For a **new dialect**, additionally write a full evaluation document under
-`.agents/evaluations/<ID>.md` capturing the Section 5 mapping, the resolved hard
-questions (with live evidence), the fixtures, the request-cost model, and the
-implementation work items.
+Additionally write a full evaluation document under `.agents/evaluations/<ID>.md` whenever
+the source is **not** a clean drop-in, i.e. when any of these hold:
+
+- a **new dialect** is needed → capture the Section 5 mapping, the resolved hard questions
+  (with live evidence), the fixtures, the request-cost model, and the implementation work items
+- **part of the catalog is broken** or a **sibling deployment** is involved → capture the
+  audit numbers, the raw evidence, and a comparison of the possible designs
+- the evaluation **contradicts the tracker issue** (different driver, different endpoint,
+  different conclusion) → capture why, so the discussion has a written basis
+
+When several designs are viable, present them as explicit options with a recommendation and
+the trade-off of each — do not silently pick one.
 
 ---
 
@@ -343,9 +434,22 @@ implementation work items.
 |-------|--------|
 | Reachability | ✅ / ❌ |
 | Protocol | SDMX 2.1 / SDMX 2.0 / proprietary (<format>) |
+| Platform | <e.g. NSI WS v9.11 / .Stat Suite / N/A> |
 | `detail` parameter supported | ✅ / ❌ / N/A |
 | Trailing-slash required | ✅ / ❌ / N/A |
 | Authentication required | ✅ / ❌ |
+
+### Catalog health
+
+<!-- Omit only if every listed flow was shown to resolve and serve data. -->
+
+| Check | Result |
+|-------|--------|
+| Flows listed | <n> |
+| Flows with a resolvable, non-placeholder DSD | <n> |
+| Flows returning data (random stratified sample) | <k>/<m> |
+| Placeholder / shared DSD detected | ✅ `<agency:id>` on <n> flows / ❌ |
+| Sibling deployment found | ✅ `<url>` (<disjoint / nested / overlapping>) / ❌ |
 
 ### End-to-end verification
 
@@ -401,6 +505,8 @@ To be added in the appropriate driver class
 <!-- List any uncertainties that need follow-up before the source can be merged. -->
 - [ ] Confirm endpoint stability / official support
 - [ ] Verify all supported languages
+- [ ] If the catalog is partly broken: which design option is chosen, and should the
+      provider be asked to fix it upstream?
 ```
 ---
 
@@ -412,8 +518,15 @@ To be added in the appropriate driver class
 Before declaring an evaluation done, sanity-check against these recurring traps:
 
 - [ ] Mapping is based on **live responses**, not just docs or a reference client
+- [ ] The tracker issue's **comments** were read, not just its body
+- [ ] The issue's proposed **driver and endpoint were re-verified**, not taken at face value
 - [ ] The **full path** databases→flows→structure→data was exercised, not just listing
 - [ ] At least **one real observation** was retrieved with the proposed mapping
+- [ ] **All** DSD references in the flow listing were grouped and audited (4c)
+- [ ] No **placeholder/shared stub DSD** silently serves a large slice of the catalog
+- [ ] **Sibling deployments** (other path segment / subdomain) were probed (4d)
+- [ ] The **share of usable flows** is known and stated, not assumed to be 100 %
+- [ ] A **stratified random sample** of flows returns data, not just the curated example
 - [ ] The **endpoint mode/flags** that return the needed metadata are confirmed
 - [ ] The **key code component is unique** (no collisions across dimensions)
 - [ ] Fields used exist in **both** the structure and data responses (or are reconciled)
@@ -429,9 +542,44 @@ Before declaring an evaluation done, sanity-check against these recurring traps:
 - [ ] **Empty/error semantics** (e.g. HTTP 500 for unknown values) are handled
 - [ ] **Transient "busy"** 200 responses are detected and made retryable
 - [ ] Very large payloads are **streamed** (no whole-body buffering / OOM)
+- [ ] **Structure payload sizes** were measured (some DSDs are tens of MB)
 - [ ] A **random-sampling invariant test** passes across many live flows (not just a few)
 - [ ] Raw response **fixtures were saved** for tests (incl. a heterogeneous table)
 - [ ] Discrepancies between docs and live behaviour are **documented**
+
+### Case study: ASTAT (standard SDMX 2.1, half the catalog broken)
+
+ASTAT (Bolzano – South Tyrol) looked like the easiest possible case: a stock **NSI Web
+Service v9.11** endpoint, HTTP 200 on `dataflow/all/all/all`, `detail` supported, no auth,
+three languages — identical in every respect to the already-registered `ISTAT` source. The
+first evaluation concluded "plain `RI_SDMX21`, done" on the strength of one flow that
+returned a clean 10-dimension DSD and 27 real observations.
+
+It was wrong, and a **comment on the tracker issue had already said so**:
+
+- 122 of the 260 listed flows referenced a single placeholder DSD, `MDM:VIRTUALDSD`,
+  which has **1 dimension**. Those flows return **HTTP 404 on data**. The curated example
+  happened to be one of the 138 healthy ones — pure luck.
+- The real DSDs existed, but on a **sibling deployment**: `/esd/NSI_WS/rest` instead of
+  `/dsm/NSI_WS/rest`. The *same* URL path and query string returns the stub on one and the
+  real 14-dimension DSD on the other.
+- Refinement of the issue comment: no exotic query (`detail=Full&references=Descendants`)
+  was needed — the plain standard `datastructure/…?references=children` works, **on the
+  right host path**. The comment had attributed the fix to the query, not the base path.
+- The two services are **complementary, not nested**: each 404s on the other's flows. Of
+  the ids, 101 match and ~21 are the same tables under prefixed variants
+  (`DF_DCAT_X` vs `DF_ISTAT_DCAT_X`), so merging them would require an id-mapping table.
+- A structure response on the sibling was **12.6 MB** — a streaming/OOM concern that the
+  first evaluation never surfaced.
+
+What actually caught it: grouping the `Structure/Ref` of *every* flow in the listing
+(→ `122 x MDM:VIRTUALDSD`), then a seeded, **stratified** sample of 5 placeholder flows and
+5 real-DSD flows (→ 5 × 404 vs 5 × OK). Two cheap steps, both now mandatory as sections
+4c and 6a.
+
+The lesson: a recognised platform and a green end-to-end example say nothing about the
+health of the *catalog*. Audit every DSD reference, sample across the strata you find,
+probe for sibling deployments — and read the issue comments first.
 
 ### Case study: INE (proprietary JSON, new dialect)
 
