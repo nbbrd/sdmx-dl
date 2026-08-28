@@ -16,8 +16,8 @@ directly to add the source to sdmx-dl.
 ## Guiding principles (read first)
 
 These rules are the difference between an evaluation that *looks* done and one that
-actually works at runtime. They were learned the hard way (see the ASTAT and INE case
-studies at the end).
+actually works at runtime. They were learned the hard way (see the ASTAT, INSEE and INE
+case studies at the end).
 
 1. **Trust live responses, not documentation.** Documentation and reference clients are
    frequently wrong, outdated, or describe a different endpoint mode. Every claim in the
@@ -27,18 +27,32 @@ studies at the end).
    still fail to return a single observation. Always probe the full chain:
    `databases → flows → structure (DSD) → data`, and confirm at least one real
    observation comes back.
-3. **Capture raw payloads as you go.** Save the actual JSON/XML responses you rely on;
-   they become the unit-test fixtures and the evidence behind every mapping decision.
-4. **Prefer the smallest real example.** Identify one concrete, confirmed-working
+3. **Capture raw payloads as you go — including error bodies.** Save the actual JSON/XML
+   responses you rely on; they become the unit-test fixtures and the evidence behind every
+   mapping decision. Do **not** discard 4xx/5xx bodies: the message inside a 400 often
+   states the real rule (`"Not enough key values in query, expecting 10 got 2"`) and turns
+   a mysterious failure into a one-line diagnosis.
+4. **Probe the requests your client will actually send.** A source can serve every URL you
+   type by hand and still fail in production because sdmx-dl emits a *different shape* of
+   the same request: a qualified `agency,id,version` flow ref, a percent-encoded separator,
+   a partially-wildcarded key, a different `Accept` media type. Reproduce those shapes
+   explicitly (Section 6b) — this is the single most common source of "it worked in my
+   browser" evaluations.
+5. **Prefer the smallest real example.** Identify one concrete, confirmed-working
    `database / flow / key` tuple with few series and a known observation. It drives the
    web-query test and the demo.
-5. **One working example proves nothing about the catalog.** A hand-picked flow can work
+6. **One working example proves nothing about the catalog.** A hand-picked flow can work
    while a large fraction of the source is broken. *Always* sample several flows across the
    listing — this applies to **standard SDMX sources too**, not only to inferred models.
-6. **Read the whole issue, including comments.** When the source comes from a tracker issue,
+7. **Read the whole issue, including comments.** When the source comes from a tracker issue,
    fetch the comments as well: earlier investigations often already recorded the quirk that
    invalidates the naive reading of the issue body.
-7. **Flag unknowns explicitly.** Accuracy beats completeness. Mark anything you could not
+8. **A standard protocol does not mean a standard-compliant service.** A textbook SDMX 2.1
+   endpoint can still need a dialect because its *content* is inconsistent (DSD ids that do
+   not match the data payload, codelists missing from the DSD) or its *query layer* is
+   picky (encoding, wildcards, media types). Do not conclude `RI_SDMX21` from a 200 on the
+   flow listing — conclude it only after Sections 6a and 6b are green.
+9. **Flag unknowns explicitly.** Accuracy beats completeness. Mark anything you could not
    confirm rather than guessing.
 
 ## 1. Gather inputs from the user
@@ -124,6 +138,12 @@ GET {endpoint}/dataflow/all/all/all?detail=allcompletestubs
 - **200** → `detailSupported=true`
 - **400 / 501 / ignored** → `detailSupported=false`
 
+Test it on **data** queries too — support is not necessarily the same on both resources:
+
+```
+GET {endpoint}/data/{flow}/all/all?detail=serieskeysonly&lastNObservations=1
+```
+
 ### 4b. Test trailing-slash quirk
 
 ```
@@ -201,6 +221,11 @@ SDMX 2.1 REST service.
 > A recognised platform (NSI WS, .Stat Suite, Fusion, …) is **not** a guarantee of a healthy
 > catalog. The platform tells you the *protocol*; sections 4c/4d tell you whether the
 > *deployment* actually serves its flows. Run both.
+
+> `RI_SDMX21` is a *provisional* choice at this point. Confirm it only after Section 6a
+> (content consistency: dimension ids, codelists, per-flow data) and Section 6b (query
+> layer: encoding, wildcards, media types) come back clean. Any fix that cannot be expressed
+> as a `sdmxdl.driver.*` property means a dialect — see the INSEE case study.
 
 ### 4f. Source properties
 
@@ -346,6 +371,8 @@ record one concrete working example:
 - [ ] `getData(...)` returns ≥ 1 series with ≥ 1 real observation (period + value)
 - [ ] The chosen key components are unique and reproduce the same key on re-fetch
 - [ ] **A random sample of other flows also returns data** (see 6a) — not just the example
+- [ ] **The query shapes the client will actually emit behave** (see 6b) — qualified/encoded
+      refs, partial keys, media types, error semantics
 - [ ] Record the working tuple: `source / database / flow / key` + expected counts
 - [ ] Record the **share of the catalog that works**, if it is not 100 %
 
@@ -362,9 +389,19 @@ stratified over whatever grouping the audit in 4c revealed (e.g. per DSD, or
 placeholder-DSD vs real-DSD), and for each run
 `data/{flow}/all/all?lastNObservations=1`. Assert:
 
-- HTTP 200 (record every 404/500 — they mean the flow is listed but not served)
+- HTTP 200 — record every **404 / 500 / 413**. A 404/500 means the flow is listed but not
+  served; a **413 (payload too large)** means the flow cannot be fetched as a whole and
+  needs a narrowed key. Both are real limitations that belong in the report.
 - ≥ 1 series returned
 - **key size == dimension count** of the flow's DSD
+- **the dimension *names* match too**, not just the count: compare the DSD dimension ids
+  with the attribute names actually present on the series (or the `Value id`s in generic
+  data). A count-only check silently passes when the service publishes a DSD whose
+  dimension ids differ from the data payload (`DATA_DOMAIN6` in the DSD vs `DATA_DOMAIN`
+  in the data), which produces **empty keys for every series** of those flows.
+- **codelist completeness**: for each dimension, check that its codelist actually carries
+  codes in the structure response. A declared-but-empty codelist means the driver must
+  re-fetch it separately.
 
 Report the results as a table. A stratified sample is what turns "it works" into
 "138 of 260 flows work".
@@ -386,6 +423,63 @@ exact invariant broken so it is directly actionable. This invariant harness is w
 "seems to work" into evidence — it repeatedly surfaced structural bugs that no curated
 example did.
 
+### 6b. Probe the *query shapes* the client will emit — not just the ones you type
+
+Everything up to here uses hand-written URLs. sdmx-dl does not send those. It sends
+qualified refs, percent-encoded separators, partially-wildcarded keys and specific media
+types — and each of those can fail on a service that answers your manual probes perfectly.
+Run this matrix on **one small, known-good flow** and record the status of every row.
+
+**1. Flow-ref forms and comma encoding.** sdmx-dl may address a flow as
+`agency,id,version`. Percent-encoding of the separator is where services break:
+
+| Request | Expected | If it differs |
+|---------|----------|----------------|
+| `data/{id}/all/all?lastNObservations=1` | 200 | baseline |
+| `data/{agency},{id},{version}/all/all?…` (**raw** commas) | 200 | qualified refs unsupported → driver must send the short form |
+| `data/{agency}%2C{id}%2C{version}/all/all?…` (**encoded** commas) | 200 | **quirk**: emit raw commas (cf. `sdmxdl.driver.noCommaEncoding`) |
+
+INSEE returns **HTTP 500** on the encoded form and 200 on the raw one. No amount of
+hand-typed probing finds this, because a human never types `%2C`.
+
+**2. Key shapes — wildcards are not uniformly supported.** With a flow of *n* dimensions,
+try all of these and tabulate:
+
+| Key | Meaning |
+|-----|---------|
+| `A.B.C.D` (fully specified) | the single-series case |
+| `.B.C.D` | **leading** wildcard |
+| `A..C.D` | **middle** wildcard |
+| `A.B.C.` (last component empty) | **trailing** wildcard |
+| `...` (all empty) | everything |
+| `all` | everything, keyword form |
+
+Trailing wildcards are the classic trap: a service that trims empty trailing path segments
+then rejects the key for having *"not enough key values"*. Also try the documented wildcard
+tokens (`*`, `all`, `%20`) in the last position to see whether any workaround exists — and
+if none does, note that keys ending in a wildcard must be expanded into a union of codes
+(`CODE1+CODE2`) or widened to `all` with client-side filtering.
+
+**3. Data media types.** The default format a client asks for is not always the one the
+service serves best. Compare, on the same query:
+
+- `application/vnd.sdmx.structurespecificdata+xml;version=2.1`
+- `application/vnd.sdmx.genericdata+xml;version=2.1`
+- no `Accept` header at all
+
+Check status, `Content-Type`, size, and that the **series/observations are actually
+parseable** in each. A driver often has to pin one specific media type.
+
+**4. Error bodies.** For every non-2xx above, **read and quote the response body**. Services
+routinely explain themselves there (`Not enough key values in query, expecting 10 got 2`),
+and that one sentence is usually worth more than the whole rest of the probe session.
+
+**5. Language negotiation.** Compare `Accept-Language: en` vs `fr` vs absent. If the payload
+is byte-identical, the service inlines all languages and ignores the header — say so, rather
+than assuming per-language requests work.
+
+Record the whole matrix in the evaluation document; it is the specification of the dialect.
+
 ## 7. Source ID, names, confidentiality
 
 - **ID**: short, unique `SCREAMING_SNAKE_CASE` from the org acronym (e.g. `ABS`, `ECB`).
@@ -405,6 +499,9 @@ the source is **not** a clean drop-in, i.e. when any of these hold:
   (with live evidence), the fixtures, the request-cost model, and the implementation work items
 - **part of the catalog is broken** or a **sibling deployment** is involved → capture the
   audit numbers, the raw evidence, and a comparison of the possible designs
+- **any Section 6b probe deviates from standard behaviour** (encoding, wildcards, media
+  type, error semantics, size limits) → capture the full query-shape matrix with the exact
+  statuses and error bodies; it is the specification the dialect will be written against
 - the evaluation **contradicts the tracker issue** (different driver, different endpoint,
   different conclusion) → capture why, so the discussion has a written basis
 
@@ -438,6 +535,22 @@ the trade-off of each — do not silently pick one.
 | `detail` parameter supported | ✅ / ❌ / N/A |
 | Trailing-slash required | ✅ / ❌ / N/A |
 | Authentication required | ✅ / ❌ |
+
+### Query-shape probes (6b)
+
+<!-- Omit only if every row was the expected/standard behaviour. -->
+
+| Check | Result |
+|-------|--------|
+| Qualified flow ref `agency,id,version` | ✅ / ❌ |
+| Encoded comma `%2C` in path | ✅ / ❌ HTTP <code> |
+| Trailing wildcard in key | ✅ / ❌ HTTP <code> |
+| Leading / middle wildcard in key | ✅ / ❌ |
+| `all` keyword | ✅ / ❌ |
+| Data media type served | structure-specific / generic / both |
+| `Accept-Language` honoured | ✅ / ❌ (all languages inlined) |
+| Unknown code on data | 404 / empty 200 / <other> |
+| Oversized flows | ❌ none / ✅ <k>/<m> return 413 |
 
 ### Catalog health
 
@@ -527,6 +640,16 @@ Before declaring an evaluation done, sanity-check against these recurring traps:
 - [ ] **Sibling deployments** (other path segment / subdomain) were probed (4d)
 - [ ] The **share of usable flows** is known and stated, not assumed to be 100 %
 - [ ] A **stratified random sample** of flows returns data, not just the curated example
+- [ ] **413** responses were counted alongside 404/500 in the sample
+- [ ] DSD **dimension ids were compared by name** with the data payload attribute names
+- [ ] Every declared codelist was checked for **actually containing codes**
+- [ ] The **qualified `agency,id,version` flow ref** was probed with **raw *and* encoded**
+      commas (6b)
+- [ ] **Partial keys** were probed — leading, middle and especially **trailing** wildcards
+- [ ] **Data media types** (structure-specific vs generic vs none) were compared (6b)
+- [ ] **Error bodies of 4xx/5xx were read**, not just their status codes
+- [ ] **Frequency codes** were listed and checked against SDMX meanings (e.g. `T`=quarterly,
+      `B`=two-monthly are *not* standard)
 - [ ] The **endpoint mode/flags** that return the needed metadata are confirmed
 - [ ] The **key code component is unique** (no collisions across dimensions)
 - [ ] Fields used exist in **both** the structure and data responses (or are reconciled)
@@ -580,6 +703,55 @@ What actually caught it: grouping the `Structure/Ref` of *every* flow in the lis
 The lesson: a recognised platform and a green end-to-end example say nothing about the
 health of the *catalog*. Audit every DSD reference, sample across the strata you find,
 probe for sibling deployments — and read the issue comments first.
+
+### Case study: INSEE (textbook SDMX 2.1 — and six quirks, all in plain sight)
+
+INSEE's BDM service is the counter-example to "standard protocol ⇒ standard driver".
+Everything the early sections check is green: HTTP 200 on `dataflow/all/all/all`, real
+`application/xml`, no auth, two languages, **244 flows / 232 distinct DSDs, no placeholder
+DSD, no sibling deployment**, and a curated example that returns a clean 8-dimension DSD
+and a real observation. A Section 4-only evaluation says `RI_SDMX21`. It is wrong: the
+shipped driver is a dialect with four `@SdmxFix`es, a custom time parser and a feature flag.
+
+What the deeper sections surface — every one of them from a live response:
+
+- **Codelists missing from the DSD.** `datastructure/FR1/{id}?references=children` declares
+  10 codelists and returns 7; the three shared ones (`CL_PERIODICITE`, `CL_UNITE`,
+  `CL_ZONE_GEO`) are omitted — identically for `references=descendants` and `references=all`
+  — yet each resolves standalone. For the 13 IMF-DSD flows **all five** are omitted. Caught
+  by the "declared codelists actually contain codes" check in 6a.
+- **DSD dimension ids that don't match the data.** `IMF:ECOFIN_DSD` declares
+  `DATA_DOMAIN6, REF_AREA6, …` while the data payload uses `DATA_DOMAIN, REF_AREA, …`, and
+  the DSD the data message points to (`IMF:CPI`) **404s**. The key-size check passes
+  numerically for FR1 flows and fails silently for IMF ones — only the *by-name* comparison
+  added to 6a exposes it (0 of 5 dimensions matched).
+- **Trailing wildcards rejected.** `A.IPCH.…​.BRUT.SO` → 200/1 series; the same key with the
+  last component empty → **400**. Middle and leading wildcards are fine, `all` is fine, and
+  an extra trailing dot is fine. The service explains it in the **error body**:
+  `Not enough key values in query, expecting 10 got 2` — trailing empty segments are trimmed,
+  then the key is too short. No wildcard token works in the last position.
+- **Encoded comma → HTTP 500.** `data/FR1,IPCH-2005,1.0/…` returns 200;
+  `data/FR1%2CIPCH-2005%2C1.0/…` returns **500**. This is exactly what
+  `sdmxdl.driver.noCommaEncoding` exists for, and it is invisible unless you deliberately
+  send the shape the client sends — hence 6b.
+- **Non-standard frequencies.** `CL_PERIODICITE` = `A, B, M, S, T`, where `T` means
+  quarterly (SDMX uses `Q`) and `B` means **two-monthly** (SDMX `B` is *business daily*).
+  The driver needs a P2M reporting-period parser.
+- **10 % of flows are too big to fetch.** A seeded 30-flow sample returned 27 × 200 and
+  **3 × HTTP 413**, even with `lastNObservations=1`, and narrowing the key does not always
+  help. Nothing is broken — the flows simply require a specific key. Worth reporting; the
+  current driver does not surface it.
+
+A dry-run of this skill against INSEE rediscovered four of the six implemented quirks on its
+own, missed the comma-encoding one entirely (it had only tested commas *inside the key*,
+never the qualified flow ref), and only half-noticed the media-type one. Sections 6b, the
+by-name dimension check and the "read the error body" rule were all added as a direct
+result.
+
+The lesson: when a source looks like a textbook SDMX 2.1 service, the quirks are not in the
+catalog — they are in the **content consistency** (ids, codelists, frequency codes) and in
+the **query layer** (encoding, wildcards, media types, size limits). Neither shows up until
+you reproduce the exact requests the client will make.
 
 ### Case study: INE (proprietary JSON, new dialect)
 
