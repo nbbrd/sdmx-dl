@@ -1,18 +1,9 @@
 package sdmxdl.desktop;
 
+import static java.util.stream.Collectors.toList;
+
 import com.formdev.flatlaf.FlatLightLaf;
 import ec.util.various.swing.BasicSwingLauncher;
-import lombok.NonNull;
-import nbbrd.design.MightBePromoted;
-import sdmxdl.ErrorListener;
-import sdmxdl.EventListener;
-import sdmxdl.swing.SdmxLogo;
-import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.WebSource;
-
-import javax.swing.*;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -20,8 +11,16 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.IntStream;
-
-import static java.util.stream.Collectors.toList;
+import javax.swing.*;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
+import lombok.NonNull;
+import nbbrd.design.MightBePromoted;
+import sdmxdl.ErrorListener;
+import sdmxdl.EventListener;
+import sdmxdl.swing.SdmxLogo;
+import sdmxdl.web.SdmxWebManager;
+import sdmxdl.web.WebSource;
 
 @lombok.experimental.UtilityClass
 public class Main {
@@ -48,28 +47,28 @@ public class Main {
         MainComponent result = new MainComponent();
         result.load();
 
-        result.addAncestorListener(new AncestorListener() {
-            @Override
-            public void ancestorAdded(AncestorEvent event) {
-                JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(result);
-                frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-                frame.addWindowListener(new WindowAdapter() {
+        result.addAncestorListener(
+                new AncestorListener() {
                     @Override
-                    public void windowClosing(WindowEvent e) {
-                        result.store();
-                        frame.dispose();
+                    public void ancestorAdded(AncestorEvent event) {
+                        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(result);
+                        frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+                        frame.addWindowListener(
+                                new WindowAdapter() {
+                                    @Override
+                                    public void windowClosing(WindowEvent e) {
+                                        result.store();
+                                        frame.dispose();
+                                    }
+                                });
                     }
+
+                    @Override
+                    public void ancestorRemoved(AncestorEvent event) {}
+
+                    @Override
+                    public void ancestorMoved(AncestorEvent event) {}
                 });
-            }
-
-            @Override
-            public void ancestorRemoved(AncestorEvent event) {
-            }
-
-            @Override
-            public void ancestorMoved(AncestorEvent event) {
-            }
-        });
 
         return result;
     }
@@ -78,8 +77,8 @@ public class Main {
         System.setProperty("enableRngDriver", "true");
         System.setProperty("enableFileDriver", "true");
         System.setProperty("enablePxWebDriver", "true");
-        return SdmxWebManager.ofServiceLoader()
-                .toBuilder()
+        System.setProperty("enableMockDriver", "true");
+        return SdmxWebManager.ofServiceLoader().toBuilder()
                 .onEvent(Main::printEvent)
                 .onError(Main::printError)
                 .onRegistryEvent(Main::printRegistryEvent)
@@ -90,14 +89,27 @@ public class Main {
 
     private static EventListener printEvent(WebSource source) {
         return (marker, message) -> {
-            SwingUtilities.invokeLater(() -> Sdmxdl.INSTANCE.getEventList().addElement(new Event(source.getId(), marker, message.toString())));
+            SwingUtilities.invokeLater(
+                    () ->
+                            Sdmxdl.INSTANCE
+                                    .getEventList()
+                                    .addElement(
+                                            new Event(source.getId(), marker, message.toString())));
             System.out.println("[" + source.getId() + "] (" + marker + ") " + message);
         };
     }
 
     private static ErrorListener printError(WebSource source) {
         return (marker, message, error) -> {
-            System.err.println("[" + source.getId() + "] (" + marker + ") " + message + ": " + error.getMessage());
+            System.err.println(
+                    "["
+                            + source.getId()
+                            + "] ("
+                            + marker
+                            + ") "
+                            + message
+                            + ": "
+                            + error.getMessage());
             error.printStackTrace(System.err);
         };
     }
@@ -115,11 +127,14 @@ public class Main {
         if (icon instanceof ImageIcon) {
             return ((ImageIcon) icon).getImage();
         } else {
-            BufferedImage result = GraphicsEnvironment
-                    .getLocalGraphicsEnvironment()
-                    .getDefaultScreenDevice()
-                    .getDefaultConfiguration()
-                    .createCompatibleImage(icon.getIconWidth(), icon.getIconHeight(), Transparency.TRANSLUCENT);
+            BufferedImage result =
+                    GraphicsEnvironment.getLocalGraphicsEnvironment()
+                            .getDefaultScreenDevice()
+                            .getDefaultConfiguration()
+                            .createCompatibleImage(
+                                    icon.getIconWidth(),
+                                    icon.getIconHeight(),
+                                    Transparency.TRANSLUCENT);
             Graphics2D g = result.createGraphics();
             icon.paintIcon(null, g, 0, 0);
             g.dispose();

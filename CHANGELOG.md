@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Add a credible but obviously-fake data source for demos and testing [#1310](https://github.com/nbbrd/sdmx-dl/issues/1310)
+
 ## [3.2.0] - 2026-08-14
 
 This release adds support for SDMX-specific representations and a new, more reliable network backend.  
