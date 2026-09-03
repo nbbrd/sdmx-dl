@@ -33,6 +33,26 @@ SdmxFileManager
     .forEach(series -> System.out.printf(Locale.ROOT, "%s: %d obs%n", series.getKey(), series.getObs().size()));
 ```
 
+Filtering example (time range and observation count):
+```java
+SdmxWebManager
+    .ofServiceLoader()
+    .usingName("ECB")
+    .getData(KeyRequest
+        .builder()
+        .flowOf("EXR")
+        .keyOf("M.CHF.EUR.SP00.A")
+        .startPeriodOf("2020")     // inclusive lower bound
+        .endPeriodOf("2022-12")    // inclusive upper bound
+        .lastNObservations(3)      // keep only the last 3 observations
+        .build())
+    .forEach(series -> System.out.printf(Locale.ROOT, "%s: %d obs%n", series.getKey(), series.getObs().size()));
+```
+
+Filters (`startPeriod`, `endPeriod`, `firstNObservations`, `lastNObservations`) are always (re-)applied
+client-side, so results are consistent across all sources. When a source supports them server-side, they
+are also pushed down as a bandwidth optimization; otherwise the full series is downloaded then filtered locally.
+
 ## Structure overview
 
 ```mermaid

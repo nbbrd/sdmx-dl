@@ -60,6 +60,10 @@ message KeyRequestDto {
   string key = 3;
   optional string database = 4;
   optional string languages = 5;
+  optional string start_period = 6; /* ISO-8601 reduced-precision date-time; absent = unbounded */
+  optional string end_period = 7; /* ISO-8601 reduced-precision date-time; absent = unbounded */
+  optional int32 first_n_observations = 8; /* absent = no first-N truncation */
+  optional int32 last_n_observations = 9; /* absent = no last-N truncation */
 }
 
 message KeyDimensionRequestDto {

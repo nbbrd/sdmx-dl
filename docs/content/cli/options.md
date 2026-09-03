@@ -35,6 +35,22 @@ SDMX-specific options.
 | <a id="database" href="#database">`--database`</a>    | `-d`     | [`<database>`](../datatypes#database) | Database reference.                                |
 | <a id="languages" href="#languages">`--languages`</a> | `-l`     | [`<langs>`](../datatypes#langs)       | Language priority list.                     |
 
+## Data filtering
+
+Optional filters that reduce the observations returned by the `fetch data` command.
+When a data source cannot apply a filter server-side, it is applied client-side after download,
+so the result is always consistent (but the download is not necessarily smaller).
+
+| Name                                            | Shortcut | Parameter                          | Description                                     |
+|-------------------------------------------------|----------|------------------------------------|-------------------------------------------------|
+| <a id="start" href="#start">`--start`</a>       | -        | [`<period>`](../datatypes#period)  | Start period (inclusive), e.g. `2020`.          |
+| <a id="end" href="#end">`--end`</a>             | -        | [`<period>`](../datatypes#period)  | End period (inclusive), e.g. `2020-12`.         |
+| <a id="first-n" href="#first-n">`--first-n`</a> | -        | `<count>`                          | Keep only the first N observations per series.  |
+| <a id="last-n" href="#last-n">`--last-n`</a>    | -        | `<count>`                          | Keep only the last N observations per series.   |
+
+When `--first-n` and `--last-n` are combined, the result is the union of the first N and the last N
+observations of each series (computed independently after any period filtering).
+
 ## CSV
 
 CSV options used to output content.  

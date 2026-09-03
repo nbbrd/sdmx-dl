@@ -1,9 +1,10 @@
 package sdmxdl.grpc;
 
-import sdmxdl.*;
-
 import static sdmxdl.DatabaseRef.NO_DATABASE_KEYWORD;
 import static sdmxdl.Languages.ANY_KEYWORD;
+
+import java.time.LocalDateTime;
+import sdmxdl.*;
 
 @lombok.experimental.UtilityClass
 public class ProtoGrpc {
@@ -16,8 +17,7 @@ public class ProtoGrpc {
     }
 
     public static SourceRequest toSourceRequest(SourceRequestDto value) {
-        return SourceRequest
-                .builder()
+        return SourceRequest.builder()
                 .languagesOf(value.hasLanguages() ? value.getLanguages() : ANY_KEYWORD)
                 .build();
     }
@@ -31,8 +31,7 @@ public class ProtoGrpc {
     }
 
     public static DatabaseRequest toDatabaseRequest(DatabaseRequestDto value) {
-        return DatabaseRequest
-                .builder()
+        return DatabaseRequest.builder()
                 .databaseOf(value.hasDatabase() ? value.getDatabase() : NO_DATABASE_KEYWORD)
                 .languagesOf(value.hasLanguages() ? value.getLanguages() : ANY_KEYWORD)
                 .build();
@@ -48,8 +47,7 @@ public class ProtoGrpc {
     }
 
     public static FlowRequest toFlowRequest(FlowRequestDto value) {
-        return FlowRequest
-                .builder()
+        return FlowRequest.builder()
                 .databaseOf(value.hasDatabase() ? value.getDatabase() : NO_DATABASE_KEYWORD)
                 .flowOf(value.getFlow())
                 .languagesOf(value.hasLanguages() ? value.getLanguages() : ANY_KEYWORD)
@@ -63,16 +61,40 @@ public class ProtoGrpc {
         result.setFlow(value.getFlow().toString());
         result.setKey(value.getKey().toString());
         result.setLanguages(value.getLanguages().toString());
+        if (value.getStartPeriod() != null) {
+            result.setStartPeriod(value.getStartPeriod().toString());
+        }
+        if (value.getEndPeriod() != null) {
+            result.setEndPeriod(value.getEndPeriod().toString());
+        }
+        if (value.getFirstNObservations() != null) {
+            result.setFirstNObservations(value.getFirstNObservations());
+        }
+        if (value.getLastNObservations() != null) {
+            result.setLastNObservations(value.getLastNObservations());
+        }
         return result.build();
     }
 
     public static KeyRequest toKeyRequest(KeyRequestDto value) {
-        return KeyRequest
-                .builder()
-                .databaseOf(value.hasDatabase() ? value.getDatabase() : NO_DATABASE_KEYWORD)
-                .flowOf(value.getFlow())
-                .keyOf(value.getKey())
-                .languagesOf(value.hasLanguages() ? value.getLanguages() : ANY_KEYWORD)
-                .build();
+        KeyRequest.Builder result =
+                KeyRequest.builder()
+                        .databaseOf(value.hasDatabase() ? value.getDatabase() : NO_DATABASE_KEYWORD)
+                        .flowOf(value.getFlow())
+                        .keyOf(value.getKey())
+                        .languagesOf(value.hasLanguages() ? value.getLanguages() : ANY_KEYWORD);
+        if (value.hasStartPeriod()) {
+            result.startPeriod(LocalDateTime.parse(value.getStartPeriod()));
+        }
+        if (value.hasEndPeriod()) {
+            result.endPeriod(LocalDateTime.parse(value.getEndPeriod()));
+        }
+        if (value.hasFirstNObservations()) {
+            result.firstNObservations(value.getFirstNObservations());
+        }
+        if (value.hasLastNObservations()) {
+            result.lastNObservations(value.getLastNObservations());
+        }
+        return result.build();
     }
 }

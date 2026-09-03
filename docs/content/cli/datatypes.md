@@ -80,5 +80,23 @@ A key can identify single or multiple time series.
 
 {{< /expand >}}
 
+### `period`
+
+A period is a reduced-precision [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) date-time used as an
+inclusive bound when filtering observations by time.
+
+**Format:** a year, optionally followed by finer fields (month, day, time).
+
+{{< expand "Examples" >}}
+
+| period                | description        |
+|-----------------------|--------------------|
+| `2020`                | year 2020          |
+| `2020-06`             | June 2020          |
+| `2020-06-15`          | 15 June 2020       |
+| `2020-06-15T13:00:00` | 15 June 2020, 1 PM |
+
+{{< /expand >}}
+
 ### `langs`
 

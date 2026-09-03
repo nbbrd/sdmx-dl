@@ -16,13 +16,6 @@
  */
 package sdmxdl.provider.web;
 
-import lombok.NonNull;
-import nbbrd.design.NonNegative;
-import sdmxdl.*;
-import sdmxdl.provider.CommonSdmxExceptions;
-import sdmxdl.provider.ConnectionSupport;
-import sdmxdl.provider.DataRef;
-
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
@@ -30,6 +23,12 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
+import lombok.NonNull;
+import nbbrd.design.NonNegative;
+import sdmxdl.*;
+import sdmxdl.provider.CommonSdmxExceptions;
+import sdmxdl.provider.ConnectionSupport;
+import sdmxdl.provider.DataRef;
 
 /**
  * @author Philippe Charles
@@ -37,8 +36,7 @@ import java.util.stream.Stream;
 @lombok.RequiredArgsConstructor(staticName = "of")
 final class RestConnection implements Connection {
 
-    @lombok.NonNull
-    private final RestClient client;
+    @lombok.NonNull private final RestClient client;
 
     private boolean closed = false;
 
@@ -56,48 +54,87 @@ final class RestConnection implements Connection {
     }
 
     @Override
-    public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
+    public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef)
+            throws IOException, IllegalArgumentException {
         checkState();
         checkDatabase(database);
         Flow flow = lookupFlow(database, flowRef);
-        return MetaSet
-                .builder()
+        return MetaSet.builder()
                 .flow(flow)
                 .structure(client.getStructure(flow.getStructureRef()))
                 .build();
     }
 
     @Override
-    public @NonNull DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
+    public @NonNull DataSet getData(
+            @NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query)
+            throws IOException {
         checkDatabase(database);
         return ConnectionSupport.getDataSetFromStream(database, flowRef, query, this);
     }
 
     @Override
-    public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
+    public @NonNull Stream<Series> getDataStream(
+            @NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query)
+            throws IOException {
         MetaSet meta = getMeta(database, flowRef);
 
         checkKey(query.getKey(), meta.getStructure());
 
-        Query normalizedQuery = query.toBuilder().key(query.getKey().normalize(meta.getStructure())).build();
+        Query normalizedQuery =
+                query.toBuilder().key(query.getKey().normalize(meta.getStructure())).build();
 
-        Query realQuery = deriveDataQuery(normalizedQuery, getSupportedFeatures(), meta.getStructure());
+        Query realQuery =
+                deriveDataQuery(normalizedQuery, getSupportedFeatures(), meta.getStructure());
 
-        Stream<Series> result = client.getData(DataRef.of(meta.getFlow().getRef(), realQuery), meta.getStructure());
+        Stream<Series> result =
+                client.getData(DataRef.of(meta.getFlow().getRef(), realQuery), meta.getStructure());
 
-        return realQuery.equals(normalizedQuery) ? result : normalizedQuery.execute(result);
+        // Observation-level filters (period range, first/last N) are always re-applied client-side
+        // because a data source may not support them (or may support them only partially).
+        return realQuery.equals(normalizedQuery) && !normalizedQuery.hasObsLevelFilter()
+                ? result
+                : normalizedQuery.execute(result);
     }
 
     @Override
-    public @NonNull Collection<String> getAvailableDimensionCodes(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, @NonNegative int dimensionIndex) throws IOException, IllegalArgumentException {
-        return ConnectionSupport.getAvailableDimensionCodes(this, database, flowRef, constraints, dimensionIndex);
+    public @NonNull Collection<String> getAvailableDimensionCodes(
+            @NonNull DatabaseRef database,
+            @NonNull FlowRef flowRef,
+            @NonNull Key constraints,
+            @NonNegative int dimensionIndex)
+            throws IOException, IllegalArgumentException {
+        return ConnectionSupport.getAvailableDimensionCodes(
+                this, database, flowRef, constraints, dimensionIndex);
     }
 
     private static Query deriveDataQuery(Query query, Set<Feature> features, Structure dsd) {
-        return Query
-                .builder()
-                .key(features.contains(Feature.DATA_QUERY_ALL_KEYWORD) || !Key.ALL.equals(query.getKey()) ? query.getKey() : alternateAllOf(dsd))
-                .detail(features.contains(Feature.DATA_QUERY_DETAIL) ? query.getDetail() : Detail.FULL)
+        return Query.builder()
+                .key(
+                        features.contains(Feature.DATA_QUERY_ALL_KEYWORD)
+                                        || !Key.ALL.equals(query.getKey())
+                                ? query.getKey()
+                                : alternateAllOf(dsd))
+                .detail(
+                        features.contains(Feature.DATA_QUERY_DETAIL)
+                                ? query.getDetail()
+                                : Detail.FULL)
+                .startPeriod(
+                        features.contains(Feature.DATA_QUERY_TIME_RANGE)
+                                ? query.getStartPeriod()
+                                : null)
+                .endPeriod(
+                        features.contains(Feature.DATA_QUERY_TIME_RANGE)
+                                ? query.getEndPeriod()
+                                : null)
+                .firstNObservations(
+                        features.contains(Feature.DATA_QUERY_OBS_COUNT)
+                                ? query.getFirstNObservations()
+                                : null)
+                .lastNObservations(
+                        features.contains(Feature.DATA_QUERY_OBS_COUNT)
+                                ? query.getLastNObservations()
+                                : null)
                 .build();
     }
 
@@ -127,7 +164,8 @@ final class RestConnection implements Connection {
         }
     }
 
-    private Flow lookupFlow(DatabaseRef database, FlowRef flowRef) throws IOException, IllegalArgumentException {
+    private Flow lookupFlow(DatabaseRef database, FlowRef flowRef)
+            throws IOException, IllegalArgumentException {
         return ConnectionSupport.getFlowFromFlows(database, flowRef, this, client);
     }
 

@@ -48,6 +48,14 @@ weight: 6
    <pre>sdmx-dl fetch data ECB EXR M<b>..</b>EUR.SP00.A</pre>
 9. Download available series in a dataset  
    <pre>sdmx-dl fetch <b><a href='{{< relref "usage#fetch-keys" >}}'>keys</a></b> ECB EXR <b>.</b>CHF.EUR.SP00.A</pre>
+10. Same as 1 but only from 2020 onwards  
+    <pre>sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A <b><a href='{{< relref "options#start" >}}'>--start 2020</a></b></pre>
+11. Same as 1 but only within a time range  
+    <pre>sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A <b><a href='{{< relref "options#start" >}}'>--start 2020</a> <a href='{{< relref "options#end" >}}'>--end 2022-12</a></b></pre>
+12. Same as 1 but only the last 3 observations  
+    <pre>sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A <b><a href='{{< relref "options#last-n" >}}'>--last-n 3</a></b></pre>
+13. Same as 1 but the first 3 and the last 2 observations  
+    <pre>sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A <b><a href='{{< relref "options#first-n" >}}'>--first-n 3</a> <a href='{{< relref "options#last-n" >}}'>--last-n 2</a></b></pre>
 
 {{< shields_io/badge label="list" message="examples" color="859900" >}}
 

@@ -16,6 +16,13 @@
  */
 package sdmxdl.provider.ri.drivers;
 
+import static sdmxdl.Confidentiality.PUBLIC;
+import static sdmxdl.provider.web.DriverProperties.DETAIL_SUPPORTED_PROPERTY;
+import static sdmxdl.provider.web.DriverProperties.TRAILING_SLASH_PROPERTY;
+
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.io.text.BaseProperty;
@@ -34,14 +41,6 @@ import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
-
-import static sdmxdl.Confidentiality.PUBLIC;
-import static sdmxdl.provider.web.DriverProperties.DETAIL_SUPPORTED_PROPERTY;
-import static sdmxdl.provider.web.DriverProperties.TRAILING_SLASH_PROPERTY;
-
 /**
  * @author Philippe Charles
  */
@@ -52,364 +51,419 @@ public final class Sdmx21RiDriver implements Driver {
     private static final String RI_SDMX_21 = "RI_SDMX21";
 
     @lombok.experimental.Delegate
-    private final DriverSupport support = DriverSupport
-            .builder()
-            .id(RI_SDMX_21)
-            .rank(NATIVE_DRIVER_RANK)
-            .connectorOf(new Sdmx21RiRestClientFactory())
-            .source(WebSource
-                    .builder()
-                    .id("ABS")
-                    .name("en", "Australian Bureau of Statistics")
-                    .driver(RI_SDMX_21)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("https://data.api.abs.gov.au/rest")
-                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
-                    .websiteOf("https://explore.data.abs.gov.au")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/ABS")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/abs")
-                    .build())
-            .source(WebSource
-                    .builder()
-                    .id("BIS")
-                    .name("en", "Bank for International Settlements")
-                    .driver(RI_SDMX_21)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("https://stats.bis.org/api/v1")
-                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
-                    .websiteOf("https://stats.bis.org/statx/toc/LBS.html")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/BIS")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/bis")
-                    .build())
-            .source(WebSource
-                    .builder()
-                    .id("CAMSTAT")
-                    .name("en", "National Institute of Statistics of Cambodia")
-                    .name("km", " វិទ្យាស្ថានជាតិស្ថិតិ")
-                    .driver(RI_SDMX_21)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("https://nsiws-stable-camstat-live.officialstatistics.org/rest")
-                    .websiteOf("http://camstat.nis.gov.kh/?locale=en&start=0")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/CAMSTAT")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/camstat")
-                    .build())
-            .source(WebSource
-                    .builder()
-                    .id("ECB")
-                    .name("en", "European Central Bank")
-                    .driver(RI_SDMX_21)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("https://data-api.ecb.europa.eu/service")
-                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
-                    .websiteOf("https://data.ecb.europa.eu/")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/ECB")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ecb")
-                    .build())
-            .source(WebSource
-                    .builder()
-                    .id("ESCAP")
-                    .name("en", "Economic and Social Commission for Asia and the Pacific")
-                    .driver(RI_SDMX_21)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("https://api-dataexplorer.unescap.org/rest")
-                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
-                    .websiteOf("https://dataexplorer.unescap.org/")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/ESCAP")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/escap")
-                    .build())
-            .source(WebSource
-                    .builder()
-                    .id("ILO")
-                    .name("en", "International Labour Organization")
-                    .name("es", "Organzación Internacional de Trabajo")
-                    .name("fr", "Organisation Internationale du Travail")
-                    .driver(RI_SDMX_21)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("https://sdmx.ilo.org/rest/")
-                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
-                    .websiteOf("https://data.ilo.org/")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/ILO")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ilo")
-                    .build())
-            .source(WebSource
-                    .builder()
-                    .id("IMF_SDMX_CENTRAL")
-                    .name("en", "International Monetary Fund (SDMX Central)")
-                    .name("fr", "Fonds monétaire international (SDMX Central)")
-                    .driver(RI_SDMX_21)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("https://sdmxcentral.imf.org/ws/public/sdmxapi/rest")
-                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
-                    .websiteOf("https://data.imf.org")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/IMF_SDMX_CENTRAL")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/imf-sdmx-central")
-                    .build())
-            .source(WebSource
-                    .builder()
-                    .id("INEGI")
-                    .name("en", "National Institute of Statistics, Geography and Informatics")
-                    .name("es", "Instituto Nacional de Estadística, Geografía e Informática")
-                    .driver(RI_SDMX_21)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("https://sdmx.snieg.mx/ServiceV6/rest")
-                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
-                    .propertyOf(TRAILING_SLASH_PROPERTY, true)
-                    .websiteOf("https://sdmx.snieg.mx")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/INEGI")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/inegi")
-                    .build())
-            .source(WebSource
-                    .builder()
-                    .id("ISTAT")
-                    .name("en", "Italian National Institute of Statistics")
-                    .name("it", "Istituto Nazionale di Statistica")
-                    .driver(RI_SDMX_21)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("https://esploradati.istat.it/SDMXWS/rest")
-                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
-                    .websiteOf("https://esploradati.istat.it/databrowser/")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/ISTAT")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/istat")
-                    .build())
-            .source(WebSource
-                    .builder()
-                    .id("NB")
-                    .name("en", "Norges Bank")
-                    .name("no", "Norges Bank")
-                    .driver(RI_SDMX_21)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("https://data.norges-bank.no/api")
-                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
-                    .websiteOf("https://www.norges-bank.no/en/topics/Statistics/")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/NB")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/nb")
-                    .build())
-            .source(WebSource
-                    .builder()
-                    .id("NBB")
-                    .name("en", "National Bank of Belgium")
-                    .name("de", "Belgische National Bank")
-                    .name("fr", "Banque Nationale de Belgique")
-                    .name("nl", "Nationale Bank van België")
-                    .driver(RI_SDMX_21)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("https://nsidisseminate-stat.nbb.be/rest")
-                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
-                    .websiteOf("https://dataexplorer.nbb.be/")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/NBB")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/nbb")
-                    .build())
-            .source(WebSource
-                    .builder()
-                    .id("OECD")
-                    .name("en", "The Organisation for Economic Co-operation and Development")
-                    .name("es", "Organización para la Cooperación y el Desarrollo Económicos")
-                    .name("fr", "Organisation de coopération et de développement économiques")
-                    .name("it", "Organizzazione per la Cooperazione e lo Sviluppo Economico")
-                    .driver(RI_SDMX_21)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("https://sdmx.oecd.org/public/rest")
-                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
-                    .websiteOf("https://data-explorer.oecd.org/")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/OECD")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/oecd")
-                    .build())
-            .source(WebSource
-                    .builder()
-                    .id("SGR")
-                    .name("en", "SDMX Global Registry")
-                    .driver(RI_SDMX_21)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("https://registry.sdmx.org/ws/public/sdmxapi/rest")
-                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
-                    .websiteOf("https://registry.sdmx.org/overview.html")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/SGR")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/sgr")
-                    .build())
-            .source(WebSource
-                    .builder()
-                    .id("SIMEL")
-                    .name("en", "El Salvador Labor Market Information System")
-                    .name("es", "Sistema de Información del Mercado Laboral")
-                    .driver(RI_SDMX_21)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("https://disseminatesimel.mtps.gob.sv/rest")
-                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
-                    .websiteOf("https://datasimel.mtps.gob.sv/")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/SIMEL")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/simel")
-                    .build())
-            .source(WebSource
-                    .builder()
-                    .id("SPC")
-                    .name("en", "Pacific Data Hub")
-                    .name("fr", "Pacific Data Hub")
-                    .driver(RI_SDMX_21)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("https://stats-nsi-stable.pacificdata.org/rest")
-                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
-                    .websiteOf("https://stats.pacificdata.org/?locale=en")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/SPC")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/spc")
-                    .build())
-            .source(WebSource
-                    .builder()
-                    .id("SSSU")
-                    .name("en", "State Statistics Service of Ukraine")
-                    .name("uk", "Державна служба статистики України")
-                    .driver(RI_SDMX_21)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("https://stat.gov.ua/sdmx/workspaces/default:integration/registry/sdmx/2.1")
-                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
-                    .websiteOf("https://stat.gov.ua/en")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/SSSU")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/SSSU")
-                    .build())
-            .source(WebSource
-                    .builder()
-                    .id("STATCAN_CCEI")
-                    .name("en", "Canadian Center of Energy Information")
-                    .name("fr", "Centre canadien d'information sur l'énergie")
-                    .driver(RI_SDMX_21)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("https://api.statcan.gc.ca/ccei-ccie/sdmx/rest")
-                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
-                    .websiteOf("https://de-ccei.statcan.gc.ca/?lc=en&pg=0")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/STATCAN_CCEI")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/statcan_ccei")
-                    .build())
-            .source(WebSource
-                    .builder()
-                    .id("STATCAN_CENSUS")
-                    .name("en", "Canadian Census of Population")
-                    .name("fr", "Recensement canadien de la population")
-                    .driver(RI_SDMX_21)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("https://api.statcan.gc.ca/census-recensement/profile/sdmx/rest")
-                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
-                    .websiteOf("https://www12.statcan.gc.ca/census-recensement/index-eng.cfm")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/STATCAN_CENSUS")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/statcan_census")
-                    .build())
-            .source(WebSource
-                    .builder()
-                    .id("STATCAN_HFED")
-                    .name("en", "Canadian high frequency electricity data")
-                    .name("fr", "Données canadiennes sur l'électricité à haute fréquence")
-                    .driver(RI_SDMX_21)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("https://api.statcan.gc.ca/hfed-dehf/sdmx/rest")
-                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
-                    .websiteOf("https://energy-information.canada.ca/en/resources/high-frequency-electricity-data")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/STATCAN_HFED")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/statcan_hfed")
-                    .build())
-            .source(WebSource
-                    .builder()
-                    .id("STATEC")
-                    .name("en", "National Institute of statistics and economic studies of the Grand Duchy of Luxembourg")
-                    .name("fr", "Institut national de la statistique et des études économiques du Grand-Duché de Luxembourg")
-                    .driver(RI_SDMX_21)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("https://lustat.statec.lu/rest")
-                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
-                    .websiteOf("https://lustat.statec.lu")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/STATEC")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/statec")
-                    .build())
-            .source(WebSource
-                    .builder()
-                    .id("SWISS_STAT")
-                    .name("en", "Swiss - Federal Statistical Office")
-                    .name("de", "Swiss - Bundesamt für Statistik")
-                    .name("fr", "Swiss - Office fédéral de la statistique")
-                    .name("it", "Swiss - Ufficio federale di statistica")
-                    .driver(RI_SDMX_21)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("https://disseminate.stats.swiss/rest")
-                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
-                    .websiteOf("https://stats.swiss")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/SWISS_STAT")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/swiss_stat")
-                    .build())
-//            .source(WebSource
-//                    .builder()
-//                    .id("TNSO")
-//                    .name("en", "National Statistical Office of Thailand")
-//                    .name("th", "สำนักงานสถิติแห่งชาติ")
-//                    .driver(RI_SDMX_21)
-//                    .confidentiality(Confidentiality.PUBLIC)
-//                    .endpointOf("https://ns1-oshub.nso.go.th/rest")
-//                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
-//                    .websiteOf("https://oshub.nso.go.th/?lc=en")
-//                    .monitorOf("upptime:/nbbrd/sdmx-upptime/TNSO")
-//                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/tnso")
-//                    .build())
-            .source(WebSource
-                    .builder()
-                    .id("UKDS")
-                    .name("en", "UK Data Service")
-                    .driver(RI_SDMX_21)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("https://open.data.dataexplorer.ukdataservice.ac.uk/rest")
-                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
-                    .websiteOf("https://dataexplorer.ukdataservice.ac.uk/")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/UKDS")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ukds")
-                    .build())
-            .source(WebSource
-                    .builder()
-                    .id("UNDATA")
-                    .name("en", "Data access system to UN databases")
-                    .driver(RI_SDMX_21)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("https://data.un.org/WS/rest")
-                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
-                    .websiteOf("https://data.un.org/SdmxBrowser/start")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/UNDATA")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/undata")
-                    .build())
-            .source(WebSource
-                    .builder()
-                    .id("UNICEF")
-                    .name("en", "UN International Children's Emergency Fund")
-                    .driver(RI_SDMX_21)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("https://sdmx.data.unicef.org/ws/public/sdmxapi/rest")
-                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
-                    .websiteOf("https://data.unicef.org/")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/UNICEF")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/unicef")
-                    .build())
-            .source(WebSource
-                    .builder()
-                    .id("WB")
-                    .name("en", "World Bank")
-                    .name("es", "Banco Mundial")
-                    .name("fr", "Banque Mondiale")
-                    .driver(RI_SDMX_21)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("https://api.worldbank.org/v2/sdmx/rest")
-                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
-                    .propertyOf(TRAILING_SLASH_PROPERTY, true)
-                    .websiteOf("https://data.worldbank.org")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/WB")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/wb")
-                    .build())
-            .source(WebSource
-                    .builder()
-                    .id("WITS")
-                    .name("en", "World Integrated Trade Solution")
-                    .name("es", "Solución Comercial Integrada Mundial")
-                    .driver(RI_SDMX_21)
-                    .confidentiality(PUBLIC)
-                    .endpointOf("https://wits.worldbank.org/API/V1/SDMX/V21/rest")
-                    .propertyOf(TRAILING_SLASH_PROPERTY, true)
-                    .websiteOf("https://wits.worldbank.org")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/WITS")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/wits")
-                    .build())
-            .build();
+    private final DriverSupport support =
+            DriverSupport.builder()
+                    .id(RI_SDMX_21)
+                    .rank(NATIVE_DRIVER_RANK)
+                    .connectorOf(new Sdmx21RiRestClientFactory())
+                    .source(
+                            WebSource.builder()
+                                    .id("ABS")
+                                    .name("en", "Australian Bureau of Statistics")
+                                    .driver(RI_SDMX_21)
+                                    .confidentiality(PUBLIC)
+                                    .endpointOf("https://data.api.abs.gov.au/rest")
+                                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                                    .websiteOf("https://explore.data.abs.gov.au")
+                                    .monitorOf("upptime:/nbbrd/sdmx-upptime/ABS")
+                                    .monitorWebsiteOf(
+                                            "https://nbbrd.github.io/sdmx-upptime/history/abs")
+                                    .build())
+                    .source(
+                            WebSource.builder()
+                                    .id("BIS")
+                                    .name("en", "Bank for International Settlements")
+                                    .driver(RI_SDMX_21)
+                                    .confidentiality(PUBLIC)
+                                    .endpointOf("https://stats.bis.org/api/v1")
+                                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                                    .websiteOf("https://stats.bis.org/statx/toc/LBS.html")
+                                    .monitorOf("upptime:/nbbrd/sdmx-upptime/BIS")
+                                    .monitorWebsiteOf(
+                                            "https://nbbrd.github.io/sdmx-upptime/history/bis")
+                                    .build())
+                    .source(
+                            WebSource.builder()
+                                    .id("CAMSTAT")
+                                    .name("en", "National Institute of Statistics of Cambodia")
+                                    .name("km", " វិទ្យាស្ថានជាតិស្ថិតិ")
+                                    .driver(RI_SDMX_21)
+                                    .confidentiality(PUBLIC)
+                                    .endpointOf(
+                                            "https://nsiws-stable-camstat-live.officialstatistics.org/rest")
+                                    .websiteOf("http://camstat.nis.gov.kh/?locale=en&start=0")
+                                    .monitorOf("upptime:/nbbrd/sdmx-upptime/CAMSTAT")
+                                    .monitorWebsiteOf(
+                                            "https://nbbrd.github.io/sdmx-upptime/history/camstat")
+                                    .build())
+                    .source(
+                            WebSource.builder()
+                                    .id("ECB")
+                                    .name("en", "European Central Bank")
+                                    .driver(RI_SDMX_21)
+                                    .confidentiality(PUBLIC)
+                                    .endpointOf("https://data-api.ecb.europa.eu/service")
+                                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                                    .websiteOf("https://data.ecb.europa.eu/")
+                                    .monitorOf("upptime:/nbbrd/sdmx-upptime/ECB")
+                                    .monitorWebsiteOf(
+                                            "https://nbbrd.github.io/sdmx-upptime/history/ecb")
+                                    .build())
+                    .source(
+                            WebSource.builder()
+                                    .id("ESCAP")
+                                    .name(
+                                            "en",
+                                            "Economic and Social Commission for Asia and the Pacific")
+                                    .driver(RI_SDMX_21)
+                                    .confidentiality(PUBLIC)
+                                    .endpointOf("https://api-dataexplorer.unescap.org/rest")
+                                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                                    .websiteOf("https://dataexplorer.unescap.org/")
+                                    .monitorOf("upptime:/nbbrd/sdmx-upptime/ESCAP")
+                                    .monitorWebsiteOf(
+                                            "https://nbbrd.github.io/sdmx-upptime/history/escap")
+                                    .build())
+                    .source(
+                            WebSource.builder()
+                                    .id("ILO")
+                                    .name("en", "International Labour Organization")
+                                    .name("es", "Organzación Internacional de Trabajo")
+                                    .name("fr", "Organisation Internationale du Travail")
+                                    .driver(RI_SDMX_21)
+                                    .confidentiality(PUBLIC)
+                                    .endpointOf("https://sdmx.ilo.org/rest/")
+                                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                                    .websiteOf("https://data.ilo.org/")
+                                    .monitorOf("upptime:/nbbrd/sdmx-upptime/ILO")
+                                    .monitorWebsiteOf(
+                                            "https://nbbrd.github.io/sdmx-upptime/history/ilo")
+                                    .build())
+                    .source(
+                            WebSource.builder()
+                                    .id("IMF_SDMX_CENTRAL")
+                                    .name("en", "International Monetary Fund (SDMX Central)")
+                                    .name("fr", "Fonds monétaire international (SDMX Central)")
+                                    .driver(RI_SDMX_21)
+                                    .confidentiality(PUBLIC)
+                                    .endpointOf(
+                                            "https://sdmxcentral.imf.org/ws/public/sdmxapi/rest")
+                                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                                    .websiteOf("https://data.imf.org")
+                                    .monitorOf("upptime:/nbbrd/sdmx-upptime/IMF_SDMX_CENTRAL")
+                                    .monitorWebsiteOf(
+                                            "https://nbbrd.github.io/sdmx-upptime/history/imf-sdmx-central")
+                                    .build())
+                    .source(
+                            WebSource.builder()
+                                    .id("INEGI")
+                                    .name(
+                                            "en",
+                                            "National Institute of Statistics, Geography and Informatics")
+                                    .name(
+                                            "es",
+                                            "Instituto Nacional de Estadística, Geografía e Informática")
+                                    .driver(RI_SDMX_21)
+                                    .confidentiality(PUBLIC)
+                                    .endpointOf("https://sdmx.snieg.mx/ServiceV6/rest")
+                                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                                    .propertyOf(TRAILING_SLASH_PROPERTY, true)
+                                    .websiteOf("https://sdmx.snieg.mx")
+                                    .monitorOf("upptime:/nbbrd/sdmx-upptime/INEGI")
+                                    .monitorWebsiteOf(
+                                            "https://nbbrd.github.io/sdmx-upptime/history/inegi")
+                                    .build())
+                    .source(
+                            WebSource.builder()
+                                    .id("ISTAT")
+                                    .name("en", "Italian National Institute of Statistics")
+                                    .name("it", "Istituto Nazionale di Statistica")
+                                    .driver(RI_SDMX_21)
+                                    .confidentiality(PUBLIC)
+                                    .endpointOf("https://esploradati.istat.it/SDMXWS/rest")
+                                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                                    .websiteOf("https://esploradati.istat.it/databrowser/")
+                                    .monitorOf("upptime:/nbbrd/sdmx-upptime/ISTAT")
+                                    .monitorWebsiteOf(
+                                            "https://nbbrd.github.io/sdmx-upptime/history/istat")
+                                    .build())
+                    .source(
+                            WebSource.builder()
+                                    .id("NB")
+                                    .name("en", "Norges Bank")
+                                    .name("no", "Norges Bank")
+                                    .driver(RI_SDMX_21)
+                                    .confidentiality(PUBLIC)
+                                    .endpointOf("https://data.norges-bank.no/api")
+                                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                                    .websiteOf("https://www.norges-bank.no/en/topics/Statistics/")
+                                    .monitorOf("upptime:/nbbrd/sdmx-upptime/NB")
+                                    .monitorWebsiteOf(
+                                            "https://nbbrd.github.io/sdmx-upptime/history/nb")
+                                    .build())
+                    .source(
+                            WebSource.builder()
+                                    .id("NBB")
+                                    .name("en", "National Bank of Belgium")
+                                    .name("de", "Belgische National Bank")
+                                    .name("fr", "Banque Nationale de Belgique")
+                                    .name("nl", "Nationale Bank van België")
+                                    .driver(RI_SDMX_21)
+                                    .confidentiality(PUBLIC)
+                                    .endpointOf("https://nsidisseminate-stat.nbb.be/rest")
+                                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                                    .websiteOf("https://dataexplorer.nbb.be/")
+                                    .monitorOf("upptime:/nbbrd/sdmx-upptime/NBB")
+                                    .monitorWebsiteOf(
+                                            "https://nbbrd.github.io/sdmx-upptime/history/nbb")
+                                    .build())
+                    .source(
+                            WebSource.builder()
+                                    .id("OECD")
+                                    .name(
+                                            "en",
+                                            "The Organisation for Economic Co-operation and Development")
+                                    .name(
+                                            "es",
+                                            "Organización para la Cooperación y el Desarrollo Económicos")
+                                    .name(
+                                            "fr",
+                                            "Organisation de coopération et de développement économiques")
+                                    .name(
+                                            "it",
+                                            "Organizzazione per la Cooperazione e lo Sviluppo Economico")
+                                    .driver(RI_SDMX_21)
+                                    .confidentiality(PUBLIC)
+                                    .endpointOf("https://sdmx.oecd.org/public/rest")
+                                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                                    .websiteOf("https://data-explorer.oecd.org/")
+                                    .monitorOf("upptime:/nbbrd/sdmx-upptime/OECD")
+                                    .monitorWebsiteOf(
+                                            "https://nbbrd.github.io/sdmx-upptime/history/oecd")
+                                    .build())
+                    .source(
+                            WebSource.builder()
+                                    .id("SGR")
+                                    .name("en", "SDMX Global Registry")
+                                    .driver(RI_SDMX_21)
+                                    .confidentiality(PUBLIC)
+                                    .endpointOf("https://registry.sdmx.org/ws/public/sdmxapi/rest")
+                                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                                    .websiteOf("https://registry.sdmx.org/overview.html")
+                                    .monitorOf("upptime:/nbbrd/sdmx-upptime/SGR")
+                                    .monitorWebsiteOf(
+                                            "https://nbbrd.github.io/sdmx-upptime/history/sgr")
+                                    .build())
+                    .source(
+                            WebSource.builder()
+                                    .id("SIMEL")
+                                    .name("en", "El Salvador Labor Market Information System")
+                                    .name("es", "Sistema de Información del Mercado Laboral")
+                                    .driver(RI_SDMX_21)
+                                    .confidentiality(PUBLIC)
+                                    .endpointOf("https://disseminatesimel.mtps.gob.sv/rest")
+                                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                                    .websiteOf("https://datasimel.mtps.gob.sv/")
+                                    .monitorOf("upptime:/nbbrd/sdmx-upptime/SIMEL")
+                                    .monitorWebsiteOf(
+                                            "https://nbbrd.github.io/sdmx-upptime/history/simel")
+                                    .build())
+                    .source(
+                            WebSource.builder()
+                                    .id("SPC")
+                                    .name("en", "Pacific Data Hub")
+                                    .name("fr", "Pacific Data Hub")
+                                    .driver(RI_SDMX_21)
+                                    .confidentiality(PUBLIC)
+                                    .endpointOf("https://stats-nsi-stable.pacificdata.org/rest")
+                                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                                    .websiteOf("https://stats.pacificdata.org/?locale=en")
+                                    .monitorOf("upptime:/nbbrd/sdmx-upptime/SPC")
+                                    .monitorWebsiteOf(
+                                            "https://nbbrd.github.io/sdmx-upptime/history/spc")
+                                    .build())
+                    .source(
+                            WebSource.builder()
+                                    .id("SSSU")
+                                    .name("en", "State Statistics Service of Ukraine")
+                                    .name("uk", "Державна служба статистики України")
+                                    .driver(RI_SDMX_21)
+                                    .confidentiality(PUBLIC)
+                                    .endpointOf(
+                                            "https://stat.gov.ua/sdmx/workspaces/default:integration/registry/sdmx/2.1")
+                                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                                    .websiteOf("https://stat.gov.ua/en")
+                                    .monitorOf("upptime:/nbbrd/sdmx-upptime/SSSU")
+                                    .monitorWebsiteOf(
+                                            "https://nbbrd.github.io/sdmx-upptime/history/SSSU")
+                                    .build())
+                    .source(
+                            WebSource.builder()
+                                    .id("STATCAN_CCEI")
+                                    .name("en", "Canadian Center of Energy Information")
+                                    .name("fr", "Centre canadien d'information sur l'énergie")
+                                    .driver(RI_SDMX_21)
+                                    .confidentiality(PUBLIC)
+                                    .endpointOf("https://api.statcan.gc.ca/ccei-ccie/sdmx/rest")
+                                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                                    .websiteOf("https://de-ccei.statcan.gc.ca/?lc=en&pg=0")
+                                    .monitorOf("upptime:/nbbrd/sdmx-upptime/STATCAN_CCEI")
+                                    .monitorWebsiteOf(
+                                            "https://nbbrd.github.io/sdmx-upptime/history/statcan_ccei")
+                                    .build())
+                    .source(
+                            WebSource.builder()
+                                    .id("STATCAN_CENSUS")
+                                    .name("en", "Canadian Census of Population")
+                                    .name("fr", "Recensement canadien de la population")
+                                    .driver(RI_SDMX_21)
+                                    .confidentiality(PUBLIC)
+                                    .endpointOf(
+                                            "https://api.statcan.gc.ca/census-recensement/profile/sdmx/rest")
+                                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                                    .websiteOf(
+                                            "https://www12.statcan.gc.ca/census-recensement/index-eng.cfm")
+                                    .monitorOf("upptime:/nbbrd/sdmx-upptime/STATCAN_CENSUS")
+                                    .monitorWebsiteOf(
+                                            "https://nbbrd.github.io/sdmx-upptime/history/statcan_census")
+                                    .build())
+                    .source(
+                            WebSource.builder()
+                                    .id("STATCAN_HFED")
+                                    .name("en", "Canadian high frequency electricity data")
+                                    .name(
+                                            "fr",
+                                            "Données canadiennes sur l'électricité à haute fréquence")
+                                    .driver(RI_SDMX_21)
+                                    .confidentiality(PUBLIC)
+                                    .endpointOf("https://api.statcan.gc.ca/hfed-dehf/sdmx/rest")
+                                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                                    .websiteOf(
+                                            "https://energy-information.canada.ca/en/resources/high-frequency-electricity-data")
+                                    .monitorOf("upptime:/nbbrd/sdmx-upptime/STATCAN_HFED")
+                                    .monitorWebsiteOf(
+                                            "https://nbbrd.github.io/sdmx-upptime/history/statcan_hfed")
+                                    .build())
+                    .source(
+                            WebSource.builder()
+                                    .id("STATEC")
+                                    .name(
+                                            "en",
+                                            "National Institute of statistics and economic studies of the Grand Duchy of Luxembourg")
+                                    .name(
+                                            "fr",
+                                            "Institut national de la statistique et des études économiques du Grand-Duché de Luxembourg")
+                                    .driver(RI_SDMX_21)
+                                    .confidentiality(PUBLIC)
+                                    .endpointOf("https://lustat.statec.lu/rest")
+                                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                                    .websiteOf("https://lustat.statec.lu")
+                                    .monitorOf("upptime:/nbbrd/sdmx-upptime/STATEC")
+                                    .monitorWebsiteOf(
+                                            "https://nbbrd.github.io/sdmx-upptime/history/statec")
+                                    .build())
+                    .source(
+                            WebSource.builder()
+                                    .id("SWISS_STAT")
+                                    .name("en", "Swiss - Federal Statistical Office")
+                                    .name("de", "Swiss - Bundesamt für Statistik")
+                                    .name("fr", "Swiss - Office fédéral de la statistique")
+                                    .name("it", "Swiss - Ufficio federale di statistica")
+                                    .driver(RI_SDMX_21)
+                                    .confidentiality(PUBLIC)
+                                    .endpointOf("https://disseminate.stats.swiss/rest")
+                                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                                    .websiteOf("https://stats.swiss")
+                                    .monitorOf("upptime:/nbbrd/sdmx-upptime/SWISS_STAT")
+                                    .monitorWebsiteOf(
+                                            "https://nbbrd.github.io/sdmx-upptime/history/swiss_stat")
+                                    .build())
+                    //            .source(WebSource
+                    //                    .builder()
+                    //                    .id("TNSO")
+                    //                    .name("en", "National Statistical Office of Thailand")
+                    //                    .name("th", "สำนักงานสถิติแห่งชาติ")
+                    //                    .driver(RI_SDMX_21)
+                    //                    .confidentiality(Confidentiality.PUBLIC)
+                    //                    .endpointOf("https://ns1-oshub.nso.go.th/rest")
+                    //                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                    //                    .websiteOf("https://oshub.nso.go.th/?lc=en")
+                    //                    .monitorOf("upptime:/nbbrd/sdmx-upptime/TNSO")
+                    //
+                    // .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/tnso")
+                    //                    .build())
+                    .source(
+                            WebSource.builder()
+                                    .id("UKDS")
+                                    .name("en", "UK Data Service")
+                                    .driver(RI_SDMX_21)
+                                    .confidentiality(PUBLIC)
+                                    .endpointOf(
+                                            "https://open.data.dataexplorer.ukdataservice.ac.uk/rest")
+                                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                                    .websiteOf("https://dataexplorer.ukdataservice.ac.uk/")
+                                    .monitorOf("upptime:/nbbrd/sdmx-upptime/UKDS")
+                                    .monitorWebsiteOf(
+                                            "https://nbbrd.github.io/sdmx-upptime/history/ukds")
+                                    .build())
+                    .source(
+                            WebSource.builder()
+                                    .id("UNDATA")
+                                    .name("en", "Data access system to UN databases")
+                                    .driver(RI_SDMX_21)
+                                    .confidentiality(PUBLIC)
+                                    .endpointOf("https://data.un.org/WS/rest")
+                                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                                    .websiteOf("https://data.un.org/SdmxBrowser/start")
+                                    .monitorOf("upptime:/nbbrd/sdmx-upptime/UNDATA")
+                                    .monitorWebsiteOf(
+                                            "https://nbbrd.github.io/sdmx-upptime/history/undata")
+                                    .build())
+                    .source(
+                            WebSource.builder()
+                                    .id("UNICEF")
+                                    .name("en", "UN International Children's Emergency Fund")
+                                    .driver(RI_SDMX_21)
+                                    .confidentiality(PUBLIC)
+                                    .endpointOf(
+                                            "https://sdmx.data.unicef.org/ws/public/sdmxapi/rest")
+                                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                                    .websiteOf("https://data.unicef.org/")
+                                    .monitorOf("upptime:/nbbrd/sdmx-upptime/UNICEF")
+                                    .monitorWebsiteOf(
+                                            "https://nbbrd.github.io/sdmx-upptime/history/unicef")
+                                    .build())
+                    .source(
+                            WebSource.builder()
+                                    .id("WB")
+                                    .name("en", "World Bank")
+                                    .name("es", "Banco Mundial")
+                                    .name("fr", "Banque Mondiale")
+                                    .driver(RI_SDMX_21)
+                                    .confidentiality(PUBLIC)
+                                    .endpointOf("https://api.worldbank.org/v2/sdmx/rest")
+                                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                                    .propertyOf(TRAILING_SLASH_PROPERTY, true)
+                                    .websiteOf("https://data.worldbank.org")
+                                    .monitorOf("upptime:/nbbrd/sdmx-upptime/WB")
+                                    .monitorWebsiteOf(
+                                            "https://nbbrd.github.io/sdmx-upptime/history/wb")
+                                    .build())
+                    .source(
+                            WebSource.builder()
+                                    .id("WITS")
+                                    .name("en", "World Integrated Trade Solution")
+                                    .name("es", "Solución Comercial Integrada Mundial")
+                                    .driver(RI_SDMX_21)
+                                    .confidentiality(PUBLIC)
+                                    .endpointOf("https://wits.worldbank.org/API/V1/SDMX/V21/rest")
+                                    .propertyOf(TRAILING_SLASH_PROPERTY, true)
+                                    .websiteOf("https://wits.worldbank.org")
+                                    .monitorOf("upptime:/nbbrd/sdmx-upptime/WITS")
+                                    .monitorWebsiteOf(
+                                            "https://nbbrd.github.io/sdmx-upptime/history/wits")
+                                    .build())
+                    .build();
 
     private static final class Sdmx21RiRestClientFactory implements RestClientFactory {
 
@@ -420,12 +474,14 @@ public final class Sdmx21RiDriver implements Driver {
             return PropertiesSupport.merge(
                     httpFactory.getHttpClientProperties(),
                     DETAIL_SUPPORTED_PROPERTY,
-                    TRAILING_SLASH_PROPERTY
-            );
+                    TRAILING_SLASH_PROPERTY);
         }
 
         @Override
-        public @NonNull RestClient createRestClient(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) {
+        public @NonNull RestClient createRestClient(
+                @NonNull WebSource source,
+                @NonNull Languages languages,
+                @NonNull WebContext context) {
             return new RiRestClient(
                     HasMarker.of(source),
                     source.getEndpoint(),
@@ -449,9 +505,18 @@ public final class Sdmx21RiDriver implements Driver {
         }
 
         private static Set<Feature> getSupportedFeatures(WebSource s) {
+            // Time-range and observation-count filtering are standard SDMX-REST 2.1 data query
+            // parameters
             return DETAIL_SUPPORTED_PROPERTY.get(s.getProperties())
-                    ? EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD, Feature.DATA_QUERY_DETAIL)
-                    : EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD);
+                    ? EnumSet.of(
+                            Feature.DATA_QUERY_ALL_KEYWORD,
+                            Feature.DATA_QUERY_DETAIL,
+                            Feature.DATA_QUERY_TIME_RANGE,
+                            Feature.DATA_QUERY_OBS_COUNT)
+                    : EnumSet.of(
+                            Feature.DATA_QUERY_ALL_KEYWORD,
+                            Feature.DATA_QUERY_TIME_RANGE,
+                            Feature.DATA_QUERY_OBS_COUNT);
         }
     }
 }

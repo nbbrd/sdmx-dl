@@ -79,6 +79,8 @@ message DimensionDto {
 enum FeatureDto {
   DATA_QUERY_ALL_KEYWORD = 0;
   DATA_QUERY_DETAIL = 1;
+  DATA_QUERY_TIME_RANGE = 2;
+  DATA_QUERY_OBS_COUNT = 3;
 }
 
 message FlowDto {
@@ -97,6 +99,10 @@ message ObsDto {
 message QueryDto {
   string key = 1; /* Representation of Key */
   DetailDto detail = 2;
+  optional string start_period = 3; /* ISO-8601 reduced-precision date-time; absent = unbounded */
+  optional string end_period = 4; /* ISO-8601 reduced-precision date-time; absent = unbounded */
+  optional int32 first_n_observations = 5; /* absent = no first-N truncation */
+  optional int32 last_n_observations = 6; /* absent = no last-N truncation */
 }
 
 message SeriesDto {

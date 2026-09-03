@@ -1,32 +1,40 @@
 package sdmxdl;
 
+import java.time.LocalDateTime;
 import lombok.NonNull;
+import org.jspecify.annotations.Nullable;
 
 @lombok.Value
 @lombok.Builder
 public class KeyRequest {
 
-    @NonNull
-    @lombok.Builder.Default
-    DatabaseRef database = DatabaseRef.NO_DATABASE;
+    @NonNull @lombok.Builder.Default DatabaseRef database = DatabaseRef.NO_DATABASE;
 
-    @NonNull
-    FlowRef flow;
+    @NonNull FlowRef flow;
 
-    @NonNull
-    @lombok.Builder.Default
-    Key key = Key.ALL;
+    @NonNull @lombok.Builder.Default Key key = Key.ALL;
 
-    @NonNull
-    @lombok.Builder.Default
-    Detail detail = Detail.FULL;
+    @NonNull @lombok.Builder.Default Detail detail = Detail.FULL;
 
-    @NonNull
-    @lombok.Builder.Default
-    Languages languages = Languages.ANY;
+    @NonNull @lombok.Builder.Default Languages languages = Languages.ANY;
+
+    @Nullable LocalDateTime startPeriod;
+
+    @Nullable LocalDateTime endPeriod;
+
+    @Nullable Integer firstNObservations;
+
+    @Nullable Integer lastNObservations;
 
     public @NonNull Query toQuery() {
-        return Query.builder().key(getKey()).detail(getDetail()).build();
+        return Query.builder()
+                .key(getKey())
+                .detail(getDetail())
+                .startPeriod(getStartPeriod())
+                .endPeriod(getEndPeriod())
+                .firstNObservations(getFirstNObservations())
+                .lastNObservations(getLastNObservations())
+                .build();
     }
 
     public static @NonNull Builder builderOf(@NonNull FlowRequest request) {
@@ -56,6 +64,14 @@ public class KeyRequest {
 
         public Builder languagesOf(@NonNull String languages) {
             return languages(Languages.parse(languages));
+        }
+
+        public Builder startPeriodOf(@NonNull String startPeriod) {
+            return startPeriod(TimeInterval.parseStart(startPeriod));
+        }
+
+        public Builder endPeriodOf(@NonNull String endPeriod) {
+            return endPeriod(TimeInterval.parseStart(endPeriod));
         }
     }
 }

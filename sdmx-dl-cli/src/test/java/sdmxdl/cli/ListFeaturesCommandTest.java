@@ -1,18 +1,17 @@
 package sdmxdl.cli;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.data.Index.atIndex;
+
 import _test.CommandWatcher;
 import _test.FileSample;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junitpioneer.jupiter.SetSystemProperty;
 import picocli.CommandLine;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.data.Index.atIndex;
 
 public class ListFeaturesCommandTest {
 
@@ -37,14 +36,14 @@ public class ListFeaturesCommandTest {
 
         assertThat(cmd.execute("sample", "--no-log", "-s", src.getPath(), "-o", out.getPath()))
                 .isEqualTo(CommandLine.ExitCode.OK);
-        assertThat(watcher.getOut())
-                .isEmpty();
-        assertThat(watcher.getErr())
-                .isEmpty();
+        assertThat(watcher.getOut()).isEmpty();
+        assertThat(watcher.getErr()).isEmpty();
 
         assertThat(FileSample.readAll(out))
                 .contains("SupportedFeature", atIndex(0))
                 .contains("DATA_QUERY_DETAIL", atIndex(2))
-                .hasSize(3);
+                .contains("DATA_QUERY_TIME_RANGE", atIndex(3))
+                .contains("DATA_QUERY_OBS_COUNT", atIndex(4))
+                .hasSize(5);
     }
 }

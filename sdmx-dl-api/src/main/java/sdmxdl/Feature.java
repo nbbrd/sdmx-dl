@@ -21,14 +21,21 @@ package sdmxdl;
  */
 public enum Feature {
 
-    /**
-     * Describe the ability to query data using the 'all' keyword as key
-     */
+    /** Describe the ability to query data using the 'all' keyword as key */
     DATA_QUERY_ALL_KEYWORD,
 
-    /**
-     * Describe the ability to query data with a specified detail
-     */
-    DATA_QUERY_DETAIL
+    /** Describe the ability to query data with a specified detail */
+    DATA_QUERY_DETAIL,
 
+    /**
+     * Describe the ability to filter data on a time range (see {@link Query#getStartPeriod()} and
+     * {@link Query#getEndPeriod()})
+     */
+    DATA_QUERY_TIME_RANGE,
+
+    /**
+     * Describe the ability to filter data on an observation count (see {@link
+     * Query#getFirstNObservations()} and {@link Query#getLastNObservations()})
+     */
+    DATA_QUERY_OBS_COUNT
 }
