@@ -27,7 +27,7 @@ jobs:
 
     steps:
       - name: Checkout and Setup Maven
-        uses: s4u/setup-maven-action@v1.20.0
+        uses: s4u/setup-maven-action@v1.21.0
 
       - name: Setup docs with Maven
         run: mvn -B -ntp install -DskipTests -P setup-docs
