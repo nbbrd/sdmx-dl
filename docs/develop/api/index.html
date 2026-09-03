@@ -15,7 +15,7 @@
   <meta name="description" content="sdmx-dl API is a library designed as a facade for the SDMX model and APIs.
 Web example:
 SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(KeyRequest .builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF&#43;USD.EUR.SP00.A&#34;) .build()) .forEach(series -&gt; System.out.printf(Locale.ROOT, &#34;%s: %d obs%n&#34;, series.getKey(), series.getObs().size())); File example:
-SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .builder() .flowOf(&#34;data&#34;) .keyOf(&#34;A.DEU.1.0.319.0.UBLGE&#34;) .build()) .forEach(series -&gt; System.out.printf(Locale.ROOT, &#34;%s: %d obs%n&#34;, series.getKey(), series.getObs().size())); Structure overview flowchart BT api subgraph formats format-base[base] csv kryo protobuf xml end subgraph providers provider-base[base] connectors ri dialects px end subgraph applications cli desktop grpc end formats --&gt; api providers --&gt; formats applications --&gt; providers Dependencies setup sdmx-dl is distributed in two different ways: a standard JAR hierarchy, and a standalone uber JAR containing all the implementations and their dependencies. Most of the standalone JAR’s dependencies are shaded i.e. they are hidden in alternative packages. This allows sdmx-dl to be used as a zero-dependency library in projects without conflicting with other dependencies." />
+SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .builder() .flowOf(&#34;data&#34;) .keyOf(&#34;A.DEU.1.0.319.0.UBLGE&#34;) .build()) .forEach(series -&gt; System.out.printf(Locale.ROOT, &#34;%s: %d obs%n&#34;, series.getKey(), series.getObs().size())); Filtering example (time range and observation count):" />
 
     <title>Java library | sdmx-dl</title>
 
@@ -45,14 +45,14 @@ SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .b
 sdmx-dl API is a library designed as a facade for the SDMX model and APIs.
 Web example:
 SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(KeyRequest .builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF&#43;USD.EUR.SP00.A&#34;) .build()) .forEach(series -&gt; System.out.printf(Locale.ROOT, &#34;%s: %d obs%n&#34;, series.getKey(), series.getObs().size())); File example:
-SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .builder() .flowOf(&#34;data&#34;) .keyOf(&#34;A.DEU.1.0.319.0.UBLGE&#34;) .build()) .forEach(series -&gt; System.out.printf(Locale.ROOT, &#34;%s: %d obs%n&#34;, series.getKey(), series.getObs().size())); Structure overview flowchart BT api subgraph formats format-base[base] csv kryo protobuf xml end subgraph providers provider-base[base] connectors ri dialects px end subgraph applications cli desktop grpc end formats --&gt; api providers --&gt; formats applications --&gt; providers Dependencies setup sdmx-dl is distributed in two different ways: a standard JAR hierarchy, and a standalone uber JAR containing all the implementations and their dependencies. Most of the standalone JAR’s dependencies are shaded i.e. they are hidden in alternative packages. This allows sdmx-dl to be used as a zero-dependency library in projects without conflicting with other dependencies." />
+SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .builder() .flowOf(&#34;data&#34;) .keyOf(&#34;A.DEU.1.0.319.0.UBLGE&#34;) .build()) .forEach(series -&gt; System.out.printf(Locale.ROOT, &#34;%s: %d obs%n&#34;, series.getKey(), series.getObs().size())); Filtering example (time range and observation count):" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/api/" />
 
 <meta property="article:section" content="API" />
     <meta
       property="article:modified_time"
-      content="2026-09-01T16:26:32+02:00"
+      content="2026-09-03T10:35:11+02:00"
     />
 
 
@@ -62,7 +62,7 @@ SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .b
 sdmx-dl API is a library designed as a facade for the SDMX model and APIs.
 Web example:
 SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(KeyRequest .builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF&#43;USD.EUR.SP00.A&#34;) .build()) .forEach(series -&gt; System.out.printf(Locale.ROOT, &#34;%s: %d obs%n&#34;, series.getKey(), series.getObs().size())); File example:
-SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .builder() .flowOf(&#34;data&#34;) .keyOf(&#34;A.DEU.1.0.319.0.UBLGE&#34;) .build()) .forEach(series -&gt; System.out.printf(Locale.ROOT, &#34;%s: %d obs%n&#34;, series.getKey(), series.getObs().size())); Structure overview flowchart BT api subgraph formats format-base[base] csv kryo protobuf xml end subgraph providers provider-base[base] connectors ri dialects px end subgraph applications cli desktop grpc end formats --&gt; api providers --&gt; formats applications --&gt; providers Dependencies setup sdmx-dl is distributed in two different ways: a standard JAR hierarchy, and a standalone uber JAR containing all the implementations and their dependencies. Most of the standalone JAR’s dependencies are shaded i.e. they are hidden in alternative packages. This allows sdmx-dl to be used as a zero-dependency library in projects without conflicting with other dependencies." />
+SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .builder() .flowOf(&#34;data&#34;) .keyOf(&#34;A.DEU.1.0.319.0.UBLGE&#34;) .build()) .forEach(series -&gt; System.out.printf(Locale.ROOT, &#34;%s: %d obs%n&#34;, series.getKey(), series.getObs().size())); Filtering example (time range and observation count):" />
 
 
   <script type="application/ld+json">
@@ -73,8 +73,8 @@ SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .b
       "name": "Java library",
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/api/",
       "headline": "Java library",
-      "description": "\nsdmx-dl API is a library designed as a facade for the SDMX model and APIs.\nWeb example:\nSdmxWebManager .ofServiceLoader() .usingName(\u0022ECB\u0022) .getData(KeyRequest .builder() .flowOf(\u0022EXR\u0022) .keyOf(\u0022M.CHF\u002bUSD.EUR.SP00.A\u0022) .build()) .forEach(series -\u003e System.out.printf(Locale.ROOT, \u0022%s: %d obs%n\u0022, series.getKey(), series.getObs().size())); File example:\nSdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .builder() .flowOf(\u0022data\u0022) .keyOf(\u0022A.DEU.1.0.319.0.UBLGE\u0022) .build()) .forEach(series -\u003e System.out.printf(Locale.ROOT, \u0022%s: %d obs%n\u0022, series.getKey(), series.getObs().size())); Structure overview flowchart BT api subgraph formats format-base[base] csv kryo protobuf xml end subgraph providers provider-base[base] connectors ri dialects px end subgraph applications cli desktop grpc end formats --\u003e api providers --\u003e formats applications --\u003e providers Dependencies setup sdmx-dl is distributed in two different ways: a standard JAR hierarchy, and a standalone uber JAR containing all the implementations and their dependencies. Most of the standalone JAR’s dependencies are shaded i.e. they are hidden in alternative packages. This allows sdmx-dl to be used as a zero-dependency library in projects without conflicting with other dependencies.",
-      "wordCount": "173",
+      "description": "\nsdmx-dl API is a library designed as a facade for the SDMX model and APIs.\nWeb example:\nSdmxWebManager .ofServiceLoader() .usingName(\u0022ECB\u0022) .getData(KeyRequest .builder() .flowOf(\u0022EXR\u0022) .keyOf(\u0022M.CHF\u002bUSD.EUR.SP00.A\u0022) .build()) .forEach(series -\u003e System.out.printf(Locale.ROOT, \u0022%s: %d obs%n\u0022, series.getKey(), series.getObs().size())); File example:\nSdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .builder() .flowOf(\u0022data\u0022) .keyOf(\u0022A.DEU.1.0.319.0.UBLGE\u0022) .build()) .forEach(series -\u003e System.out.printf(Locale.ROOT, \u0022%s: %d obs%n\u0022, series.getKey(), series.getObs().size())); Filtering example (time range and observation count):",
+      "wordCount": "254",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -85,7 +85,7 @@ SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .b
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-01T16:26:32.00Z",
+      "dateModified": "2026-09-03T10:35:11.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -982,7 +982,23 @@ SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .b
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">keyOf</span><span class="p">(</span><span class="s">&#34;A.DEU.1.0.319.0.UBLGE&#34;</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">series</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">printf</span><span class="p">(</span><span class="n">Locale</span><span class="p">.</span><span class="na">ROOT</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;%s: %d obs%n&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">series</span><span class="p">.</span><span class="na">getKey</span><span class="p">(),</span><span class="w"> </span><span class="n">series</span><span class="p">.</span><span class="na">getObs</span><span class="p">().</span><span class="na">size</span><span class="p">()));</span><span class="w">
-</span></span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
+</span></span></span></code></pre></div><p>Filtering example (time range and observation count):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">SdmxWebManager</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">KeyRequest</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">flowOf</span><span class="p">(</span><span class="s">&#34;EXR&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">keyOf</span><span class="p">(</span><span class="s">&#34;M.CHF.EUR.SP00.A&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">startPeriodOf</span><span class="p">(</span><span class="s">&#34;2020&#34;</span><span class="p">)</span><span class="w">     </span><span class="c1">// inclusive lower bound</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">endPeriodOf</span><span class="p">(</span><span class="s">&#34;2022-12&#34;</span><span class="p">)</span><span class="w">    </span><span class="c1">// inclusive upper bound</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">lastNObservations</span><span class="p">(</span><span class="n">3</span><span class="p">)</span><span class="w">      </span><span class="c1">// keep only the last 3 observations</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">series</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">printf</span><span class="p">(</span><span class="n">Locale</span><span class="p">.</span><span class="na">ROOT</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;%s: %d obs%n&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">series</span><span class="p">.</span><span class="na">getKey</span><span class="p">(),</span><span class="w"> </span><span class="n">series</span><span class="p">.</span><span class="na">getObs</span><span class="p">().</span><span class="na">size</span><span class="p">()));</span><span class="w">
+</span></span></span></code></pre></div><p>Filters (<code>startPeriod</code>, <code>endPeriod</code>, <code>firstNObservations</code>, <code>lastNObservations</code>) are always (re-)applied
+client-side, so results are consistent across all sources. When a source supports them server-side, they
+are also pushed down as a bandwidth optimization; otherwise the full series is downloaded then filtered locally.</p>
+<div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="structure-overview"
     >
         Structure overview

@@ -51,7 +51,7 @@ Common General-purpose options used by various commands." />
 <meta property="article:section" content="CLI" />
     <meta
       property="article:modified_time"
-      content="2026-09-01T16:26:32+02:00"
+      content="2026-09-03T10:35:11+02:00"
     />
 
 
@@ -72,7 +72,7 @@ Common General-purpose options used by various commands." />
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/cli/options/",
       "headline": "Options",
       "description": "An option has the following caracteristics:\nit has a name prefixed by two hyphens (e.g. --version). it may have a shortcut prefixed by one hyphen (e.g. -h is a shortcut of --help). it is case-sensitive Shortcuts can be grouped behind one hyphen (e.g. -vh is equivalent to -v -h).\nThe options default values are system-independent.\nCommon General-purpose options used by various commands.",
-      "wordCount": "259",
+      "wordCount": "372",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -83,7 +83,7 @@ Common General-purpose options used by various commands." />
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-01T16:26:32.00Z",
+      "dateModified": "2026-09-03T10:35:11.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1077,6 +1077,62 @@ Common General-purpose options used by various commands." />
 			</tr>
 	</tbody>
 </table> </div>
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="data-filtering"
+    >
+        Data filtering
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/options/#data-filtering" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Data filtering" aria-label="Anchor to: Data filtering" href="#data-filtering">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>Optional filters that reduce the observations returned by the <code>fetch data</code> command.
+When a data source cannot apply a filter server-side, it is applied client-side after download,
+so the result is always consistent (but the download is not necessarily smaller).</p>
+<div class="table-wrap"> <table>
+	<thead>
+			<tr>
+					<th>Name</th>
+					<th>Shortcut</th>
+					<th>Parameter</th>
+					<th>Description</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td><a id="start" href="#start"><code>--start</code></a></td>
+					<td>-</td>
+					<td><a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#period"
+><code>&lt;period&gt;</code></a></td>
+					<td>Start period (inclusive), e.g. <code>2020</code>.</td>
+			</tr>
+			<tr>
+					<td><a id="end" href="#end"><code>--end</code></a></td>
+					<td>-</td>
+					<td><a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#period"
+><code>&lt;period&gt;</code></a></td>
+					<td>End period (inclusive), e.g. <code>2020-12</code>.</td>
+			</tr>
+			<tr>
+					<td><a id="first-n" href="#first-n"><code>--first-n</code></a></td>
+					<td>-</td>
+					<td><code>&lt;count&gt;</code></td>
+					<td>Keep only the first N observations per series.</td>
+			</tr>
+			<tr>
+					<td><a id="last-n" href="#last-n"><code>--last-n</code></a></td>
+					<td>-</td>
+					<td><code>&lt;count&gt;</code></td>
+					<td>Keep only the last N observations per series.</td>
+			</tr>
+	</tbody>
+</table> </div>
+<p>When <code>--first-n</code> and <code>--last-n</code> are combined, the result is the union of the first N and the last N
+observations of each series (computed independently after any period filtering).</p>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="csv"
     >

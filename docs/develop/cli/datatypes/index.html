@@ -45,7 +45,7 @@
 <meta property="article:section" content="CLI" />
     <meta
       property="article:modified_time"
-      content="2026-09-01T16:26:32+02:00"
+      content="2026-09-03T10:35:11+02:00"
     />
 
 
@@ -63,7 +63,7 @@
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/",
       "headline": "Data types",
       "description": " Common file encoding char string locale datetime The date-time format is ISO-8601.",
-      "wordCount": "246",
+      "wordCount": "295",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -74,7 +74,7 @@
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-01T16:26:32.00Z",
+      "dateModified": "2026-09-03T10:35:11.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1212,6 +1212,59 @@ A key can identify single or multiple time series.</p>
 					<td><code>all</code></td>
 					<td>multiple</td>
 					<td>everything</td>
+			</tr>
+	</tbody>
+</table> </div>
+
+  </div>
+</div>
+
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h3 id="period"
+    >
+        <code>period</code>
+    </h3>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#period" class="gdoc-page__anchor clip flex align-center" title="Anchor to: period" aria-label="Anchor to: period" href="#period">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>A period is a reduced-precision <a
+  class="gdoc-markdown__link"
+  href="https://en.wikipedia.org/wiki/ISO_8601"
+>ISO-8601</a> date-time used as an
+inclusive bound when filtering observations by time.</p>
+<p><strong>Format:</strong> a year, optionally followed by finer fields (month, day, time).</p>
+
+<div class="gdoc-expand">
+  <label class="gdoc-expand__head flex justify-between" for="01b5a64e-3">
+    <span>Examples</span>
+    <span>↕</span>
+  </label>
+  <input id="01b5a64e-3" type="checkbox" class="gdoc-expand__control hidden" />
+  <div class="gdoc-markdown--nested gdoc-expand__content">
+    <div class="table-wrap"> <table>
+	<thead>
+			<tr>
+					<th>period</th>
+					<th>description</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td><code>2020</code></td>
+					<td>year 2020</td>
+			</tr>
+			<tr>
+					<td><code>2020-06</code></td>
+					<td>June 2020</td>
+			</tr>
+			<tr>
+					<td><code>2020-06-15</code></td>
+					<td>15 June 2020</td>
+			</tr>
+			<tr>
+					<td><code>2020-06-15T13:00:00</code></td>
+					<td>15 June 2020, 1 PM</td>
 			</tr>
 	</tbody>
 </table> </div>
