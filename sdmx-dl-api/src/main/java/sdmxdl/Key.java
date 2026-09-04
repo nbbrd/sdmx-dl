@@ -17,11 +17,10 @@
 package sdmxdl;
 
 import internal.sdmxdl.Chars;
+import java.util.*;
 import lombok.NonNull;
 import nbbrd.design.*;
 import org.jspecify.annotations.Nullable;
-
-import java.util.*;
 
 /**
  * Parameter that defines the dimension values of the data to be returned.
@@ -40,7 +39,7 @@ public final class Key {
     @VisibleForTesting
     static final String ALL_KEYWORD = "all";
 
-    public static final Key ALL = new Key(new String[]{WILDCARD_CODE});
+    public static final Key ALL = new Key(new String[] {WILDCARD_CODE});
 
     private final String[] items;
 
@@ -48,20 +47,32 @@ public final class Key {
         this.items = items;
     }
 
-    @NonNegative
-    public int size() {
+    @NonNegative public int size() {
         return items.length;
     }
 
-    @NonNull
-    public String get(@NonNegative int index) throws IndexOutOfBoundsException {
+    @NonNull public String get(@NonNegative int index) throws IndexOutOfBoundsException {
         return items[index];
     }
 
-    public @NonNull Key with(@NonNull String item, @NonNegative int index) throws IndexOutOfBoundsException {
+    public @NonNull Key with(@NonNull String code, @NonNegative int index) throws IndexOutOfBoundsException {
         String[] result = Arrays.copyOf(items, items.length);
-        result[index] = parseCode(item);
+        result[index] = parseCode(code);
         return new Key(result);
+    }
+
+    /**
+     * Returns a copy of this key where one dimension is replaced by a multi-code
+     * selection built by joining {@code codes} with {@code '+'}.
+     * <p>
+     * The resulting item is normalized like any parsed key item (for example,
+     * multi-codes are reordered canonically).
+     */
+    public @NonNull Key with(@NonNull Collection<String> codes, @NonNegative int index)
+            throws IndexOutOfBoundsException {
+        String[] result = Arrays.copyOf(items, items.length);
+        result[index] = String.join(String.valueOf(OR_CHAR), codes);
+        return Key.of(result);
     }
 
     public boolean isWildcard(@NonNegative int index) throws IndexOutOfBoundsException {
@@ -122,8 +133,7 @@ public final class Key {
      * @return {@code null} if the key is valid, or an error message describing
      * the first violation found
      */
-    @Nullable
-    public String validateOn(@NonNull Structure dsd) {
+    @Nullable public String validateOn(@NonNull Structure dsd) {
         if (this == ALL) {
             return null;
         }
@@ -131,7 +141,12 @@ public final class Key {
         List<Dimension> dimensions = dsd.getDimensions();
 
         if (size() > dimensions.size()) {
-            return String.format(Locale.ROOT, "Expecting key '%s' to have at most %d dimension(s) instead of %d", this, dimensions.size(), size());
+            return String.format(
+                    Locale.ROOT,
+                    "Expecting key '%s' to have at most %d dimension(s) instead of %d",
+                    this,
+                    dimensions.size(),
+                    size());
         }
 
         for (int i = 0; i < size(); i++) {
@@ -139,7 +154,13 @@ public final class Key {
             if (dimension.isCoded()) {
                 for (String code : Chars.splitToArray(get(i), OR_CHAR)) {
                     if (!isWildcardCode(code) && !dimension.getCodes().containsKey(code)) {
-                        return String.format(Locale.ROOT, "Expecting key '%s' to have a known code at position %d for dimension '%s' instead of '%s'", this, i + 1, dimension.getId(), code);
+                        return String.format(
+                                Locale.ROOT,
+                                "Expecting key '%s' to have a known code at position %d for dimension '%s' instead of '%s'",
+                                this,
+                                i + 1,
+                                dimension.getId(),
+                                code);
                     }
                 }
             }
@@ -215,11 +236,7 @@ public final class Key {
         if (input.isEmpty()) {
             return ALL;
         }
-        return new Key(input
-                .stream()
-                .map(Key::parseCode)
-                .toArray(String[]::new)
-        );
+        return new Key(input.stream().map(Key::parseCode).toArray(String[]::new));
     }
 
     @StaticFactoryMethod
@@ -234,8 +251,7 @@ public final class Key {
         return new Key(result);
     }
 
-    @NonNull
-    public static Builder builder(@NonNull Structure dfs) {
+    @NonNull public static Builder builder(@NonNull Structure dfs) {
         List<Dimension> dimensions = dfs.getDimensions();
         Map<String, Integer> result = new HashMap<>();
         for (int i = 0; i < dimensions.size(); i++) {
@@ -244,8 +260,7 @@ public final class Key {
         return new Builder(result);
     }
 
-    @NonNull
-    public static Builder builder(@NonNull List<String> dimensionNames) {
+    @NonNull public static Builder builder(@NonNull List<String> dimensionNames) {
         Map<String, Integer> result = new HashMap<>();
         for (int i = 0; i < dimensionNames.size(); i++) {
             result.put(dimensionNames.get(i), i);
@@ -264,8 +279,7 @@ public final class Key {
             Arrays.fill(items, WILDCARD_CODE);
         }
 
-        @NonNull
-        public Builder put(@Nullable String id, @Nullable String value) {
+        @NonNull public Builder put(@Nullable String id, @Nullable String value) {
             if (id != null) {
                 Integer position = index.get(id);
                 if (position != null) {
@@ -275,14 +289,12 @@ public final class Key {
             return this;
         }
 
-        @NonNull
-        public Builder clear() {
+        @NonNull public Builder clear() {
             Arrays.fill(items, WILDCARD_CODE);
             return this;
         }
 
-        @NonNull
-        public String getItem(@NonNegative int index) throws IndexOutOfBoundsException {
+        @NonNull public String getItem(@NonNegative int index) throws IndexOutOfBoundsException {
             return items[index];
         }
 
@@ -299,8 +311,7 @@ public final class Key {
             return true;
         }
 
-        @NonNull
-        public Key build() {
+        @NonNull public Key build() {
             return Key.of(items);
         }
 
@@ -308,8 +319,7 @@ public final class Key {
             return Key.formatToString(items);
         }
 
-        @NonNegative
-        public int size() {
+        @NonNegative public int size() {
             return items.length;
         }
     }

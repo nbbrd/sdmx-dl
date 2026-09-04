@@ -16,17 +16,16 @@
  */
 package sdmxdl;
 
-import org.assertj.core.api.Condition;
-import org.junit.jupiter.api.Test;
-
-import java.util.AbstractList;
-import java.util.List;
-
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
+
+import java.util.AbstractList;
+import java.util.List;
+import org.assertj.core.api.Condition;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Philippe Charles
@@ -36,20 +35,13 @@ public class KeyTest {
 
     @Test
     public void testParse() {
-        assertThatNullPointerException()
-                .isThrownBy(() -> Key.parse(null));
+        assertThatNullPointerException().isThrownBy(() -> Key.parse(null));
 
-        assertThat(Key.parse(""))
-                .describedAs("Empty must return 'all'")
-                .hasToString(Key.ALL_KEYWORD);
+        assertThat(Key.parse("")).describedAs("Empty must return 'all'").hasToString(Key.ALL_KEYWORD);
 
-        assertThat(Key.parse("*"))
-                .describedAs("Star must return 'all'")
-                .hasToString(Key.ALL_KEYWORD);
+        assertThat(Key.parse("*")).describedAs("Star must return 'all'").hasToString(Key.ALL_KEYWORD);
 
-        assertThat(Key.parse(" "))
-                .describedAs("Blank must return 'all'")
-                .hasToString(Key.ALL_KEYWORD);
+        assertThat(Key.parse(" ")).describedAs("Blank must return 'all'").hasToString(Key.ALL_KEYWORD);
 
         assertThat(Key.parse("4.AUS.M"))
                 .describedAs("Series must return series")
@@ -78,20 +70,13 @@ public class KeyTest {
 
     @Test
     public void testOfArray() {
-        assertThatNullPointerException()
-                .isThrownBy(() -> Key.of((String[]) null));
+        assertThatNullPointerException().isThrownBy(() -> Key.of((String[]) null));
 
-        assertThat(Key.of())
-                .describedAs("Empty must return 'all'")
-                .hasToString(Key.ALL_KEYWORD);
+        assertThat(Key.of()).describedAs("Empty must return 'all'").hasToString(Key.ALL_KEYWORD);
 
-        assertThat(Key.of("*"))
-                .describedAs("Star must return 'all'")
-                .hasToString(Key.ALL_KEYWORD);
+        assertThat(Key.of("*")).describedAs("Star must return 'all'").hasToString(Key.ALL_KEYWORD);
 
-        assertThat(Key.of(" "))
-                .describedAs("Blank must return 'all'")
-                .hasToString(Key.ALL_KEYWORD);
+        assertThat(Key.of(" ")).describedAs("Blank must return 'all'").hasToString(Key.ALL_KEYWORD);
 
         assertThat(Key.of("4", "AUS", "M"))
                 .describedAs("Series must return series")
@@ -124,12 +109,9 @@ public class KeyTest {
 
     @Test
     public void testOfList() {
-        assertThatNullPointerException()
-                .isThrownBy(() -> Key.of((List<String>) null));
+        assertThatNullPointerException().isThrownBy(() -> Key.of((List<String>) null));
 
-        assertThat(Key.of(emptyList()))
-                .describedAs("Empty must return 'all'")
-                .hasToString(Key.ALL_KEYWORD);
+        assertThat(Key.of(emptyList())).describedAs("Empty must return 'all'").hasToString(Key.ALL_KEYWORD);
 
         assertThat(Key.of(singletonList(" ")))
                 .describedAs("Blank must return 'all'")
@@ -219,24 +201,25 @@ public class KeyTest {
                 .isEqualTo(Key.parse("4.AUS.M").with(" ", 1))
                 .extracting(KeyTest::keyAsList, LIST)
                 .containsExactly("4", "", "M");
+
+        assertThat(Key.parse("4..M").with(asList("CHF", "AUS"), 1))
+                .extracting(KeyTest::keyAsList, LIST)
+                .containsExactly("4", "AUS+CHF", "M");
+
+        assertThat(Key.parse("4.AUS.M").with(emptyList(), 1))
+                .extracting(KeyTest::keyAsList, LIST)
+                .containsExactly("4", "", "M");
+
+        assertThatNullPointerException().isThrownBy(() -> Key.parse("4..M").with((List<String>) null, 1));
     }
 
     @Test
     public void testEqualsAndHashCode() {
-        assertThat(Key.of(""))
-                .describedAs("Empty")
-                .isEqualTo(Key.ALL)
-                .hasSameHashCodeAs(Key.ALL);
+        assertThat(Key.of("")).describedAs("Empty").isEqualTo(Key.ALL).hasSameHashCodeAs(Key.ALL);
 
-        assertThat(Key.of("*"))
-                .describedAs("Star")
-                .isEqualTo(Key.ALL)
-                .hasSameHashCodeAs(Key.ALL);
+        assertThat(Key.of("*")).describedAs("Star").isEqualTo(Key.ALL).hasSameHashCodeAs(Key.ALL);
 
-        assertThat(Key.of(" "))
-                .describedAs("Blank")
-                .isEqualTo(Key.ALL)
-                .hasSameHashCodeAs(Key.ALL);
+        assertThat(Key.of(" ")).describedAs("Blank").isEqualTo(Key.ALL).hasSameHashCodeAs(Key.ALL);
 
         assertThat(Key.of("4", "AUS", "M"))
                 .describedAs("Series")
@@ -417,50 +400,32 @@ public class KeyTest {
 
     @Test
     public void testIsValidOn() {
-        assertThatNullPointerException()
-                .isThrownBy(() -> Key.of("IND", "BE").validateOn(null));
+        assertThatNullPointerException().isThrownBy(() -> Key.of("IND", "BE").validateOn(null));
 
-        assertThat(Key.of())
-                .is(validOn(dsd0))
-                .is(validOn(dsd2));
+        assertThat(Key.of()).is(validOn(dsd0)).is(validOn(dsd2));
 
-        assertThat(Key.of("IND"))
-                .isNot(validOn(dsd0))
-                .is(validOn(dsd2));
+        assertThat(Key.of("IND")).isNot(validOn(dsd0)).is(validOn(dsd2));
 
-        assertThat(Key.of("IND", "BE", "XX"))
-                .isNot(validOn(dsd0))
-                .isNot(validOn(dsd2));
+        assertThat(Key.of("IND", "BE", "XX")).isNot(validOn(dsd0)).isNot(validOn(dsd2));
 
-        assertThat(Key.of("IND", "BE"))
-                .isNot(validOn(dsd0))
-                .is(validOn(dsd2));
+        assertThat(Key.of("IND", "BE")).isNot(validOn(dsd0)).is(validOn(dsd2));
 
-        assertThat(Key.of("IND", "XX"))
-                .isNot(validOn(dsd0))
-                .isNot(validOn(dsd2));
+        assertThat(Key.of("IND", "XX")).isNot(validOn(dsd0)).isNot(validOn(dsd2));
 
-        assertThat(Key.of("IND", ""))
-                .isNot(validOn(dsd0))
-                .is(validOn(dsd2));
+        assertThat(Key.of("IND", "")).isNot(validOn(dsd0)).is(validOn(dsd2));
 
-        assertThat(Key.of("IND", "BE+"))
-                .isNot(validOn(dsd0))
-                .is(validOn(dsd2));
+        assertThat(Key.of("IND", "BE+")).isNot(validOn(dsd0)).is(validOn(dsd2));
 
-        assertThat(Key.of("IND", "BE+LU"))
-                .isNot(validOn(dsd0))
-                .is(validOn(dsd2));
+        assertThat(Key.of("IND", "BE+LU")).isNot(validOn(dsd0)).is(validOn(dsd2));
 
-        assertThat(Key.of("IND", "BE+XX"))
-                .isNot(validOn(dsd0))
-                .isNot(validOn(dsd2));
+        assertThat(Key.of("IND", "BE+XX")).isNot(validOn(dsd0)).isNot(validOn(dsd2));
 
         assertThat(Key.of("IND", "BE", "XX").validateOn(dsd2))
                 .isEqualTo("Expecting key 'IND.BE.XX' to have at most 2 dimension(s) instead of 3");
 
         assertThat(Key.of("IND", "XX").validateOn(dsd2))
-                .isEqualTo("Expecting key 'IND.XX' to have a known code at position 2 for dimension 'REGION' instead of 'XX'");
+                .isEqualTo(
+                        "Expecting key 'IND.XX' to have a known code at position 2 for dimension 'REGION' instead of 'XX'");
     }
 
     private static Condition<Key> validOn(Structure dsd) {
@@ -469,9 +434,7 @@ public class KeyTest {
 
     @Test
     public void testNormalize() {
-        assertThat(Key.ALL.normalize(dsd0))
-                .isEqualTo(Key.ALL)
-                .hasToString(Key.ALL_KEYWORD);
+        assertThat(Key.ALL.normalize(dsd0)).isEqualTo(Key.ALL).hasToString(Key.ALL_KEYWORD);
 
         assertThat(Key.ALL.normalize(dsd2))
                 .isEqualTo(Key.ALL)
@@ -494,8 +457,7 @@ public class KeyTest {
 
     @Test
     public void testBuilderOfDimensions() {
-        assertThatNullPointerException()
-                .isThrownBy(() -> Key.builder((List<String>) null));
+        assertThatNullPointerException().isThrownBy(() -> Key.builder((List<String>) null));
 
         Key.Builder b;
 
@@ -505,8 +467,10 @@ public class KeyTest {
         assertThat(b.build()).isEqualTo(Key.ALL);
 
         b = Key.builder(asList("SECTOR", "REGION"));
-        assertThat(b.clear().put("SECTOR", "IND").put("REGION", "BE").toString()).isEqualTo("IND.BE");
-        assertThat(b.clear().put("REGION", "BE").put("SECTOR", "IND").toString()).isEqualTo("IND.BE");
+        assertThat(b.clear().put("SECTOR", "IND").put("REGION", "BE").toString())
+                .isEqualTo("IND.BE");
+        assertThat(b.clear().put("REGION", "BE").put("SECTOR", "IND").toString())
+                .isEqualTo("IND.BE");
         assertThat(b.clear().put("SECTOR", "IND").toString()).isEqualTo("IND.");
         assertThat(b.clear().put("REGION", "BE").toString()).isEqualTo(".BE");
         assertThat(b.clear().toString()).isEqualTo(".");
@@ -514,20 +478,22 @@ public class KeyTest {
         assertThat(b.isDimension("SECTOR")).isTrue();
         assertThat(b.clear().put("REGION", "BE").put("SECTOR", "IND").build()).isEqualTo(Key.of("IND", "BE"));
         assertThat(b.clear().put("REGION", "BE").build()).isEqualTo(Key.of("", "BE"));
-        assertThat(b.clear().put("REGION", "BE").put("SECTOR", "IND").getItem(0)).isEqualTo("IND");
-        assertThat(b.clear().put("REGION", "BE").put("SECTOR", "IND").getItem(1)).isEqualTo("BE");
+        assertThat(b.clear().put("REGION", "BE").put("SECTOR", "IND").getItem(0))
+                .isEqualTo("IND");
+        assertThat(b.clear().put("REGION", "BE").put("SECTOR", "IND").getItem(1))
+                .isEqualTo("BE");
         assertThat(b.clear().put("REGION", "BE").getItem(0)).isEqualTo("");
         assertThat(b.clear().put("REGION", "BE").getItem(1)).isEqualTo("BE");
 
         assertThat(b.clear().isSeries()).isFalse();
         assertThat(b.clear().put("SECTOR", "IND").isSeries()).isFalse();
-        assertThat(b.clear().put("SECTOR", "IND").put("REGION", "BE").isSeries()).isTrue();
+        assertThat(b.clear().put("SECTOR", "IND").put("REGION", "BE").isSeries())
+                .isTrue();
     }
 
     @Test
     public void testBuilderOfDataStructure() {
-        assertThatNullPointerException()
-                .isThrownBy(() -> Key.builder((Structure) null));
+        assertThatNullPointerException().isThrownBy(() -> Key.builder((Structure) null));
 
         Key.Builder b;
 
@@ -537,8 +503,10 @@ public class KeyTest {
         assertThat(b.build()).isEqualTo(Key.ALL);
 
         b = Key.builder(dsd2);
-        assertThat(b.clear().put("SECTOR", "IND").put("REGION", "BE").toString()).isEqualTo("IND.BE");
-        assertThat(b.clear().put("REGION", "BE").put("SECTOR", "IND").toString()).isEqualTo("IND.BE");
+        assertThat(b.clear().put("SECTOR", "IND").put("REGION", "BE").toString())
+                .isEqualTo("IND.BE");
+        assertThat(b.clear().put("REGION", "BE").put("SECTOR", "IND").toString())
+                .isEqualTo("IND.BE");
         assertThat(b.clear().put("SECTOR", "IND").toString()).isEqualTo("IND.");
         assertThat(b.clear().put("REGION", "BE").toString()).isEqualTo(".BE");
         assertThat(b.clear().toString()).isEqualTo(".");
@@ -546,34 +514,42 @@ public class KeyTest {
         assertThat(b.isDimension("SECTOR")).isTrue();
         assertThat(b.clear().put("REGION", "BE").put("SECTOR", "IND").build()).isEqualTo(Key.of("IND", "BE"));
         assertThat(b.clear().put("REGION", "BE").build()).isEqualTo(Key.of("", "BE"));
-        assertThat(b.clear().put("REGION", "BE").put("SECTOR", "IND").getItem(0)).isEqualTo("IND");
-        assertThat(b.clear().put("REGION", "BE").put("SECTOR", "IND").getItem(1)).isEqualTo("BE");
+        assertThat(b.clear().put("REGION", "BE").put("SECTOR", "IND").getItem(0))
+                .isEqualTo("IND");
+        assertThat(b.clear().put("REGION", "BE").put("SECTOR", "IND").getItem(1))
+                .isEqualTo("BE");
         assertThat(b.clear().put("REGION", "BE").getItem(0)).isEqualTo("");
         assertThat(b.clear().put("REGION", "BE").getItem(1)).isEqualTo("BE");
 
         assertThat(b.clear().isSeries()).isFalse();
         assertThat(b.clear().put("SECTOR", "IND").isSeries()).isFalse();
-        assertThat(b.clear().put("SECTOR", "IND").put("REGION", "BE").isSeries()).isTrue();
+        assertThat(b.clear().put("SECTOR", "IND").put("REGION", "BE").isSeries())
+                .isTrue();
     }
 
-    private final Structure dsd0 = Structure
-            .builder()
+    private final Structure dsd0 = Structure.builder()
             .ref(StructureRef.parse("ref"))
             .primaryMeasureId("")
             .name("")
             .build();
 
-    private final Codelist clSector = Codelist.builder().ref(CodelistRef.parse("CL_SECTOR")).code("IND", "Industry").build();
-    private final Codelist clRegion = Codelist.builder().ref(CodelistRef.parse("CL_REGION")).code("BE", "Belgium").code("LU", "Luxembourg").build();
-
-    private final Dimension sector = Dimension.builder().id("SECTOR").name("Sector").codelist(clSector).build();
-    private final Dimension region = Dimension.builder().id("REGION").name("Region").codelist(clRegion).build();
-
-    private final Structure dsd2 = dsd0
-            .toBuilder()
-            .dimension(sector)
-            .dimension(region)
+    private final Codelist clSector = Codelist.builder()
+            .ref(CodelistRef.parse("CL_SECTOR"))
+            .code("IND", "Industry")
             .build();
+    private final Codelist clRegion = Codelist.builder()
+            .ref(CodelistRef.parse("CL_REGION"))
+            .code("BE", "Belgium")
+            .code("LU", "Luxembourg")
+            .build();
+
+    private final Dimension sector =
+            Dimension.builder().id("SECTOR").name("Sector").codelist(clSector).build();
+    private final Dimension region =
+            Dimension.builder().id("REGION").name("Region").codelist(clRegion).build();
+
+    private final Structure dsd2 =
+            dsd0.toBuilder().dimension(sector).dimension(region).build();
 
     private static List<String> keyAsList(Key key) {
         return new AbstractList<String>() {

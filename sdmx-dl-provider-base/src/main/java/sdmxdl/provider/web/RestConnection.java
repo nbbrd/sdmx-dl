@@ -16,15 +16,15 @@
  */
 package sdmxdl.provider.web;
 
+import static sdmxdl.Feature.*;
+
 import java.io.IOException;
 import java.net.URI;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 import lombok.NonNull;
 import nbbrd.design.NonNegative;
+import nbbrd.design.VisibleForTesting;
 import sdmxdl.*;
 import sdmxdl.provider.CommonSdmxExceptions;
 import sdmxdl.provider.ConnectionSupport;
@@ -66,8 +66,7 @@ final class RestConnection implements Connection {
     }
 
     @Override
-    public @NonNull DataSet getData(
-            @NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query)
+    public @NonNull DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query)
             throws IOException {
         checkDatabase(database);
         return ConnectionSupport.getDataSetFromStream(database, flowRef, query, this);
@@ -75,20 +74,18 @@ final class RestConnection implements Connection {
 
     @Override
     public @NonNull Stream<Series> getDataStream(
-            @NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query)
-            throws IOException {
+            @NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
         MetaSet meta = getMeta(database, flowRef);
 
         checkKey(query.getKey(), meta.getStructure());
 
-        Query normalizedQuery =
-                query.toBuilder().key(query.getKey().normalize(meta.getStructure())).build();
+        Query normalizedQuery = query.toBuilder()
+                .key(query.getKey().normalize(meta.getStructure()))
+                .build();
 
-        Query realQuery =
-                deriveDataQuery(normalizedQuery, getSupportedFeatures(), meta.getStructure());
+        Query realQuery = deriveQuery(normalizedQuery, getSupportedFeatures(), meta.getStructure());
 
-        Stream<Series> result =
-                client.getData(DataRef.of(meta.getFlow().getRef(), realQuery), meta.getStructure());
+        Stream<Series> result = client.getData(DataRef.of(meta.getFlow().getRef(), realQuery), meta.getStructure());
 
         // Observation-level filters (period range, first/last N) are always re-applied client-side
         // because a data source may not support them (or may support them only partially).
@@ -104,42 +101,63 @@ final class RestConnection implements Connection {
             @NonNull Key constraints,
             @NonNegative int dimensionIndex)
             throws IOException, IllegalArgumentException {
-        return ConnectionSupport.getAvailableDimensionCodes(
-                this, database, flowRef, constraints, dimensionIndex);
+        return ConnectionSupport.getAvailableDimensionCodes(this, database, flowRef, constraints, dimensionIndex);
     }
 
-    private static Query deriveDataQuery(Query query, Set<Feature> features, Structure dsd) {
+    @VisibleForTesting
+    static Query deriveQuery(Query query, Set<Feature> features, Structure dsd) {
         return Query.builder()
-                .key(
-                        features.contains(Feature.DATA_QUERY_ALL_KEYWORD)
-                                        || !Key.ALL.equals(query.getKey())
+                .key(fixTrailingWildcards(
+                        features.contains(DATA_QUERY_ALL_KEYWORD) || !Key.ALL.equals(query.getKey())
                                 ? query.getKey()
-                                : alternateAllOf(dsd))
-                .detail(
-                        features.contains(Feature.DATA_QUERY_DETAIL)
-                                ? query.getDetail()
-                                : Detail.FULL)
-                .startPeriod(
-                        features.contains(Feature.DATA_QUERY_TIME_RANGE)
-                                ? query.getStartPeriod()
-                                : null)
-                .endPeriod(
-                        features.contains(Feature.DATA_QUERY_TIME_RANGE)
-                                ? query.getEndPeriod()
-                                : null)
-                .firstNObservations(
-                        features.contains(Feature.DATA_QUERY_OBS_COUNT)
-                                ? query.getFirstNObservations()
-                                : null)
-                .lastNObservations(
-                        features.contains(Feature.DATA_QUERY_OBS_COUNT)
-                                ? query.getLastNObservations()
-                                : null)
+                                : alternateAllOf(dsd),
+                        dsd))
+                .detail(features.contains(DATA_QUERY_DETAIL) ? query.getDetail() : Detail.FULL)
+                .startPeriod(features.contains(DATA_QUERY_TIME_RANGE) ? query.getStartPeriod() : null)
+                .endPeriod(features.contains(DATA_QUERY_TIME_RANGE) ? query.getEndPeriod() : null)
+                .firstNObservations(features.contains(DATA_QUERY_OBS_COUNT) ? query.getFirstNObservations() : null)
+                .lastNObservations(features.contains(DATA_QUERY_OBS_COUNT) ? query.getLastNObservations() : null)
                 .build();
     }
 
     private static Key alternateAllOf(Structure dsd) {
         return Key.of(new String[dsd.getDimensions().size()]);
+    }
+
+    /**
+     * Rewrites keys ending with two trailing wildcards to avoid generating positional keys
+     * with a trailing ".." segment in REST URLs.
+     * <p>
+     * When the last two dimensions are wildcards and the key has at least 3 dimensions,
+     * one of these wildcards is expanded to an explicit '+'-joined list of all codes.
+     * The dimension with fewer codes is chosen to keep the expanded key as short as possible.
+     * In case of a tie, the last dimension is expanded to preserve previous behavior.
+     * <p>
+     * If one trailing dimension has no codes (non-enumerated), the other one is expanded.
+     * If both trailing dimensions have no codes, no rewrite is possible and the key is returned unchanged.
+     */
+    private static Key fixTrailingWildcards(Key key, Structure dsd) {
+        int size = key.size();
+        if (size > 2 && key.isWildcard(size - 1) && key.isWildcard(size - 2)) {
+            int last = size - 1;
+            int previous = size - 2;
+            List<Dimension> dimensions = dsd.getDimensions();
+            Set<String> previousCodes = dimensions.get(previous).getCodes().keySet();
+            Set<String> lastCodes = dimensions.get(last).getCodes().keySet();
+
+            if (previousCodes.isEmpty() && lastCodes.isEmpty()) {
+                return key;
+            } else if (previousCodes.isEmpty()) {
+                return key.with(lastCodes, last);
+            } else if (lastCodes.isEmpty()) {
+                return key.with(previousCodes, previous);
+            } else if (previousCodes.size() < lastCodes.size()) {
+                return key.with(previousCodes, previous);
+            } else {
+                return key.with(lastCodes, last);
+            }
+        }
+        return key;
     }
 
     @Override
@@ -164,8 +182,7 @@ final class RestConnection implements Connection {
         }
     }
 
-    private Flow lookupFlow(DatabaseRef database, FlowRef flowRef)
-            throws IOException, IllegalArgumentException {
+    private Flow lookupFlow(DatabaseRef database, FlowRef flowRef) throws IOException, IllegalArgumentException {
         return ConnectionSupport.getFlowFromFlows(database, flowRef, this, client);
     }
 

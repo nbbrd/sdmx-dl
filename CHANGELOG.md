@@ -13,6 +13,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Add observation count filtering on data queries [#205](https://github.com/nbbrd/sdmx-dl/issues/205)
 - Add time filtering on data queries [#204](https://github.com/nbbrd/sdmx-dl/issues/204)
 
+### Fixed
+
+- Fix key trailing wildcards in rest queries [#1312](https://github.com/nbbrd/sdmx-dl/issues/1312)
+
 ## [3.2.0] - 2026-08-14
 
 This release adds support for SDMX-specific representations and a new, more reliable network backend.  
