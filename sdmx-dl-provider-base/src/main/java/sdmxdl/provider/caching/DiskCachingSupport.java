@@ -1,5 +1,13 @@
 package sdmxdl.provider.caching;
 
+import static java.util.Collections.emptyList;
+import static sdmxdl.format.FileFormatSupport.*;
+
+import java.io.File;
+import java.nio.file.Path;
+import java.time.Clock;
+import java.util.Collection;
+import java.util.function.Function;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.io.text.BooleanProperty;
@@ -12,22 +20,14 @@ import sdmxdl.ext.Cache;
 import sdmxdl.ext.FileFormat;
 import sdmxdl.file.FileSource;
 import sdmxdl.file.spi.FileCaching;
-import sdmxdl.provider.PropertiesSupport;
 import sdmxdl.format.design.PropertyDefinition;
 import sdmxdl.format.design.ServiceSupport;
+import sdmxdl.provider.KeyedLock;
+import sdmxdl.provider.PropertiesSupport;
 import sdmxdl.web.Credentials;
 import sdmxdl.web.MonitorReports;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.WebCaching;
-
-import java.io.File;
-import java.nio.file.Path;
-import java.time.Clock;
-import java.util.Collection;
-import java.util.function.Function;
-
-import static java.util.Collections.emptyList;
-import static sdmxdl.format.FileFormatSupport.*;
 
 @ServiceSupport(FileCaching.class)
 @ServiceSupport(WebCaching.class)
@@ -36,13 +36,13 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
 
     // Set cache folder
     @PropertyDefinition
-    public static final Property<File> CACHE_FOLDER_PROPERTY
-            = Property.of("sdmxdl.caching.cacheFolder", null, Parser.onFile(), Formatter.onFile());
+    public static final Property<File> CACHE_FOLDER_PROPERTY =
+            Property.of("sdmxdl.caching.cacheFolder", null, Parser.onFile(), Formatter.onFile());
 
     // Disable cache compression
     @PropertyDefinition
-    public static final BooleanProperty NO_COMPRESSION_PROPERTY
-            = BooleanProperty.of("sdmxdl.caching.noCompression", false);
+    public static final BooleanProperty NO_COMPRESSION_PROPERTY =
+            BooleanProperty.of("sdmxdl.caching.noCompression", false);
 
     @lombok.Getter(AccessLevel.PRIVATE)
     private final @NonNull String id;
@@ -58,6 +58,10 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
 
     @lombok.Builder.Default
     private final @NonNull FileFormat<MonitorReports> monitorsFormat = FileFormat.noOp();
+
+    // NB: shared by all the caches created by this instance so that they are mutually excluded on the same key
+    @lombok.Builder.Default
+    private final @NonNull KeyedLock locks = KeyedLock.newInstance();
 
     @Override
     public @NonNull String getFileCachingId() {
@@ -81,15 +85,12 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
 
     @Override
     public @NonNull Cache<DataRepository> getReaderCache(
-            @NonNull FileSource source,
-            @Nullable EventListener onEvent,
-            @Nullable ErrorListener onError) {
+            @NonNull FileSource source, @Nullable EventListener onEvent, @Nullable ErrorListener onError) {
         Function<? super String, ? extends CharSequence> properties = PropertiesSupport.asFunction(source);
         Path root = getCacheFolder(properties);
 
         logConfig(onEvent, repositoryFormat, root);
-        return decorateCache(DiskCache
-                .<DataRepository>builder()
+        return decorateCache(DiskCache.<DataRepository>builder()
                 .id(id)
                 .root(root)
                 .format(decorateFormat(repositoryFormat, isNoCompression(properties)))
@@ -102,15 +103,12 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
 
     @Override
     public @NonNull Cache<DataRepository> getDriverCache(
-            @NonNull WebSource source,
-            @Nullable EventListener onEvent,
-            @Nullable ErrorListener onError) {
+            @NonNull WebSource source, @Nullable EventListener onEvent, @Nullable ErrorListener onError) {
         Function<? super String, ? extends CharSequence> properties = PropertiesSupport.asFunction(source);
         Path root = getCacheFolder(properties);
 
         logConfig(onEvent, repositoryFormat, root);
-        return decorateCache(DiskCache
-                .<DataRepository>builder()
+        return decorateCache(DiskCache.<DataRepository>builder()
                 .id(id)
                 .root(root)
                 .format(decorateFormat(repositoryFormat, isNoCompression(properties)))
@@ -123,15 +121,12 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
 
     @Override
     public @NonNull Cache<MonitorReports> getMonitorCache(
-            @NonNull WebSource source,
-            @Nullable EventListener onEvent,
-            @Nullable ErrorListener onError) {
+            @NonNull WebSource source, @Nullable EventListener onEvent, @Nullable ErrorListener onError) {
         Function<? super String, ? extends CharSequence> properties = PropertiesSupport.asFunction(source);
         Path root = getCacheFolder(properties);
 
         logConfig(onEvent, monitorsFormat, root);
-        return decorateCache(DiskCache
-                .<MonitorReports>builder()
+        return decorateCache(DiskCache.<MonitorReports>builder()
                 .id(id)
                 .root(root)
                 .format(decorateFormat(monitorsFormat, isNoCompression(properties)))
@@ -143,7 +138,8 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
     }
 
     @Override
-    public @NonNull Cache<Credentials> getCredentialsCache(@NonNull WebSource source, @Nullable EventListener onEvent, @Nullable ErrorListener onError) {
+    public @NonNull Cache<Credentials> getCredentialsCache(
+            @NonNull WebSource source, @Nullable EventListener onEvent, @Nullable ErrorListener onError) {
         return Cache.noOp();
     }
 
@@ -162,12 +158,11 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
     }
 
     private <T extends HasExpiration> Cache<T> decorateCache(Cache<T> delegate) {
-        return dry(new LockingByKeyCache<>(delegate));
+        return dry(new LockingByKeyCache<>(delegate, locks));
     }
 
     private static <V extends HasExpiration> Cache<V> dry(Cache<V> cache) {
-        return DualCache
-                .<V>builder()
+        return DualCache.<V>builder()
                 .first(MemCache.<V>builder().clock(cache.getClock()).build())
                 .second(cache)
                 .clock(cache.getClock())
@@ -176,7 +171,8 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
 
     private void logConfig(EventListener onEvent, FileFormat<?> format, Path root) {
         if (onEvent != null)
-            onEvent.accept(id, "Using cache folder " + root.toUri() + " with format '" + format.getFileExtension() + "'");
+            onEvent.accept(
+                    id, "Using cache folder " + root.toUri() + " with format '" + format.getFileExtension() + "'");
     }
 
     private static Path getCacheFolder(Function<? super String, ? extends CharSequence> properties) {

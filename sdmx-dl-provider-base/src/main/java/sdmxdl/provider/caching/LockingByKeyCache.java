@@ -1,17 +1,18 @@
 package sdmxdl.provider.caching;
 
+import java.time.Clock;
 import lombok.NonNull;
 import org.jspecify.annotations.Nullable;
 import sdmxdl.HasExpiration;
 import sdmxdl.ext.Cache;
-import sdmxdl.provider.LockByKey;
-
-import java.time.Clock;
+import sdmxdl.provider.KeyedLock;
 
 @lombok.AllArgsConstructor
 public final class LockingByKeyCache<V extends HasExpiration> implements Cache<V> {
 
     private final @NonNull Cache<V> delegate;
+
+    private final @NonNull KeyedLock locks;
 
     @Override
     public @NonNull Clock getClock() {
@@ -20,23 +21,15 @@ public final class LockingByKeyCache<V extends HasExpiration> implements Cache<V
 
     @Override
     public @Nullable V get(@NonNull String key) {
-        LockByKey lockByKey = new LockByKey();
-        try {
-            lockByKey.lock(key);
+        try (KeyedLock.Lease ignore = locks.acquire(key)) {
             return delegate.get(key);
-        } finally {
-            lockByKey.unlock(key);
         }
     }
 
     @Override
     public void put(@NonNull String key, @Nullable V value) {
-        LockByKey lockByKey = new LockByKey();
-        try {
-            lockByKey.lock(key);
+        try (KeyedLock.Lease ignore = locks.acquire(key)) {
             delegate.put(key, value);
-        } finally {
-            lockByKey.unlock(key);
         }
     }
 }
