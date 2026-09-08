@@ -26,6 +26,7 @@ flowchart TB
     r{{sdmx-dl}}
     r --- f([fetch]) --- data & meta & keys
     r --- l([list]) --- sources & databases & flows & dimensions & attributes & codes & availability & features & plugins
+    r --- se([search]) --- ssources[sources] & sdatabases[databases] & sflows[flows]
     r --- c([check]) --- status & access & config & xsources[sources]
     r --- s([setup]) --- completion & launcher
 
@@ -51,6 +52,13 @@ flowchart TB
     click availability "#list-availability" "list availability command"
     click features "#list-features" "list features command"
     click plugins "#list-plugins" "list plugins command"
+
+    classDef qx fill:#6c71c4
+    class se,ssources,sdatabases,sflows qx;
+    click se "#search" "search command"
+    click ssources "#search-sources" "search sources command"
+    click sdatabases "#search-databases" "search databases command"
+    click sflows "#search-flows" "search flows command"
    
     classDef cx fill:#268bd2
     class c,status,access,config,xsources cx;
@@ -94,6 +102,15 @@ Subcommands:
 [plugins](#list-plugins)
 
 [Examples]({{< relref "examples#list-examples" >}})
+
+{{< shields_io/badge label="search" color="6c71c4" >}}
+
+Search resources by free text, with typo-tolerant ranking.
+
+Subcommands:
+[sources](#search-sources),
+[databases](#search-databases),
+[flows](#search-flows)
 
 {{< shields_io/badge label="check" color="268bd2" >}}
 
@@ -589,6 +606,111 @@ CSV columns:
 {{< expand "Output sample" >}}
 <small>{{< include file="/tmp/usage/list-plugins-sample.md" >}}</small>
 {{< /expand >}}
+
+{{< shields_io/badge label="search" message="sources" color="6c71c4" >}}
+
+Search data source names by free text, with typo-tolerant ranking.
+
+Example: <code>sdmx-dl <font color="#6c71c4">search sources</font> <abbr title="query">"european central"</abbr></code>
+
+{{< tabs "search-sources" >}}
+{{< tab "Parameters" >}}
+
+1. [`query`](../datatypes#string) - Free-text search query.
+
+{{< /tab >}}
+{{< tab "Options" >}}
+
+Main options:
+- [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
+- [`-l, --languages<langs>`](../options#languages) - Language priority list.
+- `-n, --max-results<n>` - Maximum number of results (default: `20`).
+
+Other options:
+[`CSV`](../options#csv)
+
+{{< /tab >}}
+{{< tab "Output" >}}
+
+CSV columns:
+1. [`Id:source`](../datatypes#source)
+2. [`Name:string`](../datatypes#string)
+3. [`Score:double`](../datatypes#double)
+
+{{< /tab >}}
+{{< /tabs >}}
+
+{{< shields_io/badge label="search" message="databases" color="6c71c4" >}}
+
+Search databases of a source by free text, with typo-tolerant ranking.
+
+Example: <code>sdmx-dl <font color="#6c71c4">search databases</font> <abbr title="source">STATFI</abbr> <abbr title="query">"central"</abbr></code>
+
+{{< tabs "search-databases" >}}
+{{< tab "Parameters" >}}
+
+1. [`source`](../datatypes#source) - Data source name.
+2. [`query`](../datatypes#string) - Free-text search query.
+
+{{< /tab >}}
+{{< tab "Options" >}}
+
+Main options:
+- [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
+- [`-l, --languages<langs>`](../options#languages) - Language priority list.
+- `-n, --max-results<n>` - Maximum number of results (default: `20`).
+
+Other options:
+[`CSV`](../options#csv),
+[`Network`](../options#network)
+
+{{< /tab >}}
+{{< tab "Output" >}}
+
+CSV columns:
+1. [`Ref:string`](../datatypes#string)
+2. [`Name:string`](../datatypes#string)
+3. [`Score:double`](../datatypes#double)
+
+{{< /tab >}}
+{{< /tabs >}}
+
+{{< shields_io/badge label="search" message="flows" color="6c71c4" >}}
+
+Search data flows of a source by free text, with typo-tolerant ranking.
+
+Example: <code>sdmx-dl <font color="#6c71c4">search flows</font> <abbr title="source">ECB</abbr> <abbr title="query">"exchange rates"</abbr></code>
+
+{{< tabs "search-flows" >}}
+{{< tab "Parameters" >}}
+
+1. [`source`](../datatypes#source) - Data source name.
+2. [`query`](../datatypes#string) - Free-text search query.
+
+{{< /tab >}}
+{{< tab "Options" >}}
+
+Main options:
+- [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
+- [`-d, --database<database>`](../options#database) - Database reference.
+- [`-l, --languages<langs>`](../options#languages) - Language priority list.
+- `-n, --max-results<n>` - Maximum number of results (default: `20`).
+
+Other options:
+[`CSV`](../options#csv),
+[`Network`](../options#network)
+
+{{< /tab >}}
+{{< tab "Output" >}}
+
+CSV columns:
+1. [`Ref:flow`](../datatypes#flow)
+2. [`Name:string`](../datatypes#string)
+3. [`Description:string`](../datatypes#string)
+4. [`Score:double`](../datatypes#double)
+
+{{< /tab >}}
+{{< /tabs >}}
 
 {{< shields_io/badge label="check" message="status" color="268bd2" >}}
 

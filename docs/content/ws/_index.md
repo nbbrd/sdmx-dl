@@ -6,10 +6,11 @@ weight: 3
 ![_work-in-progress_](https://img.shields.io/badge/-work_in_progress-E2BC4A)
 
 **sdmx-dl WS** is a web service that serves as a bridge to any application or language.  
-This service has two endpoints:
+This service has three endpoints:
 
 - a [gRPC endpoint](#grpc-endpoint) which has the **best performances** but a limited set of clients
 - a [REST endpoint](#rest-endpoint) which has a **wider range of clients** but is less efficient
+- an [MCP endpoint](#mcp-endpoint) which lets **AI assistants and agents** browse and fetch data
 
 These endpoints also provides specifications ([.proto files](https://grpc.io/docs/what-is-grpc/introduction/#working-with-protocol-buffers) and [OpenAPI](https://en.wikipedia.org/wiki/OpenAPI_Specification) respectively) that can be used to generate client code.
 They are designed to operate locally as well as on remote machines.
@@ -49,3 +50,41 @@ Call example using [curl](https://curl.se/):
 ```shell
 curl -X POST -H "Content-Type: application/json" localhost:4559/sdmx-dl/flows --data "{\"source\":\"ECB\"}"
 ```
+
+## MCP endpoint
+
+![_beta_](https://img.shields.io/badge/-beta-E2BC4A)
+
+The [Model Context Protocol](https://modelcontextprotocol.io/) (MCP) endpoint lets AI assistants and agents explore sources, flows and data through a set of read-only tools. It is **beta**: the tool list and their parameters may still change.
+
+It shares the same HTTP port as the [REST endpoint](#rest-endpoint) (default `4559`), on path `/mcp` (streamable HTTP transport).
+
+A few things to keep in mind:
+
+- Only sources marked as **public** are exposed; restricted/private sources are hidden.
+- It is **read-only**: there is no way to modify configuration or state through it.
+- Some fields are truncated or simplified to save tokens (for example, flow descriptions are capped in length, and metadata is returned as a skeleton without the codes of coded dimensions).
+
+Available tools:
+
+| Tool                | Description                                                    |
+|---------------------|------------------------------------------------------------------|
+| `mcpAbout`          | Get the name and version of sdmx-dl.                              |
+| `mcpSources`        | List available sources.                                           |
+| `mcpSearchSources`  | Search sources by relevance.                                      |
+| `mcpDatabases`      | List the databases of a source.                                   |
+| `mcpSearchDatabases`| Search the databases of a source by relevance.                    |
+| `mcpFlows`          | List the flows (datasets) of a source.                            |
+| `mcpSearchFlows`    | Search the flows of a source by relevance.                        |
+| `mcpMeta`           | Get the structure (dimensions, attributes) of a flow.             |
+| `mcpCodes`          | List or search the codes of a dimension.                          |
+| `mcpData`           | Fetch data series for a flow, optionally filtered by key/period.  |
+
+The typical workflow is: find a source (`mcpSources`/`mcpSearchSources`) → find a flow (`mcpFlows`/`mcpSearchFlows`) → inspect its dimensions (`mcpMeta`) → resolve dimension codes (`mcpCodes`) → fetch data (`mcpData`).
+
+Call example using [curl](https://curl.se/) against the streamable HTTP transport:
+```shell
+curl -X POST -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" localhost:4559/mcp --data "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"mcpSources\"}}"
+```
+
+Most MCP clients (e.g. IDE assistants) support configuring a remote MCP server by URL directly, without needing curl.

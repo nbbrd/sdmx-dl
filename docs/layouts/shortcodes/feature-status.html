@@ -1,0 +1,20 @@
+{{/*
+  feature-status: renders the availability badge for one feature + flavor, from data/features.yaml.
+  Meant to be placed inside a tab, right after the {{< tab "API|CLI|WS" >}} shortcode.
+  Usage (angle delimiters, output is raw HTML):
+    {{< feature-status "discover-sources" "api" >}}
+*/}}
+{{- $id := .Get 0 -}}
+{{- $flavor := .Get 1 -}}
+{{- $matches := where hugo.Data.features "id" $id -}}
+{{- if eq (len $matches) 0 -}}
+  {{- errorf "feature-status: unknown feature id %q (page %s) - check docs/data/features.yaml" $id .Page.File.Filename -}}
+{{- end -}}
+{{- with index $matches 0 -}}
+{{- $icon := dict "full" "✅" "partial" "⚠️" "none" "❌" -}}
+{{- $label := dict "full" "full support" "partial" "partial support" "none" "not available" -}}
+{{- $status := index . $flavor -}}
+{{- $noteKey := printf "%s_note" $flavor -}}
+<p class="feature-status">{{ index $icon $status }} <strong>{{ index $label $status }}</strong>{{ if and (ne $status "full") (isset . $noteKey) }} &mdash; {{ replaceRE "`([^`]+)`" "<code>$1</code>" (index . $noteKey) | safeHTML }}{{ end }}</p>
+{{- end -}}
+

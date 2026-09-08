@@ -1,0 +1,110 @@
+# Single source of truth for feature availability across flavors (API/CLI/WS).
+#
+# Used by:
+# - content/features/_index.md (via the `feature-matrix` shortcode) to render the capability matrix
+# - each content/features/*.md page (via the `feature-status` shortcode) to render its availability badge
+#
+# Status values: full | partial | none
+# `*_note` fields are only shown when the matching status is not "full".
+#
+# `group` mirrors the "How it works" sections in content/features/_index.md (find | shape | fetch | cross-cutting).
+# It is documentation-only for now (not yet consumed by a shortcode) - keep it in sync if you move a feature.
+#
+# Keep this file in sync with reality whenever a flavor gains/loses a capability;
+# it is the only place availability should be stated - do not repeat it as free text elsewhere.
+
+- id: discover-sources
+  title: "Discover sources"
+  group: find
+  api: full
+  cli: full
+  ws: full
+
+- id: search-sources
+  title: "Search sources"
+  group: find
+  api: full
+  cli: full
+  ws: full
+
+- id: discover-flows
+  title: "Discover flows"
+  group: find
+  api: full
+  cli: full
+  ws: full
+
+- id: search-flows
+  title: "Search flows"
+  group: find
+  api: full
+  cli: full
+  ws: full
+
+- id: search-databases
+  title: "Search databases"
+  group: find
+  api: full
+  cli: full
+  ws: full
+
+- id: inspect-metadata
+  title: "Inspect metadata"
+  group: shape
+  api: full
+  cli: full
+  ws: partial
+  ws_note: "Only flow-level metadata via `GetMeta`; no series-level equivalent to `fetch meta`."
+
+- id: browse-codes
+  title: "Browse codes"
+  group: shape
+  api: partial
+  api_note: "Via metadata traversal (`Dimension.getCodes()`), not a dedicated call."
+  cli: full
+  ws: partial
+  ws_note: "No dedicated endpoint; closest equivalents are `GetAvailability`/`GetMeta`."
+
+- id: check-availability
+  title: "Check availability"
+  group: shape
+  api: full
+  cli: full
+  ws: full
+
+- id: narrow-your-request
+  title: "Narrow your request"
+  group: shape
+  api: full
+  cli: full
+  ws: full
+
+- id: retrieve-data
+  title: "Retrieve data"
+  group: fetch
+  api: full
+  cli: full
+  ws: full
+
+- id: auth-and-credentials
+  title: "Authentication and credentials"
+  group: cross-cutting
+  api: full
+  cli: full
+  ws: full
+
+- id: monitor-and-status
+  title: "Monitor and status"
+  group: cross-cutting
+  api: full
+  cli: full
+  ws: partial
+  ws_note: "Checks one source per call; the CLI is the only flavor that can check several sources at once."
+
+- id: output-and-formats
+  title: "Output and formats"
+  group: cross-cutting
+  api: full
+  cli: full
+  ws: full
+

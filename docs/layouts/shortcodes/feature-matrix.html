@@ -1,0 +1,16 @@
+{{/*
+  feature-matrix: renders the Features capability matrix table (API/CLI/WS) from data/features.yaml.
+  Must be called with percent delimiters so the output pipe-table is rendered as markdown:
+    {{% feature-matrix %}}
+*/}}
+{{- $icon := dict "full" "✅" "partial" "⚠️" "none" "❌" -}}
+{{- $page := .Page -}}
+| Feature | API | CLI | WS |
+|---|---|---|---|
+{{- range hugo.Data.features }}
+| [{{ .title }}]({{ relref $page (printf "/features/%s" .id) }}) | {{ index $icon .api }} | {{ index $icon .cli }} | {{ index $icon .ws }} |
+{{- end }}
+
+Legend: ✅ full support &middot; ⚠️ partial support (see the linked page's "Availability" note) &middot; ❌ not available
+
+
