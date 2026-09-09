@@ -1,8 +1,8 @@
 package sdmxdl;
 
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Philippe Charles
@@ -11,7 +11,7 @@ public class DatabaseRequestTest {
 
     @Test
     public void testDefaults() {
-        DatabaseRequest request = DatabaseRequest.builder().build();
+        DatabaseRequest request = DatabaseRequest.DEFAULT;
 
         assertThat(request.getDatabase()).isEqualTo(DatabaseRef.NO_DATABASE);
         assertThat(request.getLanguages()).isEqualTo(Languages.ANY);
@@ -19,10 +19,8 @@ public class DatabaseRequestTest {
 
     @Test
     public void testBuilderConvenience() {
-        DatabaseRequest request = DatabaseRequest.builder()
-                .databaseOf("db")
-                .languagesOf("fr")
-                .build();
+        DatabaseRequest request =
+                DatabaseRequest.builder().databaseOf("db").languagesOf("fr").build();
 
         assertThat(request.getDatabase()).isEqualTo(DatabaseRef.parse("db"));
         assertThat(request.getLanguages()).isEqualTo(Languages.parse("fr"));
@@ -38,4 +36,3 @@ public class DatabaseRequestTest {
         assertThat(request.getDatabase()).isEqualTo(DatabaseRef.NO_DATABASE);
     }
 }
-

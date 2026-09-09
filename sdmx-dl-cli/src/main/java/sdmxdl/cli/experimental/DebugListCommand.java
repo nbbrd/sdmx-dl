@@ -16,30 +16,27 @@
  */
 package sdmxdl.cli.experimental;
 
+import static sdmxdl.Detail.SERIES_KEYS_ONLY;
+
 import internal.sdmxdl.cli.DebugOutputOptions;
 import internal.sdmxdl.cli.WebFlowOptions;
 import internal.sdmxdl.cli.WebOptions;
 import internal.sdmxdl.cli.WebSourceOptions;
+import java.util.Collection;
+import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 import picocli.CommandLine;
 import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Spec;
-import sdmxdl.Feature;
-import sdmxdl.Flow;
-import sdmxdl.KeyRequest;
+import sdmxdl.*;
 import sdmxdl.cli.protobuf.FeaturesDto;
 import sdmxdl.cli.protobuf.FlowsDto;
 import sdmxdl.cli.protobuf.SourcesDto;
 import sdmxdl.format.protobuf.ProtoApi;
 import sdmxdl.format.protobuf.ProtoWeb;
 import sdmxdl.web.WebSource;
-
-import java.util.Collection;
-import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
-
-import static sdmxdl.Detail.SERIES_KEYS_ONLY;
 
 /**
  * @author Philippe Charles
@@ -57,43 +54,55 @@ public final class DebugListCommand implements Callable<Void> {
     }
 
     @Command
-    public void sources(@Mixin WebOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out) throws Exception {
+    public void sources(@Mixin WebOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out)
+            throws Exception {
         nonNull(out).dumpAll(fromWebSources(web.loadManager().getSources().values()));
     }
 
     private static SourcesDto fromWebSources(Collection<WebSource> value) {
-        return SourcesDto
-                .newBuilder()
+        return SourcesDto.newBuilder()
                 .addAllSources(value.stream().map(ProtoWeb::fromWebSource).collect(Collectors.toList()))
                 .build();
     }
 
     @Command
-    public void flows(@Mixin WebSourceOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out) throws Exception {
-        nonNull(out).dumpAll(fromDataflows(web.loadManager().usingName(web.getSource()).getFlows(web.toDatabaseRequest())));
+    public void flows(
+            @Mixin WebSourceOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out)
+            throws Exception {
+        nonNull(out)
+                .dumpAll(fromDataflows(
+                        web.loadManager().usingName(web.getSource()).listFlows(web.toDatabaseRequest())));
     }
 
     private static FlowsDto fromDataflows(Collection<Flow> value) {
-        return FlowsDto
-                .newBuilder()
+        return FlowsDto.newBuilder()
                 .addAllFlows(value.stream().map(ProtoApi::fromDataflow).collect(Collectors.toList()))
                 .build();
     }
 
     @Command
-    public void keys(@Mixin WebFlowOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out) throws Exception {
-        KeyRequest request = KeyRequest.builderOf(web.toFlowRequest()).detail(SERIES_KEYS_ONLY).build();
-        nonNull(out).dumpAll(ProtoApi.fromDataSet(web.loadManager().usingName(web.getSource()).getData(request)));
+    public void keys(
+            @Mixin WebFlowOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out)
+            throws Exception {
+        KeyRequest request = KeyRequest.builderOf(web.toFlowRequest())
+                .detail(SERIES_KEYS_ONLY)
+                .build();
+        nonNull(out)
+                .dumpAll(ProtoApi.fromDataSet(
+                        web.loadManager().usingName(web.getSource()).getData(request)));
     }
 
     @Command
-    public void features(@Mixin WebSourceOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out) throws Exception {
-        nonNull(out).dumpAll(fromFeatures(web.loadManager().usingName(web.getSource()).getSupportedFeatures(web.toSourceRequest())));
+    public void features(
+            @Mixin WebSourceOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out)
+            throws Exception {
+        nonNull(out)
+                .dumpAll(fromFeatures(
+                        web.loadManager().usingName(web.getSource()).getSupportedFeatures()));
     }
 
     private static FeaturesDto fromFeatures(Collection<Feature> value) {
-        return FeaturesDto
-                .newBuilder()
+        return FeaturesDto.newBuilder()
                 .addAllFeatures(value.stream().map(ProtoApi::fromFeature).collect(Collectors.toList()))
                 .build();
     }

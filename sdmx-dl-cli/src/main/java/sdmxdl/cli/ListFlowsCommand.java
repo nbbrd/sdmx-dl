@@ -16,17 +16,14 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.SortOptions;
 import internal.sdmxdl.cli.WebSourceOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
+import java.io.IOException;
+import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import sdmxdl.Flow;
 import sdmxdl.format.csv.SdmxCsvFields;
-
-import java.io.IOException;
-import java.util.concurrent.Callable;
-import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
@@ -40,9 +37,6 @@ public final class ListFlowsCommand implements Callable<Void> {
     @CommandLine.Mixin
     private final RFC4180OutputOptions csv = new RFC4180OutputOptions();
 
-    @CommandLine.Mixin
-    private SortOptions sort;
-
     @Override
     public Void call() throws Exception {
         getTable().write(csv, getRows());
@@ -50,15 +44,14 @@ public final class ListFlowsCommand implements Callable<Void> {
     }
 
     private CsvTable<Flow> getTable() {
-        return CsvTable
-                .builderOf(Flow.class)
+        return CsvTable.builderOf(Flow.class)
                 .columnOf("Ref", Flow::getRef, SdmxCsvFields.getDataflowRefFormatter())
                 .columnOf("Name", Flow::getName)
                 .columnOf("Description", Flow::getDescription)
                 .build();
     }
 
-    private Stream<Flow> getRows() throws IOException {
-        return sort.applySort(web.loadManager().usingName(web.getSource()).getFlows(web.toDatabaseRequest()), WebSourceOptions.FLOWS_BY_REF);
+    private Iterable<Flow> getRows() throws IOException {
+        return web.loadManager().usingName(web.getSource()).listFlows(web.toDatabaseRequest());
     }
 }

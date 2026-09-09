@@ -1,16 +1,17 @@
 package sdmxdl;
 
-import _test.sdmxdl.TestConnection;
-import org.junit.jupiter.api.Test;
-import sdmxdl.web.WebSource;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.function.Function;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static tests.sdmxdl.api.RepoSamples.*;
+
+import _test.sdmxdl.TestConnection;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Comparator;
+import java.util.function.Function;
+import org.jspecify.annotations.NonNull;
+import org.junit.jupiter.api.Test;
+import sdmxdl.web.WebSource;
 
 /**
  * @author Philippe Charles
@@ -22,35 +23,33 @@ public class SdmxManagerTest {
     public void testUsing() {
         SdmxManager<WebSource> manager = validManager();
 
-        assertThatNullPointerException()
-                .isThrownBy(() -> manager.using(null));
+        assertThatNullPointerException().isThrownBy(() -> manager.using(null));
 
-        assertThat(manager.using(BASIC_SOURCE).getSource())
-                .isEqualTo(BASIC_SOURCE);
+        assertThat(manager.using(BASIC_SOURCE).getSource()).isEqualTo(BASIC_SOURCE);
     }
 
     @Test
     public void testTestConnection() throws IOException {
-        assertThat(validProvider().testConnection(SourceRequest.builder().build()))
-                .contains(URI.create("http://localhost"));
+        assertThat(validProvider().testConnection()).contains(URI.create("http://localhost"));
     }
 
     @Test
     public void testGetSupportedFeatures() throws IOException {
-        assertThat(validProvider().getSupportedFeatures(SourceRequest.builder().build()))
-                .isEmpty();
+        assertThat(validProvider().getSupportedFeatures()).isEmpty();
     }
 
     @Test
-    public void testGetDatabases() throws IOException {
-        assertThat(validProvider().getDatabases(SourceRequest.builder().build()))
-                .isEqualTo(REPO.getDatabases());
+    public void testListDatabases() throws IOException {
+        assertThat(validProvider().listDatabases(SourceRequest.DEFAULT))
+                .isSortedAccordingTo(Comparator.comparing(o -> o.getRef().toString()))
+                .containsExactlyInAnyOrderElementsOf(REPO.getDatabases());
     }
 
     @Test
-    public void testGetFlows() throws IOException {
-        assertThat(validProvider().getFlows(DatabaseRequest.builder().build()))
-                .isEqualTo(REPO.getFlows());
+    public void testListFlows() throws IOException {
+        assertThat(validProvider().listFlows(DatabaseRequest.DEFAULT))
+                .isSortedAccordingTo(Comparator.comparing(o -> o.getRef().toString()))
+                .containsExactlyInAnyOrderElementsOf(REPO.getFlows());
     }
 
     @Test
@@ -72,7 +71,7 @@ public class SdmxManagerTest {
     private static SdmxManager<WebSource> validManager() {
         return new SdmxManager<WebSource>() {
             @Override
-            public Connection getConnection(WebSource source, Languages languages) {
+            public @NonNull Connection getConnection(@NonNull WebSource source, @NonNull Languages languages) {
                 return TestConnection.TEST_VALID;
             }
 
@@ -88,6 +87,3 @@ public class SdmxManagerTest {
         };
     }
 }
-
-
-

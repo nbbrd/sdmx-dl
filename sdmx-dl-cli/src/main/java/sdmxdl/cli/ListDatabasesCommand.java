@@ -16,18 +16,14 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.SortOptions;
 import internal.sdmxdl.cli.WebSourceOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
+import java.io.IOException;
+import java.util.concurrent.Callable;
 import nbbrd.design.VisibleForTesting;
 import picocli.CommandLine;
 import sdmxdl.Database;
-import sdmxdl.Languages;
-
-import java.io.IOException;
-import java.util.concurrent.Callable;
-import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
@@ -41,25 +37,21 @@ public final class ListDatabasesCommand implements Callable<Void> {
     @CommandLine.Mixin
     private final RFC4180OutputOptions csv = new RFC4180OutputOptions();
 
-    @CommandLine.Mixin
-    private SortOptions sort;
-
     @Override
     public Void call() throws Exception {
-        getTable(web.getLangs()).write(csv, getRows());
+        getTable().write(csv, getRows());
         return null;
     }
 
     @VisibleForTesting
-    static CsvTable<Database> getTable(Languages languages) {
-        return CsvTable
-                .builderOf(Database.class)
+    static CsvTable<Database> getTable() {
+        return CsvTable.builderOf(Database.class)
                 .columnOf("Ref", database -> database.getRef().toString())
                 .columnOf("Name", Database::getName)
                 .build();
     }
 
-    private Stream<Database> getRows() throws IOException {
-        return web.loadManager().usingName(web.getSource()).getDatabases(web.toSourceRequest()).stream();
+    private Iterable<Database> getRows() throws IOException {
+        return web.loadManager().usingName(web.getSource()).listDatabases(web.toSourceRequest());
     }
 }

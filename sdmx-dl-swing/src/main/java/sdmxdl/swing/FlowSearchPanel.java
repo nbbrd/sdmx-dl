@@ -1,13 +1,8 @@
 package sdmxdl.swing;
 
-import internal.sdmxdl.swing.ListItemRenderer;
-import lombok.NonNull;
-import sdmxdl.*;
-import sdmxdl.web.*;
+import static internal.sdmxdl.swing.MoreSwing.*;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
+import internal.sdmxdl.swing.ListItemRenderer;
 import java.awt.*;
 import java.io.IOException;
 import java.util.*;
@@ -19,8 +14,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
-import static internal.sdmxdl.swing.MoreSwing.*;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import lombok.NonNull;
+import sdmxdl.*;
+import sdmxdl.web.*;
 
 /**
  * A single-panel flow browser that aggregates flows from <em>all</em> registered
@@ -55,7 +54,8 @@ public final class FlowSearchPanel extends JComponent {
     private BiFunction<WebSource, Runnable, Icon> sourceIconProvider = (src, repaint) -> new SdmxLogo(32);
 
     public void setSourceIconProvider(BiFunction<WebSource, Runnable, Icon> sourceIconProvider) {
-        firePropertyChange(SOURCE_ICON_PROVIDER_PROPERTY, this.sourceIconProvider, this.sourceIconProvider = sourceIconProvider);
+        firePropertyChange(
+                SOURCE_ICON_PROVIDER_PROPERTY, this.sourceIconProvider, this.sourceIconProvider = sourceIconProvider);
     }
 
     public static final String MANAGER_PROPERTY = "manager";
@@ -134,6 +134,7 @@ public final class FlowSearchPanel extends JComponent {
      * Toggle: when selected, list is filtered to non-public sources only (#6).
      */
     private final JToggleButton confidentialityToggle = new JToggleButton();
+
     private final JButton loadButton = new JButton();
     private final JProgressBar progressBar = new JProgressBar();
     private final JLabel statusLabel = new JLabel(" ");
@@ -145,6 +146,7 @@ public final class FlowSearchPanel extends JComponent {
      * Centered message shown in place of the list when the model is empty.
      */
     private final JLabel emptyLabel = new JLabel();
+
     private final CardLayout listCards = new CardLayout();
     private final JPanel listCardPanel = new JPanel(listCards);
     private final BulkListModel<FlowEntry> listModel = new BulkListModel<>();
@@ -159,8 +161,7 @@ public final class FlowSearchPanel extends JComponent {
         addHierarchyListener(new java.awt.event.HierarchyListener() {
             @Override
             public void hierarchyChanged(java.awt.event.HierarchyEvent e) {
-                if ((e.getChangeFlags() & java.awt.event.HierarchyEvent.SHOWING_CHANGED) != 0
-                        && isShowing()) {
+                if ((e.getChangeFlags() & java.awt.event.HierarchyEvent.SHOWING_CHANGED) != 0 && isShowing()) {
                     removeHierarchyListener(this);
                     startLoading();
                 }
@@ -170,11 +171,11 @@ public final class FlowSearchPanel extends JComponent {
         // --- Search field with embedded clear button (#5) and count badge (#8) ---
         searchField.putClientProperty("JTextField.placeholderText", "Search flows…");
         searchField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(CHIP_BORDER),
-                new EmptyBorder(6, 8, 6, 8)));
+                BorderFactory.createLineBorder(CHIP_BORDER), new EmptyBorder(6, 8, 6, 8)));
         searchField.getDocument().addDocumentListener(debouncedDocumentListenerOf(200, this::applyFilter));
         // Update clear-button visibility on every keystroke (no debounce needed)
-        searchField.getDocument().addDocumentListener(documentListenerOf((Consumer<? super DocumentEvent>) e1 -> clearButton.setVisible(!searchField.getText().isEmpty())));
+        searchField.getDocument().addDocumentListener(documentListenerOf((Consumer<? super DocumentEvent>)
+                e1 -> clearButton.setVisible(!searchField.getText().isEmpty())));
 
         clearButton.setText("✕");
         clearButton.setToolTipText("Clear search");
@@ -253,7 +254,8 @@ public final class FlowSearchPanel extends JComponent {
                 (entry, repaint) -> ConfidentialityBadge.wrap(
                         sourceIconProvider.apply(entry.getSource(), repaint),
                         entry.getSource().getConfidentiality()),
-                entry -> entry.getSource().getId() + "  ›  " + entry.getFlow().getRef().toShortString(),
+                entry -> entry.getSource().getId() + "  ›  "
+                        + entry.getFlow().getRef().toShortString(),
                 entry -> entry.getFlow().getName(),
                 FlowSearchPanel::buildEntryTooltip));
 
@@ -291,9 +293,10 @@ public final class FlowSearchPanel extends JComponent {
         });
 
         // Ctrl+F from anywhere in the panel → focus + select-all in search field (#9)
-        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
-                KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F,
-                        java.awt.event.InputEvent.CTRL_DOWN_MASK), "FOCUS_SEARCH");
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+                .put(
+                        KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_DOWN_MASK),
+                        "FOCUS_SEARCH");
         getActionMap().put("FOCUS_SEARCH", new AbstractAction() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -325,7 +328,7 @@ public final class FlowSearchPanel extends JComponent {
         topPanel.add(statusLabel, BorderLayout.SOUTH);
 
         JPanel centerPanel = new JPanel(new BorderLayout());
-        centerPanel.add(partialBanner, BorderLayout.NORTH);  // #3
+        centerPanel.add(partialBanner, BorderLayout.NORTH); // #3
         centerPanel.add(listCardPanel, BorderLayout.CENTER);
 
         setLayout(new BorderLayout());
@@ -400,13 +403,11 @@ public final class FlowSearchPanel extends JComponent {
     }
 
     private static List<FlowEntry> loadEntriesFor(
-            @NonNull WebSource source,
-            @NonNull SdmxWebManager manager,
-            @NonNull Languages languages) {
+            @NonNull WebSource source, @NonNull SdmxWebManager manager, @NonNull Languages languages) {
         List<FlowEntry> entries = new ArrayList<>();
         try {
-            Collection<Database> databases = manager.using(source)
-                    .getDatabases(SourceRequest.builder().languages(languages).build());
+            List<Database> databases = manager.using(source)
+                    .listDatabases(SourceRequest.builder().languages(languages).build());
 
             Set<DatabaseRef> dbRefs = new LinkedHashSet<>();
             for (Database db : databases) {
@@ -418,8 +419,8 @@ public final class FlowSearchPanel extends JComponent {
 
             for (DatabaseRef db : dbRefs) {
                 try {
-                    Collection<Flow> flows = manager.using(source)
-                            .getFlows(DatabaseRequest.builder()
+                    List<Flow> flows = manager.using(source)
+                            .listFlows(DatabaseRequest.builder()
                                     .database(db)
                                     .languages(languages)
                                     .build());
@@ -441,11 +442,9 @@ public final class FlowSearchPanel extends JComponent {
     private void confirmSelection() {
         FlowEntry entry = flowList.getSelectedValue();
         if (entry != null) {
-            setSelection(WebFlowRequest
-                    .builder()
+            setSelection(WebFlowRequest.builder()
                     .source(entry.getSource().getId())
-                    .request(FlowRequest
-                            .builder()
+                    .request(FlowRequest.builder()
                             .languages(languages)
                             .database(entry.getDatabase())
                             .flow(entry.getFlow().getRef())
@@ -497,8 +496,7 @@ public final class FlowSearchPanel extends JComponent {
             // Early-out: a newer request has already been queued
             if (searchGeneration.get() != myGeneration) return;
 
-            List<FlowEntry> results = currentSearch.search(text, maxResults)
-                    .stream()
+            List<FlowEntry> results = currentSearch.search(text, maxResults).stream()
                     .map(Search.Result::getItem)
                     .collect(Collectors.toList());
 
@@ -527,16 +525,15 @@ public final class FlowSearchPanel extends JComponent {
     private void updateStatus() {
         // Status text
         if (loading) {
-            statusLabel.setText("Loading…  " + loadedSources + " / " + totalSources
-                    + " sources  ·  " + allEntries.size() + " flows found");
+            statusLabel.setText("Loading…  " + loadedSources + " / " + totalSources + " sources  ·  "
+                    + allEntries.size() + " flows found");
         } else if (totalSources == 0) {
             statusLabel.setText("Loading flows from all sources…");
         } else {
             int showing = listModel.getSize();
             int total = allEntries.size();
             if (showing < total) {
-                statusLabel.setText("Showing " + showing + " of " + total
-                        + " flows  ·  " + totalSources + " sources");
+                statusLabel.setText("Showing " + showing + " of " + total + " flows  ·  " + totalSources + " sources");
             } else {
                 statusLabel.setText(total + " flows  ·  " + totalSources + " sources");
             }
@@ -556,8 +553,7 @@ public final class FlowSearchPanel extends JComponent {
             if (loading) {
                 emptyLabel.setText("Loading flows…");
             } else if (!query.isEmpty()) {
-                emptyLabel.setText("<html><center>No flows match<br><b>"
-                        + escapeHtml(query) + "</b></center></html>");
+                emptyLabel.setText("<html><center>No flows match<br><b>" + escapeHtml(query) + "</b></center></html>");
             } else if (totalSources > 0) {
                 emptyLabel.setText("No flows found");
             } else {

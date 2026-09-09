@@ -18,7 +18,7 @@ import sdmxdl.web.*;
 
 void main() throws Exception {
     SdmxWebManager manager = SdmxWebManager.ofServiceLoader();
-    var databases = manager.usingName("ECB").getDatabases(SourceRequest.builder().build());
+    var databases = manager.usingName("ECB").listDatabases(SourceRequest.DEFAULT);
 
     Search<Database> search = Search.ofDatabases(databases);
     search.search("central", 5)

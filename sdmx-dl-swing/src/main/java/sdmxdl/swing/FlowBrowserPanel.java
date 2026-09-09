@@ -1,15 +1,9 @@
 package sdmxdl.swing;
 
+import static internal.sdmxdl.swing.MoreSwing.escapeHtml;
+
 import internal.sdmxdl.swing.ListItemRenderer;
 import internal.sdmxdl.swing.MoreSwing;
-import sdmxdl.*;
-import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.Search;
-import sdmxdl.web.WebFlowRequest;
-import sdmxdl.web.WebSource;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.Dimension;
 import java.io.IOException;
@@ -20,8 +14,13 @@ import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-
-import static internal.sdmxdl.swing.MoreSwing.escapeHtml;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import sdmxdl.*;
+import sdmxdl.web.SdmxWebManager;
+import sdmxdl.web.Search;
+import sdmxdl.web.WebFlowRequest;
+import sdmxdl.web.WebSource;
 
 /**
  * Step-by-step SDMX flow browser: Sources → Databases → Flows.
@@ -59,7 +58,8 @@ public final class FlowBrowserPanel extends JComponent {
     private BiFunction<WebSource, Runnable, Icon> sourceIconProvider = (src, repaint) -> new SdmxLogo(32);
 
     public void setSourceIconProvider(BiFunction<WebSource, Runnable, Icon> sourceIconProvider) {
-        firePropertyChange(SOURCE_ICON_PROVIDER_PROPERTY, this.sourceIconProvider, this.sourceIconProvider = sourceIconProvider);
+        firePropertyChange(
+                SOURCE_ICON_PROVIDER_PROPERTY, this.sourceIconProvider, this.sourceIconProvider = sourceIconProvider);
     }
 
     public static final String MANAGER_PROPERTY = "manager";
@@ -202,7 +202,8 @@ public final class FlowBrowserPanel extends JComponent {
         });
 
         flowsList.setCellRenderer(new ListItemRenderer<Flow>(
-                (flow, repaint) -> internal.sdmxdl.swing.IdenticonFactory.getIcon(flow.getRef().toString()),
+                (flow, repaint) -> internal.sdmxdl.swing.IdenticonFactory.getIcon(
+                        flow.getRef().toString()),
                 flow -> flow.getRef().toShortString(),
                 Flow::getName,
                 FlowBrowserPanel::buildFlowTooltip));
@@ -227,21 +228,33 @@ public final class FlowBrowserPanel extends JComponent {
         // --- Search listeners ---
         sourcesSearch.getDocument().addDocumentListener(MoreSwing.debouncedDocumentListenerOf(200, () -> {
             String text2 = sourcesSearch.getText().trim();
-            updateModel(sourcesModel, text2.isEmpty()
-                    ? allSources
-                    : Search.ofSources(allSources, languages).search(text2, allSources.size()).stream().map(Search.Result::getItem).collect(Collectors.toList()));
+            updateModel(
+                    sourcesModel,
+                    text2.isEmpty()
+                            ? allSources
+                            : Search.ofSources(allSources, languages).search(text2, allSources.size()).stream()
+                                    .map(Search.Result::getItem)
+                                    .collect(Collectors.toList()));
         }));
         dbSearch.getDocument().addDocumentListener(MoreSwing.debouncedDocumentListenerOf(200, () -> {
             String text1 = dbSearch.getText().trim();
-            updateModel(dbModel, text1.isEmpty()
-                    ? allDatabases
-                    : Search.ofDatabases(allDatabases).search(text1, allDatabases.size()).stream().map(Search.Result::getItem).collect(Collectors.toList()));
+            updateModel(
+                    dbModel,
+                    text1.isEmpty()
+                            ? allDatabases
+                            : Search.ofDatabases(allDatabases).search(text1, allDatabases.size()).stream()
+                                    .map(Search.Result::getItem)
+                                    .collect(Collectors.toList()));
         }));
         flowsSearch.getDocument().addDocumentListener(MoreSwing.debouncedDocumentListenerOf(200, () -> {
             String text = flowsSearch.getText().trim();
-            updateModel(flowsModel, text.isEmpty()
-                    ? allFlows
-                    : Search.ofFlows(allFlows).search(text, allFlows.size()).stream().map(Search.Result::getItem).collect(Collectors.toList()));
+            updateModel(
+                    flowsModel,
+                    text.isEmpty()
+                            ? allFlows
+                            : Search.ofFlows(allFlows).search(text, allFlows.size()).stream()
+                                    .map(Search.Result::getItem)
+                                    .collect(Collectors.toList()));
         }));
 
         setLayout(new BorderLayout());
@@ -292,8 +305,7 @@ public final class FlowBrowserPanel extends JComponent {
     private JPanel buildListCard(JTextField searchField, JList<?> list, String placeholder) {
         searchField.putClientProperty("JTextField.placeholderText", placeholder);
         searchField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(CHIP_BORDER),
-                new EmptyBorder(6, 8, 6, 8)));
+                BorderFactory.createLineBorder(CHIP_BORDER), new EmptyBorder(6, 8, 6, 8)));
 
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         list.setFixedCellHeight(54);
@@ -359,8 +371,9 @@ public final class FlowBrowserPanel extends JComponent {
         new SwingWorker<java.util.List<Database>, Void>() {
             @Override
             protected java.util.List<Database> doInBackground() throws IOException {
-                return new ArrayList<>(manager.using(source)
-                        .getDatabases(SourceRequest.builder().languages(languages).build()));
+                return manager.using(source)
+                        .listDatabases(
+                                SourceRequest.builder().languages(languages).build());
             }
 
             @Override
@@ -400,7 +413,7 @@ public final class FlowBrowserPanel extends JComponent {
             @Override
             protected java.util.List<Flow> doInBackground() throws IOException {
                 return new ArrayList<>(manager.using(src)
-                        .getFlows(DatabaseRequest.builder()
+                        .listFlows(DatabaseRequest.builder()
                                 .database(db)
                                 .languages(languages)
                                 .build()));
@@ -421,11 +434,9 @@ public final class FlowBrowserPanel extends JComponent {
     }
 
     private void onFlowSelected(Flow flow) {
-        setSelection(WebFlowRequest
-                .builder()
+        setSelection(WebFlowRequest.builder()
                 .source(currentSource.getId())
-                .request(FlowRequest
-                        .builder()
+                .request(FlowRequest.builder()
                         .languages(languages)
                         .database(currentDatabase)
                         .flow(flow.getRef())
@@ -505,30 +516,28 @@ public final class FlowBrowserPanel extends JComponent {
     private void updateBreadcrumb(WebSource source, Database database, Flow flow) {
         breadcrumb.removeAll();
 
-        String currentCard = source == null ? CARD_SOURCES
-                : database != null ? CARD_DATABASES
-                  : CARD_FLOWS;
+        String currentCard = source == null ? CARD_SOURCES : database != null ? CARD_DATABASES : CARD_FLOWS;
 
         String[][] segments;
         if (source == null) {
-            segments = new String[][]{{"Sources", CARD_SOURCES}};
+            segments = new String[][] {{"Sources", CARD_SOURCES}};
         } else if (database != null) {
-            segments = new String[][]{
-                    {"Sources", CARD_SOURCES},
-                    {source.getName(languages), CARD_DATABASES}
+            segments = new String[][] {
+                {"Sources", CARD_SOURCES},
+                {source.getName(languages), CARD_DATABASES}
             };
             currentCard = CARD_DATABASES;
         } else if (flow != null) {
-            segments = new String[][]{
-                    {"Sources", CARD_SOURCES},
-                    {source.getName(languages), CARD_FLOWS},
-                    {flow.getRef().toShortString(), CARD_FLOWS}
+            segments = new String[][] {
+                {"Sources", CARD_SOURCES},
+                {source.getName(languages), CARD_FLOWS},
+                {flow.getRef().toShortString(), CARD_FLOWS}
             };
             currentCard = CARD_FLOWS;
         } else {
-            segments = new String[][]{
-                    {"Sources", CARD_SOURCES},
-                    {source.getName(languages), CARD_FLOWS}
+            segments = new String[][] {
+                {"Sources", CARD_SOURCES},
+                {source.getName(languages), CARD_FLOWS}
             };
             currentCard = CARD_FLOWS;
         }
@@ -543,9 +552,7 @@ public final class FlowBrowserPanel extends JComponent {
             boolean isCurrent = (i == segments.length - 1);
             JLabel link = new JLabel(segments[i][0]);
             link.setFont(link.getFont().deriveFont(11f));
-            link.setForeground(isCurrent
-                    ? new Color(255, 255, 255, 180)
-                    : Color.WHITE);
+            link.setForeground(isCurrent ? new Color(255, 255, 255, 180) : Color.WHITE);
             breadcrumb.add(link);
         }
 
@@ -577,9 +584,13 @@ public final class FlowBrowserPanel extends JComponent {
             sb.append("<br>").append(escapeHtml(name));
         }
         sb.append("<br><small>Driver: ").append(escapeHtml(src.getDriver())).append("</small>");
-        sb.append("<br><small>Endpoint: ").append(escapeHtml(src.getEndpoint().toString())).append("</small>");
+        sb.append("<br><small>Endpoint: ")
+                .append(escapeHtml(src.getEndpoint().toString()))
+                .append("</small>");
         if (src.getWebsite() != null) {
-            sb.append("<br><small>Website: ").append(escapeHtml(src.getWebsite().toString())).append("</small>");
+            sb.append("<br><small>Website: ")
+                    .append(escapeHtml(src.getWebsite().toString()))
+                    .append("</small>");
         }
         sb.append("</body></html>");
         return sb.toString();

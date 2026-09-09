@@ -1,13 +1,12 @@
 package _demo;
 
+import java.io.IOException;
 import sdmxdl.*;
 import sdmxdl.provider.ri.http.CachingDecoration;
 import sdmxdl.provider.ri.http.HttpManager;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.WebCaching;
-
-import java.io.IOException;
 
 public class HttpCacheExplorer {
 
@@ -16,9 +15,7 @@ public class HttpCacheExplorer {
 
         HttpManager.setHttpFactory(new CachingDecoration().decorate(HttpManager.getHttpFactory()));
 
-        SdmxWebManager manager = SdmxWebManager
-                .ofServiceLoader()
-                .toBuilder()
+        SdmxWebManager manager = SdmxWebManager.ofServiceLoader().toBuilder()
                 .caching(WebCaching.noOp())
                 .onEvent(ignore -> (marker, message) -> {
                     if (marker.equals("HTTP_CACHE")) System.out.println("  " + message);
@@ -30,7 +27,10 @@ public class HttpCacheExplorer {
         for (WebSource source : manager.getDefaultSources()) {
             Provider<WebSource> provider = manager.using(source);
             try {
-                DatabaseRef db = provider.getDatabases(SourceRequest.builder().build()).stream().map(Database::getRef).findFirst().orElse(DatabaseRef.NO_DATABASE);
+                DatabaseRef db = provider.listDatabases(SourceRequest.DEFAULT).stream()
+                        .map(Database::getRef)
+                        .findFirst()
+                        .orElse(DatabaseRef.NO_DATABASE);
                 DatabaseRequest request = DatabaseRequest.builder().database(db).build();
                 run(source, " 1/2 ", provider, request);
                 run(source, " 2/2 ", provider, request);
@@ -41,10 +41,11 @@ public class HttpCacheExplorer {
         }
     }
 
-    private static void run(WebSource source, String x, Provider<WebSource> provider, DatabaseRequest request) throws IOException {
+    private static void run(WebSource source, String x, Provider<WebSource> provider, DatabaseRequest request)
+            throws IOException {
         long start = System.currentTimeMillis();
         System.out.println(source.getId() + x);
-        provider.getFlows(request);
+        provider.listFlows(request);
         System.out.println("  -> " + (System.currentTimeMillis() - start) + " ms");
     }
 }

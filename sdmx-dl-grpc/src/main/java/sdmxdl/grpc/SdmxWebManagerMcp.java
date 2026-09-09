@@ -60,13 +60,13 @@ public class SdmxWebManagerMcp {
     // unavailable.
     private static final String DEFAULT_LANGUAGES = "en";
 
-    @Inject SdmxWebManager manager;
+    @Inject
+    SdmxWebManager manager;
 
     private WebSource getPublicSourceForMcp(String source) {
         WebSource webSource = manager.getSources().get(source);
         if (webSource == null || !Confidentiality.PUBLIC.isAllowedIn(webSource)) {
-            throw new IllegalArgumentException(
-                    "Cannot find source '" + source + "'." + suggestSources(source));
+            throw new IllegalArgumentException("Cannot find source '" + source + "'." + suggestSources(source));
         }
         return webSource;
     }
@@ -79,12 +79,11 @@ public class SdmxWebManagerMcp {
     }
 
     private String suggestSources(String source) {
-        List<String> suggestions =
-                Search.ofSources(getPublicSources(), Languages.parse(DEFAULT_LANGUAGES))
-                        .search(source == null ? "" : source, 3)
-                        .stream()
-                        .map(result -> result.getItem().getId())
-                        .toList();
+        List<String> suggestions = Search.ofSources(getPublicSources(), Languages.parse(DEFAULT_LANGUAGES))
+                .search(source == null ? "" : source, 3)
+                .stream()
+                .map(result -> result.getItem().getId())
+                .toList();
         return suggestions.isEmpty()
                 ? " Use mcpSources to list available sources."
                 : " Did you mean " + suggestions + "? Use mcpSources to list all sources.";
@@ -92,11 +91,10 @@ public class SdmxWebManagerMcp {
 
     @Prompt(description = "List SDMX sources IDs.", name = "listSourceIds")
     public PromptResponse mcpSourceIds() {
-        return PromptResponse.withMessages(
-                getPublicSources().stream()
-                        .map(WebSource::getId)
-                        .map(PromptMessage::withUserRole)
-                        .toList());
+        return PromptResponse.withMessages(getPublicSources().stream()
+                .map(WebSource::getId)
+                .map(PromptMessage::withUserRole)
+                .toList());
     }
 
     @Tool(
@@ -106,13 +104,12 @@ public class SdmxWebManagerMcp {
         return ProtoApi.fromAbout();
     }
 
-    @Tool(
-            description =
-                    "List SDMX sources. Next step: pick a source id and call mcpFlows or mcpSearchFlows.")
+    @Tool(description = "List SDMX sources. Next step: pick a source id and call mcpFlows or mcpSearchFlows.")
     public WebSourcesDto mcpSources() {
         return WebSourcesDto.newBuilder()
-                .addAllWebSources(
-                        getPublicSources().stream().map(SdmxWebManagerMcp::compactSource).toList())
+                .addAllWebSources(getPublicSources().stream()
+                        .map(SdmxWebManagerMcp::compactSource)
+                        .toList())
                 .build();
     }
 
@@ -121,15 +118,11 @@ public class SdmxWebManagerMcp {
                     "List SDMX databases. Most sources expose a single default database; databases are only needed for multi-database sources.")
     public List<DatabaseDto> mcpDatabases(
             @ToolArg(description = SOURCE_ARG) String source,
-            @ToolArg(
-                            description = LANGUAGES_ARG,
-                            required = false,
-                            defaultValue = DEFAULT_LANGUAGES)
-                    String languages)
+            @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages)
             throws IOException {
         return manager
                 .using(getPublicSourceForMcp(source))
-                .getDatabases(SourceRequest.builder().languagesOf(languages).build())
+                .listDatabases(SourceRequest.builder().languagesOf(languages).build())
                 .stream()
                 .map(ProtoApi::fromDatabase)
                 .toList();
@@ -140,24 +133,15 @@ public class SdmxWebManagerMcp {
                     "List SDMX data flows (datasets) of a source. Next step: call mcpMeta on the chosen flow to see its dimensions.")
     public List<FlowDto> mcpFlows(
             @ToolArg(description = SOURCE_ARG) String source,
-            @ToolArg(
-                            description = DATABASE_ARG,
-                            required = false,
-                            defaultValue = NO_DATABASE_KEYWORD)
-                    String database,
-            @ToolArg(
-                            description = LANGUAGES_ARG,
-                            required = false,
-                            defaultValue = DEFAULT_LANGUAGES)
-                    String languages)
+            @ToolArg(description = DATABASE_ARG, required = false, defaultValue = NO_DATABASE_KEYWORD) String database,
+            @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages)
             throws IOException {
         return manager
                 .using(getPublicSourceForMcp(source))
-                .getFlows(
-                        DatabaseRequest.builder()
-                                .databaseOf(database)
-                                .languagesOf(languages)
-                                .build())
+                .listFlows(DatabaseRequest.builder()
+                        .databaseOf(database)
+                        .languagesOf(languages)
+                        .build())
                 .stream()
                 .map(ProtoApi::fromDataflow)
                 .map(SdmxWebManagerMcp::cleanDescription)
@@ -168,11 +152,10 @@ public class SdmxWebManagerMcp {
         if (!flowDto.hasDescription()) {
             return flowDto;
         }
-        String cleaned =
-                flowDto.getDescription()
-                        .replaceAll("<[^>]*>", " ") // strip HTML tags
-                        .replaceAll("\\s+", " ") // collapse whitespace
-                        .trim();
+        String cleaned = flowDto.getDescription()
+                .replaceAll("<[^>]*>", " ") // strip HTML tags
+                .replaceAll("\\s+", " ") // collapse whitespace
+                .trim();
         if (cleaned.length() > MAX_DESCRIPTION_LENGTH) {
             cleaned = cleaned.substring(0, MAX_DESCRIPTION_LENGTH - 1).trim() + "…";
         }
@@ -185,29 +168,16 @@ public class SdmxWebManagerMcp {
     public List<FlowDto> mcpSearchFlows(
             @ToolArg(description = SOURCE_ARG) String source,
             @ToolArg(description = QUERY_ARG) String query,
-            @ToolArg(
-                            description = DATABASE_ARG,
-                            required = false,
-                            defaultValue = NO_DATABASE_KEYWORD)
-                    String database,
-            @ToolArg(
-                            description = LANGUAGES_ARG,
-                            required = false,
-                            defaultValue = DEFAULT_LANGUAGES)
-                    String languages,
-            @ToolArg(
-                            description = MAX_RESULTS_ARG,
-                            required = false,
-                            defaultValue = DEFAULT_MAX_RESULTS)
+            @ToolArg(description = DATABASE_ARG, required = false, defaultValue = NO_DATABASE_KEYWORD) String database,
+            @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages,
+            @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = DEFAULT_MAX_RESULTS)
                     int maxResults)
             throws IOException {
-        Collection<Flow> flows =
-                manager.using(getPublicSourceForMcp(source))
-                        .getFlows(
-                                DatabaseRequest.builder()
-                                        .databaseOf(database)
-                                        .languagesOf(languages)
-                                        .build());
+        Collection<Flow> flows = manager.using(getPublicSourceForMcp(source))
+                .listFlows(DatabaseRequest.builder()
+                        .databaseOf(database)
+                        .languagesOf(languages)
+                        .build());
         return Search.ofFlows(flows).search(query, maxResults).stream()
                 .map(result -> ProtoApi.fromDataflow(result.getItem()))
                 .map(SdmxWebManagerMcp::cleanDescription)
@@ -219,19 +189,10 @@ public class SdmxWebManagerMcp {
                     "Search SDMX sources by relevance using hybrid search (BM25 + trigram). Increase maxResults to widen the search. Next step: use the returned source id with mcpFlows or mcpSearchFlows.")
     public List<WebSourceDto> mcpSearchSources(
             @ToolArg(description = QUERY_ARG) String query,
-            @ToolArg(
-                            description = LANGUAGES_ARG,
-                            required = false,
-                            defaultValue = DEFAULT_LANGUAGES)
-                    String languages,
-            @ToolArg(
-                            description = MAX_RESULTS_ARG,
-                            required = false,
-                            defaultValue = DEFAULT_MAX_RESULTS)
+            @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages,
+            @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = DEFAULT_MAX_RESULTS)
                     int maxResults) {
-        return Search.ofSources(getPublicSources(), Languages.parse(languages))
-                .search(query, maxResults)
-                .stream()
+        return Search.ofSources(getPublicSources(), Languages.parse(languages)).search(query, maxResults).stream()
                 .map(result -> compactSource(result.getItem()))
                 .toList();
     }
@@ -242,20 +203,12 @@ public class SdmxWebManagerMcp {
     public List<DatabaseDto> mcpSearchDatabases(
             @ToolArg(description = SOURCE_ARG) String source,
             @ToolArg(description = QUERY_ARG) String query,
-            @ToolArg(
-                            description = LANGUAGES_ARG,
-                            required = false,
-                            defaultValue = DEFAULT_LANGUAGES)
-                    String languages,
-            @ToolArg(
-                            description = MAX_RESULTS_ARG,
-                            required = false,
-                            defaultValue = DEFAULT_MAX_RESULTS)
+            @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages,
+            @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = DEFAULT_MAX_RESULTS)
                     int maxResults)
             throws IOException {
-        Collection<Database> databases =
-                manager.using(getPublicSourceForMcp(source))
-                        .getDatabases(SourceRequest.builder().languagesOf(languages).build());
+        Collection<Database> databases = manager.using(getPublicSourceForMcp(source))
+                .listDatabases(SourceRequest.builder().languagesOf(languages).build());
         return Search.ofDatabases(databases).search(query, maxResults).stream()
                 .map(result -> ProtoApi.fromDatabase(result.getItem()))
                 .toList();
@@ -267,26 +220,15 @@ public class SdmxWebManagerMcp {
     public MetaSetDto mcpMeta(
             @ToolArg(description = SOURCE_ARG) String source,
             @ToolArg(description = FLOW_ARG) String flow,
-            @ToolArg(
-                            description = DATABASE_ARG,
-                            required = false,
-                            defaultValue = NO_DATABASE_KEYWORD)
-                    String database,
-            @ToolArg(
-                            description = LANGUAGES_ARG,
-                            required = false,
-                            defaultValue = DEFAULT_LANGUAGES)
-                    String languages)
+            @ToolArg(description = DATABASE_ARG, required = false, defaultValue = NO_DATABASE_KEYWORD) String database,
+            @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages)
             throws IOException {
-        return toSkeleton(
-                ProtoApi.fromMetaSet(
-                        manager.using(getPublicSourceForMcp(source))
-                                .getMeta(
-                                        FlowRequest.builder()
-                                                .flowOf(flow)
-                                                .databaseOf(database)
-                                                .languagesOf(languages)
-                                                .build())));
+        return toSkeleton(ProtoApi.fromMetaSet(manager.using(getPublicSourceForMcp(source))
+                .getMeta(FlowRequest.builder()
+                        .flowOf(flow)
+                        .databaseOf(database)
+                        .languagesOf(languages)
+                        .build())));
     }
 
     @Tool(
@@ -297,43 +239,26 @@ public class SdmxWebManagerMcp {
             @ToolArg(description = FLOW_ARG) String flow,
             @ToolArg(description = DIMENSION_ARG) String dimension,
             @ToolArg(description = QUERY_ARG, required = false, defaultValue = "") String query,
-            @ToolArg(
-                            description = DATABASE_ARG,
-                            required = false,
-                            defaultValue = NO_DATABASE_KEYWORD)
-                    String database,
-            @ToolArg(
-                            description = LANGUAGES_ARG,
-                            required = false,
-                            defaultValue = DEFAULT_LANGUAGES)
-                    String languages,
-            @ToolArg(
-                            description = MAX_RESULTS_ARG,
-                            required = false,
-                            defaultValue = DEFAULT_MAX_RESULTS)
+            @ToolArg(description = DATABASE_ARG, required = false, defaultValue = NO_DATABASE_KEYWORD) String database,
+            @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages,
+            @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = DEFAULT_MAX_RESULTS)
                     int maxResults)
             throws IOException {
-        MetaSet meta =
-                manager.using(getPublicSourceForMcp(source))
-                        .getMeta(
-                                FlowRequest.builder()
-                                        .flowOf(flow)
-                                        .databaseOf(database)
-                                        .languagesOf(languages)
-                                        .build());
-        Codelist codelist =
-                meta.getStructure().getDimensions().stream()
-                        .filter(d -> d.getId().equalsIgnoreCase(dimension))
-                        .map(Dimension::getCodelist)
-                        .filter(Objects::nonNull)
-                        .findFirst()
-                        .orElseThrow(
-                                () ->
-                                        new IllegalArgumentException(
-                                                "Cannot find coded dimension '"
-                                                        + dimension
-                                                        + "'. Expected one of "
-                                                        + codedDimensionIds(meta.getStructure())));
+        MetaSet meta = manager.using(getPublicSourceForMcp(source))
+                .getMeta(FlowRequest.builder()
+                        .flowOf(flow)
+                        .databaseOf(database)
+                        .languagesOf(languages)
+                        .build());
+        Codelist codelist = meta.getStructure().getDimensions().stream()
+                .filter(d -> d.getId().equalsIgnoreCase(dimension))
+                .map(Dimension::getCodelist)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Cannot find coded dimension '"
+                        + dimension
+                        + "'. Expected one of "
+                        + codedDimensionIds(meta.getStructure())));
         return CodelistDto.newBuilder()
                 .setRef(codelist.getRef().toString())
                 .setCodeCount(codelist.getCodes().size())
@@ -347,48 +272,33 @@ public class SdmxWebManagerMcp {
     public DataSetDto mcpData(
             @ToolArg(description = SOURCE_ARG) String source,
             @ToolArg(description = FLOW_ARG) String flow,
-            @ToolArg(description = KEY_ARG, required = false, defaultValue = DEFAULT_KEY)
-                    String key,
-            @ToolArg(description = DETAIL_ARG, required = false, defaultValue = DEFAULT_DETAIL)
-                    String detail,
+            @ToolArg(description = KEY_ARG, required = false, defaultValue = DEFAULT_KEY) String key,
+            @ToolArg(description = DETAIL_ARG, required = false, defaultValue = DEFAULT_DETAIL) String detail,
             @ToolArg(description = DIMENSIONS_ARG, required = false) Map<String, String> dimensions,
-            @ToolArg(
-                            description = DATABASE_ARG,
-                            required = false,
-                            defaultValue = NO_DATABASE_KEYWORD)
-                    String database,
-            @ToolArg(
-                            description = LANGUAGES_ARG,
-                            required = false,
-                            defaultValue = DEFAULT_LANGUAGES)
-                    String languages,
+            @ToolArg(description = DATABASE_ARG, required = false, defaultValue = NO_DATABASE_KEYWORD) String database,
+            @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages,
             @ToolArg(description = START_PERIOD_ARG, required = false) String startPeriod,
             @ToolArg(description = END_PERIOD_ARG, required = false) String endPeriod,
-            @ToolArg(description = FIRST_N_ARG, required = false, defaultValue = DEFAULT_FIRST_N)
-                    int firstN,
-            @ToolArg(description = LAST_N_ARG, required = false, defaultValue = DEFAULT_LAST_N)
-                    int lastN)
+            @ToolArg(description = FIRST_N_ARG, required = false, defaultValue = DEFAULT_FIRST_N) int firstN,
+            @ToolArg(description = LAST_N_ARG, required = false, defaultValue = DEFAULT_LAST_N) int lastN)
             throws IOException {
         Provider<WebSource> provider = manager.using(getPublicSourceForMcp(source));
         String effectiveKey = key;
         if (dimensions != null && !dimensions.isEmpty()) {
-            Structure structure =
-                    provider.getMeta(
-                                    FlowRequest.builder()
-                                            .flowOf(flow)
-                                            .databaseOf(database)
-                                            .languagesOf(languages)
-                                            .build())
-                            .getStructure();
+            Structure structure = provider.getMeta(FlowRequest.builder()
+                            .flowOf(flow)
+                            .databaseOf(database)
+                            .languagesOf(languages)
+                            .build())
+                    .getStructure();
             effectiveKey = buildKey(structure, dimensions).toString();
         }
-        KeyRequest.Builder request =
-                KeyRequest.builder()
-                        .flowOf(flow)
-                        .keyOf(effectiveKey)
-                        .detailOf(detail)
-                        .databaseOf(database)
-                        .languagesOf(languages);
+        KeyRequest.Builder request = KeyRequest.builder()
+                .flowOf(flow)
+                .keyOf(effectiveKey)
+                .detailOf(detail)
+                .databaseOf(database)
+                .languagesOf(languages);
         if (startPeriod != null && !startPeriod.isBlank()) {
             request.startPeriodOf(startPeriod.trim());
         }
@@ -414,10 +324,7 @@ public class SdmxWebManagerMcp {
             String actualId = byLowerId.get(entry.getKey().toLowerCase(Locale.ROOT));
             if (actualId == null) {
                 throw new IllegalArgumentException(
-                        "Cannot find dimension '"
-                                + entry.getKey()
-                                + "'. Expected one of "
-                                + byLowerId.values());
+                        "Cannot find dimension '" + entry.getKey() + "'. Expected one of " + byLowerId.values());
             }
             builder.put(actualId, entry.getValue());
         }
@@ -460,8 +367,7 @@ public class SdmxWebManagerMcp {
                 .build();
     }
 
-    private static Map<String, String> filterCodes(
-            Map<String, String> codes, String query, int maxResults) {
+    private static Map<String, String> filterCodes(Map<String, String> codes, String query, int maxResults) {
         if (maxResults <= 0) {
             return Map.of();
         }

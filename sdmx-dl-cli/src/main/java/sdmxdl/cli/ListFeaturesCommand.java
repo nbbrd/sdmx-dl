@@ -16,17 +16,13 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.SortOptions;
 import internal.sdmxdl.cli.WebSourceOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
+import java.io.IOException;
+import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import sdmxdl.Feature;
-
-import java.io.IOException;
-import java.util.Comparator;
-import java.util.concurrent.Callable;
-import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
@@ -40,9 +36,6 @@ public final class ListFeaturesCommand implements Callable<Void> {
     @CommandLine.Mixin
     private final RFC4180OutputOptions csv = new RFC4180OutputOptions();
 
-    @CommandLine.Mixin
-    private SortOptions sort;
-
     @Override
     public Void call() throws Exception {
         getTable().write(csv, getRows());
@@ -50,15 +43,12 @@ public final class ListFeaturesCommand implements Callable<Void> {
     }
 
     private CsvTable<Feature> getTable() {
-        return CsvTable
-                .builderOf(Feature.class)
+        return CsvTable.builderOf(Feature.class)
                 .columnOf("SupportedFeature", Feature::name)
                 .build();
     }
 
-    private Stream<Feature> getRows() throws IOException {
-        return sort.applySort(web.loadManager().usingName(web.getSource()).getSupportedFeatures(web.toSourceRequest()), BY_NAME);
+    private Iterable<Feature> getRows() throws IOException {
+        return web.loadManager().usingName(web.getSource()).getSupportedFeatures();
     }
-
-    private static final Comparator<Feature> BY_NAME = Comparator.comparing(Enum::name);
 }

@@ -16,17 +16,14 @@
  */
 package sdmxdl.cli.experimental;
 
+import static java.lang.System.lineSeparator;
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
+
 import dev.failsafe.Failsafe;
 import dev.failsafe.Fallback;
 import dev.failsafe.RetryPolicy;
 import internal.sdmxdl.cli.WebNetOptions;
-import nbbrd.console.picocli.text.TextOutputOptions;
-import picocli.CommandLine;
-import sdmxdl.Languages;
-import sdmxdl.SourceRequest;
-import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.WebSource;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.net.URI;
@@ -34,10 +31,11 @@ import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
-
-import static java.lang.System.lineSeparator;
-import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toList;
+import nbbrd.console.picocli.text.TextOutputOptions;
+import picocli.CommandLine;
+import sdmxdl.Languages;
+import sdmxdl.web.SdmxWebManager;
+import sdmxdl.web.WebSource;
 
 /**
  * @author Philippe Charles
@@ -55,18 +53,18 @@ public final class ListUpptimeCommand implements Callable<Void> {
     @Override
     public Void call() throws Exception {
         try (Writer writer = output.newCharWriter()) {
-            for (UpptimeSite site : getSiteList(web.loadManager(), web.getLangs(), msg -> web.getVerboseOptions().reportToErrorStream(null, null, msg))) {
+            for (UpptimeSite site : getSiteList(web.loadManager(), web.getLangs(), msg -> web.getVerboseOptions()
+                    .reportToErrorStream(null, null, msg))) {
                 writer.write("  - name: " + site.getName() + lineSeparator());
-                writer.write("    url: " + (site.getUri() != null ? site.getUri().toString() : "N/A") + lineSeparator());
+                writer.write(
+                        "    url: " + (site.getUri() != null ? site.getUri().toString() : "N/A") + lineSeparator());
             }
         }
         return null;
     }
 
     private static List<UpptimeSite> getSiteList(SdmxWebManager manager, Languages languages, Consumer<String> report) {
-        return manager.getSources()
-                .values()
-                .parallelStream()
+        return manager.getSources().values().parallelStream()
                 .filter(source -> !source.isAlias() && isUpptimeMonitor(source))
                 .map(source -> getSite(manager, languages, source, report))
                 .sorted(comparing(UpptimeSite::getName))
@@ -74,25 +72,27 @@ public final class ListUpptimeCommand implements Callable<Void> {
     }
 
     private static boolean isUpptimeMonitor(WebSource source) {
-        return source.getMonitor() != null && "upptime".equals(source.getMonitor().getScheme());
+        return source.getMonitor() != null
+                && "upptime".equals(source.getMonitor().getScheme());
     }
 
-    private static UpptimeSite getSite(SdmxWebManager manager, Languages languages, WebSource source, Consumer<String> report) {
-        return Failsafe
-                .with(Fallback.of(() -> UpptimeSite.failed(source)))
+    private static UpptimeSite getSite(
+            SdmxWebManager manager, Languages languages, WebSource source, Consumer<String> report) {
+        return Failsafe.with(Fallback.of(() -> UpptimeSite.failed(source)))
                 .compose(RetryPolicy.<UpptimeSite>builder()
                         .handle(IOException.class)
                         .withMaxRetries(3)
                         .withDelay(Duration.ofSeconds(1))
-                        .onRetry(event -> report.accept("Retrying " + source.getId() + " due to " + event.getLastException().getMessage()))
+                        .onRetry(event -> report.accept("Retrying " + source.getId() + " due to "
+                                + event.getLastException().getMessage()))
                         .build())
                 .get(() -> getUpptimeSite(manager, languages, source));
     }
 
-    private static UpptimeSite getUpptimeSite(SdmxWebManager manager, Languages languages, WebSource source) throws IOException {
-        return manager
-                .using(source)
-                .testConnection(SourceRequest.builder().languages(languages).build())
+    private static UpptimeSite getUpptimeSite(SdmxWebManager manager, Languages languages, WebSource source)
+            throws IOException {
+        return manager.using(source)
+                .testConnection()
                 .map(value -> UpptimeSite.ok(source, value))
                 .orElseGet(() -> UpptimeSite.missing(source));
     }
@@ -117,4 +117,3 @@ public final class ListUpptimeCommand implements Callable<Void> {
         }
     }
 }
-

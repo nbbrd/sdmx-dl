@@ -19,10 +19,7 @@ package internal.sdmxdl.cli;
 import picocli.CommandLine;
 import sdmxdl.DatabaseRef;
 import sdmxdl.DatabaseRequest;
-import sdmxdl.Flow;
 import sdmxdl.SourceRequest;
-
-import java.util.Comparator;
 
 /**
  * @author Philippe Charles
@@ -31,19 +28,14 @@ import java.util.Comparator;
 @lombok.Setter
 public class WebSourceOptions extends WebNetOptions {
 
-    @CommandLine.Parameters(
-            index = "0",
-            paramLabel = "<source>",
-            descriptionKey = "cli.sdmx.source"
-    )
+    @CommandLine.Parameters(index = "0", paramLabel = "<source>", descriptionKey = "cli.sdmx.source")
     private String source;
 
     @CommandLine.Option(
             names = {"-d", "--database"},
             paramLabel = "<database>",
             converter = DatabaseRefConverter.class,
-            descriptionKey = "cli.sdmx.database"
-    )
+            descriptionKey = "cli.sdmx.database")
     private DatabaseRef database;
 
     public DatabaseRef getDatabase() {
@@ -51,18 +43,12 @@ public class WebSourceOptions extends WebNetOptions {
     }
 
     public SourceRequest toSourceRequest() {
-        return SourceRequest
-                .builder()
-                .languages(getLangs())
-                .build();
+        return SourceRequest.builder().languages(getLangs()).build();
     }
 
     public DatabaseRequest toDatabaseRequest() {
-        return DatabaseRequest
-                .builderOf(toSourceRequest())
+        return DatabaseRequest.builderOf(toSourceRequest())
                 .database(getDatabase())
                 .build();
     }
-
-    public static final Comparator<Flow> FLOWS_BY_REF = Comparator.comparing(dataflow -> dataflow.getRef().toString());
 }

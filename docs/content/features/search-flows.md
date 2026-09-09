@@ -19,7 +19,7 @@ import sdmxdl.web.*;
 void main() throws Exception {
     SdmxWebManager manager = SdmxWebManager.ofServiceLoader();
 
-    var flows = manager.usingName("ECB").getFlows(DatabaseRequest.builder().build());
+    var flows = manager.usingName("ECB").listFlows(DatabaseRequest.DEFAULT);
 
     Search<Flow> search = Search.ofFlows(flows);
     search.search("exchange rates", 5)

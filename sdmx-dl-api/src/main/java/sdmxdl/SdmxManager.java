@@ -16,6 +16,8 @@
  */
 package sdmxdl;
 
+import java.io.IOException;
+import java.util.function.Function;
 import lombok.NonNull;
 import nbbrd.design.SealedType;
 import nbbrd.design.ThreadSafe;
@@ -23,83 +25,21 @@ import org.jspecify.annotations.Nullable;
 import sdmxdl.file.SdmxFileManager;
 import sdmxdl.web.SdmxWebManager;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-
 /**
  * @author Philippe Charles
  */
-@SealedType({
-        SdmxFileManager.class,
-        SdmxWebManager.class
-})
+@SealedType({SdmxFileManager.class, SdmxWebManager.class})
 @ThreadSafe
 public abstract class SdmxManager<SOURCE extends Source> {
 
     public final @NonNull Provider<SOURCE> using(@NonNull SOURCE source) {
-        return new DefaultProvider<>(this, source);
+        return new Provider<>(this, source);
     }
 
-    public abstract @NonNull Connection getConnection(@NonNull SOURCE source, @NonNull Languages languages) throws IOException;
+    public abstract @NonNull Connection getConnection(@NonNull SOURCE source, @NonNull Languages languages)
+            throws IOException;
 
     public abstract @Nullable Function<? super SOURCE, EventListener> getOnEvent();
 
     public abstract @Nullable Function<? super SOURCE, ErrorListener> getOnError();
-
-    @lombok.AllArgsConstructor
-    private static final class DefaultProvider<SOURCE extends Source> implements Provider<SOURCE> {
-
-        @NonNull
-        private final SdmxManager<SOURCE> manager;
-
-        @lombok.Getter
-        @NonNull
-        private final SOURCE source;
-
-        @Override
-        public @NonNull Optional<URI> testConnection(sdmxdl.@NonNull SourceRequest request) throws IOException {
-            try (Connection connection = manager.getConnection(source, request.getLanguages())) {
-                return connection.testConnection();
-            }
-        }
-
-        @Override
-        public @NonNull Set<Feature> getSupportedFeatures(sdmxdl.@NonNull SourceRequest request) throws IOException {
-            try (Connection connection = manager.getConnection(source, request.getLanguages())) {
-                return connection.getSupportedFeatures();
-            }
-        }
-
-        @Override
-        public @NonNull Collection<Database> getDatabases(sdmxdl.@NonNull SourceRequest request) throws IOException {
-            try (Connection connection = manager.getConnection(source, request.getLanguages())) {
-                return connection.getDatabases();
-            }
-        }
-
-        @Override
-        public @NonNull Collection<Flow> getFlows(sdmxdl.@NonNull DatabaseRequest request) throws IOException {
-            try (Connection connection = manager.getConnection(source, request.getLanguages())) {
-                return connection.getFlows(request.getDatabase());
-            }
-        }
-
-        @Override
-        public @NonNull MetaSet getMeta(@NonNull FlowRequest request) throws IOException {
-            try (Connection connection = manager.getConnection(source, request.getLanguages())) {
-                return connection.getMeta(request.getDatabase(), request.getFlow());
-            }
-        }
-
-        @Override
-        public @NonNull DataSet getData(sdmxdl.@NonNull KeyRequest request) throws IOException {
-            try (Connection connection = manager.getConnection(source, request.getLanguages())) {
-                return connection.getData(request.getDatabase(), request.getFlow(), request.toQuery());
-            }
-        }
-    }
 }

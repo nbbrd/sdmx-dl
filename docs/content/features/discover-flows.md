@@ -20,7 +20,7 @@ void main() throws Exception {
     SdmxWebManager manager = SdmxWebManager.ofServiceLoader();
 
     manager.usingName("ECB")
-            .getFlows(DatabaseRequest.builder().build())
+            .listFlows(DatabaseRequest.DEFAULT)
             .forEach(flow -> IO.println(flow.getRef()));
 }
 ```

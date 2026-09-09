@@ -1,5 +1,8 @@
 package internal.sdmxdl.desktop.experiments;
 
+import static internal.sdmxdl.swing.MoreSwing.debouncedDocumentListenerOf;
+import static internal.sdmxdl.swing.MoreSwing.escapeHtml;
+
 import com.formdev.flatlaf.FlatLightLaf;
 import ec.util.chart.TimeSeriesChart;
 import ec.util.chart.swing.JTimeSeriesChart;
@@ -8,19 +11,6 @@ import internal.sdmxdl.desktop.SdmxAutoCompletion;
 import internal.sdmxdl.desktop.util.SystemLafColorScheme;
 import internal.sdmxdl.swing.ListItemRenderer;
 import internal.sdmxdl.swing.WrapLayout;
-import lombok.NonNull;
-import org.jfree.data.time.Millisecond;
-import org.jfree.data.time.TimeSeries;
-import org.jfree.data.time.TimeSeriesCollection;
-import sdmxdl.*;
-import sdmxdl.web.Search;
-import sdmxdl.swing.SdmxLogo;
-import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.WebSource;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.io.IOException;
@@ -32,9 +22,18 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static internal.sdmxdl.swing.MoreSwing.debouncedDocumentListenerOf;
-import static internal.sdmxdl.swing.MoreSwing.escapeHtml;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+import lombok.NonNull;
+import org.jfree.data.time.Millisecond;
+import org.jfree.data.time.TimeSeries;
+import org.jfree.data.time.TimeSeriesCollection;
+import sdmxdl.*;
+import sdmxdl.swing.SdmxLogo;
+import sdmxdl.web.SdmxWebManager;
+import sdmxdl.web.Search;
+import sdmxdl.web.WebSource;
 
 /**
  * A Swing panel that mirrors the functionality of {@code browse.html}: a multi-step
@@ -265,7 +264,8 @@ public final class BrowsePanel extends JComponent {
         });
 
         flowsList.setCellRenderer(new ListItemRenderer<Flow>(
-                (flow, repaint) -> internal.sdmxdl.swing.IdenticonFactory.getIcon(flow.getRef().toString()),
+                (flow, repaint) -> internal.sdmxdl.swing.IdenticonFactory.getIcon(
+                        flow.getRef().toString()),
                 flow -> flow.getRef().toString(),
                 Flow::getName,
                 BrowsePanel::buildFlowTooltip));
@@ -293,10 +293,10 @@ public final class BrowsePanel extends JComponent {
             if (text2.isEmpty()) {
                 updateListModel(sourcesModel, allSources);
             } else {
-                updateListModel(sourcesModel,
-                        Search.ofSources(allSources, Languages.ANY)
-                                .search(text2, allSources.size())
-                                .stream().map(Search.Result::getItem)
+                updateListModel(
+                        sourcesModel,
+                        Search.ofSources(allSources, Languages.ANY).search(text2, allSources.size()).stream()
+                                .map(Search.Result::getItem)
                                 .collect(Collectors.toList()));
             }
         }));
@@ -305,10 +305,10 @@ public final class BrowsePanel extends JComponent {
             if (text1.isEmpty()) {
                 updateListModel(dbModel, allDatabases);
             } else {
-                updateListModel(dbModel,
-                        Search.ofDatabases(allDatabases)
-                                .search(text1, allDatabases.size())
-                                .stream().map(Search.Result::getItem)
+                updateListModel(
+                        dbModel,
+                        Search.ofDatabases(allDatabases).search(text1, allDatabases.size()).stream()
+                                .map(Search.Result::getItem)
                                 .collect(Collectors.toList()));
             }
         }));
@@ -317,10 +317,10 @@ public final class BrowsePanel extends JComponent {
             if (text.isEmpty()) {
                 updateListModel(flowsModel, allFlows);
             } else {
-                updateListModel(flowsModel,
-                        Search.ofFlows(allFlows)
-                                .search(text, allFlows.size())
-                                .stream().map(Search.Result::getItem)
+                updateListModel(
+                        flowsModel,
+                        Search.ofFlows(allFlows).search(text, allFlows.size()).stream()
+                                .map(Search.Result::getItem)
                                 .collect(Collectors.toList()));
             }
         }));
@@ -378,8 +378,7 @@ public final class BrowsePanel extends JComponent {
     private JPanel buildListCard(JTextField searchField, JList<?> list, String placeholder) {
         searchField.putClientProperty("JTextField.placeholderText", placeholder);
         searchField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(CHIP_BORDER),
-                new EmptyBorder(6, 8, 6, 8)));
+                BorderFactory.createLineBorder(CHIP_BORDER), new EmptyBorder(6, 8, 6, 8)));
 
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         list.setFixedCellHeight(54);
@@ -404,8 +403,8 @@ public final class BrowsePanel extends JComponent {
 
     private JPanel buildDimensionsCard() {
         // Chips row
-        JScrollPane chipsScroll = new JScrollPane(dimChipsPanel,
-                JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        JScrollPane chipsScroll = new JScrollPane(
+                dimChipsPanel, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         chipsScroll.setBorder(null);
         chipsScroll.getHorizontalScrollBar().setPreferredSize(new java.awt.Dimension(0, 4));
 
@@ -420,8 +419,7 @@ public final class BrowsePanel extends JComponent {
         // Footer
         keyLabel.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
         keyLabel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(0, 3, 0, 0, PRIMARY),
-                new EmptyBorder(4, 8, 4, 8)));
+                BorderFactory.createMatteBorder(0, 3, 0, 0, PRIMARY), new EmptyBorder(4, 8, 4, 8)));
 
         JPanel footer = new JPanel(new BorderLayout(8, 0));
         footer.setBorder(new EmptyBorder(8, 8, 8, 8));
@@ -442,8 +440,7 @@ public final class BrowsePanel extends JComponent {
     private JPanel buildDataCard() {
         dataChart.setPreferredSize(new java.awt.Dimension(600, 250));
 
-        JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-                new JScrollPane(dataChart), seriesTabs);
+        JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(dataChart), seriesTabs);
         split.setResizeWeight(0.4);
 
         JPanel card = new JPanel(new BorderLayout());
@@ -497,8 +494,9 @@ public final class BrowsePanel extends JComponent {
         new SwingWorker<List<Database>, Void>() {
             @Override
             protected List<Database> doInBackground() throws IOException {
-                return new ArrayList<>(manager.using(source).getDatabases(
-                        SourceRequest.builder().languages(Languages.ANY).build()));
+                return manager.using(source)
+                        .listDatabases(
+                                SourceRequest.builder().languages(Languages.ANY).build());
             }
 
             @Override
@@ -541,8 +539,8 @@ public final class BrowsePanel extends JComponent {
         new SwingWorker<List<Flow>, Void>() {
             @Override
             protected List<Flow> doInBackground() throws IOException {
-                return new ArrayList<>(manager.using(src).getFlows(
-                        DatabaseRequest.builder()
+                return new ArrayList<>(manager.using(src)
+                        .listFlows(DatabaseRequest.builder()
                                 .database(db)
                                 .languages(Languages.ANY)
                                 .build()));
@@ -588,7 +586,8 @@ public final class BrowsePanel extends JComponent {
             protected void done() {
                 try {
                     currentStructure = get();
-                    dimensionValues = new String[currentStructure.getDimensions().size()];
+                    dimensionValues =
+                            new String[currentStructure.getDimensions().size()];
                     Arrays.fill(dimensionValues, "");
                     selectedDimension = 0;
                     pushView(CARD_DIMENSIONS);
@@ -716,8 +715,8 @@ public final class BrowsePanel extends JComponent {
     }
 
     private JButton buildCodeChip(String code, String name, boolean selected, int dimIdx) {
-        String label = "<html><b>" + code + "</b>"
-                + (name.isEmpty() ? "" : "<br><small>" + name + "</small>") + "</html>";
+        String label =
+                "<html><b>" + code + "</b>" + (name.isEmpty() ? "" : "<br><small>" + name + "</small>") + "</html>";
         JButton chip = new JButton(label);
         chip.setFont(chip.getFont().deriveFont(11f));
         chip.setFocusPainted(false);
@@ -769,7 +768,7 @@ public final class BrowsePanel extends JComponent {
             protected List<Series> doInBackground() throws IOException {
                 Query query = Query.builder().key(key).detail(Detail.FULL).build();
                 try (Connection conn = manager.getConnection(src, Languages.ANY);
-                     Stream<Series> stream = conn.getDataStream(db, flowRef, query)) {
+                        Stream<Series> stream = conn.getDataStream(db, flowRef, query)) {
                     return stream.collect(Collectors.toList());
                 }
             }
@@ -794,8 +793,8 @@ public final class BrowsePanel extends JComponent {
             TimeSeries ts = new TimeSeries(series.getKey().toString());
             for (Obs obs : series.getObs()) {
                 try {
-                    Millisecond period = new Millisecond(
-                            Timestamp.valueOf(obs.getPeriod().getStart()));
+                    Millisecond period =
+                            new Millisecond(Timestamp.valueOf(obs.getPeriod().getStart()));
                     ts.addOrUpdate(period, obs.getValue());
                 } catch (Exception ignored) {
                     // skip unparseable obs
@@ -825,16 +824,14 @@ public final class BrowsePanel extends JComponent {
                 }
             });
             table.setAutoCreateRowSorter(true);
-            table.getColumnModel().getColumn(1).setCellRenderer(
-                    new RightAlignedRenderer());
+            table.getColumnModel().getColumn(1).setCellRenderer(new RightAlignedRenderer());
 
             String tabTitle = series.getKey().toString();
             if (tabTitle.length() > 40) {
                 tabTitle = tabTitle.substring(0, 37) + "…";
             }
             seriesTabs.addTab(tabTitle, new JScrollPane(table));
-            seriesTabs.setToolTipTextAt(seriesTabs.getTabCount() - 1,
-                    series.getKey() + " (" + obs.size() + " obs)");
+            seriesTabs.setToolTipTextAt(seriesTabs.getTabCount() - 1, series.getKey() + " (" + obs.size() + " obs)");
         }
 
         showCard(CARD_DATA);
@@ -957,21 +954,20 @@ public final class BrowsePanel extends JComponent {
     private void updateBreadcrumb() {
         breadcrumb.removeAll();
         List<String[]> segments = new ArrayList<>();
-        segments.add(new String[]{"Sources", CARD_SOURCES});
+        segments.add(new String[] {"Sources", CARD_SOURCES});
         if (currentSource != null) {
-            segments.add(new String[]{currentSource.getName(Languages.ANY), CARD_DATABASES});
+            segments.add(new String[] {currentSource.getName(Languages.ANY), CARD_DATABASES});
         }
         if (currentFlow != null) {
             String name = currentFlow.getName();
             if (name.length() > 35) name = name.substring(0, 32) + "…";
-            segments.add(new String[]{name, CARD_DIMENSIONS});
+            segments.add(new String[] {name, CARD_DIMENSIONS});
         }
         if (!currentData.isEmpty()) {
-            segments.add(new String[]{"Data", CARD_DATA});
+            segments.add(new String[] {"Data", CARD_DATA});
         }
 
-        String currentCard = navIndex >= 0 && navIndex < navHistory.size()
-                ? navHistory.get(navIndex) : CARD_SOURCES;
+        String currentCard = navIndex >= 0 && navIndex < navHistory.size() ? navHistory.get(navIndex) : CARD_SOURCES;
 
         for (int i = 0; i < segments.size(); i++) {
             String[] seg = segments.get(i);
@@ -984,9 +980,7 @@ public final class BrowsePanel extends JComponent {
             boolean isCurrent = seg[1].equals(currentCard);
             JLabel link = new JLabel(seg[0]);
             link.setFont(link.getFont().deriveFont(11f));
-            link.setForeground(isCurrent
-                    ? new Color(255, 255, 255, 180)
-                    : Color.WHITE);
+            link.setForeground(isCurrent ? new Color(255, 255, 255, 180) : Color.WHITE);
             if (!isCurrent) {
                 link.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 final String targetCard = seg[1];
@@ -1038,8 +1032,7 @@ public final class BrowsePanel extends JComponent {
 
     private void copyCurrentKey() {
         String key = buildCurrentKey().toString();
-        Toolkit.getDefaultToolkit().getSystemClipboard()
-                .setContents(new StringSelection(key), null);
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(key), null);
     }
 
     private static <T> void updateListModel(DefaultListModel<T> model, List<T> items) {
@@ -1066,9 +1059,13 @@ public final class BrowsePanel extends JComponent {
             sb.append("<br>").append(escapeHtml(name));
         }
         sb.append("<br><small>Driver: ").append(escapeHtml(src.getDriver())).append("</small>");
-        sb.append("<br><small>Endpoint: ").append(escapeHtml(src.getEndpoint().toString())).append("</small>");
+        sb.append("<br><small>Endpoint: ")
+                .append(escapeHtml(src.getEndpoint().toString()))
+                .append("</small>");
         if (src.getWebsite() != null) {
-            sb.append("<br><small>Website: ").append(escapeHtml(src.getWebsite().toString())).append("</small>");
+            sb.append("<br><small>Website: ")
+                    .append(escapeHtml(src.getWebsite().toString()))
+                    .append("</small>");
         }
         sb.append("</body></html>");
         return sb.toString();
@@ -1104,11 +1101,10 @@ public final class BrowsePanel extends JComponent {
 
     private static final class RightAlignedRenderer extends javax.swing.table.DefaultTableCellRenderer {
         @Override
-        public java.awt.Component getTableCellRendererComponent(JTable table, Object value,
-                                                                boolean isSelected, boolean hasFocus,
-                                                                int row, int column) {
-            JLabel label = (JLabel) super.getTableCellRendererComponent(
-                    table, value, isSelected, hasFocus, row, column);
+        public java.awt.Component getTableCellRendererComponent(
+                JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            JLabel label =
+                    (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             label.setHorizontalAlignment(SwingConstants.TRAILING);
             return label;
         }
@@ -1117,12 +1113,11 @@ public final class BrowsePanel extends JComponent {
     // ==================== Demo main ====================
 
     public static void main(String[] args) {
-        SdmxWebManager manager = SdmxWebManager.ofServiceLoader()
-                .toBuilder()
+        SdmxWebManager manager = SdmxWebManager.ofServiceLoader().toBuilder()
                 .onEvent(source -> (marker, message) ->
                         System.out.printf(Locale.ROOT, "[%s] (%s) %s%n", source.getId(), marker, message))
-                .onError(source -> (marker, message, error) ->
-                        System.err.printf(Locale.ROOT, "[%s] (%s) %s: %s%n", source.getId(), marker, message, error.getMessage()))
+                .onError(source -> (marker, message, error) -> System.err.printf(
+                        Locale.ROOT, "[%s] (%s) %s: %s%n", source.getId(), marker, message, error.getMessage()))
                 .build()
                 .warmupAsync();
 
@@ -1139,7 +1134,3 @@ public final class BrowsePanel extends JComponent {
         });
     }
 }
-
-
-
-

@@ -6,8 +6,9 @@ import lombok.NonNull;
 @lombok.Builder
 public class SourceRequest {
 
-    @NonNull
-    @lombok.Builder.Default
+    public static final SourceRequest DEFAULT = SourceRequest.builder().build();
+
+    @NonNull @lombok.Builder.Default
     Languages languages = Languages.ANY;
 
     public static final class Builder {

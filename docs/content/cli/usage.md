@@ -314,7 +314,6 @@ Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
 - [`-d, --database<database>`](../options#database) - Database reference.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
-- [`--sort`](../options#sort) - Sort output.
 
 Other options:
 [`CSV`](../options#csv),
@@ -352,7 +351,6 @@ Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
 - [`-d, --database<database>`](../options#database) - Database reference.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
-- [`--sort`](../options#sort) - Sort output.
 
 Other options: 
 [`CSV`](../options#csv),
@@ -553,7 +551,6 @@ Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
 - [`-d, --database<database>`](../options#database) - Database reference.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
-- [`--sort`](../options#sort) - Sort output.
 
 Other options: 
 [`CSV`](../options#csv),

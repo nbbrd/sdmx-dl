@@ -1,5 +1,18 @@
 package sdmxdl.provider;
 
+import static java.util.Collections.singletonList;
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.UncheckedIOException;
+import java.time.Duration;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.Predicate;
 import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;
 import nbbrd.design.VisibleForTesting;
@@ -10,20 +23,6 @@ import sdmxdl.*;
 import sdmxdl.Flow;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.UncheckedIOException;
-import java.time.Duration;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.function.Predicate;
-
-import static java.util.Collections.singletonList;
-import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
 
 public final class Explorer {
 
@@ -44,16 +43,14 @@ public final class Explorer {
         /**
          * Maximum time to wait for a single source before reporting it as {@link Status#TIMEOUT}.
          */
-        @lombok.NonNull
-        @lombok.Builder.Default
+        @lombok.NonNull @lombok.Builder.Default
         Duration perSourceTimeout = Duration.ofMinutes(2);
 
         /**
          * Overall wall-clock budget for the whole run; sources not completed within it are
          * reported as {@link Status#TIMEOUT}.
          */
-        @lombok.NonNull
-        @lombok.Builder.Default
+        @lombok.NonNull @lombok.Builder.Default
         Duration totalBudget = Duration.ofMinutes(30);
 
         /**
@@ -91,15 +88,12 @@ public final class Explorer {
         int maxDatabasesSampled = 4;
     }
 
-    public static SortedMap<Status, List<Report>> explore(@NonNull SdmxWebManager manager, @NonNull Predicate<? super WebSource> filter, @NonNull Options options) {
+    public static SortedMap<Status, List<Report>> explore(
+            @NonNull SdmxWebManager manager, @NonNull Predicate<? super WebSource> filter, @NonNull Options options) {
         manager.getNetworking().warmupNetwork();
-        List<WebSource> sources = manager.getSources()
-                .values()
-                .stream()
-                .filter(filter)
-                .collect(toList());
-        return exploreAll(manager, sources, options)
-                .stream()
+        List<WebSource> sources =
+                manager.getSources().values().stream().filter(filter).collect(toList());
+        return exploreAll(manager, sources, options).stream()
                 .collect(groupingBy(Report::getStatus, TreeMap::new, toList()));
     }
 
@@ -125,14 +119,14 @@ public final class Explorer {
                     result.add(future.get(waitNanos, TimeUnit.NANOSECONDS));
                 } catch (TimeoutException ex) {
                     future.cancel(true);
-                    result.add(Report.of(entry.getKey(), Status.TIMEOUT, SourceRequest.builder().build()));
+                    result.add(Report.of(entry.getKey(), Status.TIMEOUT, SourceRequest.DEFAULT));
                 } catch (ExecutionException ex) {
                     Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
                     result.add(Report.of(entry.getKey(), Status.UNEXPECTED_FAILURE, cause, stackTraceToString(cause)));
                 } catch (InterruptedException ex) {
                     Thread.currentThread().interrupt();
                     future.cancel(true);
-                    result.add(Report.of(entry.getKey(), Status.TIMEOUT, SourceRequest.builder().build()));
+                    result.add(Report.of(entry.getKey(), Status.TIMEOUT, SourceRequest.DEFAULT));
                 }
             }
             return result;
@@ -149,14 +143,16 @@ public final class Explorer {
         }
     }
 
-    public static @NonNull Report explore(@NonNull SdmxWebManager manager, @NonNull WebSource source, @NonNull Options options) {
+    public static @NonNull Report explore(
+            @NonNull SdmxWebManager manager, @NonNull WebSource source, @NonNull Options options) {
         long start = System.nanoTime();
         Report report = doExplore(manager, source, options);
         long elapsedMillis = (System.nanoTime() - start) / 1_000_000L;
         return report.withDurationMillis(elapsedMillis);
     }
 
-    private static @NonNull Report doExplore(@NonNull SdmxWebManager manager, @NonNull WebSource source, @NonNull Options options) {
+    private static @NonNull Report doExplore(
+            @NonNull SdmxWebManager manager, @NonNull WebSource source, @NonNull Options options) {
         try (Connection c = manager.getConnection(source, Languages.ANY)) {
             return doExplore(c, source, options);
         } catch (Throwable fatal) {
@@ -169,14 +165,13 @@ public final class Explorer {
         try {
             c.testConnection();
         } catch (Exception fatal) {
-            return Report.of(source, Status.CONNECTION_FAILURE, fatal, SourceRequest.builder().build());
+            return Report.of(source, Status.CONNECTION_FAILURE, fatal, SourceRequest.DEFAULT);
         }
 
-        SourceRequest sourceRequest = SourceRequest.builder().build();
+        SourceRequest sourceRequest = SourceRequest.DEFAULT;
         List<DatabaseRef> databases;
         try {
-            databases = c.getDatabases()
-                    .stream()
+            databases = c.getDatabases().stream()
                     .map(Database::getRef)
                     .sorted(comparing(Objects::toString))
                     .collect(toList());
@@ -189,21 +184,20 @@ public final class Explorer {
         // wrongly reported as a failure. The number of probed databases is bounded and the search
         // stops early on the first success, so a healthy source keeps its single-database cost and
         // remote servers are not overwhelmed.
-        List<DatabaseRef> candidates = databases.isEmpty()
-                ? singletonList(DatabaseRef.NO_DATABASE)
-                : databases;
+        List<DatabaseRef> candidates = databases.isEmpty() ? singletonList(DatabaseRef.NO_DATABASE) : databases;
         int maxDatabases = Math.max(1, options.getMaxDatabasesSampled());
         Report best = null;
         DatabaseRequest lastDatabaseRequest = null;
         int databasesProbed = 0;
         for (DatabaseRef databaseRef : candidates) {
-            DatabaseRequest databaseRequest = DatabaseRequest.builderOf(sourceRequest).database(databaseRef).build();
+            DatabaseRequest databaseRequest = DatabaseRequest.builderOf(sourceRequest)
+                    .database(databaseRef)
+                    .build();
             lastDatabaseRequest = databaseRequest;
 
             List<FlowRef> flows;
             try {
-                flows = c.getFlows(databaseRef)
-                        .stream()
+                flows = c.getFlows(databaseRef).stream()
                         .map(Flow::getRef)
                         .sorted(comparing(Objects::toString))
                         .collect(toList());
@@ -235,7 +229,13 @@ public final class Explorer {
         return best;
     }
 
-    private static Report exploreDatabase(Connection c, WebSource source, DatabaseRequest databaseRequest, List<FlowRef> flows, int databaseCount, Options options) {
+    private static Report exploreDatabase(
+            Connection c,
+            WebSource source,
+            DatabaseRequest databaseRequest,
+            List<FlowRef> flows,
+            int databaseCount,
+            Options options) {
         // Sample several flows (not just the first) so the report reflects how broadly the
         // driver works, not whether a single lucky flow happens to succeed.
         List<FlowRef> sample = sampleFlows(flows, options.getMaxFlowsSampled());
@@ -243,7 +243,8 @@ public final class Explorer {
         int flowsWithData = 0;
         Report best = null;
         for (FlowRef flowRef : sample) {
-            FlowRequest flowRequest = FlowRequest.builderOf(databaseRequest).flow(flowRef).build();
+            FlowRequest flowRequest =
+                    FlowRequest.builderOf(databaseRequest).flow(flowRef).build();
             Report outcome = exploreFlow(c, source, flowRequest, options);
             if (hasStructure(outcome.getStatus())) {
                 flowsWithStructure++;
@@ -257,13 +258,17 @@ public final class Explorer {
             }
         }
         // sample is never empty here (flows is non-empty).
-        return best.withCoverage(Coverage.of(databaseCount, flows.size(), sample.size(), flowsWithStructure, flowsWithData));
+        return best.withCoverage(
+                Coverage.of(databaseCount, flows.size(), sample.size(), flowsWithStructure, flowsWithData));
     }
 
     // Keeps the furthest-stage report so that a later database yielding data (or getting further)
     // supersedes an earlier failing one; ties keep the earlier (already selected) database.
     private static Report furthest(@Nullable Report current, @NonNull Report candidate) {
-        return current == null || candidate.getStatus().ordinal() > current.getStatus().ordinal() ? candidate : current;
+        return current == null
+                        || candidate.getStatus().ordinal() > current.getStatus().ordinal()
+                ? candidate
+                : current;
     }
 
     private static Report exploreFlow(Connection c, WebSource source, FlowRequest flowRequest, Options options) {
@@ -325,7 +330,8 @@ public final class Explorer {
     // Candidate keys tried in order: a specific built key first (cheap), then the broad Key.ALL as
     // a fallback. The fallback matters when the built key is an impossible combination (e.g. sources
     // with mutually-exclusive dimensions), which would otherwise wrongly look like "no data".
-    private static List<Key> candidateKeys(Connection c, FlowRequest flowRequest, Structure structure, Options options) {
+    private static List<Key> candidateKeys(
+            Connection c, FlowRequest flowRequest, Structure structure, Options options) {
         List<Key> result = new ArrayList<>();
         try {
             result.add(buildKey(c, flowRequest.getDatabase(), flowRequest.getFlow(), structure));
@@ -344,7 +350,8 @@ public final class Explorer {
         Key.Builder key = Key.builder(structure);
         List<Dimension> dimensions = structure.getDimensions();
         for (int i = 0; i < dimensions.size(); i++) {
-            Iterator<String> availableDimensionCodes = c.getAvailableDimensionCodes(db, flow, key.build(), i).iterator();
+            Iterator<String> availableDimensionCodes =
+                    c.getAvailableDimensionCodes(db, flow, key.build(), i).iterator();
             if (availableDimensionCodes.hasNext()) {
                 key.put(dimensions.get(i).getId(), availableDimensionCodes.next());
             }
@@ -370,8 +377,16 @@ public final class Explorer {
     public static class Report {
 
         @StaticFactoryMethod
-        public static @NonNull Report of(@NonNull WebSource source, @NonNull Status status, @NonNull Throwable fatal, @NonNull Object request) {
-            return new Report(source.getId(), status, request, fatal.getClass().getSimpleName(), fatal.getMessage(), Coverage.NO_COVERAGE, 0);
+        public static @NonNull Report of(
+                @NonNull WebSource source, @NonNull Status status, @NonNull Throwable fatal, @NonNull Object request) {
+            return new Report(
+                    source.getId(),
+                    status,
+                    request,
+                    fatal.getClass().getSimpleName(),
+                    fatal.getMessage(),
+                    Coverage.NO_COVERAGE,
+                    0);
         }
 
         @StaticFactoryMethod
@@ -379,23 +394,17 @@ public final class Explorer {
             return new Report(source.getId(), status, request, null, null, Coverage.NO_COVERAGE, 0);
         }
 
-        @NonNull
-        String source;
+        @NonNull String source;
 
-        @NonNull
-        Status status;
+        @NonNull Status status;
 
-        @NonNull
-        Object request;
+        @NonNull Object request;
 
-        @Nullable
-        String error;
+        @Nullable String error;
 
-        @Nullable
-        String message;
+        @Nullable String message;
 
-        @NonNull
-        @lombok.With
+        @NonNull @lombok.With
         Coverage coverage;
 
         /**
@@ -431,11 +440,15 @@ public final class Explorer {
                 return databaseRequest.getDatabase().toString();
             } else if (request instanceof FlowRequest) {
                 FlowRequest flowRequest = (FlowRequest) request;
-                String database = flowRequest.getDatabase().equals(DatabaseRef.NO_DATABASE) ? "" : flowRequest.getDatabase() + " > ";
+                String database = flowRequest.getDatabase().equals(DatabaseRef.NO_DATABASE)
+                        ? ""
+                        : flowRequest.getDatabase() + " > ";
                 return database + flowRequest.getFlow().toShortString();
             } else if (request instanceof KeyRequest) {
                 KeyRequest keyRequest = (KeyRequest) request;
-                String database = keyRequest.getDatabase().equals(DatabaseRef.NO_DATABASE) ? "" : keyRequest.getDatabase() + " > ";
+                String database = keyRequest.getDatabase().equals(DatabaseRef.NO_DATABASE)
+                        ? ""
+                        : keyRequest.getDatabase() + " > ";
                 return database + keyRequest.getFlow().toShortString() + " > " + keyRequest.getKey();
             }
             return Objects.toString(request, "-");
@@ -511,7 +524,7 @@ public final class Explorer {
                 return ANSI_RED;
         }
     }
-    
+
     /**
      * Prints the given reports to an appendable using the
      * <a href="https://eslint.org/docs/latest/user-guide/formatters/#stylish">stylish</a> format,
@@ -522,7 +535,9 @@ public final class Explorer {
      * @param useAnsi    whether to apply ANSI color codes to section headers
      * @throws IOException if an I/O error occurs while writing
      */
-    public static void printStylish(@NonNull Appendable appendable, @NonNull SortedMap<Status, List<Report>> reports, boolean useAnsi) throws IOException {
+    public static void printStylish(
+            @NonNull Appendable appendable, @NonNull SortedMap<Status, List<Report>> reports, boolean useAnsi)
+            throws IOException {
         StylishWriter<Report> writer = StylishWriter.<Report>builder()
                 .column(Formatter.of(Report::getSource))
                 .column(Formatter.of(Report::toShortError))
@@ -538,7 +553,6 @@ public final class Explorer {
                         ? ansiColorOf(entry.getKey()) + entry.getKey().name() + ANSI_RESET
                         : entry.getKey().name(),
                 Map.Entry::getValue,
-                entry -> entry.getValue().size() + (entry.getValue().size() == 1 ? " source" : " sources")
-        );
+                entry -> entry.getValue().size() + (entry.getValue().size() == 1 ? " source" : " sources"));
     }
 }
