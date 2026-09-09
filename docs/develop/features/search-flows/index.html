@@ -14,7 +14,7 @@
 
   <meta name="description" content="Find a dataset by topic within a source when you don&rsquo;t know its exact flow ID.
 API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); var flows = manager.usingName(&#34;ECB&#34;).getFlows(DatabaseRequest.builder().build()); Search&lt;Flow&gt; search = Search.ofFlows(flows); search.search(&#34;exchange rates&#34;, 5) .forEach(result -&gt; IO.println(result.getItem().getRef() &#43; &#34; -&gt; &#34; &#43; result.getScore())); } CLI ✅ full support" />
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); var flows = manager.usingName(&#34;ECB&#34;).listFlows(DatabaseRequest.DEFAULT); Search&lt;Flow&gt; search = Search.ofFlows(flows); search.search(&#34;exchange rates&#34;, 5) .forEach(result -&gt; IO.println(result.getItem().getRef() &#43; &#34; -&gt; &#34; &#43; result.getScore())); } CLI ✅ full support" />
 
     <title>Search flows | sdmx-dl</title>
 
@@ -42,14 +42,14 @@ API ✅ full support
   <meta property="og:site_name" content="sdmx-dl" />
   <meta property="og:description" content="Find a dataset by topic within a source when you don’t know its exact flow ID.
 API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); var flows = manager.usingName(&#34;ECB&#34;).getFlows(DatabaseRequest.builder().build()); Search&lt;Flow&gt; search = Search.ofFlows(flows); search.search(&#34;exchange rates&#34;, 5) .forEach(result -&gt; IO.println(result.getItem().getRef() &#43; &#34; -&gt; &#34; &#43; result.getScore())); } CLI ✅ full support" />
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); var flows = manager.usingName(&#34;ECB&#34;).listFlows(DatabaseRequest.DEFAULT); Search&lt;Flow&gt; search = Search.ofFlows(flows); search.search(&#34;exchange rates&#34;, 5) .forEach(result -&gt; IO.println(result.getItem().getRef() &#43; &#34; -&gt; &#34; &#43; result.getScore())); } CLI ✅ full support" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/features/search-flows/" />
 
 <meta property="article:section" content="Features" />
     <meta
       property="article:modified_time"
-      content="2026-09-08T09:06:43+02:00"
+      content="2026-09-09T09:17:34+02:00"
     />
 
 
@@ -57,7 +57,7 @@ API ✅ full support
 <meta name="twitter:title" content="Search flows" />
   <meta name="twitter:description" content="Find a dataset by topic within a source when you don’t know its exact flow ID.
 API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); var flows = manager.usingName(&#34;ECB&#34;).getFlows(DatabaseRequest.builder().build()); Search&lt;Flow&gt; search = Search.ofFlows(flows); search.search(&#34;exchange rates&#34;, 5) .forEach(result -&gt; IO.println(result.getItem().getRef() &#43; &#34; -&gt; &#34; &#43; result.getScore())); } CLI ✅ full support" />
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); var flows = manager.usingName(&#34;ECB&#34;).listFlows(DatabaseRequest.DEFAULT); Search&lt;Flow&gt; search = Search.ofFlows(flows); search.search(&#34;exchange rates&#34;, 5) .forEach(result -&gt; IO.println(result.getItem().getRef() &#43; &#34; -&gt; &#34; &#43; result.getScore())); } CLI ✅ full support" />
 
 
   <script type="application/ld+json">
@@ -68,7 +68,7 @@ API ✅ full support
       "name": "Search flows",
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/features/search-flows/",
       "headline": "Search flows",
-      "description": "Find a dataset by topic within a source when you don’t know its exact flow ID.\nAPI ✅ full support\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); var flows = manager.usingName(\u0022ECB\u0022).getFlows(DatabaseRequest.builder().build()); Search\u003cFlow\u003e search = Search.ofFlows(flows); search.search(\u0022exchange rates\u0022, 5) .forEach(result -\u003e IO.println(result.getItem().getRef() \u002b \u0022 -\u003e \u0022 \u002b result.getScore())); } CLI ✅ full support",
+      "description": "Find a dataset by topic within a source when you don’t know its exact flow ID.\nAPI ✅ full support\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); var flows = manager.usingName(\u0022ECB\u0022).listFlows(DatabaseRequest.DEFAULT); Search\u003cFlow\u003e search = Search.ofFlows(flows); search.search(\u0022exchange rates\u0022, 5) .forEach(result -\u003e IO.println(result.getItem().getRef() \u002b \u0022 -\u003e \u0022 \u002b result.getScore())); } CLI ✅ full support",
       "wordCount": "143",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
@@ -80,7 +80,7 @@ API ✅ full support
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-08T09:06:43.00Z",
+      "dateModified": "2026-09-09T09:17:34.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1609,7 +1609,7 @@ API ✅ full support
 </span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w"> </span><span class="n">manager</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SdmxWebManager</span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">();</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="n">flows</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">manager</span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">).</span><span class="na">getFlows</span><span class="p">(</span><span class="n">DatabaseRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">().</span><span class="na">build</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="n">flows</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">manager</span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">).</span><span class="na">listFlows</span><span class="p">(</span><span class="n">DatabaseRequest</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Search</span><span class="o">&lt;</span><span class="n">Flow</span><span class="o">&gt;</span><span class="w"> </span><span class="n">search</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Search</span><span class="p">.</span><span class="na">ofFlows</span><span class="p">(</span><span class="n">flows</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">search</span><span class="p">.</span><span class="na">search</span><span class="p">(</span><span class="s">&#34;exchange rates&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">5</span><span class="p">)</span><span class="w">

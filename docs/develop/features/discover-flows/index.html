@@ -14,7 +14,7 @@
 
   <meta name="description" content="See which datasets a source publishes, before picking one to query for data.
 API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DatabaseRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); manager.usingName(&#34;ECB&#34;) .getFlows(DatabaseRequest.builder().build()) .forEach(flow -&gt; IO.println(flow.getRef())); } CLI ✅ full support
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DatabaseRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); manager.usingName(&#34;ECB&#34;) .listFlows(DatabaseRequest.DEFAULT) .forEach(flow -&gt; IO.println(flow.getRef())); } CLI ✅ full support
 sdmx-dl list flows ECB WS ✅ full support
 REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559/sdmx-dl/flows \ --data &#34;{\&#34;source\&#34;:\&#34;ECB\&#34;}&#34; gRPC grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;}&#39; -plaintext localhost:4557 sdmxdl.grpc.SdmxWebManager.GetFlows Notes Some sources expose several databases; pass a database to scope the listing (defaults to the source&rsquo;s single/default database otherwise). Related features Discover sources Search flows - find a flow by topic when you don&rsquo;t know its exact ID. " />
 
@@ -44,7 +44,7 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
   <meta property="og:site_name" content="sdmx-dl" />
   <meta property="og:description" content="See which datasets a source publishes, before picking one to query for data.
 API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DatabaseRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); manager.usingName(&#34;ECB&#34;) .getFlows(DatabaseRequest.builder().build()) .forEach(flow -&gt; IO.println(flow.getRef())); } CLI ✅ full support
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DatabaseRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); manager.usingName(&#34;ECB&#34;) .listFlows(DatabaseRequest.DEFAULT) .forEach(flow -&gt; IO.println(flow.getRef())); } CLI ✅ full support
 sdmx-dl list flows ECB WS ✅ full support
 REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559/sdmx-dl/flows \ --data &#34;{\&#34;source\&#34;:\&#34;ECB\&#34;}&#34; gRPC grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;}&#39; -plaintext localhost:4557 sdmxdl.grpc.SdmxWebManager.GetFlows Notes Some sources expose several databases; pass a database to scope the listing (defaults to the source’s single/default database otherwise). Related features Discover sources Search flows - find a flow by topic when you don’t know its exact ID. " />
 <meta property="og:type" content="article" />
@@ -53,7 +53,7 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
 <meta property="article:section" content="Features" />
     <meta
       property="article:modified_time"
-      content="2026-09-08T09:06:43+02:00"
+      content="2026-09-09T09:17:34+02:00"
     />
 
 
@@ -61,7 +61,7 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
 <meta name="twitter:title" content="Discover flows" />
   <meta name="twitter:description" content="See which datasets a source publishes, before picking one to query for data.
 API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DatabaseRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); manager.usingName(&#34;ECB&#34;) .getFlows(DatabaseRequest.builder().build()) .forEach(flow -&gt; IO.println(flow.getRef())); } CLI ✅ full support
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DatabaseRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); manager.usingName(&#34;ECB&#34;) .listFlows(DatabaseRequest.DEFAULT) .forEach(flow -&gt; IO.println(flow.getRef())); } CLI ✅ full support
 sdmx-dl list flows ECB WS ✅ full support
 REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559/sdmx-dl/flows \ --data &#34;{\&#34;source\&#34;:\&#34;ECB\&#34;}&#34; gRPC grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;}&#39; -plaintext localhost:4557 sdmxdl.grpc.SdmxWebManager.GetFlows Notes Some sources expose several databases; pass a database to scope the listing (defaults to the source’s single/default database otherwise). Related features Discover sources Search flows - find a flow by topic when you don’t know its exact ID. " />
 
@@ -74,7 +74,7 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
       "name": "Discover flows",
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/features/discover-flows/",
       "headline": "Discover flows",
-      "description": "See which datasets a source publishes, before picking one to query for data.\nAPI ✅ full support\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DatabaseRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); manager.usingName(\u0022ECB\u0022) .getFlows(DatabaseRequest.builder().build()) .forEach(flow -\u003e IO.println(flow.getRef())); } CLI ✅ full support\nsdmx-dl list flows ECB WS ✅ full support\nREST curl -X POST \\ -H \u0022Content-Type: application\/json\u0022 \\ localhost:4559\/sdmx-dl\/flows \\ --data \u0022{\\\u0022source\\\u0022:\\\u0022ECB\\\u0022}\u0022 gRPC grpcurl -d \u0027{\u0022source\u0022:\u0022ECB\u0022}\u0027 -plaintext localhost:4557 sdmxdl.grpc.SdmxWebManager.GetFlows Notes Some sources expose several databases; pass a database to scope the listing (defaults to the source’s single\/default database otherwise). Related features Discover sources Search flows - find a flow by topic when you don’t know its exact ID. ",
+      "description": "See which datasets a source publishes, before picking one to query for data.\nAPI ✅ full support\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DatabaseRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); manager.usingName(\u0022ECB\u0022) .listFlows(DatabaseRequest.DEFAULT) .forEach(flow -\u003e IO.println(flow.getRef())); } CLI ✅ full support\nsdmx-dl list flows ECB WS ✅ full support\nREST curl -X POST \\ -H \u0022Content-Type: application\/json\u0022 \\ localhost:4559\/sdmx-dl\/flows \\ --data \u0022{\\\u0022source\\\u0022:\\\u0022ECB\\\u0022}\u0022 gRPC grpcurl -d \u0027{\u0022source\u0022:\u0022ECB\u0022}\u0027 -plaintext localhost:4557 sdmxdl.grpc.SdmxWebManager.GetFlows Notes Some sources expose several databases; pass a database to scope the listing (defaults to the source’s single\/default database otherwise). Related features Discover sources Search flows - find a flow by topic when you don’t know its exact ID. ",
       "wordCount": "111",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
@@ -86,7 +86,7 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-08T09:06:43.00Z",
+      "dateModified": "2026-09-09T09:17:34.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1616,7 +1616,7 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w"> </span><span class="n">manager</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SdmxWebManager</span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">();</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">manager</span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">getFlows</span><span class="p">(</span><span class="n">DatabaseRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">().</span><span class="na">build</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">listFlows</span><span class="p">(</span><span class="n">DatabaseRequest</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">flow</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">flow</span><span class="p">.</span><span class="na">getRef</span><span class="p">()));</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></div></div>
