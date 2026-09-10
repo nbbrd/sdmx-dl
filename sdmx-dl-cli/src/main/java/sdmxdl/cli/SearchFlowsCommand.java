@@ -1,18 +1,14 @@
 package sdmxdl.cli;
 
-import static java.util.Locale.ROOT;
-
 import internal.sdmxdl.cli.WebSourceOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.stream.Stream;
 import picocli.CommandLine;
 import sdmxdl.Flow;
 import sdmxdl.format.csv.SdmxCsvFields;
-import sdmxdl.web.Search;
 
 /**
  * @author Philippe Charles
@@ -41,20 +37,16 @@ public final class SearchFlowsCommand implements Callable<Void> {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
-    private CsvTable<Search.Result<Flow>> getTable() {
-        return CsvTable.<Search.Result<Flow>>builder()
-                .columnOf("Ref", result -> result.getItem().getRef(), SdmxCsvFields.getDataflowRefFormatter())
-                .columnOf("Name", result -> result.getItem().getName())
-                .columnOf("Description", result -> result.getItem().getDescription())
-                .columnOf("Score", result -> String.format(ROOT, "%.6f", result.getScore()))
+    private CsvTable<Flow> getTable() {
+        return CsvTable.<Flow>builder()
+                .columnOf("Ref", Flow::getRef, SdmxCsvFields.getDataflowRefFormatter())
+                .columnOf("Name", Flow::getName)
+                .columnOf("Description", Flow::getDescription)
+                .columnOf("Score", result -> "0")
                 .build();
     }
 
-    private Stream<Search.Result<Flow>> getRows() throws IOException {
-        List<Flow> flows = web.loadManager().usingName(web.getSource()).listFlows(web.toDatabaseRequest());
-        Search<Flow> search = Search.ofFlows(flows);
-        List<Search.Result<Flow>> results = search.search(query, maxResults);
-        return results.stream();
+    private List<Flow> getRows() throws IOException {
+        return web.loadManager().usingName(web.getSource()).listFlows(web.toDatabaseRequest(query, maxResults));
     }
 }

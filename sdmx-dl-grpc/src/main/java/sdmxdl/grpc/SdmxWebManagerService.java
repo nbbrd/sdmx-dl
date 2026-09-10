@@ -238,14 +238,18 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     @Path("/searchDatabases")
     @Override
     public Multi<DatabaseDto> searchDatabases(SearchDatabaseRequestDto request) {
-        Languages languages = request.hasLanguages() ? Languages.parse(request.getLanguages()) : Languages.ANY;
-        int maxResults = request.hasMaxResults() ? request.getMaxResults() : 20;
+        if (request.getQuery().isEmpty()) {
+            return Multi.createFrom().empty();
+        }
+
+        SourceRequest sourceRequest = SourceRequest.builder()
+                .languages(request.hasLanguages() ? Languages.parse(request.getLanguages()) : Languages.ANY)
+                .query(request.getQuery())
+                .maxResults(request.hasMaxResults() ? request.getMaxResults() : 20)
+                .build();
         try {
-            Collection<Database> databases = manager.usingName(request.getSource())
-                    .listDatabases(SourceRequest.builder().languages(languages).build());
             return Multi.createFrom()
-                    .iterable(Search.ofDatabases(databases).search(request.getQuery(), maxResults))
-                    .map(Search.Result::getItem)
+                    .iterable(manager.usingName(request.getSource()).listDatabases(sourceRequest))
                     .map(ProtoApi::fromDatabase);
         } catch (IOException ex) {
             return Multi.createFrom().failure(ex);
@@ -263,19 +267,19 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     @Path("/searchFlows")
     @Override
     public Multi<FlowDto> searchFlows(SearchFlowsRequestDto request) {
-        DatabaseRef databaseRef =
-                request.hasDatabase() ? DatabaseRef.parse(request.getDatabase()) : DatabaseRef.NO_DATABASE;
-        Languages languages = request.hasLanguages() ? Languages.parse(request.getLanguages()) : Languages.ANY;
-        int maxResults = request.hasMaxResults() ? request.getMaxResults() : 20;
+        if (request.getQuery().isEmpty()) {
+            return Multi.createFrom().empty();
+        }
+
+        DatabaseRequest databaseRequest = DatabaseRequest.builder()
+                .database(request.hasDatabase() ? DatabaseRef.parse(request.getDatabase()) : DatabaseRef.NO_DATABASE)
+                .languages(request.hasLanguages() ? Languages.parse(request.getLanguages()) : Languages.ANY)
+                .query(request.getQuery())
+                .maxResults(request.hasMaxResults() ? request.getMaxResults() : 20)
+                .build();
         try {
-            Collection<Flow> flows = manager.usingName(request.getSource())
-                    .listFlows(DatabaseRequest.builder()
-                            .database(databaseRef)
-                            .languages(languages)
-                            .build());
             return Multi.createFrom()
-                    .iterable(Search.ofFlows(flows).search(request.getQuery(), maxResults))
-                    .map(Search.Result::getItem)
+                    .iterable(manager.usingName(request.getSource()).listFlows(databaseRequest))
                     .map(ProtoApi::fromDataflow);
         } catch (IOException ex) {
             return Multi.createFrom().failure(ex);

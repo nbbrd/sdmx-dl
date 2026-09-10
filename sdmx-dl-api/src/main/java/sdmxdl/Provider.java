@@ -1,5 +1,6 @@
 package sdmxdl;
 
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 
 import java.io.IOException;
@@ -7,6 +8,7 @@ import java.net.URI;
 import java.util.*;
 import lombok.AccessLevel;
 import lombok.NonNull;
+import sdmxdl.web.Search;
 
 /**
  * Contract for data providers that expose SDMX-related resources and data.
@@ -64,34 +66,60 @@ public final class Provider<SOURCE extends Source> {
     /**
      * Lists databases available for the given source request.
      *
-     * <p>Entries are returned sorted by database reference string value.
+     * <p>When {@link SourceRequest#getQuery()} is empty, entries are returned sorted by
+     * database reference string value and truncated to {@link SourceRequest#getMaxResults()}
+     * when a positive limit is set.
+     *
+     * <p>When a non-empty query is provided, entries are ranked by relevance using
+     * {@link sdmxdl.web.Search#ofDatabases(java.util.Collection)} and returned best match
+     * first, limited to {@link SourceRequest#getMaxResults()} results.
      *
      * @param request source-level request parameters (non-null)
-     * @return non-null sorted list of databases (possibly empty)
+     * @return non-null list of databases (possibly empty), sorted or ranked depending on the query
      * @throws IOException if database discovery fails due to I/O issues
      */
     public @NonNull List<Database> listDatabases(@NonNull SourceRequest request) throws IOException {
         try (Connection connection = manager.getConnection(source, request.getLanguages())) {
-            return connection.getDatabases().stream()
-                    .sorted(Comparator.comparing(Database::getRef))
-                    .collect(toList());
+            Collection<Database> result = connection.getDatabases();
+            int max = request.getMaxResults() > 0 ? request.getMaxResults() : Integer.MAX_VALUE;
+            return request.getQuery().isEmpty()
+                    ? result.stream()
+                            .sorted(comparing(HasReference::getRef))
+                            .limit(max)
+                            .collect(toList())
+                    : Search.ofDatabases(result).search(request.getQuery(), max).stream()
+                            .map(Search.Result::getItem)
+                            .collect(toList());
         }
     }
 
     /**
      * Lists flows available in the requested database context.
      *
-     * <p>Entries are returned sorted by flow reference string value.
+     * <p>When {@link DatabaseRequest#getQuery()} is empty, entries are returned sorted by
+     * flow reference string value and truncated to {@link DatabaseRequest#getMaxResults()}
+     * when a positive limit is set.
+     *
+     * <p>When a non-empty query is provided, entries are ranked by relevance using
+     * {@link sdmxdl.web.Search#ofFlows(java.util.Collection)} and returned best match first,
+     * limited to {@link DatabaseRequest#getMaxResults()} results.
      *
      * @param request database-level request parameters (non-null)
-     * @return non-null sorted list of flows (possibly empty)
+     * @return non-null list of flows (possibly empty), sorted or ranked depending on the query
      * @throws IOException if flow discovery fails due to I/O issues
      */
     public @NonNull List<Flow> listFlows(@NonNull DatabaseRequest request) throws IOException {
         try (Connection connection = manager.getConnection(source, request.getLanguages())) {
-            return connection.getFlows(request.getDatabase()).stream()
-                    .sorted(Comparator.comparing(Flow::getRef))
-                    .collect(toList());
+            Collection<Flow> result = connection.getFlows(request.getDatabase());
+            int max = request.getMaxResults() > 0 ? request.getMaxResults() : Integer.MAX_VALUE;
+            return request.getQuery().isEmpty()
+                    ? result.stream()
+                            .sorted(comparing(HasReference::getRef))
+                            .limit(max)
+                            .collect(toList())
+                    : Search.ofFlows(result).search(request.getQuery(), max).stream()
+                            .map(Search.Result::getItem)
+                            .collect(toList());
         }
     }
 

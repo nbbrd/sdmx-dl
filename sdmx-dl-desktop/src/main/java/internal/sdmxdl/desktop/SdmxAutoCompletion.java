@@ -158,15 +158,10 @@ public abstract class SdmxAutoCompletion {
 
         @lombok.NonNull private final ConcurrentMap<?, ?> cache;
 
-        private SourceRequest toRequest() {
-            return SourceRequest.builder().languages(languages).build();
-        }
-
         @Override
         public AutoCompletionSource getSource() {
             return ExtAutoCompletionSource.builder(this::load)
                     .behavior(SYNC)
-                    .postProcessor(this::filterAndSort)
                     .valueToString(database -> database.getRef().toString())
                     .cache(cache, this::getCacheKey, SYNC)
                     .build();
@@ -183,16 +178,11 @@ public abstract class SdmxAutoCompletion {
         }
 
         private List<Database> load(String term) throws IOException {
-            return manager.using(source.get()).listDatabases(toRequest());
-        }
-
-        private List<Database> filterAndSort(List<Database> list, String term) {
-            if (term == null || term.isEmpty()) {
-                return list.stream().sorted(comparing(Database::getName)).collect(toList());
-            }
-            return Search.ofDatabases(list).search(term, list.size()).stream()
-                    .map(Search.Result::getItem)
-                    .collect(toList());
+            SourceRequest request = SourceRequest.builder()
+                    .languages(languages)
+                    .query(term != null ? term : HasSearchQuery.NO_QUERY)
+                    .build();
+            return manager.using(source.get()).listDatabases(request);
         }
 
         private String getCacheKey(String term) {
@@ -213,18 +203,10 @@ public abstract class SdmxAutoCompletion {
 
         @lombok.NonNull private final ConcurrentMap<?, ?> cache;
 
-        private DatabaseRequest toRequest() {
-            return DatabaseRequest.builder()
-                    .languages(languages)
-                    .database(database.get())
-                    .build();
-        }
-
         @Override
         public AutoCompletionSource getSource() {
             return ExtAutoCompletionSource.builder(this::load)
                     .behavior(this::getBehavior)
-                    .postProcessor(this::filterAndSort)
                     .valueToString(o -> o.getRef().toShortString())
                     .cache(cache, this::getCacheKey, SYNC)
                     .build();
@@ -238,20 +220,16 @@ public abstract class SdmxAutoCompletion {
         }
 
         private List<Flow> load(String term) throws Exception {
-            return manager.using(source.get()).listFlows(toRequest());
+            DatabaseRequest request = DatabaseRequest.builder()
+                    .languages(languages)
+                    .database(database.get())
+                    .query(term != null ? term : HasSearchQuery.NO_QUERY)
+                    .build();
+            return manager.using(source.get()).listFlows(request);
         }
 
         private AutoCompletionSource.Behavior getBehavior(String term) {
             return source.get() != null ? ASYNC : NONE;
-        }
-
-        private List<Flow> filterAndSort(List<Flow> values, String term) {
-            if (term == null || term.isEmpty()) {
-                return values.stream().sorted(comparing(Flow::getName)).collect(toList());
-            }
-            return Search.ofFlows(values).search(term, values.size()).stream()
-                    .map(Search.Result::getItem)
-                    .collect(toList());
         }
 
         private String getCacheKey(String term) {

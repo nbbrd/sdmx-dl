@@ -16,12 +16,9 @@
  */
 package internal.sdmxdl.cli;
 
-import picocli.CommandLine;
-import sdmxdl.FlowRef;
-import sdmxdl.FlowRequest;
-import sdmxdl.Series;
-
 import java.util.Comparator;
+import picocli.CommandLine;
+import sdmxdl.*;
 
 /**
  * @author Philippe Charles
@@ -34,16 +31,15 @@ public class WebFlowOptions extends WebSourceOptions {
             index = "1",
             paramLabel = "<flow>",
             converter = DataflowRefConverter.class,
-            descriptionKey = "cli.sdmx.flow"
-    )
+            descriptionKey = "cli.sdmx.flow")
     private FlowRef flow;
 
     public FlowRequest toFlowRequest() {
-        return FlowRequest
-                .builderOf(toDatabaseRequest())
+        return FlowRequest.builderOf(toDatabaseRequest(HasSearchQuery.NO_QUERY, HasLimit.NO_LIMIT))
                 .flow(getFlow())
                 .build();
     }
 
-    public static final Comparator<Series> SERIES_BY_KEY = Comparator.comparing(series -> series.getKey().toString());
+    public static final Comparator<Series> SERIES_BY_KEY =
+            Comparator.comparing(series -> series.getKey().toString());
 }

@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import sdmxdl.Flow;
+import sdmxdl.HasLimit;
+import sdmxdl.HasSearchQuery;
 import sdmxdl.format.csv.SdmxCsvFields;
 
 /**
@@ -52,6 +54,8 @@ public final class ListFlowsCommand implements Callable<Void> {
     }
 
     private Iterable<Flow> getRows() throws IOException {
-        return web.loadManager().usingName(web.getSource()).listFlows(web.toDatabaseRequest());
+        return web.loadManager()
+                .usingName(web.getSource())
+                .listFlows(web.toDatabaseRequest(HasSearchQuery.NO_QUERY, HasLimit.NO_LIMIT));
     }
 }

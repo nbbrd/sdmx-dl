@@ -1,17 +1,13 @@
 package sdmxdl.cli;
 
-import static java.util.Locale.ROOT;
-
 import internal.sdmxdl.cli.WebSourceOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.stream.Stream;
 import picocli.CommandLine;
 import sdmxdl.Database;
-import sdmxdl.web.Search;
 
 /**
  * @author Philippe Charles
@@ -40,18 +36,15 @@ public final class SearchDatabasesCommand implements Callable<Void> {
         return null;
     }
 
-    private CsvTable<Search.Result<Database>> getTable() {
-        return CsvTable.<Search.Result<Database>>builder()
-                .columnOf("Ref", result -> result.getItem().getRef().toString())
-                .columnOf("Name", result -> result.getItem().getName())
-                .columnOf("Score", result -> String.format(ROOT, "%.6f", result.getScore()))
+    private CsvTable<Database> getTable() {
+        return CsvTable.<Database>builder()
+                .columnOf("Ref", result -> result.getRef().toString())
+                .columnOf("Name", Database::getName)
+                .columnOf("Score", result -> "0")
                 .build();
     }
 
-    private Stream<Search.Result<Database>> getRows() throws IOException {
-        List<Database> databases = web.loadManager().usingName(web.getSource()).listDatabases(web.toSourceRequest());
-        Search<Database> search = Search.ofDatabases(databases);
-        List<Search.Result<Database>> results = search.search(query, maxResults);
-        return results.stream();
+    private List<Database> getRows() throws IOException {
+        return web.loadManager().usingName(web.getSource()).listDatabases(web.toSourceRequest(query, maxResults));
     }
 }

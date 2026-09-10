@@ -20,10 +20,13 @@ import internal.sdmxdl.cli.WebSourceOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import nbbrd.design.VisibleForTesting;
 import picocli.CommandLine;
 import sdmxdl.Database;
+import sdmxdl.HasLimit;
+import sdmxdl.HasSearchQuery;
 
 /**
  * @author Philippe Charles
@@ -46,12 +49,14 @@ public final class ListDatabasesCommand implements Callable<Void> {
     @VisibleForTesting
     static CsvTable<Database> getTable() {
         return CsvTable.builderOf(Database.class)
-                .columnOf("Ref", database -> database.getRef().toString())
+                .columnOf("Ref", Database::getRef, Objects::toString)
                 .columnOf("Name", Database::getName)
                 .build();
     }
 
     private Iterable<Database> getRows() throws IOException {
-        return web.loadManager().usingName(web.getSource()).listDatabases(web.toSourceRequest());
+        return web.loadManager()
+                .usingName(web.getSource())
+                .listDatabases(web.toSourceRequest(HasSearchQuery.NO_QUERY, HasLimit.NO_LIMIT));
     }
 }

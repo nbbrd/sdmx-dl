@@ -42,12 +42,16 @@ public class WebSourceOptions extends WebNetOptions {
         return database == null ? DatabaseRef.NO_DATABASE : database;
     }
 
-    public SourceRequest toSourceRequest() {
-        return SourceRequest.builder().languages(getLangs()).build();
+    public SourceRequest toSourceRequest(String query, int maxResults) {
+        return SourceRequest.builder()
+                .languages(getLangs())
+                .query(query)
+                .maxResults(maxResults)
+                .build();
     }
 
-    public DatabaseRequest toDatabaseRequest() {
-        return DatabaseRequest.builderOf(toSourceRequest())
+    public DatabaseRequest toDatabaseRequest(String query, int maxResults) {
+        return DatabaseRequest.builderOf(toSourceRequest(query, maxResults))
                 .database(getDatabase())
                 .build();
     }

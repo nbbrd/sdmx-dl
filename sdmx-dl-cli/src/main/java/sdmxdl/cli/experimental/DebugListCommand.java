@@ -70,8 +70,9 @@ public final class DebugListCommand implements Callable<Void> {
             @Mixin WebSourceOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out)
             throws Exception {
         nonNull(out)
-                .dumpAll(fromDataflows(
-                        web.loadManager().usingName(web.getSource()).listFlows(web.toDatabaseRequest())));
+                .dumpAll(fromDataflows(web.loadManager()
+                        .usingName(web.getSource())
+                        .listFlows(web.toDatabaseRequest(HasSearchQuery.NO_QUERY, HasLimit.NO_LIMIT))));
     }
 
     private static FlowsDto fromDataflows(Collection<Flow> value) {

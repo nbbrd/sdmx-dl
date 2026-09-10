@@ -7,13 +7,7 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import sdmxdl.*;
 import sdmxdl.format.protobuf.*;
 import sdmxdl.format.protobuf.web.WebSourceDto;
@@ -173,13 +167,18 @@ public class SdmxWebManagerMcp {
             @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = DEFAULT_MAX_RESULTS)
                     int maxResults)
             throws IOException {
-        Collection<Flow> flows = manager.using(getPublicSourceForMcp(source))
-                .listFlows(DatabaseRequest.builder()
-                        .databaseOf(database)
-                        .languagesOf(languages)
-                        .build());
-        return Search.ofFlows(flows).search(query, maxResults).stream()
-                .map(result -> ProtoApi.fromDataflow(result.getItem()))
+        if (query.isEmpty()) {
+            return List.of();
+        }
+
+        DatabaseRequest request = DatabaseRequest.builder()
+                .databaseOf(database)
+                .languagesOf(languages)
+                .query(query)
+                .maxResults(maxResults)
+                .build();
+        return manager.using(getPublicSourceForMcp(source)).listFlows(request).stream()
+                .map(ProtoApi::fromDataflow)
                 .map(SdmxWebManagerMcp::cleanDescription)
                 .toList();
     }
@@ -207,10 +206,17 @@ public class SdmxWebManagerMcp {
             @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = DEFAULT_MAX_RESULTS)
                     int maxResults)
             throws IOException {
-        Collection<Database> databases = manager.using(getPublicSourceForMcp(source))
-                .listDatabases(SourceRequest.builder().languagesOf(languages).build());
-        return Search.ofDatabases(databases).search(query, maxResults).stream()
-                .map(result -> ProtoApi.fromDatabase(result.getItem()))
+        if (query.isEmpty()) {
+            return List.of();
+        }
+
+        SourceRequest request = SourceRequest.builder()
+                .languagesOf(languages)
+                .query(query)
+                .maxResults(maxResults)
+                .build();
+        return manager.using(getPublicSourceForMcp(source)).listDatabases(request).stream()
+                .map(ProtoApi::fromDatabase)
                 .toList();
     }
 
