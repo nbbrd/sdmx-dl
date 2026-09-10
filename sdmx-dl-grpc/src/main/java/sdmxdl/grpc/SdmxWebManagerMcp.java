@@ -250,25 +250,22 @@ public class SdmxWebManagerMcp {
             @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = DEFAULT_MAX_RESULTS)
                     int maxResults)
             throws IOException {
-        MetaSet meta = manager.using(getPublicSourceForMcp(source))
-                .getMeta(FlowRequest.builder()
-                        .flowOf(flow)
-                        .databaseOf(database)
-                        .languagesOf(languages)
-                        .build());
-        Codelist codelist = meta.getStructure().getDimensions().stream()
-                .filter(d -> d.getId().equalsIgnoreCase(dimension))
-                .map(Dimension::getCodelist)
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Cannot find coded dimension '"
-                        + dimension
-                        + "'. Expected one of "
-                        + codedDimensionIds(meta.getStructure())));
+
+        ConceptRequest request = ConceptRequest.builder()
+                .flowOf(flow)
+                .databaseOf(database)
+                .languagesOf(languages)
+                .query(query)
+                .maxResults(maxResults)
+                .concept(dimension)
+                .build();
+
+        Map<String, String> codes = manager.using(getPublicSourceForMcp(source)).listCodes(request);
+
         return CodelistDto.newBuilder()
-                .setRef(codelist.getRef().toString())
-                .setCodeCount(codelist.getCodes().size())
-                .putAllCodes(filterCodes(codelist.getCodes(), query, maxResults))
+                .setRef("")
+                .setCodeCount(codes.size())
+                .putAllCodes(codes)
                 .build();
     }
 
@@ -337,13 +334,6 @@ public class SdmxWebManagerMcp {
         return builder.build();
     }
 
-    private static List<String> codedDimensionIds(Structure structure) {
-        return structure.getDimensions().stream()
-                .filter(Dimension::isCoded)
-                .map(Dimension::getId)
-                .toList();
-    }
-
     private static MetaSetDto toSkeleton(MetaSetDto metaSet) {
         StructureDto structure = metaSet.getStructure();
         StructureDto.Builder result = structure.toBuilder().clearDimensions().clearAttributes();
@@ -371,25 +361,6 @@ public class SdmxWebManagerMcp {
                 .setRef(codelist.getRef())
                 .setCodeCount(codelist.getCodesMap().size())
                 .build();
-    }
-
-    private static Map<String, String> filterCodes(Map<String, String> codes, String query, int maxResults) {
-        if (maxResults <= 0) {
-            return Map.of();
-        }
-        String needle = query == null ? "" : query.trim().toLowerCase(Locale.ROOT);
-        Map<String, String> result = new LinkedHashMap<>();
-        for (Map.Entry<String, String> code : codes.entrySet()) {
-            if (needle.isEmpty()
-                    || code.getKey().toLowerCase(Locale.ROOT).contains(needle)
-                    || code.getValue().toLowerCase(Locale.ROOT).contains(needle)) {
-                result.put(code.getKey(), code.getValue());
-                if (result.size() >= maxResults) {
-                    break;
-                }
-            }
-        }
-        return result;
     }
 
     private static WebSourceDto compactSource(WebSource source) {

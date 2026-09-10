@@ -1,9 +1,14 @@
 package internal.sdmxdl.web;
 
 import internal.sdmxdl.web.spi.SearchScoringProviderLoader;
+import java.util.*;
+import java.util.function.Function;
 import lombok.NonNull;
+import sdmxdl.Attribute;
+import sdmxdl.Component;
 import sdmxdl.Database;
 import sdmxdl.DatabaseRef;
+import sdmxdl.Dimension;
 import sdmxdl.Flow;
 import sdmxdl.Languages;
 import sdmxdl.web.FlowEntry;
@@ -11,9 +16,6 @@ import sdmxdl.web.Search;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.SearchScorer;
 import sdmxdl.web.spi.SearchScoringProvider;
-
-import java.util.*;
-import java.util.function.Function;
 
 /**
  * Generic hybrid search implementation combining multiple scoring strategies,
@@ -45,21 +47,34 @@ public final class HybridSearch<T> implements Search<T> {
         return of(databases, HybridSearch::extractDatabaseFields, DATABASE_FIELD_WEIGHTS);
     }
 
-    public static @NonNull Search<FlowEntry> ofFlowEntries(@NonNull List<FlowEntry> entries, @NonNull Languages languages) {
+    public static @NonNull Search<FlowEntry> ofFlowEntries(
+            @NonNull List<FlowEntry> entries, @NonNull Languages languages) {
         Function<FlowEntry, String[]> extractor = entry -> extractFlowEntryFields(entry, languages);
         return of(entries, extractor, FLOW_ENTRY_FIELD_WEIGHTS);
     }
 
-    private static <T> @NonNull Search<T> of(@NonNull List<T> items,
-                                             @NonNull Function<T, String[]> extractor,
-                                             double[] fieldWeights) {
+    public static @NonNull Search<Dimension> ofDimensions(@NonNull List<Dimension> dimensions) {
+        return of(dimensions, HybridSearch::extractComponentFields, COMPONENT_FIELD_WEIGHTS);
+    }
+
+    public static @NonNull Search<Attribute> ofAttributes(@NonNull List<Attribute> attributes) {
+        return of(attributes, HybridSearch::extractComponentFields, COMPONENT_FIELD_WEIGHTS);
+    }
+
+    public static @NonNull Search<Map.Entry<String, String>> ofCodes(@NonNull Map<String, String> codes) {
+        return of(new ArrayList<>(codes.entrySet()), HybridSearch::extractCodeFields, CODE_FIELD_WEIGHTS);
+    }
+
+    private static <T> @NonNull Search<T> of(
+            @NonNull List<T> items, @NonNull Function<T, String[]> extractor, double[] fieldWeights) {
         return of(items, extractor, fieldWeights, SearchScoringProviderLoader.load());
     }
 
-    static <T> @NonNull Search<T> of(@NonNull List<T> items,
-                                     @NonNull Function<T, String[]> extractor,
-                                     double[] fieldWeights,
-                                     @NonNull List<SearchScoringProvider> providers) {
+    static <T> @NonNull Search<T> of(
+            @NonNull List<T> items,
+            @NonNull Function<T, String[]> extractor,
+            double[] fieldWeights,
+            @NonNull List<SearchScoringProvider> providers) {
         List<T> immutableItems = Collections.unmodifiableList(new ArrayList<>(items));
 
         List<String[]> documents = new ArrayList<>(immutableItems.size());
@@ -67,9 +82,7 @@ public final class HybridSearch<T> implements Search<T> {
             documents.add(extractor.apply(item));
         }
 
-        List<SearchScoringProvider> effectiveProviders = providers.isEmpty()
-                ? defaultProviders()
-                : providers;
+        List<SearchScoringProvider> effectiveProviders = providers.isEmpty() ? defaultProviders() : providers;
 
         List<SearchScorer> scorers = new ArrayList<>(effectiveProviders.size());
         for (SearchScoringProvider provider : effectiveProviders) {
@@ -115,25 +128,29 @@ public final class HybridSearch<T> implements Search<T> {
     private static final double[] DATABASE_FIELD_WEIGHTS = {3.0, 2.0};
     // fields: flowId, flowName, sourceId, flowDescription, databaseId, sourceAliases
     private static final double[] FLOW_ENTRY_FIELD_WEIGHTS = {4.0, 3.0, 3.0, 1.5, 1.0, 0.5};
+    // fields: componentId, componentName, codeLabels
+    private static final double[] COMPONENT_FIELD_WEIGHTS = {3.0, 2.0, 0.5};
+    // fields: codeId, codeLabel
+    private static final double[] CODE_FIELD_WEIGHTS = {3.0, 2.0};
 
     private static String[] extractFlowFields(Flow flow) {
         String id = flow.getRef().getId();
         String name = flow.getName();
         String description = flow.getDescription() != null ? flow.getDescription() : "";
-        return new String[]{id, name, description};
+        return new String[] {id, name, description};
     }
 
     private static String[] extractSourceFields(WebSource source, Languages languages) {
         String id = source.getId();
         String name = source.getName(languages);
         String aliases = String.join(" ", source.getAliases());
-        return new String[]{id, name != null ? name : "", aliases};
+        return new String[] {id, name != null ? name : "", aliases};
     }
 
     private static String[] extractDatabaseFields(Database database) {
         String id = database.getRef().getId();
         String name = database.getName();
-        return new String[]{id, name};
+        return new String[] {id, name};
     }
 
     private static String[] extractFlowEntryFields(FlowEntry entry, Languages languages) {
@@ -150,7 +167,22 @@ public final class HybridSearch<T> implements Search<T> {
         String sourceName = source.getName(languages);
         // Append source name to sourceId field so both contribute to the same slot weight
         String sourceIdAndName = sourceName != null ? sourceId + " " + sourceName : sourceId;
-        return new String[]{flowId, flowName, sourceIdAndName, flowDescription, databaseId, sourceAliases};
+        return new String[] {flowId, flowName, sourceIdAndName, flowDescription, databaseId, sourceAliases};
+    }
+
+    private static String[] extractComponentFields(Component component) {
+        String id = component.getId();
+        String name = component.getName();
+        // Code labels are indexed with a low weight so that a component can also
+        // be found through one of the values it enumerates
+        String codeLabels = String.join(" ", component.getCodes().values());
+        return new String[] {id, name != null ? name : "", codeLabels};
+    }
+
+    private static String[] extractCodeFields(Map.Entry<String, String> code) {
+        String id = code.getKey();
+        String label = code.getValue();
+        return new String[] {id, label != null ? label : ""};
     }
 
     // --- Default providers ---
@@ -159,4 +191,3 @@ public final class HybridSearch<T> implements Search<T> {
         return Arrays.asList(new Bm25ScoringProvider(), new TrigramScoringProvider());
     }
 }
-

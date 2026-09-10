@@ -40,6 +40,12 @@ public class WebFlowOptions extends WebSourceOptions {
                 .build();
     }
 
+    public ComponentRequest toComponentRequest() {
+        return ComponentRequest.builderOf(toDatabaseRequest(HasSearchQuery.NO_QUERY, HasLimit.NO_LIMIT))
+                .flow(getFlow())
+                .build();
+    }
+
     public static final Comparator<Series> SERIES_BY_KEY =
             Comparator.comparing(series -> series.getKey().toString());
 }

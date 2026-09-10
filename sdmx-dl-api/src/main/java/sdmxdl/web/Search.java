@@ -1,15 +1,17 @@
 package sdmxdl.web;
 
 import internal.sdmxdl.web.HybridSearch;
-import lombok.NonNull;
-import nbbrd.design.StaticFactoryMethod;
-import sdmxdl.Database;
-import sdmxdl.Flow;
-import sdmxdl.Languages;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import lombok.NonNull;
+import nbbrd.design.StaticFactoryMethod;
+import sdmxdl.Attribute;
+import sdmxdl.Database;
+import sdmxdl.Dimension;
+import sdmxdl.Flow;
+import sdmxdl.Languages;
 
 /**
  * Hybrid search engine for SDMX entities.
@@ -31,8 +33,7 @@ public interface Search<T> {
      * @param maxResults maximum number of results to return
      * @return ranked list of results, best match first; empty if no match
      */
-    @NonNull
-    List<Result<T>> search(@NonNull String query, int maxResults);
+    @NonNull List<Result<T>> search(@NonNull String query, int maxResults);
 
     /**
      * A search result pairing an item with its relevance score.
@@ -42,8 +43,7 @@ public interface Search<T> {
     @lombok.Value
     class Result<T> {
 
-        @lombok.NonNull
-        T item;
+        @lombok.NonNull T item;
 
         double score;
     }
@@ -94,8 +94,41 @@ public interface Search<T> {
      * @return a new search engine
      */
     @StaticFactoryMethod
-    static @NonNull Search<sdmxdl.web.FlowEntry> ofFlowEntries(@NonNull Collection<sdmxdl.web.FlowEntry> entries, @NonNull Languages languages) {
+    static @NonNull Search<sdmxdl.web.FlowEntry> ofFlowEntries(
+            @NonNull Collection<sdmxdl.web.FlowEntry> entries, @NonNull Languages languages) {
         return HybridSearch.ofFlowEntries(new ArrayList<>(entries), languages);
     }
-}
 
+    /**
+     * Creates a new hybrid search engine from the given dimensions.
+     *
+     * @param dimensions the dimensions to index
+     * @return a new search engine
+     */
+    @StaticFactoryMethod
+    static @NonNull Search<Dimension> ofDimensions(@NonNull Collection<Dimension> dimensions) {
+        return HybridSearch.ofDimensions(new ArrayList<>(dimensions));
+    }
+
+    /**
+     * Creates a new hybrid search engine from the given attributes.
+     *
+     * @param attributes the attributes to index
+     * @return a new search engine
+     */
+    @StaticFactoryMethod
+    static @NonNull Search<Attribute> ofAttributes(@NonNull Collection<Attribute> attributes) {
+        return HybridSearch.ofAttributes(new ArrayList<>(attributes));
+    }
+
+    /**
+     * Creates a new hybrid search engine from the given codes.
+     *
+     * @param codes a map of code id to code label
+     * @return a new search engine whose items are the entries of the given map
+     */
+    @StaticFactoryMethod
+    static @NonNull Search<Map.Entry<String, String>> ofCodes(@NonNull Map<String, String> codes) {
+        return HybridSearch.ofCodes(codes);
+    }
+}

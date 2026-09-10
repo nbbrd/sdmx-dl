@@ -2,10 +2,12 @@ package sdmxdl;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.*;
+import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import sdmxdl.web.Search;
@@ -81,13 +83,12 @@ public final class Provider<SOURCE extends Source> {
     public @NonNull List<Database> listDatabases(@NonNull SourceRequest request) throws IOException {
         try (Connection connection = manager.getConnection(source, request.getLanguages())) {
             Collection<Database> result = connection.getDatabases();
-            int max = request.getMaxResults() > 0 ? request.getMaxResults() : Integer.MAX_VALUE;
             return request.getQuery().isEmpty()
                     ? result.stream()
                             .sorted(comparing(HasReference::getRef))
-                            .limit(max)
+                            .limit(max(request))
                             .collect(toList())
-                    : Search.ofDatabases(result).search(request.getQuery(), max).stream()
+                    : Search.ofDatabases(result).search(request.getQuery(), max(request)).stream()
                             .map(Search.Result::getItem)
                             .collect(toList());
         }
@@ -111,15 +112,107 @@ public final class Provider<SOURCE extends Source> {
     public @NonNull List<Flow> listFlows(@NonNull DatabaseRequest request) throws IOException {
         try (Connection connection = manager.getConnection(source, request.getLanguages())) {
             Collection<Flow> result = connection.getFlows(request.getDatabase());
-            int max = request.getMaxResults() > 0 ? request.getMaxResults() : Integer.MAX_VALUE;
             return request.getQuery().isEmpty()
                     ? result.stream()
                             .sorted(comparing(HasReference::getRef))
-                            .limit(max)
+                            .limit(max(request))
                             .collect(toList())
-                    : Search.ofFlows(result).search(request.getQuery(), max).stream()
+                    : Search.ofFlows(result).search(request.getQuery(), max(request)).stream()
                             .map(Search.Result::getItem)
                             .collect(toList());
+        }
+    }
+
+    /**
+     * Lists dimensions of the structure associated with the requested flow.
+     *
+     * <p>When {@link ComponentRequest#getQuery()} is empty, entries are returned sorted by
+     * index and truncated to {@link ComponentRequest#getMaxResults()} when a positive
+     * limit is set.
+     *
+     * <p>When a non-empty query is provided, entries are ranked by relevance using
+     * {@link sdmxdl.web.Search#ofDimensions(java.util.Collection)} and returned best match
+     * first, limited to {@link ComponentRequest#getMaxResults()} results.
+     *
+     * @param request component-level request parameters (non-null)
+     * @return non-null list of dimensions (possibly empty), sorted or ranked depending on the query
+     * @throws IOException if structure retrieval fails due to I/O issues
+     */
+    public @NonNull List<Dimension> listDimensions(@NonNull ComponentRequest request) throws IOException {
+        try (Connection connection = manager.getConnection(source, request.getLanguages())) {
+            List<Dimension> result = connection
+                    .getMeta(request.getDatabase(), request.getFlow())
+                    .getStructure()
+                    .getDimensions();
+            return request.getQuery().isEmpty()
+                    ? result.stream().limit(max(request)).collect(toList())
+                    : Search.ofDimensions(result).search(request.getQuery(), max(request)).stream()
+                            .map(Search.Result::getItem)
+                            .collect(toList());
+        }
+    }
+
+    /**
+     * Lists attributes of the structure associated with the requested flow.
+     *
+     * <p>When {@link ComponentRequest#getQuery()} is empty, entries are returned sorted by
+     * component id and truncated to {@link ComponentRequest#getMaxResults()} when a positive
+     * limit is set.
+     *
+     * <p>When a non-empty query is provided, entries are ranked by relevance using
+     * {@link sdmxdl.web.Search#ofAttributes(java.util.Collection)} and returned best match
+     * first, limited to {@link ComponentRequest#getMaxResults()} results.
+     *
+     * @param request component-level request parameters (non-null)
+     * @return non-null list of attributes (possibly empty), sorted or ranked depending on the query
+     * @throws IOException if structure retrieval fails due to I/O issues
+     */
+    public @NonNull List<Attribute> listAttributes(@NonNull ComponentRequest request) throws IOException {
+        try (Connection connection = manager.getConnection(source, request.getLanguages())) {
+            Set<Attribute> result = connection
+                    .getMeta(request.getDatabase(), request.getFlow())
+                    .getStructure()
+                    .getAttributes();
+            return request.getQuery().isEmpty()
+                    ? result.stream()
+                            .sorted(comparing(Component::getId))
+                            .limit(max(request))
+                            .collect(toList())
+                    : Search.ofAttributes(result).search(request.getQuery(), max(request)).stream()
+                            .map(Search.Result::getItem)
+                            .collect(toList());
+        }
+    }
+
+    /**
+     * Lists codes of the codelist associated with the requested concept (a dimension or
+     * attribute id) within the structure of the requested flow.
+     *
+     * <p>When no dimension or attribute matches {@link ConceptRequest#getConcept()}, or when
+     * the matching component is not coded, an empty map is returned.
+     *
+     * <p>When {@link ConceptRequest#getQuery()} is empty, entries are returned in codelist
+     * order and truncated to {@link ConceptRequest#getMaxResults()} when a positive limit is
+     * set.
+     *
+     * <p>When a non-empty query is provided, entries are ranked by relevance using
+     * {@link sdmxdl.web.Search#ofCodes(java.util.Map)} and returned best match first, limited
+     * to {@link ConceptRequest#getMaxResults()} results.
+     *
+     * @param request concept-level request parameters (non-null)
+     * @return non-null map of code id to code label (possibly empty), ordered or ranked depending on the query
+     * @throws IOException if structure retrieval fails due to I/O issues
+     */
+    public @NonNull Map<String, String> listCodes(@NonNull ConceptRequest request) throws IOException {
+        try (Connection connection = manager.getConnection(source, request.getLanguages())) {
+            Map<String, String> result = loadComponent(connection, request);
+            return request.getQuery().isEmpty()
+                    ? result.entrySet().stream()
+                            .limit(max(request))
+                            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, LinkedHashMap::new))
+                    : Search.ofCodes(result).search(request.getQuery(), max(request)).stream()
+                            .map(Search.Result::getItem)
+                            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, LinkedHashMap::new));
         }
     }
 
@@ -147,5 +240,19 @@ public final class Provider<SOURCE extends Source> {
         try (Connection connection = manager.getConnection(source, request.getLanguages())) {
             return connection.getData(request.getDatabase(), request.getFlow(), request.toQuery());
         }
+    }
+
+    private static int max(HasLimit request) {
+        return request.getMaxResults() > 0 ? request.getMaxResults() : Integer.MAX_VALUE;
+    }
+
+    private static Map<String, String> loadComponent(Connection connection, ConceptRequest request) throws IOException {
+        Structure dsd =
+                connection.getMeta(request.getDatabase(), request.getFlow()).getStructure();
+        return Stream.concat(dsd.getDimensions().stream(), dsd.getAttributes().stream())
+                .filter(component -> component.getId().equals(request.getConcept()))
+                .map(Component::getCodes)
+                .findFirst()
+                .orElseThrow(() -> new IOException("Cannot find concept '" + request.getConcept() + "'"));
     }
 }

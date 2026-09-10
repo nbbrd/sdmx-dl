@@ -16,17 +16,14 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.SortOptions;
 import internal.sdmxdl.cli.WebConceptOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
-import nbbrd.io.text.Formatter;
-import picocli.CommandLine;
-
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.stream.Stream;
+import picocli.CommandLine;
 
 /**
  * @author Philippe Charles
@@ -40,9 +37,6 @@ public final class ListCodesCommand implements Callable<Void> {
     @CommandLine.Mixin
     private final RFC4180OutputOptions csv = new RFC4180OutputOptions();
 
-    @CommandLine.Mixin
-    private SortOptions sort;
-
     @Override
     public Void call() throws Exception {
         getTable().write(csv, getRows());
@@ -50,13 +44,16 @@ public final class ListCodesCommand implements Callable<Void> {
     }
 
     private CsvTable<Map.Entry<String, String>> getTable() {
-        CsvTable.Builder<Map.Entry<String, String>> result = CsvTable.builder();
-        result.columnOf("Code", Map.Entry::getKey);
-        result.columnOf("Label", Map.Entry::getValue);
-        return result.build();
+        return CsvTable.<Map.Entry<String, String>>builder()
+                .columnOf("Code", Map.Entry::getKey)
+                .columnOf("Label", Map.Entry::getValue)
+                .build();
     }
 
-    private Stream<Map.Entry<String, String>> getRows() throws IOException {
-        return sort.applySort(web.loadComponent(web.loadManager()).getCodes().entrySet(), Map.Entry.comparingByKey());
+    private Set<Map.Entry<String, String>> getRows() throws IOException {
+        return web.loadManager()
+                .usingName(web.getSource())
+                .listCodes(web.toConceptRequest())
+                .entrySet();
     }
 }

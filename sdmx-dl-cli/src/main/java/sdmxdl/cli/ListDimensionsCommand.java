@@ -16,21 +16,20 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.SortOptions;
 import internal.sdmxdl.cli.WebFlowOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
-import nbbrd.io.text.Formatter;
-import org.jspecify.annotations.Nullable;
-import picocli.CommandLine;
-import sdmxdl.Structure;
-import sdmxdl.Dimension;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.stream.IntStream;
+import java.util.function.ToIntFunction;
 import java.util.stream.Stream;
+import nbbrd.io.text.Formatter;
+import org.jspecify.annotations.Nullable;
+import picocli.CommandLine;
+import sdmxdl.Dimension;
+import sdmxdl.Provider;
+import sdmxdl.web.WebSource;
 
 /**
  * @author Philippe Charles
@@ -44,9 +43,6 @@ public final class ListDimensionsCommand implements Callable<Void> {
     @CommandLine.Mixin
     private final RFC4180OutputOptions csv = new RFC4180OutputOptions();
 
-    @CommandLine.Mixin
-    private SortOptions sort;
-
     @Override
     public Void call() throws Exception {
         getTable().write(csv, getRows());
@@ -54,8 +50,7 @@ public final class ListDimensionsCommand implements Callable<Void> {
     }
 
     private CsvTable<IndexedComponent> getTable() {
-        return CsvTable
-                .builderOf(IndexedComponent.class)
+        return CsvTable.builderOf(IndexedComponent.class)
                 .columnOf("Name", IndexedComponent::getId)
                 .columnOf("Label", IndexedComponent::getName)
                 .columnOf("Coded", IndexedComponent::isCoded, Formatter.onBoolean())
@@ -64,24 +59,22 @@ public final class ListDimensionsCommand implements Callable<Void> {
     }
 
     private Stream<IndexedComponent> getRows() throws IOException {
-        return getDimensions(web.loadManager().usingName(web.getSource()).getMeta(web.toFlowRequest()).getStructure());
+        Provider<WebSource> provider = web.loadManager().usingName(web.getSource());
+        return getDimensions(
+                provider.getMeta(web.toFlowRequest()).getStructure().getDimensions()::indexOf, // FIXME
+                provider.listDimensions(web.toComponentRequest()));
     }
 
-    private Stream<IndexedComponent> getDimensions(Structure dsd) {
-        List<Dimension> dimensions = dsd.getDimensions();
-        return IntStream
-                .range(0, dimensions.size())
-                .mapToObj(i -> new IndexedComponent(i, dimensions.get(i)));
+    private Stream<IndexedComponent> getDimensions(ToIntFunction<Dimension> index, List<Dimension> dimensions) {
+        return dimensions.stream().map(dimension -> new IndexedComponent(index.applyAsInt(dimension), dimension));
     }
 
     @lombok.Value
     private static class IndexedComponent {
 
-        @Nullable
-        Integer indexOrNull;
+        @Nullable Integer indexOrNull;
 
-        @lombok.NonNull
-        @lombok.experimental.Delegate
+        @lombok.NonNull @lombok.experimental.Delegate
         Dimension component;
     }
 }

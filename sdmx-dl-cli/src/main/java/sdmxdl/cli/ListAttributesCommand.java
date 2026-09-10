@@ -16,19 +16,15 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.SortOptions;
 import internal.sdmxdl.cli.WebFlowOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.Callable;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 import sdmxdl.Attribute;
-import sdmxdl.Structure;
-
-import java.io.IOException;
-import java.util.Comparator;
-import java.util.concurrent.Callable;
-import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
@@ -42,9 +38,6 @@ public final class ListAttributesCommand implements Callable<Void> {
     @CommandLine.Mixin
     private final RFC4180OutputOptions csv = new RFC4180OutputOptions();
 
-    @CommandLine.Mixin
-    private SortOptions sort;
-
     @Override
     public Void call() throws Exception {
         getTable().write(csv, getRows());
@@ -52,8 +45,7 @@ public final class ListAttributesCommand implements Callable<Void> {
     }
 
     private CsvTable<Attribute> getTable() {
-        return CsvTable
-                .builderOf(Attribute.class)
+        return CsvTable.builderOf(Attribute.class)
                 .columnOf("Name", Attribute::getId)
                 .columnOf("Label", Attribute::getName)
                 .columnOf("Coded", Attribute::isCoded, Formatter.onBoolean())
@@ -61,13 +53,7 @@ public final class ListAttributesCommand implements Callable<Void> {
                 .build();
     }
 
-    private Stream<Attribute> getRows() throws IOException {
-        return getAttributes(web.loadManager().usingName(web.getSource()).getMeta(web.toFlowRequest()).getStructure());
+    private List<Attribute> getRows() throws IOException {
+        return web.loadManager().usingName(web.getSource()).listAttributes(web.toComponentRequest());
     }
-
-    private Stream<Attribute> getAttributes(Structure dsd) {
-        return sort.applySort(dsd.getAttributes(), BY_RELATIONSHIP_AND_ID);
-    }
-
-    private static final Comparator<Attribute> BY_RELATIONSHIP_AND_ID = Comparator.comparing(Attribute::getRelationship).reversed().thenComparing(Attribute::getId);
 }
