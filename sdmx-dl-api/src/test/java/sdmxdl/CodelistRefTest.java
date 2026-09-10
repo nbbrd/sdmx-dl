@@ -1,11 +1,11 @@
 package sdmxdl;
 
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.*;
 import static sdmxdl.CodelistRef.of;
 import static sdmxdl.ResourceRef.ALL_AGENCIES;
 import static sdmxdl.ResourceRef.LATEST_VERSION;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Philippe Charles
@@ -48,5 +48,18 @@ public class CodelistRefTest {
                 .isEqualTo(of("world", "CL_FREQ", "123"))
                 .isNotEqualTo(of("world", "CL_OTHER", "123"));
     }
-}
 
+    @Test
+    public void testCompareTo() {
+        CodelistRef aa1 = of("A", "A", "1");
+        CodelistRef aa2 = of("A", "A", "2");
+        CodelistRef ab1 = of("A", "B", "1");
+        CodelistRef ba1 = of("B", "A", "1");
+
+        assertThat(aa1).isEqualByComparingTo(of("A", "A", "1"));
+        assertThat(aa1).isLessThan(aa2);
+        assertThat(aa2).isLessThan(ab1);
+        assertThat(ab1).isLessThan(ba1);
+        assertThat(ba1).isGreaterThan(aa1);
+    }
+}

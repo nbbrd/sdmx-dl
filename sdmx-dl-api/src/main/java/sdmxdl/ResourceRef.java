@@ -26,25 +26,18 @@ import org.jspecify.annotations.Nullable;
  *
  * @author Philippe Charles
  */
-@SealedType({
-        StructureRef.class,
-        FlowRef.class,
-        CodelistRef.class
-})
-public abstract class ResourceRef<T extends ResourceRef<T>> implements HasShortString {
+@SealedType({StructureRef.class, FlowRef.class, CodelistRef.class})
+public abstract class ResourceRef<T extends ResourceRef<T>> implements HasShortString, Reference<T> {
 
     public static final String ALL_AGENCIES = "all";
     public static final String LATEST_VERSION = "latest";
     private static final char SEP = ',';
 
-    @NonNull
-    public abstract String getAgency();
+    @NonNull public abstract String getAgency();
 
-    @NonNull
-    public abstract String getId();
+    @NonNull public abstract String getId();
 
-    @NonNull
-    public abstract String getVersion();
+    @NonNull public abstract String getVersion();
 
     public boolean containsRef(@NonNull Resource<T> that) {
         return contains(that.getRef());
@@ -53,7 +46,8 @@ public abstract class ResourceRef<T extends ResourceRef<T>> implements HasShortS
     public boolean contains(@NonNull T that) {
         return (this.getAgency().equals(ALL_AGENCIES) || this.getAgency().equals(that.getAgency()))
                 && (this.getId().equals(that.getId()))
-                && (this.getVersion().equals(LATEST_VERSION) || this.getVersion().equals(that.getVersion()));
+                && (this.getVersion().equals(LATEST_VERSION)
+                        || this.getVersion().equals(that.getVersion()));
     }
 
     public boolean equalsRef(@NonNull Resource<T> that) {
@@ -62,21 +56,22 @@ public abstract class ResourceRef<T extends ResourceRef<T>> implements HasShortS
 
     @Override
     public @NonNull String toShortString() {
-        return ALL_AGENCIES.equals(getAgency()) && LATEST_VERSION.equals(getVersion())
-                ? getId() : toString();
+        return ALL_AGENCIES.equals(getAgency()) && LATEST_VERSION.equals(getVersion()) ? getId() : toString();
     }
 
-    @NonNull
-    protected static String toString(ResourceRef<?> ref) {
+    @NonNull protected static String toString(ResourceRef<?> ref) {
         return ref.getAgency() + SEP + ref.getId() + SEP + ref.getVersion();
     }
 
-    @NonNull
-    protected static <T extends ResourceRef<T>> T create(@NonNull CharSequence input, @NonNull Factory<T> factory) throws IllegalArgumentException {
+    @NonNull protected static <T extends ResourceRef<T>> T create(@NonNull CharSequence input, @NonNull Factory<T> factory)
+            throws IllegalArgumentException {
         String[] items = Chars.splitToArray(input.toString(), SEP);
         switch (items.length) {
             case 3:
-                return factory.create(Chars.emptyToDefault(items[0], ALL_AGENCIES), items[1], Chars.emptyToDefault(items[2], LATEST_VERSION));
+                return factory.create(
+                        Chars.emptyToDefault(items[0], ALL_AGENCIES),
+                        items[1],
+                        Chars.emptyToDefault(items[2], LATEST_VERSION));
             case 2:
                 return factory.create(Chars.emptyToDefault(items[0], ALL_AGENCIES), items[1], LATEST_VERSION);
             case 1:
@@ -86,17 +81,20 @@ public abstract class ResourceRef<T extends ResourceRef<T>> implements HasShortS
         }
     }
 
-    @NonNull
-    protected static <T extends ResourceRef<T>> T of(@Nullable String agencyId, @NonNull String id, @Nullable String version, @NonNull Factory<T> factory) throws IllegalArgumentException {
+    @NonNull protected static <T extends ResourceRef<T>> T of(
+            @Nullable String agencyId, @NonNull String id, @Nullable String version, @NonNull Factory<T> factory)
+            throws IllegalArgumentException {
         if (Chars.contains(id, SEP)) {
             throw new IllegalArgumentException(id);
         }
-        return factory.create(Chars.nullOrEmptyToDefault(agencyId, ALL_AGENCIES), id, Chars.nullOrEmptyToDefault(version, LATEST_VERSION));
+        return factory.create(
+                Chars.nullOrEmptyToDefault(agencyId, ALL_AGENCIES),
+                id,
+                Chars.nullOrEmptyToDefault(version, LATEST_VERSION));
     }
 
     protected interface Factory<T extends ResourceRef<T>> {
 
-        @NonNull
-        T create(@NonNull String agencyId, @NonNull String id, @NonNull String version);
+        @NonNull T create(@NonNull String agencyId, @NonNull String id, @NonNull String version);
     }
 }

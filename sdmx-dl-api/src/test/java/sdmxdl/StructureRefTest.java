@@ -16,12 +16,12 @@
  */
 package sdmxdl;
 
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.*;
 import static sdmxdl.ResourceRef.ALL_AGENCIES;
 import static sdmxdl.ResourceRef.LATEST_VERSION;
 import static sdmxdl.StructureRef.of;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Philippe Charles
@@ -87,17 +87,27 @@ public class StructureRefTest {
 
     @Test
     public void testEquals() {
-        assertThat(of("", "", ""))
-                .isEqualTo(of("", "", ""));
+        assertThat(of("", "", "")).isEqualTo(of("", "", ""));
 
-        assertThat(of("world", "hello", "123"))
-                .isEqualTo(of("world", "hello", "123"));
+        assertThat(of("world", "hello", "123")).isEqualTo(of("world", "hello", "123"));
 
-        assertThat(of("world", "other", "123"))
-                .isNotEqualTo(of("world", "hello", "123"));
+        assertThat(of("world", "other", "123")).isNotEqualTo(of("world", "hello", "123"));
 
-        assertThat(of("", "", ""))
-                .isNotEqualTo(of("world", "hello", "123"));
+        assertThat(of("", "", "")).isNotEqualTo(of("world", "hello", "123"));
+    }
+
+    @Test
+    public void testCompareTo() {
+        StructureRef aa1 = of("A", "A", "1");
+        StructureRef aa2 = of("A", "A", "2");
+        StructureRef ab1 = of("A", "B", "1");
+        StructureRef ba1 = of("B", "A", "1");
+
+        assertThat(aa1).isEqualByComparingTo(of("A", "A", "1"));
+        assertThat(aa1).isLessThan(aa2);
+        assertThat(aa2).isLessThan(ab1);
+        assertThat(ab1).isLessThan(ba1);
+        assertThat(ba1).isGreaterThan(aa1);
     }
 
     @Test
@@ -134,8 +144,10 @@ public class StructureRefTest {
         assertThat(of("ECB", "EXR", LATEST_VERSION).containsRef(structOf(x))).isTrue();
         assertThat(x.containsRef(structOf(of("ECB", "EXR", LATEST_VERSION)))).isFalse();
 
-        assertThat(of(ALL_AGENCIES, "EXR", LATEST_VERSION).containsRef(structOf(x))).isTrue();
-        assertThat(x.containsRef(structOf(of(ALL_AGENCIES, "EXR", LATEST_VERSION)))).isFalse();
+        assertThat(of(ALL_AGENCIES, "EXR", LATEST_VERSION).containsRef(structOf(x)))
+                .isTrue();
+        assertThat(x.containsRef(structOf(of(ALL_AGENCIES, "EXR", LATEST_VERSION))))
+                .isFalse();
     }
 
     @Test
@@ -153,8 +165,10 @@ public class StructureRefTest {
         assertThat(of("ECB", "EXR", LATEST_VERSION).equalsRef(structOf(x))).isFalse();
         assertThat(x.equalsRef(structOf(of("ECB", "EXR", LATEST_VERSION)))).isFalse();
 
-        assertThat(of(ALL_AGENCIES, "EXR", LATEST_VERSION).equalsRef(structOf(x))).isFalse();
-        assertThat(x.equalsRef(structOf(of(ALL_AGENCIES, "EXR", LATEST_VERSION)))).isFalse();
+        assertThat(of(ALL_AGENCIES, "EXR", LATEST_VERSION).equalsRef(structOf(x)))
+                .isFalse();
+        assertThat(x.equalsRef(structOf(of(ALL_AGENCIES, "EXR", LATEST_VERSION))))
+                .isFalse();
     }
 
     private Structure structOf(StructureRef ref) {

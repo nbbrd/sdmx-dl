@@ -73,7 +73,7 @@ public final class Provider<SOURCE extends Source> {
     public @NonNull List<Database> listDatabases(@NonNull SourceRequest request) throws IOException {
         try (Connection connection = manager.getConnection(source, request.getLanguages())) {
             return connection.getDatabases().stream()
-                    .sorted(Comparator.comparing(o -> o.getRef().toString()))
+                    .sorted(Comparator.comparing(Database::getRef))
                     .collect(toList());
         }
     }
@@ -90,7 +90,7 @@ public final class Provider<SOURCE extends Source> {
     public @NonNull List<Flow> listFlows(@NonNull DatabaseRequest request) throws IOException {
         try (Connection connection = manager.getConnection(source, request.getLanguages())) {
             return connection.getFlows(request.getDatabase()).stream()
-                    .sorted(Comparator.comparing(o -> o.getRef().toString()))
+                    .sorted(Comparator.comparing(Flow::getRef))
                     .collect(toList());
         }
     }

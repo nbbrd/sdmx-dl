@@ -16,12 +16,12 @@
  */
 package sdmxdl;
 
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.*;
 import static sdmxdl.FlowRef.of;
 import static sdmxdl.ResourceRef.ALL_AGENCIES;
 import static sdmxdl.ResourceRef.LATEST_VERSION;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Philippe Charles
@@ -86,17 +86,27 @@ public class FlowRefTest {
 
     @Test
     public void testEquals() {
-        assertThat(of("", "", ""))
-                .isEqualTo(of("", "", ""));
+        assertThat(of("", "", "")).isEqualTo(of("", "", ""));
 
-        assertThat(of("world", "hello", "123"))
-                .isEqualTo(of("world", "hello", "123"));
+        assertThat(of("world", "hello", "123")).isEqualTo(of("world", "hello", "123"));
 
-        assertThat(of("world", "other", "123"))
-                .isNotEqualTo(of("world", "hello", "123"));
+        assertThat(of("world", "other", "123")).isNotEqualTo(of("world", "hello", "123"));
 
-        assertThat(of("", "", ""))
-                .isNotEqualTo(of("world", "hello", "123"));
+        assertThat(of("", "", "")).isNotEqualTo(of("world", "hello", "123"));
+    }
+
+    @Test
+    public void testCompareTo() {
+        FlowRef aa1 = of("A", "A", "1");
+        FlowRef aa2 = of("A", "A", "2");
+        FlowRef ab1 = of("A", "B", "1");
+        FlowRef ba1 = of("B", "A", "1");
+
+        assertThat(aa1).isEqualByComparingTo(of("A", "A", "1"));
+        assertThat(aa1).isLessThan(aa2);
+        assertThat(aa2).isLessThan(ab1);
+        assertThat(ab1).isLessThan(ba1);
+        assertThat(ba1).isGreaterThan(aa1);
     }
 
     @Test
@@ -133,8 +143,10 @@ public class FlowRefTest {
         assertThat(of("ECB", "EXR", LATEST_VERSION).containsRef(flowOf(x))).isTrue();
         assertThat(x.containsRef(flowOf(of("ECB", "EXR", LATEST_VERSION)))).isFalse();
 
-        assertThat(of(ALL_AGENCIES, "EXR", LATEST_VERSION).containsRef(flowOf(x))).isTrue();
-        assertThat(x.containsRef(flowOf(of(ALL_AGENCIES, "EXR", LATEST_VERSION)))).isFalse();
+        assertThat(of(ALL_AGENCIES, "EXR", LATEST_VERSION).containsRef(flowOf(x)))
+                .isTrue();
+        assertThat(x.containsRef(flowOf(of(ALL_AGENCIES, "EXR", LATEST_VERSION))))
+                .isFalse();
     }
 
     @Test
@@ -157,6 +169,10 @@ public class FlowRefTest {
     }
 
     private Flow flowOf(FlowRef ref) {
-        return Flow.builder().ref(ref).structureRef(StructureRef.parse("")).name("").build();
+        return Flow.builder()
+                .ref(ref)
+                .structureRef(StructureRef.parse(""))
+                .name("")
+                .build();
     }
 }

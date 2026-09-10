@@ -8,10 +8,9 @@ import nbbrd.design.StaticFactoryMethod;
 @RepresentableAsString
 @lombok.Value
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class DatabaseRef {
+public class DatabaseRef implements Reference<DatabaseRef> {
 
-    @NonNull
-    String id;
+    @NonNull String id;
 
     @Override
     public String toString() {
