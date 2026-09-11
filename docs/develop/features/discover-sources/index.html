@@ -14,7 +14,7 @@
 
   <meta name="description" content="See which data providers sdmx-dl can connect to, before picking one to query.
 API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); manager.getSources().values().stream() .filter(source -&gt; !source.isAlias()) .forEach(source -&gt; IO.println(source.getId())); } CLI ✅ full support
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.*; void main() throws Exception { SdmxWebManager .ofServiceLoader() .listSources(WebSourcesRequest.DEFAULT) .forEach(source -&gt; IO.println(source.getId())); } CLI ✅ full support
 sdmx-dl list sources WS ✅ full support
 REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559/sdmx-dl/sources \ --data &#34;{}&#34; gRPC grpcurl -d &#39;{}&#39; -plaintext localhost:4557 sdmxdl.grpc.SdmxWebManager.GetSources Notes Some sources are aliases of others (e.g. renamed or mirrored endpoints); the API exposes WebSource.isAlias() to filter them out, while the CLI table lists them alongside their target. Related features Search sources - find a source when you don&rsquo;t know its exact ID. Discover flows " />
 
@@ -44,7 +44,7 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
   <meta property="og:site_name" content="sdmx-dl" />
   <meta property="og:description" content="See which data providers sdmx-dl can connect to, before picking one to query.
 API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); manager.getSources().values().stream() .filter(source -&gt; !source.isAlias()) .forEach(source -&gt; IO.println(source.getId())); } CLI ✅ full support
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.*; void main() throws Exception { SdmxWebManager .ofServiceLoader() .listSources(WebSourcesRequest.DEFAULT) .forEach(source -&gt; IO.println(source.getId())); } CLI ✅ full support
 sdmx-dl list sources WS ✅ full support
 REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559/sdmx-dl/sources \ --data &#34;{}&#34; gRPC grpcurl -d &#39;{}&#39; -plaintext localhost:4557 sdmxdl.grpc.SdmxWebManager.GetSources Notes Some sources are aliases of others (e.g. renamed or mirrored endpoints); the API exposes WebSource.isAlias() to filter them out, while the CLI table lists them alongside their target. Related features Search sources - find a source when you don’t know its exact ID. Discover flows " />
 <meta property="og:type" content="article" />
@@ -53,7 +53,7 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
 <meta property="article:section" content="Features" />
     <meta
       property="article:modified_time"
-      content="2026-09-11T15:39:29+02:00"
+      content="2026-09-11T16:52:32+02:00"
     />
 
 
@@ -61,7 +61,7 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
 <meta name="twitter:title" content="Discover sources" />
   <meta name="twitter:description" content="See which data providers sdmx-dl can connect to, before picking one to query.
 API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); manager.getSources().values().stream() .filter(source -&gt; !source.isAlias()) .forEach(source -&gt; IO.println(source.getId())); } CLI ✅ full support
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.*; void main() throws Exception { SdmxWebManager .ofServiceLoader() .listSources(WebSourcesRequest.DEFAULT) .forEach(source -&gt; IO.println(source.getId())); } CLI ✅ full support
 sdmx-dl list sources WS ✅ full support
 REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559/sdmx-dl/sources \ --data &#34;{}&#34; gRPC grpcurl -d &#39;{}&#39; -plaintext localhost:4557 sdmxdl.grpc.SdmxWebManager.GetSources Notes Some sources are aliases of others (e.g. renamed or mirrored endpoints); the API exposes WebSource.isAlias() to filter them out, while the CLI table lists them alongside their target. Related features Search sources - find a source when you don’t know its exact ID. Discover flows " />
 
@@ -74,8 +74,8 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
       "name": "Discover sources",
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/features/discover-sources/",
       "headline": "Discover sources",
-      "description": "See which data providers sdmx-dl can connect to, before picking one to query.\nAPI ✅ full support\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); manager.getSources().values().stream() .filter(source -\u003e !source.isAlias()) .forEach(source -\u003e IO.println(source.getId())); } CLI ✅ full support\nsdmx-dl list sources WS ✅ full support\nREST curl -X POST \\ -H \u0022Content-Type: application\/json\u0022 \\ localhost:4559\/sdmx-dl\/sources \\ --data \u0022{}\u0022 gRPC grpcurl -d \u0027{}\u0027 -plaintext localhost:4557 sdmxdl.grpc.SdmxWebManager.GetSources Notes Some sources are aliases of others (e.g. renamed or mirrored endpoints); the API exposes WebSource.isAlias() to filter them out, while the CLI table lists them alongside their target. Related features Search sources - find a source when you don’t know its exact ID. Discover flows ",
-      "wordCount": "117",
+      "description": "See which data providers sdmx-dl can connect to, before picking one to query.\nAPI ✅ full support\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.*; void main() throws Exception { SdmxWebManager .ofServiceLoader() .listSources(WebSourcesRequest.DEFAULT) .forEach(source -\u003e IO.println(source.getId())); } CLI ✅ full support\nsdmx-dl list sources WS ✅ full support\nREST curl -X POST \\ -H \u0022Content-Type: application\/json\u0022 \\ localhost:4559\/sdmx-dl\/sources \\ --data \u0022{}\u0022 gRPC grpcurl -d \u0027{}\u0027 -plaintext localhost:4557 sdmxdl.grpc.SdmxWebManager.GetSources Notes Some sources are aliases of others (e.g. renamed or mirrored endpoints); the API exposes WebSource.isAlias() to filter them out, while the CLI table lists them alongside their target. Related features Search sources - find a source when you don’t know its exact ID. Discover flows ",
+      "wordCount": "112",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -86,7 +86,7 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-11T15:39:29.00Z",
+      "dateModified": "2026-09-11T16:52:32.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1612,11 +1612,10 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
 </span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.*</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w"> </span><span class="n">manager</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SdmxWebManager</span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">();</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">manager</span><span class="p">.</span><span class="na">getSources</span><span class="p">().</span><span class="na">values</span><span class="p">().</span><span class="na">stream</span><span class="p">()</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">filter</span><span class="p">(</span><span class="n">source</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="o">!</span><span class="n">source</span><span class="p">.</span><span class="na">isAlias</span><span class="p">())</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">source</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">source</span><span class="p">.</span><span class="na">getId</span><span class="p">()));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">listSources</span><span class="p">(</span><span class="n">WebSourcesRequest</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">source</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">source</span><span class="p">.</span><span class="na">getId</span><span class="p">()));</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></div></div>
     <input

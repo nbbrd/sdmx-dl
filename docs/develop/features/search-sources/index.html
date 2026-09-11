@@ -14,7 +14,7 @@
 
   <meta name="description" content="Find a source by name or topic when you don&rsquo;t know its exact ID, with typo tolerance.
 API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.Languages; import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); Search&lt;WebSource&gt; search = Search.ofSources(manager.getSources().values(), Languages.ANY); search.search(&#34;european central&#34;, 5) .forEach(result -&gt; IO.println(result.getItem().getId())); } CLI ✅ full support
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.*; void main() throws Exception { SdmxWebManager .ofServiceLoader() .listSources(WebSourcesRequest.builder() .query(&#34;european central&#34;) .maxResults(5) .build()) .forEach(source -&gt; IO.println(source.getId())); } CLI ✅ full support
 sdmx-dl search sources &#34;european central&#34; -n 5 WS ✅ full support" />
 
     <title>Search sources | sdmx-dl</title>
@@ -43,7 +43,7 @@ sdmx-dl search sources &#34;european central&#34; -n 5 WS ✅ full support" />
   <meta property="og:site_name" content="sdmx-dl" />
   <meta property="og:description" content="Find a source by name or topic when you don’t know its exact ID, with typo tolerance.
 API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.Languages; import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); Search&lt;WebSource&gt; search = Search.ofSources(manager.getSources().values(), Languages.ANY); search.search(&#34;european central&#34;, 5) .forEach(result -&gt; IO.println(result.getItem().getId())); } CLI ✅ full support
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.*; void main() throws Exception { SdmxWebManager .ofServiceLoader() .listSources(WebSourcesRequest.builder() .query(&#34;european central&#34;) .maxResults(5) .build()) .forEach(source -&gt; IO.println(source.getId())); } CLI ✅ full support
 sdmx-dl search sources &#34;european central&#34; -n 5 WS ✅ full support" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/features/search-sources/" />
@@ -51,7 +51,7 @@ sdmx-dl search sources &#34;european central&#34; -n 5 WS ✅ full support" />
 <meta property="article:section" content="Features" />
     <meta
       property="article:modified_time"
-      content="2026-09-11T15:39:29+02:00"
+      content="2026-09-11T16:52:32+02:00"
     />
 
 
@@ -59,7 +59,7 @@ sdmx-dl search sources &#34;european central&#34; -n 5 WS ✅ full support" />
 <meta name="twitter:title" content="Search sources" />
   <meta name="twitter:description" content="Find a source by name or topic when you don’t know its exact ID, with typo tolerance.
 API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.Languages; import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); Search&lt;WebSource&gt; search = Search.ofSources(manager.getSources().values(), Languages.ANY); search.search(&#34;european central&#34;, 5) .forEach(result -&gt; IO.println(result.getItem().getId())); } CLI ✅ full support
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.*; void main() throws Exception { SdmxWebManager .ofServiceLoader() .listSources(WebSourcesRequest.builder() .query(&#34;european central&#34;) .maxResults(5) .build()) .forEach(source -&gt; IO.println(source.getId())); } CLI ✅ full support
 sdmx-dl search sources &#34;european central&#34; -n 5 WS ✅ full support" />
 
 
@@ -71,8 +71,8 @@ sdmx-dl search sources &#34;european central&#34; -n 5 WS ✅ full support" />
       "name": "Search sources",
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/features/search-sources/",
       "headline": "Search sources",
-      "description": "Find a source by name or topic when you don’t know its exact ID, with typo tolerance.\nAPI ✅ full support\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.Languages; import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); Search\u003cWebSource\u003e search = Search.ofSources(manager.getSources().values(), Languages.ANY); search.search(\u0022european central\u0022, 5) .forEach(result -\u003e IO.println(result.getItem().getId())); } CLI ✅ full support\nsdmx-dl search sources \u0022european central\u0022 -n 5 WS ✅ full support",
-      "wordCount": "159",
+      "description": "Find a source by name or topic when you don’t know its exact ID, with typo tolerance.\nAPI ✅ full support\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.*; void main() throws Exception { SdmxWebManager .ofServiceLoader() .listSources(WebSourcesRequest.builder() .query(\u0022european central\u0022) .maxResults(5) .build()) .forEach(source -\u003e IO.println(source.getId())); } CLI ✅ full support\nsdmx-dl search sources \u0022european central\u0022 -n 5 WS ✅ full support",
+      "wordCount": "165",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -83,7 +83,7 @@ sdmx-dl search sources &#34;european central&#34; -n 5 WS ✅ full support" />
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-11T15:39:29.00Z",
+      "dateModified": "2026-09-11T16:52:32.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1606,15 +1606,16 @@ sdmx-dl search sources &#34;european central&#34; -n 5 WS ✅ full support" />
       <p class="feature-status">✅ <strong>full support</strong></p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.Languages</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.*</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w"> </span><span class="n">manager</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SdmxWebManager</span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">();</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Search</span><span class="o">&lt;</span><span class="n">WebSource</span><span class="o">&gt;</span><span class="w"> </span><span class="n">search</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Search</span><span class="p">.</span><span class="na">ofSources</span><span class="p">(</span><span class="n">manager</span><span class="p">.</span><span class="na">getSources</span><span class="p">().</span><span class="na">values</span><span class="p">(),</span><span class="w"> </span><span class="n">Languages</span><span class="p">.</span><span class="na">ANY</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">search</span><span class="p">.</span><span class="na">search</span><span class="p">(</span><span class="s">&#34;european central&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">5</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">result</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="na">getItem</span><span class="p">().</span><span class="na">getId</span><span class="p">()));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">listSources</span><span class="p">(</span><span class="n">WebSourcesRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">query</span><span class="p">(</span><span class="s">&#34;european central&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">maxResults</span><span class="p">(</span><span class="n">5</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">source</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">source</span><span class="p">.</span><span class="na">getId</span><span class="p">()));</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></div></div>
     <input
@@ -1679,7 +1680,8 @@ sdmx-dl search sources &#34;european central&#34; -n 5 WS ✅ full support" />
 <ul>
 <li>Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so both <code>&quot;ecb&quot;</code> and <code>&quot;eurpean central&quot;</code> find the European Central Bank.</li>
 <li>Sources marked as aliases are excluded from the search index.</li>
-<li>Unlike flows/databases, sources are not obtained through a <code>Provider</code>, so there&rsquo;s no <code>query</code>/<code>maxResults</code>-enabled request for them; <code>Search.ofSources(...)</code> on the in-memory list from <code>manager.getSources()</code> is the way to rank them by relevance.</li>
+<li><code>WebSourcesRequest</code> also carries a <code>threshold</code> (a <code>Confidentiality</code> level) so that sources requiring stricter confidentiality can be excluded from the results; it defaults to allowing every source.</li>
+<li>When <code>query</code> is empty, <code>manager.listSources(...)</code> falls back to listing sources sorted by id instead of ranking by relevance.</li>
 </ul>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="related-features"
