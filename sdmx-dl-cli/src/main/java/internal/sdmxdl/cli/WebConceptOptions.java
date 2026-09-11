@@ -1,9 +1,7 @@
 package internal.sdmxdl.cli;
 
 import picocli.CommandLine;
-import sdmxdl.ConceptRequest;
-import sdmxdl.HasLimit;
-import sdmxdl.HasSearchQuery;
+import sdmxdl.*;
 
 @lombok.Getter
 @lombok.Setter
@@ -12,8 +10,10 @@ public class WebConceptOptions extends WebFlowOptions {
     @CommandLine.Parameters(index = "2", paramLabel = "<concept>", descriptionKey = "cli.sdmx.concept")
     private String concept;
 
-    public ConceptRequest toConceptRequest() {
-        return ConceptRequest.builderOf(toDatabaseRequest(HasSearchQuery.NO_QUERY, HasLimit.NO_LIMIT))
+    public CodesRequest toConceptRequest() {
+        return CodesRequest.builder()
+                .languages(getLangs())
+                .database(getDatabase())
                 .flow(getFlow())
                 .concept(concept)
                 .build();

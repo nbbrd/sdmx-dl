@@ -33,7 +33,7 @@ public class ProviderTest {
 
     @Test
     public void testListDatabases() throws IOException {
-        assertThat(validProvider().listDatabases(SourceRequest.DEFAULT))
+        assertThat(validProvider().listDatabases(DatabasesRequest.DEFAULT))
                 .isSortedAccordingTo(Comparator.comparing(o -> o.getRef().toString()))
                 .containsExactlyInAnyOrderElementsOf(REPO.getDatabases());
     }
@@ -44,7 +44,8 @@ public class ProviderTest {
         Database iif = new Database(DatabaseRef.parse("IIF"), "Invest in Finland");
         Provider<WebSource> provider = providerOfDatabases(Arrays.asList(ecb, iif));
 
-        assertThat(provider.listDatabases(SourceRequest.builder().maxResults(1).build()))
+        assertThat(provider.listDatabases(
+                        DatabasesRequest.builder().maxResults(1).build()))
                 .containsExactly(ecb);
     }
 
@@ -55,17 +56,17 @@ public class ProviderTest {
         Provider<WebSource> provider = providerOfDatabases(Arrays.asList(ecb, iif));
 
         assertThat(provider.listDatabases(
-                        SourceRequest.builder().query("Finland").build()))
+                        DatabasesRequest.builder().query("Finland").build()))
                 .containsExactly(iif);
 
         assertThat(provider.listDatabases(
-                        SourceRequest.builder().query("zzzyyyxxxwww").build()))
+                        DatabasesRequest.builder().query("zzzyyyxxxwww").build()))
                 .isEmpty();
     }
 
     @Test
     public void testListFlows() throws IOException {
-        assertThat(validProvider().listFlows(DatabaseRequest.DEFAULT))
+        assertThat(validProvider().listFlows(FlowsRequest.DEFAULT))
                 .isSortedAccordingTo(Comparator.comparing(o -> o.getRef().toString()))
                 .containsExactlyInAnyOrderElementsOf(REPO.getFlows());
     }
@@ -84,7 +85,7 @@ public class ProviderTest {
                 .build();
         Provider<WebSource> provider = providerOfFlows(Arrays.asList(gdp, cpi));
 
-        assertThat(provider.listFlows(DatabaseRequest.builder().maxResults(1).build()))
+        assertThat(provider.listFlows(FlowsRequest.builder().maxResults(1).build()))
                 .containsExactly(cpi);
     }
 
@@ -102,12 +103,11 @@ public class ProviderTest {
                 .build();
         Provider<WebSource> provider = providerOfFlows(Arrays.asList(gdp, cpi));
 
-        assertThat(provider.listFlows(
-                        DatabaseRequest.builder().query("Consumer").build()))
+        assertThat(provider.listFlows(FlowsRequest.builder().query("Consumer").build()))
                 .containsExactly(cpi);
 
         assertThat(provider.listFlows(
-                        DatabaseRequest.builder().query("zzzyyyxxxwww").build()))
+                        FlowsRequest.builder().query("zzzyyyxxxwww").build()))
                 .isEmpty();
     }
 
@@ -115,7 +115,7 @@ public class ProviderTest {
     public void testListDimensions() throws IOException {
         assertThat(validProvider()
                         .listDimensions(
-                                ComponentRequest.builder().flow(FLOW_REF).build()))
+                                DimensionsRequest.builder().flow(FLOW_REF).build()))
                 .isSortedAccordingTo(Comparator.comparing(Component::getId))
                 .containsExactlyInAnyOrderElementsOf(STRUCT.getDimensions());
     }
@@ -133,7 +133,7 @@ public class ProviderTest {
                 .build());
 
         assertThat(provider.listDimensions(
-                        ComponentRequest.builder().flow(FLOW_REF).maxResults(1).build()))
+                        DimensionsRequest.builder().flow(FLOW_REF).maxResults(1).build()))
                 .containsExactly(region);
     }
 
@@ -149,13 +149,13 @@ public class ProviderTest {
                 .name("structName")
                 .build());
 
-        assertThat(provider.listDimensions(ComponentRequest.builder()
+        assertThat(provider.listDimensions(DimensionsRequest.builder()
                         .flow(FLOW_REF)
                         .query("Frequency")
                         .build()))
                 .containsExactly(freq);
 
-        assertThat(provider.listDimensions(ComponentRequest.builder()
+        assertThat(provider.listDimensions(DimensionsRequest.builder()
                         .flow(FLOW_REF)
                         .query("zzzyyyxxxwww")
                         .build()))
@@ -166,7 +166,7 @@ public class ProviderTest {
     public void testListAttributes() throws IOException {
         assertThat(validProvider()
                         .listAttributes(
-                                ComponentRequest.builder().flow(FLOW_REF).build()))
+                                AttributesRequest.builder().flow(FLOW_REF).build()))
                 .isSortedAccordingTo(Comparator.comparing(Component::getId))
                 .containsExactlyInAnyOrderElementsOf(STRUCT.getAttributes());
     }
@@ -185,7 +185,7 @@ public class ProviderTest {
                 .build());
 
         assertThat(provider.listAttributes(
-                        ComponentRequest.builder().flow(FLOW_REF).maxResults(1).build()))
+                        AttributesRequest.builder().flow(FLOW_REF).maxResults(1).build()))
                 .containsExactly(obsStatus);
     }
 
@@ -202,11 +202,13 @@ public class ProviderTest {
                 .name("structName")
                 .build());
 
-        assertThat(provider.listAttributes(
-                        ComponentRequest.builder().flow(FLOW_REF).query("Title").build()))
+        assertThat(provider.listAttributes(AttributesRequest.builder()
+                        .flow(FLOW_REF)
+                        .query("Title")
+                        .build()))
                 .containsExactly(title);
 
-        assertThat(provider.listAttributes(ComponentRequest.builder()
+        assertThat(provider.listAttributes(AttributesRequest.builder()
                         .flow(FLOW_REF)
                         .query("zzzyyyxxxwww")
                         .build()))
@@ -216,7 +218,7 @@ public class ProviderTest {
     @Test
     public void testListCodes() throws IOException {
         assertThat(validProvider()
-                        .listCodes(ConceptRequest.builder()
+                        .listCodes(CodesRequest.builder()
                                 .flow(FLOW_REF)
                                 .concept("FREQ")
                                 .build()))
@@ -227,7 +229,7 @@ public class ProviderTest {
     public void testListCodesWithUnknownConcept() throws IOException {
         assertThatIOException()
                 .isThrownBy(() -> validProvider()
-                        .listCodes(ConceptRequest.builder()
+                        .listCodes(CodesRequest.builder()
                                 .flow(FLOW_REF)
                                 .concept("zzzyyyxxxwww")
                                 .build()))
@@ -237,7 +239,7 @@ public class ProviderTest {
     @Test
     public void testListCodesWithMaxResults() throws IOException {
         assertThat(validProvider()
-                        .listCodes(ConceptRequest.builder()
+                        .listCodes(CodesRequest.builder()
                                 .flow(FLOW_REF)
                                 .concept("REGION")
                                 .maxResults(1)
@@ -248,7 +250,7 @@ public class ProviderTest {
     @Test
     public void testListCodesWithQuery() throws IOException {
         assertThat(validProvider()
-                        .listCodes(ConceptRequest.builder()
+                        .listCodes(CodesRequest.builder()
                                 .flow(FLOW_REF)
                                 .concept("REGION")
                                 .query("Belgium")
@@ -256,7 +258,7 @@ public class ProviderTest {
                 .containsExactlyEntriesOf(Collections.singletonMap("BE", "Belgium"));
 
         assertThat(validProvider()
-                        .listCodes(ConceptRequest.builder()
+                        .listCodes(CodesRequest.builder()
                                 .flow(FLOW_REF)
                                 .concept("REGION")
                                 .query("zzzyyyxxxwww")
@@ -266,13 +268,13 @@ public class ProviderTest {
 
     @Test
     public void testGetMeta() throws IOException {
-        assertThat(validProvider().getMeta(FlowRequest.builder().flow(FLOW_REF).build()))
+        assertThat(validProvider().getMeta(MetaRequest.builder().flow(FLOW_REF).build()))
                 .isEqualTo(META_SET);
     }
 
     @Test
     public void testGetData() throws IOException {
-        assertThat(validProvider().getData(KeyRequest.builder().flow(FLOW_REF).build()))
+        assertThat(validProvider().getData(DataRequest.builder().flow(FLOW_REF).build()))
                 .isEqualTo(DATA_SET);
     }
 

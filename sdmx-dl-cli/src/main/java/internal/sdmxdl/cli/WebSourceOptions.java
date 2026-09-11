@@ -18,8 +18,6 @@ package internal.sdmxdl.cli;
 
 import picocli.CommandLine;
 import sdmxdl.DatabaseRef;
-import sdmxdl.DatabaseRequest;
-import sdmxdl.SourceRequest;
 
 /**
  * @author Philippe Charles
@@ -40,19 +38,5 @@ public class WebSourceOptions extends WebNetOptions {
 
     public DatabaseRef getDatabase() {
         return database == null ? DatabaseRef.NO_DATABASE : database;
-    }
-
-    public SourceRequest toSourceRequest(String query, int maxResults) {
-        return SourceRequest.builder()
-                .languages(getLangs())
-                .query(query)
-                .maxResults(maxResults)
-                .build();
-    }
-
-    public DatabaseRequest toDatabaseRequest(String query, int maxResults) {
-        return DatabaseRequest.builderOf(toSourceRequest(query, maxResults))
-                .database(getDatabase())
-                .build();
     }
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import sdmxdl.Flow;
+import sdmxdl.FlowsRequest;
 import sdmxdl.format.csv.SdmxCsvFields;
 
 /**
@@ -47,6 +48,13 @@ public final class SearchFlowsCommand implements Callable<Void> {
     }
 
     private List<Flow> getRows() throws IOException {
-        return web.loadManager().usingName(web.getSource()).listFlows(web.toDatabaseRequest(query, maxResults));
+        return web.loadManager()
+                .usingName(web.getSource())
+                .listFlows(FlowsRequest.builder()
+                        .languages(web.getLangs())
+                        .query(query)
+                        .maxResults(maxResults)
+                        .database(web.getDatabase())
+                        .build());
     }
 }

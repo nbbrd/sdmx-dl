@@ -18,11 +18,11 @@ package sdmxdl.cli.experimental;
 
 import internal.sdmxdl.cli.DebugOutputOptions;
 import internal.sdmxdl.cli.WebKeyOptions;
+import java.util.concurrent.Callable;
 import picocli.CommandLine;
+import sdmxdl.DataRequest;
 import sdmxdl.Detail;
 import sdmxdl.format.protobuf.ProtoApi;
-
-import java.util.concurrent.Callable;
 
 /**
  * @author Philippe Charles
@@ -39,7 +39,15 @@ public final class DebugDataCommand implements Callable<Void> {
 
     @Override
     public Void call() throws Exception {
-        output.dumpAll(ProtoApi.fromDataSet(web.loadManager().usingName(web.getSource()).getData(web.toKeyRequest(Detail.FULL))));
+        output.dumpAll(ProtoApi.fromDataSet(web.loadManager()
+                .usingName(web.getSource())
+                .getData(DataRequest.builder()
+                        .languages(web.getLangs())
+                        .database(web.getDatabase())
+                        .flow(web.getFlow())
+                        .key(web.getKey())
+                        .detail(Detail.FULL)
+                        .build())));
         return null;
     }
 }

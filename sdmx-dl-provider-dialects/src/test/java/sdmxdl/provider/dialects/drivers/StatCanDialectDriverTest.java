@@ -1,5 +1,27 @@
 package sdmxdl.provider.dialects.drivers;
 
+import static nbbrd.io.text.BaseProperty.keysOf;
+import static org.assertj.core.api.Assertions.*;
+import static sdmxdl.DatabaseRef.NO_DATABASE;
+import static sdmxdl.Languages.ANY;
+import static sdmxdl.provider.dialects.drivers.StatCanDialectDriver.Converter.*;
+import static sdmxdl.provider.ri.http.CachingDecoration.HTTP_CACHING_PROPERTY;
+import static sdmxdl.provider.ri.http.CookieDecoration.COOKIE_PROPERTY;
+import static sdmxdl.provider.ri.http.DumpingDecoration.DUMP_FOLDER_PROPERTY;
+import static sdmxdl.provider.ri.http.RateLimitingDecoration.RATE_LIMITING_PROPERTY;
+import static sdmxdl.provider.ri.http.RetryDecoration.MAX_RETRIES_PROPERTY;
+import static sdmxdl.provider.web.DriverProperties.*;
+import static tests.sdmxdl.api.SdmxConditions.uniqueObs;
+import static tests.sdmxdl.api.SdmxConditions.uniqueSeriesKeys;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 import nbbrd.io.Resource;
 import nbbrd.io.text.TextParser;
 import org.assertj.core.api.Assertions;
@@ -16,29 +38,6 @@ import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.WebContext;
 import tests.sdmxdl.web.spi.DriverAssert;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
-
-import static nbbrd.io.text.BaseProperty.keysOf;
-import static org.assertj.core.api.Assertions.*;
-import static sdmxdl.DatabaseRef.NO_DATABASE;
-import static sdmxdl.Languages.ANY;
-import static sdmxdl.provider.dialects.drivers.StatCanDialectDriver.Converter.*;
-import static sdmxdl.provider.ri.http.CachingDecoration.HTTP_CACHING_PROPERTY;
-import static sdmxdl.provider.ri.http.CookieDecoration.COOKIE_PROPERTY;
-import static sdmxdl.provider.ri.http.DumpingDecoration.DUMP_FOLDER_PROPERTY;
-import static sdmxdl.provider.ri.http.RateLimitingDecoration.RATE_LIMITING_PROPERTY;
-import static sdmxdl.provider.ri.http.RetryDecoration.MAX_RETRIES_PROPERTY;
-import static sdmxdl.provider.web.DriverProperties.*;
-import static tests.sdmxdl.api.SdmxConditions.uniqueObs;
-import static tests.sdmxdl.api.SdmxConditions.uniqueSeriesKeys;
-
 public class StatCanDialectDriverTest {
 
     @Test
@@ -49,20 +48,18 @@ public class StatCanDialectDriverTest {
     @Test
     public void testProperties() {
         assertThat(new StatCanDialectDriver().getDriverPropertyNames())
-                .containsExactlyInAnyOrderElementsOf(
-                        keysOf(
-                                CONNECT_TIMEOUT_PROPERTY,
-                                READ_TIMEOUT_PROPERTY,
-                                USER_AGENT_PROPERTY,
-                                AUTH_SCHEME_PROPERTY,
-                                MAX_REDIRECTS_PROPERTY,
-                                MAX_RETRIES_PROPERTY,
-                                DUMP_FOLDER_PROPERTY,
-                                COOKIE_PROPERTY,
-                                CACHE_TTL_PROPERTY,
-                                HTTP_CACHING_PROPERTY,
-                                RATE_LIMITING_PROPERTY)
-                );
+                .containsExactlyInAnyOrderElementsOf(keysOf(
+                        CONNECT_TIMEOUT_PROPERTY,
+                        READ_TIMEOUT_PROPERTY,
+                        USER_AGENT_PROPERTY,
+                        AUTH_SCHEME_PROPERTY,
+                        MAX_REDIRECTS_PROPERTY,
+                        MAX_RETRIES_PROPERTY,
+                        DUMP_FOLDER_PROPERTY,
+                        COOKIE_PROPERTY,
+                        CACHE_TTL_PROPERTY,
+                        HTTP_CACHING_PROPERTY,
+                        RATE_LIMITING_PROPERTY));
     }
 
     @Test
@@ -89,15 +86,18 @@ public class StatCanDialectDriverTest {
 
     @Test
     public void testDataTableParseAll() throws IOException {
-        TextParser<StatCanDialectDriver.DataTable[]> x = TextParser.onParsingReader(StatCanDialectDriver.DataTable::parseAll);
+        TextParser<StatCanDialectDriver.DataTable[]> x =
+                TextParser.onParsingReader(StatCanDialectDriver.DataTable::parseAll);
 
-        Assertions.assertThat(x.parseResource(StatCanDialectDriverTest.class, "statcan-datatables.json", StandardCharsets.UTF_8))
+        Assertions.assertThat(x.parseResource(
+                        StatCanDialectDriverTest.class, "statcan-datatables.json", StandardCharsets.UTF_8))
                 .hasSize(2)
-                .contains(new StatCanDialectDriver.DataTable(
-                        10100001,
-                        "Federal public sector employment reconciliation of Treasury Board of Canada Secretariat, Public Service Commission of Canada and Statistics Canada statistical universes, as at December 31",
-                        "Emploi du secteur public fédéral rapprochement des univers statistiques du Secrétariat du Conseil du Trésor du Canada, de la Commission de la fonction publique du Canada et de Statistique Canada, au 31 décembre"
-                ), atIndex(0));
+                .contains(
+                        new StatCanDialectDriver.DataTable(
+                                10100001,
+                                "Federal public sector employment reconciliation of Treasury Board of Canada Secretariat, Public Service Commission of Canada and Statistics Canada statistical universes, as at December 31",
+                                "Emploi du secteur public fédéral rapprochement des univers statistiques du Secrétariat du Conseil du Trésor du Canada, de la Commission de la fonction publique du Canada et de Statistique Canada, au 31 décembre"),
+                        atIndex(0));
     }
 
     @Nested
@@ -105,8 +105,7 @@ public class StatCanDialectDriverTest {
 
         @Test
         public void testToDataflowRef() {
-            assertThat(toDataflowRef(1234))
-                    .isEqualTo(FlowRef.of("StatCan", "DF_1234", "1.0"));
+            assertThat(toDataflowRef(1234)).isEqualTo(FlowRef.of("StatCan", "DF_1234", "1.0"));
 
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> toDataflowRef(-1))
@@ -115,17 +114,14 @@ public class StatCanDialectDriverTest {
 
         @Test
         public void testFromDataflowRef() {
-            assertThat(fromDataflowRef(FlowRef.of("StatCan", "DF_1234", "1.0")))
-                    .isEqualTo(1234);
+            assertThat(fromDataflowRef(FlowRef.of("StatCan", "DF_1234", "1.0"))).isEqualTo(1234);
 
-            assertThat(fromDataflowRef(FlowRef.of("all", "DF_1234", "1.0")))
-                    .isEqualTo(1234);
+            assertThat(fromDataflowRef(FlowRef.of("all", "DF_1234", "1.0"))).isEqualTo(1234);
 
             assertThat(fromDataflowRef(FlowRef.of("StatCan", "DF_1234", "latest")))
                     .isEqualTo(1234);
 
-            assertThatNullPointerException()
-                    .isThrownBy(() -> fromDataflowRef(null));
+            assertThatNullPointerException().isThrownBy(() -> fromDataflowRef(null));
 
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> fromDataflowRef(FlowRef.of("StatCan", "F_1234", "1.0")))
@@ -154,8 +150,7 @@ public class StatCanDialectDriverTest {
 
         @Test
         public void testToDataStructureRef() {
-            assertThat(toDataStructureRef(1234))
-                    .isEqualTo(StructureRef.of("StatCan", "Data_Structure_1234", "1.0"));
+            assertThat(toDataStructureRef(1234)).isEqualTo(StructureRef.of("StatCan", "Data_Structure_1234", "1.0"));
 
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> toDataStructureRef(-1))
@@ -174,29 +169,18 @@ public class StatCanDialectDriverTest {
             labels.put(Languages.parse("fr"), "Structure de données");
 
             for (Map.Entry<Languages, String> label : labels.entrySet()) {
-                assertThat(toSdmxRepository(x, 10100001, label.getKey()))
-                        .satisfies(repo -> {
-                            assertThat(repo.getStructures())
-                                    .singleElement()
-                                    .satisfies(dsd -> {
-                                        assertThat(dsd.getDimensions())
-                                                .hasSize(2);
-                                        assertThat(dsd.getAttributes())
-                                                .hasSize(8);
-                                        assertThat(dsd.getName())
-                                                .startsWith(label.getValue());
-                                        assertThat(dsd.getRef())
-                                                .isEqualTo(toDataStructureRef(10100001));
-                                    });
-                            assertThat(repo.getDataSets())
-                                    .singleElement()
-                                    .satisfies(dataSet -> {
-                                        assertThat(dataSet.getData())
-                                                .hasSize(14);
-                                        assertThat(dataSet.getRef())
-                                                .isEqualTo(toDataflowRef(10100001));
-                                    });
-                        });
+                assertThat(toSdmxRepository(x, 10100001, label.getKey())).satisfies(repo -> {
+                    assertThat(repo.getStructures()).singleElement().satisfies(dsd -> {
+                        assertThat(dsd.getDimensions()).hasSize(2);
+                        assertThat(dsd.getAttributes()).hasSize(8);
+                        assertThat(dsd.getName()).startsWith(label.getValue());
+                        assertThat(dsd.getRef()).isEqualTo(toDataStructureRef(10100001));
+                    });
+                    assertThat(repo.getDataSets()).singleElement().satisfies(dataSet -> {
+                        assertThat(dataSet.getData()).hasSize(14);
+                        assertThat(dataSet.getRef()).isEqualTo(toDataflowRef(10100001));
+                    });
+                });
             }
         }
 
@@ -213,38 +197,44 @@ public class StatCanDialectDriverTest {
                     .have(uniqueObs())
                     .filteredOn(Series::getKey, Key.parse("1"))
                     .singleElement()
-                    .satisfies(
-                            series -> assertThat(series.getObs())
-                                    .hasSize(388)
-                                    .startsWith(obsOf("1990-01-01", "P1M", 276.428))
-                                    .endsWith(obsOf("2022-04-01", "P1M", 267.330))
-                                    .filteredOn(Obs::getPeriod, periodOf("2021-07-01", "P1M"))
-                                    .singleElement()
-                                    .isEqualTo(obsOf("2021-07-01", "P1M", 274.067))
-                    )
-            ;
+                    .satisfies(series -> assertThat(series.getObs())
+                            .hasSize(388)
+                            .startsWith(obsOf("1990-01-01", "P1M", 276.428))
+                            .endsWith(obsOf("2022-04-01", "P1M", 267.330))
+                            .filteredOn(Obs::getPeriod, periodOf("2021-07-01", "P1M"))
+                            .singleElement()
+                            .isEqualTo(obsOf("2021-07-01", "P1M", 274.067)));
         }
     }
 
     @ParameterizedTest
     @CsvFileSource(resources = "StatCanDialectDriverTest.csv", useHeadersInDisplayName = true)
     @Tag("webQueries")
-    public void testBuiltinSources(String source, String flow, String key, int minFlowCount, int dimCount, int minSeriesCount, int minObsCount, String details) throws IOException {
-        DriverAssert.assertBuiltinSource(new StatCanDialectDriver(), DriverAssert.SourceQuery
-                        .builder()
+    public void testBuiltinSources(
+            String source,
+            String flow,
+            String key,
+            int minFlowCount,
+            int dimCount,
+            int minSeriesCount,
+            int minObsCount,
+            String details)
+            throws IOException {
+        DriverAssert.assertBuiltinSource(
+                new StatCanDialectDriver(),
+                DriverAssert.SourceQuery.builder()
                         .source(source)
-                        .keyRequest(KeyRequest.builder().flowOf(flow).keyOf(key).build())
+                        .dataRequest(
+                                DataRequest.builder().flowOf(flow).keyOf(key).build())
                         .minFlowCount(minFlowCount)
                         .dimCount(dimCount)
                         .minSeriesCount(minSeriesCount)
                         .minObsCount(minObsCount)
                         .build(),
-                context
-        );
+                context);
     }
 
-    private final WebContext context = WebContext
-            .builder()
+    private final WebContext context = WebContext.builder()
             .caching(MemCachingSupport.builder().id("local").build())
             .networking(new RiNetworking())
             .onEvent(source -> DriverAssert.eventOf(source, System.out::println))
@@ -255,11 +245,6 @@ public class StatCanDialectDriverTest {
     }
 
     private static Obs obsOf(String localDate, String duration, double value) {
-        return Obs
-                .builder()
-                .period(periodOf(localDate, duration))
-                .value(value)
-                .build();
+        return Obs.builder().period(periodOf(localDate, duration)).value(value).build();
     }
 }
-

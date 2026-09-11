@@ -16,15 +16,14 @@
  */
 package sdmxdl.cli;
 
+import internal.sdmxdl.cli.HiddenSortOptions;
 import internal.sdmxdl.cli.WebSourceOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 import picocli.CommandLine;
-import sdmxdl.Flow;
-import sdmxdl.HasLimit;
-import sdmxdl.HasSearchQuery;
+import sdmxdl.*;
 import sdmxdl.format.csv.SdmxCsvFields;
 
 /**
@@ -38,6 +37,9 @@ public final class ListFlowsCommand implements Callable<Void> {
 
     @CommandLine.Mixin
     private final RFC4180OutputOptions csv = new RFC4180OutputOptions();
+
+    @CommandLine.Mixin
+    private HiddenSortOptions sortOptions;
 
     @Override
     public Void call() throws Exception {
@@ -56,6 +58,9 @@ public final class ListFlowsCommand implements Callable<Void> {
     private Iterable<Flow> getRows() throws IOException {
         return web.loadManager()
                 .usingName(web.getSource())
-                .listFlows(web.toDatabaseRequest(HasSearchQuery.NO_QUERY, HasLimit.NO_LIMIT));
+                .listFlows(FlowsRequest.builder()
+                        .languages(web.getLangs())
+                        .database(web.getDatabase())
+                        .build());
     }
 }

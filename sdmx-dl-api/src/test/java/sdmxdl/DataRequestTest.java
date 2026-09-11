@@ -1,18 +1,18 @@
 package sdmxdl;
 
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static tests.sdmxdl.api.RepoSamples.FLOW_REF;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Philippe Charles
  */
-public class KeyRequestTest {
+public class DataRequestTest {
 
     @Test
     public void testDefaults() {
-        KeyRequest request = KeyRequest.builder().flow(FLOW_REF).build();
+        DataRequest request = DataRequest.builder().flow(FLOW_REF).build();
 
         assertThat(request.getDatabase()).isEqualTo(DatabaseRef.NO_DATABASE);
         assertThat(request.getFlow()).isEqualTo(FLOW_REF);
@@ -23,7 +23,7 @@ public class KeyRequestTest {
 
     @Test
     public void testBuilderConvenience() {
-        KeyRequest request = KeyRequest.builder()
+        DataRequest request = DataRequest.builder()
                 .databaseOf("db")
                 .flowOf("NBB,XYZ,v2.0")
                 .keyOf("M.BE.INDUSTRY")
@@ -40,29 +40,16 @@ public class KeyRequestTest {
 
     @Test
     public void testToQuery() {
-        KeyRequest request = KeyRequest.builder()
+        DataRequest request = DataRequest.builder()
                 .flow(FLOW_REF)
                 .keyOf("M.BE.INDUSTRY")
                 .detail(Detail.NO_DATA)
                 .build();
 
         assertThat(request.toQuery())
-                .isEqualTo(Query.builder().key(Key.parse("M.BE.INDUSTRY")).detail(Detail.NO_DATA).build());
-    }
-
-    @Test
-    public void testBuilderOf() {
-        FlowRequest source = FlowRequest.builder()
-                .databaseOf("db")
-                .flow(FLOW_REF)
-                .languagesOf("fr")
-                .build();
-
-        KeyRequest request = KeyRequest.builderOf(source).build();
-
-        assertThat(request.getDatabase()).isEqualTo(source.getDatabase());
-        assertThat(request.getFlow()).isEqualTo(source.getFlow());
-        assertThat(request.getLanguages()).isEqualTo(source.getLanguages());
+                .isEqualTo(Query.builder()
+                        .key(Key.parse("M.BE.INDUSTRY"))
+                        .detail(Detail.NO_DATA)
+                        .build());
     }
 }
-

@@ -4,38 +4,35 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static sdmxdl.grpc.ProtoGrpc.*;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.DatabaseRequest;
-import sdmxdl.FlowRequest;
-import sdmxdl.KeyRequest;
-import sdmxdl.SourceRequest;
+import sdmxdl.*;
 
 class ProtoGrpcTest {
 
     @Test
     void testSourceRequest() {
-        SourceRequest empty = SourceRequest.DEFAULT;
+        DatabasesRequest empty = DatabasesRequest.DEFAULT;
         assertThat(toSourceRequest(fromSourceRequest("src", empty))).isEqualTo(empty);
 
-        SourceRequest request = SourceRequest.builder().languagesOf("en").build();
+        DatabasesRequest request = DatabasesRequest.builder().languagesOf("en").build();
         assertThat(toSourceRequest(fromSourceRequest("src", request))).isEqualTo(request);
     }
 
     @Test
     void testDatabaseRequest() {
-        DatabaseRequest empty = DatabaseRequest.DEFAULT;
+        FlowsRequest empty = FlowsRequest.DEFAULT;
         assertThat(toDatabaseRequest(fromDatabaseRequest("src", empty))).isEqualTo(empty);
 
-        DatabaseRequest request =
-                DatabaseRequest.builder().databaseOf("hello").languagesOf("en").build();
+        FlowsRequest request =
+                FlowsRequest.builder().databaseOf("hello").languagesOf("en").build();
         assertThat(toDatabaseRequest(fromDatabaseRequest("src", request))).isEqualTo(request);
     }
 
     @Test
     void testFlowRequest() {
-        FlowRequest empty = FlowRequest.builder().flowOf("EXR").build();
+        MetaRequest empty = MetaRequest.builder().flowOf("EXR").build();
         assertThat(toFlowRequest(fromFlowRequest("src", empty))).isEqualTo(empty);
 
-        FlowRequest request = FlowRequest.builder()
+        MetaRequest request = MetaRequest.builder()
                 .flowOf("EXR")
                 .databaseOf("hello")
                 .languagesOf("en")
@@ -45,10 +42,10 @@ class ProtoGrpcTest {
 
     @Test
     void testKeyRequest() {
-        KeyRequest empty = KeyRequest.builder().flowOf("EXR").build();
+        DataRequest empty = DataRequest.builder().flowOf("EXR").build();
         assertThat(toKeyRequest(fromKeyRequest("src", empty))).isEqualTo(empty);
 
-        KeyRequest request = KeyRequest.builder()
+        DataRequest request = DataRequest.builder()
                 .flowOf("EXR")
                 .keyOf("A.B.C")
                 .databaseOf("hello")

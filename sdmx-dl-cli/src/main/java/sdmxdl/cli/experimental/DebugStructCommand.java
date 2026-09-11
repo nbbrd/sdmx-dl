@@ -18,10 +18,10 @@ package sdmxdl.cli.experimental;
 
 import internal.sdmxdl.cli.DebugOutputOptions;
 import internal.sdmxdl.cli.WebFlowOptions;
-import picocli.CommandLine;
-import sdmxdl.format.protobuf.ProtoApi;
-
 import java.util.concurrent.Callable;
+import picocli.CommandLine;
+import sdmxdl.MetaRequest;
+import sdmxdl.format.protobuf.ProtoApi;
 
 /**
  * @author Philippe Charles
@@ -38,7 +38,14 @@ public final class DebugStructCommand implements Callable<Void> {
 
     @Override
     public Void call() throws Exception {
-        output.dumpAll(ProtoApi.fromDataStructure(web.loadManager().usingName(web.getSource()).getMeta(web.toFlowRequest()).getStructure()));
+        output.dumpAll(ProtoApi.fromDataStructure(web.loadManager()
+                .usingName(web.getSource())
+                .getMeta(MetaRequest.builder()
+                        .languages(web.getLangs())
+                        .database(web.getDatabase())
+                        .flow(web.getFlow())
+                        .build())
+                .getStructure()));
         return null;
     }
 }

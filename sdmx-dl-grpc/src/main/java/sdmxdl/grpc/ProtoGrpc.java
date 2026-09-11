@@ -9,20 +9,20 @@ import sdmxdl.*;
 @lombok.experimental.UtilityClass
 public class ProtoGrpc {
 
-    public static SourceRequestDto fromSourceRequest(String source, SourceRequest value) {
+    public static SourceRequestDto fromSourceRequest(String source, DatabasesRequest value) {
         SourceRequestDto.Builder result = SourceRequestDto.newBuilder();
         result.setSource(source);
         result.setLanguages(value.getLanguages().toString());
         return result.build();
     }
 
-    public static SourceRequest toSourceRequest(SourceRequestDto value) {
-        return SourceRequest.builder()
+    public static DatabasesRequest toSourceRequest(SourceRequestDto value) {
+        return DatabasesRequest.builder()
                 .languagesOf(value.hasLanguages() ? value.getLanguages() : ANY_KEYWORD)
                 .build();
     }
 
-    public static DatabaseRequestDto fromDatabaseRequest(String source, DatabaseRequest value) {
+    public static DatabaseRequestDto fromDatabaseRequest(String source, FlowsRequest value) {
         DatabaseRequestDto.Builder result = DatabaseRequestDto.newBuilder();
         result.setSource(source);
         result.setDatabase(value.getDatabase().toString());
@@ -30,14 +30,14 @@ public class ProtoGrpc {
         return result.build();
     }
 
-    public static DatabaseRequest toDatabaseRequest(DatabaseRequestDto value) {
-        return DatabaseRequest.builder()
+    public static FlowsRequest toDatabaseRequest(DatabaseRequestDto value) {
+        return FlowsRequest.builder()
                 .databaseOf(value.hasDatabase() ? value.getDatabase() : NO_DATABASE_KEYWORD)
                 .languagesOf(value.hasLanguages() ? value.getLanguages() : ANY_KEYWORD)
                 .build();
     }
 
-    public static FlowRequestDto fromFlowRequest(String source, FlowRequest value) {
+    public static FlowRequestDto fromFlowRequest(String source, MetaRequest value) {
         FlowRequestDto.Builder result = FlowRequestDto.newBuilder();
         result.setSource(source);
         result.setDatabase(value.getDatabase().toString());
@@ -46,15 +46,15 @@ public class ProtoGrpc {
         return result.build();
     }
 
-    public static FlowRequest toFlowRequest(FlowRequestDto value) {
-        return FlowRequest.builder()
+    public static MetaRequest toFlowRequest(FlowRequestDto value) {
+        return MetaRequest.builder()
                 .databaseOf(value.hasDatabase() ? value.getDatabase() : NO_DATABASE_KEYWORD)
                 .flowOf(value.getFlow())
                 .languagesOf(value.hasLanguages() ? value.getLanguages() : ANY_KEYWORD)
                 .build();
     }
 
-    public static KeyRequestDto fromKeyRequest(String source, KeyRequest value) {
+    public static KeyRequestDto fromKeyRequest(String source, DataRequest value) {
         KeyRequestDto.Builder result = KeyRequestDto.newBuilder();
         result.setSource(source);
         result.setDatabase(value.getDatabase().toString());
@@ -76,13 +76,12 @@ public class ProtoGrpc {
         return result.build();
     }
 
-    public static KeyRequest toKeyRequest(KeyRequestDto value) {
-        KeyRequest.Builder result =
-                KeyRequest.builder()
-                        .databaseOf(value.hasDatabase() ? value.getDatabase() : NO_DATABASE_KEYWORD)
-                        .flowOf(value.getFlow())
-                        .keyOf(value.getKey())
-                        .languagesOf(value.hasLanguages() ? value.getLanguages() : ANY_KEYWORD);
+    public static DataRequest toKeyRequest(KeyRequestDto value) {
+        DataRequest.Builder result = DataRequest.builder()
+                .databaseOf(value.hasDatabase() ? value.getDatabase() : NO_DATABASE_KEYWORD)
+                .flowOf(value.getFlow())
+                .keyOf(value.getKey())
+                .languagesOf(value.hasLanguages() ? value.getLanguages() : ANY_KEYWORD);
         if (value.hasStartPeriod()) {
             result.startPeriod(LocalDateTime.parse(value.getStartPeriod()));
         }

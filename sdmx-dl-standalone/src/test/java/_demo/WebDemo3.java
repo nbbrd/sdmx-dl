@@ -3,7 +3,7 @@ package _demo;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.IntStream;
-import sdmxdl.DatabaseRequest;
+import sdmxdl.FlowsRequest;
 import sdmxdl.Provider;
 import sdmxdl.provider.caching.MemCachingSupport;
 import sdmxdl.web.SdmxWebManager;
@@ -30,7 +30,7 @@ public class WebDemo3 {
         IntStream.range(0, 10).parallel().forEach(index -> {
             long start = System.currentTimeMillis();
             try {
-                System.out.println(salsa.listFlows(DatabaseRequest.DEFAULT).size());
+                System.out.println(salsa.listFlows(FlowsRequest.DEFAULT).size());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

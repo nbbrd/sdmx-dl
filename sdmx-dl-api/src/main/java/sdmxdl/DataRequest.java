@@ -6,17 +6,21 @@ import org.jspecify.annotations.Nullable;
 
 @lombok.Value
 @lombok.Builder
-public class KeyRequest {
+public class DataRequest {
 
-    @NonNull @lombok.Builder.Default DatabaseRef database = DatabaseRef.NO_DATABASE;
+    @NonNull @lombok.Builder.Default
+    DatabaseRef database = DatabaseRef.NO_DATABASE;
 
     @NonNull FlowRef flow;
 
-    @NonNull @lombok.Builder.Default Key key = Key.ALL;
+    @NonNull @lombok.Builder.Default
+    Key key = Key.ALL;
 
-    @NonNull @lombok.Builder.Default Detail detail = Detail.FULL;
+    @NonNull @lombok.Builder.Default
+    Detail detail = Detail.FULL;
 
-    @NonNull @lombok.Builder.Default Languages languages = Languages.ANY;
+    @NonNull @lombok.Builder.Default
+    Languages languages = Languages.ANY;
 
     @Nullable LocalDateTime startPeriod;
 
@@ -35,13 +39,6 @@ public class KeyRequest {
                 .firstNObservations(getFirstNObservations())
                 .lastNObservations(getLastNObservations())
                 .build();
-    }
-
-    public static @NonNull Builder builderOf(@NonNull FlowRequest request) {
-        return builder()
-                .database(request.getDatabase())
-                .flow(request.getFlow())
-                .languages(request.getLanguages());
     }
 
     public static final class Builder {

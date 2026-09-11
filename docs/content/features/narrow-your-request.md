@@ -5,7 +5,7 @@ weight: 9
 
 Restrict a data request to a date range and/or a limited number of observations, so you download only what you need instead of a series' full history.
 
-Both narrowing mechanisms are just extra fields on the same data request (`KeyRequest`/`Query` in the API, options on `fetch data` in the CLI, fields on `GetData` in the WS), so they can be used separately or together.
+Both narrowing mechanisms are just extra fields on the same data request (`DataRequest`/`Query` in the API, options on `fetch data` in the CLI, fields on `GetData` in the WS), so they can be used separately or together.
 
 ## By period
 
@@ -17,7 +17,7 @@ Both narrowing mechanisms are just extra fields on the same data request (`KeyRe
 ```java
 //JAVA 25+
 //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0
-import sdmxdl.KeyRequest;
+import sdmxdl.DataRequest;
 import sdmxdl.web.SdmxWebManager;
 
 void main() throws Exception {
@@ -75,7 +75,7 @@ Bounds are inclusive and accept reduced-precision ISO-8601 (`"2020"`, `"2020-12"
 ```java
 //JAVA 25+
 //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0
-import sdmxdl.KeyRequest;
+import sdmxdl.DataRequest;
 import sdmxdl.web.SdmxWebManager;
 
 void main() throws Exception {

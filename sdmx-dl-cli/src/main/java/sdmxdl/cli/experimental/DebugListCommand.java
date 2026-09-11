@@ -30,7 +30,10 @@ import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Spec;
-import sdmxdl.*;
+import sdmxdl.DataRequest;
+import sdmxdl.Feature;
+import sdmxdl.Flow;
+import sdmxdl.FlowsRequest;
 import sdmxdl.cli.protobuf.FeaturesDto;
 import sdmxdl.cli.protobuf.FlowsDto;
 import sdmxdl.cli.protobuf.SourcesDto;
@@ -72,7 +75,10 @@ public final class DebugListCommand implements Callable<Void> {
         nonNull(out)
                 .dumpAll(fromDataflows(web.loadManager()
                         .usingName(web.getSource())
-                        .listFlows(web.toDatabaseRequest(HasSearchQuery.NO_QUERY, HasLimit.NO_LIMIT))));
+                        .listFlows(FlowsRequest.builder()
+                                .languages(web.getLangs())
+                                .database(web.getDatabase())
+                                .build())));
     }
 
     private static FlowsDto fromDataflows(Collection<Flow> value) {
@@ -85,7 +91,10 @@ public final class DebugListCommand implements Callable<Void> {
     public void keys(
             @Mixin WebFlowOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out)
             throws Exception {
-        KeyRequest request = KeyRequest.builderOf(web.toFlowRequest())
+        DataRequest request = DataRequest.builder()
+                .languages(web.getLangs())
+                .database(web.getDatabase())
+                .flow(web.getFlow())
                 .detail(SERIES_KEYS_ONLY)
                 .build();
         nonNull(out)

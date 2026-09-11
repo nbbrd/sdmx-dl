@@ -16,6 +16,7 @@
  */
 package sdmxdl.cli;
 
+import internal.sdmxdl.cli.HiddenSortOptions;
 import internal.sdmxdl.cli.WebFlowOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
@@ -28,6 +29,8 @@ import nbbrd.io.text.Formatter;
 import org.jspecify.annotations.Nullable;
 import picocli.CommandLine;
 import sdmxdl.Dimension;
+import sdmxdl.DimensionsRequest;
+import sdmxdl.MetaRequest;
 import sdmxdl.Provider;
 import sdmxdl.web.WebSource;
 
@@ -42,6 +45,9 @@ public final class ListDimensionsCommand implements Callable<Void> {
 
     @CommandLine.Mixin
     private final RFC4180OutputOptions csv = new RFC4180OutputOptions();
+
+    @CommandLine.Mixin
+    private HiddenSortOptions sortOptions;
 
     @Override
     public Void call() throws Exception {
@@ -61,8 +67,18 @@ public final class ListDimensionsCommand implements Callable<Void> {
     private Stream<IndexedComponent> getRows() throws IOException {
         Provider<WebSource> provider = web.loadManager().usingName(web.getSource());
         return getDimensions(
-                provider.getMeta(web.toFlowRequest()).getStructure().getDimensions()::indexOf, // FIXME
-                provider.listDimensions(web.toComponentRequest()));
+                provider.getMeta(MetaRequest.builder()
+                                .languages(web.getLangs())
+                                .database(web.getDatabase())
+                                .flow(web.getFlow())
+                                .build())
+                        .getStructure()
+                        .getDimensions()::indexOf, // FIXME
+                provider.listDimensions(DimensionsRequest.builder()
+                        .languages(web.getLangs())
+                        .database(web.getDatabase())
+                        .flow(web.getFlow())
+                        .build()));
     }
 
     private Stream<IndexedComponent> getDimensions(ToIntFunction<Dimension> index, List<Dimension> dimensions) {

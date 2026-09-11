@@ -1,6 +1,12 @@
 package tests.sdmxdl.web.spi;
 
+import static org.assertj.core.api.Assertions.*;
+import static sdmxdl.Languages.ANY;
+import static tests.sdmxdl.api.SdmxConditions.*;
+
 import internal.sdmxdl.web.spi.DriverLoader;
+import java.io.IOException;
+import java.util.function.Consumer;
 import lombok.NonNull;
 import nbbrd.design.MightBeGenerated;
 import org.assertj.core.api.Condition;
@@ -11,13 +17,6 @@ import sdmxdl.web.spi.WebContext;
 import tests.sdmxdl.api.ExtensionPoint;
 import tests.sdmxdl.api.TckUtil;
 
-import java.io.IOException;
-import java.util.function.Consumer;
-
-import static org.assertj.core.api.Assertions.*;
-import static sdmxdl.Languages.ANY;
-import static tests.sdmxdl.api.SdmxConditions.*;
-
 @lombok.experimental.UtilityClass
 public class DriverAssert {
 
@@ -26,8 +25,7 @@ public class DriverAssert {
     }
 
     @MightBeGenerated
-    private static final ExtensionPoint<Driver> EXTENSION_POINT = ExtensionPoint
-            .<Driver>builder()
+    private static final ExtensionPoint<Driver> EXTENSION_POINT = ExtensionPoint.<Driver>builder()
             .id(Driver::getDriverId)
             .idPattern(DriverLoader.ID_PATTERN)
             .rank(Driver::getDriverRank)
@@ -40,8 +38,7 @@ public class DriverAssert {
     public void assertCompliance(@NonNull Driver driver) {
         TckUtil.run(s -> EXTENSION_POINT.assertCompliance(s, driver));
 
-        WebSource validSource = WebSource
-                .builder()
+        WebSource validSource = WebSource.builder()
                 .id("valid")
                 .driver(driver.getDriverId())
                 .endpointOf("http://localhost")
@@ -69,20 +66,20 @@ public class DriverAssert {
     }
 
     public static void assertBuiltinSource(Driver driver, SourceQuery query, WebContext context) throws IOException {
-        WebSource webSource = driver.getDefaultSources()
-                .stream()
+        WebSource webSource = driver.getDefaultSources().stream()
                 .filter(item -> item.getId().equals(query.getSource()))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Cannot find source '" + query.getSource() + "'"));
 
-        try (Connection connection = driver.connect(webSource, query.getKeyRequest().getLanguages(), context)) {
-            DatabaseRef database = query.getKeyRequest().getDatabase();
+        try (Connection connection =
+                driver.connect(webSource, query.getDataRequest().getLanguages(), context)) {
+            DatabaseRef database = query.getDataRequest().getDatabase();
             assertThat(connection.getFlows(database))
                     .describedAs("Flows of %s/%s", webSource.getId(), database)
                     .are(validFlow(query.isNoDescription()))
                     .hasSizeGreaterThanOrEqualTo(query.getMinFlowCount());
 
-            FlowRef flowRef = query.getKeyRequest().getFlow();
+            FlowRef flowRef = query.getDataRequest().getFlow();
             MetaSet meta = connection.getMeta(database, flowRef);
             assertThat(meta.getFlow())
                     .describedAs("Flow %s/%s/%s", webSource.getId(), database, flowRef)
@@ -102,20 +99,24 @@ public class DriverAssert {
                                 .are(validAttribute());
                     });
 
-            Key key = query.getKeyRequest().getKey();
-            assertThatObject(connection.getData(database, flowRef, Query.builder().key(key).build()))
+            Key key = query.getDataRequest().getKey();
+            assertThatObject(connection.getData(
+                            database, flowRef, Query.builder().key(key).build()))
                     .satisfies(dataSet -> {
                         assertThat(dataSet.getData())
                                 .describedAs("Data of %s/%s/%s for key %s", webSource.getId(), database, flowRef, key)
                                 .has(uniqueSeriesKeys())
                                 .have(uniqueObs())
                                 .hasSizeGreaterThanOrEqualTo(query.getMinSeriesCount());
-                        assertThat(dataSet.getData().stream().mapToInt(series -> series.getObs().size()).sum())
-                                .describedAs("Observations of %s/%s/%s for key %s", webSource.getId(), database, flowRef, key)
+                        assertThat(dataSet.getData().stream()
+                                        .mapToInt(series -> series.getObs().size())
+                                        .sum())
+                                .describedAs(
+                                        "Observations of %s/%s/%s for key %s",
+                                        webSource.getId(), database, flowRef, key)
                                 .isGreaterThanOrEqualTo(query.getMinObsCount());
                     });
         }
-
     }
 
     //    @MightBePromoted
@@ -127,10 +128,12 @@ public class DriverAssert {
     @lombok.Builder
     public static class SourceQuery {
         String source;
-        KeyRequest keyRequest;
+        DataRequest dataRequest;
         int minFlowCount;
+
         @lombok.Builder.Default
         boolean noDescription = true;
+
         int dimCount;
         int minSeriesCount;
         int minObsCount;

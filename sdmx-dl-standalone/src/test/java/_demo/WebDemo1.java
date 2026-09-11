@@ -1,10 +1,9 @@
 package _demo;
 
-import sdmxdl.KeyRequest;
-import sdmxdl.web.SdmxWebManager;
-
 import java.io.IOException;
 import java.util.Locale;
+import sdmxdl.DataRequest;
+import sdmxdl.web.SdmxWebManager;
 
 public class WebDemo1 {
 
@@ -13,12 +12,14 @@ public class WebDemo1 {
 
         SdmxWebManager.ofServiceLoader()
                 .usingName("ECB")
-                .getData(KeyRequest
-                        .builder()
+                .getData(DataRequest.builder()
                         .flowOf("EXR")
                         .keyOf("M.CHF+USD.EUR.SP00.A")
                         .build())
-                .forEach(series -> System.out.printf(Locale.ROOT, "%s: %d obs%n", series.getKey(), series.getObs().size()));
-
+                .forEach(series -> System.out.printf(
+                        Locale.ROOT,
+                        "%s: %d obs%n",
+                        series.getKey(),
+                        series.getObs().size()));
     }
 }

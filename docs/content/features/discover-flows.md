@@ -13,7 +13,7 @@ See which datasets a source publishes, before picking one to query for data.
 ```java
 //JAVA 25+
 //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0
-import sdmxdl.DatabaseRequest;
+import sdmxdl.FlowsRequest;
 import sdmxdl.web.SdmxWebManager;
 
 void main() throws Exception {

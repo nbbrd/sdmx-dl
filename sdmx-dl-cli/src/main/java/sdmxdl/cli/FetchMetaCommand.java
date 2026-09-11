@@ -20,16 +20,15 @@ import internal.sdmxdl.cli.SortOptions;
 import internal.sdmxdl.cli.WebKeyOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
-import nbbrd.io.text.Formatter;
-import picocli.CommandLine;
-import sdmxdl.Key;
-
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
-
-import static sdmxdl.Detail.NO_DATA;
+import nbbrd.io.text.Formatter;
+import picocli.CommandLine;
+import sdmxdl.DataRequest;
+import sdmxdl.Detail;
+import sdmxdl.Key;
 
 /**
  * @author Philippe Charles
@@ -54,8 +53,7 @@ public final class FetchMetaCommand implements Callable<Void> {
     }
 
     private CsvTable<MetaResult> getTable() {
-        return CsvTable
-                .builderOf(MetaResult.class)
+        return CsvTable.builderOf(MetaResult.class)
                 .columnOf("Series", MetaResult::getKey, Formatter.onObjectToString())
                 .columnOf("Concept", MetaResult::getConcept)
                 .columnOf("Value", MetaResult::getValue)
@@ -64,9 +62,20 @@ public final class FetchMetaCommand implements Callable<Void> {
 
     private Stream<MetaResult> getRows() throws IOException {
         return sort.applySort(
-                web.loadManager().usingName(web.getSource()).getData(web.toKeyRequest(NO_DATA)).getData().stream().flatMap(this::getMetaResultStream),
-                BY_FLOW_KEY_CONCEPT
-        );
+                web
+                        .loadManager()
+                        .usingName(web.getSource())
+                        .getData(DataRequest.builder()
+                                .languages(web.getLangs())
+                                .database(web.getDatabase())
+                                .flow(web.getFlow())
+                                .key(web.getKey())
+                                .detail(Detail.NO_DATA)
+                                .build())
+                        .getData()
+                        .stream()
+                        .flatMap(this::getMetaResultStream),
+                BY_FLOW_KEY_CONCEPT);
     }
 
     private Stream<MetaResult> getMetaResultStream(sdmxdl.Series series) {
@@ -80,7 +89,6 @@ public final class FetchMetaCommand implements Callable<Void> {
         String value;
     }
 
-    private static final Comparator<MetaResult> BY_FLOW_KEY_CONCEPT = Comparator
-            .comparing((MetaResult o) -> o.getKey().toString())
-            .thenComparing(MetaResult::getConcept);
+    private static final Comparator<MetaResult> BY_FLOW_KEY_CONCEPT =
+            Comparator.comparing((MetaResult o) -> o.getKey().toString()).thenComparing(MetaResult::getConcept);
 }

@@ -16,6 +16,7 @@
  */
 package sdmxdl.cli;
 
+import internal.sdmxdl.cli.HiddenSortOptions;
 import internal.sdmxdl.cli.WebConceptOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
@@ -36,6 +37,9 @@ public final class ListCodesCommand implements Callable<Void> {
 
     @CommandLine.Mixin
     private final RFC4180OutputOptions csv = new RFC4180OutputOptions();
+
+    @CommandLine.Mixin
+    private HiddenSortOptions sortOptions;
 
     @Override
     public Void call() throws Exception {

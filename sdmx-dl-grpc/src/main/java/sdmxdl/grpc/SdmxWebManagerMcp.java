@@ -116,7 +116,7 @@ public class SdmxWebManagerMcp {
             throws IOException {
         return manager
                 .using(getPublicSourceForMcp(source))
-                .listDatabases(SourceRequest.builder().languagesOf(languages).build())
+                .listDatabases(DatabasesRequest.builder().languagesOf(languages).build())
                 .stream()
                 .map(ProtoApi::fromDatabase)
                 .toList();
@@ -132,7 +132,7 @@ public class SdmxWebManagerMcp {
             throws IOException {
         return manager
                 .using(getPublicSourceForMcp(source))
-                .listFlows(DatabaseRequest.builder()
+                .listFlows(FlowsRequest.builder()
                         .databaseOf(database)
                         .languagesOf(languages)
                         .build())
@@ -171,7 +171,7 @@ public class SdmxWebManagerMcp {
             return List.of();
         }
 
-        DatabaseRequest request = DatabaseRequest.builder()
+        FlowsRequest request = FlowsRequest.builder()
                 .databaseOf(database)
                 .languagesOf(languages)
                 .query(query)
@@ -210,7 +210,7 @@ public class SdmxWebManagerMcp {
             return List.of();
         }
 
-        SourceRequest request = SourceRequest.builder()
+        DatabasesRequest request = DatabasesRequest.builder()
                 .languagesOf(languages)
                 .query(query)
                 .maxResults(maxResults)
@@ -230,7 +230,7 @@ public class SdmxWebManagerMcp {
             @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages)
             throws IOException {
         return toSkeleton(ProtoApi.fromMetaSet(manager.using(getPublicSourceForMcp(source))
-                .getMeta(FlowRequest.builder()
+                .getMeta(MetaRequest.builder()
                         .flowOf(flow)
                         .databaseOf(database)
                         .languagesOf(languages)
@@ -251,7 +251,7 @@ public class SdmxWebManagerMcp {
                     int maxResults)
             throws IOException {
 
-        ConceptRequest request = ConceptRequest.builder()
+        CodesRequest request = CodesRequest.builder()
                 .flowOf(flow)
                 .databaseOf(database)
                 .languagesOf(languages)
@@ -288,7 +288,7 @@ public class SdmxWebManagerMcp {
         Provider<WebSource> provider = manager.using(getPublicSourceForMcp(source));
         String effectiveKey = key;
         if (dimensions != null && !dimensions.isEmpty()) {
-            Structure structure = provider.getMeta(FlowRequest.builder()
+            Structure structure = provider.getMeta(MetaRequest.builder()
                             .flowOf(flow)
                             .databaseOf(database)
                             .languagesOf(languages)
@@ -296,7 +296,7 @@ public class SdmxWebManagerMcp {
                     .getStructure();
             effectiveKey = buildKey(structure, dimensions).toString();
         }
-        KeyRequest.Builder request = KeyRequest.builder()
+        DataRequest.Builder request = DataRequest.builder()
                 .flowOf(flow)
                 .keyOf(effectiveKey)
                 .detailOf(detail)

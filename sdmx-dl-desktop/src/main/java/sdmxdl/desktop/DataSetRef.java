@@ -1,8 +1,8 @@
 package sdmxdl.desktop;
 
 import lombok.NonNull;
+import sdmxdl.DataRequest;
 import sdmxdl.Key;
-import sdmxdl.KeyRequest;
 import sdmxdl.web.WebFlowRequest;
 import sdmxdl.web.WebKeyRequest;
 
@@ -10,21 +10,20 @@ import sdmxdl.web.WebKeyRequest;
 @lombok.Builder
 public class DataSetRef {
 
-    @NonNull
-    DataSourceRef dataSourceRef;
+    @NonNull DataSourceRef dataSourceRef;
 
-    @NonNull
-    Key key;
+    @NonNull Key key;
 
     int dimensionIndex;
 
     public WebKeyRequest toWebKeyRequest() {
         WebFlowRequest webFlowRequest = dataSourceRef.toWebFlowRequest();
-        return WebKeyRequest
-                .builder()
+        return WebKeyRequest.builder()
                 .source(webFlowRequest.getSource())
-                .request(KeyRequest
-                        .builderOf(webFlowRequest.getRequest())
+                .request(DataRequest.builder()
+                        .database(webFlowRequest.getRequest().getDatabase())
+                        .flow(webFlowRequest.getRequest().getFlow())
+                        .languages(webFlowRequest.getRequest().getLanguages())
                         .key(key)
                         .build())
                 .build();

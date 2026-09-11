@@ -119,14 +119,14 @@ public final class Explorer {
                     result.add(future.get(waitNanos, TimeUnit.NANOSECONDS));
                 } catch (TimeoutException ex) {
                     future.cancel(true);
-                    result.add(Report.of(entry.getKey(), Status.TIMEOUT, SourceRequest.DEFAULT));
+                    result.add(Report.of(entry.getKey(), Status.TIMEOUT, DatabasesRequest.DEFAULT));
                 } catch (ExecutionException ex) {
                     Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
                     result.add(Report.of(entry.getKey(), Status.UNEXPECTED_FAILURE, cause, stackTraceToString(cause)));
                 } catch (InterruptedException ex) {
                     Thread.currentThread().interrupt();
                     future.cancel(true);
-                    result.add(Report.of(entry.getKey(), Status.TIMEOUT, SourceRequest.DEFAULT));
+                    result.add(Report.of(entry.getKey(), Status.TIMEOUT, DatabasesRequest.DEFAULT));
                 }
             }
             return result;
@@ -165,10 +165,10 @@ public final class Explorer {
         try {
             c.testConnection();
         } catch (Exception fatal) {
-            return Report.of(source, Status.CONNECTION_FAILURE, fatal, SourceRequest.DEFAULT);
+            return Report.of(source, Status.CONNECTION_FAILURE, fatal, DatabasesRequest.DEFAULT);
         }
 
-        SourceRequest sourceRequest = SourceRequest.DEFAULT;
+        DatabasesRequest databasesRequest = DatabasesRequest.DEFAULT;
         List<DatabaseRef> databases;
         try {
             databases = c.getDatabases().stream()
@@ -176,7 +176,7 @@ public final class Explorer {
                     .sorted(comparing(Objects::toString))
                     .collect(toList());
         } catch (Exception fatal) {
-            return Report.of(source, Status.DB_FAILURE, fatal, sourceRequest);
+            return Report.of(source, Status.DB_FAILURE, fatal, databasesRequest);
         }
 
         // Probe several databases (not just the first non-empty one) so that a source whose
@@ -187,13 +187,16 @@ public final class Explorer {
         List<DatabaseRef> candidates = databases.isEmpty() ? singletonList(DatabaseRef.NO_DATABASE) : databases;
         int maxDatabases = Math.max(1, options.getMaxDatabasesSampled());
         Report best = null;
-        DatabaseRequest lastDatabaseRequest = null;
+        FlowsRequest lastFlowsRequest = null;
         int databasesProbed = 0;
         for (DatabaseRef databaseRef : candidates) {
-            DatabaseRequest databaseRequest = DatabaseRequest.builderOf(sourceRequest)
+            FlowsRequest flowsRequest = FlowsRequest.builder()
+                    .languages(databasesRequest.getLanguages())
+                    .query(databasesRequest.getQuery())
+                    .maxResults(databasesRequest.getMaxResults())
                     .database(databaseRef)
                     .build();
-            lastDatabaseRequest = databaseRequest;
+            lastFlowsRequest = flowsRequest;
 
             List<FlowRef> flows;
             try {
@@ -202,7 +205,7 @@ public final class Explorer {
                         .sorted(comparing(Objects::toString))
                         .collect(toList());
             } catch (Exception fatal) {
-                Report failure = Report.of(source, Status.FLOW_FAILURE, fatal, databaseRequest)
+                Report failure = Report.of(source, Status.FLOW_FAILURE, fatal, flowsRequest)
                         .withCoverage(Coverage.of(databases.size(), 0, 0, 0, 0));
                 best = furthest(best, failure);
                 if (++databasesProbed >= maxDatabases) break;
@@ -215,14 +218,14 @@ public final class Explorer {
                 continue;
             }
 
-            best = furthest(best, exploreDatabase(c, source, databaseRequest, flows, databases.size(), options));
+            best = furthest(best, exploreDatabase(c, source, flowsRequest, flows, databases.size(), options));
             if (best.getStatus() == Status.SUCCESS) break;
             if (++databasesProbed >= maxDatabases) break;
         }
 
         if (best == null) {
             // No database yielded any flow (all databases were empty).
-            return Report.of(source, Status.NO_FLOW, lastDatabaseRequest)
+            return Report.of(source, Status.NO_FLOW, lastFlowsRequest)
                     .withCoverage(Coverage.of(databases.size(), 0, 0, 0, 0));
         }
 
@@ -232,7 +235,7 @@ public final class Explorer {
     private static Report exploreDatabase(
             Connection c,
             WebSource source,
-            DatabaseRequest databaseRequest,
+            FlowsRequest flowsRequest,
             List<FlowRef> flows,
             int databaseCount,
             Options options) {
@@ -243,9 +246,12 @@ public final class Explorer {
         int flowsWithData = 0;
         Report best = null;
         for (FlowRef flowRef : sample) {
-            FlowRequest flowRequest =
-                    FlowRequest.builderOf(databaseRequest).flow(flowRef).build();
-            Report outcome = exploreFlow(c, source, flowRequest, options);
+            MetaRequest metaRequest = MetaRequest.builder()
+                    .database(flowsRequest.getDatabase())
+                    .languages(flowsRequest.getLanguages())
+                    .flow(flowRef)
+                    .build();
+            Report outcome = exploreFlow(c, source, metaRequest, options);
             if (hasStructure(outcome.getStatus())) {
                 flowsWithStructure++;
             }
@@ -271,36 +277,41 @@ public final class Explorer {
                 : current;
     }
 
-    private static Report exploreFlow(Connection c, WebSource source, FlowRequest flowRequest, Options options) {
+    private static Report exploreFlow(Connection c, WebSource source, MetaRequest metaRequest, Options options) {
         MetaSet metaSet;
         try {
-            metaSet = c.getMeta(flowRequest.getDatabase(), flowRequest.getFlow());
+            metaSet = c.getMeta(metaRequest.getDatabase(), metaRequest.getFlow());
         } catch (Exception fatal) {
-            return Report.of(source, Status.META_FAILURE, fatal, flowRequest);
+            return Report.of(source, Status.META_FAILURE, fatal, metaRequest);
         }
 
         if (isInvalidStructure(metaSet)) {
-            return Report.of(source, Status.NO_META, flowRequest);
+            return Report.of(source, Status.NO_META, metaRequest);
         }
 
-        List<Key> keys = candidateKeys(c, flowRequest, metaSet.getStructure(), options);
-        KeyRequest keyRequest;
+        List<Key> keys = candidateKeys(c, metaRequest, metaSet.getStructure(), options);
+        DataRequest dataRequest;
         DataSet dataSet;
         Iterator<Key> key = keys.iterator();
         do {
-            keyRequest = KeyRequest.builderOf(flowRequest).key(key.next()).build();
+            dataRequest = DataRequest.builder()
+                    .database(metaRequest.getDatabase())
+                    .flow(metaRequest.getFlow())
+                    .languages(metaRequest.getLanguages())
+                    .key(key.next())
+                    .build();
             try {
-                dataSet = c.getData(keyRequest.getDatabase(), keyRequest.getFlow(), keyRequest.toQuery());
+                dataSet = c.getData(dataRequest.getDatabase(), dataRequest.getFlow(), dataRequest.toQuery());
             } catch (Exception fatal) {
-                return Report.of(source, Status.DATA_FAILURE, fatal, keyRequest);
+                return Report.of(source, Status.DATA_FAILURE, fatal, dataRequest);
             }
         } while (key.hasNext() && dataSet.getData().isEmpty());
 
         if (dataSet.getData().isEmpty()) {
-            return Report.of(source, Status.NO_DATA, keyRequest);
+            return Report.of(source, Status.NO_DATA, dataRequest);
         }
 
-        return Report.of(source, Status.SUCCESS, keyRequest);
+        return Report.of(source, Status.SUCCESS, dataRequest);
     }
 
     // A structure was usable (coded dimensions) whenever the data stage was reached.
@@ -331,10 +342,10 @@ public final class Explorer {
     // a fallback. The fallback matters when the built key is an impossible combination (e.g. sources
     // with mutually-exclusive dimensions), which would otherwise wrongly look like "no data".
     private static List<Key> candidateKeys(
-            Connection c, FlowRequest flowRequest, Structure structure, Options options) {
+            Connection c, MetaRequest metaRequest, Structure structure, Options options) {
         List<Key> result = new ArrayList<>();
         try {
-            result.add(buildKey(c, flowRequest.getDatabase(), flowRequest.getFlow(), structure));
+            result.add(buildKey(c, metaRequest.getDatabase(), metaRequest.getFlow(), structure));
         } catch (Exception ignore) {
             // getAvailableDimensionCodes may be unsupported or fail; fall back to the broad query
             // below instead of misreporting this as a data failure.
@@ -433,23 +444,23 @@ public final class Explorer {
         }
 
         public @NonNull String toShortRequest() {
-            if (request instanceof SourceRequest) {
+            if (request instanceof DatabasesRequest) {
                 return "-";
-            } else if (request instanceof DatabaseRequest) {
-                DatabaseRequest databaseRequest = (DatabaseRequest) request;
-                return databaseRequest.getDatabase().toString();
-            } else if (request instanceof FlowRequest) {
-                FlowRequest flowRequest = (FlowRequest) request;
-                String database = flowRequest.getDatabase().equals(DatabaseRef.NO_DATABASE)
+            } else if (request instanceof FlowsRequest) {
+                FlowsRequest flowsRequest = (FlowsRequest) request;
+                return flowsRequest.getDatabase().toString();
+            } else if (request instanceof MetaRequest) {
+                MetaRequest metaRequest = (MetaRequest) request;
+                String database = metaRequest.getDatabase().equals(DatabaseRef.NO_DATABASE)
                         ? ""
-                        : flowRequest.getDatabase() + " > ";
-                return database + flowRequest.getFlow().toShortString();
-            } else if (request instanceof KeyRequest) {
-                KeyRequest keyRequest = (KeyRequest) request;
-                String database = keyRequest.getDatabase().equals(DatabaseRef.NO_DATABASE)
+                        : metaRequest.getDatabase() + " > ";
+                return database + metaRequest.getFlow().toShortString();
+            } else if (request instanceof DataRequest) {
+                DataRequest dataRequest = (DataRequest) request;
+                String database = dataRequest.getDatabase().equals(DatabaseRef.NO_DATABASE)
                         ? ""
-                        : keyRequest.getDatabase() + " > ";
-                return database + keyRequest.getFlow().toShortString() + " > " + keyRequest.getKey();
+                        : dataRequest.getDatabase() + " > ";
+                return database + dataRequest.getFlow().toShortString() + " > " + dataRequest.getKey();
             }
             return Objects.toString(request, "-");
         }

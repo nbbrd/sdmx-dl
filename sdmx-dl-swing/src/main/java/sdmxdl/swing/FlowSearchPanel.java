@@ -407,7 +407,8 @@ public final class FlowSearchPanel extends JComponent {
         List<FlowEntry> entries = new ArrayList<>();
         try {
             List<Database> databases = manager.using(source)
-                    .listDatabases(SourceRequest.builder().languages(languages).build());
+                    .listDatabases(
+                            DatabasesRequest.builder().languages(languages).build());
 
             Set<DatabaseRef> dbRefs = new LinkedHashSet<>();
             for (Database db : databases) {
@@ -420,7 +421,7 @@ public final class FlowSearchPanel extends JComponent {
             for (DatabaseRef db : dbRefs) {
                 try {
                     List<Flow> flows = manager.using(source)
-                            .listFlows(DatabaseRequest.builder()
+                            .listFlows(FlowsRequest.builder()
                                     .database(db)
                                     .languages(languages)
                                     .build());
@@ -444,7 +445,7 @@ public final class FlowSearchPanel extends JComponent {
         if (entry != null) {
             setSelection(WebFlowRequest.builder()
                     .source(entry.getSource().getId())
-                    .request(FlowRequest.builder()
+                    .request(MetaRequest.builder()
                             .languages(languages)
                             .database(entry.getDatabase())
                             .flow(entry.getFlow().getRef())

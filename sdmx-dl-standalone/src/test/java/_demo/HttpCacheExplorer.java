@@ -27,11 +27,11 @@ public class HttpCacheExplorer {
         for (WebSource source : manager.getDefaultSources()) {
             Provider<WebSource> provider = manager.using(source);
             try {
-                DatabaseRef db = provider.listDatabases(SourceRequest.DEFAULT).stream()
+                DatabaseRef db = provider.listDatabases(DatabasesRequest.DEFAULT).stream()
                         .map(Database::getRef)
                         .findFirst()
                         .orElse(DatabaseRef.NO_DATABASE);
-                DatabaseRequest request = DatabaseRequest.builder().database(db).build();
+                FlowsRequest request = FlowsRequest.builder().database(db).build();
                 run(source, " 1/2 ", provider, request);
                 run(source, " 2/2 ", provider, request);
             } catch (IOException e) {
@@ -41,7 +41,7 @@ public class HttpCacheExplorer {
         }
     }
 
-    private static void run(WebSource source, String x, Provider<WebSource> provider, DatabaseRequest request)
+    private static void run(WebSource source, String x, Provider<WebSource> provider, FlowsRequest request)
             throws IOException {
         long start = System.currentTimeMillis();
         System.out.println(source.getId() + x);

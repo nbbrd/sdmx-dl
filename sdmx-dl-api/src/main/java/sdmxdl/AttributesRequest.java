@@ -1,27 +1,25 @@
 package sdmxdl;
 
 import lombok.NonNull;
+import nbbrd.design.NonNegative;
 
 @lombok.Value
 @lombok.Builder
-public class FlowRequest {
+public class AttributesRequest implements HasSearchQuery, HasLimit {
 
-    @NonNull
     @lombok.Builder.Default
-    DatabaseRef database = DatabaseRef.NO_DATABASE;
+    @NonNull DatabaseRef database = DatabaseRef.NO_DATABASE;
 
-    @NonNull
-    FlowRef flow;
+    @NonNull FlowRef flow;
 
-    @NonNull
     @lombok.Builder.Default
-    Languages languages = Languages.ANY;
+    @NonNull Languages languages = Languages.ANY;
 
-    public static @NonNull Builder builderOf(@NonNull DatabaseRequest request) {
-        return builder()
-                .database(request.getDatabase())
-                .languages(request.getLanguages());
-    }
+    @lombok.Builder.Default
+    @NonNull String query = NO_QUERY;
+
+    @lombok.Builder.Default
+    @NonNegative int maxResults = NO_LIMIT;
 
     public static final class Builder {
 

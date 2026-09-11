@@ -178,7 +178,7 @@ public abstract class SdmxAutoCompletion {
         }
 
         private List<Database> load(String term) throws IOException {
-            SourceRequest request = SourceRequest.builder()
+            DatabasesRequest request = DatabasesRequest.builder()
                     .languages(languages)
                     .query(term != null ? term : HasSearchQuery.NO_QUERY)
                     .build();
@@ -220,7 +220,7 @@ public abstract class SdmxAutoCompletion {
         }
 
         private List<Flow> load(String term) throws Exception {
-            DatabaseRequest request = DatabaseRequest.builder()
+            FlowsRequest request = FlowsRequest.builder()
                     .languages(languages)
                     .database(database.get())
                     .query(term != null ? term : HasSearchQuery.NO_QUERY)
@@ -252,8 +252,8 @@ public abstract class SdmxAutoCompletion {
 
         @lombok.NonNull private final ConcurrentMap<?, ?> cache;
 
-        private FlowRequest toRequest() {
-            return FlowRequest.builder()
+        private MetaRequest toRequest() {
+            return MetaRequest.builder()
                     .languages(languages)
                     .database(database.get())
                     .flow(flowRef.get())
@@ -314,8 +314,8 @@ public abstract class SdmxAutoCompletion {
 
         @lombok.NonNull private final ConcurrentMap<?, ?> cache;
 
-        private FlowRequest toRequest() {
-            return FlowRequest.builder()
+        private MetaRequest toRequest() {
+            return MetaRequest.builder()
                     .languages(languages)
                     .database(database.get())
                     .flow(flowRef.get())

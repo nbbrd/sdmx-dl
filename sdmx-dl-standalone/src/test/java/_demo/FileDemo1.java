@@ -1,13 +1,12 @@
 package _demo;
 
-import sdmxdl.KeyRequest;
-import sdmxdl.file.SdmxFileManager;
-import tests.sdmxdl.format.xml.SdmxXmlSources;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Locale;
+import sdmxdl.DataRequest;
+import sdmxdl.file.SdmxFileManager;
+import tests.sdmxdl.format.xml.SdmxXmlSources;
 
 public class FileDemo1 {
 
@@ -16,13 +15,15 @@ public class FileDemo1 {
 
         SdmxFileManager.ofServiceLoader()
                 .usingFile(dataFile())
-                .getData(KeyRequest
-                        .builder()
+                .getData(DataRequest.builder()
                         .flowOf("data")
                         .keyOf("A.DEU.1.0.319.0.UBLGE")
                         .build())
-                .forEach(series -> System.out.printf(Locale.ROOT, "%s: %d obs%n", series.getKey(), series.getObs().size()));
-
+                .forEach(series -> System.out.printf(
+                        Locale.ROOT,
+                        "%s: %d obs%n",
+                        series.getKey(),
+                        series.getObs().size()));
     }
 
     private static File dataFile() throws IOException {

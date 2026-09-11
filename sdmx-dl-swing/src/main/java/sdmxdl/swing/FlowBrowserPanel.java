@@ -373,7 +373,7 @@ public final class FlowBrowserPanel extends JComponent {
             protected java.util.List<Database> doInBackground() throws IOException {
                 return manager.using(source)
                         .listDatabases(
-                                SourceRequest.builder().languages(languages).build());
+                                DatabasesRequest.builder().languages(languages).build());
             }
 
             @Override
@@ -413,7 +413,7 @@ public final class FlowBrowserPanel extends JComponent {
             @Override
             protected java.util.List<Flow> doInBackground() throws IOException {
                 return new ArrayList<>(manager.using(src)
-                        .listFlows(DatabaseRequest.builder()
+                        .listFlows(FlowsRequest.builder()
                                 .database(db)
                                 .languages(languages)
                                 .build()));
@@ -436,7 +436,7 @@ public final class FlowBrowserPanel extends JComponent {
     private void onFlowSelected(Flow flow) {
         setSelection(WebFlowRequest.builder()
                 .source(currentSource.getId())
-                .request(FlowRequest.builder()
+                .request(MetaRequest.builder()
                         .languages(languages)
                         .database(currentDatabase)
                         .flow(flow.getRef())

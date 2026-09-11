@@ -17,9 +17,7 @@
 package internal.sdmxdl.cli;
 
 import picocli.CommandLine;
-import sdmxdl.Detail;
 import sdmxdl.Key;
-import sdmxdl.KeyRequest;
 
 /**
  * @author Philippe Charles
@@ -32,15 +30,6 @@ public class WebKeyOptions extends WebFlowOptions {
             index = "2",
             paramLabel = "<key>",
             converter = KeyConverter.class,
-            descriptionKey = "cli.sdmx.key"
-    )
+            descriptionKey = "cli.sdmx.key")
     private Key key;
-
-    public KeyRequest toKeyRequest(Detail detail) {
-        return KeyRequest
-                .builderOf(toFlowRequest())
-                .key(getKey())
-                .detail(detail)
-                .build();
-    }
 }

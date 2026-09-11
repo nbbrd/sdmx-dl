@@ -495,8 +495,9 @@ public final class BrowsePanel extends JComponent {
             @Override
             protected List<Database> doInBackground() throws IOException {
                 return manager.using(source)
-                        .listDatabases(
-                                SourceRequest.builder().languages(Languages.ANY).build());
+                        .listDatabases(DatabasesRequest.builder()
+                                .languages(Languages.ANY)
+                                .build());
             }
 
             @Override
@@ -540,7 +541,7 @@ public final class BrowsePanel extends JComponent {
             @Override
             protected List<Flow> doInBackground() throws IOException {
                 return new ArrayList<>(manager.using(src)
-                        .listFlows(DatabaseRequest.builder()
+                        .listFlows(FlowsRequest.builder()
                                 .database(db)
                                 .languages(Languages.ANY)
                                 .build()));

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import sdmxdl.Database;
+import sdmxdl.DatabasesRequest;
 
 /**
  * @author Philippe Charles
@@ -45,6 +46,12 @@ public final class SearchDatabasesCommand implements Callable<Void> {
     }
 
     private List<Database> getRows() throws IOException {
-        return web.loadManager().usingName(web.getSource()).listDatabases(web.toSourceRequest(query, maxResults));
+        return web.loadManager()
+                .usingName(web.getSource())
+                .listDatabases(DatabasesRequest.builder()
+                        .languages(web.getLangs())
+                        .query(query)
+                        .maxResults(maxResults)
+                        .build());
     }
 }

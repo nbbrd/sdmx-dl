@@ -13,7 +13,7 @@ Download observations from a dataset using a source, flow, and key.
 ```java
 //JAVA 25+
 //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0
-import sdmxdl.KeyRequest;
+import sdmxdl.DataRequest;
 import sdmxdl.web.SdmxWebManager;
 
 void main() throws Exception {

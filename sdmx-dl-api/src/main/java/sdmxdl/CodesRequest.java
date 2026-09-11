@@ -5,7 +5,7 @@ import nbbrd.design.NonNegative;
 
 @lombok.Value
 @lombok.Builder
-public class ConceptRequest implements HasSearchQuery, HasLimit {
+public class CodesRequest implements HasSearchQuery, HasLimit {
 
     @lombok.Builder.Default
     @NonNull DatabaseRef database = DatabaseRef.NO_DATABASE;
@@ -22,14 +22,6 @@ public class ConceptRequest implements HasSearchQuery, HasLimit {
 
     @lombok.Builder.Default
     @NonNegative int maxResults = NO_LIMIT;
-
-    public static @NonNull Builder builderOf(@NonNull DatabaseRequest request) {
-        return builder()
-                .database(request.getDatabase())
-                .languages(request.getLanguages())
-                .query(request.getQuery())
-                .maxResults(request.getMaxResults());
-    }
 
     public static final class Builder {
 

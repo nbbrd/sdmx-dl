@@ -242,14 +242,14 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
             return Multi.createFrom().empty();
         }
 
-        SourceRequest sourceRequest = SourceRequest.builder()
+        DatabasesRequest databasesRequest = DatabasesRequest.builder()
                 .languages(request.hasLanguages() ? Languages.parse(request.getLanguages()) : Languages.ANY)
                 .query(request.getQuery())
                 .maxResults(request.hasMaxResults() ? request.getMaxResults() : 20)
                 .build();
         try {
             return Multi.createFrom()
-                    .iterable(manager.usingName(request.getSource()).listDatabases(sourceRequest))
+                    .iterable(manager.usingName(request.getSource()).listDatabases(databasesRequest))
                     .map(ProtoApi::fromDatabase);
         } catch (IOException ex) {
             return Multi.createFrom().failure(ex);
@@ -271,7 +271,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
             return Multi.createFrom().empty();
         }
 
-        DatabaseRequest databaseRequest = DatabaseRequest.builder()
+        FlowsRequest flowsRequest = FlowsRequest.builder()
                 .database(request.hasDatabase() ? DatabaseRef.parse(request.getDatabase()) : DatabaseRef.NO_DATABASE)
                 .languages(request.hasLanguages() ? Languages.parse(request.getLanguages()) : Languages.ANY)
                 .query(request.getQuery())
@@ -279,7 +279,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
                 .build();
         try {
             return Multi.createFrom()
-                    .iterable(manager.usingName(request.getSource()).listFlows(databaseRequest))
+                    .iterable(manager.usingName(request.getSource()).listFlows(flowsRequest))
                     .map(ProtoApi::fromDataflow);
         } catch (IOException ex) {
             return Multi.createFrom().failure(ex);

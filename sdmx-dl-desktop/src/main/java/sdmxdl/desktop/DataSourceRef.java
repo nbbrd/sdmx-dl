@@ -1,5 +1,11 @@
 package sdmxdl.desktop;
 
+import static java.util.Objects.requireNonNull;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
 import lombok.NonNull;
 import nbbrd.io.sys.SystemProperties;
 import sdmxdl.*;
@@ -10,35 +16,23 @@ import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebFlowRequest;
 import sdmxdl.web.WebSource;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-
-import static java.util.Objects.requireNonNull;
-
 @lombok.Value
 @lombok.Builder(toBuilder = true)
 public class DataSourceRef {
 
-    @NonNull
-    String source;
+    @NonNull String source;
 
     @lombok.Builder.Default
-    @NonNull
-    DatabaseRef database = DatabaseRef.NO_DATABASE;
+    @NonNull DatabaseRef database = DatabaseRef.NO_DATABASE;
 
     @lombok.Builder.Default
-    @NonNull
-    String flow = "";
+    @NonNull String flow = "";
 
     @lombok.Singular
-    @NonNull
-    List<String> dimensions;
+    @NonNull List<String> dimensions;
 
     @lombok.Builder.Default
-    @NonNull
-    Languages languages = Sdmxdl.INSTANCE.getLanguages();
+    @NonNull Languages languages = Sdmxdl.INSTANCE.getLanguages();
 
     @lombok.Singular
     Map<String, String> properties;
@@ -47,12 +41,10 @@ public class DataSourceRef {
     boolean debug = false;
 
     @lombok.Builder.Default
-    @NonNull
-    Toggle curlBackend = Toggle.DEFAULT;
+    @NonNull Toggle curlBackend = Toggle.DEFAULT;
 
-    public FlowRequest toFlowRequest() {
-        return FlowRequest
-                .builder()
+    public MetaRequest toFlowRequest() {
+        return MetaRequest.builder()
                 .database(database)
                 .flowOf(flow)
                 .languages(languages)
@@ -60,11 +52,7 @@ public class DataSourceRef {
     }
 
     public WebFlowRequest toWebFlowRequest() {
-        return WebFlowRequest
-                .builder()
-                .source(source)
-                .request(toFlowRequest())
-                .build();
+        return WebFlowRequest.builder().source(source).request(toFlowRequest()).build();
     }
 
     public FlowRef toFlowRef() {
@@ -76,13 +64,20 @@ public class DataSourceRef {
         if (result == null) return null;
         WebSource.Builder builder = result.toBuilder().properties(properties);
         if (debug) {
-            Path tmp = requireNonNull(SystemProperties.DEFAULT.getJavaIoTmpdir()).resolve(About.NAME).resolve("debug_" + source);
-            builder.property(DumpingDecoration.DUMP_FOLDER_PROPERTY.getKey(), tmp.resolve("dump").toString());
-            builder.property(DiskCachingSupport.CACHE_FOLDER_PROPERTY.getKey(), tmp.resolve("cache").toString());
+            Path tmp = requireNonNull(SystemProperties.DEFAULT.getJavaIoTmpdir())
+                    .resolve(About.NAME)
+                    .resolve("debug_" + source);
+            builder.property(
+                    DumpingDecoration.DUMP_FOLDER_PROPERTY.getKey(),
+                    tmp.resolve("dump").toString());
+            builder.property(
+                    DiskCachingSupport.CACHE_FOLDER_PROPERTY.getKey(),
+                    tmp.resolve("cache").toString());
             builder.property(DiskCachingSupport.NO_COMPRESSION_PROPERTY.getKey(), "true");
         }
         if (curlBackend != Toggle.DEFAULT) {
-            builder.property(RiNetworking.URL_BACKEND_PROPERTY.getKey(), curlBackend.equals(Toggle.ENABLE) ? "CURL" : "JDK");
+            builder.property(
+                    RiNetworking.URL_BACKEND_PROPERTY.getKey(), curlBackend.equals(Toggle.ENABLE) ? "CURL" : "JDK");
         }
         return builder.build();
     }
