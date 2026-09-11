@@ -1635,7 +1635,7 @@ It is mainly based on the <a
   href="https://www.jbang.dev/"
 >JBang</a> script:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.0.0-beta.18</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.*</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.*</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
@@ -1643,7 +1643,7 @@ It is mainly based on the <a
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">()</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">KeyRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">DataRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">flowOf</span><span class="p">(</span><span class="s">&#34;EXR&#34;</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">keyOf</span><span class="p">(</span><span class="s">&#34;M.CHF+USD.EUR.SP00.A&#34;</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">

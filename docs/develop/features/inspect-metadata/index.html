@@ -14,7 +14,7 @@
 
   <meta name="description" content="Look up descriptive metadata (title, units, notes, source-specific attributes) attached to a series or a flow, without downloading the observations themselves.
 API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(KeyRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .detailOf(Detail.NO_DATA.name()) .build()) .forEach(series -&gt; series.getMeta().forEach((concept, value) -&gt; IO.println(concept &#43; &#34; = &#34; &#43; value))); } CLI ✅ full support" />
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .detailOf(Detail.NO_DATA.name()) .build()) .forEach(series -&gt; series.getMeta().forEach((concept, value) -&gt; IO.println(concept &#43; &#34; = &#34; &#43; value))); } CLI ✅ full support" />
 
     <title>Inspect metadata | sdmx-dl</title>
 
@@ -42,14 +42,14 @@ API ✅ full support
   <meta property="og:site_name" content="sdmx-dl" />
   <meta property="og:description" content="Look up descriptive metadata (title, units, notes, source-specific attributes) attached to a series or a flow, without downloading the observations themselves.
 API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(KeyRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .detailOf(Detail.NO_DATA.name()) .build()) .forEach(series -&gt; series.getMeta().forEach((concept, value) -&gt; IO.println(concept &#43; &#34; = &#34; &#43; value))); } CLI ✅ full support" />
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .detailOf(Detail.NO_DATA.name()) .build()) .forEach(series -&gt; series.getMeta().forEach((concept, value) -&gt; IO.println(concept &#43; &#34; = &#34; &#43; value))); } CLI ✅ full support" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/features/inspect-metadata/" />
 
 <meta property="article:section" content="Features" />
     <meta
       property="article:modified_time"
-      content="2026-09-10T08:52:51+02:00"
+      content="2026-09-11T14:16:43+02:00"
     />
 
 
@@ -57,7 +57,7 @@ API ✅ full support
 <meta name="twitter:title" content="Inspect metadata" />
   <meta name="twitter:description" content="Look up descriptive metadata (title, units, notes, source-specific attributes) attached to a series or a flow, without downloading the observations themselves.
 API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(KeyRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .detailOf(Detail.NO_DATA.name()) .build()) .forEach(series -&gt; series.getMeta().forEach((concept, value) -&gt; IO.println(concept &#43; &#34; = &#34; &#43; value))); } CLI ✅ full support" />
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .detailOf(Detail.NO_DATA.name()) .build()) .forEach(series -&gt; series.getMeta().forEach((concept, value) -&gt; IO.println(concept &#43; &#34; = &#34; &#43; value))); } CLI ✅ full support" />
 
 
   <script type="application/ld+json">
@@ -68,7 +68,7 @@ API ✅ full support
       "name": "Inspect metadata",
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/features/inspect-metadata/",
       "headline": "Inspect metadata",
-      "description": "Look up descriptive metadata (title, units, notes, source-specific attributes) attached to a series or a flow, without downloading the observations themselves.\nAPI ✅ full support\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(\u0022ECB\u0022) .getData(KeyRequest.builder() .flowOf(\u0022EXR\u0022) .keyOf(\u0022M.CHF.EUR.SP00.A\u0022) .detailOf(Detail.NO_DATA.name()) .build()) .forEach(series -\u003e series.getMeta().forEach((concept, value) -\u003e IO.println(concept \u002b \u0022 = \u0022 \u002b value))); } CLI ✅ full support",
+      "description": "Look up descriptive metadata (title, units, notes, source-specific attributes) attached to a series or a flow, without downloading the observations themselves.\nAPI ✅ full support\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(\u0022ECB\u0022) .getData(DataRequest.builder() .flowOf(\u0022EXR\u0022) .keyOf(\u0022M.CHF.EUR.SP00.A\u0022) .detailOf(Detail.NO_DATA.name()) .build()) .forEach(series -\u003e series.getMeta().forEach((concept, value) -\u003e IO.println(concept \u002b \u0022 = \u0022 \u002b value))); } CLI ✅ full support",
       "wordCount": "185",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
@@ -80,7 +80,7 @@ API ✅ full support
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-10T08:52:51.00Z",
+      "dateModified": "2026-09-11T14:16:43.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1610,7 +1610,7 @@ API ✅ full support
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">()</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">KeyRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">DataRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">flowOf</span><span class="p">(</span><span class="s">&#34;EXR&#34;</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">keyOf</span><span class="p">(</span><span class="s">&#34;M.CHF.EUR.SP00.A&#34;</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">detailOf</span><span class="p">(</span><span class="n">Detail</span><span class="p">.</span><span class="na">NO_DATA</span><span class="p">.</span><span class="na">name</span><span class="p">())</span><span class="w">

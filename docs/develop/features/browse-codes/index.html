@@ -13,10 +13,8 @@
 
 
   <meta name="description" content="Look up the human-readable labels behind a coded dimension&rsquo;s values (e.g. FREQ=M means &ldquo;Monthly&rdquo;), so you can build a valid key or interpret one.
-API ⚠️ partial support &mdash; Via metadata traversal (Dimension.getCodes()), not a dedicated call.
-Not supported as a dedicated high-level API call.
-The closest API equivalent is to retrieve flow metadata and inspect the codes attached to a coded dimension.
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { try (Connection conn = SdmxWebManager.ofServiceLoader().getConnection(&#34;ECB&#34;, Languages.ANY)) { MetaSet meta = conn.getMeta(DatabaseRef.NO_DATABASE, FlowRef.parse(&#34;EXR&#34;)); Dimension freq = meta.getStructure().getDimensions().stream() .filter(d -&gt; d.getId().equals(&#34;FREQ&#34;)) .findFirst() .orElseThrow(); freq.getCodes().forEach((code, label) -&gt; IO.println(code &#43; &#34; = &#34; &#43; label)); } } CLI ✅ full support" />
+API ✅ full support
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .listCodes(CodesRequest.builder() .flowOf(&#34;EXR&#34;) .concept(&#34;FREQ&#34;) .build()) .forEach((code, label) -&gt; IO.println(code &#43; &#34; = &#34; &#43; label)); } listDimensions/listAttributes return a flow&rsquo;s coded components, and listCodes resolves a chosen concept&rsquo;s codes; all three accept an optional query/maxResults to search/limit results, the same way as Search flows." />
 
     <title>Browse codes | sdmx-dl</title>
 
@@ -43,27 +41,23 @@ The closest API equivalent is to retrieve flow metadata and inspect the codes at
   />
   <meta property="og:site_name" content="sdmx-dl" />
   <meta property="og:description" content="Look up the human-readable labels behind a coded dimension’s values (e.g. FREQ=M means “Monthly”), so you can build a valid key or interpret one.
-API ⚠️ partial support — Via metadata traversal (Dimension.getCodes()), not a dedicated call.
-Not supported as a dedicated high-level API call.
-The closest API equivalent is to retrieve flow metadata and inspect the codes attached to a coded dimension.
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { try (Connection conn = SdmxWebManager.ofServiceLoader().getConnection(&#34;ECB&#34;, Languages.ANY)) { MetaSet meta = conn.getMeta(DatabaseRef.NO_DATABASE, FlowRef.parse(&#34;EXR&#34;)); Dimension freq = meta.getStructure().getDimensions().stream() .filter(d -&gt; d.getId().equals(&#34;FREQ&#34;)) .findFirst() .orElseThrow(); freq.getCodes().forEach((code, label) -&gt; IO.println(code &#43; &#34; = &#34; &#43; label)); } } CLI ✅ full support" />
+API ✅ full support
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .listCodes(CodesRequest.builder() .flowOf(&#34;EXR&#34;) .concept(&#34;FREQ&#34;) .build()) .forEach((code, label) -&gt; IO.println(code &#43; &#34; = &#34; &#43; label)); } listDimensions/listAttributes return a flow’s coded components, and listCodes resolves a chosen concept’s codes; all three accept an optional query/maxResults to search/limit results, the same way as Search flows." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/features/browse-codes/" />
 
 <meta property="article:section" content="Features" />
     <meta
       property="article:modified_time"
-      content="2026-09-10T08:52:51+02:00"
+      content="2026-09-11T14:16:43+02:00"
     />
 
 
   <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Browse codes" />
   <meta name="twitter:description" content="Look up the human-readable labels behind a coded dimension’s values (e.g. FREQ=M means “Monthly”), so you can build a valid key or interpret one.
-API ⚠️ partial support — Via metadata traversal (Dimension.getCodes()), not a dedicated call.
-Not supported as a dedicated high-level API call.
-The closest API equivalent is to retrieve flow metadata and inspect the codes attached to a coded dimension.
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { try (Connection conn = SdmxWebManager.ofServiceLoader().getConnection(&#34;ECB&#34;, Languages.ANY)) { MetaSet meta = conn.getMeta(DatabaseRef.NO_DATABASE, FlowRef.parse(&#34;EXR&#34;)); Dimension freq = meta.getStructure().getDimensions().stream() .filter(d -&gt; d.getId().equals(&#34;FREQ&#34;)) .findFirst() .orElseThrow(); freq.getCodes().forEach((code, label) -&gt; IO.println(code &#43; &#34; = &#34; &#43; label)); } } CLI ✅ full support" />
+API ✅ full support
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .listCodes(CodesRequest.builder() .flowOf(&#34;EXR&#34;) .concept(&#34;FREQ&#34;) .build()) .forEach((code, label) -&gt; IO.println(code &#43; &#34; = &#34; &#43; label)); } listDimensions/listAttributes return a flow’s coded components, and listCodes resolves a chosen concept’s codes; all three accept an optional query/maxResults to search/limit results, the same way as Search flows." />
 
 
   <script type="application/ld+json">
@@ -74,8 +68,8 @@ The closest API equivalent is to retrieve flow metadata and inspect the codes at
       "name": "Browse codes",
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/features/browse-codes/",
       "headline": "Browse codes",
-      "description": "Look up the human-readable labels behind a coded dimension’s values (e.g. FREQ=M means “Monthly”), so you can build a valid key or interpret one.\nAPI ⚠️ partial support — Via metadata traversal (Dimension.getCodes()), not a dedicated call.\nNot supported as a dedicated high-level API call.\nThe closest API equivalent is to retrieve flow metadata and inspect the codes attached to a coded dimension.\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { try (Connection conn = SdmxWebManager.ofServiceLoader().getConnection(\u0022ECB\u0022, Languages.ANY)) { MetaSet meta = conn.getMeta(DatabaseRef.NO_DATABASE, FlowRef.parse(\u0022EXR\u0022)); Dimension freq = meta.getStructure().getDimensions().stream() .filter(d -\u003e d.getId().equals(\u0022FREQ\u0022)) .findFirst() .orElseThrow(); freq.getCodes().forEach((code, label) -\u003e IO.println(code \u002b \u0022 = \u0022 \u002b label)); } } CLI ✅ full support",
-      "wordCount": "232",
+      "description": "Look up the human-readable labels behind a coded dimension’s values (e.g. FREQ=M means “Monthly”), so you can build a valid key or interpret one.\nAPI ✅ full support\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(\u0022ECB\u0022) .listCodes(CodesRequest.builder() .flowOf(\u0022EXR\u0022) .concept(\u0022FREQ\u0022) .build()) .forEach((code, label) -\u003e IO.println(code \u002b \u0022 = \u0022 \u002b label)); } listDimensions\/listAttributes return a flow’s coded components, and listCodes resolves a chosen concept’s codes; all three accept an optional query\/maxResults to search\/limit results, the same way as Search flows.",
+      "wordCount": "220",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -86,7 +80,7 @@ The closest API equivalent is to retrieve flow metadata and inspect the codes at
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-10T08:52:51.00Z",
+      "dateModified": "2026-09-11T14:16:43.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1606,25 +1600,26 @@ The closest API equivalent is to retrieve flow metadata and inspect the codes at
       API
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <p class="feature-status">⚠️ <strong>partial support</strong> &mdash; Via metadata traversal (<code>Dimension.getCodes()</code>), not a dedicated call.</p>
-<p>Not supported as a dedicated high-level API call.</p>
-<p>The closest API equivalent is to retrieve flow metadata and inspect the codes attached to a coded dimension.</p>
+      <p class="feature-status">✅ <strong>full support</strong></p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.*</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.SdmxWebManager</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">Connection</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SdmxWebManager</span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">().</span><span class="na">getConnection</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">Languages</span><span class="p">.</span><span class="na">ANY</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">MetaSet</span><span class="w"> </span><span class="n">meta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">conn</span><span class="p">.</span><span class="na">getMeta</span><span class="p">(</span><span class="n">DatabaseRef</span><span class="p">.</span><span class="na">NO_DATABASE</span><span class="p">,</span><span class="w"> </span><span class="n">FlowRef</span><span class="p">.</span><span class="na">parse</span><span class="p">(</span><span class="s">&#34;EXR&#34;</span><span class="p">));</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Dimension</span><span class="w"> </span><span class="n">freq</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">meta</span><span class="p">.</span><span class="na">getStructure</span><span class="p">().</span><span class="na">getDimensions</span><span class="p">().</span><span class="na">stream</span><span class="p">()</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">.</span><span class="na">filter</span><span class="p">(</span><span class="n">d</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="na">getId</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&#34;FREQ&#34;</span><span class="p">))</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">.</span><span class="na">findFirst</span><span class="p">()</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">.</span><span class="na">orElseThrow</span><span class="p">();</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">freq</span><span class="p">.</span><span class="na">getCodes</span><span class="p">().</span><span class="na">forEach</span><span class="p">((</span><span class="n">code</span><span class="p">,</span><span class="w"> </span><span class="n">label</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">code</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34; = &#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">label</span><span class="p">));</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">listCodes</span><span class="p">(</span><span class="n">CodesRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">flowOf</span><span class="p">(</span><span class="s">&#34;EXR&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">concept</span><span class="p">(</span><span class="s">&#34;FREQ&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">((</span><span class="n">code</span><span class="p">,</span><span class="w"> </span><span class="n">label</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">code</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34; = &#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">label</span><span class="p">));</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
-</span></span></span></code></pre></div></div>
+</span></span></span></code></pre></div><p><code>listDimensions</code>/<code>listAttributes</code> return a flow&rsquo;s coded components, and <code>listCodes</code> resolves a chosen concept&rsquo;s codes; all three accept an optional <code>query</code>/<code>maxResults</code> to search/limit results, the same way as <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/features/search-flows/"
+>Search flows</a>.</p></div>
     <input
       type="radio"
       class="gdoc-tabs__control hidden"
@@ -1691,7 +1686,7 @@ The closest API equivalent is to retrieve flow metadata and inspect the codes at
   class="gdoc-markdown__link"
   href="/sdmx-dl/docs/develop/features/check-availability/"
 >Check availability</a> instead.</li>
-<li>CLI has a dedicated <code>list codes</code> command; API/WS reach the same data through metadata/structure objects.</li>
+<li>CLI has a dedicated <code>list codes</code> command; the API now offers the equivalent <code>Provider.listCodes(...)</code> (alongside <code>listDimensions</code>/<code>listAttributes</code>). WS still reaches the same data through structure/availability objects.</li>
 </ul>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="related-features"

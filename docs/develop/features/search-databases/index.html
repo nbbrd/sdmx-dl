@@ -14,7 +14,8 @@
 
   <meta name="description" content="Find a database namespace within a multi-database source, when you don&rsquo;t know its exact name.
 API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); var databases = manager.usingName(&#34;ECB&#34;).listDatabases(SourceRequest.DEFAULT); Search&lt;Database&gt; search = Search.ofDatabases(databases); search.search(&#34;central&#34;, 5) .forEach(result -&gt; IO.println(result.getItem().getRef() &#43; &#34; -&gt; &#34; &#43; result.getScore())); } CLI ✅ full support" />
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .listDatabases(DatabasesRequest.builder() .query(&#34;central&#34;) .maxResults(5) .build()) .forEach(database -&gt; IO.println(database.getRef())); } CLI ✅ full support
+sdmx-dl search databases ECB &#34;central&#34; -n 5 WS ✅ full support" />
 
     <title>Search databases | sdmx-dl</title>
 
@@ -42,14 +43,15 @@ API ✅ full support
   <meta property="og:site_name" content="sdmx-dl" />
   <meta property="og:description" content="Find a database namespace within a multi-database source, when you don’t know its exact name.
 API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); var databases = manager.usingName(&#34;ECB&#34;).listDatabases(SourceRequest.DEFAULT); Search&lt;Database&gt; search = Search.ofDatabases(databases); search.search(&#34;central&#34;, 5) .forEach(result -&gt; IO.println(result.getItem().getRef() &#43; &#34; -&gt; &#34; &#43; result.getScore())); } CLI ✅ full support" />
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .listDatabases(DatabasesRequest.builder() .query(&#34;central&#34;) .maxResults(5) .build()) .forEach(database -&gt; IO.println(database.getRef())); } CLI ✅ full support
+sdmx-dl search databases ECB &#34;central&#34; -n 5 WS ✅ full support" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/features/search-databases/" />
 
 <meta property="article:section" content="Features" />
     <meta
       property="article:modified_time"
-      content="2026-09-10T08:52:51+02:00"
+      content="2026-09-11T14:16:43+02:00"
     />
 
 
@@ -57,7 +59,8 @@ API ✅ full support
 <meta name="twitter:title" content="Search databases" />
   <meta name="twitter:description" content="Find a database namespace within a multi-database source, when you don’t know its exact name.
 API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); var databases = manager.usingName(&#34;ECB&#34;).listDatabases(SourceRequest.DEFAULT); Search&lt;Database&gt; search = Search.ofDatabases(databases); search.search(&#34;central&#34;, 5) .forEach(result -&gt; IO.println(result.getItem().getRef() &#43; &#34; -&gt; &#34; &#43; result.getScore())); } CLI ✅ full support" />
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .listDatabases(DatabasesRequest.builder() .query(&#34;central&#34;) .maxResults(5) .build()) .forEach(database -&gt; IO.println(database.getRef())); } CLI ✅ full support
+sdmx-dl search databases ECB &#34;central&#34; -n 5 WS ✅ full support" />
 
 
   <script type="application/ld+json">
@@ -68,8 +71,8 @@ API ✅ full support
       "name": "Search databases",
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/features/search-databases/",
       "headline": "Search databases",
-      "description": "Find a database namespace within a multi-database source, when you don’t know its exact name.\nAPI ✅ full support\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); var databases = manager.usingName(\u0022ECB\u0022).listDatabases(SourceRequest.DEFAULT); Search\u003cDatabase\u003e search = Search.ofDatabases(databases); search.search(\u0022central\u0022, 5) .forEach(result -\u003e IO.println(result.getItem().getRef() \u002b \u0022 -\u003e \u0022 \u002b result.getScore())); } CLI ✅ full support",
-      "wordCount": "123",
+      "description": "Find a database namespace within a multi-database source, when you don’t know its exact name.\nAPI ✅ full support\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(\u0022ECB\u0022) .listDatabases(DatabasesRequest.builder() .query(\u0022central\u0022) .maxResults(5) .build()) .forEach(database -\u003e IO.println(database.getRef())); } CLI ✅ full support\nsdmx-dl search databases ECB \u0022central\u0022 -n 5 WS ✅ full support",
+      "wordCount": "138",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -80,7 +83,7 @@ API ✅ full support
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-10T08:52:51.00Z",
+      "dateModified": "2026-09-11T14:16:43.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1604,15 +1607,17 @@ API ✅ full support
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.*</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.*</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.SdmxWebManager</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w"> </span><span class="n">manager</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SdmxWebManager</span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">();</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="n">databases</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">manager</span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">).</span><span class="na">listDatabases</span><span class="p">(</span><span class="n">SourceRequest</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Search</span><span class="o">&lt;</span><span class="n">Database</span><span class="o">&gt;</span><span class="w"> </span><span class="n">search</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Search</span><span class="p">.</span><span class="na">ofDatabases</span><span class="p">(</span><span class="n">databases</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">search</span><span class="p">.</span><span class="na">search</span><span class="p">(</span><span class="s">&#34;central&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">5</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">result</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="na">getItem</span><span class="p">().</span><span class="na">getRef</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34; -&gt; &#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">result</span><span class="p">.</span><span class="na">getScore</span><span class="p">()));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">listDatabases</span><span class="p">(</span><span class="n">DatabasesRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">query</span><span class="p">(</span><span class="s">&#34;central&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">maxResults</span><span class="p">(</span><span class="n">5</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">database</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">database</span><span class="p">.</span><span class="na">getRef</span><span class="p">()));</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></div></div>
     <input
@@ -1677,6 +1682,7 @@ API ✅ full support
 <ul>
 <li>Most sources expose a single default database, so this feature is only useful for multi-database providers.</li>
 <li>Search is scoped to one source at a time.</li>
+<li><code>Provider.listDatabases(...)</code> accepts the <code>query</code>/<code>maxResults</code> directly on <code>DatabasesRequest</code>, so a separate <code>Search.ofDatabases(...)</code> call on an already-fetched list is only needed when you want access to the numeric relevance <code>getScore()</code>.</li>
 </ul>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="related-features"

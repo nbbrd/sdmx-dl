@@ -15,7 +15,7 @@
   <meta name="description" content="Pick the right output for your use case: Java objects for the library, CSV for shell pipelines, or JSON/protobuf for a remote service.
 API ✅ full support
 The API is object-centric and can be used with the supported format modules and managers. A common entry point is the Java library or the standalone JAR distribution.
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.KeyRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(KeyRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .build()) .forEach(series -&gt; IO.println(series.getKey())); } CLI ✅ full support" />
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .build()) .forEach(series -&gt; IO.println(series.getKey())); } CLI ✅ full support" />
 
     <title>Output and formats | sdmx-dl</title>
 
@@ -44,14 +44,14 @@ The API is object-centric and can be used with the supported format modules and 
   <meta property="og:description" content="Pick the right output for your use case: Java objects for the library, CSV for shell pipelines, or JSON/protobuf for a remote service.
 API ✅ full support
 The API is object-centric and can be used with the supported format modules and managers. A common entry point is the Java library or the standalone JAR distribution.
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.KeyRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(KeyRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .build()) .forEach(series -&gt; IO.println(series.getKey())); } CLI ✅ full support" />
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .build()) .forEach(series -&gt; IO.println(series.getKey())); } CLI ✅ full support" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/features/output-and-formats/" />
 
 <meta property="article:section" content="Features" />
     <meta
       property="article:modified_time"
-      content="2026-09-10T08:52:51+02:00"
+      content="2026-09-11T14:16:43+02:00"
     />
 
 
@@ -60,7 +60,7 @@ The API is object-centric and can be used with the supported format modules and 
   <meta name="twitter:description" content="Pick the right output for your use case: Java objects for the library, CSV for shell pipelines, or JSON/protobuf for a remote service.
 API ✅ full support
 The API is object-centric and can be used with the supported format modules and managers. A common entry point is the Java library or the standalone JAR distribution.
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.KeyRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(KeyRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .build()) .forEach(series -&gt; IO.println(series.getKey())); } CLI ✅ full support" />
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .build()) .forEach(series -&gt; IO.println(series.getKey())); } CLI ✅ full support" />
 
 
   <script type="application/ld+json">
@@ -71,7 +71,7 @@ The API is object-centric and can be used with the supported format modules and 
       "name": "Output and formats",
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/features/output-and-formats/",
       "headline": "Output and formats",
-      "description": "Pick the right output for your use case: Java objects for the library, CSV for shell pipelines, or JSON\/protobuf for a remote service.\nAPI ✅ full support\nThe API is object-centric and can be used with the supported format modules and managers. A common entry point is the Java library or the standalone JAR distribution.\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.KeyRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(\u0022ECB\u0022) .getData(KeyRequest.builder() .flowOf(\u0022EXR\u0022) .keyOf(\u0022M.CHF.EUR.SP00.A\u0022) .build()) .forEach(series -\u003e IO.println(series.getKey())); } CLI ✅ full support",
+      "description": "Pick the right output for your use case: Java objects for the library, CSV for shell pipelines, or JSON\/protobuf for a remote service.\nAPI ✅ full support\nThe API is object-centric and can be used with the supported format modules and managers. A common entry point is the Java library or the standalone JAR distribution.\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(\u0022ECB\u0022) .getData(DataRequest.builder() .flowOf(\u0022EXR\u0022) .keyOf(\u0022M.CHF.EUR.SP00.A\u0022) .build()) .forEach(series -\u003e IO.println(series.getKey())); } CLI ✅ full support",
       "wordCount": "225",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
@@ -83,7 +83,7 @@ The API is object-centric and can be used with the supported format modules and 
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-10T08:52:51.00Z",
+      "dateModified": "2026-09-11T14:16:43.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1608,14 +1608,14 @@ The API is object-centric and can be used with the supported format modules and 
 A common entry point is the Java library or the standalone JAR distribution.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.KeyRequest</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.DataRequest</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.SdmxWebManager</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">()</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">KeyRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">DataRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">flowOf</span><span class="p">(</span><span class="s">&#34;EXR&#34;</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">keyOf</span><span class="p">(</span><span class="s">&#34;M.CHF.EUR.SP00.A&#34;</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">

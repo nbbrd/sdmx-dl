@@ -14,8 +14,8 @@
 
   <meta name="description" content="sdmx-dl API is a library designed as a facade for the SDMX model and APIs.
 Web example:
-SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(KeyRequest .builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF&#43;USD.EUR.SP00.A&#34;) .build()) .forEach(series -&gt; System.out.printf(Locale.ROOT, &#34;%s: %d obs%n&#34;, series.getKey(), series.getObs().size())); File example:
-SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .builder() .flowOf(&#34;data&#34;) .keyOf(&#34;A.DEU.1.0.319.0.UBLGE&#34;) .build()) .forEach(series -&gt; System.out.printf(Locale.ROOT, &#34;%s: %d obs%n&#34;, series.getKey(), series.getObs().size())); Filtering example (time range and observation count):" />
+SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest .builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF&#43;USD.EUR.SP00.A&#34;) .build()) .forEach(series -&gt; System.out.printf(Locale.ROOT, &#34;%s: %d obs%n&#34;, series.getKey(), series.getObs().size())); File example:
+SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(DataRequest .builder() .flowOf(&#34;data&#34;) .keyOf(&#34;A.DEU.1.0.319.0.UBLGE&#34;) .build()) .forEach(series -&gt; System.out.printf(Locale.ROOT, &#34;%s: %d obs%n&#34;, series.getKey(), series.getObs().size())); Filtering example (time range and observation count):" />
 
     <title>Java library | sdmx-dl</title>
 
@@ -44,15 +44,15 @@ SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .b
   <meta property="og:description" content="
 sdmx-dl API is a library designed as a facade for the SDMX model and APIs.
 Web example:
-SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(KeyRequest .builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF&#43;USD.EUR.SP00.A&#34;) .build()) .forEach(series -&gt; System.out.printf(Locale.ROOT, &#34;%s: %d obs%n&#34;, series.getKey(), series.getObs().size())); File example:
-SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .builder() .flowOf(&#34;data&#34;) .keyOf(&#34;A.DEU.1.0.319.0.UBLGE&#34;) .build()) .forEach(series -&gt; System.out.printf(Locale.ROOT, &#34;%s: %d obs%n&#34;, series.getKey(), series.getObs().size())); Filtering example (time range and observation count):" />
+SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest .builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF&#43;USD.EUR.SP00.A&#34;) .build()) .forEach(series -&gt; System.out.printf(Locale.ROOT, &#34;%s: %d obs%n&#34;, series.getKey(), series.getObs().size())); File example:
+SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(DataRequest .builder() .flowOf(&#34;data&#34;) .keyOf(&#34;A.DEU.1.0.319.0.UBLGE&#34;) .build()) .forEach(series -&gt; System.out.printf(Locale.ROOT, &#34;%s: %d obs%n&#34;, series.getKey(), series.getObs().size())); Filtering example (time range and observation count):" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/api/" />
 
 <meta property="article:section" content="API" />
     <meta
       property="article:modified_time"
-      content="2026-09-10T08:52:51+02:00"
+      content="2026-09-11T14:16:43+02:00"
     />
 
 
@@ -61,8 +61,8 @@ SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .b
   <meta name="twitter:description" content="
 sdmx-dl API is a library designed as a facade for the SDMX model and APIs.
 Web example:
-SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(KeyRequest .builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF&#43;USD.EUR.SP00.A&#34;) .build()) .forEach(series -&gt; System.out.printf(Locale.ROOT, &#34;%s: %d obs%n&#34;, series.getKey(), series.getObs().size())); File example:
-SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .builder() .flowOf(&#34;data&#34;) .keyOf(&#34;A.DEU.1.0.319.0.UBLGE&#34;) .build()) .forEach(series -&gt; System.out.printf(Locale.ROOT, &#34;%s: %d obs%n&#34;, series.getKey(), series.getObs().size())); Filtering example (time range and observation count):" />
+SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest .builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF&#43;USD.EUR.SP00.A&#34;) .build()) .forEach(series -&gt; System.out.printf(Locale.ROOT, &#34;%s: %d obs%n&#34;, series.getKey(), series.getObs().size())); File example:
+SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(DataRequest .builder() .flowOf(&#34;data&#34;) .keyOf(&#34;A.DEU.1.0.319.0.UBLGE&#34;) .build()) .forEach(series -&gt; System.out.printf(Locale.ROOT, &#34;%s: %d obs%n&#34;, series.getKey(), series.getObs().size())); Filtering example (time range and observation count):" />
 
 
   <script type="application/ld+json">
@@ -73,7 +73,7 @@ SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .b
       "name": "Java library",
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/api/",
       "headline": "Java library",
-      "description": "\nsdmx-dl API is a library designed as a facade for the SDMX model and APIs.\nWeb example:\nSdmxWebManager .ofServiceLoader() .usingName(\u0022ECB\u0022) .getData(KeyRequest .builder() .flowOf(\u0022EXR\u0022) .keyOf(\u0022M.CHF\u002bUSD.EUR.SP00.A\u0022) .build()) .forEach(series -\u003e System.out.printf(Locale.ROOT, \u0022%s: %d obs%n\u0022, series.getKey(), series.getObs().size())); File example:\nSdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .builder() .flowOf(\u0022data\u0022) .keyOf(\u0022A.DEU.1.0.319.0.UBLGE\u0022) .build()) .forEach(series -\u003e System.out.printf(Locale.ROOT, \u0022%s: %d obs%n\u0022, series.getKey(), series.getObs().size())); Filtering example (time range and observation count):",
+      "description": "\nsdmx-dl API is a library designed as a facade for the SDMX model and APIs.\nWeb example:\nSdmxWebManager .ofServiceLoader() .usingName(\u0022ECB\u0022) .getData(DataRequest .builder() .flowOf(\u0022EXR\u0022) .keyOf(\u0022M.CHF\u002bUSD.EUR.SP00.A\u0022) .build()) .forEach(series -\u003e System.out.printf(Locale.ROOT, \u0022%s: %d obs%n\u0022, series.getKey(), series.getObs().size())); File example:\nSdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(DataRequest .builder() .flowOf(\u0022data\u0022) .keyOf(\u0022A.DEU.1.0.319.0.UBLGE\u0022) .build()) .forEach(series -\u003e System.out.printf(Locale.ROOT, \u0022%s: %d obs%n\u0022, series.getKey(), series.getObs().size())); Filtering example (time range and observation count):",
       "wordCount": "254",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
@@ -85,7 +85,7 @@ SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .b
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-10T08:52:51.00Z",
+      "dateModified": "2026-09-11T14:16:43.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1592,7 +1592,7 @@ SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .b
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">SdmxWebManager</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">()</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">KeyRequest</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">DataRequest</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">flowOf</span><span class="p">(</span><span class="s">&#34;EXR&#34;</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">keyOf</span><span class="p">(</span><span class="s">&#34;M.CHF+USD.EUR.SP00.A&#34;</span><span class="p">)</span><span class="w">
@@ -1602,7 +1602,7 @@ SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .b
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">SdmxFileManager</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">()</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">usingFile</span><span class="p">(</span><span class="n">dataFile</span><span class="p">())</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">KeyRequest</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">DataRequest</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">flowOf</span><span class="p">(</span><span class="s">&#34;data&#34;</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">keyOf</span><span class="p">(</span><span class="s">&#34;A.DEU.1.0.319.0.UBLGE&#34;</span><span class="p">)</span><span class="w">
@@ -1612,7 +1612,7 @@ SdmxFileManager .ofServiceLoader() .usingFile(dataFile()) .getData(KeyRequest .b
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">SdmxWebManager</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">()</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">KeyRequest</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">DataRequest</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">flowOf</span><span class="p">(</span><span class="s">&#34;EXR&#34;</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">keyOf</span><span class="p">(</span><span class="s">&#34;M.CHF.EUR.SP00.A&#34;</span><span class="p">)</span><span class="w">

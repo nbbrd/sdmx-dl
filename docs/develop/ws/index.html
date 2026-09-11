@@ -50,7 +50,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
 <meta property="article:section" content="Ws" />
     <meta
       property="article:modified_time"
-      content="2026-09-10T08:52:51+02:00"
+      content="2026-09-11T14:16:43+02:00"
     />
 
 
@@ -71,7 +71,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/ws/",
       "headline": "Web service",
       "description": "\nsdmx-dl WS is a web service that serves as a bridge to any application or language.\nThis service has three endpoints:\na gRPC endpoint which has the best performances but a limited set of clients a REST endpoint which has a wider range of clients but is less efficient an MCP endpoint which lets AI assistants and agents browse and fetch data These endpoints also provides specifications (.proto files and OpenAPI respectively) that can be used to generate client code. They are designed to operate locally as well as on remote machines.",
-      "wordCount": "498",
+      "wordCount": "568",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -82,7 +82,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-10T08:52:51.00Z",
+      "dateModified": "2026-09-11T14:16:43.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1729,6 +1729,7 @@ Its default port is <code>4559</code>. For convenience, an <a
 <li>Only sources marked as <strong>public</strong> are exposed; restricted/private sources are hidden.</li>
 <li>It is <strong>read-only</strong>: there is no way to modify configuration or state through it.</li>
 <li>Some fields are truncated or simplified to save tokens (for example, flow descriptions are capped in length, and metadata is returned as a skeleton without the codes of coded dimensions).</li>
+<li>List and search are unified: every listing tool accepts an optional <code>query</code>. When <code>query</code> is empty, entries are returned in their natural order (sorted or as defined) and truncated to <code>maxResults</code> (<code>0</code> = no limit). When <code>query</code> is non-empty, entries are ranked by relevance (hybrid BM25 + trigram search) and limited to <code>maxResults</code>.</li>
 </ul>
 <p>Available tools:</p>
 <div class="table-wrap"> <table>
@@ -1740,53 +1741,49 @@ Its default port is <code>4559</code>. For convenience, an <a
 	</thead>
 	<tbody>
 			<tr>
-					<td><code>mcpAbout</code></td>
+					<td><code>about</code></td>
 					<td>Get the name and version of sdmx-dl.</td>
 			</tr>
 			<tr>
-					<td><code>mcpSources</code></td>
-					<td>List available sources.</td>
+					<td><code>listSources</code></td>
+					<td>List or search available sources.</td>
 			</tr>
 			<tr>
-					<td><code>mcpSearchSources</code></td>
-					<td>Search sources by relevance.</td>
+					<td><code>listDatabases</code></td>
+					<td>List or search the databases of a source.</td>
 			</tr>
 			<tr>
-					<td><code>mcpDatabases</code></td>
-					<td>List the databases of a source.</td>
+					<td><code>listFlows</code></td>
+					<td>List or search the flows (datasets) of a source.</td>
 			</tr>
 			<tr>
-					<td><code>mcpSearchDatabases</code></td>
-					<td>Search the databases of a source by relevance.</td>
+					<td><code>listDimensions</code></td>
+					<td>List or search the dimensions of a flow&rsquo;s structure.</td>
 			</tr>
 			<tr>
-					<td><code>mcpFlows</code></td>
-					<td>List the flows (datasets) of a source.</td>
+					<td><code>listAttributes</code></td>
+					<td>List or search the attributes of a flow&rsquo;s structure.</td>
 			</tr>
 			<tr>
-					<td><code>mcpSearchFlows</code></td>
-					<td>Search the flows of a source by relevance.</td>
+					<td><code>getMeta</code></td>
+					<td>Get the structure (dimensions, attributes) skeleton of a flow.</td>
 			</tr>
 			<tr>
-					<td><code>mcpMeta</code></td>
-					<td>Get the structure (dimensions, attributes) of a flow.</td>
+					<td><code>listCodes</code></td>
+					<td>List or search the codes of a dimension or attribute.</td>
 			</tr>
 			<tr>
-					<td><code>mcpCodes</code></td>
-					<td>List or search the codes of a dimension.</td>
-			</tr>
-			<tr>
-					<td><code>mcpData</code></td>
+					<td><code>getData</code></td>
 					<td>Fetch data series for a flow, optionally filtered by key/period.</td>
 			</tr>
 	</tbody>
 </table> </div>
-<p>The typical workflow is: find a source (<code>mcpSources</code>/<code>mcpSearchSources</code>) → find a flow (<code>mcpFlows</code>/<code>mcpSearchFlows</code>) → inspect its dimensions (<code>mcpMeta</code>) → resolve dimension codes (<code>mcpCodes</code>) → fetch data (<code>mcpData</code>).</p>
+<p>The typical workflow is: find a source (<code>listSources</code>) → find a flow (<code>listFlows</code>) → inspect its dimensions/attributes (<code>getMeta</code> or <code>listDimensions</code>/<code>listAttributes</code>) → resolve dimension codes (<code>listCodes</code>) → fetch data (<code>getData</code>, preferring the structured <code>dimensions</code> map over a positional <code>key</code>).</p>
 <p>Call example using <a
   class="gdoc-markdown__link"
   href="https://curl.se/"
 >curl</a> against the streamable HTTP transport:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -X POST -H <span class="s2">&#34;Content-Type: application/json&#34;</span> -H <span class="s2">&#34;Accept: application/json, text/event-stream&#34;</span> localhost:4559/mcp --data <span class="s2">&#34;{\&#34;jsonrpc\&#34;:\&#34;2.0\&#34;,\&#34;id\&#34;:1,\&#34;method\&#34;:\&#34;tools/call\&#34;,\&#34;params\&#34;:{\&#34;name\&#34;:\&#34;mcpSources\&#34;}}&#34;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -X POST -H <span class="s2">&#34;Content-Type: application/json&#34;</span> -H <span class="s2">&#34;Accept: application/json, text/event-stream&#34;</span> localhost:4559/mcp --data <span class="s2">&#34;{\&#34;jsonrpc\&#34;:\&#34;2.0\&#34;,\&#34;id\&#34;:1,\&#34;method\&#34;:\&#34;tools/call\&#34;,\&#34;params\&#34;:{\&#34;name\&#34;:\&#34;listSources\&#34;}}&#34;</span>
 </span></span></code></pre></div><p>Most MCP clients (e.g. IDE assistants) support configuring a remote MCP server by URL directly, without needing curl.</p>
 
   </article>

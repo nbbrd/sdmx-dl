@@ -13,7 +13,7 @@
 
 
   <meta name="description" content="Restrict a data request to a date range and/or a limited number of observations, so you download only what you need instead of a series&rsquo; full history.
-Both narrowing mechanisms are just extra fields on the same data request (KeyRequest/Query in the API, options on fetch data in the CLI, fields on GetData in the WS), so they can be used separately or together.
+Both narrowing mechanisms are just extra fields on the same data request (DataRequest/Query in the API, options on fetch data in the CLI, fields on GetData in the WS), so they can be used separately or together.
 By period API ✅ full support" />
 
     <title>Narrow your request | sdmx-dl</title>
@@ -41,7 +41,7 @@ By period API ✅ full support" />
   />
   <meta property="og:site_name" content="sdmx-dl" />
   <meta property="og:description" content="Restrict a data request to a date range and/or a limited number of observations, so you download only what you need instead of a series’ full history.
-Both narrowing mechanisms are just extra fields on the same data request (KeyRequest/Query in the API, options on fetch data in the CLI, fields on GetData in the WS), so they can be used separately or together.
+Both narrowing mechanisms are just extra fields on the same data request (DataRequest/Query in the API, options on fetch data in the CLI, fields on GetData in the WS), so they can be used separately or together.
 By period API ✅ full support" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/features/narrow-your-request/" />
@@ -49,14 +49,14 @@ By period API ✅ full support" />
 <meta property="article:section" content="Features" />
     <meta
       property="article:modified_time"
-      content="2026-09-10T08:52:51+02:00"
+      content="2026-09-11T14:16:43+02:00"
     />
 
 
   <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Narrow your request" />
   <meta name="twitter:description" content="Restrict a data request to a date range and/or a limited number of observations, so you download only what you need instead of a series’ full history.
-Both narrowing mechanisms are just extra fields on the same data request (KeyRequest/Query in the API, options on fetch data in the CLI, fields on GetData in the WS), so they can be used separately or together.
+Both narrowing mechanisms are just extra fields on the same data request (DataRequest/Query in the API, options on fetch data in the CLI, fields on GetData in the WS), so they can be used separately or together.
 By period API ✅ full support" />
 
 
@@ -68,7 +68,7 @@ By period API ✅ full support" />
       "name": "Narrow your request",
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/features/narrow-your-request/",
       "headline": "Narrow your request",
-      "description": "Restrict a data request to a date range and\/or a limited number of observations, so you download only what you need instead of a series’ full history.\nBoth narrowing mechanisms are just extra fields on the same data request (KeyRequest\/Query in the API, options on fetch data in the CLI, fields on GetData in the WS), so they can be used separately or together.\nBy period API ✅ full support",
+      "description": "Restrict a data request to a date range and\/or a limited number of observations, so you download only what you need instead of a series’ full history.\nBoth narrowing mechanisms are just extra fields on the same data request (DataRequest\/Query in the API, options on fetch data in the CLI, fields on GetData in the WS), so they can be used separately or together.\nBy period API ✅ full support",
       "wordCount": "281",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
@@ -80,7 +80,7 @@ By period API ✅ full support" />
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-10T08:52:51.00Z",
+      "dateModified": "2026-09-11T14:16:43.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1586,7 +1586,7 @@ By period API ✅ full support" />
     <h1>Narrow your request</h1>
     
     <p>Restrict a data request to a date range and/or a limited number of observations, so you download only what you need instead of a series&rsquo; full history.</p>
-<p>Both narrowing mechanisms are just extra fields on the same data request (<code>KeyRequest</code>/<code>Query</code> in the API, options on <code>fetch data</code> in the CLI, fields on <code>GetData</code> in the WS), so they can be used separately or together.</p>
+<p>Both narrowing mechanisms are just extra fields on the same data request (<code>DataRequest</code>/<code>Query</code> in the API, options on <code>fetch data</code> in the CLI, fields on <code>GetData</code> in the WS), so they can be used separately or together.</p>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="by-period"
     >
@@ -1613,14 +1613,14 @@ By period API ✅ full support" />
       <p class="feature-status">✅ <strong>full support</strong></p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.KeyRequest</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.DataRequest</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.SdmxWebManager</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">()</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">KeyRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">DataRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">flowOf</span><span class="p">(</span><span class="s">&#34;EXR&#34;</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">keyOf</span><span class="p">(</span><span class="s">&#34;M.CHF.EUR.SP00.A&#34;</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">startPeriodOf</span><span class="p">(</span><span class="s">&#34;2020&#34;</span><span class="p">)</span><span class="w">
@@ -1706,14 +1706,14 @@ By period API ✅ full support" />
       <p class="feature-status">✅ <strong>full support</strong></p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.KeyRequest</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.DataRequest</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.SdmxWebManager</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">()</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">KeyRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">DataRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">flowOf</span><span class="p">(</span><span class="s">&#34;EXR&#34;</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">keyOf</span><span class="p">(</span><span class="s">&#34;M.CHF.EUR.SP00.A&#34;</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">firstNObservations</span><span class="p">(</span><span class="n">3</span><span class="p">)</span><span class="w">

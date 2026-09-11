@@ -51,7 +51,7 @@ sdmx-dl search sources &#34;european central&#34; -n 5 WS ✅ full support" />
 <meta property="article:section" content="Features" />
     <meta
       property="article:modified_time"
-      content="2026-09-10T08:52:51+02:00"
+      content="2026-09-11T14:16:43+02:00"
     />
 
 
@@ -72,7 +72,7 @@ sdmx-dl search sources &#34;european central&#34; -n 5 WS ✅ full support" />
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/features/search-sources/",
       "headline": "Search sources",
       "description": "Find a source by name or topic when you don’t know its exact ID, with typo tolerance.\nAPI ✅ full support\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.Languages; import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); Search\u003cWebSource\u003e search = Search.ofSources(manager.getSources().values(), Languages.ANY); search.search(\u0022european central\u0022, 5) .forEach(result -\u003e IO.println(result.getItem().getId())); } CLI ✅ full support\nsdmx-dl search sources \u0022european central\u0022 -n 5 WS ✅ full support",
-      "wordCount": "128",
+      "wordCount": "159",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -83,7 +83,7 @@ sdmx-dl search sources &#34;european central&#34; -n 5 WS ✅ full support" />
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-10T08:52:51.00Z",
+      "dateModified": "2026-09-11T14:16:43.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1679,6 +1679,7 @@ sdmx-dl search sources &#34;european central&#34; -n 5 WS ✅ full support" />
 <ul>
 <li>Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so both <code>&quot;ecb&quot;</code> and <code>&quot;eurpean central&quot;</code> find the European Central Bank.</li>
 <li>Sources marked as aliases are excluded from the search index.</li>
+<li>Unlike flows/databases, sources are not obtained through a <code>Provider</code>, so there&rsquo;s no <code>query</code>/<code>maxResults</code>-enabled request for them; <code>Search.ofSources(...)</code> on the in-memory list from <code>manager.getSources()</code> is the way to rank them by relevance.</li>
 </ul>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="related-features"
