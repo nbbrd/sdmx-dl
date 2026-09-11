@@ -14,7 +14,6 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.Collection;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.ExampleObject;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
@@ -25,8 +24,7 @@ import sdmxdl.format.protobuf.*;
 import sdmxdl.format.protobuf.web.MonitorReportDto;
 import sdmxdl.format.protobuf.web.WebSourceDto;
 import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.Search;
-import sdmxdl.web.WebSource;
+import sdmxdl.web.WebSourcesRequest;
 
 @Path("/sdmx-dl")
 @Consumes(APPLICATION_JSON)
@@ -225,13 +223,16 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     @Path("/searchSources")
     @Override
     public Multi<WebSourceDto> searchSources(SearchSourcesRequestDto request) {
-        Languages languages = request.hasLanguages() ? Languages.parse(request.getLanguages()) : Languages.ANY;
-        int maxResults = request.hasMaxResults() ? request.getMaxResults() : 20;
-        Collection<WebSource> sources = manager.getSources().values();
-        return Multi.createFrom()
-                .iterable(Search.ofSources(sources, languages).search(request.getQuery(), maxResults))
-                .map(Search.Result::getItem)
-                .map(ProtoWeb::fromWebSource);
+        if (request.getQuery().isEmpty()) {
+            return Multi.createFrom().empty();
+        }
+
+        WebSourcesRequest sourcesRequest = WebSourcesRequest.builder()
+                .languages(request.hasLanguages() ? Languages.parse(request.getLanguages()) : Languages.ANY)
+                .maxResults(request.hasMaxResults() ? request.getMaxResults() : 20)
+                .query(request.getQuery())
+                .build();
+        return Multi.createFrom().iterable(manager.listSources(sourcesRequest)).map(ProtoWeb::fromWebSource);
     }
 
     @POST

@@ -16,11 +16,10 @@ See which data providers sdmx-dl can connect to, before picking one to query.
 import sdmxdl.web.*;
 
 void main() throws Exception {
-    SdmxWebManager manager = SdmxWebManager.ofServiceLoader();
-
-    manager.getSources().values().stream()
-            .filter(source -> !source.isAlias())
-            .forEach(source -> IO.println(source.getId()));
+    SdmxWebManager
+        .ofServiceLoader()
+        .listSources(WebSourcesRequest.DEFAULT)
+        .forEach(source -> IO.println(source.getId()));
 }
 ```
 {{< /tab >}}

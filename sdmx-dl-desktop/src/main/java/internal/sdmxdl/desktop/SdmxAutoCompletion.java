@@ -31,7 +31,6 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -45,8 +44,8 @@ import nbbrd.desktop.favicon.URLConnectionFactory;
 import sdmxdl.*;
 import sdmxdl.swing.SdmxLogo;
 import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.Search;
 import sdmxdl.web.WebSource;
+import sdmxdl.web.WebSourcesRequest;
 import sdmxdl.web.spi.Network;
 import sdmxdl.web.spi.SSLFactory;
 
@@ -108,7 +107,6 @@ public abstract class SdmxAutoCompletion {
         public AutoCompletionSource getSource() {
             return ExtAutoCompletionSource.builder(this::load)
                     .behavior(SYNC)
-                    .postProcessor(this::filterAndSort)
                     .valueToString(WebSource::getId)
                     .build();
         }
@@ -130,20 +128,8 @@ public abstract class SdmxAutoCompletion {
         }
 
         private List<WebSource> load(String term) {
-            return manager.getSources().values().stream()
-                    .filter(source -> !source.isAlias())
-                    .collect(toList());
-        }
-
-        private List<WebSource> filterAndSort(List<WebSource> list, String term) {
-            if (term == null || term.isEmpty()) {
-                return list.stream()
-                        .sorted(comparing(source -> Objects.toString(languages.select(source.getNames()))))
-                        .collect(toList());
-            }
-            return Search.ofSources(list, languages).search(term, list.size()).stream()
-                    .map(Search.Result::getItem)
-                    .collect(toList());
+            return manager.listSources(
+                    WebSourcesRequest.builder().languages(languages).query(term).build());
         }
     }
 

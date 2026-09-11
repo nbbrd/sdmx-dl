@@ -13,15 +13,16 @@ Find a source by name or topic when you don't know its exact ID, with typo toler
 ```java
 //JAVA 25+
 //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:{{< sdmx-dl-version >}}
-import sdmxdl.Languages;
 import sdmxdl.web.*;
 
 void main() throws Exception {
-    SdmxWebManager manager = SdmxWebManager.ofServiceLoader();
-
-    Search<WebSource> search = Search.ofSources(manager.getSources().values(), Languages.ANY);
-    search.search("european central", 5)
-            .forEach(result -> IO.println(result.getItem().getId()));
+    SdmxWebManager
+            .ofServiceLoader()
+            .listSources(WebSourcesRequest.builder()
+                    .query("european central")
+                    .maxResults(5)
+                    .build())
+            .forEach(source -> IO.println(source.getId()));
 }
 ```
 {{< /tab >}}
@@ -58,7 +59,8 @@ grpcurl -d '{"query":"european central","maxResults":5}' -plaintext localhost:45
 
 - Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so both `"ecb"` and `"eurpean central"` find the European Central Bank.
 - Sources marked as aliases are excluded from the search index.
-- Unlike flows/databases, sources are not obtained through a `Provider`, so there's no `query`/`maxResults`-enabled request for them; `Search.ofSources(...)` on the in-memory list from `manager.getSources()` is the way to rank them by relevance.
+- `WebSourcesRequest` also carries a `threshold` (a `Confidentiality` level) so that sources requiring stricter confidentiality can be excluded from the results; it defaults to allowing every source.
+- When `query` is empty, `manager.listSources(...)` falls back to listing sources sorted by id instead of ranking by relevance.
 
 ## Related features
 

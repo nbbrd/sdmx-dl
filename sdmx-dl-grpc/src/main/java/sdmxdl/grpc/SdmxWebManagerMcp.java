@@ -1,21 +1,25 @@
 package sdmxdl.grpc;
 
-import static java.util.Comparator.comparing;
 import static sdmxdl.DatabaseRef.NO_DATABASE_KEYWORD;
 import static sdmxdl.HasSearchQuery.NO_QUERY;
 
-import io.quarkiverse.mcp.server.*;
+import io.quarkiverse.mcp.server.Tool;
+import io.quarkiverse.mcp.server.ToolArg;
+import io.quarkiverse.mcp.server.WrapBusinessError;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import sdmxdl.*;
 import sdmxdl.format.protobuf.*;
 import sdmxdl.format.protobuf.web.WebSourceDto;
 import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.Search;
 import sdmxdl.web.WebSource;
+import sdmxdl.web.WebSourcesRequest;
 
 @ApplicationScoped
 @RegisterForReflection
@@ -51,6 +55,7 @@ public class SdmxWebManagerMcp {
     private static final String DEFAULT_QUERY = NO_QUERY;
     private static final String DEFAULT_DETAIL = "DATA_ONLY";
     private static final String DEFAULT_KEY = "all";
+    private static final Confidentiality THRESHOLD = Confidentiality.PUBLIC;
 
     // Default to a single language to roughly halve name-related tokens; falls back gracefully when
     // unavailable.
@@ -61,40 +66,11 @@ public class SdmxWebManagerMcp {
 
     private WebSource getPublicSourceForMcp(String source) {
         WebSource webSource = manager.getSources().get(source);
-        if (webSource == null || !Confidentiality.PUBLIC.isAllowedIn(webSource)) {
-            throw new IllegalArgumentException("Cannot find source '" + source + "'." + suggestSources(source));
+        if (webSource == null || !THRESHOLD.isAllowedIn(webSource)) {
+            throw new IllegalArgumentException(
+                    "Cannot find source '" + source + "'. Use listSources to list available sources.");
         }
         return webSource;
-    }
-
-    private List<WebSource> getPublicSources() {
-        return manager.getSources().values().stream()
-                .filter(source -> !source.isAlias())
-                .filter(Confidentiality.PUBLIC::isAllowedIn)
-                .toList();
-    }
-
-    private String suggestSources(String source) {
-        List<String> suggestions = Search.ofSources(getPublicSources(), Languages.parse(DEFAULT_LANGUAGES))
-                .search(source == null ? "" : source, 3)
-                .stream()
-                .map(result -> result.getItem().getId())
-                .toList();
-        return suggestions.isEmpty()
-                ? " Use listSources to list available sources."
-                : " Did you mean " + suggestions + "? Use listSources to list all sources.";
-    }
-
-    private static int max(int maxResults) {
-        return maxResults > 0 ? maxResults : Integer.MAX_VALUE;
-    }
-
-    @Prompt(description = "List SDMX sources IDs.", name = "listSourceIds")
-    public PromptResponse sourceIds() {
-        return PromptResponse.withMessages(getPublicSources().stream()
-                .map(WebSource::getId)
-                .map(PromptMessage::withUserRole)
-                .toList());
     }
 
     @Tool(
@@ -112,16 +88,15 @@ public class SdmxWebManagerMcp {
             @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages,
             @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = DEFAULT_MAX_RESULTS)
                     int maxResults) {
-        List<WebSource> publicSources = getPublicSources();
-        List<WebSource> result = query.isEmpty()
-                ? publicSources.stream()
-                        .sorted(comparing(WebSource::getId))
-                        .limit(max(maxResults))
-                        .toList()
-                : Search.ofSources(publicSources, Languages.parse(languages)).search(query, max(maxResults)).stream()
-                        .map(Search.Result::getItem)
-                        .toList();
-        return result.stream().map(SdmxWebManagerMcp::compactSource).toList();
+        WebSourcesRequest request = WebSourcesRequest.builder()
+                .languagesOf(languages)
+                .query(query)
+                .maxResults(maxResults)
+                .threshold(THRESHOLD)
+                .build();
+        return manager.listSources(request).stream()
+                .map(SdmxWebManagerMcp::compactSource)
+                .toList();
     }
 
     @Tool(

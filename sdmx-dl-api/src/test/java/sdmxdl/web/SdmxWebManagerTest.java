@@ -16,7 +16,17 @@
  */
 package sdmxdl.web;
 
+import static org.assertj.core.api.Assertions.*;
+import static sdmxdl.Languages.ANY;
+import static sdmxdl.web.spi.Driver.NATIVE_DRIVER_RANK;
+import static sdmxdl.web.spi.Driver.WRAPPED_DRIVER_RANK;
+
+import java.io.IOException;
+import java.util.AbstractMap;
+import java.util.EnumSet;
+import java.util.List;
 import org.junit.jupiter.api.Test;
+import sdmxdl.Confidentiality;
 import sdmxdl.Connection;
 import sdmxdl.DataRepository;
 import sdmxdl.Feature;
@@ -27,15 +37,6 @@ import tests.sdmxdl.api.SdmxManagerAssert;
 import tests.sdmxdl.web.spi.MockedDriver;
 import tests.sdmxdl.web.spi.MockedRegistry;
 
-import java.io.IOException;
-import java.util.AbstractMap;
-import java.util.EnumSet;
-
-import static org.assertj.core.api.Assertions.*;
-import static sdmxdl.Languages.ANY;
-import static sdmxdl.web.spi.Driver.NATIVE_DRIVER_RANK;
-import static sdmxdl.web.spi.Driver.WRAPPED_DRIVER_RANK;
-
 /**
  * @author Philippe Charles
  */
@@ -45,12 +46,10 @@ public class SdmxWebManagerTest {
     public void testCompliance() {
         SdmxManagerAssert.assertCompliance(
                 SdmxWebManager.builder().driver(sampleDriver).build(),
-                SdmxManagerAssert.Sample
-                        .<WebSource>builder()
+                SdmxManagerAssert.Sample.<WebSource>builder()
                         .validSource(sampleSource)
                         .invalidSource(sampleSource.toBuilder().driver("other").build())
-                        .build()
-        );
+                        .build());
     }
 
     @Test
@@ -89,20 +88,33 @@ public class SdmxWebManagerTest {
             assertThat(o.getAuthenticators()).isEmpty();
             assertThat(o.getCustomSources()).isEmpty();
             assertThat(o.getDefaultSources()).containsAll(sampleDriver.getDefaultSources());
-            assertThat(o.getSources()).containsValues(sampleDriver.getDefaultSources().toArray(new WebSource[0]));
+            assertThat(o.getSources())
+                    .containsValues(sampleDriver.getDefaultSources().toArray(new WebSource[0]));
         });
     }
 
     @Test
     public void testGetSources() {
-        WebSource nbb = WebSource.builder().id("nbb").alias("bnb").driver("sdmx21").endpointOf("http://nbb").build();
-        WebSource ecb = WebSource.builder().id("ecb").driver("sdmx21").endpointOf("http://ecb").build();
-        WebSource abs = WebSource.builder().id("abs").driver("sdmx21").endpointOf("http://abs").build();
+        WebSource nbb = WebSource.builder()
+                .id("nbb")
+                .alias("bnb")
+                .driver("sdmx21")
+                .endpointOf("http://nbb")
+                .build();
+        WebSource ecb = WebSource.builder()
+                .id("ecb")
+                .driver("sdmx21")
+                .endpointOf("http://ecb")
+                .build();
+        WebSource abs = WebSource.builder()
+                .id("abs")
+                .driver("sdmx21")
+                .endpointOf("http://abs")
+                .build();
 
         WebSource nbbAlias = nbb.alias("bnb");
 
-        Driver sdmx21 = MockedDriver
-                .builder()
+        Driver sdmx21 = MockedDriver.builder()
                 .id("sdmx21")
                 .rank(WRAPPED_DRIVER_RANK)
                 .available(true)
@@ -110,74 +122,149 @@ public class SdmxWebManagerTest {
                 .customSource(ecb)
                 .build();
 
-        assertThat(
-                SdmxWebManager
-                        .builder()
-                        .build()
-                        .getSources()
-        )
+        assertThat(SdmxWebManager.builder().build().getSources())
                 .describedAs("WebManager without driver nor custom-sources has no sources")
                 .isEmpty();
 
-        assertThat(
-                SdmxWebManager
-                        .builder()
-                        .driver(sdmx21)
-                        .build()
-                        .getSources()
-        )
-                .describedAs("WebManager with driver but without custom-sources has only driver-sources sorted by name with order-based priority")
-                .containsExactly(
-                        entryOf("bnb", nbbAlias),
-                        entryOf("ecb", ecb),
-                        entryOf("nbb", nbb)
-                );
+        assertThat(SdmxWebManager.builder().driver(sdmx21).build().getSources())
+                .describedAs(
+                        "WebManager with driver but without custom-sources has only driver-sources sorted by name with order-based priority")
+                .containsExactly(entryOf("bnb", nbbAlias), entryOf("ecb", ecb), entryOf("nbb", nbb));
 
-        assertThat(
-                SdmxWebManager
-                        .builder()
-                        .registry(MockedRegistry.builder().source(nbb).source(abs).build())
+        assertThat(SdmxWebManager.builder()
+                        .registry(
+                                MockedRegistry.builder().source(nbb).source(abs).build())
                         .build()
-                        .getSources()
-        )
-                .describedAs("WebManager without driver but with custom-sources has only custom-sources sorted by name with order-based priority")
-                .containsExactly(
-                        entryOf("abs", abs),
-                        entryOf("bnb", nbbAlias),
-                        entryOf("nbb", nbb)
-                );
+                        .getSources())
+                .describedAs(
+                        "WebManager without driver but with custom-sources has only custom-sources sorted by name with order-based priority")
+                .containsExactly(entryOf("abs", abs), entryOf("bnb", nbbAlias), entryOf("nbb", nbb));
 
-        assertThat(
-                SdmxWebManager
-                        .builder()
+        assertThat(SdmxWebManager.builder()
                         .driver(sdmx21)
                         .registry(MockedRegistry.builder().source(abs).build())
                         .build()
-                        .getSources()
-        )
-                .describedAs("WebManager with driver and custom-sources has both driver-sources and custom-sources sorted by name with order-based priority")
+                        .getSources())
+                .describedAs(
+                        "WebManager with driver and custom-sources has both driver-sources and custom-sources sorted by name with order-based priority")
                 .containsExactly(
-                        entryOf("abs", abs),
-                        entryOf("bnb", nbbAlias),
-                        entryOf("ecb", ecb),
-                        entryOf("nbb", nbb)
-                );
+                        entryOf("abs", abs), entryOf("bnb", nbbAlias), entryOf("ecb", ecb), entryOf("nbb", nbb));
+    }
+
+    @Test
+    public void testListSources() {
+        WebSource nbb = WebSource.builder()
+                .id("nbb")
+                .alias("bnb")
+                .driver("sdmx21")
+                .endpointOf("http://nbb")
+                .confidentiality(Confidentiality.PUBLIC)
+                .build();
+        WebSource ecb = WebSource.builder()
+                .id("ecb")
+                .driver("sdmx21")
+                .endpointOf("http://ecb")
+                .confidentiality(Confidentiality.PUBLIC)
+                .build();
+        WebSource abs = WebSource.builder()
+                .id("abs")
+                .driver("sdmx21")
+                .endpointOf("http://abs")
+                .confidentiality(Confidentiality.RESTRICTED)
+                .build();
+
+        Driver sdmx21 = MockedDriver.builder()
+                .id("sdmx21")
+                .rank(WRAPPED_DRIVER_RANK)
+                .available(true)
+                .customSource(nbb)
+                .customSource(ecb)
+                .customSource(abs)
+                .build();
+
+        SdmxWebManager manager = SdmxWebManager.builder().driver(sdmx21).build();
+
+        assertThatNullPointerException().isThrownBy(() -> manager.listSources(null));
+
+        assertThat(manager.listSources(WebSourcesRequest.DEFAULT))
+                .describedAs("no query nor threshold restriction sorts all non-alias sources by id")
+                .extracting(WebSource::getId)
+                .containsExactly("abs", "ecb", "nbb");
+
+        assertThat(manager.listSources(WebSourcesRequest.builder().maxResults(2).build()))
+                .describedAs("no query respects maxResults")
+                .extracting(WebSource::getId)
+                .containsExactly("abs", "ecb");
+
+        assertThat(manager.listSources(WebSourcesRequest.builder()
+                        .threshold(Confidentiality.PUBLIC)
+                        .build()))
+                .describedAs("threshold filters out sources with a higher confidentiality")
+                .extracting(WebSource::getId)
+                .containsExactly("ecb", "nbb");
+
+        assertThat(manager.listSources(WebSourcesRequest.builder().query("ecb").build()))
+                .describedAs("query ranks by relevance instead of sorting by id")
+                .extracting(WebSource::getId)
+                .containsExactly("ecb");
+
+        List<WebSource> allSources = manager.listSources(WebSourcesRequest.DEFAULT);
+        assertThat(allSources)
+                .describedAs("aliases are never returned as standalone entries")
+                .extracting(WebSource::getId)
+                .doesNotContain("bnb");
     }
 
     @Test
     public void testGetDefaultSources() {
-        WebSource source1a = WebSource.builder().id("s1").driver("dX").endpointOf("http://abc").build();
-        WebSource source2 = WebSource.builder().id("s2").driver("dX").endpointOf("http://abc").build();
-        Driver driverX = MockedDriver.builder().id("dX").rank(WRAPPED_DRIVER_RANK).available(true).customSource(source1a).customSource(source2).build();
+        WebSource source1a = WebSource.builder()
+                .id("s1")
+                .driver("dX")
+                .endpointOf("http://abc")
+                .build();
+        WebSource source2 = WebSource.builder()
+                .id("s2")
+                .driver("dX")
+                .endpointOf("http://abc")
+                .build();
+        Driver driverX = MockedDriver.builder()
+                .id("dX")
+                .rank(WRAPPED_DRIVER_RANK)
+                .available(true)
+                .customSource(source1a)
+                .customSource(source2)
+                .build();
 
-        WebSource source1b = WebSource.builder().id("s1").driver("dY").endpointOf("http://xyz").build();
-        WebSource source3 = WebSource.builder().id("s3").driver("dY").endpointOf("http://xyz").build();
-        Driver driverY = MockedDriver.builder().id("dY").rank(NATIVE_DRIVER_RANK).available(true).customSource(source1b).customSource(source3).build();
+        WebSource source1b = WebSource.builder()
+                .id("s1")
+                .driver("dY")
+                .endpointOf("http://xyz")
+                .build();
+        WebSource source3 = WebSource.builder()
+                .id("s3")
+                .driver("dY")
+                .endpointOf("http://xyz")
+                .build();
+        Driver driverY = MockedDriver.builder()
+                .id("dY")
+                .rank(NATIVE_DRIVER_RANK)
+                .available(true)
+                .customSource(source1b)
+                .customSource(source3)
+                .build();
 
-        assertThat(SdmxWebManager.builder().driver(driverX).driver(driverY).build().getDefaultSources())
+        assertThat(SdmxWebManager.builder()
+                        .driver(driverX)
+                        .driver(driverY)
+                        .build()
+                        .getDefaultSources())
                 .containsExactly(source1a, source2, source3);
 
-        assertThat(SdmxWebManager.builder().driver(driverY).driver(driverX).build().getDefaultSources())
+        assertThat(SdmxWebManager.builder()
+                        .driver(driverY)
+                        .driver(driverX)
+                        .build()
+                        .getDefaultSources())
                 .containsExactly(source1b, source3, source2);
     }
 
@@ -192,29 +279,37 @@ public class SdmxWebManagerTest {
                 .isThrownBy(() -> manager.getConnection("ko", ANY))
                 .as("Invalid source name");
 
-        assertThatCode(() -> manager.getConnection(sampleSource.getId(), ANY).close()).doesNotThrowAnyException();
+        assertThatCode(() -> manager.getConnection(sampleSource.getId(), ANY).close())
+                .doesNotThrowAnyException();
 
-        Driver driver1 = MockedDriver
-                .builder()
+        Driver driver1 = MockedDriver.builder()
                 .id("d1")
                 .rank(WRAPPED_DRIVER_RANK)
                 .available(true)
                 .repo(sample, EnumSet.allOf(Feature.class))
-                .customSource(WebSource.builder().id("source").driver("d1").endpointOf(sample.getName()).build())
+                .customSource(WebSource.builder()
+                        .id("source")
+                        .driver("d1")
+                        .endpointOf(sample.getName())
+                        .build())
                 .build();
 
-        Driver driver2 = MockedDriver
-                .builder()
+        Driver driver2 = MockedDriver.builder()
                 .id("d2")
                 .rank(NATIVE_DRIVER_RANK)
                 .available(true)
                 .repo(sample, EnumSet.allOf(Feature.class))
-                .customSource(WebSource.builder().id("source").driver("d2").endpointOf(sample.getName()).build())
+                .customSource(WebSource.builder()
+                        .id("source")
+                        .driver("d2")
+                        .endpointOf(sample.getName())
+                        .build())
                 .build();
 
-        try (Connection c = SdmxWebManager.builder().driver(driver2).driver(driver1).build().getConnection("source", ANY)) {
+        try (Connection c =
+                SdmxWebManager.builder().driver(driver2).driver(driver1).build().getConnection("source", ANY)) {
             // TODO: create code that verifies that driver2 is selected
-//            assertThat(c.getDriver()).isEqualTo(driver2.getName());
+            //            assertThat(c.getDriver()).isEqualTo(driver2.getName());
         }
     }
 
@@ -226,26 +321,29 @@ public class SdmxWebManagerTest {
         assertThatNullPointerException().isThrownBy(() -> manager.getConnection((WebSource) null, ANY));
 
         assertThatIOException()
-                .isThrownBy(() -> manager.getConnection(sampleSource.toBuilder().endpointOf("http://ko").build(), ANY))
+                .isThrownBy(() -> manager.getConnection(
+                        sampleSource.toBuilder().endpointOf("http://ko").build(), ANY))
                 .as("Invalid source endpoint");
 
         assertThatIOException()
-                .isThrownBy(() -> manager.getConnection(sampleSource.toBuilder().driver("ko").build(), ANY))
+                .isThrownBy(() -> manager.getConnection(
+                        sampleSource.toBuilder().driver("ko").build(), ANY))
                 .as("Invalid source driver");
 
         assertThatCode(() -> manager.getConnection(sampleSource, ANY).close()).doesNotThrowAnyException();
-        assertThatCode(() -> manager.getConnection(sampleSource.toBuilder().id("other").build(), ANY).close()).doesNotThrowAnyException();
+        assertThatCode(() -> manager.getConnection(
+                                sampleSource.toBuilder().id("other").build(), ANY)
+                        .close())
+                .doesNotThrowAnyException();
     }
 
     private final DataRepository sample = DataRepository.builder().name("repo").build();
-    private final WebSource sampleSource = WebSource
-            .builder()
+    private final WebSource sampleSource = WebSource.builder()
             .id("repoSource")
             .driver("repoDriver")
             .endpointOf(sample.getName())
             .build();
-    private final Driver sampleDriver = MockedDriver
-            .builder()
+    private final Driver sampleDriver = MockedDriver.builder()
             .id("repoDriver")
             .rank(0)
             .available(true)

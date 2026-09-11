@@ -16,17 +16,12 @@
  */
 package sdmxdl.web;
 
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+
 import internal.sdmxdl.ext.PersistenceLoader;
 import internal.sdmxdl.web.spi.*;
-import lombok.AccessLevel;
-import lombok.NonNull;
-import nbbrd.design.StaticFactoryMethod;
-import org.jspecify.annotations.Nullable;
-import sdmxdl.*;
-import sdmxdl.EventListener;
-import sdmxdl.ext.Persistence;
-import sdmxdl.web.spi.*;
-
 import java.io.IOException;
 import java.net.URI;
 import java.util.*;
@@ -37,9 +32,14 @@ import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
+import lombok.AccessLevel;
+import lombok.NonNull;
+import nbbrd.design.StaticFactoryMethod;
+import org.jspecify.annotations.Nullable;
+import sdmxdl.*;
+import sdmxdl.EventListener;
+import sdmxdl.ext.Persistence;
+import sdmxdl.web.spi.*;
 
 /**
  * @author Philippe Charles
@@ -51,8 +51,7 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
 
     @StaticFactoryMethod
     public static @NonNull SdmxWebManager ofServiceLoader() {
-        return SdmxWebManager
-                .builder()
+        return SdmxWebManager.builder()
                 .drivers(DriverLoader.load())
                 .monitors(MonitorLoader.load())
                 .networking(NetworkingLoader.load())
@@ -69,60 +68,46 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
     }
 
     @lombok.Singular
-    @NonNull
-    List<Driver> drivers;
+    @NonNull List<Driver> drivers;
 
     @lombok.Singular
-    @NonNull
-    List<Monitor> monitors;
+    @NonNull List<Monitor> monitors;
 
     @lombok.Builder.Default
-    @NonNull
-    Networking networking = Networking.getDefault();
+    @NonNull Networking networking = Networking.getDefault();
 
     @lombok.Builder.Default
-    @NonNull
-    WebCaching caching = WebCaching.noOp();
+    @NonNull WebCaching caching = WebCaching.noOp();
 
-    @Nullable
-    Function<? super WebSource, EventListener> onEvent;
+    @Nullable Function<? super WebSource, EventListener> onEvent;
 
-    @Nullable
-    Function<? super WebSource, ErrorListener> onError;
+    @Nullable Function<? super WebSource, ErrorListener> onError;
 
     @lombok.Singular
-    @NonNull
-    List<Persistence> persistences;
+    @NonNull List<Persistence> persistences;
 
     @lombok.Singular
-    @NonNull
-    List<Authenticator> authenticators;
+    @NonNull List<Authenticator> authenticators;
 
     @lombok.Builder.Default
-    @NonNull
-    Registry registry = Registry.noOp();
+    @NonNull Registry registry = Registry.noOp();
 
-    @Nullable
-    EventListener onRegistryEvent;
+    @Nullable EventListener onRegistryEvent;
 
-    @Nullable
-    ErrorListener onRegistryError;
+    @Nullable ErrorListener onRegistryError;
 
     @lombok.Getter(lazy = true)
-    @NonNull
-    List<WebSource> customSources = initLazyCustomSources(getRegistry(), getPersistences(), getOnRegistryEvent(), getOnRegistryError());
+    @NonNull List<WebSource> customSources =
+            initLazyCustomSources(getRegistry(), getPersistences(), getOnRegistryEvent(), getOnRegistryError());
 
     @lombok.Getter(lazy = true)
-    @NonNull
-    List<WebSource> defaultSources = initLazyDefaultSources(getDrivers());
+    @NonNull List<WebSource> defaultSources = initLazyDefaultSources(getDrivers());
 
     @lombok.Getter(lazy = true)
-    @NonNull
-    SortedMap<String, WebSource> sources = initLazySourceMap(getCustomSources(), getDefaultSources());
+    @NonNull SortedMap<String, WebSource> sources = initLazySourceMap(getCustomSources(), getDefaultSources());
 
     @lombok.Getter(lazy = true, value = AccessLevel.PRIVATE)
-    @NonNull
-    WebContext context = initLazyContext();
+    @NonNull WebContext context = initLazyContext();
 
     public @NonNull SdmxWebManager warmupAsync() {
         Executors.newSingleThreadExecutor(SdmxWebManager::newLowPriorityDaemonThread)
@@ -131,14 +116,14 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
     }
 
     public @NonNull Connection getConnection(@NonNull String name, @NonNull Languages languages) throws IOException {
-        WebSource source = lookupSource(name)
-                .orElseThrow(() -> newMissingSource(name));
+        WebSource source = lookupSource(name).orElseThrow(() -> newMissingSource(name));
 
         return getConnection(source, languages);
     }
 
     @Override
-    public @NonNull Connection getConnection(@NonNull WebSource source, @NonNull Languages languages) throws IOException {
+    public @NonNull Connection getConnection(@NonNull WebSource source, @NonNull Languages languages)
+            throws IOException {
         Driver driver = lookupDriverById(source.getDriver())
                 .orElseThrow(() -> new IOException("Failed to find a suitable driver for '" + source + "'"));
 
@@ -153,8 +138,7 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
     }
 
     public @NonNull MonitorReport getMonitorReport(@NonNull String name) throws IOException {
-        WebSource source = lookupSource(name)
-                .orElseThrow(() -> newMissingSource(name));
+        WebSource source = lookupSource(name).orElseThrow(() -> newMissingSource(name));
 
         return getMonitorReport(source);
     }
@@ -172,9 +156,42 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
         return monitor.getReport(source, getContext());
     }
 
+    /**
+     * Lists the web sources known to this manager, applying the filtering, ranking and
+     * limit options carried by the given request.
+     * <p>
+     * Sources are first restricted to non-alias sources whose confidentiality is allowed
+     * by {@link WebSourcesRequest#getThreshold()}. Then:
+     * <ul>
+     *     <li>if the request has no query ({@link HasSearchQuery#NO_QUERY}), the remaining
+     *     sources are sorted by {@linkplain WebSource#getId() id} and truncated to
+     *     {@link WebSourcesRequest#getMaxResults()} (or all of them if
+     *     {@link HasLimit#NO_LIMIT})</li>
+     *     <li>otherwise, the remaining sources are ranked by relevance to
+     *     {@link WebSourcesRequest#getQuery()} using {@link Search#ofSources(Collection, Languages)}
+     *     and limited to {@link WebSourcesRequest#getMaxResults()}</li>
+     * </ul>
+     *
+     * @param request the non-null request describing the query, threshold and limit to apply
+     * @return a non-null, possibly empty, list of matching web sources
+     */
+    public @NonNull List<WebSource> listSources(@NonNull WebSourcesRequest request) {
+        Collection<WebSource> result = getSources().values().stream()
+                .filter(source -> !source.isAlias())
+                .filter(request.getThreshold()::isAllowedIn)
+                .collect(toList());
+        return request.getQuery().isEmpty()
+                ? result.stream()
+                        .sorted(comparing(WebSource::getId))
+                        .limit(max(request))
+                        .collect(toList())
+                : Search.ofSources(result, request.getLanguages()).search(request.getQuery(), max(request)).stream()
+                        .map(Search.Result::getItem)
+                        .collect(toList());
+    }
+
     public @NonNull Provider<WebSource> usingName(@NonNull String name) throws IOException {
-        return using(lookupSource(name)
-                .orElseThrow(() -> newMissingSource(name)));
+        return using(lookupSource(name).orElseThrow(() -> newMissingSource(name)));
     }
 
     private Optional<WebSource> lookupSource(String name) {
@@ -182,23 +199,20 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
     }
 
     private Optional<Driver> lookupDriverById(String id) {
-        return drivers
-                .stream()
+        return drivers.stream()
                 .map(FailsafeDriver::wrap)
                 .filter(driver -> id.equals(driver.getDriverId()))
                 .findFirst();
     }
 
     private Optional<Monitor> lookupMonitor(String uriScheme) {
-        return monitors
-                .stream()
+        return monitors.stream()
                 .filter(monitor -> uriScheme.equals(monitor.getMonitorUriScheme()))
                 .findFirst();
     }
 
     private WebContext initLazyContext() {
-        return WebContext
-                .builder()
+        return WebContext.builder()
                 .caching(caching)
                 .networking(networking)
                 .onEvent(onEvent)
@@ -207,19 +221,20 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
                 .build();
     }
 
-    private static List<WebSource> initLazyCustomSources(Registry registry, List<Persistence> persistences, EventListener onEvent, ErrorListener onError) {
+    private static List<WebSource> initLazyCustomSources(
+            Registry registry, List<Persistence> persistences, EventListener onEvent, ErrorListener onError) {
         return registry.getSources(persistences, onEvent, onError).getSources();
     }
 
     private static List<WebSource> initLazyDefaultSources(List<Driver> drivers) {
-        return drivers
-                .stream()
+        return drivers.stream()
                 .flatMap(driver -> driver.getDefaultSources().stream())
                 .filter(distinctByKey(WebSource::getId))
                 .collect(toList());
     }
 
-    private static SortedMap<String, WebSource> initLazySourceMap(List<WebSource> customSources, List<WebSource> defaultSources) {
+    private static SortedMap<String, WebSource> initLazySourceMap(
+            List<WebSource> customSources, List<WebSource> defaultSources) {
         return Stream.concat(customSources.stream(), defaultSources.stream())
                 .flatMap(SdmxWebManager::expandAliases)
                 .collect(groupingBy(WebSource::getId, TreeMap::new, reducingByFirst()));
@@ -260,6 +275,11 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
 
     @StaticFactoryMethod(ErrorListener.class)
     public static ErrorListener printError(WebSource source) {
-        return (marker, message, error) -> System.err.println("[" + source.getId() + "] (" + marker + ") " + message + ": " + error.getMessage());
+        return (marker, message, error) ->
+                System.err.println("[" + source.getId() + "] (" + marker + ") " + message + ": " + error.getMessage());
+    }
+
+    private static int max(HasLimit request) {
+        return request.getMaxResults() > 0 ? request.getMaxResults() : Integer.MAX_VALUE;
     }
 }

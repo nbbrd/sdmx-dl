@@ -16,21 +16,20 @@
  */
 package sdmxdl.cli;
 
+import static internal.sdmxdl.cli.ext.CsvUtil.DEFAULT_MAP_FORMATTER;
+
 import internal.sdmxdl.cli.WebOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.CsvUtil;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
+import java.util.List;
+import java.util.concurrent.Callable;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 import sdmxdl.Languages;
 import sdmxdl.web.WebSource;
-
-import java.io.IOException;
-import java.util.concurrent.Callable;
-import java.util.stream.Stream;
-
-import static internal.sdmxdl.cli.ext.CsvUtil.DEFAULT_MAP_FORMATTER;
+import sdmxdl.web.WebSourcesRequest;
 
 /**
  * @author Philippe Charles
@@ -52,8 +51,7 @@ public final class ListSourcesCommand implements Callable<Void> {
 
     @VisibleForTesting
     static CsvTable<WebSource> getTable(Languages languages) {
-        return CsvTable
-                .builderOf(WebSource.class)
+        return CsvTable.builderOf(WebSource.class)
                 .columnOf("Name", WebSource::getId)
                 .columnOf("Description", source -> source.getName(languages))
                 .columnOf("Aliases", WebSource::getAliases, CsvUtil.DEFAULT_LIST_FORMATTER)
@@ -68,11 +66,7 @@ public final class ListSourcesCommand implements Callable<Void> {
                 .build();
     }
 
-    private Stream<WebSource> getRows() throws IOException {
-        return web.loadManager()
-                .getSources()
-                .values()
-                .stream()
-                .filter(source -> !source.isAlias());
+    private List<WebSource> getRows() {
+        return web.loadManager().listSources(WebSourcesRequest.DEFAULT);
     }
 }
