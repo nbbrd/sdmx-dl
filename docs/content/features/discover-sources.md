@@ -12,7 +12,7 @@ See which data providers sdmx-dl can connect to, before picking one to query.
 
 ```java
 //JAVA 25+
-//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0
+//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:{{< sdmx-dl-version >}}
 import sdmxdl.web.*;
 
 void main() throws Exception {

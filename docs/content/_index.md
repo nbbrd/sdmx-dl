@@ -48,7 +48,7 @@ jbang sdmx-dl@nbbrd fetch data ECB EXR M.CHF.EUR.SP00.A
 **Java library** — retrieve data in a few lines with a [JBang](https://www.jbang.dev/) script:
 ```java
 //JAVA 25+
-//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.0.0-beta.18
+//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:{{< sdmx-dl-version >}}
 import sdmxdl.*;
 import sdmxdl.web.*;
 
@@ -56,7 +56,7 @@ void main() throws Exception {
     SdmxWebManager
         .ofServiceLoader()
         .usingName("ECB")
-        .getData(KeyRequest.builder()
+        .getData(DataRequest.builder()
             .flowOf("EXR")
             .keyOf("M.CHF+USD.EUR.SP00.A")
             .build())

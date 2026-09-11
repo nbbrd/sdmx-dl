@@ -16,7 +16,7 @@ Both narrowing mechanisms are just extra fields on the same data request (`DataR
 
 ```java
 //JAVA 25+
-//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0
+//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:{{< sdmx-dl-version >}}
 import sdmxdl.DataRequest;
 import sdmxdl.web.SdmxWebManager;
 
@@ -24,7 +24,7 @@ void main() throws Exception {
     SdmxWebManager
             .ofServiceLoader()
             .usingName("ECB")
-            .getData(KeyRequest.builder()
+            .getData(DataRequest.builder()
                     .flowOf("EXR")
                     .keyOf("M.CHF.EUR.SP00.A")
                     .startPeriodOf("2020")
@@ -74,7 +74,7 @@ Bounds are inclusive and accept reduced-precision ISO-8601 (`"2020"`, `"2020-12"
 
 ```java
 //JAVA 25+
-//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0
+//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:{{< sdmx-dl-version >}}
 import sdmxdl.DataRequest;
 import sdmxdl.web.SdmxWebManager;
 
@@ -82,7 +82,7 @@ void main() throws Exception {
     SdmxWebManager
             .ofServiceLoader()
             .usingName("ECB")
-            .getData(KeyRequest.builder()
+            .getData(DataRequest.builder()
                     .flowOf("EXR")
                     .keyOf("M.CHF.EUR.SP00.A")
                     .firstNObservations(3)

@@ -10,27 +10,25 @@ Look up the human-readable labels behind a coded dimension's values (e.g. `FREQ=
 {{< tab "API" >}}
 {{< feature-status "browse-codes" "api" >}}
 
-Not supported as a dedicated high-level API call.
-
-The closest API equivalent is to retrieve flow metadata and inspect the codes attached to a coded dimension.
-
 ```java
 //JAVA 25+
-//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0
+//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:{{< sdmx-dl-version >}}
 import sdmxdl.*;
 import sdmxdl.web.SdmxWebManager;
 
 void main() throws Exception {
-    try (Connection conn = SdmxWebManager.ofServiceLoader().getConnection("ECB", Languages.ANY)) {
-        MetaSet meta = conn.getMeta(DatabaseRef.NO_DATABASE, FlowRef.parse("EXR"));
-        Dimension freq = meta.getStructure().getDimensions().stream()
-                .filter(d -> d.getId().equals("FREQ"))
-                .findFirst()
-                .orElseThrow();
-        freq.getCodes().forEach((code, label) -> IO.println(code + " = " + label));
-    }
+    SdmxWebManager
+            .ofServiceLoader()
+            .usingName("ECB")
+            .listCodes(CodesRequest.builder()
+                    .flowOf("EXR")
+                    .concept("FREQ")
+                    .build())
+            .forEach((code, label) -> IO.println(code + " = " + label));
 }
 ```
+
+`listDimensions`/`listAttributes` return a flow's coded components, and `listCodes` resolves a chosen concept's codes; all three accept an optional `query`/`maxResults` to search/limit results, the same way as [Search flows]({{< relref "/features/search-flows" >}}).
 {{< /tab >}}
 
 {{< tab "CLI" >}}
@@ -68,9 +66,10 @@ grpcurl -d '{"source":"ECB","flow":"EXR","key":"M..EUR.SP00.A","dimension":1}' -
 ## Notes
 
 - This lists **all defined codes** for a dimension, regardless of whether they actually occur in the dataset. To narrow codes down to what's actually available under a key constraint, use [Check availability]({{< relref "/features/check-availability" >}}) instead.
-- CLI has a dedicated `list codes` command; API/WS reach the same data through metadata/structure objects.
+- CLI has a dedicated `list codes` command; the API now offers the equivalent `Provider.listCodes(...)` (alongside `listDimensions`/`listAttributes`). WS still reaches the same data through structure/availability objects.
 
 ## Related features
 
 - [Inspect metadata]({{< relref "/features/inspect-metadata" >}})
 - [Check availability]({{< relref "/features/check-availability" >}})
+

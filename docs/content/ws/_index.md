@@ -64,27 +64,28 @@ A few things to keep in mind:
 - Only sources marked as **public** are exposed; restricted/private sources are hidden.
 - It is **read-only**: there is no way to modify configuration or state through it.
 - Some fields are truncated or simplified to save tokens (for example, flow descriptions are capped in length, and metadata is returned as a skeleton without the codes of coded dimensions).
+- List and search are unified: every listing tool accepts an optional `query`. When `query` is empty, entries are returned in their natural order (sorted or as defined) and truncated to `maxResults` (`0` = no limit). When `query` is non-empty, entries are ranked by relevance (hybrid BM25 + trigram search) and limited to `maxResults`.
 
 Available tools:
 
-| Tool                | Description                                                    |
-|---------------------|------------------------------------------------------------------|
-| `mcpAbout`          | Get the name and version of sdmx-dl.                              |
-| `mcpSources`        | List available sources.                                           |
-| `mcpSearchSources`  | Search sources by relevance.                                      |
-| `mcpDatabases`      | List the databases of a source.                                   |
-| `mcpSearchDatabases`| Search the databases of a source by relevance.                    |
-| `mcpFlows`          | List the flows (datasets) of a source.                            |
-| `mcpSearchFlows`    | Search the flows of a source by relevance.                        |
-| `mcpMeta`           | Get the structure (dimensions, attributes) of a flow.             |
-| `mcpCodes`          | List or search the codes of a dimension.                          |
-| `mcpData`           | Fetch data series for a flow, optionally filtered by key/period.  |
+| Tool             | Description                                                       |
+|------------------|---------------------------------------------------------------------|
+| `about`          | Get the name and version of sdmx-dl.                                 |
+| `listSources`    | List or search available sources.                                    |
+| `listDatabases`  | List or search the databases of a source.                            |
+| `listFlows`      | List or search the flows (datasets) of a source.                     |
+| `listDimensions` | List or search the dimensions of a flow's structure.                 |
+| `listAttributes` | List or search the attributes of a flow's structure.                 |
+| `getMeta`        | Get the structure (dimensions, attributes) skeleton of a flow.       |
+| `listCodes`      | List or search the codes of a dimension or attribute.                |
+| `getData`        | Fetch data series for a flow, optionally filtered by key/period.     |
 
-The typical workflow is: find a source (`mcpSources`/`mcpSearchSources`) → find a flow (`mcpFlows`/`mcpSearchFlows`) → inspect its dimensions (`mcpMeta`) → resolve dimension codes (`mcpCodes`) → fetch data (`mcpData`).
+The typical workflow is: find a source (`listSources`) → find a flow (`listFlows`) → inspect its dimensions/attributes (`getMeta` or `listDimensions`/`listAttributes`) → resolve dimension codes (`listCodes`) → fetch data (`getData`, preferring the structured `dimensions` map over a positional `key`).
 
 Call example using [curl](https://curl.se/) against the streamable HTTP transport:
 ```shell
-curl -X POST -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" localhost:4559/mcp --data "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"mcpSources\"}}"
+curl -X POST -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" localhost:4559/mcp --data "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"listSources\"}}"
 ```
 
 Most MCP clients (e.g. IDE assistants) support configuring a remote MCP server by URL directly, without needing curl.
+

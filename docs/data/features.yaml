@@ -59,8 +59,7 @@
 - id: browse-codes
   title: "Browse codes"
   group: shape
-  api: partial
-  api_note: "Via metadata traversal (`Dimension.getCodes()`), not a dedicated call."
+  api: full
   cli: full
   ws: partial
   ws_note: "No dedicated endpoint; closest equivalents are `GetAvailability`/`GetMeta`."
@@ -107,4 +106,3 @@
   api: full
   cli: full
   ws: full
-

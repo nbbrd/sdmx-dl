@@ -12,7 +12,7 @@ Web example:
 SdmxWebManager
     .ofServiceLoader()
     .usingName("ECB")
-    .getData(KeyRequest
+    .getData(DataRequest
         .builder()
         .flowOf("EXR")
         .keyOf("M.CHF+USD.EUR.SP00.A")
@@ -25,7 +25,7 @@ File example:
 SdmxFileManager
     .ofServiceLoader()
     .usingFile(dataFile())
-    .getData(KeyRequest
+    .getData(DataRequest
         .builder()
         .flowOf("data")
         .keyOf("A.DEU.1.0.319.0.UBLGE")
@@ -38,7 +38,7 @@ Filtering example (time range and observation count):
 SdmxWebManager
     .ofServiceLoader()
     .usingName("ECB")
-    .getData(KeyRequest
+    .getData(DataRequest
         .builder()
         .flowOf("EXR")
         .keyOf("M.CHF.EUR.SP00.A")

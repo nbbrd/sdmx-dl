@@ -12,7 +12,7 @@ Narrow down which codes are actually usable for one dimension, once other dimens
 
 ```java
 //JAVA 25+
-//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0
+//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:{{< sdmx-dl-version >}}
 import sdmxdl.*;
 import sdmxdl.web.SdmxWebManager;
 

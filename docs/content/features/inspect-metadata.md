@@ -12,7 +12,7 @@ Look up descriptive metadata (title, units, notes, source-specific attributes) a
 
 ```java
 //JAVA 25+
-//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0
+//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:{{< sdmx-dl-version >}}
 import sdmxdl.*;
 import sdmxdl.web.SdmxWebManager;
 
@@ -20,7 +20,7 @@ void main() throws Exception {
     SdmxWebManager
             .ofServiceLoader()
             .usingName("ECB")
-            .getData(KeyRequest.builder()
+            .getData(DataRequest.builder()
                     .flowOf("EXR")
                     .keyOf("M.CHF.EUR.SP00.A")
                     .detailOf(Detail.NO_DATA.name())

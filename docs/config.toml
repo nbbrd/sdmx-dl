@@ -27,3 +27,7 @@ enableRobotsTXT = true
 
 [params]
 #  geekdocLogo = "SDMX_logo.svg"
+  # Single source of truth for the version used in `//DEPS` JBang headers across the docs.
+  # Bump this at release time instead of editing every code sample.
+  # Used by the `sdmx-dl-version` shortcode.
+  sdmxDlVersion = "3.2.0"

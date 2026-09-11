@@ -12,7 +12,7 @@ Find a source by name or topic when you don't know its exact ID, with typo toler
 
 ```java
 //JAVA 25+
-//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0
+//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:{{< sdmx-dl-version >}}
 import sdmxdl.Languages;
 import sdmxdl.web.*;
 
@@ -58,6 +58,7 @@ grpcurl -d '{"query":"european central","maxResults":5}' -plaintext localhost:45
 
 - Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so both `"ecb"` and `"eurpean central"` find the European Central Bank.
 - Sources marked as aliases are excluded from the search index.
+- Unlike flows/databases, sources are not obtained through a `Provider`, so there's no `query`/`maxResults`-enabled request for them; `Search.ofSources(...)` on the in-memory list from `manager.getSources()` is the way to rank them by relevance.
 
 ## Related features
 

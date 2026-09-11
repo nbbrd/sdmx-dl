@@ -1,0 +1,13 @@
+{{/*
+  sdmx-dl-version: renders the sdmx-dl version used in JBang `//DEPS` code samples,
+  from params.sdmxDlVersion in config.toml (single source of truth).
+  Works even inside fenced code blocks, since shortcodes are expanded before Goldmark parsing.
+  Usage (angle delimiters):
+    {{< sdmx-dl-version >}}
+*/}}
+{{- with .Site.Params.sdmxDlVersion -}}
+{{- . -}}
+{{- else -}}
+{{- errorf "sdmx-dl-version: missing params.sdmxDlVersion in config.toml" -}}
+{{- end -}}
+

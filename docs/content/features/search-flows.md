@@ -12,18 +12,19 @@ Find a dataset by topic within a source when you don't know its exact flow ID.
 
 ```java
 //JAVA 25+
-//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0
+//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:{{< sdmx-dl-version >}}
 import sdmxdl.*;
-import sdmxdl.web.*;
+import sdmxdl.web.SdmxWebManager;
 
 void main() throws Exception {
-    SdmxWebManager manager = SdmxWebManager.ofServiceLoader();
-
-    var flows = manager.usingName("ECB").listFlows(DatabaseRequest.DEFAULT);
-
-    Search<Flow> search = Search.ofFlows(flows);
-    search.search("exchange rates", 5)
-            .forEach(result -> IO.println(result.getItem().getRef() + " -> " + result.getScore()));
+    SdmxWebManager
+            .ofServiceLoader()
+            .usingName("ECB")
+            .listFlows(FlowsRequest.builder()
+                    .query("exchange rates")
+                    .maxResults(5)
+                    .build())
+            .forEach(flow -> IO.println(flow.getRef()));
 }
 ```
 {{< /tab >}}
@@ -60,8 +61,10 @@ grpcurl -d '{"source":"ECB","query":"exchange rates","maxResults":5}' -plaintext
 
 - Ranking is hybrid: lexical (BM25) fused with typo-tolerant trigram matching, so partial or approximate queries still surface the right flow.
 - Search is scoped to a single source; use [Search sources]({{< relref "/features/search-sources" >}}) first if you don't know which source to search within.
+- `Provider.listFlows(...)` accepts the `query`/`maxResults` directly on `FlowsRequest`, so a separate `Search.ofFlows(...)` call on an already-fetched list is only needed when you want access to the numeric relevance `getScore()` — see [Discover flows]({{< relref "/features/discover-flows" >}}).
 
 ## Related features
 
 - [Discover flows]({{< relref "/features/discover-flows" >}})
 - [Search sources]({{< relref "/features/search-sources" >}})
+
