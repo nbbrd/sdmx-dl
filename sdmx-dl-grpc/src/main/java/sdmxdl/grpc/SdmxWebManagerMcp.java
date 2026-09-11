@@ -1,6 +1,8 @@
 package sdmxdl.grpc;
 
+import static java.util.Comparator.comparing;
 import static sdmxdl.DatabaseRef.NO_DATABASE_KEYWORD;
+import static sdmxdl.HasSearchQuery.NO_QUERY;
 
 import io.quarkiverse.mcp.server.*;
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -11,7 +13,6 @@ import java.util.*;
 import sdmxdl.*;
 import sdmxdl.format.protobuf.*;
 import sdmxdl.format.protobuf.web.WebSourceDto;
-import sdmxdl.format.protobuf.web.WebSourcesDto;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.Search;
 import sdmxdl.web.WebSource;
@@ -31,7 +32,7 @@ public class SdmxWebManagerMcp {
             "Amount of information to retrieve (FULL, DATA_ONLY, SERIES_KEYS_ONLY, NO_DATA)";
     private static final String QUERY_ARG = "Search query (free text)";
     private static final String MAX_RESULTS_ARG = "Maximum number of results to return";
-    private static final String DIMENSION_ARG = "Dimension id (as returned by mcpMeta)";
+    private static final String DIMENSION_ARG = "Dimension id (as returned by getMeta or listDimensions)";
     private static final String DIMENSIONS_ARG =
             "Optional structured filter mapping dimension id to code (e.g. {\"CURRENCY\":\"CHF\"}); the server builds the positional key from the flow structure and treats unspecified dimensions as wildcards. Takes precedence over 'key'.";
     private static final String LAST_N_ARG =
@@ -46,7 +47,8 @@ public class SdmxWebManagerMcp {
     private static final int MAX_DESCRIPTION_LENGTH = 200;
     private static final String DEFAULT_LAST_N = "20";
     private static final String DEFAULT_FIRST_N = "0";
-    private static final String DEFAULT_MAX_RESULTS = "5";
+    private static final String DEFAULT_MAX_RESULTS = "0";
+    private static final String DEFAULT_QUERY = NO_QUERY;
     private static final String DEFAULT_DETAIL = "DATA_ONLY";
     private static final String DEFAULT_KEY = "all";
 
@@ -79,12 +81,16 @@ public class SdmxWebManagerMcp {
                 .map(result -> result.getItem().getId())
                 .toList();
         return suggestions.isEmpty()
-                ? " Use mcpSources to list available sources."
-                : " Did you mean " + suggestions + "? Use mcpSources to list all sources.";
+                ? " Use listSources to list available sources."
+                : " Did you mean " + suggestions + "? Use listSources to list all sources.";
+    }
+
+    private static int max(int maxResults) {
+        return maxResults > 0 ? maxResults : Integer.MAX_VALUE;
     }
 
     @Prompt(description = "List SDMX sources IDs.", name = "listSourceIds")
-    public PromptResponse mcpSourceIds() {
+    public PromptResponse sourceIds() {
         return PromptResponse.withMessages(getPublicSources().stream()
                 .map(WebSource::getId)
                 .map(PromptMessage::withUserRole)
@@ -93,50 +99,69 @@ public class SdmxWebManagerMcp {
 
     @Tool(
             description =
-                    "Get name and version of SDMX-DL. Typical workflow: (1) find a source with mcpSources/mcpSearchSources, (2) find a flow with mcpFlows/mcpSearchFlows, (3) inspect dimensions with mcpMeta, (4) resolve dimension codes with mcpCodes, (5) fetch data with mcpData (prefer the structured 'dimensions' map over a positional 'key').")
-    public AboutDto mcpAbout() {
+                    "Get name and version of SDMX-DL. Typical workflow: (1) find a source with listSources, (2) find a flow with listFlows, (3) inspect dimensions/attributes with getMeta or listDimensions/listAttributes, (4) resolve dimension codes with listCodes, (5) fetch data with getData (prefer the structured 'dimensions' map over a positional 'key').")
+    public AboutDto about() {
         return ProtoApi.fromAbout();
-    }
-
-    @Tool(description = "List SDMX sources. Next step: pick a source id and call mcpFlows or mcpSearchFlows.")
-    public WebSourcesDto mcpSources() {
-        return WebSourcesDto.newBuilder()
-                .addAllWebSources(getPublicSources().stream()
-                        .map(SdmxWebManagerMcp::compactSource)
-                        .toList())
-                .build();
     }
 
     @Tool(
             description =
-                    "List SDMX databases. Most sources expose a single default database; databases are only needed for multi-database sources.")
-    public List<DatabaseDto> mcpDatabases(
+                    "List or search SDMX sources. When 'query' is empty, entries are sorted by id and truncated to 'maxResults' (0 = no limit). When 'query' is non-empty, entries are ranked by relevance (BM25 + trigram) and limited to 'maxResults'. Next step: pick a source id and call listFlows.")
+    public List<WebSourceDto> listSources(
+            @ToolArg(description = QUERY_ARG, required = false, defaultValue = DEFAULT_QUERY) String query,
+            @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages,
+            @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = DEFAULT_MAX_RESULTS)
+                    int maxResults) {
+        List<WebSource> publicSources = getPublicSources();
+        List<WebSource> result = query.isEmpty()
+                ? publicSources.stream()
+                        .sorted(comparing(WebSource::getId))
+                        .limit(max(maxResults))
+                        .toList()
+                : Search.ofSources(publicSources, Languages.parse(languages)).search(query, max(maxResults)).stream()
+                        .map(Search.Result::getItem)
+                        .toList();
+        return result.stream().map(SdmxWebManagerMcp::compactSource).toList();
+    }
+
+    @Tool(
+            description =
+                    "List or search SDMX databases of a source. When 'query' is empty, entries are sorted by ref and truncated to 'maxResults' (0 = no limit). When 'query' is non-empty, entries are ranked by relevance (BM25 + trigram) and limited to 'maxResults'. Most sources expose a single default database; databases are only needed for multi-database sources.")
+    public List<DatabaseDto> listDatabases(
             @ToolArg(description = SOURCE_ARG) String source,
-            @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages)
+            @ToolArg(description = QUERY_ARG, required = false, defaultValue = DEFAULT_QUERY) String query,
+            @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages,
+            @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = DEFAULT_MAX_RESULTS)
+                    int maxResults)
             throws IOException {
-        return manager
-                .using(getPublicSourceForMcp(source))
-                .listDatabases(DatabasesRequest.builder().languagesOf(languages).build())
-                .stream()
+        DatabasesRequest request = DatabasesRequest.builder()
+                .languagesOf(languages)
+                .query(query)
+                .maxResults(maxResults)
+                .build();
+        return manager.using(getPublicSourceForMcp(source)).listDatabases(request).stream()
                 .map(ProtoApi::fromDatabase)
                 .toList();
     }
 
     @Tool(
             description =
-                    "List SDMX data flows (datasets) of a source. Next step: call mcpMeta on the chosen flow to see its dimensions.")
-    public List<FlowDto> mcpFlows(
+                    "List or search SDMX data flows (datasets) of a source. When 'query' is empty, entries are sorted by ref and truncated to 'maxResults' (0 = no limit). When 'query' is non-empty, entries are ranked by relevance (BM25 + trigram) and limited to 'maxResults'. Next step: call getMeta on the chosen flow to see its dimensions.")
+    public List<FlowDto> listFlows(
             @ToolArg(description = SOURCE_ARG) String source,
+            @ToolArg(description = QUERY_ARG, required = false, defaultValue = DEFAULT_QUERY) String query,
             @ToolArg(description = DATABASE_ARG, required = false, defaultValue = NO_DATABASE_KEYWORD) String database,
-            @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages)
+            @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages,
+            @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = DEFAULT_MAX_RESULTS)
+                    int maxResults)
             throws IOException {
-        return manager
-                .using(getPublicSourceForMcp(source))
-                .listFlows(FlowsRequest.builder()
-                        .databaseOf(database)
-                        .languagesOf(languages)
-                        .build())
-                .stream()
+        FlowsRequest request = FlowsRequest.builder()
+                .databaseOf(database)
+                .languagesOf(languages)
+                .query(query)
+                .maxResults(maxResults)
+                .build();
+        return manager.using(getPublicSourceForMcp(source)).listFlows(request).stream()
                 .map(ProtoApi::fromDataflow)
                 .map(SdmxWebManagerMcp::cleanDescription)
                 .toList();
@@ -158,72 +183,56 @@ public class SdmxWebManagerMcp {
 
     @Tool(
             description =
-                    "Search SDMX data flows of a source by relevance using hybrid search (BM25 + trigram). Increase maxResults to widen the search. Next step: call mcpMeta on the chosen flow.")
-    public List<FlowDto> mcpSearchFlows(
+                    "List or search dimensions of a flow's structure. When 'query' is empty, entries are returned in structure order and truncated to 'maxResults' (0 = no limit). When 'query' is non-empty, entries are ranked by relevance (BM25 + trigram) and limited to 'maxResults'. Next step: use listCodes to resolve a dimension's values.")
+    public List<DimensionDto> listDimensions(
             @ToolArg(description = SOURCE_ARG) String source,
-            @ToolArg(description = QUERY_ARG) String query,
+            @ToolArg(description = FLOW_ARG) String flow,
+            @ToolArg(description = QUERY_ARG, required = false, defaultValue = DEFAULT_QUERY) String query,
             @ToolArg(description = DATABASE_ARG, required = false, defaultValue = NO_DATABASE_KEYWORD) String database,
             @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages,
             @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = DEFAULT_MAX_RESULTS)
                     int maxResults)
             throws IOException {
-        if (query.isEmpty()) {
-            return List.of();
-        }
-
-        FlowsRequest request = FlowsRequest.builder()
+        DimensionsRequest request = DimensionsRequest.builder()
+                .flowOf(flow)
                 .databaseOf(database)
                 .languagesOf(languages)
                 .query(query)
                 .maxResults(maxResults)
                 .build();
-        return manager.using(getPublicSourceForMcp(source)).listFlows(request).stream()
-                .map(ProtoApi::fromDataflow)
-                .map(SdmxWebManagerMcp::cleanDescription)
+        return manager.using(getPublicSourceForMcp(source)).listDimensions(request).stream()
+                .map(ProtoApi::fromDimension)
                 .toList();
     }
 
     @Tool(
             description =
-                    "Search SDMX sources by relevance using hybrid search (BM25 + trigram). Increase maxResults to widen the search. Next step: use the returned source id with mcpFlows or mcpSearchFlows.")
-    public List<WebSourceDto> mcpSearchSources(
-            @ToolArg(description = QUERY_ARG) String query,
-            @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages,
-            @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = DEFAULT_MAX_RESULTS)
-                    int maxResults) {
-        return Search.ofSources(getPublicSources(), Languages.parse(languages)).search(query, maxResults).stream()
-                .map(result -> compactSource(result.getItem()))
-                .toList();
-    }
-
-    @Tool(
-            description =
-                    "Search SDMX databases of a source by relevance using hybrid search (BM25 + trigram). Increase maxResults to widen the search.")
-    public List<DatabaseDto> mcpSearchDatabases(
+                    "List or search attributes of a flow's structure. When 'query' is empty, entries are sorted by id and truncated to 'maxResults' (0 = no limit). When 'query' is non-empty, entries are ranked by relevance (BM25 + trigram) and limited to 'maxResults'.")
+    public List<AttributeDto> listAttributes(
             @ToolArg(description = SOURCE_ARG) String source,
-            @ToolArg(description = QUERY_ARG) String query,
+            @ToolArg(description = FLOW_ARG) String flow,
+            @ToolArg(description = QUERY_ARG, required = false, defaultValue = DEFAULT_QUERY) String query,
+            @ToolArg(description = DATABASE_ARG, required = false, defaultValue = NO_DATABASE_KEYWORD) String database,
             @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages,
             @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = DEFAULT_MAX_RESULTS)
                     int maxResults)
             throws IOException {
-        if (query.isEmpty()) {
-            return List.of();
-        }
-
-        DatabasesRequest request = DatabasesRequest.builder()
+        AttributesRequest request = AttributesRequest.builder()
+                .flowOf(flow)
+                .databaseOf(database)
                 .languagesOf(languages)
                 .query(query)
                 .maxResults(maxResults)
                 .build();
-        return manager.using(getPublicSourceForMcp(source)).listDatabases(request).stream()
-                .map(ProtoApi::fromDatabase)
+        return manager.using(getPublicSourceForMcp(source)).listAttributes(request).stream()
+                .map(ProtoApi::fromAttribute)
                 .toList();
     }
 
     @Tool(
             description =
-                    "Get SDMX metadata: flow and structure skeleton. Returns dimensions in order with their id, name, codelist ref and code count, but NOT the codes themselves. Next step: use mcpCodes to resolve a dimension's codes, then mcpData.")
-    public MetaSetDto mcpMeta(
+                    "Get SDMX metadata: flow and structure skeleton. Returns dimensions in order with their id, name, codelist ref and code count, but NOT the codes themselves. Next step: use listCodes to resolve a dimension's codes, then getData.")
+    public MetaSetDto getMeta(
             @ToolArg(description = SOURCE_ARG) String source,
             @ToolArg(description = FLOW_ARG) String flow,
             @ToolArg(description = DATABASE_ARG, required = false, defaultValue = NO_DATABASE_KEYWORD) String database,
@@ -239,12 +248,12 @@ public class SdmxWebManagerMcp {
 
     @Tool(
             description =
-                    "List or search the codes of a single dimension of an SDMX flow. Use after mcpMeta to resolve a label (e.g. a product name) to its dimension code. Returns the codelist ref, the total code count and the matching codes (id -> label); when 'codeCount' exceeds the number of returned codes, refine 'query' or raise 'maxResults'. Next step: pass the chosen code(s) to mcpData via the 'dimensions' map.")
-    public CodelistDto mcpCodes(
+                    "List or search the codes of a single dimension of an SDMX flow. Use after getMeta or listDimensions to resolve a label (e.g. a product name) to its dimension code. Returns the codelist ref, the total code count and the matching codes (id -> label); when 'codeCount' exceeds the number of returned codes, refine 'query' or raise 'maxResults'. Next step: pass the chosen code(s) to getData via the 'dimensions' map.")
+    public CodelistDto listCodes(
             @ToolArg(description = SOURCE_ARG) String source,
             @ToolArg(description = FLOW_ARG) String flow,
             @ToolArg(description = DIMENSION_ARG) String dimension,
-            @ToolArg(description = QUERY_ARG, required = false, defaultValue = "") String query,
+            @ToolArg(description = QUERY_ARG, required = false, defaultValue = DEFAULT_QUERY) String query,
             @ToolArg(description = DATABASE_ARG, required = false, defaultValue = NO_DATABASE_KEYWORD) String database,
             @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages,
             @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = DEFAULT_MAX_RESULTS)
@@ -272,7 +281,7 @@ public class SdmxWebManagerMcp {
     @Tool(
             description =
                     "Get SDMX data series alongside their flow reference and the query used to get them. Provide either the positional 'key' or the structured 'dimensions' map (recommended: it avoids positional-key mistakes). Observations can be filtered by period ('startPeriod'/'endPeriod') and/or count ('firstN'/'lastN'); by default only the most recent observations of each series are returned (lastN=20), so increase or disable 'lastN' to get more. Filters are applied server-side when the source supports it and always enforced client-side, and the returned query echoes the filters that were applied. Tip: call once with detail=SERIES_KEYS_ONLY to list the available series keys without data, then call again with a chosen key (or dimensions) and detail=DATA_ONLY to fetch observations.")
-    public DataSetDto mcpData(
+    public DataSetDto getData(
             @ToolArg(description = SOURCE_ARG) String source,
             @ToolArg(description = FLOW_ARG) String flow,
             @ToolArg(description = KEY_ARG, required = false, defaultValue = DEFAULT_KEY) String key,
