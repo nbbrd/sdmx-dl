@@ -17,6 +17,7 @@
 package sdmxdl.cli;
 
 import internal.sdmxdl.cli.HiddenSortOptions;
+import internal.sdmxdl.cli.ListSearchOptions;
 import internal.sdmxdl.cli.WebSourceOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
@@ -36,6 +37,9 @@ public final class ListDatabasesCommand implements Callable<Void> {
 
     @CommandLine.Mixin
     private WebSourceOptions web;
+
+    @CommandLine.Mixin
+    private ListSearchOptions listSearch;
 
     @CommandLine.Mixin
     private final RFC4180OutputOptions csv = new RFC4180OutputOptions();
@@ -60,7 +64,10 @@ public final class ListDatabasesCommand implements Callable<Void> {
     private Iterable<Database> getRows() throws IOException {
         return web.loadManager()
                 .usingName(web.getSource())
-                .listDatabases(
-                        DatabasesRequest.builder().languages(web.getLangs()).build());
+                .listDatabases(DatabasesRequest.builder()
+                        .languages(web.getLangs())
+                        .query(listSearch.getSearchQuery())
+                        .maxResults(listSearch.getMaxResults())
+                        .build());
     }
 }

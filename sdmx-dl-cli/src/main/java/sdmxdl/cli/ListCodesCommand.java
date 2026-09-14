@@ -17,6 +17,7 @@
 package sdmxdl.cli;
 
 import internal.sdmxdl.cli.HiddenSortOptions;
+import internal.sdmxdl.cli.ListSearchOptions;
 import internal.sdmxdl.cli.WebConceptOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
@@ -25,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import picocli.CommandLine;
+import sdmxdl.CodesRequest;
 
 /**
  * @author Philippe Charles
@@ -34,6 +36,9 @@ public final class ListCodesCommand implements Callable<Void> {
 
     @CommandLine.Mixin
     private WebConceptOptions web;
+
+    @CommandLine.Mixin
+    private ListSearchOptions listSearch;
 
     @CommandLine.Mixin
     private final RFC4180OutputOptions csv = new RFC4180OutputOptions();
@@ -57,7 +62,14 @@ public final class ListCodesCommand implements Callable<Void> {
     private Set<Map.Entry<String, String>> getRows() throws IOException {
         return web.loadManager()
                 .usingName(web.getSource())
-                .listCodes(web.toConceptRequest())
+                .listCodes(CodesRequest.builder()
+                        .languages(web.getLangs())
+                        .database(web.getDatabase())
+                        .flow(web.getFlow())
+                        .concept(web.getConcept())
+                        .query(listSearch.getSearchQuery())
+                        .maxResults(listSearch.getMaxResults())
+                        .build())
                 .entrySet();
     }
 }

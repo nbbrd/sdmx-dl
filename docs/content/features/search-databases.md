@@ -33,7 +33,7 @@ void main() throws Exception {
 {{< feature-status "search-databases" "cli" >}}
 
 ```shell
-sdmx-dl search databases ECB "central" -n 5
+sdmx-dl list databases ECB -q "central" -m 5
 ```
 {{< /tab >}}
 

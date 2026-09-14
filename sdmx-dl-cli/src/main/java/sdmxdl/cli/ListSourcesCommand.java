@@ -18,6 +18,7 @@ package sdmxdl.cli;
 
 import static internal.sdmxdl.cli.ext.CsvUtil.DEFAULT_MAP_FORMATTER;
 
+import internal.sdmxdl.cli.ListSearchOptions;
 import internal.sdmxdl.cli.WebOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.CsvUtil;
@@ -27,6 +28,7 @@ import java.util.concurrent.Callable;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
+import sdmxdl.Confidentiality;
 import sdmxdl.Languages;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.WebSourcesRequest;
@@ -39,6 +41,15 @@ public final class ListSourcesCommand implements Callable<Void> {
 
     @CommandLine.Mixin
     private WebOptions web;
+
+    @CommandLine.Mixin
+    private ListSearchOptions listSearch;
+
+    @CommandLine.Option(
+            names = {"-c", "--confidentiality"},
+            defaultValue = "SECRET",
+            description = "Filter sources by confidentiality threshold")
+    private Confidentiality confidentialityThreshold;
 
     @CommandLine.Mixin
     private final RFC4180OutputOptions csv = new RFC4180OutputOptions();
@@ -67,6 +78,11 @@ public final class ListSourcesCommand implements Callable<Void> {
     }
 
     private List<WebSource> getRows() {
-        return web.loadManager().listSources(WebSourcesRequest.DEFAULT);
+        return web.loadManager()
+                .listSources(WebSourcesRequest.builder()
+                        .query(listSearch.getSearchQuery())
+                        .maxResults(listSearch.getMaxResults())
+                        .confidentialityThreshold(confidentialityThreshold)
+                        .build());
     }
 }

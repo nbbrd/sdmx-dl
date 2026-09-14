@@ -31,7 +31,7 @@ void main() throws Exception {
 {{< feature-status "search-sources" "cli" >}}
 
 ```shell
-sdmx-dl search sources "european central" -n 5
+sdmx-dl list sources -q "european central" -m 5
 ```
 {{< /tab >}}
 

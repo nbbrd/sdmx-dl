@@ -33,7 +33,7 @@ void main() throws Exception {
 {{< feature-status "search-flows" "cli" >}}
 
 ```shell
-sdmx-dl search flows ECB "exchange rates" -n 5
+sdmx-dl list flows ECB -q "exchange rates" -m 5
 ```
 {{< /tab >}}
 
