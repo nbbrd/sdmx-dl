@@ -15,7 +15,7 @@
   <meta name="description" content="Find a dataset by topic within a source when you don&rsquo;t know its exact flow ID.
 API ✅ full support
 //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .listFlows(FlowsRequest.builder() .query(&#34;exchange rates&#34;) .maxResults(5) .build()) .forEach(flow -&gt; IO.println(flow.getRef())); } CLI ✅ full support
-sdmx-dl search flows ECB &#34;exchange rates&#34; -n 5 WS ✅ full support" />
+sdmx-dl list flows ECB -q &#34;exchange rates&#34; -m 5 WS ✅ full support" />
 
     <title>Search flows | sdmx-dl</title>
 
@@ -44,14 +44,14 @@ sdmx-dl search flows ECB &#34;exchange rates&#34; -n 5 WS ✅ full support" />
   <meta property="og:description" content="Find a dataset by topic within a source when you don’t know its exact flow ID.
 API ✅ full support
 //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .listFlows(FlowsRequest.builder() .query(&#34;exchange rates&#34;) .maxResults(5) .build()) .forEach(flow -&gt; IO.println(flow.getRef())); } CLI ✅ full support
-sdmx-dl search flows ECB &#34;exchange rates&#34; -n 5 WS ✅ full support" />
+sdmx-dl list flows ECB -q &#34;exchange rates&#34; -m 5 WS ✅ full support" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/features/search-flows/" />
 
 <meta property="article:section" content="Features" />
     <meta
       property="article:modified_time"
-      content="2026-09-11T16:52:32+02:00"
+      content="2026-09-14T14:12:03+02:00"
     />
 
 
@@ -60,7 +60,7 @@ sdmx-dl search flows ECB &#34;exchange rates&#34; -n 5 WS ✅ full support" />
   <meta name="twitter:description" content="Find a dataset by topic within a source when you don’t know its exact flow ID.
 API ✅ full support
 //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .listFlows(FlowsRequest.builder() .query(&#34;exchange rates&#34;) .maxResults(5) .build()) .forEach(flow -&gt; IO.println(flow.getRef())); } CLI ✅ full support
-sdmx-dl search flows ECB &#34;exchange rates&#34; -n 5 WS ✅ full support" />
+sdmx-dl list flows ECB -q &#34;exchange rates&#34; -m 5 WS ✅ full support" />
 
 
   <script type="application/ld+json">
@@ -71,8 +71,8 @@ sdmx-dl search flows ECB &#34;exchange rates&#34; -n 5 WS ✅ full support" />
       "name": "Search flows",
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/features/search-flows/",
       "headline": "Search flows",
-      "description": "Find a dataset by topic within a source when you don’t know its exact flow ID.\nAPI ✅ full support\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(\u0022ECB\u0022) .listFlows(FlowsRequest.builder() .query(\u0022exchange rates\u0022) .maxResults(5) .build()) .forEach(flow -\u003e IO.println(flow.getRef())); } CLI ✅ full support\nsdmx-dl search flows ECB \u0022exchange rates\u0022 -n 5 WS ✅ full support",
-      "wordCount": "162",
+      "description": "Find a dataset by topic within a source when you don’t know its exact flow ID.\nAPI ✅ full support\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(\u0022ECB\u0022) .listFlows(FlowsRequest.builder() .query(\u0022exchange rates\u0022) .maxResults(5) .build()) .forEach(flow -\u003e IO.println(flow.getRef())); } CLI ✅ full support\nsdmx-dl list flows ECB -q \u0022exchange rates\u0022 -m 5 WS ✅ full support",
+      "wordCount": "163",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -83,7 +83,7 @@ sdmx-dl search flows ECB &#34;exchange rates&#34; -n 5 WS ✅ full support" />
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-11T16:52:32.00Z",
+      "dateModified": "2026-09-14T14:12:03.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1631,7 +1631,7 @@ sdmx-dl search flows ECB &#34;exchange rates&#34; -n 5 WS ✅ full support" />
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
       <p class="feature-status">✅ <strong>full support</strong></p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl search flows ECB <span class="s2">&#34;exchange rates&#34;</span> -n <span class="m">5</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl list flows ECB -q <span class="s2">&#34;exchange rates&#34;</span> -m <span class="m">5</span>
 </span></span></code></pre></div></div>
     <input
       type="radio"

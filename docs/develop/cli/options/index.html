@@ -51,7 +51,7 @@ Common General-purpose options used by various commands." />
 <meta property="article:section" content="CLI" />
     <meta
       property="article:modified_time"
-      content="2026-09-11T16:52:32+02:00"
+      content="2026-09-14T14:12:03+02:00"
     />
 
 
@@ -72,7 +72,7 @@ Common General-purpose options used by various commands." />
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/cli/options/",
       "headline": "Options",
       "description": "An option has the following caracteristics:\nit has a name prefixed by two hyphens (e.g. --version). it may have a shortcut prefixed by one hyphen (e.g. -h is a shortcut of --help). it is case-sensitive Shortcuts can be grouped behind one hyphen (e.g. -vh is equivalent to -v -h).\nThe options default values are system-independent.\nCommon General-purpose options used by various commands.",
-      "wordCount": "372",
+      "wordCount": "476",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -83,7 +83,7 @@ Common General-purpose options used by various commands." />
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-11T16:52:32.00Z",
+      "dateModified": "2026-09-14T14:12:03.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1700,6 +1700,75 @@ Common General-purpose options used by various commands." />
   href="../datatypes#langs"
 ><code>&lt;langs&gt;</code></a></td>
 					<td>Language priority list.</td>
+			</tr>
+	</tbody>
+</table> </div>
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="search"
+    >
+        Search
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/options/#search" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Search" aria-label="Anchor to: Search" href="#search">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>Options shared by every <code>list</code> subcommand to search/rank results by free text instead of listing everything.
+When <code>--query</code> is empty (the default), results are returned sorted/unranked instead.</p>
+<div class="table-wrap"> <table>
+	<thead>
+			<tr>
+					<th>Name</th>
+					<th>Shortcut</th>
+					<th>Parameter</th>
+					<th>Description</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td><a id="query" href="#query"><code>--query</code></a></td>
+					<td><code>-q</code></td>
+					<td><code>&lt;query&gt;</code></td>
+					<td>Free-text search query, with typo-tolerant ranking.</td>
+			</tr>
+			<tr>
+					<td><a id="max-results" href="#max-results"><code>--max-results</code></a></td>
+					<td><code>-m</code></td>
+					<td><code>&lt;n&gt;</code></td>
+					<td>Maximum number of results to return (default: <code>0</code>, meaning no limit).</td>
+			</tr>
+	</tbody>
+</table> </div>
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="description"
+    >
+        Description
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/options/#description" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Description" aria-label="Anchor to: Description" href="#description">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>Options used by <code>list flows</code> and <code>search flows</code> to clean up the flow <code>Description</code> column.</p>
+<div class="table-wrap"> <table>
+	<thead>
+			<tr>
+					<th>Name</th>
+					<th>Shortcut</th>
+					<th>Parameter</th>
+					<th>Description</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td><a id="plain-description" href="#plain-description"><code>--plain-description</code></a></td>
+					<td>-</td>
+					<td>-</td>
+					<td>Strip markup (e.g. HTML tags) and collapse whitespace in descriptions.</td>
+			</tr>
+			<tr>
+					<td><a id="max-description-length" href="#max-description-length"><code>--max-description-length</code></a></td>
+					<td>-</td>
+					<td><code>&lt;length&gt;</code></td>
+					<td>Maximum length of descriptions, truncated with an ellipsis (default: <code>0</code>, meaning no limit).</td>
 			</tr>
 	</tbody>
 </table> </div>
