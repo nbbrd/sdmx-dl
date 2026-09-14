@@ -16,6 +16,7 @@
  */
 package sdmxdl.cli;
 
+import internal.sdmxdl.cli.DescriptionOptions;
 import internal.sdmxdl.cli.HiddenSortOptions;
 import internal.sdmxdl.cli.ListSearchOptions;
 import internal.sdmxdl.cli.WebSourceOptions;
@@ -38,6 +39,9 @@ public final class ListFlowsCommand implements Callable<Void> {
 
     @CommandLine.Mixin
     private ListSearchOptions listSearch;
+
+    @CommandLine.Mixin
+    private DescriptionOptions description;
 
     @CommandLine.Mixin
     private final RFC4180OutputOptions csv = new RFC4180OutputOptions();
@@ -67,6 +71,8 @@ public final class ListFlowsCommand implements Callable<Void> {
                         .database(web.getDatabase())
                         .query(listSearch.getSearchQuery())
                         .maxResults(listSearch.getMaxResults())
+                        .plainDescription(description.isPlainDescription())
+                        .maxDescriptionLength(description.getMaxDescriptionLength())
                         .build());
     }
 }

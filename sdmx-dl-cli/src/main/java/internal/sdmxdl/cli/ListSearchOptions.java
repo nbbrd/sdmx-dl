@@ -19,6 +19,7 @@ public final class ListSearchOptions {
 
     @CommandLine.Option(
             names = {"-m", "--max-results"},
+            paramLabel = "<limit>",
             defaultValue = "0",
             descriptionKey = "cli.sdmx.maxResults")
     private int maxResults;

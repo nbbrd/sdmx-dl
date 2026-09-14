@@ -1,6 +1,8 @@
 package internal.sdmxdl;
 
+import java.util.regex.Pattern;
 import lombok.NonNull;
+import nbbrd.design.NonNegative;
 import org.jspecify.annotations.Nullable;
 
 @lombok.experimental.UtilityClass
@@ -40,4 +42,25 @@ public class Chars {
     }
 
     public static final int NOT_FOUND = -1;
+
+    private static final Pattern HTML_TAG = Pattern.compile("<[^>]*>");
+    private static final Pattern WHITESPACE = Pattern.compile("\\s+");
+    private static final String ELLIPSIS = "…";
+
+    public static @Nullable String toPlainText(@Nullable String text) {
+        if (text == null) {
+            return null;
+        }
+        return WHITESPACE
+                .matcher(HTML_TAG.matcher(text).replaceAll(" "))
+                .replaceAll(" ")
+                .trim();
+    }
+
+    public static @Nullable String truncate(@Nullable String text, @NonNegative int maxLength) {
+        if (text == null || text.length() <= maxLength) {
+            return text;
+        }
+        return text.substring(0, Math.max(0, maxLength - 1)).trim() + ELLIPSIS;
+    }
 }

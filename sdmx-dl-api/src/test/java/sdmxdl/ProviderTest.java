@@ -112,6 +112,53 @@ public class ProviderTest {
     }
 
     @Test
+    public void testListFlowsWithPlainDescription() throws IOException {
+        Flow cpi = Flow.builder()
+                .ref(FlowRef.of("NBB", "CPI", "v1.0"))
+                .structureRef(STRUCT_REF)
+                .name("Consumer Price Index")
+                .description("<b>Monthly</b>   index")
+                .build();
+        Provider<WebSource> provider = providerOfFlows(Collections.singletonList(cpi));
+
+        assertThat(provider.listFlows(
+                        FlowsRequest.builder().plainDescription(true).build()))
+                .extracting(Flow::getDescription)
+                .containsExactly("Monthly index");
+    }
+
+    @Test
+    public void testListFlowsWithMaxDescriptionLength() throws IOException {
+        Flow cpi = Flow.builder()
+                .ref(FlowRef.of("NBB", "CPI", "v1.0"))
+                .structureRef(STRUCT_REF)
+                .name("Consumer Price Index")
+                .description("hello world")
+                .build();
+        Provider<WebSource> provider = providerOfFlows(Collections.singletonList(cpi));
+
+        assertThat(provider.listFlows(
+                        FlowsRequest.builder().maxDescriptionLength(5).build()))
+                .extracting(Flow::getDescription)
+                .containsExactly("hell…");
+    }
+
+    @Test
+    public void testListFlowsWithDefaultDescriptionOptions() throws IOException {
+        Flow cpi = Flow.builder()
+                .ref(FlowRef.of("NBB", "CPI", "v1.0"))
+                .structureRef(STRUCT_REF)
+                .name("Consumer Price Index")
+                .description("<b>hello</b> world")
+                .build();
+        Provider<WebSource> provider = providerOfFlows(Collections.singletonList(cpi));
+
+        assertThat(provider.listFlows(FlowsRequest.DEFAULT))
+                .extracting(Flow::getDescription)
+                .containsExactly("<b>hello</b> world");
+    }
+
+    @Test
     public void testListDimensions() throws IOException {
         assertThat(validProvider()
                         .listDimensions(

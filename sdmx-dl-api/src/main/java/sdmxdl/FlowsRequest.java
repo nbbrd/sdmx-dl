@@ -21,6 +21,20 @@ public class FlowsRequest implements HasSearchQuery, HasLimit {
     @lombok.Builder.Default
     @NonNegative int maxResults = NO_LIMIT;
 
+    /**
+     * Whether flow descriptions should have markup (e.g. HTML tags) stripped
+     * and whitespace collapsed before being returned.
+     */
+    @lombok.Builder.Default
+    boolean plainDescription = false;
+
+    /**
+     * Maximum length of flow descriptions, or {@link HasDescription#NO_DESCRIPTION_LIMIT}
+     * for no truncation.
+     */
+    @lombok.Builder.Default
+    @NonNegative int maxDescriptionLength = HasDescription.NO_DESCRIPTION_LIMIT;
+
     public static final class Builder {
 
         public Builder databaseOf(@NonNull String database) {

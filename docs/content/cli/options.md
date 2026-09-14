@@ -45,6 +45,15 @@ When `--query` is empty (the default), results are returned sorted/unranked inst
 | <a id="query" href="#query">`--query`</a>                    | `-q`     | `<query>` | Free-text search query, with typo-tolerant ranking.                    |
 | <a id="max-results" href="#max-results">`--max-results`</a>  | `-m`     | `<n>`     | Maximum number of results to return (default: `0`, meaning no limit).  |
 
+## Description
+
+Options used by `list flows` and `search flows` to clean up the flow `Description` column.
+
+| Name                                                                       | Shortcut | Parameter | Description                                                       |
+|-----------------------------------------------------------------------------|----------|-----------|----------------------------------------------------------------------|
+| <a id="plain-description" href="#plain-description">`--plain-description`</a> | -      | -         | Strip markup (e.g. HTML tags) and collapse whitespace in descriptions. |
+| <a id="max-description-length" href="#max-description-length">`--max-description-length`</a> | -      | `<length>` | Maximum length of descriptions, truncated with an ellipsis (default: `0`, meaning no limit). |
+
 ## Data filtering
 
 Optional filters that reduce the observations returned by the `fetch data` command.

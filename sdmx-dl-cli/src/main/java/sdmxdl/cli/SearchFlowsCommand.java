@@ -1,5 +1,6 @@
 package sdmxdl.cli;
 
+import internal.sdmxdl.cli.DescriptionOptions;
 import internal.sdmxdl.cli.WebSourceOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
@@ -22,6 +23,9 @@ public final class SearchFlowsCommand implements Callable<Void> {
 
     @CommandLine.Mixin
     private final RFC4180OutputOptions csv = new RFC4180OutputOptions();
+
+    @CommandLine.Mixin
+    private DescriptionOptions description;
 
     @CommandLine.Parameters(index = "1", paramLabel = "<query>", descriptionKey = "cli.sdmx.searchQuery")
     private String query;
@@ -55,6 +59,8 @@ public final class SearchFlowsCommand implements Callable<Void> {
                         .query(query)
                         .maxResults(maxResults)
                         .database(web.getDatabase())
+                        .plainDescription(description.isPlainDescription())
+                        .maxDescriptionLength(description.getMaxDescriptionLength())
                         .build());
     }
 }

@@ -7,6 +7,7 @@ import static java.util.stream.Collectors.toMap;
 import java.io.IOException;
 import java.net.URI;
 import java.util.*;
+import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.NonNull;
@@ -105,6 +106,10 @@ public final class Provider<SOURCE extends Source> {
      * {@link sdmxdl.web.Search#ofFlows(java.util.Collection)} and returned best match first,
      * limited to {@link FlowsRequest#getMaxResults()} results.
      *
+     * <p>When {@link FlowsRequest#isPlainDescription()} is {@code true} and/or
+     * {@link FlowsRequest#getMaxDescriptionLength()} is set, each flow's description is
+     * cleaned (markup stripped) and/or truncated accordingly; see {@link HasDescription}.
+     *
      * @param request database-level request parameters (non-null)
      * @return non-null list of flows (possibly empty), sorted or ranked depending on the query
      * @throws IOException if flow discovery fails due to I/O issues
@@ -116,11 +121,22 @@ public final class Provider<SOURCE extends Source> {
                     ? result.stream()
                             .sorted(comparing(HasReference::getRef))
                             .limit(request.getEffectiveMaxResults())
+                            .map(flowTransformer(request))
                             .collect(toList())
                     : Search.ofFlows(result).search(request.getQuery(), request.getEffectiveMaxResults()).stream()
                             .map(Search.Result::getItem)
+                            .map(flowTransformer(request))
                             .collect(toList());
         }
+    }
+
+    private static UnaryOperator<Flow> flowTransformer(FlowsRequest request) {
+        return !request.isPlainDescription() && request.getMaxDescriptionLength() == HasDescription.NO_DESCRIPTION_LIMIT
+                ? UnaryOperator.identity()
+                : flow -> flow.toBuilder()
+                        .description(
+                                flow.getDescription(request.isPlainDescription(), request.getMaxDescriptionLength()))
+                        .build();
     }
 
     /**

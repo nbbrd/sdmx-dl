@@ -135,25 +135,12 @@ public class SdmxWebManagerMcp {
                 .languagesOf(languages)
                 .query(query)
                 .maxResults(maxResults)
+                .plainDescription(true)
+                .maxDescriptionLength(MAX_DESCRIPTION_LENGTH)
                 .build();
         return manager.using(getPublicSourceForMcp(source)).listFlows(request).stream()
                 .map(ProtoApi::fromDataflow)
-                .map(SdmxWebManagerMcp::cleanDescription)
                 .toList();
-    }
-
-    private static FlowDto cleanDescription(FlowDto flowDto) {
-        if (!flowDto.hasDescription()) {
-            return flowDto;
-        }
-        String cleaned = flowDto.getDescription()
-                .replaceAll("<[^>]*>", " ") // strip HTML tags
-                .replaceAll("\\s+", " ") // collapse whitespace
-                .trim();
-        if (cleaned.length() > MAX_DESCRIPTION_LENGTH) {
-            cleaned = cleaned.substring(0, MAX_DESCRIPTION_LENGTH - 1).trim() + "…";
-        }
-        return flowDto.toBuilder().setDescription(cleaned).build();
     }
 
     @Tool(
