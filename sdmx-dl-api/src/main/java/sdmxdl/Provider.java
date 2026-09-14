@@ -86,9 +86,9 @@ public final class Provider<SOURCE extends Source> {
             return request.getQuery().isEmpty()
                     ? result.stream()
                             .sorted(comparing(HasReference::getRef))
-                            .limit(max(request))
+                            .limit(request.getEffectiveMaxResults())
                             .collect(toList())
-                    : Search.ofDatabases(result).search(request.getQuery(), max(request)).stream()
+                    : Search.ofDatabases(result).search(request.getQuery(), request.getEffectiveMaxResults()).stream()
                             .map(Search.Result::getItem)
                             .collect(toList());
         }
@@ -115,9 +115,9 @@ public final class Provider<SOURCE extends Source> {
             return request.getQuery().isEmpty()
                     ? result.stream()
                             .sorted(comparing(HasReference::getRef))
-                            .limit(max(request))
+                            .limit(request.getEffectiveMaxResults())
                             .collect(toList())
-                    : Search.ofFlows(result).search(request.getQuery(), max(request)).stream()
+                    : Search.ofFlows(result).search(request.getQuery(), request.getEffectiveMaxResults()).stream()
                             .map(Search.Result::getItem)
                             .collect(toList());
         }
@@ -145,8 +145,8 @@ public final class Provider<SOURCE extends Source> {
                     .getStructure()
                     .getDimensions();
             return request.getQuery().isEmpty()
-                    ? result.stream().limit(max(request)).collect(toList())
-                    : Search.ofDimensions(result).search(request.getQuery(), max(request)).stream()
+                    ? result.stream().limit(request.getEffectiveMaxResults()).collect(toList())
+                    : Search.ofDimensions(result).search(request.getQuery(), request.getEffectiveMaxResults()).stream()
                             .map(Search.Result::getItem)
                             .collect(toList());
         }
@@ -176,9 +176,9 @@ public final class Provider<SOURCE extends Source> {
             return request.getQuery().isEmpty()
                     ? result.stream()
                             .sorted(comparing(Component::getId))
-                            .limit(max(request))
+                            .limit(request.getEffectiveMaxResults())
                             .collect(toList())
-                    : Search.ofAttributes(result).search(request.getQuery(), max(request)).stream()
+                    : Search.ofAttributes(result).search(request.getQuery(), request.getEffectiveMaxResults()).stream()
                             .map(Search.Result::getItem)
                             .collect(toList());
         }
@@ -208,9 +208,9 @@ public final class Provider<SOURCE extends Source> {
             Map<String, String> result = loadComponent(connection, request);
             return request.getQuery().isEmpty()
                     ? result.entrySet().stream()
-                            .limit(max(request))
+                            .limit(request.getEffectiveMaxResults())
                             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, LinkedHashMap::new))
-                    : Search.ofCodes(result).search(request.getQuery(), max(request)).stream()
+                    : Search.ofCodes(result).search(request.getQuery(), request.getEffectiveMaxResults()).stream()
                             .map(Search.Result::getItem)
                             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, LinkedHashMap::new));
         }
@@ -240,10 +240,6 @@ public final class Provider<SOURCE extends Source> {
         try (Connection connection = manager.getConnection(source, request.getLanguages())) {
             return connection.getData(request.getDatabase(), request.getFlow(), request.toQuery());
         }
-    }
-
-    private static int max(HasLimit request) {
-        return request.getMaxResults() > 0 ? request.getMaxResults() : Integer.MAX_VALUE;
     }
 
     private static Map<String, String> loadComponent(Connection connection, CodesRequest request) throws IOException {

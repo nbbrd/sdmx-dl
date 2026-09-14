@@ -161,7 +161,7 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
      * limit options carried by the given request.
      * <p>
      * Sources are first restricted to non-alias sources whose confidentiality is allowed
-     * by {@link WebSourcesRequest#getThreshold()}. Then:
+     * by {@link WebSourcesRequest#getConfidentialityThreshold()}. Then:
      * <ul>
      *     <li>if the request has no query ({@link HasSearchQuery#NO_QUERY}), the remaining
      *     sources are sorted by {@linkplain WebSource#getId() id} and truncated to
@@ -178,14 +178,16 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
     public @NonNull List<WebSource> listSources(@NonNull WebSourcesRequest request) {
         Collection<WebSource> result = getSources().values().stream()
                 .filter(source -> !source.isAlias())
-                .filter(request.getThreshold()::isAllowedIn)
+                .filter(request.getConfidentialityThreshold()::isAllowedIn)
                 .collect(toList());
         return request.getQuery().isEmpty()
                 ? result.stream()
                         .sorted(comparing(WebSource::getId))
-                        .limit(max(request))
+                        .limit(request.getEffectiveMaxResults())
                         .collect(toList())
-                : Search.ofSources(result, request.getLanguages()).search(request.getQuery(), max(request)).stream()
+                : Search.ofSources(result, request.getLanguages())
+                        .search(request.getQuery(), request.getEffectiveMaxResults())
+                        .stream()
                         .map(Search.Result::getItem)
                         .collect(toList());
     }
@@ -277,9 +279,5 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
     public static ErrorListener printError(WebSource source) {
         return (marker, message, error) ->
                 System.err.println("[" + source.getId() + "] (" + marker + ") " + message + ": " + error.getMessage());
-    }
-
-    private static int max(HasLimit request) {
-        return request.getMaxResults() > 0 ? request.getMaxResults() : Integer.MAX_VALUE;
     }
 }

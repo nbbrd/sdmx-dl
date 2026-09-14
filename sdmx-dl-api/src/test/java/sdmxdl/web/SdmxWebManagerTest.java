@@ -197,7 +197,7 @@ public class SdmxWebManagerTest {
                 .containsExactly("abs", "ecb");
 
         assertThat(manager.listSources(WebSourcesRequest.builder()
-                        .threshold(Confidentiality.PUBLIC)
+                        .confidentialityThreshold(Confidentiality.PUBLIC)
                         .build()))
                 .describedAs("threshold filters out sources with a higher confidentiality")
                 .extracting(WebSource::getId)

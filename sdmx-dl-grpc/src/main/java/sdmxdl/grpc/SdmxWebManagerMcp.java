@@ -51,7 +51,7 @@ public class SdmxWebManagerMcp {
     private static final int MAX_DESCRIPTION_LENGTH = 200;
     private static final String DEFAULT_LAST_N = "20";
     private static final String DEFAULT_FIRST_N = "0";
-    private static final String DEFAULT_MAX_RESULTS = "0";
+    private static final String DEFAULT_MAX_RESULTS = "20";
     private static final String DEFAULT_QUERY = NO_QUERY;
     private static final String DEFAULT_DETAIL = "DATA_ONLY";
     private static final String DEFAULT_KEY = "all";
@@ -92,7 +92,7 @@ public class SdmxWebManagerMcp {
                 .languagesOf(languages)
                 .query(query)
                 .maxResults(maxResults)
-                .threshold(THRESHOLD)
+                .confidentialityThreshold(THRESHOLD)
                 .build();
         return manager.listSources(request).stream()
                 .map(SdmxWebManagerMcp::compactSource)
