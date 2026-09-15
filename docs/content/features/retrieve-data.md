@@ -1,6 +1,6 @@
 ---
 title: "Retrieve data"
-weight: 11
+weight: 9
 ---
 
 Download observations from a dataset using a source, flow, and key.
@@ -8,7 +8,6 @@ Download observations from a dataset using a source, flow, and key.
 {{< tabs "retrieve-data" >}}
 
 {{< tab "API" >}}
-{{< feature-status "retrieve-data" "api" >}}
 
 ```java
 //JAVA 25+
@@ -33,7 +32,6 @@ void main() throws Exception {
 {{< /tab >}}
 
 {{< tab "CLI" >}}
-{{< feature-status "retrieve-data" "cli" >}}
 
 ```shell
 sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A
@@ -47,20 +45,20 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --start 2020 --end 2022-12 --last-n 
 {{< /tab >}}
 
 {{< tab "WS" >}}
-{{< feature-status "retrieve-data" "ws" >}}
 
 ### REST
 
 ```shell
-curl -X POST \
-  -H "Content-Type: application/json" \
-  localhost:4559/sdmx-dl/data \
-  --data "{\"source\":\"ECB\",\"flow\":\"EXR\",\"key\":\"M.CHF.EUR.SP00.A\",\"start_period\":\"2020\",\"end_period\":\"2022-12\",\"last_n_observations\":3}"
+curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data \
+  --data-urlencode "key=M.CHF.EUR.SP00.A" \
+  --data-urlencode "startPeriod=2020" \
+  --data-urlencode "endPeriod=2022-12" \
+  --data-urlencode "lastNObservations=3"
 ```
 
 ### gRPC
 ```shell
-grpcurl -d '{"source":"ECB","flow":"EXR","key":"M.CHF.EUR.SP00.A"}' -plaintext localhost:4557 sdmxdl.grpc.SdmxWebManager.GetData
+grpcurl -d '{"source":"ECB","flow":"EXR","key":"M.CHF.EUR.SP00.A"}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
 ```
 {{< /tab >}}
 
@@ -69,9 +67,12 @@ grpcurl -d '{"source":"ECB","flow":"EXR","key":"M.CHF.EUR.SP00.A"}' -plaintext l
 ## Notes
 
 - All flavors share the same request shape: `source`, `flow`, `key`, plus optional `database`, `languages`, and the filters described in [Narrow your request]({{< relref "/features/narrow-your-request" >}}).
-- WS additionally offers `GetDataStream`/`/sdmx-dl/dataStream` to stream large responses instead of buffering the full dataset.
+- WS additionally offers `GetDataStream`/`GET /sdmx-dl/v2/{source}/{flow}/data:stream` to stream large responses instead of buffering the full dataset.
 
 ## Related features
 
 - [Discover sources]({{< relref "/features/discover-sources" >}})
-- [Search flows]({{< relref "/features/search-flows" >}})
+- [Discover flows]({{< relref "/features/discover-flows" >}})
+- [Inspect metadata]({{< relref "/features/inspect-metadata" >}})
+
+

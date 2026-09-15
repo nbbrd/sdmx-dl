@@ -63,12 +63,12 @@ public class DataRequest {
             return languages(Languages.parse(languages));
         }
 
-        public Builder startPeriodOf(@NonNull String startPeriod) {
-            return startPeriod(TimeInterval.parseStart(startPeriod));
+        public Builder startPeriodOf(@Nullable String startPeriod) {
+            return startPeriod != null ? startPeriod(TimeInterval.parseStart(startPeriod)) : this;
         }
 
-        public Builder endPeriodOf(@NonNull String endPeriod) {
-            return endPeriod(TimeInterval.parseStart(endPeriod));
+        public Builder endPeriodOf(@Nullable String endPeriod) {
+            return endPeriod != null ? endPeriod(TimeInterval.parseStart(endPeriod)) : this;
         }
     }
 }

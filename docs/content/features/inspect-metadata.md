@@ -1,6 +1,6 @@
 ---
 title: "Inspect metadata"
-weight: 6
+weight: 7
 ---
 
 Look up descriptive metadata (title, units, notes, source-specific attributes) attached to a series or a flow, without downloading the observations themselves.
@@ -8,7 +8,6 @@ Look up descriptive metadata (title, units, notes, source-specific attributes) a
 {{< tabs "inspect-metadata" >}}
 
 {{< tab "API" >}}
-{{< feature-status "inspect-metadata" "api" >}}
 
 ```java
 //JAVA 25+
@@ -32,7 +31,6 @@ void main() throws Exception {
 {{< /tab >}}
 
 {{< tab "CLI" >}}
-{{< feature-status "inspect-metadata" "cli" >}}
 
 ```shell
 sdmx-dl fetch meta ECB EXR M.CHF.EUR.SP00.A
@@ -40,24 +38,26 @@ sdmx-dl fetch meta ECB EXR M.CHF.EUR.SP00.A
 {{< /tab >}}
 
 {{< tab "WS" >}}
-{{< feature-status "inspect-metadata" "ws" >}}
 
-Not supported as a series-level `fetch meta` equivalent.
-
-
-The closest WS equivalent is `GetMeta`, which exposes flow-level metadata (`source` + `flow`).
+`GetData`/`GetDataStream` accept the same `detail` parameter as the CLI/API; pass `NO_DATA` to get series-level metadata without downloading observations.
 
 ### REST
 ```shell
-curl -X POST \
-  -H "Content-Type: application/json" \
-  localhost:4559/sdmx-dl/meta \
-  --data "{\"source\":\"ECB\",\"flow\":\"EXR\"}"
+curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data \
+  --data-urlencode "key=M.CHF.EUR.SP00.A" \
+  --data-urlencode "detail=NO_DATA"
 ```
 
 ### gRPC
 ```shell
-grpcurl -d '{"source":"ECB","flow":"EXR"}' -plaintext localhost:4557 sdmxdl.grpc.SdmxWebManager.GetMeta
+grpcurl -d '{"source":"ECB","flow":"EXR","key":"M.CHF.EUR.SP00.A","detail":"NO_DATA"}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
+```
+
+For flow-level metadata (dimensions, attributes, codelists) instead of series-level, use `GetMeta`:
+
+```shell
+curl "localhost:4559/sdmx-dl/v2/ECB/EXR/meta"
+grpcurl -d '{"source":"ECB","flow":"EXR"}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetMeta
 ```
 {{< /tab >}}
 
@@ -65,10 +65,11 @@ grpcurl -d '{"source":"ECB","flow":"EXR"}' -plaintext localhost:4557 sdmxdl.grpc
 
 ## Notes
 
-- This is one of the few genuinely non-equivalent features: CLI/API can inspect metadata at the **series** level (`fetch meta`, `Detail.NO_DATA`), while WS only exposes it at the **flow/structure** level (`GetMeta`).
-- If you only need the dataset's structure (dimensions, attributes, codelists), `GetMeta`/`getMeta(...)` is the right call on every flavor â€” see [Browse codes]({{< relref "/features/browse-codes" >}}).
+- `detail=NO_DATA` is the series-level equivalent of the CLI's `fetch meta` and the API's `Detail.NO_DATA`: every flavor now shares the same request shape as [Retrieve data]({{< relref "/features/retrieve-data" >}}), just with `detail` set to skip observations.
+- Don't confuse this with flow/structure-level metadata (dimensions, attributes, codelists): that's `GetMeta`/`getMeta(...)` on every flavor — see [Browse dimensions and attributes]({{< relref "/features/browse-structure" >}}).
 
 ## Related features
 
 - [Retrieve data]({{< relref "/features/retrieve-data" >}})
+- [Browse dimensions and attributes]({{< relref "/features/browse-structure" >}})
 - [Browse codes]({{< relref "/features/browse-codes" >}})

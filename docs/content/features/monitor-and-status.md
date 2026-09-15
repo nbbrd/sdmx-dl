@@ -1,6 +1,6 @@
 ---
 title: "Monitor and status"
-weight: 13
+weight: 11
 ---
 
 Check whether a source is up, and how it has been performing, before relying on it in an automated job.
@@ -8,7 +8,6 @@ Check whether a source is up, and how it has been performing, before relying on 
 {{< tabs "monitor-and-status" >}}
 
 {{< tab "API" >}}
-{{< feature-status "monitor-and-status" "api" >}}
 
 ```java
 //JAVA 25+
@@ -23,7 +22,6 @@ void main() throws Exception {
 {{< /tab >}}
 
 {{< tab "CLI" >}}
-{{< feature-status "monitor-and-status" "cli" >}}
 
 ```shell
 sdmx-dl check status ECB
@@ -38,20 +36,23 @@ sdmx-dl check status all
 {{< /tab >}}
 
 {{< tab "WS" >}}
-{{< feature-status "monitor-and-status" "ws" >}}
 
 ### REST
 
 ```shell
-curl -X POST \
-  -H "Content-Type: application/json" \
-  localhost:4559/sdmx-dl/monitorReport \
-  --data "{\"source\":\"ECB\"}"
+curl "localhost:4559/sdmx-dl/v2/statuses?sources=ECB"
+```
+
+`ListStatuses` also accepts several comma-separated sources, or `all` to check every configured source:
+
+```shell
+curl "localhost:4559/sdmx-dl/v2/statuses?sources=ECB,IMF,INSEE"
+curl "localhost:4559/sdmx-dl/v2/statuses?sources=all"
 ```
 
 ### gRPC
 ```shell
-grpcurl -d '{"source":"ECB"}' -plaintext localhost:4557 sdmxdl.grpc.SdmxWebManager.GetMonitorReport
+grpcurl -d '{"sources":["ECB"]}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListStatuses
 ```
 {{< /tab >}}
 
@@ -61,8 +62,10 @@ grpcurl -d '{"source":"ECB"}' -plaintext localhost:4557 sdmxdl.grpc.SdmxWebManag
 
 - A report includes a status (UP/DOWN/UNKNOWN), an uptime ratio, and an average response time; the CLI table adds an error message column when a check fails.
 - Only sources that declare a monitor endpoint in their configuration can be checked; others report "No monitor defined".
+- WS's `ListStatuses` mirrors the CLI's ability to batch-check several sources (or `all`) in a single call, instead of one request per source.
 
 ## Related features
 
 - [Discover sources]({{< relref "/features/discover-sources" >}})
 - [Authentication and credentials]({{< relref "/features/auth-and-credentials" >}})
+

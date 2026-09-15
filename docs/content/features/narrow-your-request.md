@@ -1,6 +1,6 @@
 ---
 title: "Narrow your request"
-weight: 9
+weight: 8
 ---
 
 Restrict a data request to a date range and/or a limited number of observations, so you download only what you need instead of a series' full history.
@@ -12,7 +12,6 @@ Both narrowing mechanisms are just extra fields on the same data request (`DataR
 {{< tabs "narrow-by-period" >}}
 
 {{< tab "API" >}}
-{{< feature-status "narrow-your-request" "api" >}}
 
 ```java
 //JAVA 25+
@@ -36,7 +35,6 @@ void main() throws Exception {
 {{< /tab >}}
 
 {{< tab "CLI" >}}
-{{< feature-status "narrow-your-request" "cli" >}}
 
 ```shell
 sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --start 2020 --end 2022-12
@@ -44,20 +42,19 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --start 2020 --end 2022-12
 {{< /tab >}}
 
 {{< tab "WS" >}}
-{{< feature-status "narrow-your-request" "ws" >}}
 
 ### REST
 
 ```shell
-curl -X POST \
-  -H "Content-Type: application/json" \
-  localhost:4559/sdmx-dl/data \
-  --data "{\"source\":\"ECB\",\"flow\":\"EXR\",\"key\":\"M.CHF.EUR.SP00.A\",\"start_period\":\"2020\",\"end_period\":\"2022-12\"}"
+curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data \
+  --data-urlencode "key=M.CHF.EUR.SP00.A" \
+  --data-urlencode "startPeriod=2020" \
+  --data-urlencode "endPeriod=2022-12"
 ```
 
 ### gRPC
 ```shell
-grpcurl -d '{"source":"ECB","flow":"EXR","key":"M.CHF.EUR.SP00.A","start_period":"2020","end_period":"2022-12"}' -plaintext localhost:4557 sdmxdl.grpc.SdmxWebManager.GetData
+grpcurl -d '{"source":"ECB","flow":"EXR","key":"M.CHF.EUR.SP00.A","start_period":"2020","end_period":"2022-12"}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
 ```
 {{< /tab >}}
 
@@ -70,7 +67,6 @@ Bounds are inclusive and accept reduced-precision ISO-8601 (`"2020"`, `"2020-12"
 {{< tabs "narrow-by-count" >}}
 
 {{< tab "API" >}}
-{{< feature-status "narrow-your-request" "api" >}}
 
 ```java
 //JAVA 25+
@@ -94,7 +90,6 @@ void main() throws Exception {
 {{< /tab >}}
 
 {{< tab "CLI" >}}
-{{< feature-status "narrow-your-request" "cli" >}}
 
 ```shell
 sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --first-n 3 --last-n 2
@@ -102,20 +97,19 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --first-n 3 --last-n 2
 {{< /tab >}}
 
 {{< tab "WS" >}}
-{{< feature-status "narrow-your-request" "ws" >}}
 
 ### REST
 
 ```shell
-curl -X POST \
-  -H "Content-Type: application/json" \
-  localhost:4559/sdmx-dl/data \
-  --data "{\"source\":\"ECB\",\"flow\":\"EXR\",\"key\":\"M.CHF.EUR.SP00.A\",\"first_n_observations\":3,\"last_n_observations\":2}"
+curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data \
+  --data-urlencode "key=M.CHF.EUR.SP00.A" \
+  --data-urlencode "firstNObservations=3" \
+  --data-urlencode "lastNObservations=2"
 ```
 
 ### gRPC
 ```shell
-grpcurl -d '{"source":"ECB","flow":"EXR","key":"M.CHF.EUR.SP00.A","first_n_observations":3,"last_n_observations":2}' -plaintext localhost:4557 sdmxdl.grpc.SdmxWebManager.GetData
+grpcurl -d '{"source":"ECB","flow":"EXR","key":"M.CHF.EUR.SP00.A","first_n_observations":3,"last_n_observations":2}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
 ```
 {{< /tab >}}
 
@@ -134,7 +128,5 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --start 2020 --end 2022-12 --last-n 
 ## Related features
 
 - [Retrieve data]({{< relref "/features/retrieve-data" >}})
-- [Check availability]({{< relref "/features/check-availability" >}})
-
-
+- [Browse availability]({{< relref "/features/browse-availability" >}})
 

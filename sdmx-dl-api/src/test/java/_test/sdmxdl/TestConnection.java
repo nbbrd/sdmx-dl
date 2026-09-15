@@ -16,10 +16,7 @@
  */
 package _test.sdmxdl;
 
-import lombok.NonNull;
-import nbbrd.design.NonNegative;
-import sdmxdl.*;
-import tests.sdmxdl.api.RepoSamples;
+import static java.util.stream.Collectors.toList;
 
 import java.io.IOException;
 import java.net.URI;
@@ -28,8 +25,10 @@ import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
+import lombok.NonNull;
+import nbbrd.design.NonNegative;
+import sdmxdl.*;
+import tests.sdmxdl.api.RepoSamples;
 
 /**
  * @author Philippe Charles
@@ -53,7 +52,8 @@ public enum TestConnection implements Connection {
         }
 
         @Override
-        public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
+        public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef)
+                throws IOException, IllegalArgumentException {
             return RepoSamples.META_SET;
         }
 
@@ -63,13 +63,24 @@ public enum TestConnection implements Connection {
         }
 
         @Override
-        public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) {
+        public @NonNull Stream<Series> getDataStream(
+                @NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) {
             return RepoSamples.DATA_SET.getData().stream();
         }
 
         @Override
-        public @NonNull Collection<String> getAvailableDimensionCodes(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, @NonNegative int dimensionIndex) throws IOException, IllegalArgumentException {
-            return RepoSamples.DATA_SET.getData().stream().map(Series::getKey).map(key -> key.get(dimensionIndex)).distinct().collect(toList());
+        public @NonNull Collection<String> getAvailableDimensionCodes(
+                @NonNull DatabaseRef database,
+                @NonNull FlowRef flowRef,
+                @NonNull Key constraints,
+                @NonNegative int dimensionIndex)
+                throws IOException, IllegalArgumentException {
+            return RepoSamples.DATA_SET.getData().stream()
+                    .filter(constraints::containsKey)
+                    .map(Series::getKey)
+                    .map(key -> key.get(dimensionIndex))
+                    .distinct()
+                    .collect(toList());
         }
 
         @Override
@@ -78,8 +89,7 @@ public enum TestConnection implements Connection {
         }
 
         @Override
-        public void close() {
-        }
+        public void close() {}
     },
     TEST_FAILING {
         @Override
@@ -98,7 +108,8 @@ public enum TestConnection implements Connection {
         }
 
         @Override
-        public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
+        public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef)
+                throws IOException, IllegalArgumentException {
             throw new CustomException();
         }
 
@@ -108,12 +119,18 @@ public enum TestConnection implements Connection {
         }
 
         @Override
-        public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) {
+        public @NonNull Stream<Series> getDataStream(
+                @NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) {
             throw new CustomException();
         }
 
         @Override
-        public @NonNull Collection<String> getAvailableDimensionCodes(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, @NonNegative int dimensionIndex) throws IOException, IllegalArgumentException {
+        public @NonNull Collection<String> getAvailableDimensionCodes(
+                @NonNull DatabaseRef database,
+                @NonNull FlowRef flowRef,
+                @NonNull Key constraints,
+                @NonNegative int dimensionIndex)
+                throws IOException, IllegalArgumentException {
             throw new CustomException();
         }
 
@@ -154,12 +171,18 @@ public enum TestConnection implements Connection {
         }
 
         @Override
-        public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) {
+        public @NonNull Stream<Series> getDataStream(
+                @NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) {
             return null;
         }
 
         @Override
-        public @NonNull Collection<String> getAvailableDimensionCodes(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, @NonNegative int dimensionIndex) throws IOException, IllegalArgumentException {
+        public @NonNull Collection<String> getAvailableDimensionCodes(
+                @NonNull DatabaseRef database,
+                @NonNull FlowRef flowRef,
+                @NonNull Key constraints,
+                @NonNegative int dimensionIndex)
+                throws IOException, IllegalArgumentException {
             return null;
         }
 

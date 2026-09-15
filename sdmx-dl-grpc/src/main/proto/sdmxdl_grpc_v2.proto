@@ -1,0 +1,121 @@
+syntax = "proto3";
+option java_multiple_files = true;
+
+package sdmxdl.grpc.v2;
+
+import "sdmxdl_api.proto";
+import "sdmxdl_web.proto";
+
+service SdmxWebManager {
+
+  rpc GetAbout(EmptyDto) returns (sdmxdl.format.protobuf.AboutDto);
+
+  rpc ListSources(WebSourcesRequestDto) returns (stream sdmxdl.format.protobuf.web.WebSourceDto);
+
+  rpc ListDatabases(WebDatabasesRequestDto) returns (stream sdmxdl.format.protobuf.DatabaseDto);
+
+  rpc ListFlows(WebFlowsRequestDto) returns (stream sdmxdl.format.protobuf.FlowDto);
+
+  rpc GetMeta(WebMetaRequestDto) returns (sdmxdl.format.protobuf.MetaSetDto);
+
+  rpc ListDimensions(WebDimensionsRequestDto) returns (stream sdmxdl.format.protobuf.DimensionDto);
+
+  rpc ListAttributes(WebAttributesRequestDto) returns (stream sdmxdl.format.protobuf.AttributeDto);
+
+  rpc GetData(WebDataRequestDto) returns (sdmxdl.format.protobuf.DataSetDto);
+
+  rpc GetDataStream(WebDataRequestDto) returns (stream sdmxdl.format.protobuf.SeriesDto);
+
+  rpc ListCodes(WebCodesRequestDto) returns (sdmxdl.format.protobuf.CodelistDto);
+
+  rpc ListAvailability(WebAvailabilityRequestDto) returns (sdmxdl.format.protobuf.CodelistDto);
+
+  rpc ListStatuses(WebStatusesRequestDto) returns (stream sdmxdl.format.protobuf.web.MonitorReportDto);
+}
+
+message EmptyDto {
+}
+
+message WebSourcesRequestDto {
+  optional string languages = 1;
+  optional string query = 2;
+  optional int32 maxResults = 3;
+  optional sdmxdl.format.protobuf.ConfidentialityDto confidentiality_threshold = 4;
+}
+
+message WebDatabasesRequestDto {
+  string source = 1;
+  optional string languages = 2;
+  optional string query = 3;
+  optional int32 maxResults = 4;
+}
+
+message WebFlowsRequestDto {
+  string source = 1;
+  optional string database = 2;
+  optional string languages = 3;
+  optional string query = 4;
+  optional int32 maxResults = 5;
+}
+
+message WebMetaRequestDto {
+  string source = 1;
+  string flow = 2;
+  optional string database = 3;
+  optional string languages = 4;
+}
+
+message WebDimensionsRequestDto {
+  string source = 1;
+  string flow = 2;
+  optional string query = 3;
+  optional int32 maxResults = 4;
+  optional string database = 5;
+  optional string languages = 6;
+}
+
+message WebAttributesRequestDto {
+  string source = 1;
+  string flow = 2;
+  optional string query = 3;
+  optional int32 maxResults = 4;
+  optional string database = 5;
+  optional string languages = 6;
+}
+
+message WebDataRequestDto {
+  string source = 1;
+  string flow = 2;
+  string key = 3;
+  optional string database = 4;
+  optional string languages = 5;
+  optional string start_period = 6; /* ISO-8601 reduced-precision date-time; absent = unbounded */
+  optional string end_period = 7; /* ISO-8601 reduced-precision date-time; absent = unbounded */
+  optional int32 first_n_observations = 8; /* absent = no first-N truncation */
+  optional int32 last_n_observations = 9; /* absent = no last-N truncation */
+  optional sdmxdl.format.protobuf.DetailDto detail = 10;
+}
+
+message WebCodesRequestDto {
+  string source = 1;
+  string flow = 2;
+  string concept = 3; /* concept id, as returned by GetMeta */
+  optional string query = 4;
+  optional int32 maxResults = 5;
+  optional string database = 6;
+  optional string languages = 7;
+}
+
+message WebAvailabilityRequestDto {
+  string source = 1;
+  string flow = 2;
+  string key = 3;
+  string dimension = 4; /* dimension id, as returned by GetMeta */
+  optional string database = 5;
+  optional string languages = 6;
+}
+
+message WebStatusesRequestDto {
+  repeated string sources = 1; /* empty, or a single "all" entry (case-insensitive), means every known source */
+}
+

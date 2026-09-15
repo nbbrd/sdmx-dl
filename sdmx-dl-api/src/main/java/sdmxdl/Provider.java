@@ -11,14 +11,24 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.NonNull;
+import nbbrd.design.MightBePromoted;
 import sdmxdl.web.Search;
 
 /**
- * Contract for data providers that expose SDMX-related resources and data.
+ * Facade that binds a {@link SdmxManager} to a specific {@link Source} and exposes
+ * SDMX-related resources and data through simple request/response methods.
  *
  * <p>A provider is bound to a specific {@link Source} type and is responsible for
  * discovering metadata (databases, flows, structure) and retrieving data according to
  * request objects.
+ *
+ * <p>Every method opens a short-lived {@link Connection} via {@link
+ * SdmxManager#getConnection(Source, Languages)}, uses it to satisfy the request, then closes
+ * it (even if an exception occurs), so instances of this class are cheap to keep around and
+ * do not need to be closed themselves.
+ *
+ * <p>Instances are typically obtained through {@link SdmxManager#using(Source)} rather than
+ * constructed directly.
  *
  * @param <SOURCE> concrete source type handled by this provider
  */
@@ -130,6 +140,16 @@ public final class Provider<SOURCE extends Source> {
         }
     }
 
+    /**
+     * Builds a function that applies the description-related options of the given request
+     * (plain text conversion and/or truncation) to a flow.
+     *
+     * <p>Returns the identity function when neither option is active, to avoid rebuilding
+     * every flow unnecessarily.
+     *
+     * @param request the flow-level request carrying description options
+     * @return a function transforming a flow's description according to the request
+     */
     private static UnaryOperator<Flow> flowTransformer(FlowsRequest request) {
         return !request.isPlainDescription() && request.getMaxDescriptionLength() == HasDescription.NO_DESCRIPTION_LIMIT
                 ? UnaryOperator.identity()
@@ -161,9 +181,13 @@ public final class Provider<SOURCE extends Source> {
                     .getStructure()
                     .getDimensions();
             return request.getQuery().isEmpty()
-                    ? result.stream().limit(request.getEffectiveMaxResults()).collect(toList())
+                    ? result.stream()
+                            .limit(request.getEffectiveMaxResults())
+                            .map(Provider::removeCodes)
+                            .collect(toList())
                     : Search.ofDimensions(result).search(request.getQuery(), request.getEffectiveMaxResults()).stream()
                             .map(Search.Result::getItem)
+                            .map(Provider::removeCodes)
                             .collect(toList());
         }
     }
@@ -193,9 +217,11 @@ public final class Provider<SOURCE extends Source> {
                     ? result.stream()
                             .sorted(comparing(Component::getId))
                             .limit(request.getEffectiveMaxResults())
+                            .map(Provider::removeCodes)
                             .collect(toList())
                     : Search.ofAttributes(result).search(request.getQuery(), request.getEffectiveMaxResults()).stream()
                             .map(Search.Result::getItem)
+                            .map(Provider::removeCodes)
                             .collect(toList());
         }
     }
@@ -233,6 +259,44 @@ public final class Provider<SOURCE extends Source> {
     }
 
     /**
+     * Lists the codes that are actually available for the requested dimension, given the
+     * requested key constraints, within the structure of the requested flow.
+     *
+     * <p>Entries are returned sorted by code id and mapped to their label as defined in the
+     * dimension's codelist. When a code has no matching label, its value is {@code null}.
+     *
+     * @param request dimension/key-level request parameters (non-null)
+     * @return non-null sorted map of available code id to code label (possibly empty)
+     * @throws IOException if the requested dimension cannot be found, or if metadata/data
+     *                      retrieval fails due to I/O issues
+     */
+    public @NonNull SortedMap<String, String> listAvailability(@NonNull AvailabilityRequest request)
+            throws IOException {
+        try (Connection connection = manager.getConnection(source, request.getLanguages())) {
+            List<Dimension> dimensions = connection
+                    .getMeta(request.getDatabase(), request.getFlow())
+                    .getStructure()
+                    .getDimensions();
+
+            int dimensionIndex = Dimension.indexOf(dimensions, request.getDimension());
+            if (dimensionIndex == -1) {
+                throw new IOException("Cannot find dimension '" + request.getDimension() + "'");
+            }
+
+            Map<String, String> codes = dimensions.get(dimensionIndex).getCodes();
+            // NB: a plain Collectors.toMap(..., TreeMap::new) would throw a NullPointerException
+            // as soon as a returned code has no matching label (its Map.merge call rejects null
+            // values), so the map is built manually to keep the label as null in that case.
+            SortedMap<String, String> result = new TreeMap<>();
+            for (String code : connection.getAvailableDimensionCodes(
+                    request.getDatabase(), request.getFlow(), request.getKey(), dimensionIndex)) {
+                result.putIfAbsent(code, codes.get(code));
+            }
+            return result;
+        }
+    }
+
+    /**
      * Retrieves structural metadata (dimensions, attributes, etc.) for a flow.
      *
      * @param request flow-level request parameters (non-null)
@@ -258,6 +322,16 @@ public final class Provider<SOURCE extends Source> {
         }
     }
 
+    /**
+     * Finds, in the structure of the requested flow, the codelist (as an id-to-label map) of
+     * the dimension or attribute whose id matches {@link CodesRequest#getConcept()}.
+     *
+     * @param connection the connection used to retrieve the flow's structure
+     * @param request the concept-level request identifying the target component
+     * @return non-null map of code id to code label for the matching component
+     * @throws IOException if no dimension or attribute matches the requested concept, or if
+     *                      structure retrieval fails due to I/O issues
+     */
     private static Map<String, String> loadComponent(Connection connection, CodesRequest request) throws IOException {
         Structure dsd =
                 connection.getMeta(request.getDatabase(), request.getFlow()).getStructure();
@@ -266,5 +340,39 @@ public final class Provider<SOURCE extends Source> {
                 .map(Component::getCodes)
                 .findFirst()
                 .orElseThrow(() -> new IOException("Cannot find concept '" + request.getConcept() + "'"));
+    }
+
+    /**
+     * Returns a copy of the given dimension with its codelist's codes cleared, or the same
+     * dimension unchanged when it has no codelist.
+     *
+     * @param dimension the dimension to strip codes from
+     * @return the dimension without its codelist's codes
+     */
+    @MightBePromoted
+    static Dimension removeCodes(Dimension dimension) {
+        Codelist codelist = dimension.getCodelist();
+        return codelist != null
+                ? dimension.toBuilder()
+                        .codelist(codelist.toBuilder().clearCodes().build())
+                        .build()
+                : dimension;
+    }
+
+    /**
+     * Returns a copy of the given attribute with its codelist's codes cleared, or the same
+     * attribute unchanged when it has no codelist.
+     *
+     * @param attribute the attribute to strip codes from
+     * @return the attribute without its codelist's codes
+     */
+    @MightBePromoted
+    static Attribute removeCodes(Attribute attribute) {
+        Codelist codelist = attribute.getCodelist();
+        return codelist != null
+                ? attribute.toBuilder()
+                        .codelist(codelist.toBuilder().clearCodes().build())
+                        .build()
+                : attribute;
     }
 }

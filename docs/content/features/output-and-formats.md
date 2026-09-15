@@ -1,6 +1,6 @@
 ---
 title: "Output and formats"
-weight: 14
+weight: 12
 ---
 
 Pick the right output for your use case: Java objects for the library, CSV for shell pipelines, or JSON/protobuf for a remote service.
@@ -8,7 +8,6 @@ Pick the right output for your use case: Java objects for the library, CSV for s
 {{< tabs "output-and-formats" >}}
 
 {{< tab "API" >}}
-{{< feature-status "output-and-formats" "api" >}}
 
 The API is object-centric and can be used with the supported format modules and managers.
 A common entry point is the Java library or the standalone JAR distribution.
@@ -33,7 +32,6 @@ void main() throws Exception {
 {{< /tab >}}
 
 {{< tab "CLI" >}}
-{{< feature-status "output-and-formats" "cli" >}}
 
 The CLI writes RFC4180 CSV to standard output by default and supports file output, gzip, append, and encoding options.
 
@@ -43,7 +41,6 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv -z
 {{< /tab >}}
 
 {{< tab "WS" >}}
-{{< feature-status "output-and-formats" "ws" >}}
 
 The web service exposes two transport formats:
 
@@ -53,12 +50,12 @@ The web service exposes two transport formats:
 
 ### gRPC
 ```shell
-grpcurl -d '{"source":"ECB","flow":"EXR","key":"M.CHF.EUR.SP00.A"}' -plaintext localhost:4557 sdmxdl.grpc.SdmxWebManager.GetData
+grpcurl -d '{"source":"ECB","flow":"EXR","key":"M.CHF.EUR.SP00.A"}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
 ```
 
 ### REST
 ```shell
-curl -X POST -H "Content-Type: application/json" localhost:4559/sdmx-dl/data --data "{\"source\":\"ECB\",\"flow\":\"EXR\",\"key\":\"M.CHF.EUR.SP00.A\"}"
+curl "localhost:4559/sdmx-dl/v2/ECB/EXR/data?key=M.CHF.EUR.SP00.A"
 ```
 {{< /tab >}}
 
@@ -76,3 +73,4 @@ sdmx-dl also reads/writes several standard SDMX and interchange formats (SDMX-ML
 ## Related features
 
 - [Retrieve data]({{< relref "/features/retrieve-data" >}})
+

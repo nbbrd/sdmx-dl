@@ -16,19 +16,17 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.SortOptions;
+import internal.sdmxdl.cli.HiddenSortOptions;
 import internal.sdmxdl.cli.WebKeyOptions;
-import internal.sdmxdl.cli.ext.CsvUtil;
+import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
-import nbbrd.picocsv.Csv;
-import picocli.CommandLine;
-import sdmxdl.Connection;
-
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
+import java.util.*;
 import java.util.concurrent.Callable;
+import nbbrd.design.MightBePromoted;
+import picocli.CommandLine;
+import sdmxdl.*;
+import sdmxdl.web.WebSource;
 
 /**
  * @author Philippe Charles
@@ -43,34 +41,44 @@ public final class ListAvailabilityCommand implements Callable<Void> {
     private final RFC4180OutputOptions csv = new RFC4180OutputOptions();
 
     @CommandLine.Mixin
-    private SortOptions sort;
+    private HiddenSortOptions sortOptions;
 
-    @CommandLine.Parameters(
-            index = "3",
-            paramLabel = "<index>",
-            descriptionKey = "cli.sdmx.dimensionIndex"
-    )
+    @CommandLine.Parameters(index = "3", paramLabel = "<index>", descriptionKey = "cli.sdmx.dimensionIndex")
     private int dimensionIndex;
 
     @Override
     public Void call() throws Exception {
-        CsvUtil.write(csv, this::writeHead, this::writeBody);
+        getTable().write(csv, getRows());
         return null;
     }
 
-    private void writeHead(Csv.Writer w) throws IOException {
-        w.writeField("Code");
-        w.writeEndOfLine();
+    private CsvTable<Map.Entry<String, String>> getTable() {
+        return CsvTable.<Map.Entry<String, String>>builder()
+                .columnOf("Code", Map.Entry::getKey)
+                .columnOf("Label", Map.Entry::getValue)
+                .build();
     }
 
-    private void writeBody(Csv.Writer w) throws IOException {
-        try (Connection conn = web.loadManager().getConnection(web.getSource(), web.getLangs())) {
-            Collection<String> children = conn.getAvailableDimensionCodes(web.getDatabase(), web.getFlow(), web.getKey(), dimensionIndex);
-            Iterator<String> iterator = sort.applySort(children, Comparator.naturalOrder()).iterator();
-            while (iterator.hasNext()) {
-                w.writeField(iterator.next());
-                w.writeEndOfLine();
-            }
-        }
+    private Set<Map.Entry<String, String>> getRows() throws IOException {
+        Provider<WebSource> provider = web.loadManager().usingName(web.getSource());
+        return provider.listAvailability(AvailabilityRequest.builder()
+                        .languages(web.getLangs())
+                        .database(web.getDatabase())
+                        .flow(web.getFlow())
+                        .key(web.getKey())
+                        .dimension(dimensionOfIndex(provider))
+                        .build())
+                .entrySet();
+    }
+
+    @MightBePromoted
+    private String dimensionOfIndex(Provider<WebSource> provider) throws IOException {
+        return provider.listDimensions(DimensionsRequest.builder()
+                        .languages(web.getLangs())
+                        .database(web.getDatabase())
+                        .flow(web.getFlow())
+                        .build())
+                .get(dimensionIndex)
+                .getId();
     }
 }

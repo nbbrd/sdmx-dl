@@ -1,6 +1,6 @@
 ---
 title: "Authentication and credentials"
-weight: 12
+weight: 10
 ---
 
 Configure how sdmx-dl authenticates against protected data sources — credentials are configured once, in a source config file shared by every flavor.
@@ -8,7 +8,6 @@ Configure how sdmx-dl authenticates against protected data sources — credentia
 {{< tabs "auth-and-credentials" >}}
 
 {{< tab "API" >}}
-{{< feature-status "auth-and-credentials" "api" >}}
 
 ```properties
 sdmxdl.driver.authScheme=BASIC
@@ -24,7 +23,6 @@ sdmxdl.authenticator.scopes=...
 {{< /tab >}}
 
 {{< tab "CLI" >}}
-{{< feature-status "auth-and-credentials" "cli" >}}
 
 The CLI reads the same source configuration file, so the same authentication properties apply when running commands such as:
 
@@ -34,7 +32,6 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --sources sources.csv
 {{< /tab >}}
 
 {{< tab "WS" >}}
-{{< feature-status "auth-and-credentials" "ws" >}}
 
 The web service uses the same source configuration model.
 
@@ -42,12 +39,12 @@ When a protected source is accessed through REST or gRPC, the credential flow is
 
 ### REST
 ```shell
-curl -X POST -H "Content-Type: application/json" localhost:4559/sdmx-dl/data --data "{\"source\":\"ECB\",\"flow\":\"EXR\",\"key\":\"M.CHF.EUR.SP00.A\"}"
+curl "localhost:4559/sdmx-dl/v2/ECB/EXR/data?key=M.CHF.EUR.SP00.A"
 ```
 
 ### gRPC
 ```shell
-grpcurl -d '{"source":"ECB","flow":"EXR","key":"M.CHF.EUR.SP00.A"}' -plaintext localhost:4557 sdmxdl.grpc.SdmxWebManager.GetData
+grpcurl -d '{"source":"ECB","flow":"EXR","key":"M.CHF.EUR.SP00.A"}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
 ```
 {{< /tab >}}
 
@@ -63,3 +60,4 @@ grpcurl -d '{"source":"ECB","flow":"EXR","key":"M.CHF.EUR.SP00.A"}' -plaintext l
 
 - [Discover sources]({{< relref "/features/discover-sources" >}})
 - [Retrieve data]({{< relref "/features/retrieve-data" >}})
+

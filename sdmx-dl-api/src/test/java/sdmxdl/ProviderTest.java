@@ -2,8 +2,11 @@ package sdmxdl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIOException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.entry;
 import static tests.sdmxdl.api.RepoSamples.*;
 
+import _test.sdmxdl.CustomException;
 import _test.sdmxdl.TestConnection;
 import java.io.IOException;
 import java.net.URI;
@@ -11,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -27,8 +31,53 @@ public class ProviderTest {
     }
 
     @Test
+    public void testTestConnectionWhenAbsent() throws IOException {
+        Provider<WebSource> provider = providerOf(new ForwardingConnection() {
+            @Override
+            public @NonNull Optional<URI> testConnection() {
+                return Optional.empty();
+            }
+        });
+
+        assertThat(provider.testConnection()).isEmpty();
+    }
+
+    @Test
     public void testGetSupportedFeatures() throws IOException {
         assertThat(validProvider().getSupportedFeatures()).isEmpty();
+    }
+
+    @Test
+    public void testGetSupportedFeaturesIsSorted() throws IOException {
+        Provider<WebSource> provider = providerOf(new ForwardingConnection() {
+            @Override
+            public @NonNull Set<Feature> getSupportedFeatures() {
+                return EnumSet.of(Feature.DATA_QUERY_OBS_COUNT, Feature.DATA_QUERY_ALL_KEYWORD);
+            }
+        });
+
+        assertThat(provider.getSupportedFeatures())
+                .containsExactly(Feature.DATA_QUERY_ALL_KEYWORD, Feature.DATA_QUERY_OBS_COUNT);
+    }
+
+    @Test
+    public void testConnectionIsClosedOnFailure() {
+        boolean[] closed = {false};
+        Provider<WebSource> provider = providerOf(new ForwardingConnection() {
+            @Override
+            public @NonNull Collection<Database> getDatabases() {
+                throw new CustomException();
+            }
+
+            @Override
+            public void close() {
+                closed[0] = true;
+            }
+        });
+
+        assertThatThrownBy(() -> provider.listDatabases(DatabasesRequest.DEFAULT))
+                .isInstanceOf(CustomException.class);
+        assertThat(closed[0]).isTrue();
     }
 
     @Test
@@ -164,7 +213,8 @@ public class ProviderTest {
                         .listDimensions(
                                 DimensionsRequest.builder().flow(FLOW_REF).build()))
                 .isSortedAccordingTo(Comparator.comparing(Component::getId))
-                .containsExactlyInAnyOrderElementsOf(STRUCT.getDimensions());
+                .containsExactlyInAnyOrderElementsOf(
+                        STRUCT.getDimensions().stream().map(Provider::removeCodes)::iterator);
     }
 
     @Test
@@ -215,7 +265,8 @@ public class ProviderTest {
                         .listAttributes(
                                 AttributesRequest.builder().flow(FLOW_REF).build()))
                 .isSortedAccordingTo(Comparator.comparing(Component::getId))
-                .containsExactlyInAnyOrderElementsOf(STRUCT.getAttributes());
+                .containsExactlyInAnyOrderElementsOf(
+                        STRUCT.getAttributes().stream().map(Provider::removeCodes)::iterator);
     }
 
     @Test
@@ -284,6 +335,16 @@ public class ProviderTest {
     }
 
     @Test
+    public void testListCodesWithAttributeConcept() throws IOException {
+        assertThat(validProvider()
+                        .listCodes(CodesRequest.builder()
+                                .flow(FLOW_REF)
+                                .concept(CODED_ATTRIBUTE.getId())
+                                .build()))
+                .containsExactlyEntriesOf(CL4.getCodes());
+    }
+
+    @Test
     public void testListCodesWithMaxResults() throws IOException {
         assertThat(validProvider()
                         .listCodes(CodesRequest.builder()
@@ -311,6 +372,61 @@ public class ProviderTest {
                                 .query("zzzyyyxxxwww")
                                 .build()))
                 .isEmpty();
+    }
+
+    @Test
+    public void testListAvailability() throws IOException {
+        assertThat(validProvider()
+                        .listAvailability(AvailabilityRequest.builder()
+                                .flow(FLOW_REF)
+                                .key(Key.ALL)
+                                .dimension("REGION")
+                                .build()))
+                .containsExactly(entry("BE", "Belgium"), entry("FR", "France"));
+    }
+
+    @Test
+    public void testListAvailabilityWithKey() throws IOException {
+        assertThat(validProvider()
+                        .listAvailability(AvailabilityRequest.builder()
+                                .flow(FLOW_REF)
+                                .keyOf("M..XXX")
+                                .dimension("REGION")
+                                .build()))
+                .containsExactly(entry("BE", "Belgium"));
+    }
+
+    @Test
+    public void testListAvailabilityWithUnknownDimension() {
+        assertThatIOException()
+                .isThrownBy(() -> validProvider()
+                        .listAvailability(AvailabilityRequest.builder()
+                                .flow(FLOW_REF)
+                                .key(Key.ALL)
+                                .dimension("zzzyyyxxxwww")
+                                .build()))
+                .withMessageContaining("Cannot find dimension 'zzzyyyxxxwww'");
+    }
+
+    @Test
+    public void testListAvailabilityWithUnmappedCode() throws IOException {
+        Provider<WebSource> provider = providerOf(new ForwardingConnection() {
+            @Override
+            public @NonNull Collection<String> getAvailableDimensionCodes(
+                    @NonNull DatabaseRef database,
+                    @NonNull FlowRef flowRef,
+                    @NonNull Key constraints,
+                    int dimensionIndex) {
+                return Collections.singletonList("zzzyyyxxxwww");
+            }
+        });
+
+        assertThat(provider.listAvailability(AvailabilityRequest.builder()
+                        .flow(FLOW_REF)
+                        .key(Key.ALL)
+                        .dimension("REGION")
+                        .build()))
+                .containsExactly(entry("zzzyyyxxxwww", null));
     }
 
     @Test

@@ -1,4 +1,4 @@
-package sdmxdl.grpc;
+package sdmxdl.grpc.v2;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
@@ -27,7 +27,7 @@ import sdmxdl.format.protobuf.ProtoApi;
 import sdmxdl.format.protobuf.web.WebSourceDto;
 
 @QuarkusTest
-public class SdmxWebManagerMcpTest {
+public class SdmxdlMcpService2Test {
 
     // --- about ---
 
@@ -41,7 +41,7 @@ public class SdmxWebManagerMcpTest {
                                 .extracting(ToolResponse::content, list(Content.class))
                                 .hasSize(1)
                                 .element(0)
-                                .extracting(SdmxWebManagerMcpTest::getText, STRING)
+                                .extracting(SdmxdlMcpService2Test::getText, STRING)
                                 .isEqualToIgnoringNewLines(toJson(ProtoApi.fromAbout()));
                     })
                     .thenAssertResults();
@@ -74,7 +74,7 @@ public class SdmxWebManagerMcpTest {
                                 .extracting(ToolResponse::content, list(Content.class))
                                 .hasSize(1)
                                 .element(0)
-                                .extracting(SdmxWebManagerMcpTest::getText, STRING)
+                                .extracting(SdmxdlMcpService2Test::getText, STRING)
                                 .isNotEqualTo("[]");
                     })
                     .thenAssertResults();
@@ -170,7 +170,7 @@ public class SdmxWebManagerMcpTest {
                                 .extracting(ToolResponse::content, list(Content.class))
                                 .isNotEmpty()
                                 .element(0)
-                                .extracting(SdmxWebManagerMcpTest::getText, STRING)
+                                .extracting(SdmxdlMcpService2Test::getText, STRING)
                                 .contains("ECB");
                     })
                     .thenAssertResults();
@@ -490,7 +490,7 @@ public class SdmxWebManagerMcpTest {
                     .toolsCall("getData", Map.of("source", "INVALID_SOURCE_XYZ", "flow", "EXR"), r -> {
                         assertThat(r)
                                 .returns(true, ToolResponse::isError)
-                                .extracting(SdmxWebManagerMcpTest::firstText, STRING)
+                                .extracting(SdmxdlMcpService2Test::firstText, STRING)
                                 .contains("listSources");
                     })
                     .thenAssertResults();

@@ -31,7 +31,6 @@ import org.jspecify.annotations.Nullable;
 import picocli.CommandLine;
 import sdmxdl.Dimension;
 import sdmxdl.DimensionsRequest;
-import sdmxdl.MetaRequest;
 import sdmxdl.Provider;
 import sdmxdl.web.WebSource;
 
@@ -71,13 +70,7 @@ public final class ListDimensionsCommand implements Callable<Void> {
     private Stream<IndexedComponent> getRows() throws IOException {
         Provider<WebSource> provider = web.loadManager().usingName(web.getSource());
         return getDimensions(
-                provider.getMeta(MetaRequest.builder()
-                                .languages(web.getLangs())
-                                .database(web.getDatabase())
-                                .flow(web.getFlow())
-                                .build())
-                        .getStructure()
-                        .getDimensions()::indexOf, // FIXME
+                getIndexFunction(provider),
                 provider.listDimensions(DimensionsRequest.builder()
                         .languages(web.getLangs())
                         .database(web.getDatabase())
@@ -85,6 +78,15 @@ public final class ListDimensionsCommand implements Callable<Void> {
                         .query(listSearch.getSearchQuery())
                         .maxResults(listSearch.getMaxResults())
                         .build()));
+    }
+
+    private ToIntFunction<Dimension> getIndexFunction(Provider<WebSource> provider) throws IOException {
+        List<Dimension> dimensions = provider.listDimensions(DimensionsRequest.builder()
+                .languages(web.getLangs())
+                .database(web.getDatabase())
+                .flow(web.getFlow())
+                .build());
+        return dimension -> Dimension.indexOf(dimensions, dimension.getId()); // FIXME
     }
 
     private Stream<IndexedComponent> getDimensions(ToIntFunction<Dimension> index, List<Dimension> dimensions) {
