@@ -50,7 +50,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
 <meta property="article:section" content="Ws" />
     <meta
       property="article:modified_time"
-      content="2026-09-14T14:12:03+02:00"
+      content="2026-09-15T14:57:16+02:00"
     />
 
 
@@ -71,7 +71,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/ws/",
       "headline": "Web service",
       "description": "\nsdmx-dl WS is a web service that serves as a bridge to any application or language.\nThis service has three endpoints:\na gRPC endpoint which has the best performances but a limited set of clients a REST endpoint which has a wider range of clients but is less efficient an MCP endpoint which lets AI assistants and agents browse and fetch data These endpoints also provides specifications (.proto files and OpenAPI respectively) that can be used to generate client code. They are designed to operate locally as well as on remote machines.",
-      "wordCount": "568",
+      "wordCount": "719",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -82,7 +82,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-14T14:12:03.00Z",
+      "dateModified": "2026-09-15T14:57:16.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -995,6 +995,50 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
               
                 <span class="flex">
                   <a
+                    href="/sdmx-dl/docs/develop/features/discover-databases/"
+                    class="gdoc-nav__entry"
+                  >
+                    Discover databases
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
                     href="/sdmx-dl/docs/develop/features/discover-flows/"
                     class="gdoc-nav__entry"
                   >
@@ -1039,142 +1083,10 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
               
                 <span class="flex">
                   <a
-                    href="/sdmx-dl/docs/develop/features/search-sources/"
+                    href="/sdmx-dl/docs/develop/features/browse-structure/"
                     class="gdoc-nav__entry"
                   >
-                    Search sources
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/search-flows/"
-                    class="gdoc-nav__entry"
-                  >
-                    Search flows
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/search-databases/"
-                    class="gdoc-nav__entry"
-                  >
-                    Search databases
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/inspect-metadata/"
-                    class="gdoc-nav__entry"
-                  >
-                    Inspect metadata
+                    Browse dimensions and attributes
                   </a>
                 </span>
               
@@ -1259,10 +1171,54 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
               
                 <span class="flex">
                   <a
-                    href="/sdmx-dl/docs/develop/features/check-availability/"
+                    href="/sdmx-dl/docs/develop/features/browse-availability/"
                     class="gdoc-nav__entry"
                   >
-                    Check availability
+                    Browse availability
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/features/inspect-metadata/"
+                    class="gdoc-nav__entry"
+                  >
+                    Inspect metadata
                   </a>
                 </span>
               
@@ -1674,12 +1630,12 @@ They are designed to operate locally as well as on remote machines.</p>
 Its default port is <code>4557</code>. For convenience, the <a
   class="gdoc-markdown__link"
   href="https://grpc.io/docs/guides/reflection/"
->reflection protocol</a> is enabled.</p>
+>reflection protocol</a> is enabled. The service is <code>sdmxdl.grpc.v2.SdmxWebManager</code>.</p>
 <p>Call example using <a
   class="gdoc-markdown__link"
   href="https://github.com/fullstorydev/grpcurl"
 >gRPCurl</a>:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s2">&#34;{\&#34;source\&#34;:\&#34;ECB\&#34;}&#34;</span> -plaintext localhost:4557 sdmxdl.grpc.SdmxWebManager.GetFlows
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s2">&#34;{\&#34;source\&#34;:\&#34;ECB\&#34;}&#34;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListFlows
 </span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="rest-endpoint"
     >
@@ -1690,19 +1646,101 @@ Its default port is <code>4557</code>. For convenience, the <a
     </a>
 </div>
 <p>The REST endpoint has the best compatibility with a wide range of clients.<br>
-Its default port is <code>4559</code>. For convenience, an <a
+Its default port is <code>4559</code>, under the <code>/sdmx-dl/v2</code> path prefix. For convenience, an <a
   class="gdoc-markdown__link"
   href="https://swagger.io/tools/swagger-ui/"
 >OpenAPI UI</a> is available at <a
   class="gdoc-markdown__link"
   href="http://localhost:4559/q/swagger-ui"
 >http://localhost:4559/q/swagger-ui</a>.</p>
+<p>Every operation is a plain HTTP <code>GET</code> with path/query parameters - there is no request body.</p>
 <p>Call example using <a
   class="gdoc-markdown__link"
   href="https://curl.se/"
 >curl</a>:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -X POST -H <span class="s2">&#34;Content-Type: application/json&#34;</span> localhost:4559/sdmx-dl/flows --data <span class="s2">&#34;{\&#34;source\&#34;:\&#34;ECB\&#34;}&#34;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/ECB/flows&#34;</span>
 </span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
+    <h3 id="available-operations"
+    >
+        Available operations
+    </h3>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/ws/#available-operations" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Available operations" aria-label="Anchor to: Available operations" href="#available-operations">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<div class="table-wrap"> <table>
+	<thead>
+			<tr>
+					<th>RPC</th>
+					<th>REST path</th>
+					<th>Description</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td><code>GetAbout</code></td>
+					<td><code>GET /about</code></td>
+					<td>Name and version of sdmx-dl.</td>
+			</tr>
+			<tr>
+					<td><code>ListSources</code></td>
+					<td><code>GET /sources</code></td>
+					<td>List or search sources.</td>
+			</tr>
+			<tr>
+					<td><code>ListDatabases</code></td>
+					<td><code>GET /{source}/databases</code></td>
+					<td>List or search a source&rsquo;s databases.</td>
+			</tr>
+			<tr>
+					<td><code>ListFlows</code></td>
+					<td><code>GET /{source}/flows</code></td>
+					<td>List or search a source&rsquo;s flows.</td>
+			</tr>
+			<tr>
+					<td><code>GetMeta</code></td>
+					<td><code>GET /{source}/{flow}/meta</code></td>
+					<td>Flow-level structure (dimensions, attributes).</td>
+			</tr>
+			<tr>
+					<td><code>ListDimensions</code></td>
+					<td><code>GET /{source}/{flow}/dimensions</code></td>
+					<td>List or search a flow&rsquo;s dimensions.</td>
+			</tr>
+			<tr>
+					<td><code>ListAttributes</code></td>
+					<td><code>GET /{source}/{flow}/attributes</code></td>
+					<td>List or search a flow&rsquo;s attributes.</td>
+			</tr>
+			<tr>
+					<td><code>ListCodes</code></td>
+					<td><code>GET /{source}/{flow}/codes/{dimension}</code></td>
+					<td>List or search the codes of a dimension.</td>
+			</tr>
+			<tr>
+					<td><code>ListAvailability</code></td>
+					<td><code>GET /{source}/{flow}/availability/{dimension}</code></td>
+					<td>Codes that actually occur under a key constraint.</td>
+			</tr>
+			<tr>
+					<td><code>GetData</code></td>
+					<td><code>GET /{source}/{flow}/data</code></td>
+					<td>Fetch observations for a key.</td>
+			</tr>
+			<tr>
+					<td><code>GetDataStream</code></td>
+					<td><code>GET /{source}/{flow}/data:stream</code></td>
+					<td>Same as <code>GetData</code>, streamed observation by observation.</td>
+			</tr>
+			<tr>
+					<td><code>ListStatuses</code></td>
+					<td><code>GET /statuses</code></td>
+					<td>Check the health of one, several, or all sources.</td>
+			</tr>
+	</tbody>
+</table> </div>
+<p>All paths above are relative to <code>/sdmx-dl/v2</code>.</p>
+<div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="mcp-endpoint"
     >
         MCP endpoint
@@ -1711,15 +1749,10 @@ Its default port is <code>4559</code>. For convenience, an <a
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<p><img
-  src="https://img.shields.io/badge/-beta-E2BC4A"
-  alt="beta"
-  
-/></p>
 <p>The <a
   class="gdoc-markdown__link"
   href="https://modelcontextprotocol.io/"
->Model Context Protocol</a> (MCP) endpoint lets AI assistants and agents explore sources, flows and data through a set of read-only tools. It is <strong>beta</strong>: the tool list and their parameters may still change.</p>
+>Model Context Protocol</a> (MCP) endpoint lets AI assistants and agents explore sources, flows and data through a set of read-only tools.</p>
 <p>It shares the same HTTP port as the <a
   class="gdoc-markdown__link"
   href="#rest-endpoint"
@@ -1773,8 +1806,16 @@ Its default port is <code>4559</code>. For convenience, an <a
 					<td>List or search the codes of a dimension or attribute.</td>
 			</tr>
 			<tr>
+					<td><code>listAvailability</code></td>
+					<td>Get the codes that actually occur for a dimension under a key.</td>
+			</tr>
+			<tr>
 					<td><code>getData</code></td>
 					<td>Fetch data series for a flow, optionally filtered by key/period.</td>
+			</tr>
+			<tr>
+					<td><code>status</code></td>
+					<td>Get the monitor status of a single source.</td>
 			</tr>
 	</tbody>
 </table> </div>
@@ -2245,39 +2286,6 @@ Its default port is <code>4559</code>. For convenience, an <a
   
 
   
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
   
     
 

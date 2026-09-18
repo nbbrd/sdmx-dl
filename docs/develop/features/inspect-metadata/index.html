@@ -13,8 +13,7 @@
 
 
   <meta name="description" content="Look up descriptive metadata (title, units, notes, source-specific attributes) attached to a series or a flow, without downloading the observations themselves.
-API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .detailOf(Detail.NO_DATA.name()) .build()) .forEach(series -&gt; series.getMeta().forEach((concept, value) -&gt; IO.println(concept &#43; &#34; = &#34; &#43; value))); } CLI ✅ full support" />
+API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .detailOf(Detail.NO_DATA.name()) .build()) .forEach(series -&gt; series.getMeta().forEach((concept, value) -&gt; IO.println(concept &#43; &#34; = &#34; &#43; value))); } CLI sdmx-dl fetch meta ECB EXR M.CHF.EUR.SP00.A WS GetData/GetDataStream accept the same detail parameter as the CLI/API; pass NO_DATA to get series-level metadata without downloading observations." />
 
     <title>Inspect metadata | sdmx-dl</title>
 
@@ -41,23 +40,21 @@ API ✅ full support
   />
   <meta property="og:site_name" content="sdmx-dl" />
   <meta property="og:description" content="Look up descriptive metadata (title, units, notes, source-specific attributes) attached to a series or a flow, without downloading the observations themselves.
-API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .detailOf(Detail.NO_DATA.name()) .build()) .forEach(series -&gt; series.getMeta().forEach((concept, value) -&gt; IO.println(concept &#43; &#34; = &#34; &#43; value))); } CLI ✅ full support" />
+API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .detailOf(Detail.NO_DATA.name()) .build()) .forEach(series -&gt; series.getMeta().forEach((concept, value) -&gt; IO.println(concept &#43; &#34; = &#34; &#43; value))); } CLI sdmx-dl fetch meta ECB EXR M.CHF.EUR.SP00.A WS GetData/GetDataStream accept the same detail parameter as the CLI/API; pass NO_DATA to get series-level metadata without downloading observations." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/features/inspect-metadata/" />
 
 <meta property="article:section" content="Features" />
     <meta
       property="article:modified_time"
-      content="2026-09-14T14:12:03+02:00"
+      content="2026-09-15T14:57:16+02:00"
     />
 
 
   <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Inspect metadata" />
   <meta name="twitter:description" content="Look up descriptive metadata (title, units, notes, source-specific attributes) attached to a series or a flow, without downloading the observations themselves.
-API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .detailOf(Detail.NO_DATA.name()) .build()) .forEach(series -&gt; series.getMeta().forEach((concept, value) -&gt; IO.println(concept &#43; &#34; = &#34; &#43; value))); } CLI ✅ full support" />
+API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .detailOf(Detail.NO_DATA.name()) .build()) .forEach(series -&gt; series.getMeta().forEach((concept, value) -&gt; IO.println(concept &#43; &#34; = &#34; &#43; value))); } CLI sdmx-dl fetch meta ECB EXR M.CHF.EUR.SP00.A WS GetData/GetDataStream accept the same detail parameter as the CLI/API; pass NO_DATA to get series-level metadata without downloading observations." />
 
 
   <script type="application/ld+json">
@@ -68,8 +65,8 @@ API ✅ full support
       "name": "Inspect metadata",
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/features/inspect-metadata/",
       "headline": "Inspect metadata",
-      "description": "Look up descriptive metadata (title, units, notes, source-specific attributes) attached to a series or a flow, without downloading the observations themselves.\nAPI ✅ full support\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(\u0022ECB\u0022) .getData(DataRequest.builder() .flowOf(\u0022EXR\u0022) .keyOf(\u0022M.CHF.EUR.SP00.A\u0022) .detailOf(Detail.NO_DATA.name()) .build()) .forEach(series -\u003e series.getMeta().forEach((concept, value) -\u003e IO.println(concept \u002b \u0022 = \u0022 \u002b value))); } CLI ✅ full support",
-      "wordCount": "185",
+      "description": "Look up descriptive metadata (title, units, notes, source-specific attributes) attached to a series or a flow, without downloading the observations themselves.\nAPI \/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(\u0022ECB\u0022) .getData(DataRequest.builder() .flowOf(\u0022EXR\u0022) .keyOf(\u0022M.CHF.EUR.SP00.A\u0022) .detailOf(Detail.NO_DATA.name()) .build()) .forEach(series -\u003e series.getMeta().forEach((concept, value) -\u003e IO.println(concept \u002b \u0022 = \u0022 \u002b value))); } CLI sdmx-dl fetch meta ECB EXR M.CHF.EUR.SP00.A WS GetData\/GetDataStream accept the same detail parameter as the CLI\/API; pass NO_DATA to get series-level metadata without downloading observations.",
+      "wordCount": "181",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -80,7 +77,7 @@ API ✅ full support
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-14T14:12:03.00Z",
+      "dateModified": "2026-09-15T14:57:16.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -993,6 +990,50 @@ API ✅ full support
               
                 <span class="flex">
                   <a
+                    href="/sdmx-dl/docs/develop/features/discover-databases/"
+                    class="gdoc-nav__entry"
+                  >
+                    Discover databases
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
                     href="/sdmx-dl/docs/develop/features/discover-flows/"
                     class="gdoc-nav__entry"
                   >
@@ -1037,142 +1078,10 @@ API ✅ full support
               
                 <span class="flex">
                   <a
-                    href="/sdmx-dl/docs/develop/features/search-sources/"
+                    href="/sdmx-dl/docs/develop/features/browse-structure/"
                     class="gdoc-nav__entry"
                   >
-                    Search sources
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/search-flows/"
-                    class="gdoc-nav__entry"
-                  >
-                    Search flows
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/search-databases/"
-                    class="gdoc-nav__entry"
-                  >
-                    Search databases
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/inspect-metadata/"
-                    class="gdoc-nav__entry is-active"
-                  >
-                    Inspect metadata
+                    Browse dimensions and attributes
                   </a>
                 </span>
               
@@ -1257,10 +1166,54 @@ API ✅ full support
               
                 <span class="flex">
                   <a
-                    href="/sdmx-dl/docs/develop/features/check-availability/"
+                    href="/sdmx-dl/docs/develop/features/browse-availability/"
                     class="gdoc-nav__entry"
                   >
-                    Check availability
+                    Browse availability
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/features/inspect-metadata/"
+                    class="gdoc-nav__entry is-active"
+                  >
+                    Inspect metadata
                   </a>
                 </span>
               
@@ -1600,8 +1553,7 @@ API ✅ full support
       API
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <p class="feature-status">✅ <strong>full support</strong></p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
+      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.*</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.SdmxWebManager</span><span class="p">;</span><span class="w">
@@ -1629,8 +1581,7 @@ API ✅ full support
       CLI
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <p class="feature-status">✅ <strong>full support</strong></p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl fetch meta ECB EXR M.CHF.EUR.SP00.A
+      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl fetch meta ECB EXR M.CHF.EUR.SP00.A
 </span></span></code></pre></div></div>
     <input
       type="radio"
@@ -1642,9 +1593,7 @@ API ✅ full support
       WS
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <p class="feature-status">⚠️ <strong>partial support</strong> &mdash; Only flow-level metadata via <code>GetMeta</code>; no series-level equivalent to <code>fetch meta</code>.</p>
-<p>Not supported as a series-level <code>fetch meta</code> equivalent.</p>
-<p>The closest WS equivalent is <code>GetMeta</code>, which exposes flow-level metadata (<code>source</code> + <code>flow</code>).</p>
+      <p><code>GetData</code>/<code>GetDataStream</code> accept the same <code>detail</code> parameter as the CLI/API; pass <code>NO_DATA</code> to get series-level metadata without downloading observations.</p>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h3 id="rest"
     >
@@ -1654,10 +1603,9 @@ API ✅ full support
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -X POST <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -H <span class="s2">&#34;Content-Type: application/json&#34;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  localhost:4559/sdmx-dl/meta <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --data <span class="s2">&#34;{\&#34;source\&#34;:\&#34;ECB\&#34;,\&#34;flow\&#34;:\&#34;EXR\&#34;}&#34;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;key=M.CHF.EUR.SP00.A&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;detail=NO_DATA&#34;</span>
 </span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
     <h3 id="grpc"
     >
@@ -1667,7 +1615,10 @@ API ✅ full support
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.SdmxWebManager.GetMeta
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;,&#34;detail&#34;:&#34;NO_DATA&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
+</span></span></code></pre></div><p>For flow-level metadata (dimensions, attributes, codelists) instead of series-level, use <code>GetMeta</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/ECB/EXR/meta&#34;</span>
+</span></span><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetMeta
 </span></span></code></pre></div></div>
 </div>
 
@@ -1681,11 +1632,14 @@ API ✅ full support
     </a>
 </div>
 <ul>
-<li>This is one of the few genuinely non-equivalent features: CLI/API can inspect metadata at the <strong>series</strong> level (<code>fetch meta</code>, <code>Detail.NO_DATA</code>), while WS only exposes it at the <strong>flow/structure</strong> level (<code>GetMeta</code>).</li>
-<li>If you only need the dataset&rsquo;s structure (dimensions, attributes, codelists), <code>GetMeta</code>/<code>getMeta(...)</code> is the right call on every flavor — see <a
+<li><code>detail=NO_DATA</code> is the series-level equivalent of the CLI&rsquo;s <code>fetch meta</code> and the API&rsquo;s <code>Detail.NO_DATA</code>: every flavor now shares the same request shape as <a
   class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/features/browse-codes/"
->Browse codes</a>.</li>
+  href="/sdmx-dl/docs/develop/features/retrieve-data/"
+>Retrieve data</a>, just with <code>detail</code> set to skip observations.</li>
+<li>Don&rsquo;t confuse this with flow/structure-level metadata (dimensions, attributes, codelists): that&rsquo;s <code>GetMeta</code>/<code>getMeta(...)</code> on every flavor � see <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/features/browse-structure/"
+>Browse dimensions and attributes</a>.</li>
 </ul>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="related-features"
@@ -1701,6 +1655,10 @@ API ✅ full support
   class="gdoc-markdown__link"
   href="/sdmx-dl/docs/develop/features/retrieve-data/"
 >Retrieve data</a></li>
+<li><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/features/browse-structure/"
+>Browse dimensions and attributes</a></li>
 <li><a
   class="gdoc-markdown__link"
   href="/sdmx-dl/docs/develop/features/browse-codes/"
@@ -2346,6 +2304,39 @@ API ✅ full support
         
 
         
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
           
           
         
@@ -2384,72 +2375,6 @@ API ✅ full support
             
             
           
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
         
 
         
@@ -2610,11 +2535,11 @@ API ✅ full support
   
     <a
       class="gdoc-page__nav--prev flex align-center"
-      href="/sdmx-dl/docs/develop/features/search-databases/"
-      title="Search databases"
+      href="/sdmx-dl/docs/develop/features/browse-availability/"
+      title="Browse availability"
     >
       <i class="gdoc-icon">gdoc_arrow_left_alt</i>
-      Search databases
+      Browse availability
     </a>
   
 </span>
@@ -2622,10 +2547,10 @@ API ✅ full support
   
     <a
       class="gdoc-page__nav--next flex align-center"
-      href="/sdmx-dl/docs/develop/features/browse-codes/"
-      title="Browse codes"
+      href="/sdmx-dl/docs/develop/features/narrow-your-request/"
+      title="Narrow your request"
     >
-      Browse codes
+      Narrow your request
       <i class="gdoc-icon">gdoc_arrow_right_alt</i>
     </a>
   

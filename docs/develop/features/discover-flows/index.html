@@ -12,11 +12,9 @@
 <meta name="generator" content="Hugo 0.166.0">
 
 
-  <meta name="description" content="See which datasets a source publishes, before picking one to query for data.
-API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.FlowsRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); manager.usingName(&#34;ECB&#34;) .listFlows(FlowsRequest.DEFAULT) .forEach(flow -&gt; IO.println(flow.getRef())); } CLI ✅ full support
-sdmx-dl list flows ECB WS ✅ full support
-REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559/sdmx-dl/flows \ --data &#34;{\&#34;source\&#34;:\&#34;ECB\&#34;}&#34; gRPC grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;}&#39; -plaintext localhost:4557 sdmxdl.grpc.SdmxWebManager.GetFlows Notes Some sources expose several databases; pass a database to scope the listing (defaults to the source&rsquo;s single/default database otherwise). FlowsRequest also accepts an optional query/maxResults to search and limit results in the same call — see Search flows. Related features Discover sources Search flows - find a flow by topic when you don&rsquo;t know its exact ID. " />
+  <meta name="description" content="See which datasets a source publishes, and find one by topic within that source when you don&rsquo;t know its exact flow ID.
+API listFlows(...) always accepts an optional query/maxResults; omit them to simply list every flow.
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { Provider ecb = SdmxWebManager.ofServiceLoader().usingName(&#34;ECB&#34;); // List every flow ecb.listFlows(FlowsRequest.DEFAULT) .forEach(flow -&gt; IO.println(flow.getRef())); // Search by topic ecb.listFlows(FlowsRequest.builder() .query(&#34;exchange rates&#34;) .maxResults(5) .build()) .forEach(flow -&gt; IO.println(flow.getRef())); } CLI sdmx-dl list flows ECB sdmx-dl list flows ECB -q &#34;exchange rates&#34; -m 5 WS REST curl &#34;localhost:4559/sdmx-dl/v2/ECB/flows&#34; curl -G localhost:4559/sdmx-dl/v2/ECB/flows \ --data-urlencode &#34;query=exchange rates&#34; \ --data-urlencode &#34;maxResults=5&#34; gRPC grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListFlows grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;query&#34;:&#34;exchange rates&#34;,&#34;maxResults&#34;:5}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListFlows Notes Discovery and search are the same call: pass a query/maxResults to search within a source, or omit them to list every flow it publishes. Ranking is hybrid: lexical (BM25) fused with typo-tolerant trigram matching, so partial or approximate queries still surface the right flow. Search is scoped to a single source; use Discover sources first if you don&rsquo;t know which source to search within. Some sources expose several databases; pass a database to scope the listing (defaults to the source&rsquo;s single/default database otherwise) — see Discover databases. Related features Discover sources Discover databases " />
 
     <title>Discover flows | sdmx-dl</title>
 
@@ -42,28 +40,24 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
     content="Discover flows"
   />
   <meta property="og:site_name" content="sdmx-dl" />
-  <meta property="og:description" content="See which datasets a source publishes, before picking one to query for data.
-API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.FlowsRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); manager.usingName(&#34;ECB&#34;) .listFlows(FlowsRequest.DEFAULT) .forEach(flow -&gt; IO.println(flow.getRef())); } CLI ✅ full support
-sdmx-dl list flows ECB WS ✅ full support
-REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559/sdmx-dl/flows \ --data &#34;{\&#34;source\&#34;:\&#34;ECB\&#34;}&#34; gRPC grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;}&#39; -plaintext localhost:4557 sdmxdl.grpc.SdmxWebManager.GetFlows Notes Some sources expose several databases; pass a database to scope the listing (defaults to the source’s single/default database otherwise). FlowsRequest also accepts an optional query/maxResults to search and limit results in the same call — see Search flows. Related features Discover sources Search flows - find a flow by topic when you don’t know its exact ID. " />
+  <meta property="og:description" content="See which datasets a source publishes, and find one by topic within that source when you don’t know its exact flow ID.
+API listFlows(...) always accepts an optional query/maxResults; omit them to simply list every flow.
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { Provider ecb = SdmxWebManager.ofServiceLoader().usingName(&#34;ECB&#34;); // List every flow ecb.listFlows(FlowsRequest.DEFAULT) .forEach(flow -&gt; IO.println(flow.getRef())); // Search by topic ecb.listFlows(FlowsRequest.builder() .query(&#34;exchange rates&#34;) .maxResults(5) .build()) .forEach(flow -&gt; IO.println(flow.getRef())); } CLI sdmx-dl list flows ECB sdmx-dl list flows ECB -q &#34;exchange rates&#34; -m 5 WS REST curl &#34;localhost:4559/sdmx-dl/v2/ECB/flows&#34; curl -G localhost:4559/sdmx-dl/v2/ECB/flows \ --data-urlencode &#34;query=exchange rates&#34; \ --data-urlencode &#34;maxResults=5&#34; gRPC grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListFlows grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;query&#34;:&#34;exchange rates&#34;,&#34;maxResults&#34;:5}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListFlows Notes Discovery and search are the same call: pass a query/maxResults to search within a source, or omit them to list every flow it publishes. Ranking is hybrid: lexical (BM25) fused with typo-tolerant trigram matching, so partial or approximate queries still surface the right flow. Search is scoped to a single source; use Discover sources first if you don’t know which source to search within. Some sources expose several databases; pass a database to scope the listing (defaults to the source’s single/default database otherwise) — see Discover databases. Related features Discover sources Discover databases " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/features/discover-flows/" />
 
 <meta property="article:section" content="Features" />
     <meta
       property="article:modified_time"
-      content="2026-09-14T14:12:03+02:00"
+      content="2026-09-15T14:57:16+02:00"
     />
 
 
   <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Discover flows" />
-  <meta name="twitter:description" content="See which datasets a source publishes, before picking one to query for data.
-API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.FlowsRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); manager.usingName(&#34;ECB&#34;) .listFlows(FlowsRequest.DEFAULT) .forEach(flow -&gt; IO.println(flow.getRef())); } CLI ✅ full support
-sdmx-dl list flows ECB WS ✅ full support
-REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559/sdmx-dl/flows \ --data &#34;{\&#34;source\&#34;:\&#34;ECB\&#34;}&#34; gRPC grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;}&#39; -plaintext localhost:4557 sdmxdl.grpc.SdmxWebManager.GetFlows Notes Some sources expose several databases; pass a database to scope the listing (defaults to the source’s single/default database otherwise). FlowsRequest also accepts an optional query/maxResults to search and limit results in the same call — see Search flows. Related features Discover sources Search flows - find a flow by topic when you don’t know its exact ID. " />
+  <meta name="twitter:description" content="See which datasets a source publishes, and find one by topic within that source when you don’t know its exact flow ID.
+API listFlows(...) always accepts an optional query/maxResults; omit them to simply list every flow.
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { Provider ecb = SdmxWebManager.ofServiceLoader().usingName(&#34;ECB&#34;); // List every flow ecb.listFlows(FlowsRequest.DEFAULT) .forEach(flow -&gt; IO.println(flow.getRef())); // Search by topic ecb.listFlows(FlowsRequest.builder() .query(&#34;exchange rates&#34;) .maxResults(5) .build()) .forEach(flow -&gt; IO.println(flow.getRef())); } CLI sdmx-dl list flows ECB sdmx-dl list flows ECB -q &#34;exchange rates&#34; -m 5 WS REST curl &#34;localhost:4559/sdmx-dl/v2/ECB/flows&#34; curl -G localhost:4559/sdmx-dl/v2/ECB/flows \ --data-urlencode &#34;query=exchange rates&#34; \ --data-urlencode &#34;maxResults=5&#34; gRPC grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListFlows grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;query&#34;:&#34;exchange rates&#34;,&#34;maxResults&#34;:5}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListFlows Notes Discovery and search are the same call: pass a query/maxResults to search within a source, or omit them to list every flow it publishes. Ranking is hybrid: lexical (BM25) fused with typo-tolerant trigram matching, so partial or approximate queries still surface the right flow. Search is scoped to a single source; use Discover sources first if you don’t know which source to search within. Some sources expose several databases; pass a database to scope the listing (defaults to the source’s single/default database otherwise) — see Discover databases. Related features Discover sources Discover databases " />
 
 
   <script type="application/ld+json">
@@ -74,8 +68,8 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
       "name": "Discover flows",
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/features/discover-flows/",
       "headline": "Discover flows",
-      "description": "See which datasets a source publishes, before picking one to query for data.\nAPI ✅ full support\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.FlowsRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); manager.usingName(\u0022ECB\u0022) .listFlows(FlowsRequest.DEFAULT) .forEach(flow -\u003e IO.println(flow.getRef())); } CLI ✅ full support\nsdmx-dl list flows ECB WS ✅ full support\nREST curl -X POST \\ -H \u0022Content-Type: application\/json\u0022 \\ localhost:4559\/sdmx-dl\/flows \\ --data \u0022{\\\u0022source\\\u0022:\\\u0022ECB\\\u0022}\u0022 gRPC grpcurl -d \u0027{\u0022source\u0022:\u0022ECB\u0022}\u0027 -plaintext localhost:4557 sdmxdl.grpc.SdmxWebManager.GetFlows Notes Some sources expose several databases; pass a database to scope the listing (defaults to the source’s single\/default database otherwise). FlowsRequest also accepts an optional query\/maxResults to search and limit results in the same call — see Search flows. Related features Discover sources Search flows - find a flow by topic when you don’t know its exact ID. ",
-      "wordCount": "130",
+      "description": "See which datasets a source publishes, and find one by topic within that source when you don’t know its exact flow ID.\nAPI listFlows(...) always accepts an optional query\/maxResults; omit them to simply list every flow.\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { Provider ecb = SdmxWebManager.ofServiceLoader().usingName(\u0022ECB\u0022); \/\/ List every flow ecb.listFlows(FlowsRequest.DEFAULT) .forEach(flow -\u003e IO.println(flow.getRef())); \/\/ Search by topic ecb.listFlows(FlowsRequest.builder() .query(\u0022exchange rates\u0022) .maxResults(5) .build()) .forEach(flow -\u003e IO.println(flow.getRef())); } CLI sdmx-dl list flows ECB sdmx-dl list flows ECB -q \u0022exchange rates\u0022 -m 5 WS REST curl \u0022localhost:4559\/sdmx-dl\/v2\/ECB\/flows\u0022 curl -G localhost:4559\/sdmx-dl\/v2\/ECB\/flows \\ --data-urlencode \u0022query=exchange rates\u0022 \\ --data-urlencode \u0022maxResults=5\u0022 gRPC grpcurl -d \u0027{\u0022source\u0022:\u0022ECB\u0022}\u0027 -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListFlows grpcurl -d \u0027{\u0022source\u0022:\u0022ECB\u0022,\u0022query\u0022:\u0022exchange rates\u0022,\u0022maxResults\u0022:5}\u0027 -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListFlows Notes Discovery and search are the same call: pass a query\/maxResults to search within a source, or omit them to list every flow it publishes. Ranking is hybrid: lexical (BM25) fused with typo-tolerant trigram matching, so partial or approximate queries still surface the right flow. Search is scoped to a single source; use Discover sources first if you don’t know which source to search within. Some sources expose several databases; pass a database to scope the listing (defaults to the source’s single\/default database otherwise) — see Discover databases. Related features Discover sources Discover databases ",
+      "wordCount": "210",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -86,7 +80,7 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-14T14:12:03.00Z",
+      "dateModified": "2026-09-15T14:57:16.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -999,6 +993,50 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
               
                 <span class="flex">
                   <a
+                    href="/sdmx-dl/docs/develop/features/discover-databases/"
+                    class="gdoc-nav__entry"
+                  >
+                    Discover databases
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
                     href="/sdmx-dl/docs/develop/features/discover-flows/"
                     class="gdoc-nav__entry is-active"
                   >
@@ -1043,142 +1081,10 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
               
                 <span class="flex">
                   <a
-                    href="/sdmx-dl/docs/develop/features/search-sources/"
+                    href="/sdmx-dl/docs/develop/features/browse-structure/"
                     class="gdoc-nav__entry"
                   >
-                    Search sources
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/search-flows/"
-                    class="gdoc-nav__entry"
-                  >
-                    Search flows
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/search-databases/"
-                    class="gdoc-nav__entry"
-                  >
-                    Search databases
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/inspect-metadata/"
-                    class="gdoc-nav__entry"
-                  >
-                    Inspect metadata
+                    Browse dimensions and attributes
                   </a>
                 </span>
               
@@ -1263,10 +1169,54 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
               
                 <span class="flex">
                   <a
-                    href="/sdmx-dl/docs/develop/features/check-availability/"
+                    href="/sdmx-dl/docs/develop/features/browse-availability/"
                     class="gdoc-nav__entry"
                   >
-                    Check availability
+                    Browse availability
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/features/inspect-metadata/"
+                    class="gdoc-nav__entry"
+                  >
+                    Inspect metadata
                   </a>
                 </span>
               
@@ -1591,7 +1541,7 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
   >
     <h1>Discover flows</h1>
     
-    <p>See which datasets a source publishes, before picking one to query for data.</p>
+    <p>See which datasets a source publishes, and find one by topic within that source when you don&rsquo;t know its exact flow ID.</p>
 
 
 
@@ -1606,17 +1556,24 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
       API
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <p class="feature-status">✅ <strong>full support</strong></p>
+      <p><code>listFlows(...)</code> always accepts an optional <code>query</code>/<code>maxResults</code>; omit them to simply list every flow.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.FlowsRequest</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.*</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.SdmxWebManager</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w"> </span><span class="n">manager</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SdmxWebManager</span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Provider</span><span class="w"> </span><span class="n">ecb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SdmxWebManager</span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">().</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">manager</span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">listFlows</span><span class="p">(</span><span class="n">FlowsRequest</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// List every flow</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">ecb</span><span class="p">.</span><span class="na">listFlows</span><span class="p">(</span><span class="n">FlowsRequest</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">flow</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">flow</span><span class="p">.</span><span class="na">getRef</span><span class="p">()));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// Search by topic</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">ecb</span><span class="p">.</span><span class="na">listFlows</span><span class="p">(</span><span class="n">FlowsRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">query</span><span class="p">(</span><span class="s">&#34;exchange rates&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">maxResults</span><span class="p">(</span><span class="n">5</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">flow</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">flow</span><span class="p">.</span><span class="na">getRef</span><span class="p">()));</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></div></div>
@@ -1630,8 +1587,8 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
       CLI
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <p class="feature-status">✅ <strong>full support</strong></p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl list flows ECB
+      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl list flows ECB
+</span></span><span class="line"><span class="cl">sdmx-dl list flows ECB -q <span class="s2">&#34;exchange rates&#34;</span> -m <span class="m">5</span>
 </span></span></code></pre></div></div>
     <input
       type="radio"
@@ -1643,8 +1600,7 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
       WS
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <p class="feature-status">✅ <strong>full support</strong></p>
-<div class="flex align-center gdoc-page__anchorwrap">
+      <div class="flex align-center gdoc-page__anchorwrap">
     <h3 id="rest"
     >
         REST
@@ -1653,10 +1609,11 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -X POST <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -H <span class="s2">&#34;Content-Type: application/json&#34;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  localhost:4559/sdmx-dl/flows <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --data <span class="s2">&#34;{\&#34;source\&#34;:\&#34;ECB\&#34;}&#34;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/ECB/flows&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">curl -G localhost:4559/sdmx-dl/v2/ECB/flows <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;query=exchange rates&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;maxResults=5&#34;</span>
 </span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
     <h3 id="grpc"
     >
@@ -1666,7 +1623,9 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.SdmxWebManager.GetFlows
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListFlows
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;query&#34;:&#34;exchange rates&#34;,&#34;maxResults&#34;:5}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListFlows
 </span></span></code></pre></div></div>
 </div>
 
@@ -1680,11 +1639,16 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
     </a>
 </div>
 <ul>
-<li>Some sources expose several databases; pass a <code>database</code> to scope the listing (defaults to the source&rsquo;s single/default database otherwise).</li>
-<li><code>FlowsRequest</code> also accepts an optional <code>query</code>/<code>maxResults</code> to search and limit results in the same call — see <a
+<li>Discovery and search are the same call: pass a <code>query</code>/<code>maxResults</code> to search within a source, or omit them to list every flow it publishes.</li>
+<li>Ranking is hybrid: lexical (BM25) fused with typo-tolerant trigram matching, so partial or approximate queries still surface the right flow.</li>
+<li>Search is scoped to a single source; use <a
   class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/features/search-flows/"
->Search flows</a>.</li>
+  href="/sdmx-dl/docs/develop/features/discover-sources/"
+>Discover sources</a> first if you don&rsquo;t know which source to search within.</li>
+<li>Some sources expose several databases; pass a <code>database</code> to scope the listing (defaults to the source&rsquo;s single/default database otherwise) — see <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/features/discover-databases/"
+>Discover databases</a>.</li>
 </ul>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="related-features"
@@ -1702,8 +1666,8 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
 >Discover sources</a></li>
 <li><a
   class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/features/search-flows/"
->Search flows</a> - find a flow by topic when you don&rsquo;t know its exact ID.</li>
+  href="/sdmx-dl/docs/develop/features/discover-databases/"
+>Discover databases</a></li>
 </ul>
 
   </article>
@@ -2213,6 +2177,39 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
         
 
         
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
           
           
         
@@ -2251,72 +2248,6 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
             
             
           
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
         
 
         
@@ -2609,11 +2540,11 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
   
     <a
       class="gdoc-page__nav--prev flex align-center"
-      href="/sdmx-dl/docs/develop/features/discover-sources/"
-      title="Discover sources"
+      href="/sdmx-dl/docs/develop/features/discover-databases/"
+      title="Discover databases"
     >
       <i class="gdoc-icon">gdoc_arrow_left_alt</i>
-      Discover sources
+      Discover databases
     </a>
   
 </span>
@@ -2621,10 +2552,10 @@ REST curl -X POST \ -H &#34;Content-Type: application/json&#34; \ localhost:4559
   
     <a
       class="gdoc-page__nav--next flex align-center"
-      href="/sdmx-dl/docs/develop/features/search-sources/"
-      title="Search sources"
+      href="/sdmx-dl/docs/develop/features/browse-structure/"
+      title="Browse dimensions and attributes"
     >
-      Search sources
+      Browse dimensions and attributes
       <i class="gdoc-icon">gdoc_arrow_right_alt</i>
     </a>
   

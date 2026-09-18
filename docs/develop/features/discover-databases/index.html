@@ -12,12 +12,11 @@
 <meta name="generator" content="Hugo 0.166.0">
 
 
-  <meta name="description" content="Find a dataset by topic within a source when you don&rsquo;t know its exact flow ID.
-API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .listFlows(FlowsRequest.builder() .query(&#34;exchange rates&#34;) .maxResults(5) .build()) .forEach(flow -&gt; IO.println(flow.getRef())); } CLI ✅ full support
-sdmx-dl list flows ECB -q &#34;exchange rates&#34; -m 5 WS ✅ full support" />
+  <meta name="description" content="Find a database namespace within a multi-database source, when you don&rsquo;t know its exact name.
+API listDatabases(...) always accepts an optional query/maxResults; omit them to simply list every database.
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { Provider ecb = SdmxWebManager.ofServiceLoader().usingName(&#34;ECB&#34;); // List every database ecb.listDatabases(DatabasesRequest.DEFAULT) .forEach(database -&gt; IO.println(database.getRef())); // Search by name ecb.listDatabases(DatabasesRequest.builder() .query(&#34;central&#34;) .maxResults(5) .build()) .forEach(database -&gt; IO.println(database.getRef())); } CLI sdmx-dl list databases ECB sdmx-dl list databases ECB -q &#34;central&#34; -m 5 WS REST curl &#34;localhost:4559/sdmx-dl/v2/ECB/databases&#34; curl -G localhost:4559/sdmx-dl/v2/ECB/databases \ --data-urlencode &#34;query=central&#34; \ --data-urlencode &#34;maxResults=5&#34; gRPC grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListDatabases grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;query&#34;:&#34;central&#34;,&#34;maxResults&#34;:5}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListDatabases Notes Discovery and search are the same call: pass a query/maxResults to search within a source, or omit them to list every database it exposes. Most sources expose a single default database, so this feature is only useful for multi-database providers. Search is scoped to one source at a time; use Discover sources first if you don&rsquo;t know which source to search within. Related features Discover sources Discover flows " />
 
-    <title>Search flows | sdmx-dl</title>
+    <title>Discover databases | sdmx-dl</title>
 
     <link rel="icon" type="image/svg+xml" href="/sdmx-dl/docs/develop/favicon/favicon.svg" />
 <link
@@ -38,29 +37,27 @@ sdmx-dl list flows ECB -q &#34;exchange rates&#34; -m 5 WS ✅ full support" />
     
   <meta
     property="og:title"
-    content="Search flows"
+    content="Discover databases"
   />
   <meta property="og:site_name" content="sdmx-dl" />
-  <meta property="og:description" content="Find a dataset by topic within a source when you don’t know its exact flow ID.
-API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .listFlows(FlowsRequest.builder() .query(&#34;exchange rates&#34;) .maxResults(5) .build()) .forEach(flow -&gt; IO.println(flow.getRef())); } CLI ✅ full support
-sdmx-dl list flows ECB -q &#34;exchange rates&#34; -m 5 WS ✅ full support" />
+  <meta property="og:description" content="Find a database namespace within a multi-database source, when you don’t know its exact name.
+API listDatabases(...) always accepts an optional query/maxResults; omit them to simply list every database.
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { Provider ecb = SdmxWebManager.ofServiceLoader().usingName(&#34;ECB&#34;); // List every database ecb.listDatabases(DatabasesRequest.DEFAULT) .forEach(database -&gt; IO.println(database.getRef())); // Search by name ecb.listDatabases(DatabasesRequest.builder() .query(&#34;central&#34;) .maxResults(5) .build()) .forEach(database -&gt; IO.println(database.getRef())); } CLI sdmx-dl list databases ECB sdmx-dl list databases ECB -q &#34;central&#34; -m 5 WS REST curl &#34;localhost:4559/sdmx-dl/v2/ECB/databases&#34; curl -G localhost:4559/sdmx-dl/v2/ECB/databases \ --data-urlencode &#34;query=central&#34; \ --data-urlencode &#34;maxResults=5&#34; gRPC grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListDatabases grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;query&#34;:&#34;central&#34;,&#34;maxResults&#34;:5}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListDatabases Notes Discovery and search are the same call: pass a query/maxResults to search within a source, or omit them to list every database it exposes. Most sources expose a single default database, so this feature is only useful for multi-database providers. Search is scoped to one source at a time; use Discover sources first if you don’t know which source to search within. Related features Discover sources Discover flows " />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/features/search-flows/" />
+<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/features/discover-databases/" />
 
 <meta property="article:section" content="Features" />
     <meta
       property="article:modified_time"
-      content="2026-09-14T14:12:03+02:00"
+      content="2026-09-15T14:57:16+02:00"
     />
 
 
   <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Search flows" />
-  <meta name="twitter:description" content="Find a dataset by topic within a source when you don’t know its exact flow ID.
-API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .listFlows(FlowsRequest.builder() .query(&#34;exchange rates&#34;) .maxResults(5) .build()) .forEach(flow -&gt; IO.println(flow.getRef())); } CLI ✅ full support
-sdmx-dl list flows ECB -q &#34;exchange rates&#34; -m 5 WS ✅ full support" />
+<meta name="twitter:title" content="Discover databases" />
+  <meta name="twitter:description" content="Find a database namespace within a multi-database source, when you don’t know its exact name.
+API listDatabases(...) always accepts an optional query/maxResults; omit them to simply list every database.
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { Provider ecb = SdmxWebManager.ofServiceLoader().usingName(&#34;ECB&#34;); // List every database ecb.listDatabases(DatabasesRequest.DEFAULT) .forEach(database -&gt; IO.println(database.getRef())); // Search by name ecb.listDatabases(DatabasesRequest.builder() .query(&#34;central&#34;) .maxResults(5) .build()) .forEach(database -&gt; IO.println(database.getRef())); } CLI sdmx-dl list databases ECB sdmx-dl list databases ECB -q &#34;central&#34; -m 5 WS REST curl &#34;localhost:4559/sdmx-dl/v2/ECB/databases&#34; curl -G localhost:4559/sdmx-dl/v2/ECB/databases \ --data-urlencode &#34;query=central&#34; \ --data-urlencode &#34;maxResults=5&#34; gRPC grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListDatabases grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;query&#34;:&#34;central&#34;,&#34;maxResults&#34;:5}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListDatabases Notes Discovery and search are the same call: pass a query/maxResults to search within a source, or omit them to list every database it exposes. Most sources expose a single default database, so this feature is only useful for multi-database providers. Search is scoped to one source at a time; use Discover sources first if you don’t know which source to search within. Related features Discover sources Discover flows " />
 
 
   <script type="application/ld+json">
@@ -68,22 +65,22 @@ sdmx-dl list flows ECB -q &#34;exchange rates&#34; -m 5 WS ✅ full support" />
       "@context": "http://schema.org",
       "@type": "TechArticle",
       "articleSection": "Features",
-      "name": "Search flows",
-      "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/features/search-flows/",
-      "headline": "Search flows",
-      "description": "Find a dataset by topic within a source when you don’t know its exact flow ID.\nAPI ✅ full support\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(\u0022ECB\u0022) .listFlows(FlowsRequest.builder() .query(\u0022exchange rates\u0022) .maxResults(5) .build()) .forEach(flow -\u003e IO.println(flow.getRef())); } CLI ✅ full support\nsdmx-dl list flows ECB -q \u0022exchange rates\u0022 -m 5 WS ✅ full support",
-      "wordCount": "163",
+      "name": "Discover databases",
+      "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/features/discover-databases/",
+      "headline": "Discover databases",
+      "description": "Find a database namespace within a multi-database source, when you don’t know its exact name.\nAPI listDatabases(...) always accepts an optional query\/maxResults; omit them to simply list every database.\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { Provider ecb = SdmxWebManager.ofServiceLoader().usingName(\u0022ECB\u0022); \/\/ List every database ecb.listDatabases(DatabasesRequest.DEFAULT) .forEach(database -\u003e IO.println(database.getRef())); \/\/ Search by name ecb.listDatabases(DatabasesRequest.builder() .query(\u0022central\u0022) .maxResults(5) .build()) .forEach(database -\u003e IO.println(database.getRef())); } CLI sdmx-dl list databases ECB sdmx-dl list databases ECB -q \u0022central\u0022 -m 5 WS REST curl \u0022localhost:4559\/sdmx-dl\/v2\/ECB\/databases\u0022 curl -G localhost:4559\/sdmx-dl\/v2\/ECB\/databases \\ --data-urlencode \u0022query=central\u0022 \\ --data-urlencode \u0022maxResults=5\u0022 gRPC grpcurl -d \u0027{\u0022source\u0022:\u0022ECB\u0022}\u0027 -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListDatabases grpcurl -d \u0027{\u0022source\u0022:\u0022ECB\u0022,\u0022query\u0022:\u0022central\u0022,\u0022maxResults\u0022:5}\u0027 -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListDatabases Notes Discovery and search are the same call: pass a query\/maxResults to search within a source, or omit them to list every database it exposes. Most sources expose a single default database, so this feature is only useful for multi-database providers. Search is scoped to one source at a time; use Discover sources first if you don’t know which source to search within. Related features Discover sources Discover flows ",
+      "wordCount": "174",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
           "@type": "WebPage",
-          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/features/search-flows/"
+          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/features/discover-databases/"
       },
       "copyrightHolder": "sdmx-dl",
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-14T14:12:03.00Z",
+      "dateModified": "2026-09-15T14:57:16.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -161,7 +158,7 @@ sdmx-dl list flows ECB -q &#34;exchange rates&#34; -m 5 WS ✅ full support" />
   href="/sdmx-dl/docs/develop/custom.css"
   media="all"
 />
-  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/features/search-flows/" rel="canonical" type="text/html" />
+  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/features/discover-databases/" rel="canonical" type="text/html" />
 
 <!-- Made with Geekdoc theme https://github.com/thegeeklab/hugo-geekdoc -->
 
@@ -996,6 +993,50 @@ sdmx-dl list flows ECB -q &#34;exchange rates&#34; -m 5 WS ✅ full support" />
               
                 <span class="flex">
                   <a
+                    href="/sdmx-dl/docs/develop/features/discover-databases/"
+                    class="gdoc-nav__entry is-active"
+                  >
+                    Discover databases
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
                     href="/sdmx-dl/docs/develop/features/discover-flows/"
                     class="gdoc-nav__entry"
                   >
@@ -1040,142 +1081,10 @@ sdmx-dl list flows ECB -q &#34;exchange rates&#34; -m 5 WS ✅ full support" />
               
                 <span class="flex">
                   <a
-                    href="/sdmx-dl/docs/develop/features/search-sources/"
+                    href="/sdmx-dl/docs/develop/features/browse-structure/"
                     class="gdoc-nav__entry"
                   >
-                    Search sources
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/search-flows/"
-                    class="gdoc-nav__entry is-active"
-                  >
-                    Search flows
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/search-databases/"
-                    class="gdoc-nav__entry"
-                  >
-                    Search databases
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/inspect-metadata/"
-                    class="gdoc-nav__entry"
-                  >
-                    Inspect metadata
+                    Browse dimensions and attributes
                   </a>
                 </span>
               
@@ -1260,10 +1169,54 @@ sdmx-dl list flows ECB -q &#34;exchange rates&#34; -m 5 WS ✅ full support" />
               
                 <span class="flex">
                   <a
-                    href="/sdmx-dl/docs/develop/features/check-availability/"
+                    href="/sdmx-dl/docs/develop/features/browse-availability/"
                     class="gdoc-nav__entry"
                   >
-                    Check availability
+                    Browse availability
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/features/inspect-metadata/"
+                    class="gdoc-nav__entry"
+                  >
+                    Inspect metadata
                   </a>
                 </span>
               
@@ -1567,7 +1520,7 @@ sdmx-dl list flows ECB -q &#34;exchange rates&#34; -m 5 WS ✅ full support" />
     
   
   
-    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/features/' href='/sdmx-dl/docs/develop/features/'><span itemprop='name'>Features</span></a><meta itemprop='position' content='5' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Search flows</span><meta itemprop='position' content='6' /></li>
+    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/features/' href='/sdmx-dl/docs/develop/features/'><span itemprop='name'>Features</span></a><meta itemprop='position' content='5' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Discover databases</span><meta itemprop='position' content='6' /></li>
   
 
   
@@ -1586,9 +1539,9 @@ sdmx-dl list flows ECB -q &#34;exchange rates&#34; -m 5 WS ✅ full support" />
     class="gdoc-markdown gdoc-markdown__align--left"
     id="main-content" tabindex="-1"
   >
-    <h1>Search flows</h1>
+    <h1>Discover databases</h1>
     
-    <p>Find a dataset by topic within a source when you don&rsquo;t know its exact flow ID.</p>
+    <p>Find a database namespace within a multi-database source, when you don&rsquo;t know its exact name.</p>
 
 
 
@@ -1596,77 +1549,83 @@ sdmx-dl list flows ECB -q &#34;exchange rates&#34; -m 5 WS ✅ full support" />
     <input
       type="radio"
       class="gdoc-tabs__control hidden"
-      name="tabs-search-flows"
-      id="tabs-search-flows-0"
+      name="tabs-discover-databases"
+      id="tabs-discover-databases-0"
       checked="checked"/>
-    <label for="tabs-search-flows-0" class="gdoc-tabs__label">
+    <label for="tabs-discover-databases-0" class="gdoc-tabs__label">
       API
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <p class="feature-status">✅ <strong>full support</strong></p>
+      <p><code>listDatabases(...)</code> always accepts an optional <code>query</code>/<code>maxResults</code>; omit them to simply list every database.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.*</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.SdmxWebManager</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">()</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">listFlows</span><span class="p">(</span><span class="n">FlowsRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">query</span><span class="p">(</span><span class="s">&#34;exchange rates&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Provider</span><span class="w"> </span><span class="n">ecb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SdmxWebManager</span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">().</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// List every database</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">ecb</span><span class="p">.</span><span class="na">listDatabases</span><span class="p">(</span><span class="n">DatabasesRequest</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">database</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">database</span><span class="p">.</span><span class="na">getRef</span><span class="p">()));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// Search by name</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">ecb</span><span class="p">.</span><span class="na">listDatabases</span><span class="p">(</span><span class="n">DatabasesRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">query</span><span class="p">(</span><span class="s">&#34;central&#34;</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">maxResults</span><span class="p">(</span><span class="n">5</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">flow</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">flow</span><span class="p">.</span><span class="na">getRef</span><span class="p">()));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">database</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">database</span><span class="p">.</span><span class="na">getRef</span><span class="p">()));</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></div></div>
     <input
       type="radio"
       class="gdoc-tabs__control hidden"
-      name="tabs-search-flows"
-      id="tabs-search-flows-1"
+      name="tabs-discover-databases"
+      id="tabs-discover-databases-1"
       />
-    <label for="tabs-search-flows-1" class="gdoc-tabs__label">
+    <label for="tabs-discover-databases-1" class="gdoc-tabs__label">
       CLI
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <p class="feature-status">✅ <strong>full support</strong></p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl list flows ECB -q <span class="s2">&#34;exchange rates&#34;</span> -m <span class="m">5</span>
+      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl list databases ECB
+</span></span><span class="line"><span class="cl">sdmx-dl list databases ECB -q <span class="s2">&#34;central&#34;</span> -m <span class="m">5</span>
 </span></span></code></pre></div></div>
     <input
       type="radio"
       class="gdoc-tabs__control hidden"
-      name="tabs-search-flows"
-      id="tabs-search-flows-2"
+      name="tabs-discover-databases"
+      id="tabs-discover-databases-2"
       />
-    <label for="tabs-search-flows-2" class="gdoc-tabs__label">
+    <label for="tabs-discover-databases-2" class="gdoc-tabs__label">
       WS
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <p class="feature-status">✅ <strong>full support</strong></p>
-<div class="flex align-center gdoc-page__anchorwrap">
+      <div class="flex align-center gdoc-page__anchorwrap">
     <h3 id="rest"
     >
         REST
     </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/search-flows/#rest" class="gdoc-page__anchor clip flex align-center" title="Anchor to: REST" aria-label="Anchor to: REST" href="#rest">
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/discover-databases/#rest" class="gdoc-page__anchor clip flex align-center" title="Anchor to: REST" aria-label="Anchor to: REST" href="#rest">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -X POST <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -H <span class="s2">&#34;Content-Type: application/json&#34;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  localhost:4559/sdmx-dl/searchFlows <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --data <span class="s2">&#34;{\&#34;source\&#34;:\&#34;ECB\&#34;,\&#34;query\&#34;:\&#34;exchange rates\&#34;,\&#34;maxResults\&#34;:5}&#34;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/ECB/databases&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">curl -G localhost:4559/sdmx-dl/v2/ECB/databases <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;query=central&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;maxResults=5&#34;</span>
 </span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
     <h3 id="grpc"
     >
         gRPC
     </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/search-flows/#grpc" class="gdoc-page__anchor clip flex align-center" title="Anchor to: gRPC" aria-label="Anchor to: gRPC" href="#grpc">
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/discover-databases/#grpc" class="gdoc-page__anchor clip flex align-center" title="Anchor to: gRPC" aria-label="Anchor to: gRPC" href="#grpc">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;query&#34;:&#34;exchange rates&#34;,&#34;maxResults&#34;:5}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.SdmxWebManager.SearchFlows
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListDatabases
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;query&#34;:&#34;central&#34;,&#34;maxResults&#34;:5}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListDatabases
 </span></span></code></pre></div></div>
 </div>
 
@@ -1675,39 +1634,36 @@ sdmx-dl list flows ECB -q &#34;exchange rates&#34; -m 5 WS ✅ full support" />
     >
         Notes
     </h2>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/search-flows/#notes" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Notes" aria-label="Anchor to: Notes" href="#notes">
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/discover-databases/#notes" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Notes" aria-label="Anchor to: Notes" href="#notes">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
 <ul>
-<li>Ranking is hybrid: lexical (BM25) fused with typo-tolerant trigram matching, so partial or approximate queries still surface the right flow.</li>
-<li>Search is scoped to a single source; use <a
+<li>Discovery and search are the same call: pass a <code>query</code>/<code>maxResults</code> to search within a source, or omit them to list every database it exposes.</li>
+<li>Most sources expose a single default database, so this feature is only useful for multi-database providers.</li>
+<li>Search is scoped to one source at a time; use <a
   class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/features/search-sources/"
->Search sources</a> first if you don&rsquo;t know which source to search within.</li>
-<li><code>Provider.listFlows(...)</code> accepts the <code>query</code>/<code>maxResults</code> directly on <code>FlowsRequest</code>, so a separate <code>Search.ofFlows(...)</code> call on an already-fetched list is only needed when you want access to the numeric relevance <code>getScore()</code> — see <a
-  class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/features/discover-flows/"
->Discover flows</a>.</li>
+  href="/sdmx-dl/docs/develop/features/discover-sources/"
+>Discover sources</a> first if you don&rsquo;t know which source to search within.</li>
 </ul>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="related-features"
     >
         Related features
     </h2>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/search-flows/#related-features" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Related features" aria-label="Anchor to: Related features" href="#related-features">
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/discover-databases/#related-features" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Related features" aria-label="Anchor to: Related features" href="#related-features">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
 <ul>
 <li><a
   class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/features/discover-flows/"
->Discover flows</a></li>
+  href="/sdmx-dl/docs/develop/features/discover-sources/"
+>Discover sources</a></li>
 <li><a
   class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/features/search-sources/"
->Search sources</a></li>
+  href="/sdmx-dl/docs/develop/features/discover-flows/"
+>Discover flows</a></li>
 </ul>
 
   </article>
@@ -2217,72 +2173,6 @@ sdmx-dl list flows ECB -q &#34;exchange rates&#34; -m 5 WS ✅ full support" />
         
 
         
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
           
           
         
@@ -2321,6 +2211,39 @@ sdmx-dl list flows ECB -q &#34;exchange rates&#34; -m 5 WS ✅ full support" />
             
             
           
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
         
 
         
@@ -2613,11 +2536,11 @@ sdmx-dl list flows ECB -q &#34;exchange rates&#34; -m 5 WS ✅ full support" />
   
     <a
       class="gdoc-page__nav--prev flex align-center"
-      href="/sdmx-dl/docs/develop/features/search-sources/"
-      title="Search sources"
+      href="/sdmx-dl/docs/develop/features/discover-sources/"
+      title="Discover sources"
     >
       <i class="gdoc-icon">gdoc_arrow_left_alt</i>
-      Search sources
+      Discover sources
     </a>
   
 </span>
@@ -2625,10 +2548,10 @@ sdmx-dl list flows ECB -q &#34;exchange rates&#34; -m 5 WS ✅ full support" />
   
     <a
       class="gdoc-page__nav--next flex align-center"
-      href="/sdmx-dl/docs/develop/features/search-databases/"
-      title="Search databases"
+      href="/sdmx-dl/docs/develop/features/discover-flows/"
+      title="Discover flows"
     >
-      Search databases
+      Discover flows
       <i class="gdoc-icon">gdoc_arrow_right_alt</i>
     </a>
   

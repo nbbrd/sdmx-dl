@@ -13,9 +13,8 @@
 
 
   <meta name="description" content="Download observations from a dataset using a source, flow, and key.
-API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .startPeriodOf(&#34;2020&#34;) .endPeriodOf(&#34;2022-12&#34;) .lastNObservations(3) .build()) .forEach(series -&gt; IO.println(series.getKey())); } CLI ✅ full support
-sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A With filters:" />
+API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .startPeriodOf(&#34;2020&#34;) .endPeriodOf(&#34;2022-12&#34;) .lastNObservations(3) .build()) .forEach(series -&gt; IO.println(series.getKey())); } CLI sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A With filters:
+sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --start 2020 --end 2022-12 --last-n 3 WS REST curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data \ --data-urlencode &#34;key=M.CHF.EUR.SP00.A&#34; \ --data-urlencode &#34;startPeriod=2020&#34; \ --data-urlencode &#34;endPeriod=2022-12&#34; \ --data-urlencode &#34;lastNObservations=3&#34; gRPC grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData Notes All flavors share the same request shape: source, flow, key, plus optional database, languages, and the filters described in Narrow your request. WS additionally offers GetDataStream/GET /sdmx-dl/v2/{source}/{flow}/data:stream to stream large responses instead of buffering the full dataset. Related features Discover sources Discover flows Inspect metadata " />
 
     <title>Retrieve data | sdmx-dl</title>
 
@@ -42,25 +41,23 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A With filters:" />
   />
   <meta property="og:site_name" content="sdmx-dl" />
   <meta property="og:description" content="Download observations from a dataset using a source, flow, and key.
-API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .startPeriodOf(&#34;2020&#34;) .endPeriodOf(&#34;2022-12&#34;) .lastNObservations(3) .build()) .forEach(series -&gt; IO.println(series.getKey())); } CLI ✅ full support
-sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A With filters:" />
+API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .startPeriodOf(&#34;2020&#34;) .endPeriodOf(&#34;2022-12&#34;) .lastNObservations(3) .build()) .forEach(series -&gt; IO.println(series.getKey())); } CLI sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A With filters:
+sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --start 2020 --end 2022-12 --last-n 3 WS REST curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data \ --data-urlencode &#34;key=M.CHF.EUR.SP00.A&#34; \ --data-urlencode &#34;startPeriod=2020&#34; \ --data-urlencode &#34;endPeriod=2022-12&#34; \ --data-urlencode &#34;lastNObservations=3&#34; gRPC grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData Notes All flavors share the same request shape: source, flow, key, plus optional database, languages, and the filters described in Narrow your request. WS additionally offers GetDataStream/GET /sdmx-dl/v2/{source}/{flow}/data:stream to stream large responses instead of buffering the full dataset. Related features Discover sources Discover flows Inspect metadata " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/features/retrieve-data/" />
 
 <meta property="article:section" content="Features" />
     <meta
       property="article:modified_time"
-      content="2026-09-14T14:12:03+02:00"
+      content="2026-09-15T14:57:16+02:00"
     />
 
 
   <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Retrieve data" />
   <meta name="twitter:description" content="Download observations from a dataset using a source, flow, and key.
-API ✅ full support
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .startPeriodOf(&#34;2020&#34;) .endPeriodOf(&#34;2022-12&#34;) .lastNObservations(3) .build()) .forEach(series -&gt; IO.println(series.getKey())); } CLI ✅ full support
-sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A With filters:" />
+API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .startPeriodOf(&#34;2020&#34;) .endPeriodOf(&#34;2022-12&#34;) .lastNObservations(3) .build()) .forEach(series -&gt; IO.println(series.getKey())); } CLI sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A With filters:
+sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --start 2020 --end 2022-12 --last-n 3 WS REST curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data \ --data-urlencode &#34;key=M.CHF.EUR.SP00.A&#34; \ --data-urlencode &#34;startPeriod=2020&#34; \ --data-urlencode &#34;endPeriod=2022-12&#34; \ --data-urlencode &#34;lastNObservations=3&#34; gRPC grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData Notes All flavors share the same request shape: source, flow, key, plus optional database, languages, and the filters described in Narrow your request. WS additionally offers GetDataStream/GET /sdmx-dl/v2/{source}/{flow}/data:stream to stream large responses instead of buffering the full dataset. Related features Discover sources Discover flows Inspect metadata " />
 
 
   <script type="application/ld+json">
@@ -71,8 +68,8 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A With filters:" />
       "name": "Retrieve data",
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/features/retrieve-data/",
       "headline": "Retrieve data",
-      "description": "Download observations from a dataset using a source, flow, and key.\nAPI ✅ full support\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(\u0022ECB\u0022) .getData(DataRequest.builder() .flowOf(\u0022EXR\u0022) .keyOf(\u0022M.CHF.EUR.SP00.A\u0022) .startPeriodOf(\u00222020\u0022) .endPeriodOf(\u00222022-12\u0022) .lastNObservations(3) .build()) .forEach(series -\u003e IO.println(series.getKey())); } CLI ✅ full support\nsdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A With filters:",
-      "wordCount": "133",
+      "description": "Download observations from a dataset using a source, flow, and key.\nAPI \/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(\u0022ECB\u0022) .getData(DataRequest.builder() .flowOf(\u0022EXR\u0022) .keyOf(\u0022M.CHF.EUR.SP00.A\u0022) .startPeriodOf(\u00222020\u0022) .endPeriodOf(\u00222022-12\u0022) .lastNObservations(3) .build()) .forEach(series -\u003e IO.println(series.getKey())); } CLI sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A With filters:\nsdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --start 2020 --end 2022-12 --last-n 3 WS REST curl -G localhost:4559\/sdmx-dl\/v2\/ECB\/EXR\/data \\ --data-urlencode \u0022key=M.CHF.EUR.SP00.A\u0022 \\ --data-urlencode \u0022startPeriod=2020\u0022 \\ --data-urlencode \u0022endPeriod=2022-12\u0022 \\ --data-urlencode \u0022lastNObservations=3\u0022 gRPC grpcurl -d \u0027{\u0022source\u0022:\u0022ECB\u0022,\u0022flow\u0022:\u0022EXR\u0022,\u0022key\u0022:\u0022M.CHF.EUR.SP00.A\u0022}\u0027 -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData Notes All flavors share the same request shape: source, flow, key, plus optional database, languages, and the filters described in Narrow your request. WS additionally offers GetDataStream\/GET \/sdmx-dl\/v2\/{source}\/{flow}\/data:stream to stream large responses instead of buffering the full dataset. Related features Discover sources Discover flows Inspect metadata ",
+      "wordCount": "130",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -83,7 +80,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A With filters:" />
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-14T14:12:03.00Z",
+      "dateModified": "2026-09-15T14:57:16.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -996,6 +993,50 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A With filters:" />
               
                 <span class="flex">
                   <a
+                    href="/sdmx-dl/docs/develop/features/discover-databases/"
+                    class="gdoc-nav__entry"
+                  >
+                    Discover databases
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
                     href="/sdmx-dl/docs/develop/features/discover-flows/"
                     class="gdoc-nav__entry"
                   >
@@ -1040,142 +1081,10 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A With filters:" />
               
                 <span class="flex">
                   <a
-                    href="/sdmx-dl/docs/develop/features/search-sources/"
+                    href="/sdmx-dl/docs/develop/features/browse-structure/"
                     class="gdoc-nav__entry"
                   >
-                    Search sources
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/search-flows/"
-                    class="gdoc-nav__entry"
-                  >
-                    Search flows
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/search-databases/"
-                    class="gdoc-nav__entry"
-                  >
-                    Search databases
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/inspect-metadata/"
-                    class="gdoc-nav__entry"
-                  >
-                    Inspect metadata
+                    Browse dimensions and attributes
                   </a>
                 </span>
               
@@ -1260,10 +1169,54 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A With filters:" />
               
                 <span class="flex">
                   <a
-                    href="/sdmx-dl/docs/develop/features/check-availability/"
+                    href="/sdmx-dl/docs/develop/features/browse-availability/"
                     class="gdoc-nav__entry"
                   >
-                    Check availability
+                    Browse availability
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/features/inspect-metadata/"
+                    class="gdoc-nav__entry"
+                  >
+                    Inspect metadata
                   </a>
                 </span>
               
@@ -1603,8 +1556,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A With filters:" />
       API
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <p class="feature-status">✅ <strong>full support</strong></p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
+      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.DataRequest</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.SdmxWebManager</span><span class="p">;</span><span class="w">
@@ -1633,8 +1585,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A With filters:" />
       CLI
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <p class="feature-status">✅ <strong>full support</strong></p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A
+      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A
 </span></span></code></pre></div><p>With filters:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --start <span class="m">2020</span> --end 2022-12 --last-n <span class="m">3</span>
 </span></span></code></pre></div></div>
@@ -1648,8 +1599,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A With filters:" />
       WS
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <p class="feature-status">✅ <strong>full support</strong></p>
-<div class="flex align-center gdoc-page__anchorwrap">
+      <div class="flex align-center gdoc-page__anchorwrap">
     <h3 id="rest"
     >
         REST
@@ -1658,10 +1608,11 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A With filters:" />
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -X POST <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -H <span class="s2">&#34;Content-Type: application/json&#34;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  localhost:4559/sdmx-dl/data <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --data <span class="s2">&#34;{\&#34;source\&#34;:\&#34;ECB\&#34;,\&#34;flow\&#34;:\&#34;EXR\&#34;,\&#34;key\&#34;:\&#34;M.CHF.EUR.SP00.A\&#34;,\&#34;start_period\&#34;:\&#34;2020\&#34;,\&#34;end_period\&#34;:\&#34;2022-12\&#34;,\&#34;last_n_observations\&#34;:3}&#34;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;key=M.CHF.EUR.SP00.A&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;startPeriod=2020&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;endPeriod=2022-12&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;lastNObservations=3&#34;</span>
 </span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
     <h3 id="grpc"
     >
@@ -1671,7 +1622,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A With filters:" />
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.SdmxWebManager.GetData
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
 </span></span></code></pre></div></div>
 </div>
 
@@ -1689,7 +1640,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A With filters:" />
   class="gdoc-markdown__link"
   href="/sdmx-dl/docs/develop/features/narrow-your-request/"
 >Narrow your request</a>.</li>
-<li>WS additionally offers <code>GetDataStream</code>/<code>/sdmx-dl/dataStream</code> to stream large responses instead of buffering the full dataset.</li>
+<li>WS additionally offers <code>GetDataStream</code>/<code>GET /sdmx-dl/v2/{source}/{flow}/data:stream</code> to stream large responses instead of buffering the full dataset.</li>
 </ul>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="related-features"
@@ -1707,8 +1658,12 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A With filters:" />
 >Discover sources</a></li>
 <li><a
   class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/features/search-flows/"
->Search flows</a></li>
+  href="/sdmx-dl/docs/develop/features/discover-flows/"
+>Discover flows</a></li>
+<li><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/features/inspect-metadata/"
+>Inspect metadata</a></li>
 </ul>
 
   </article>
@@ -2162,39 +2117,6 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A With filters:" />
   
 
   
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
   
     
 
