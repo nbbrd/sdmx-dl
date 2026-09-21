@@ -16,19 +16,18 @@
  */
 package internal.sdmxdl.format.xml;
 
-import lombok.NonNull;
-import sdmxdl.*;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import lombok.NonNull;
+import sdmxdl.*;
 
 /**
  * @author Philippe Charles
  */
-//@NotThreadSafe
+// @NotThreadSafe
 @SuppressWarnings("SwitchStatementWithTooFewBranches")
 public final class XMLStreamStructure21 {
 
@@ -75,8 +74,7 @@ public final class XMLStreamStructure21 {
         this.label = new TextBuilder(languages);
     }
 
-    @NonNull
-    public List<Structure> parse(@NonNull XMLStreamReader reader) throws XMLStreamException {
+    @NonNull public List<Structure> parse(@NonNull XMLStreamReader reader) throws XMLStreamException {
         if (XMLStreamUtil.isNotNamespaceAware(reader)) {
             throw new XMLStreamException("Cannot parse structure");
         }
@@ -164,7 +162,9 @@ public final class XMLStreamStructure21 {
         }
     }
 
-    private void parseConcept(XMLStreamReader reader, List<Concept> concepts, String conceptSchemeID, String conceptSchemeVersion) throws XMLStreamException {
+    private void parseConcept(
+            XMLStreamReader reader, List<Concept> concepts, String conceptSchemeID, String conceptSchemeVersion)
+            throws XMLStreamException {
         String id = reader.getAttributeValue(null, ID_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing Concept id");
 
@@ -185,18 +185,21 @@ public final class XMLStreamStructure21 {
         concepts.add(new Concept(id, label.build(id), coreRef, coreTextFormat, conceptSchemeID, conceptSchemeVersion));
     }
 
-    private void parseDataStructures(XMLStreamReader reader, List<Structure> result, DsdContext context) throws XMLStreamException {
+    private void parseDataStructures(XMLStreamReader reader, List<Structure> result, DsdContext context)
+            throws XMLStreamException {
         while (XMLStreamUtil.nextTag(reader, DATA_STUCTURES_TAG, DATA_STUCTURE_TAG)) {
             parseDataStructure(reader, result, context);
         }
     }
 
-    private void parseDataStructure(XMLStreamReader reader, List<Structure> result, DsdContext context) throws XMLStreamException {
+    private void parseDataStructure(XMLStreamReader reader, List<Structure> result, DsdContext context)
+            throws XMLStreamException {
         String id = reader.getAttributeValue(null, ID_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing DataStrucure id");
 
         Structure.Builder ds = Structure.builder();
-        ds.ref(StructureRef.of(reader.getAttributeValue(null, AGENCY_ID_ATTR), id, reader.getAttributeValue(null, VERSION_ATTR)));
+        ds.ref(StructureRef.of(
+                reader.getAttributeValue(null, AGENCY_ID_ATTR), id, reader.getAttributeValue(null, VERSION_ATTR)));
         structureLabel.clear();
         while (XMLStreamUtil.nextTags(reader, DATA_STUCTURE_TAG)) {
             switch (reader.getLocalName()) {
@@ -212,7 +215,8 @@ public final class XMLStreamStructure21 {
         result.add(ds.build());
     }
 
-    private void parseDataStructureComponents(XMLStreamReader reader, Structure.Builder ds, DsdContext context) throws XMLStreamException {
+    private void parseDataStructureComponents(XMLStreamReader reader, Structure.Builder ds, DsdContext context)
+            throws XMLStreamException {
         while (XMLStreamUtil.nextTags(reader, DATA_STUCTURE_COMPONENTS_TAG)) {
             switch (reader.getLocalName()) {
                 case DIMENSION_LIST_TAG:
@@ -228,7 +232,8 @@ public final class XMLStreamStructure21 {
         }
     }
 
-    private void parseDimensionList(XMLStreamReader reader, Structure.Builder ds, DsdContext context) throws XMLStreamException {
+    private void parseDimensionList(XMLStreamReader reader, Structure.Builder ds, DsdContext context)
+            throws XMLStreamException {
         while (XMLStreamUtil.nextTags(reader, DIMENSION_LIST_TAG)) {
             switch (reader.getLocalName()) {
                 case DIMENSION_TAG:
@@ -241,7 +246,8 @@ public final class XMLStreamStructure21 {
         }
     }
 
-    private void parseDimension(XMLStreamReader reader, Structure.Builder ds, DsdContext context) throws XMLStreamException {
+    private void parseDimension(XMLStreamReader reader, Structure.Builder ds, DsdContext context)
+            throws XMLStreamException {
         String id = reader.getAttributeValue(null, ID_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing Dimension id");
 
@@ -260,24 +266,29 @@ public final class XMLStreamStructure21 {
 
         XMLStreamUtil.check(conceptIdentity != null, reader, "Missing Concept identity for Dimension '%s'", id);
 
-        Concept concept = context.findConceptByConceptIdentity(conceptIdentity).orElseGet(missingConceptFallback(conceptIdentity));
-        CodelistRef ref = concept.resolveRef(localRepresentation != null ? localRepresentation.getEnumeration() : null).orElse(NO_CODELIST_REF);
+        Concept concept = context.findConceptByConceptIdentity(conceptIdentity)
+                .orElseGet(missingConceptFallback(conceptIdentity));
+        CodelistRef ref = concept.resolveRef(localRepresentation != null ? localRepresentation.getEnumeration() : null)
+                .orElse(NO_CODELIST_REF);
 
         if (ref == NO_CODELIST_REF) {
             // Non-enumerated dimension: valid only if a TextFormat representation is provided,
             // either locally on the dimension or inherited from the concept's core representation
-            boolean textFormat = (localRepresentation != null && localRepresentation.isTextFormat()) || concept.hasTextFormat();
-            XMLStreamUtil.check(textFormat, reader,
-                    "Missing Codelist or TextFormat representation for Dimension '%s'", id);
+            boolean textFormat =
+                    (localRepresentation != null && localRepresentation.isTextFormat()) || concept.hasTextFormat();
+            XMLStreamUtil.check(
+                    textFormat, reader, "Missing Codelist or TextFormat representation for Dimension '%s'", id);
         }
 
-        ds.dimension(Dimension
-                .builder()
+        ds.dimension(Dimension.builder()
                 .id(id)
                 .name(concept.getName())
-                .codelist(ref != NO_CODELIST_REF ? context.findCodelistByRef(ref).orElse(emptyCodelistFallback(ref)) : NO_CODELIST)
-                .build()
-        );
+                .codelist(
+                        ref != NO_CODELIST_REF
+                                ? context.findCodelistByRef(ref).orElse(emptyCodelistFallback(ref))
+                                : NO_CODELIST)
+                .index(context.getDimensionCount())
+                .build());
 
         context.incrementDimensionCount();
     }
@@ -292,8 +303,7 @@ public final class XMLStreamStructure21 {
                     reader.getAttributeValue(null, MAINTAINABLE_PARENT_ID_ATTR),
                     reader.getAttributeValue(null, MAINTAINABLE_PARENT_VERSION_ATTR),
                     reader.getAttributeValue(null, AGENCY_ID_ATTR),
-                    id
-            );
+                    id);
         }
         return null;
     }
@@ -306,7 +316,8 @@ public final class XMLStreamStructure21 {
         return parseRepresentation(reader, CORE_REPRESENTATION_TAG);
     }
 
-    private Representation parseRepresentation(XMLStreamReader reader, String representationTag) throws XMLStreamException {
+    private Representation parseRepresentation(XMLStreamReader reader, String representationTag)
+            throws XMLStreamException {
         CodelistRef enumeration = null;
         boolean textFormat = false;
         while (XMLStreamUtil.nextTags(reader, representationTag)) {
@@ -358,7 +369,8 @@ public final class XMLStreamStructure21 {
         }
     }
 
-    private void parseAttributeList(XMLStreamReader reader, Structure.Builder ds, DsdContext context) throws XMLStreamException {
+    private void parseAttributeList(XMLStreamReader reader, Structure.Builder ds, DsdContext context)
+            throws XMLStreamException {
         while (XMLStreamUtil.nextTags(reader, ATTRIBUTE_LIST_TAG)) {
             switch (reader.getLocalName()) {
                 case ATTRIBUTE_TAG:
@@ -368,7 +380,8 @@ public final class XMLStreamStructure21 {
         }
     }
 
-    private void parseAttribute(XMLStreamReader reader, Structure.Builder ds, DsdContext context) throws XMLStreamException {
+    private void parseAttribute(XMLStreamReader reader, Structure.Builder ds, DsdContext context)
+            throws XMLStreamException {
         String id = reader.getAttributeValue(null, ID_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing Attribute id");
 
@@ -391,20 +404,21 @@ public final class XMLStreamStructure21 {
 
         XMLStreamUtil.check(conceptIdentity != null, reader, "Missing Concept identity for Attribute '%s'", id);
 
-        Concept concept = context.findConceptByConceptIdentity(conceptIdentity).orElseGet(missingConceptFallback(conceptIdentity));
-        CodelistRef ref = concept.resolveRef(localRepresentation != null ? localRepresentation.getEnumeration() : null).orElse(NO_CODELIST_REF);
+        Concept concept = context.findConceptByConceptIdentity(conceptIdentity)
+                .orElseGet(missingConceptFallback(conceptIdentity));
+        CodelistRef ref = concept.resolveRef(localRepresentation != null ? localRepresentation.getEnumeration() : null)
+                .orElse(NO_CODELIST_REF);
 
-        ds.attribute(Attribute
-                .builder()
+        ds.attribute(Attribute.builder()
                 .id(id)
                 .name(concept.getName())
                 .codelist(context.findCodelistByRef(ref).orElse(NO_CODELIST))
                 .relationship(attributeRelationship)
-                .build()
-        );
+                .build());
     }
 
-    private AttributeRelationship parseAttributeRelationship(XMLStreamReader reader, DsdContext context) throws XMLStreamException {
+    private AttributeRelationship parseAttributeRelationship(XMLStreamReader reader, DsdContext context)
+            throws XMLStreamException {
         AttributeRelationship result = AttributeRelationship.DATAFLOW;
         int dimensionCount = 0;
         while (XMLStreamUtil.nextTags(reader, ATTRIBUTE_RELATIONSHIP_TAG)) {
@@ -418,7 +432,9 @@ public final class XMLStreamStructure21 {
             }
         }
         if (dimensionCount > 0) {
-            result = dimensionCount < context.getDimensionCount() ? AttributeRelationship.GROUP : AttributeRelationship.SERIES;
+            result = dimensionCount < context.getDimensionCount()
+                    ? AttributeRelationship.GROUP
+                    : AttributeRelationship.SERIES;
         }
         return result;
     }
@@ -437,8 +453,7 @@ public final class XMLStreamStructure21 {
     @lombok.Value
     private static class Representation {
 
-        @org.jspecify.annotations.Nullable
-        CodelistRef enumeration;
+        @org.jspecify.annotations.Nullable CodelistRef enumeration;
 
         boolean textFormat;
     }

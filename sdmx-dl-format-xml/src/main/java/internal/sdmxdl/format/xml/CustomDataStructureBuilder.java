@@ -16,15 +16,14 @@
  */
 package internal.sdmxdl.format.xml;
 
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.regex.Pattern;
 import lombok.NonNull;
 import nbbrd.io.net.MediaType;
 import org.jspecify.annotations.Nullable;
 import sdmxdl.*;
 import sdmxdl.format.xml.XmlMediaTypes;
-
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.regex.Pattern;
 
 /**
  * @author Philippe Charles
@@ -38,49 +37,41 @@ public final class CustomDataStructureBuilder {
     private String timeDimensionId = null;
     private String primaryMeasureId = null;
 
-    @NonNull
-    public CustomDataStructureBuilder dimension(@NonNull String concept, @NonNull String value) {
+    @NonNull public CustomDataStructureBuilder dimension(@NonNull String concept, @NonNull String value) {
         putMulti(dimensions, concept, value);
         return this;
     }
 
-    @NonNull
-    public CustomDataStructureBuilder attribute(@NonNull String concept, @NonNull String value) {
+    @NonNull public CustomDataStructureBuilder attribute(@NonNull String concept, @NonNull String value) {
         putMulti(attributes, concept, value);
         return this;
     }
 
-    @NonNull
-    public CustomDataStructureBuilder fileType(@NonNull MediaType fileType) {
+    @NonNull public CustomDataStructureBuilder fileType(@NonNull MediaType fileType) {
         this.fileType = fileType;
         return this;
     }
 
-    @NonNull
-    public CustomDataStructureBuilder refId(@NonNull String refId) {
+    @NonNull public CustomDataStructureBuilder refId(@NonNull String refId) {
         return ref(StructureRef.of(null, refId, null));
     }
 
-    @NonNull
-    public CustomDataStructureBuilder ref(@NonNull StructureRef ref) {
+    @NonNull public CustomDataStructureBuilder ref(@NonNull StructureRef ref) {
         this.ref = ref;
         return this;
     }
 
-    @NonNull
-    public CustomDataStructureBuilder timeDimensionId(@Nullable String timeDimensionId) {
+    @NonNull public CustomDataStructureBuilder timeDimensionId(@Nullable String timeDimensionId) {
         this.timeDimensionId = timeDimensionId;
         return this;
     }
 
-    @NonNull
-    public CustomDataStructureBuilder primaryMeasureId(@Nullable String primaryMeasureId) {
+    @NonNull public CustomDataStructureBuilder primaryMeasureId(@Nullable String primaryMeasureId) {
         this.primaryMeasureId = primaryMeasureId;
         return this;
     }
 
-    @NonNull
-    public Structure build() {
+    @NonNull public Structure build() {
         return Structure.builder()
                 .ref(ref)
                 .dimensions(guessDimensions())
@@ -91,13 +82,15 @@ public final class CustomDataStructureBuilder {
     }
 
     private Set<Dimension> guessDimensions() {
+        int index = 0;
         Set<Dimension> result = new LinkedHashSet<>();
-        boolean needsFiltering = fileType.equals(XmlMediaTypes.STRUCTURE_SPECIFIC_DATA_20) || fileType.equals(XmlMediaTypes.STRUCTURE_SPECIFIC_DATA_21);
+        boolean needsFiltering = fileType.equals(XmlMediaTypes.STRUCTURE_SPECIFIC_DATA_20)
+                || fileType.equals(XmlMediaTypes.STRUCTURE_SPECIFIC_DATA_21);
         for (Entry<String, Set<String>> item : dimensions.entrySet()) {
             if (needsFiltering && isAttribute(item)) {
                 continue;
             }
-            result.add(dimension(item.getKey(), item.getValue()));
+            result.add(dimension(item.getKey(), index++, item.getValue()));
         }
         return result;
     }
@@ -106,7 +99,8 @@ public final class CustomDataStructureBuilder {
         if (item.getKey().contains("TITLE")) {
             return true;
         }
-        return item.getValue().stream().anyMatch(o -> WHITE_SPACE_PATTERN.matcher(o).find());
+        return item.getValue().stream()
+                .anyMatch(o -> WHITE_SPACE_PATTERN.matcher(o).find());
     }
 
     private static final Pattern WHITE_SPACE_PATTERN = Pattern.compile("\\s+");
@@ -115,11 +109,11 @@ public final class CustomDataStructureBuilder {
         map.computeIfAbsent(key, k -> new HashSet<>()).add(value);
     }
 
-    public static Dimension dimension(String name, String... values) {
-        return dimension(name, Arrays.asList(values));
+    public static Dimension dimension(String name, int index, String... values) {
+        return dimension(name, index, Arrays.asList(values));
     }
 
-    public static Dimension dimension(String name, Collection<String> values) {
+    public static Dimension dimension(String name, int index, Collection<String> values) {
         Codelist.Builder codelist = Codelist.builder().ref(CodelistRef.parse(name));
         values.forEach(o -> codelist.code(o, o));
 
@@ -127,6 +121,7 @@ public final class CustomDataStructureBuilder {
                 .id(name)
                 .name(name)
                 .codelist(codelist.build())
+                .index(index)
                 .build();
     }
 }

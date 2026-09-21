@@ -16,15 +16,14 @@
  */
 package sdmxdl.format.xml;
 
+import static internal.sdmxdl.format.xml.CustomDataStructureBuilder.dimension;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import sdmxdl.Structure;
 import sdmxdl.StructureRef;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
-
-import java.io.IOException;
-
-import static internal.sdmxdl.format.xml.CustomDataStructureBuilder.dimension;
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Philippe Charles
@@ -35,70 +34,74 @@ public class StructureDecoderTest {
     public void testDecodeGeneric20() throws IOException {
         Structure ds = Structure.builder()
                 .ref(StructureRef.of(null, "BIS_JOINT_DEBT", null))
-                .dimension(dimension("FREQ", "A", "M"))
-                .dimension(dimension("JD_TYPE", "P"))
-                .dimension(dimension("JD_CATEGORY", "A"))
-                .dimension(dimension("VIS_CTY", "MX"))
+                .dimension(dimension("FREQ", 0, "A", "M"))
+                .dimension(dimension("JD_TYPE", 1, "P"))
+                .dimension(dimension("JD_CATEGORY", 2, "A"))
+                .dimension(dimension("VIS_CTY", 3, "MX"))
                 .name("BIS_JOINT_DEBT")
                 .timeDimensionId("TIME_PERIOD")
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
-        assertThat(DataStructureDecoder.generic20().parseReader(SdmxXmlSources.OTHER_GENERIC20::openReader)).isEqualTo(ds);
+        assertThat(DataStructureDecoder.generic20().parseReader(SdmxXmlSources.OTHER_GENERIC20::openReader))
+                .isEqualTo(ds);
     }
 
     @Test
     public void testDecodeCompact20() throws IOException {
         Structure ds = Structure.builder()
                 .ref(StructureRef.of(null, "UNKNOWN", null))
-                .dimension(dimension("FREQ", "A", "M"))
-                .dimension(dimension("COLLECTION", "B"))
-                .dimension(dimension("VIS_CTY", "MX"))
-                .dimension(dimension("JD_TYPE", "P"))
-                .dimension(dimension("JD_CATEGORY", "A", "B"))
+                .dimension(dimension("FREQ", 0, "A", "M"))
+                .dimension(dimension("COLLECTION", 1, "B"))
+                .dimension(dimension("VIS_CTY", 2, "MX"))
+                .dimension(dimension("JD_TYPE", 3, "P"))
+                .dimension(dimension("JD_CATEGORY", 4, "A", "B"))
                 .name("UNKNOWN")
                 .timeDimensionId("TIME_PERIOD")
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
-        assertThat(DataStructureDecoder.compact20().parseReader(SdmxXmlSources.OTHER_COMPACT20::openReader)).isEqualTo(ds);
+        assertThat(DataStructureDecoder.compact20().parseReader(SdmxXmlSources.OTHER_COMPACT20::openReader))
+                .isEqualTo(ds);
     }
 
     @Test
     public void testDecodeGeneric21() throws IOException {
         Structure ds = Structure.builder()
                 .ref(StructureRef.of(null, "ECB_AME1", null))
-                .dimension(dimension("FREQ", "A"))
-                .dimension(dimension("AME_REF_AREA", "BEL"))
-                .dimension(dimension("AME_TRANSFORMATION", "1"))
-                .dimension(dimension("AME_AGG_METHOD", "0"))
-                .dimension(dimension("AME_UNIT", "0"))
-                .dimension(dimension("AME_REFERENCE", "0"))
-                .dimension(dimension("AME_ITEM", "OVGD"))
+                .dimension(dimension("FREQ", 0, "A"))
+                .dimension(dimension("AME_REF_AREA", 1, "BEL"))
+                .dimension(dimension("AME_TRANSFORMATION", 2, "1"))
+                .dimension(dimension("AME_AGG_METHOD", 3, "0"))
+                .dimension(dimension("AME_UNIT", 4, "0"))
+                .dimension(dimension("AME_REFERENCE", 5, "0"))
+                .dimension(dimension("AME_ITEM", 6, "OVGD"))
                 .name("ECB_AME1")
                 .timeDimensionId("TIME_PERIOD")
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
-        assertThat(DataStructureDecoder.generic21().parseReader(SdmxXmlSources.OTHER_GENERIC21::openReader)).isEqualTo(ds);
+        assertThat(DataStructureDecoder.generic21().parseReader(SdmxXmlSources.OTHER_GENERIC21::openReader))
+                .isEqualTo(ds);
     }
 
     @Test
     public void testDecodeCompact21() throws IOException {
         Structure ds = Structure.builder()
                 .ref(StructureRef.of(null, "ECB_AME1", null))
-                .dimension(dimension("FREQ", "A"))
-                .dimension(dimension("AME_REF_AREA", "BEL"))
-                .dimension(dimension("AME_TRANSFORMATION", "1"))
-                .dimension(dimension("AME_AGG_METHOD", "0"))
-                .dimension(dimension("AME_UNIT", "0"))
-                .dimension(dimension("AME_REFERENCE", "0"))
-                .dimension(dimension("AME_ITEM", "OVGD"))
+                .dimension(dimension("FREQ", 0, "A"))
+                .dimension(dimension("AME_REF_AREA", 1, "BEL"))
+                .dimension(dimension("AME_TRANSFORMATION", 2, "1"))
+                .dimension(dimension("AME_AGG_METHOD", 3, "0"))
+                .dimension(dimension("AME_UNIT", 4, "0"))
+                .dimension(dimension("AME_REFERENCE", 5, "0"))
+                .dimension(dimension("AME_ITEM", 6, "OVGD"))
                 .name("ECB_AME1")
                 .timeDimensionId("TIME_PERIOD")
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
-        assertThat(DataStructureDecoder.compact21().parseReader(SdmxXmlSources.OTHER_COMPACT21::openReader)).isEqualTo(ds);
+        assertThat(DataStructureDecoder.compact21().parseReader(SdmxXmlSources.OTHER_COMPACT21::openReader))
+                .isEqualTo(ds);
     }
 }

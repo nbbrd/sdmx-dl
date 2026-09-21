@@ -24,15 +24,10 @@ import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.function.ToIntFunction;
-import java.util.stream.Stream;
 import nbbrd.io.text.Formatter;
-import org.jspecify.annotations.Nullable;
 import picocli.CommandLine;
 import sdmxdl.Dimension;
 import sdmxdl.DimensionsRequest;
-import sdmxdl.Provider;
-import sdmxdl.web.WebSource;
 
 /**
  * @author Philippe Charles
@@ -58,47 +53,24 @@ public final class ListDimensionsCommand implements Callable<Void> {
         return null;
     }
 
-    private CsvTable<IndexedComponent> getTable() {
-        return CsvTable.builderOf(IndexedComponent.class)
-                .columnOf("Name", IndexedComponent::getId)
-                .columnOf("Label", IndexedComponent::getName)
-                .columnOf("Coded", IndexedComponent::isCoded, Formatter.onBoolean())
-                .columnOf("Index", IndexedComponent::getIndexOrNull, Formatter.onInteger())
+    private CsvTable<Dimension> getTable() {
+        return CsvTable.builderOf(Dimension.class)
+                .columnOf("Name", Dimension::getId)
+                .columnOf("Label", Dimension::getName)
+                .columnOf("Coded", Dimension::isCoded, Formatter.onBoolean())
+                .columnOf("Index", Dimension::getIndex, Formatter.onInteger())
                 .build();
     }
 
-    private Stream<IndexedComponent> getRows() throws IOException {
-        Provider<WebSource> provider = web.loadManager().usingName(web.getSource());
-        return getDimensions(
-                getIndexFunction(provider),
-                provider.listDimensions(DimensionsRequest.builder()
+    private List<Dimension> getRows() throws IOException {
+        return web.loadManager()
+                .usingName(web.getSource())
+                .listDimensions(DimensionsRequest.builder()
                         .languages(web.getLangs())
                         .database(web.getDatabase())
                         .flow(web.getFlow())
                         .query(listSearch.getSearchQuery())
                         .maxResults(listSearch.getMaxResults())
-                        .build()));
-    }
-
-    private ToIntFunction<Dimension> getIndexFunction(Provider<WebSource> provider) throws IOException {
-        List<Dimension> dimensions = provider.listDimensions(DimensionsRequest.builder()
-                .languages(web.getLangs())
-                .database(web.getDatabase())
-                .flow(web.getFlow())
-                .build());
-        return dimension -> Dimension.indexOf(dimensions, dimension.getId()); // FIXME
-    }
-
-    private Stream<IndexedComponent> getDimensions(ToIntFunction<Dimension> index, List<Dimension> dimensions) {
-        return dimensions.stream().map(dimension -> new IndexedComponent(index.applyAsInt(dimension), dimension));
-    }
-
-    @lombok.Value
-    private static class IndexedComponent {
-
-        @Nullable Integer indexOrNull;
-
-        @lombok.NonNull @lombok.experimental.Delegate
-        Dimension component;
+                        .build());
     }
 }

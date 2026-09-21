@@ -16,9 +16,7 @@
  */
 package sdmxdl;
 
-import java.util.List;
-import java.util.function.Function;
-import nbbrd.design.MightBePromoted;
+import nbbrd.design.NonNegative;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -57,20 +55,7 @@ public class Dimension extends Component {
      */
     @Nullable Codelist codelist;
 
+    @NonNegative int index;
+
     public static final class Builder extends Component.Builder<Dimension.Builder> {}
-
-    // FIXME: dimensions should contain an index field, so we don't have to do this linear search
-    public static int indexOf(List<Dimension> dimensions, String id) {
-        return indexOf(dimensions, id, Dimension::getId);
-    }
-
-    @MightBePromoted
-    private static <T, I> int indexOf(List<T> list, I id, Function<T, I> idFunction) {
-        for (int i = 0; i < list.size(); i++) {
-            if (idFunction.apply(list.get(i)).equals(id)) {
-                return i;
-            }
-        }
-        return -1;
-    }
 }

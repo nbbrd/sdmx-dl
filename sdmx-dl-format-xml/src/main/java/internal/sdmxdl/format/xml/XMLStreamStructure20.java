@@ -16,18 +16,17 @@
  */
 package internal.sdmxdl.format.xml;
 
-import lombok.NonNull;
-import sdmxdl.*;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import lombok.NonNull;
+import sdmxdl.*;
 
 /**
  * @author Philippe Charles
  */
-//@NotThreadSafe
+// @NotThreadSafe
 public final class XMLStreamStructure20 {
 
     private static final String HEADER_TAG = "Header";
@@ -63,8 +62,7 @@ public final class XMLStreamStructure20 {
         this.label = new TextBuilder(languages);
     }
 
-    @NonNull
-    public List<Structure> parse(@NonNull XMLStreamReader reader) throws XMLStreamException {
+    @NonNull public List<Structure> parse(@NonNull XMLStreamReader reader) throws XMLStreamException {
         if (XMLStreamUtil.isNotNamespaceAware(reader)) {
             throw new XMLStreamException("Cannot parse structure");
         }
@@ -145,21 +143,22 @@ public final class XMLStreamStructure20 {
         concepts.add(new Concept(id, label.build(id), null, false, null, null));
     }
 
-    private void parseDataStructures(XMLStreamReader reader, List<Structure> result, DsdContext context) throws XMLStreamException {
+    private void parseDataStructures(XMLStreamReader reader, List<Structure> result, DsdContext context)
+            throws XMLStreamException {
         while (XMLStreamUtil.nextTag(reader, KEY_FAMILIES_TAG, KEY_FAMILY_TAG)) {
             parseDataStructure(reader, result, context);
         }
     }
 
-    private void parseDataStructure(XMLStreamReader reader, List<Structure> result, DsdContext context) throws XMLStreamException {
+    private void parseDataStructure(XMLStreamReader reader, List<Structure> result, DsdContext context)
+            throws XMLStreamException {
         String id = reader.getAttributeValue(null, ID_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing DataStrucure id");
 
         String optionalAgency = reader.getAttributeValue(null, AGENCY_ID_ATTR);
         String optionalVersion = reader.getAttributeValue(null, VERSION_ATTR);
 
-        Structure.Builder ds = Structure
-                .builder()
+        Structure.Builder ds = Structure.builder()
                 .ref(StructureRef.of(optionalAgency, id, optionalVersion))
                 .primaryMeasureId("");
         structureLabel.clear();
@@ -177,7 +176,8 @@ public final class XMLStreamStructure20 {
         result.add(ds.build());
     }
 
-    private void parseDataStructureComponents(XMLStreamReader reader, Structure.Builder ds, DsdContext context) throws XMLStreamException {
+    private void parseDataStructureComponents(XMLStreamReader reader, Structure.Builder ds, DsdContext context)
+            throws XMLStreamException {
         while (XMLStreamUtil.nextTags(reader, COMPONENTS_TAG)) {
             switch (reader.getLocalName()) {
                 case DIMENSION_TAG:
@@ -196,7 +196,8 @@ public final class XMLStreamStructure20 {
         }
     }
 
-    private void parseComponent(XMLStreamReader reader, Component.Builder<?> component, DsdContext context) throws XMLStreamException {
+    private void parseComponent(XMLStreamReader reader, Component.Builder<?> component, DsdContext context)
+            throws XMLStreamException {
         String id = reader.getAttributeValue(null, CONCEPT_REF_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing Dimension id");
 
@@ -210,13 +211,17 @@ public final class XMLStreamStructure20 {
 
         CodelistRef ref = CodelistRef.of(null, codelist, null);
 
-        component.codelist(context.findCodelistByRef(ref).orElse(Codelist.builder().ref(ref).build()));
+        component.codelist(context.findCodelistByRef(ref)
+                .orElse(Codelist.builder().ref(ref).build()));
     }
 
-    private void parseDimension(XMLStreamReader reader, Structure.Builder ds, DsdContext context) throws XMLStreamException {
+    private void parseDimension(XMLStreamReader reader, Structure.Builder ds, DsdContext context)
+            throws XMLStreamException {
         Dimension.Builder result = Dimension.builder();
         parseComponent(reader, result, context);
+        result.index(context.getDimensionCount());
         ds.dimension(result.build());
+        context.incrementDimensionCount();
     }
 
     private void parseTimeDimension(XMLStreamReader reader, Structure.Builder ds) throws XMLStreamException {
@@ -240,7 +245,8 @@ public final class XMLStreamStructure20 {
         }
     }
 
-    private void parseAttribute(XMLStreamReader reader, Structure.Builder ds, DsdContext context) throws XMLStreamException {
+    private void parseAttribute(XMLStreamReader reader, Structure.Builder ds, DsdContext context)
+            throws XMLStreamException {
         Attribute.Builder result = Attribute.builder();
         parseComponent(reader, result, context);
         result.relationship(getAttributeRelationship(reader.getAttributeValue(null, ATTACHMENT_LEVEL_ATTR)));

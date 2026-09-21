@@ -1,19 +1,17 @@
 package tests.sdmxdl.api;
 
-import lombok.NonNull;
-import org.assertj.core.api.Assertions;
-import org.assertj.core.api.Condition;
-import sdmxdl.*;
-
-import java.util.Collection;
-
-import static org.assertj.core.api.Assertions.anyOf;
-import static org.assertj.core.api.Assertions.not;
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.HamcrestCondition.matching;
 import static org.assertj.core.condition.NestableCondition.nestable;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.hamcrest.text.IsBlankString.blankOrNullString;
 import static org.hamcrest.text.IsBlankString.blankString;
+
+import java.util.Collection;
+import java.util.concurrent.atomic.AtomicInteger;
+import lombok.NonNull;
+import org.assertj.core.api.Condition;
+import sdmxdl.*;
 
 @lombok.experimental.UtilityClass
 public class SdmxConditions {
@@ -23,47 +21,44 @@ public class SdmxConditions {
     }
 
     public static <T extends ResourceRef<T>> @NonNull Condition<T> validResourceRef() {
-        return nestable("resource",
+        return nestable(
+                "resource",
                 nestable("agency", ResourceRef::getAgency, not(matching(blankString()))),
                 nestable("id", ResourceRef::getId, not(matching(blankString()))),
-                nestable("version", ResourceRef::getVersion, not(matching(blankString())))
-        );
+                nestable("version", ResourceRef::getVersion, not(matching(blankString()))));
     }
 
     public static @NonNull Condition<Flow> validFlow(boolean allowNoDescription) {
-        return Assertions.allOf(
-                validResource(),
-                validName(),
-                validDescription(allowNoDescription)
-        );
+        return allOf(validResource(), validName(), validDescription(allowNoDescription));
     }
 
     public static @NonNull Condition<Structure> validStructure() {
-        return Assertions.allOf(
-                validResource(),
-                validName()
-        );
+        return allOf(validResource(), validName());
     }
 
     public static @NonNull Condition<Component> validComponent() {
-        return Assertions.allOf(
+        return allOf(
                 validComponentId(),
                 validName(),
-                nestable("codelist", Component::getCodelist, anyOf(matching(nullValue()), validCodelist()))
-        );
+                nestable("codelist", Component::getCodelist, anyOf(matching(nullValue()), validCodelist())));
     }
 
     public static @NonNull Condition<Attribute> validAttribute() {
-        return Assertions.allOf(
-                validComponent()
-        );
+        return allOf(validComponent());
     }
 
     public static @NonNull Condition<Dimension> validDimension() {
-        return Assertions.allOf(
-                validComponent()
-                //new Condition<>(dimension -> dimension.getPosition() > 0, "a dimension must have a positive position"),
-        );
+        return allOf(validComponent(), nonNegativeIndex());
+    }
+
+    public static @NonNull Condition<Collection<? extends Dimension>> orderedByDimensionIndex() {
+        return new Condition<>(
+                SdmxConditions::isOrderedByDimensionIndex,
+                "a dimension list must be a 0-based sequence incremented by 1");
+    }
+
+    private static Condition<Dimension> nonNegativeIndex() {
+        return new Condition<>(dimension -> dimension.getIndex() >= 0, "a dimension must have a non-negative index");
     }
 
     public static <T extends Component> @NonNull Condition<T> validComponentId() {
@@ -75,7 +70,9 @@ public class SdmxConditions {
     }
 
     public static <T extends HasDescription> @NonNull Condition<T> validDescription(boolean allowNoDescription) {
-        return allowNoDescription ? ignore() : nestable("description", HasDescription::getDescription, not(matching(blankOrNullString())));
+        return allowNoDescription
+                ? ignore()
+                : nestable("description", HasDescription::getDescription, not(matching(blankOrNullString())));
     }
 
     public static @NonNull Condition<Codelist> validCodelist() {
@@ -87,10 +84,19 @@ public class SdmxConditions {
     }
 
     public static Condition<Series> uniqueObs() {
-        return new Condition<>(o -> o.getObs().stream().map(Obs::getPeriod).distinct().count() == o.getObs().size(), "unique obs");
+        return new Condition<>(
+                series ->
+                        series.getObs().stream().map(Obs::getPeriod).distinct().count()
+                                == series.getObs().size(),
+                "unique obs");
     }
 
     private static <T> Condition<T> ignore() {
         return new Condition<>(ignore -> true, "ignore");
+    }
+
+    private static boolean isOrderedByDimensionIndex(Collection<? extends Dimension> list) {
+        AtomicInteger expectedIndex = new AtomicInteger(0);
+        return list.stream().mapToInt(Dimension::getIndex).allMatch(index -> index == expectedIndex.getAndIncrement());
     }
 }

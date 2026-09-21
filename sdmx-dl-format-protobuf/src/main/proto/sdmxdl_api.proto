@@ -74,6 +74,7 @@ message DimensionDto {
   string id = 1;
   string name = 2;
   optional CodelistDto codelist = 3;
+  int32 index = 4;
 }
 
 enum FeatureDto {

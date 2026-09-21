@@ -78,8 +78,7 @@ public class ConnectionAssert {
                 supplier,
                 o -> o.getDataStream(NO_DATABASE, sample.validFlow, Query.ALL),
                 "getDataStream(DataflowRef, DataQuery)");
-        assertState(
-                s, supplier, o -> o.getMeta(NO_DATABASE, sample.validFlow), "getMeta(DataflowRef)");
+        assertState(s, supplier, o -> o.getMeta(NO_DATABASE, sample.validFlow), "getMeta(DataflowRef)");
         assertState(s, supplier, o -> o.getFlows(NO_DATABASE), "getFlows()");
         assertState(
                 s,
@@ -97,8 +96,7 @@ public class ConnectionAssert {
         }
     }
 
-    private void checkValidFlow(SoftAssertions s, Sample sample, Connection conn)
-            throws IOException {
+    private void checkValidFlow(SoftAssertions s, Sample sample, Connection conn) throws IOException {
         assertNonnull(s, conn, sample.validFlow);
         for (Detail filter : Detail.values()) {
             checkValidKey(s, sample, conn, filter);
@@ -107,20 +105,19 @@ public class ConnectionAssert {
 
         checkObsFiltering(s, sample, conn);
 
-        s.assertThat(conn.getFlows(NO_DATABASE))
-                .are(validFlow(true))
-                .anyMatch(sample.validFlow::containsRef);
+        s.assertThat(conn.getFlows(NO_DATABASE)).are(validFlow(true)).anyMatch(sample.validFlow::containsRef);
 
         s.assertThat(conn.getMeta(NO_DATABASE, sample.validFlow).getFlow()).is(validFlow(true));
 
         Structure dsd = conn.getMeta(NO_DATABASE, sample.validFlow).getStructure();
         s.assertThat(dsd).has(validName());
         s.assertThat(dsd.getAttributes()).are(validAttribute());
-        s.assertThat(dsd.getDimensions()).are(validDimension());
+        s.assertThat(dsd.getDimensions()).are(validDimension()).is(orderedByDimensionIndex());
     }
 
     private void checkInvalidKey(SoftAssertions s, Sample sample, Connection conn, Detail filter) {
-        Query invalidQuery = Query.builder().key(sample.invalidKey).detail(filter).build();
+        Query invalidQuery =
+                Query.builder().key(sample.invalidKey).detail(filter).build();
 
         s.assertThatThrownBy(() -> conn.getData(NO_DATABASE, sample.validFlow, invalidQuery))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -131,8 +128,7 @@ public class ConnectionAssert {
                 .hasMessageContainingAll("Expecting key", sample.invalidKey.toString());
     }
 
-    private void checkValidKey(SoftAssertions s, Sample sample, Connection conn, Detail filter)
-            throws IOException {
+    private void checkValidKey(SoftAssertions s, Sample sample, Connection conn, Detail filter) throws IOException {
         Query validQuery = Query.builder().key(sample.validKey).detail(filter).build();
 
         s.assertThat(conn.getDataStream(NO_DATABASE, sample.validFlow, validQuery))
@@ -140,41 +136,43 @@ public class ConnectionAssert {
                         conn.getData(NO_DATABASE, sample.validFlow, validQuery).getData());
     }
 
-    private void checkObsFiltering(SoftAssertions s, Sample sample, Connection conn)
-            throws IOException {
+    private void checkObsFiltering(SoftAssertions s, Sample sample, Connection conn) throws IOException {
         // firstN/lastN truncation never yields more than N observations per series,
         // regardless of whether the source supports observation-count filtering server-side.
-        for (Series series :
-                conn.getData(
-                                NO_DATABASE,
-                                sample.validFlow,
-                                Query.builder().key(sample.validKey).firstNObservations(1).build())
-                        .getData()) {
+        for (Series series : conn.getData(
+                        NO_DATABASE,
+                        sample.validFlow,
+                        Query.builder()
+                                .key(sample.validKey)
+                                .firstNObservations(1)
+                                .build())
+                .getData()) {
             s.assertThat(series.getObs().size())
                     .as("firstNObservations must cap the observation count")
                     .isLessThanOrEqualTo(1);
         }
-        for (Series series :
-                conn.getData(
-                                NO_DATABASE,
-                                sample.validFlow,
-                                Query.builder().key(sample.validKey).lastNObservations(1).build())
-                        .getData()) {
+        for (Series series : conn.getData(
+                        NO_DATABASE,
+                        sample.validFlow,
+                        Query.builder()
+                                .key(sample.validKey)
+                                .lastNObservations(1)
+                                .build())
+                .getData()) {
             s.assertThat(series.getObs().size())
                     .as("lastNObservations must cap the observation count")
                     .isLessThanOrEqualTo(1);
         }
 
         // a period range in the far future must exclude every observation.
-        for (Series series :
-                conn.getData(
-                                NO_DATABASE,
-                                sample.validFlow,
-                                Query.builder()
-                                        .key(sample.validKey)
-                                        .startPeriod(LocalDateTime.of(9999, 1, 1, 0, 0))
-                                        .build())
-                        .getData()) {
+        for (Series series : conn.getData(
+                        NO_DATABASE,
+                        sample.validFlow,
+                        Query.builder()
+                                .key(sample.validKey)
+                                .startPeriod(LocalDateTime.of(9999, 1, 1, 0, 0))
+                                .build())
+                .getData()) {
             s.assertThat(series.getObs())
                     .as("startPeriod in the far future must exclude every observation")
                     .isEmpty();
@@ -183,22 +181,20 @@ public class ConnectionAssert {
 
     private void checkInvalidFlow(SoftAssertions s, Sample sample, Connection conn) {
         for (Detail filter : Detail.values()) {
-            Query validQuery = Query.builder().key(sample.validKey).detail(filter).build();
+            Query validQuery =
+                    Query.builder().key(sample.validKey).detail(filter).build();
 
             s.assertThatThrownBy(() -> conn.getData(NO_DATABASE, sample.invalidFlow, validQuery))
                     .isInstanceOf(IOException.class);
 
-            s.assertThatThrownBy(
-                            () -> conn.getDataStream(NO_DATABASE, sample.invalidFlow, validQuery))
+            s.assertThatThrownBy(() -> conn.getDataStream(NO_DATABASE, sample.invalidFlow, validQuery))
                     .isInstanceOf(IOException.class);
 
             s.assertThatThrownBy(() -> conn.getMeta(NO_DATABASE, sample.invalidFlow))
                     .isInstanceOf(IOException.class);
 
             s.assertThatThrownBy(
-                            () ->
-                                    conn.getAvailableDimensionCodes(
-                                            NO_DATABASE, sample.invalidFlow, sample.validKey, 0))
+                            () -> conn.getAvailableDimensionCodes(NO_DATABASE, sample.invalidFlow, sample.validKey, 0))
                     .isInstanceOf(IOException.class);
         }
     }
@@ -226,9 +222,7 @@ public class ConnectionAssert {
                 .isInstanceOf(NullPointerException.class);
 
         s.assertThatThrownBy(() -> conn.getAvailableDimensionCodes(NO_DATABASE, null, Key.ALL, 0))
-                .as(
-                        nullDescriptionOf(
-                                "getAvailableDimensionValues(DataflowRef,Key,int)", "flowRef"))
+                .as(nullDescriptionOf("getAvailableDimensionValues(DataflowRef,Key,int)", "flowRef"))
                 .isInstanceOf(NullPointerException.class);
 
         s.assertThatThrownBy(() -> conn.getAvailableDimensionCodes(NO_DATABASE, ref, null, 0))
@@ -237,10 +231,7 @@ public class ConnectionAssert {
     }
 
     private void assertState(
-            SoftAssertions s,
-            ConnectionSupplier supplier,
-            ConnectionConsumer consumer,
-            String expression) {
+            SoftAssertions s, ConnectionSupplier supplier, ConnectionConsumer consumer, String expression) {
         try (Connection conn = supplier.getWithIO()) {
             conn.close();
             s.assertThatThrownBy(() -> consumer.acceptWithIO(conn))

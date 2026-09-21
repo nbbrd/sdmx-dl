@@ -273,23 +273,20 @@ public final class Provider<SOURCE extends Source> {
     public @NonNull SortedMap<String, String> listAvailability(@NonNull AvailabilityRequest request)
             throws IOException {
         try (Connection connection = manager.getConnection(source, request.getLanguages())) {
-            List<Dimension> dimensions = connection
-                    .getMeta(request.getDatabase(), request.getFlow())
-                    .getStructure()
-                    .getDimensions();
+            Dimension dimension =
+                    connection.getMeta(request.getDatabase(), request.getFlow()).getStructure().getDimensions().stream()
+                            .filter(o -> o.getId().equals(request.getDimension()))
+                            .findFirst()
+                            .orElseThrow(
+                                    () -> new IOException("Cannot find dimension '" + request.getDimension() + "'"));
 
-            int dimensionIndex = Dimension.indexOf(dimensions, request.getDimension());
-            if (dimensionIndex == -1) {
-                throw new IOException("Cannot find dimension '" + request.getDimension() + "'");
-            }
-
-            Map<String, String> codes = dimensions.get(dimensionIndex).getCodes();
+            Map<String, String> codes = dimension.getCodes();
             // NB: a plain Collectors.toMap(..., TreeMap::new) would throw a NullPointerException
             // as soon as a returned code has no matching label (its Map.merge call rejects null
             // values), so the map is built manually to keep the label as null in that case.
             SortedMap<String, String> result = new TreeMap<>();
             for (String code : connection.getAvailableDimensionCodes(
-                    request.getDatabase(), request.getFlow(), request.getKey(), dimensionIndex)) {
+                    request.getDatabase(), request.getFlow(), request.getKey(), dimension.getIndex())) {
                 result.putIfAbsent(code, codes.get(code));
             }
             return result;

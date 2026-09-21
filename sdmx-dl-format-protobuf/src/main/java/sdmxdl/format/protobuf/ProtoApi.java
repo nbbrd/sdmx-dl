@@ -9,15 +9,17 @@ import sdmxdl.*;
 public class ProtoApi {
 
     public static AboutDto fromAbout() {
-        return AboutDto.newBuilder().setName(About.NAME).setVersion(About.VERSION).build();
+        return AboutDto.newBuilder()
+                .setName(About.NAME)
+                .setVersion(About.VERSION)
+                .build();
     }
 
     public static DataRepositoryDto fromDataRepository(DataRepository value) {
         return DataRepositoryDto.newBuilder()
                 .setName(value.getName())
                 .addAllDatabases(fromCollection(value.getDatabases(), ProtoApi::fromDatabase))
-                .addAllStructures(
-                        fromCollection(value.getStructures(), ProtoApi::fromDataStructure))
+                .addAllStructures(fromCollection(value.getStructures(), ProtoApi::fromDataStructure))
                 .addAllFlows(fromCollection(value.getFlows(), ProtoApi::fromDataflow))
                 .addAllDataSets(fromCollection(value.getDataSets(), ProtoApi::fromDataSet))
                 .setCreationTime(fromInstant(value.getCreationTime()))
@@ -49,13 +51,10 @@ public class ProtoApi {
     }
 
     public static StructureDto fromDataStructure(Structure value) {
-        StructureDto.Builder result =
-                StructureDto.newBuilder()
-                        .setRef(value.getRef().toString())
-                        .addAllDimensions(
-                                fromCollection(value.getDimensions(), ProtoApi::fromDimension))
-                        .addAllAttributes(
-                                fromCollection(value.getAttributes(), ProtoApi::fromAttribute));
+        StructureDto.Builder result = StructureDto.newBuilder()
+                .setRef(value.getRef().toString())
+                .addAllDimensions(fromCollection(value.getDimensions(), ProtoApi::fromDimension))
+                .addAllAttributes(fromCollection(value.getAttributes(), ProtoApi::fromAttribute));
         if (value.getTimeDimensionId() != null) {
             result.setTimeDimensionId(value.getTimeDimensionId());
         }
@@ -79,6 +78,7 @@ public class ProtoApi {
         DimensionDto.Builder result =
                 DimensionDto.newBuilder().setId(value.getId()).setName(value.getName());
         if (value.getCodelist() != null) result.setCodelist(fromCodelist(value.getCodelist()));
+        result.setIndex(value.getIndex());
         return result.build();
     }
 
@@ -87,6 +87,7 @@ public class ProtoApi {
                 .id(value.getId())
                 .name(value.getName())
                 .codelist(value.hasCodelist() ? toCodelist(value.getCodelist()) : null)
+                .index(value.getIndex())
                 .build();
     }
 
@@ -108,7 +109,8 @@ public class ProtoApi {
         AttributeDto.Builder result =
                 AttributeDto.newBuilder().setId(value.getId()).setName(value.getName());
         if (value.getCodelist() != null) result.setCodelist(fromCodelist(value.getCodelist()));
-        return result.setRelationship(fromAttributeRelationship(value.getRelationship())).build();
+        return result.setRelationship(fromAttributeRelationship(value.getRelationship()))
+                .build();
     }
 
     public static Attribute toAttribute(AttributeDto value) {
@@ -129,11 +131,10 @@ public class ProtoApi {
     }
 
     public static FlowDto fromDataflow(Flow value) {
-        FlowDto.Builder result =
-                FlowDto.newBuilder()
-                        .setRef(value.getRef().toString())
-                        .setStructureRef(value.getStructureRef().toString())
-                        .setName(value.getName());
+        FlowDto.Builder result = FlowDto.newBuilder()
+                .setRef(value.getRef().toString())
+                .setStructureRef(value.getStructureRef().toString())
+                .setName(value.getName());
         if (value.getDescription() != null) {
             result.setDescription(value.getDescription());
         }
@@ -181,9 +182,7 @@ public class ProtoApi {
 
     public static QueryDto fromDataQuery(Query value) {
         QueryDto.Builder result =
-                QueryDto.newBuilder()
-                        .setKey(value.getKey().toString())
-                        .setDetail(fromDataDetail(value.getDetail()));
+                QueryDto.newBuilder().setKey(value.getKey().toString()).setDetail(fromDataDetail(value.getDetail()));
         if (value.getStartPeriod() != null) {
             result.setStartPeriod(value.getStartPeriod().toString());
         }
@@ -200,10 +199,7 @@ public class ProtoApi {
     }
 
     public static Query toDataQuery(QueryDto value) {
-        Query.Builder result =
-                Query.builder()
-                        .key(Key.parse(value.getKey()))
-                        .detail(toDataDetail(value.getDetail()));
+        Query.Builder result = Query.builder().key(Key.parse(value.getKey())).detail(toDataDetail(value.getDetail()));
         if (value.hasStartPeriod()) {
             result.startPeriod(LocalDateTime.parse(value.getStartPeriod()));
         }

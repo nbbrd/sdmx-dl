@@ -93,6 +93,7 @@ public class DriverAssert {
                         assertThat(structure.getDimensions())
                                 .describedAs("Dimensions of %s/%s/%s", webSource.getId(), database, flowRef)
                                 .are(validDimension())
+                                .is(orderedByDimensionIndex())
                                 .hasSize(query.getDimCount());
                         assertThat(structure.getAttributes())
                                 .describedAs("Attributes of %s/%s/%s", webSource.getId(), database, flowRef)

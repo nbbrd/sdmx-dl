@@ -22,11 +22,6 @@ import com.esotericsoftware.kryo.kryo5.io.Input;
 import com.esotericsoftware.kryo.kryo5.io.Output;
 import com.esotericsoftware.kryo.kryo5.serializers.*;
 import com.esotericsoftware.kryo.kryo5.util.Pool;
-import lombok.NonNull;
-import sdmxdl.*;
-import sdmxdl.ext.FileFormat;
-import sdmxdl.web.*;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -37,6 +32,10 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
+import lombok.NonNull;
+import sdmxdl.*;
+import sdmxdl.ext.FileFormat;
+import sdmxdl.web.*;
 
 /**
  * @author Philippe Charles
@@ -44,8 +43,7 @@ import java.util.*;
 @lombok.AllArgsConstructor(staticName = "of")
 public final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
 
-    @lombok.NonNull
-    private final Class<T> type;
+    @lombok.NonNull private final Class<T> type;
 
     @Override
     public @NonNull T parsePath(@NonNull Path source) throws IOException {
@@ -158,7 +156,8 @@ public final class KryoFileFormat<T extends HasPersistence> implements FileForma
         result.register(Duration.class, new DurationSerializer());
         result.register(Dimension.class, new DimensionSerializer());
         result.register(Attribute.class, new AttributeSerializer());
-        result.register(AttributeRelationship.class, new DefaultSerializers.EnumSerializer(AttributeRelationship.class));
+        result.register(
+                AttributeRelationship.class, new DefaultSerializers.EnumSerializer(AttributeRelationship.class));
         result.register(MonitorReports.class, new MonitorReportsSerializer());
         result.register(MonitorReport.class, new MonitorReportSerializer());
         result.register(MonitorStatus.class, new DefaultSerializers.EnumSerializer(MonitorStatus.class));
@@ -187,8 +186,7 @@ public final class KryoFileFormat<T extends HasPersistence> implements FileForma
 
         @Override
         public WebSources read(Kryo kryo, Input input, Class<? extends WebSources> type) {
-            return WebSources
-                    .builder()
+            return WebSources.builder()
                     .sources(kryo.readObject(input, ArrayList.class, sources))
                     .build();
         }
@@ -215,8 +213,7 @@ public final class KryoFileFormat<T extends HasPersistence> implements FileForma
 
         @Override
         public WebSource read(Kryo kryo, Input input, Class<? extends WebSource> type) {
-            return WebSource
-                    .builder()
+            return WebSource.builder()
                     .id(input.readString())
                     .names(kryo.readObject(input, HashMap.class, names))
                     .driver(input.readString())
@@ -253,7 +250,7 @@ public final class KryoFileFormat<T extends HasPersistence> implements FileForma
         }
     }
 
-    private static abstract class ResourceRefSerializer<T extends ResourceRef<T>> extends ImmutableSerializer<T> {
+    private abstract static class ResourceRefSerializer<T extends ResourceRef<T>> extends ImmutableSerializer<T> {
 
         protected abstract T read(String input);
 
@@ -290,8 +287,7 @@ public final class KryoFileFormat<T extends HasPersistence> implements FileForma
         @SuppressWarnings("unchecked")
         @Override
         public DataRepository read(Kryo kryo, Input input, Class<? extends DataRepository> type) {
-            return DataRepository
-                    .builder()
+            return DataRepository.builder()
                     .name(input.readString())
                     .databases(kryo.readObject(input, ArrayList.class, databases))
                     .structures(kryo.readObject(input, ArrayList.class, structures))
@@ -313,10 +309,7 @@ public final class KryoFileFormat<T extends HasPersistence> implements FileForma
 
         @Override
         public Database read(Kryo kryo, Input input, Class<? extends Database> type) {
-            return new Database(
-                    kryo.readObject(input, DatabaseRef.class),
-                    input.readString()
-            );
+            return new Database(kryo.readObject(input, DatabaseRef.class), input.readString());
         }
     }
 
@@ -351,8 +344,7 @@ public final class KryoFileFormat<T extends HasPersistence> implements FileForma
         @SuppressWarnings("unchecked")
         @Override
         public Structure read(Kryo kryo, Input input, Class<? extends Structure> type) {
-            return Structure
-                    .builder()
+            return Structure.builder()
                     .ref(kryo.readObject(input, StructureRef.class))
                     .dimensions(kryo.readObject(input, ArrayList.class, dimensions))
                     .attributes(kryo.readObject(input, ArrayList.class, attributes))
@@ -383,8 +375,7 @@ public final class KryoFileFormat<T extends HasPersistence> implements FileForma
 
         @Override
         public Flow read(Kryo kryo, Input input, Class<? extends Flow> type) {
-            return Flow
-                    .builder()
+            return Flow.builder()
                     .ref(kryo.readObject(input, FlowRef.class))
                     .structureRef(kryo.readObject(input, StructureRef.class))
                     .name(input.readString())
@@ -413,8 +404,7 @@ public final class KryoFileFormat<T extends HasPersistence> implements FileForma
 
         @Override
         public Codelist read(Kryo kryo, Input input, Class<? extends Codelist> type) {
-            return Codelist
-                    .builder()
+            return Codelist.builder()
                     .ref(kryo.readObject(input, CodelistRef.class))
                     .codes(kryo.readObject(input, HashMap.class, this.codes))
                     .build();
@@ -439,8 +429,7 @@ public final class KryoFileFormat<T extends HasPersistence> implements FileForma
 
         @Override
         public MetaSet read(Kryo kryo, Input input, Class<? extends MetaSet> type) {
-            return MetaSet
-                    .builder()
+            return MetaSet.builder()
                     .flow(kryo.readObject(input, Flow.class))
                     .structure(kryo.readObject(input, Structure.class))
                     .build();
@@ -461,8 +450,7 @@ public final class KryoFileFormat<T extends HasPersistence> implements FileForma
         @SuppressWarnings("unchecked")
         @Override
         public DataSet read(Kryo kryo, Input input, Class<? extends DataSet> type) {
-            return DataSet
-                    .builder()
+            return DataSet.builder()
                     .ref(kryo.readObject(input, FlowRef.class))
                     .query(kryo.readObject(input, Query.class))
                     .data(kryo.readObject(input, ArrayList.class, data))
@@ -493,8 +481,7 @@ public final class KryoFileFormat<T extends HasPersistence> implements FileForma
 
         @Override
         public Query read(Kryo kryo, Input input, Class<? extends Query> type) {
-            return Query
-                    .builder()
+            return Query.builder()
                     .key(kryo.readObject(input, Key.class))
                     .detail(kryo.readObject(input, Detail.class))
                     .build();
@@ -516,8 +503,7 @@ public final class KryoFileFormat<T extends HasPersistence> implements FileForma
         @SuppressWarnings("unchecked")
         @Override
         public Series read(Kryo kryo, Input input, Class<? extends Series> type) {
-            return Series
-                    .builder()
+            return Series.builder()
                     .key(kryo.readObject(input, Key.class))
                     .obs(kryo.readObject(input, ArrayList.class, obs))
                     .meta(kryo.readObject(input, HashMap.class, seriesMeta))
@@ -539,8 +525,7 @@ public final class KryoFileFormat<T extends HasPersistence> implements FileForma
         @SuppressWarnings("unchecked")
         @Override
         public Obs read(Kryo kryo, Input input, Class<? extends Obs> type) {
-            return Obs
-                    .builder()
+            return Obs.builder()
                     .period(kryo.readObject(input, TimeInterval.class))
                     .value(input.readDouble())
                     .meta(kryo.readObject(input, HashMap.class, obsMeta))
@@ -584,16 +569,17 @@ public final class KryoFileFormat<T extends HasPersistence> implements FileForma
             output.writeString(t.getId());
             output.writeString(t.getName());
             kryo.writeObjectOrNull(output, t.getCodelist(), Codelist.class);
+            output.writeInt(t.getIndex());
         }
 
         @SuppressWarnings("unchecked")
         @Override
         public Dimension read(Kryo kryo, Input input, Class<? extends Dimension> type) {
-            return Dimension
-                    .builder()
+            return Dimension.builder()
                     .id(input.readString())
                     .name(input.readString())
                     .codelist(kryo.readObjectOrNull(input, Codelist.class))
+                    .index(input.readInt())
                     .build();
         }
     }
@@ -611,8 +597,7 @@ public final class KryoFileFormat<T extends HasPersistence> implements FileForma
         @SuppressWarnings("unchecked")
         @Override
         public Attribute read(Kryo kryo, Input input, Class<? extends Attribute> type) {
-            return Attribute
-                    .builder()
+            return Attribute.builder()
                     .id(input.readString())
                     .name(input.readString())
                     .codelist(kryo.readObjectOrNull(input, Codelist.class))
@@ -623,7 +608,8 @@ public final class KryoFileFormat<T extends HasPersistence> implements FileForma
 
     private static final class MonitorReportsSerializer extends ImmutableSerializer<MonitorReports> {
 
-        private final Serializer<Collection<MonitorReport>> reports = new CustomCollectionSerializer<>(MonitorReport.class);
+        private final Serializer<Collection<MonitorReport>> reports =
+                new CustomCollectionSerializer<>(MonitorReport.class);
 
         @Override
         public void write(Kryo kryo, Output output, MonitorReports t) {
@@ -635,8 +621,7 @@ public final class KryoFileFormat<T extends HasPersistence> implements FileForma
 
         @Override
         public MonitorReports read(Kryo kryo, Input input, Class<? extends MonitorReports> type) {
-            return MonitorReports
-                    .builder()
+            return MonitorReports.builder()
                     .uriScheme(input.readString())
                     .reports(kryo.readObject(input, ArrayList.class, reports))
                     .creationTime(kryo.readObject(input, Instant.class))
@@ -657,8 +642,7 @@ public final class KryoFileFormat<T extends HasPersistence> implements FileForma
 
         @Override
         public MonitorReport read(Kryo kryo, Input input, Class<? extends MonitorReport> type) {
-            return MonitorReport
-                    .builder()
+            return MonitorReport.builder()
                     .source(input.readString())
                     .status(kryo.readObject(input, MonitorStatus.class))
                     .uptimeRatio(kryo.readObjectOrNull(input, Double.class))
