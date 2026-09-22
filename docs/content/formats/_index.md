@@ -1,6 +1,6 @@
 ---
 title: "Data formats"
-weight: 4
+weight: 7
 ---
 
 **sdmx-dl** supports the following file formats:

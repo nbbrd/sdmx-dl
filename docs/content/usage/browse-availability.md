@@ -55,11 +55,11 @@ grpcurl -d '{"source":"ECB","flow":"EXR","key":"M..EUR.SP00.A","dimension":"FREQ
 
 ## Notes
 
-- Unlike [Browse codes]({{< relref "/features/browse-codes" >}}), this only returns codes that actually occur in the data under the given constraint — not every code defined in the codelist.
-- The dimension is **not** referenced the same way across flavors: the API and WS (`AvailabilityRequest.dimension`/gRPC `dimension` field/REST `/availability/{dimension}` path segment) take the dimension by its **id** (e.g. `FREQ`, as returned by [Browse dimensions and attributes]({{< relref "/features/browse-structure" >}})), while the CLI conveniently accepts a zero-based **index** into the key instead (e.g. `1` for the second component of `M..EUR.SP00.A`) and resolves it to an id internally before calling the same request.
+- Unlike [Browse codes]({{< relref "/usage/browse-codes" >}}), this only returns codes that actually occur in the data under the given constraint — not every code defined in the codelist.
+- The dimension is **not** referenced the same way across flavors: the API and WS (`AvailabilityRequest.dimension`/gRPC `dimension` field/REST `/availability/{dimension}` path segment) take the dimension by its **id** (e.g. `FREQ`, as returned by [Browse dimensions and attributes]({{< relref "/usage/browse-structure" >}})), while the CLI conveniently accepts a zero-based **index** into the key instead (e.g. `1` for the second component of `M..EUR.SP00.A`) and resolves it to an id internally before calling the same request.
 
 ## Related features
 
-- [Browse codes]({{< relref "/features/browse-codes" >}})
-- [Browse dimensions and attributes]({{< relref "/features/browse-structure" >}})
-- [Retrieve data]({{< relref "/features/retrieve-data" >}})
+- [Browse codes]({{< relref "/usage/browse-codes" >}})
+- [Browse dimensions and attributes]({{< relref "/usage/browse-structure" >}})
+- [Retrieve data]({{< relref "/usage/retrieve-data" >}})

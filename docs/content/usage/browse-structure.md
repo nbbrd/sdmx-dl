@@ -54,13 +54,13 @@ grpcurl -d '{"source":"ECB","flow":"EXR"}' -plaintext localhost:4557 sdmxdl.grpc
 
 ## Notes
 
-- Both calls accept an optional `query`/`maxResults` to search/limit results, the same way as [Discover flows]({{< relref "/features/discover-flows" >}}).
-- Dimensions are ordered and make up the positional `key` used by [Retrieve data]({{< relref "/features/retrieve-data" >}}) and [Browse availability]({{< relref "/features/browse-availability" >}}); attributes carry extra descriptive metadata and aren't part of the key.
-- A dimension or attribute marked `coded` has its values drawn from a codelist — resolve them with [Browse codes]({{< relref "/features/browse-codes" >}}).
+- Both calls accept an optional `query`/`maxResults` to search/limit results, the same way as [Discover flows]({{< relref "/usage/discover-flows" >}}).
+- Dimensions are ordered and make up the positional `key` used by [Retrieve data]({{< relref "/usage/retrieve-data" >}}) and [Browse availability]({{< relref "/usage/browse-availability" >}}); attributes carry extra descriptive metadata and aren't part of the key.
+- A dimension or attribute marked `coded` has its values drawn from a codelist — resolve them with [Browse codes]({{< relref "/usage/browse-codes" >}}).
 - CLI has dedicated `list dimensions`/`list attributes` commands; the API offers the equivalent `Provider.listDimensions(...)`/`listAttributes(...)`; WS exposes them as the `ListDimensions`/`ListAttributes` RPCs and `/dimensions`/`/attributes` REST endpoints.
 
 ## Related features
 
-- [Inspect metadata]({{< relref "/features/inspect-metadata" >}})
-- [Browse codes]({{< relref "/features/browse-codes" >}})
+- [Inspect metadata]({{< relref "/usage/inspect-metadata" >}})
+- [Browse codes]({{< relref "/usage/browse-codes" >}})
 

@@ -27,7 +27,7 @@ void main() throws Exception {
 }
 ```
 
-`listCodes` resolves the codes of a chosen concept; it accepts an optional `query`/`maxResults` to search/limit results, the same way as [Browse dimensions and attributes]({{< relref "/features/browse-structure" >}}).
+`listCodes` resolves the codes of a chosen concept; it accepts an optional `query`/`maxResults` to search/limit results, the same way as [Browse dimensions and attributes]({{< relref "/usage/browse-structure" >}}).
 {{< /tab >}}
 
 {{< tab "CLI" >}}
@@ -54,12 +54,12 @@ grpcurl -d '{"source":"ECB","flow":"EXR","concept":"FREQ"}' -plaintext localhost
 
 ## Notes
 
-- This lists **all defined codes** for a dimension, regardless of whether they actually occur in the dataset. To narrow codes down to what's actually available under a key constraint, use [Browse availability]({{< relref "/features/browse-availability" >}}) instead.
+- This lists **all defined codes** for a dimension, regardless of whether they actually occur in the dataset. To narrow codes down to what's actually available under a key constraint, use [Browse availability]({{< relref "/usage/browse-availability" >}}) instead.
 - CLI has a dedicated `list codes` command; the API offers the equivalent `Provider.listCodes(...)`; WS exposes it as the `ListCodes` RPC/`/codes/{dimension}` REST endpoint (its `concept` field on gRPC is the same value as the REST path segment).
-- To find out which dimension/concept names are available for a flow first, see [Browse dimensions and attributes]({{< relref "/features/browse-structure" >}}).
+- To find out which dimension/concept names are available for a flow first, see [Browse dimensions and attributes]({{< relref "/usage/browse-structure" >}}).
 
 ## Related features
 
-- [Browse dimensions and attributes]({{< relref "/features/browse-structure" >}})
-- [Inspect metadata]({{< relref "/features/inspect-metadata" >}})
-- [Browse availability]({{< relref "/features/browse-availability" >}})
+- [Browse dimensions and attributes]({{< relref "/usage/browse-structure" >}})
+- [Inspect metadata]({{< relref "/usage/inspect-metadata" >}})
+- [Browse availability]({{< relref "/usage/browse-availability" >}})

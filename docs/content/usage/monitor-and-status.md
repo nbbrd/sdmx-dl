@@ -66,6 +66,5 @@ grpcurl -d '{"sources":["ECB"]}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWe
 
 ## Related features
 
-- [Discover sources]({{< relref "/features/discover-sources" >}})
-- [Authentication and credentials]({{< relref "/features/auth-and-credentials" >}})
+- [Discover sources]({{< relref "/usage/discover-sources" >}})
 

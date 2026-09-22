@@ -65,11 +65,11 @@ grpcurl -d '{"source":"ECB","flow":"EXR"}' -plaintext localhost:4557 sdmxdl.grpc
 
 ## Notes
 
-- `detail=NO_DATA` is the series-level equivalent of the CLI's `fetch meta` and the API's `Detail.NO_DATA`: every flavor now shares the same request shape as [Retrieve data]({{< relref "/features/retrieve-data" >}}), just with `detail` set to skip observations.
-- Don't confuse this with flow/structure-level metadata (dimensions, attributes, codelists): that's `GetMeta`/`getMeta(...)` on every flavor — see [Browse dimensions and attributes]({{< relref "/features/browse-structure" >}}).
+- `detail=NO_DATA` is the series-level equivalent of the CLI's `fetch meta` and the API's `Detail.NO_DATA`: every flavor now shares the same request shape as [Retrieve data]({{< relref "/usage/retrieve-data" >}}), just with `detail` set to skip observations.
+- Don't confuse this with flow/structure-level metadata (dimensions, attributes, codelists): that's `GetMeta`/`getMeta(...)` on every flavor ï¿½ see [Browse dimensions and attributes]({{< relref "/usage/browse-structure" >}}).
 
 ## Related features
 
-- [Retrieve data]({{< relref "/features/retrieve-data" >}})
-- [Browse dimensions and attributes]({{< relref "/features/browse-structure" >}})
-- [Browse codes]({{< relref "/features/browse-codes" >}})
+- [Retrieve data]({{< relref "/usage/retrieve-data" >}})
+- [Browse dimensions and attributes]({{< relref "/usage/browse-structure" >}})
+- [Browse codes]({{< relref "/usage/browse-codes" >}})

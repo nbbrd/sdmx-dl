@@ -1,6 +1,6 @@
 ---
 title: "Java library"
-weight: 1
+weight: 3
 ---
 
 ![_work-in-progress_](https://img.shields.io/badge/-work_in_progress-E2BC4A)

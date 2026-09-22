@@ -68,10 +68,10 @@ grpcurl -d '{"source":"ECB","query":"central","maxResults":5}' -plaintext localh
 
 - Discovery and search are the same call: pass a `query`/`maxResults` to search within a source, or omit them to list every database it exposes.
 - Most sources expose a single default database, so this feature is only useful for multi-database providers.
-- Search is scoped to one source at a time; use [Discover sources]({{< relref "/features/discover-sources" >}}) first if you don't know which source to search within.
+- Search is scoped to one source at a time; use [Discover sources]({{< relref "/usage/discover-sources" >}}) first if you don't know which source to search within.
 
 ## Related features
 
-- [Discover sources]({{< relref "/features/discover-sources" >}})
-- [Discover flows]({{< relref "/features/discover-flows" >}})
+- [Discover sources]({{< relref "/usage/discover-sources" >}})
+- [Discover flows]({{< relref "/usage/discover-flows" >}})
 

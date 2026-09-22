@@ -72,8 +72,8 @@ grpcurl -d '{"query":"european central","maxResults":5}' -plaintext localhost:45
 
 ## Related features
 
-- [Discover databases]({{< relref "/features/discover-databases" >}})
-- [Discover flows]({{< relref "/features/discover-flows" >}})
+- [Discover databases]({{< relref "/usage/discover-databases" >}})
+- [Discover flows]({{< relref "/usage/discover-flows" >}})
 
 
 

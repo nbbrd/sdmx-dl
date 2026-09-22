@@ -1,6 +1,6 @@
 ---
 title: "Command-line tool"
-weight: 2
+weight: 4
 ---
 
 **sdmx-dl CLI** is a command-line tool for easily browsing and downloading SDMX data.  

@@ -1,6 +1,6 @@
 ---
 title: "Authentication"
-weight: 4
+weight: 6
 ---
 
 **sdmx-dl** support multiple authentication schemes:

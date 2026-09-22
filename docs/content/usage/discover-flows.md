@@ -68,13 +68,13 @@ grpcurl -d '{"source":"ECB","query":"exchange rates","maxResults":5}' -plaintext
 
 - Discovery and search are the same call: pass a `query`/`maxResults` to search within a source, or omit them to list every flow it publishes.
 - Ranking is hybrid: lexical (BM25) fused with typo-tolerant trigram matching, so partial or approximate queries still surface the right flow.
-- Search is scoped to a single source; use [Discover sources]({{< relref "/features/discover-sources" >}}) first if you don't know which source to search within.
-- Some sources expose several databases; pass a `database` to scope the listing (defaults to the source's single/default database otherwise) — see [Discover databases]({{< relref "/features/discover-databases" >}}).
+- Search is scoped to a single source; use [Discover sources]({{< relref "/usage/discover-sources" >}}) first if you don't know which source to search within.
+- Some sources expose several databases; pass a `database` to scope the listing (defaults to the source's single/default database otherwise) — see [Discover databases]({{< relref "/usage/discover-databases" >}}).
 
 ## Related features
 
-- [Discover sources]({{< relref "/features/discover-sources" >}})
-- [Discover databases]({{< relref "/features/discover-databases" >}})
+- [Discover sources]({{< relref "/usage/discover-sources" >}})
+- [Discover databases]({{< relref "/usage/discover-databases" >}})
 
 
 

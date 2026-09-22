@@ -127,6 +127,6 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --start 2020 --end 2022-12 --last-n 
 
 ## Related features
 
-- [Retrieve data]({{< relref "/features/retrieve-data" >}})
-- [Browse availability]({{< relref "/features/browse-availability" >}})
+- [Retrieve data]({{< relref "/usage/retrieve-data" >}})
+- [Browse availability]({{< relref "/usage/browse-availability" >}})
 

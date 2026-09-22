@@ -66,13 +66,13 @@ grpcurl -d '{"source":"ECB","flow":"EXR","key":"M.CHF.EUR.SP00.A"}' -plaintext l
 
 ## Notes
 
-- All flavors share the same request shape: `source`, `flow`, `key`, plus optional `database`, `languages`, and the filters described in [Narrow your request]({{< relref "/features/narrow-your-request" >}}).
+- All flavors share the same request shape: `source`, `flow`, `key`, plus optional `database`, `languages`, and the filters described in [Narrow your request]({{< relref "/usage/narrow-your-request" >}}).
 - WS additionally offers `GetDataStream`/`GET /sdmx-dl/v2/{source}/{flow}/data:stream` to stream large responses instead of buffering the full dataset.
 
 ## Related features
 
-- [Discover sources]({{< relref "/features/discover-sources" >}})
-- [Discover flows]({{< relref "/features/discover-flows" >}})
-- [Inspect metadata]({{< relref "/features/inspect-metadata" >}})
+- [Discover sources]({{< relref "/usage/discover-sources" >}})
+- [Discover flows]({{< relref "/usage/discover-flows" >}})
+- [Inspect metadata]({{< relref "/usage/inspect-metadata" >}})
 
 
