@@ -1,40 +1,265 @@
 {{ $csv := resources.Get "sources.csv" | transform.Unmarshal (dict "delimiter" ",") }}
 {{ $lineCount := len $csv }}
+{{ $sourceCount := sub $lineCount 1 }}
+{{ $drivers := slice }}
 
-sdmx-dl is bundled with the following pre-configured {{ sub $lineCount 1 }} web services:
+{{ range $i, $r := $csv }}
+{{ if ne $i 0 }}
+{{ $drivers = $drivers | append (index $r 3) }}
+{{ end }}
+{{ end }}
 
-<table>
-    <thead>
-        <tr>
-            <th>Source</th>
-            <th>Status</th>
-            <th>Uptime</th>
-        </tr>
-    </thead>
-    <tbody>
-    {{ range $i, $r := $csv }}
-    {{ if ne $i 0 }}
-    <tr>
-        {{ $id := index $r 0 }}
-        {{ $name := index $r 1 }}
-        {{ $website := index $r 7 }}
-        {{ $domain := (urls.Parse $website).Host }}
-        {{ $monitor_website := index $r 9 }}
-        {{ $monitor_name := replace (lower $id) "_" "-" }}
-        <td>
-            <div style="display: flex; align-items: center;">
-                <img src="https://icons.duckduckgo.com/ip3/{{ $domain }}.ico" width="32" style="margin-right: 8px;" />
-                <div>
-                    <code>{{ $id }}</code><br>
-                    <small style="padding: .25rem .5rem; display: inline-block;"><a href="{{ $website }}">{{ $name }}</a></small>
-                </div>
-            </div>
-        </td>
-        <td><a href="{{ $monitor_website }}"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2F{{ $monitor_name }}.yml"></a></td>
-        <td><a href="{{ $monitor_website }}"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2F{{ $monitor_name }}%2Fuptime.json"></a></td>
-    </tr>
-    {{ end }}
-    {{ end }}
-    </tbody>
-</table>
+{{ $drivers = sort ($drivers | uniq) }}
+
+sdmx-dl is bundled with the following pre-configured {{ $sourceCount }} web services:
+
+<style>
+    [data-sources-root] .sources-filter {
+        margin: 1rem 0 .75rem;
+        padding: .75rem 1rem;
+        border: 1px solid var(--accent-color);
+        border-radius: .3rem;
+        background: var(--accent-color-lite);
+        display: grid;
+        grid-template-columns: minmax(18rem, 1fr) minmax(9rem, 11rem) auto auto;
+        gap: .75rem 1rem;
+        align-items: end;
+    }
+
+    [data-sources-root] .sources-filter__search {
+        min-width: 0;
+        width: 100%;
+        display: flex;
+        align-items: stretch;
+        position: relative;
+    }
+
+    [data-sources-root] .sources-filter__search .gdoc-search__input,
+    [data-sources-root] .sources-filter__select,
+    [data-sources-root] .sources-filter__clear {
+        background: var(--body-background);
+        border: 1px solid var(--accent-color);
+        box-sizing: border-box;
+        min-height: 2.5rem;
+    }
+
+    [data-sources-root] .sources-filter__search .gdoc-search__input {
+        border-radius: .3rem;
+        width: 100%;
+        padding-left: 2rem;
+    }
+
+    [data-sources-root] .sources-filter__search svg.gdoc-icon {
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    [data-sources-root] .sources-filter__field {
+        min-width: 0;
+    }
+
+    [data-sources-root] .sources-filter__select {
+        width: 100%;
+        padding: .5rem .75rem;
+        border-radius: .3rem;
+        color: var(--body-font-color);
+    }
+
+    [data-sources-root] .sources-filter__actions {
+        display: flex;
+        align-items: stretch;
+    }
+
+    [data-sources-root] .sources-filter__clear {
+        appearance: none;
+        -webkit-appearance: none;
+        cursor: pointer;
+        font: inherit;
+        color: inherit;
+        padding: .25rem .75rem;
+        line-height: 1.15;
+        min-width: 5rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    [data-sources-root] .sources-filter__clear {
+        margin: 0 !important;
+        background: var(--body-background) !important;
+        border: 1px solid var(--accent-color) !important;
+        border-radius: .3rem;
+        height: 2.5rem;
+        padding: 0 .75rem !important;
+    }
+
+    [data-sources-root] .sources-filter__clear:hover {
+        background: var(--button-background) !important;
+        color: #f4f6f7;
+    }
+
+    [data-sources-root] .sources-filter__status {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        min-height: 2.5rem;
+    }
+
+    [data-sources-root] .sources-filter__count {
+        margin: 0;
+        white-space: nowrap;
+    }
+
+    [data-sources-root] .sources-filter__empty {
+        margin: .75rem 0 0;
+    }
+
+    @media (max-width: 40rem) {
+        [data-sources-root] .sources-filter {
+            grid-template-columns: 1fr;
+        }
+
+        [data-sources-root] .sources-filter__search,
+        [data-sources-root] .sources-filter__field,
+        [data-sources-root] .sources-filter__actions,
+        [data-sources-root] .sources-filter__status,
+        [data-sources-root] .sources-filter__clear {
+            width: 100%;
+        }
+    }
+</style>
+
+<div data-sources-root>
+    <div class="sources-filter gdoc-page__header flex flex-wrap align-center gap-16" data-sources-toolbar hidden>
+        <div class="sources-filter__search gdoc-search flex-auto">
+            <label class="hidden" for="sources-filter-search">Filter sources</label>
+            <svg class="gdoc-icon gdoc_search"><use xlink:href="#gdoc_search"></use></svg>
+            <input
+                type="search"
+                id="sources-filter-search"
+                class="gdoc-search__input"
+                data-sources-search
+                placeholder="Filter sources..."
+                aria-label="Filter sources by source id, name, description, or driver"
+            >
+        </div>
+        <div class="sources-filter__field">
+            <label class="hidden" for="sources-filter-driver">Driver</label>
+            <select id="sources-filter-driver" class="sources-filter__select" data-sources-driver>
+                    <option value="">All drivers</option>
+                    {{ range $drivers }}
+                    <option value="{{ . }}">{{ . }}</option>
+                    {{ end }}
+            </select>
+        </div>
+        <div class="sources-filter__actions">
+            <button type="button" class="gdoc-button gdoc-button--regular sources-filter__clear" data-sources-clear>Clear</button>
+        </div>
+        <div class="sources-filter__status">
+            <span class="sources-filter__count gdoc-props__tag info" data-sources-count hidden aria-live="polite">
+                {{ $sourceCount }} / {{ $sourceCount }}
+            </span>
+        </div>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Source</th>
+                    <th>Status</th>
+                    <th>Uptime</th>
+                </tr>
+            </thead>
+            <tbody data-sources-body>
+            {{ range $i, $r := $csv }}
+            {{ if ne $i 0 }}
+            {{ $id := index $r 0 }}
+            {{ $description := index $r 1 }}
+            {{ $driver := index $r 3 }}
+            {{ $website := index $r 7 }}
+            {{ $domain := (urls.Parse $website).Host }}
+            {{ $monitor_website := index $r 9 }}
+            {{ $monitor_name := replace (lower $id) "_" "-" }}
+            {{ $searchText := lower (printf "%s %s %s" $id $description $driver) }}
+            <tr
+                data-source-id="{{ $id }}"
+                data-source-description="{{ $description }}"
+                data-source-driver="{{ $driver }}"
+                data-source-search="{{ $searchText }}"
+            >
+                <td>
+                    <div class="flex align-center gap-8 no-wrap">
+                        <img src="https://icons.duckduckgo.com/ip3/{{ $domain }}.ico" alt="" width="32" height="32" />
+                        <div class="sources-filter__source">
+                            <code>{{ $id }}</code><br>
+                            <small><a href="{{ $website }}">{{ $description }}</a></small>
+                        </div>
+                    </div>
+                </td>
+                <td><a href="{{ $monitor_website }}"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2F{{ $monitor_name }}.yml" alt="Status badge for {{ $id }}"></a></td>
+                <td><a href="{{ $monitor_website }}"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2F{{ $monitor_name }}%2Fuptime.json" alt="Uptime badge for {{ $id }}"></a></td>
+            </tr>
+            {{ end }}
+            {{ end }}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="gdoc-hint note sources-filter__empty" data-sources-empty hidden>
+        <div class="gdoc-hint__text">No sources match the current filters.</div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        var roots = document.querySelectorAll('[data-sources-root]');
+
+        roots.forEach(function (root) {
+            var toolbar = root.querySelector('[data-sources-toolbar]');
+            var searchInput = root.querySelector('[data-sources-search]');
+            var driverSelect = root.querySelector('[data-sources-driver]');
+            var clearButton = root.querySelector('[data-sources-clear]');
+            var count = root.querySelector('[data-sources-count]');
+            var empty = root.querySelector('[data-sources-empty]');
+            var rows = Array.prototype.slice.call(root.querySelectorAll('tbody[data-sources-body] tr'));
+            var total = rows.length;
+
+            function render() {
+                var search = searchInput.value.trim().toLowerCase();
+                var driver = driverSelect.value;
+                var visible = 0;
+
+                rows.forEach(function (row) {
+                    var matchesSearch = !search || (row.dataset.sourceSearch || '').indexOf(search) !== -1;
+                    var matchesDriver = !driver || row.dataset.sourceDriver === driver;
+                    var show = matchesSearch && matchesDriver;
+
+                    row.hidden = !show;
+
+                    if (show) {
+                        visible += 1;
+                    }
+                });
+
+                count.textContent = visible + ' / ' + total;
+                empty.hidden = visible !== 0;
+            }
+
+            clearButton.addEventListener('click', function () {
+                searchInput.value = '';
+                driverSelect.value = '';
+                render();
+                searchInput.focus();
+            });
+
+            searchInput.addEventListener('input', render);
+            driverSelect.addEventListener('change', render);
+
+            toolbar.hidden = false;
+            count.hidden = false;
+            render();
+        });
+    }());
+</script>
 
