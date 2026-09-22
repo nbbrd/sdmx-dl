@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import nbbrd.io.function.IOSupplier;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import sdmxdl.*;
@@ -37,6 +38,7 @@ import sdmxdl.web.WebSourcesRequest;
  * REST counterpart of {@link SdmxdlGrpcService2}, exposing the same features
  * through plain HTTP GET endpoints instead of gRPC calls.
  */
+@Tag(name = "sdmx-dl v2", description = "sdmx-dl REST API version 2")
 @Path("/sdmx-dl/v2")
 @Produces(APPLICATION_JSON)
 @RegisterForReflection

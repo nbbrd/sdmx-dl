@@ -17,6 +17,7 @@ import java.io.IOException;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.ExampleObject;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import sdmxdl.*;
@@ -26,6 +27,8 @@ import sdmxdl.format.protobuf.web.WebSourceDto;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSourcesRequest;
 
+@Deprecated
+@Tag(name = "sdmx-dl v1", description = "sdmx-dl REST API version 1 (deprecated)")
 @Path("/sdmx-dl")
 @Consumes(APPLICATION_JSON)
 @Produces(APPLICATION_JSON)

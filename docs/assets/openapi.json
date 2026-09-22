@@ -1,0 +1,1692 @@
+{
+  "openapi" : "3.1.0",
+  "tags" : [ {
+    "name" : "sdmx-dl v1",
+    "description" : "sdmx-dl REST API version 1 (deprecated)"
+  }, {
+    "name" : "sdmx-dl v2",
+    "description" : "sdmx-dl REST API version 2"
+  } ],
+  "components" : {
+    "schemas" : {
+      "AboutDto" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "version" : {
+            "type" : "string"
+          }
+        }
+      },
+      "AttributeDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "codelist" : {
+            "$ref" : "#/components/schemas/CodelistDto"
+          },
+          "relationship" : {
+            "$ref" : "#/components/schemas/AttributeRelationshipDto"
+          }
+        }
+      },
+      "AttributeRelationshipDto" : {
+        "type" : "string",
+        "enum" : [ "UNKNOWN", "DATAFLOW", "GROUP", "SERIES", "OBSERVATION", "UNRECOGNIZED" ]
+      },
+      "CodelistDto" : {
+        "type" : "object",
+        "properties" : {
+          "ref" : {
+            "type" : "string"
+          },
+          "codes" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "codeCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "ConfidentialityDto" : {
+        "type" : "string",
+        "enum" : [ "PUBLIC", "UNRESTRICTED", "RESTRICTED", "CONFIDENTIAL", "SECRET", "UNRECOGNIZED" ]
+      },
+      "DataSetDto" : {
+        "type" : "object",
+        "properties" : {
+          "ref" : {
+            "type" : "string"
+          },
+          "query" : {
+            "$ref" : "#/components/schemas/QueryDto"
+          },
+          "data" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SeriesDto"
+            }
+          }
+        }
+      },
+      "DatabaseDto" : {
+        "type" : "object",
+        "properties" : {
+          "ref" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        }
+      },
+      "DatabaseRequestDto" : {
+        "type" : "object",
+        "properties" : {
+          "descriptorForType" : {
+            "type" : "object"
+          },
+          "source" : {
+            "type" : "string"
+          },
+          "database" : {
+            "type" : "string"
+          },
+          "languages" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Detail" : {
+        "type" : "string",
+        "enum" : [ "FULL", "DATA_ONLY", "SERIES_KEYS_ONLY", "NO_DATA" ]
+      },
+      "DetailDto" : {
+        "type" : "string",
+        "enum" : [ "FULL", "DATA_ONLY", "SERIES_KEYS_ONLY", "NO_DATA", "UNRECOGNIZED" ]
+      },
+      "DimensionCodesDto" : {
+        "type" : "object",
+        "properties" : {
+          "descriptorForType" : {
+            "type" : "object"
+          },
+          "codes" : {
+            "type" : "array"
+          }
+        }
+      },
+      "DimensionDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "codelist" : {
+            "$ref" : "#/components/schemas/CodelistDto"
+          },
+          "index" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "EmptyDto" : {
+        "type" : "object",
+        "properties" : {
+          "descriptorForType" : {
+            "type" : "object"
+          }
+        }
+      },
+      "FlowDto" : {
+        "type" : "object",
+        "properties" : {
+          "ref" : {
+            "type" : "string"
+          },
+          "structureRef" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          }
+        }
+      },
+      "FlowRequestDto" : {
+        "type" : "object",
+        "properties" : {
+          "descriptorForType" : {
+            "type" : "object"
+          },
+          "source" : {
+            "type" : "string"
+          },
+          "flow" : {
+            "type" : "string"
+          },
+          "database" : {
+            "type" : "string"
+          },
+          "languages" : {
+            "type" : "string"
+          }
+        }
+      },
+      "KeyDimensionRequestDto" : {
+        "type" : "object",
+        "properties" : {
+          "descriptorForType" : {
+            "type" : "object"
+          },
+          "source" : {
+            "type" : "string"
+          },
+          "flow" : {
+            "type" : "string"
+          },
+          "key" : {
+            "type" : "string"
+          },
+          "dimension" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "database" : {
+            "type" : "string"
+          },
+          "languages" : {
+            "type" : "string"
+          }
+        }
+      },
+      "KeyRequestDto" : {
+        "type" : "object",
+        "properties" : {
+          "descriptorForType" : {
+            "type" : "object"
+          },
+          "source" : {
+            "type" : "string"
+          },
+          "flow" : {
+            "type" : "string"
+          },
+          "key" : {
+            "type" : "string"
+          },
+          "database" : {
+            "type" : "string"
+          },
+          "languages" : {
+            "type" : "string"
+          },
+          "startPeriod" : {
+            "type" : "string"
+          },
+          "endPeriod" : {
+            "type" : "string"
+          },
+          "firstNObservations" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "lastNObservations" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "MetaSetDto" : {
+        "type" : "object",
+        "properties" : {
+          "flow" : {
+            "$ref" : "#/components/schemas/FlowDto"
+          },
+          "structure" : {
+            "$ref" : "#/components/schemas/StructureDto"
+          }
+        }
+      },
+      "MonitorReportDto" : {
+        "type" : "object",
+        "properties" : {
+          "source" : {
+            "type" : "string"
+          },
+          "status" : {
+            "$ref" : "#/components/schemas/MonitorStatusDto"
+          },
+          "uptimeRatio" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "averageResponseTime" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "MonitorStatusDto" : {
+        "type" : "string",
+        "enum" : [ "UNKNOWN", "UP", "DOWN", "UNRECOGNIZED" ]
+      },
+      "ObsDto" : {
+        "type" : "object",
+        "properties" : {
+          "period" : {
+            "type" : "string"
+          },
+          "value" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "meta" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "QueryDto" : {
+        "type" : "object",
+        "properties" : {
+          "key" : {
+            "type" : "string"
+          },
+          "detail" : {
+            "$ref" : "#/components/schemas/DetailDto"
+          },
+          "startPeriod" : {
+            "type" : "string"
+          },
+          "endPeriod" : {
+            "type" : "string"
+          },
+          "firstNObservations" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "lastNObservations" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "SearchDatabaseRequestDto" : {
+        "type" : "object",
+        "properties" : {
+          "descriptorForType" : {
+            "type" : "object"
+          },
+          "source" : {
+            "type" : "string"
+          },
+          "query" : {
+            "type" : "string"
+          },
+          "languages" : {
+            "type" : "string"
+          },
+          "maxResults" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "SearchFlowsRequestDto" : {
+        "type" : "object",
+        "properties" : {
+          "descriptorForType" : {
+            "type" : "object"
+          },
+          "source" : {
+            "type" : "string"
+          },
+          "query" : {
+            "type" : "string"
+          },
+          "database" : {
+            "type" : "string"
+          },
+          "languages" : {
+            "type" : "string"
+          },
+          "maxResults" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "SearchSourcesRequestDto" : {
+        "type" : "object",
+        "properties" : {
+          "descriptorForType" : {
+            "type" : "object"
+          },
+          "query" : {
+            "type" : "string"
+          },
+          "languages" : {
+            "type" : "string"
+          },
+          "maxResults" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "SeriesDto" : {
+        "type" : "object",
+        "properties" : {
+          "key" : {
+            "type" : "string"
+          },
+          "meta" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "obs" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ObsDto"
+            }
+          }
+        }
+      },
+      "SourceRequestDto" : {
+        "type" : "object",
+        "properties" : {
+          "descriptorForType" : {
+            "type" : "object"
+          },
+          "source" : {
+            "type" : "string"
+          },
+          "languages" : {
+            "type" : "string"
+          }
+        }
+      },
+      "StructureDto" : {
+        "type" : "object",
+        "properties" : {
+          "ref" : {
+            "type" : "string"
+          },
+          "timeDimensionId" : {
+            "type" : "string"
+          },
+          "primaryMeasureId" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "dimensions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/DimensionDto"
+            }
+          },
+          "attributes" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/AttributeDto"
+            }
+          }
+        }
+      },
+      "WebSourceDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "names" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "driver" : {
+            "type" : "string"
+          },
+          "endpoint" : {
+            "type" : "string"
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "website" : {
+            "type" : "string"
+          },
+          "monitor" : {
+            "type" : "string"
+          },
+          "monitorWebsite" : {
+            "type" : "string"
+          },
+          "confidentiality" : {
+            "$ref" : "#/components/schemas/ConfidentialityDto"
+          },
+          "aliases" : {
+            "type" : "array"
+          }
+        }
+      }
+    }
+  },
+  "paths" : {
+    "/sdmx-dl/about" : {
+      "post" : {
+        "deprecated" : true,
+        "tags" : [ "sdmx-dl v1" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/EmptyDto"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AboutDto"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "summary" : "Get About"
+      }
+    },
+    "/sdmx-dl/availability" : {
+      "post" : {
+        "deprecated" : true,
+        "tags" : [ "sdmx-dl v1" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "examples" : {
+                "ECB example" : {
+                  "value" : {
+                    "source" : "ECB",
+                    "flow" : "EXR",
+                    "key" : "M..EUR.SP00.A",
+                    "dimension" : 1
+                  }
+                }
+              },
+              "schema" : {
+                "$ref" : "#/components/schemas/KeyDimensionRequestDto"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/DimensionCodesDto"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "summary" : "Get Availability"
+      }
+    },
+    "/sdmx-dl/data" : {
+      "post" : {
+        "deprecated" : true,
+        "tags" : [ "sdmx-dl v1" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "examples" : {
+                "ECB example" : {
+                  "value" : {
+                    "source" : "ECB",
+                    "flow" : "EXR",
+                    "key" : "M.USD+CHF.EUR.SP00.A"
+                  }
+                }
+              },
+              "schema" : {
+                "$ref" : "#/components/schemas/KeyRequestDto"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DataSetDto"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "summary" : "Get Data"
+      }
+    },
+    "/sdmx-dl/dataStream" : {
+      "post" : {
+        "deprecated" : true,
+        "tags" : [ "sdmx-dl v1" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "examples" : {
+                "ECB example" : {
+                  "value" : {
+                    "source" : "ECB",
+                    "flow" : "EXR",
+                    "key" : "M.USD+CHF.EUR.SP00.A"
+                  }
+                }
+              },
+              "schema" : {
+                "$ref" : "#/components/schemas/KeyRequestDto"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/SeriesDto"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "summary" : "Get Data Stream"
+      }
+    },
+    "/sdmx-dl/databases" : {
+      "post" : {
+        "deprecated" : true,
+        "tags" : [ "sdmx-dl v1" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "examples" : {
+                "ECB example" : {
+                  "value" : {
+                    "source" : "ECB"
+                  }
+                }
+              },
+              "schema" : {
+                "$ref" : "#/components/schemas/SourceRequestDto"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/DatabaseDto"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "summary" : "Get Databases"
+      }
+    },
+    "/sdmx-dl/flows" : {
+      "post" : {
+        "deprecated" : true,
+        "tags" : [ "sdmx-dl v1" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "examples" : {
+                "ECB example" : {
+                  "value" : {
+                    "source" : "ECB"
+                  }
+                }
+              },
+              "schema" : {
+                "$ref" : "#/components/schemas/DatabaseRequestDto"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/FlowDto"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "summary" : "Get Flows"
+      }
+    },
+    "/sdmx-dl/meta" : {
+      "post" : {
+        "deprecated" : true,
+        "tags" : [ "sdmx-dl v1" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "examples" : {
+                "ECB example" : {
+                  "value" : {
+                    "source" : "ECB",
+                    "flow" : "EXR"
+                  }
+                }
+              },
+              "schema" : {
+                "$ref" : "#/components/schemas/FlowRequestDto"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MetaSetDto"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "summary" : "Get Meta"
+      }
+    },
+    "/sdmx-dl/monitorReport" : {
+      "post" : {
+        "deprecated" : true,
+        "tags" : [ "sdmx-dl v1" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "examples" : {
+                "ECB example" : {
+                  "value" : {
+                    "source" : "ECB"
+                  }
+                }
+              },
+              "schema" : {
+                "$ref" : "#/components/schemas/SourceRequestDto"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MonitorReportDto"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "summary" : "Get Monitor Report"
+      }
+    },
+    "/sdmx-dl/searchDatabases" : {
+      "post" : {
+        "deprecated" : true,
+        "tags" : [ "sdmx-dl v1" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/SearchDatabaseRequestDto"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/DatabaseDto"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "summary" : "Search Databases"
+      }
+    },
+    "/sdmx-dl/searchFlows" : {
+      "post" : {
+        "deprecated" : true,
+        "tags" : [ "sdmx-dl v1" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "examples" : {
+                "ECB example" : {
+                  "value" : {
+                    "source" : "ECB",
+                    "query" : "exchange rates",
+                    "maxResults" : 5
+                  }
+                }
+              },
+              "schema" : {
+                "$ref" : "#/components/schemas/SearchFlowsRequestDto"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/FlowDto"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "summary" : "Search Flows"
+      }
+    },
+    "/sdmx-dl/searchSources" : {
+      "post" : {
+        "deprecated" : true,
+        "tags" : [ "sdmx-dl v1" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "examples" : {
+                "ECB example" : {
+                  "value" : {
+                    "query" : "european central",
+                    "maxResults" : 5
+                  }
+                }
+              },
+              "schema" : {
+                "$ref" : "#/components/schemas/SearchSourcesRequestDto"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/WebSourceDto"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "summary" : "Search Sources"
+      }
+    },
+    "/sdmx-dl/sources" : {
+      "post" : {
+        "deprecated" : true,
+        "tags" : [ "sdmx-dl v1" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/EmptyDto"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/WebSourceDto"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "summary" : "Get Sources"
+      }
+    },
+    "/sdmx-dl/v2/about" : {
+      "get" : {
+        "tags" : [ "sdmx-dl v2" ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AboutDto"
+                }
+              }
+            }
+          }
+        },
+        "summary" : "Get About"
+      }
+    },
+    "/sdmx-dl/v2/sources" : {
+      "get" : {
+        "tags" : [ "sdmx-dl v2" ],
+        "parameters" : [ {
+          "name" : "confidentialityThreshold",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : "SECRET"
+          }
+        }, {
+          "name" : "languages",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : "*"
+          }
+        }, {
+          "name" : "maxResults",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
+          }
+        }, {
+          "name" : "query",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : ""
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/WebSourceDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary" : "List Sources"
+      }
+    },
+    "/sdmx-dl/v2/statuses" : {
+      "get" : {
+        "tags" : [ "sdmx-dl v2" ],
+        "parameters" : [ {
+          "name" : "sources",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : "all"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/MonitorReportDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary" : "List Statuses"
+      }
+    },
+    "/sdmx-dl/v2/{source}/databases" : {
+      "get" : {
+        "tags" : [ "sdmx-dl v2" ],
+        "parameters" : [ {
+          "name" : "source",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "languages",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : "*"
+          }
+        }, {
+          "name" : "maxResults",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
+          }
+        }, {
+          "name" : "query",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : ""
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/DatabaseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary" : "List Databases"
+      }
+    },
+    "/sdmx-dl/v2/{source}/flows" : {
+      "get" : {
+        "tags" : [ "sdmx-dl v2" ],
+        "parameters" : [ {
+          "name" : "source",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "database",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : ""
+          }
+        }, {
+          "name" : "languages",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : "*"
+          }
+        }, {
+          "name" : "maxResults",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
+          }
+        }, {
+          "name" : "query",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : ""
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/FlowDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary" : "List Flows"
+      }
+    },
+    "/sdmx-dl/v2/{source}/{flow}/attributes" : {
+      "get" : {
+        "tags" : [ "sdmx-dl v2" ],
+        "parameters" : [ {
+          "name" : "flow",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "source",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "database",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : ""
+          }
+        }, {
+          "name" : "languages",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : "*"
+          }
+        }, {
+          "name" : "maxResults",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
+          }
+        }, {
+          "name" : "query",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : ""
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/AttributeDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary" : "List Attributes"
+      }
+    },
+    "/sdmx-dl/v2/{source}/{flow}/availability/{dimension}" : {
+      "get" : {
+        "tags" : [ "sdmx-dl v2" ],
+        "parameters" : [ {
+          "name" : "dimension",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "flow",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "source",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "database",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : ""
+          }
+        }, {
+          "name" : "key",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : "all"
+          }
+        }, {
+          "name" : "languages",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : "*"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CodelistDto"
+                }
+              }
+            }
+          }
+        },
+        "summary" : "Get Availability"
+      }
+    },
+    "/sdmx-dl/v2/{source}/{flow}/codes/{dimension}" : {
+      "get" : {
+        "tags" : [ "sdmx-dl v2" ],
+        "parameters" : [ {
+          "name" : "dimension",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "flow",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "source",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "database",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : ""
+          }
+        }, {
+          "name" : "languages",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : "*"
+          }
+        }, {
+          "name" : "maxResults",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
+          }
+        }, {
+          "name" : "query",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : ""
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CodelistDto"
+                }
+              }
+            }
+          }
+        },
+        "summary" : "Get Codes"
+      }
+    },
+    "/sdmx-dl/v2/{source}/{flow}/data" : {
+      "get" : {
+        "tags" : [ "sdmx-dl v2" ],
+        "parameters" : [ {
+          "name" : "flow",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "source",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "database",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : ""
+          }
+        }, {
+          "name" : "detail",
+          "in" : "query",
+          "schema" : {
+            "allOf" : [ {
+              "$ref" : "#/components/schemas/Detail"
+            }, {
+              "default" : "FULL"
+            } ]
+          }
+        }, {
+          "name" : "endPeriod",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "firstNObservations",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "key",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : "all"
+          }
+        }, {
+          "name" : "languages",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : "*"
+          }
+        }, {
+          "name" : "lastNObservations",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "startPeriod",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DataSetDto"
+                }
+              }
+            }
+          }
+        },
+        "summary" : "Get Data"
+      }
+    },
+    "/sdmx-dl/v2/{source}/{flow}/data:stream" : {
+      "get" : {
+        "tags" : [ "sdmx-dl v2" ],
+        "parameters" : [ {
+          "name" : "flow",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "source",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "database",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : ""
+          }
+        }, {
+          "name" : "detail",
+          "in" : "query",
+          "schema" : {
+            "allOf" : [ {
+              "$ref" : "#/components/schemas/Detail"
+            }, {
+              "default" : "FULL"
+            } ]
+          }
+        }, {
+          "name" : "endPeriod",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "firstNObservations",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "key",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : "all"
+          }
+        }, {
+          "name" : "languages",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : "*"
+          }
+        }, {
+          "name" : "lastNObservations",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "startPeriod",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/SeriesDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary" : "Get Data Stream"
+      }
+    },
+    "/sdmx-dl/v2/{source}/{flow}/dimensions" : {
+      "get" : {
+        "tags" : [ "sdmx-dl v2" ],
+        "parameters" : [ {
+          "name" : "flow",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "source",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "database",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : ""
+          }
+        }, {
+          "name" : "languages",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : "*"
+          }
+        }, {
+          "name" : "maxResults",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
+          }
+        }, {
+          "name" : "query",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : ""
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/DimensionDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary" : "List Dimensions"
+      }
+    },
+    "/sdmx-dl/v2/{source}/{flow}/meta" : {
+      "get" : {
+        "tags" : [ "sdmx-dl v2" ],
+        "parameters" : [ {
+          "name" : "flow",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "source",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "database",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : ""
+          }
+        }, {
+          "name" : "languages",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : "*"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MetaSetDto"
+                }
+              }
+            }
+          }
+        },
+        "summary" : "Get Meta"
+      }
+    }
+  },
+  "info" : {
+    "title" : "sdmx-dl-grpc API",
+    "version" : "3.2.1-SNAPSHOT"
+  },
+  "servers" : [ {
+    "url" : "http://127.0.0.1:4559",
+    "description" : "Auto generated value"
+  } ]
+}
