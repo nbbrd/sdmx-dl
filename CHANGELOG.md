@@ -9,13 +9,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- Add a credible but obviously-fake data source for demos and testing [#1310](https://github.com/nbbrd/sdmx-dl/issues/1310)
-- Add observation count filtering on data queries [#205](https://github.com/nbbrd/sdmx-dl/issues/205)
-- Add time filtering on data queries [#204](https://github.com/nbbrd/sdmx-dl/issues/204)
+- ![API] Add observation count filtering on data queries [#205](https://github.com/nbbrd/sdmx-dl/issues/205)
+- ![API] Add time filtering on data queries [#204](https://github.com/nbbrd/sdmx-dl/issues/204)
+- ![API] ![GRPC] Add new APIs to improve feature parity [#1337](https://github.com/nbbrd/sdmx-dl/issues/1337)
+- ![PROVIDER] Add a credible but obviously-fake data source for demos and testing [#1310](https://github.com/nbbrd/sdmx-dl/issues/1310)
+
+### Changed
+
+- ![CLI] Move search capability to list commands [#1338](https://github.com/nbbrd/sdmx-dl/issues/1338)
 
 ### Fixed
 
-- Fix key trailing wildcards in rest queries [#1312](https://github.com/nbbrd/sdmx-dl/issues/1312)
+- ![PROVIDER] Fix key trailing wildcards in rest queries [#1312](https://github.com/nbbrd/sdmx-dl/issues/1312)
 
 ## [3.2.0] - 2026-08-14
 
