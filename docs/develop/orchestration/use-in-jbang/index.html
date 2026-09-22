@@ -12,10 +12,11 @@
 <meta name="generator" content="Hugo 0.166.0">
 
 
-  <meta name="description" content="Look up descriptive metadata (title, units, notes, source-specific attributes) attached to a series or a flow, without downloading the observations themselves.
-API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .detailOf(Detail.NO_DATA.name()) .build()) .forEach(series -&gt; series.getMeta().forEach((concept, value) -&gt; IO.println(concept &#43; &#34; = &#34; &#43; value))); } CLI sdmx-dl fetch meta ECB EXR M.CHF.EUR.SP00.A WS GetData/GetDataStream accept the same detail parameter as the CLI/API; pass NO_DATA to get series-level metadata without downloading observations." />
+  <meta name="description" content="Run sdmx-dl orchestration from a single Java script using jbang, leveraging the Java API without Maven/Gradle setup.
+A simple jbang Java script that uses the sdmx-dl API:
+//usr/bin/env jbang &#34;$0&#34; &#34;$@&#34; ; exit $? //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager.ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .lastNObservations(12) .build()) .forEach(series -&gt; System.out.println(series.getKey())); } Save as FetchSdmx.java and run:" />
 
-    <title>Inspect metadata | sdmx-dl</title>
+    <title>Use in jbang script | sdmx-dl</title>
 
     <link rel="icon" type="image/svg+xml" href="/sdmx-dl/docs/develop/favicon/favicon.svg" />
 <link
@@ -36,15 +37,16 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
     
   <meta
     property="og:title"
-    content="Inspect metadata"
+    content="Use in jbang script"
   />
   <meta property="og:site_name" content="sdmx-dl" />
-  <meta property="og:description" content="Look up descriptive metadata (title, units, notes, source-specific attributes) attached to a series or a flow, without downloading the observations themselves.
-API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .detailOf(Detail.NO_DATA.name()) .build()) .forEach(series -&gt; series.getMeta().forEach((concept, value) -&gt; IO.println(concept &#43; &#34; = &#34; &#43; value))); } CLI sdmx-dl fetch meta ECB EXR M.CHF.EUR.SP00.A WS GetData/GetDataStream accept the same detail parameter as the CLI/API; pass NO_DATA to get series-level metadata without downloading observations." />
+  <meta property="og:description" content="Run sdmx-dl orchestration from a single Java script using jbang, leveraging the Java API without Maven/Gradle setup.
+A simple jbang Java script that uses the sdmx-dl API:
+//usr/bin/env jbang &#34;$0&#34; &#34;$@&#34; ; exit $? //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager.ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .lastNObservations(12) .build()) .forEach(series -&gt; System.out.println(series.getKey())); } Save as FetchSdmx.java and run:" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/inspect-metadata/" />
+<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/orchestration/use-in-jbang/" />
 
-<meta property="article:section" content="Usage" />
+<meta property="article:section" content="Orchestration" />
     <meta
       property="article:modified_time"
       content="2026-09-22T15:48:35+02:00"
@@ -52,26 +54,27 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
 
 
   <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Inspect metadata" />
-  <meta name="twitter:description" content="Look up descriptive metadata (title, units, notes, source-specific attributes) attached to a series or a flow, without downloading the observations themselves.
-API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .detailOf(Detail.NO_DATA.name()) .build()) .forEach(series -&gt; series.getMeta().forEach((concept, value) -&gt; IO.println(concept &#43; &#34; = &#34; &#43; value))); } CLI sdmx-dl fetch meta ECB EXR M.CHF.EUR.SP00.A WS GetData/GetDataStream accept the same detail parameter as the CLI/API; pass NO_DATA to get series-level metadata without downloading observations." />
+<meta name="twitter:title" content="Use in jbang script" />
+  <meta name="twitter:description" content="Run sdmx-dl orchestration from a single Java script using jbang, leveraging the Java API without Maven/Gradle setup.
+A simple jbang Java script that uses the sdmx-dl API:
+//usr/bin/env jbang &#34;$0&#34; &#34;$@&#34; ; exit $? //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager.ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .lastNObservations(12) .build()) .forEach(series -&gt; System.out.println(series.getKey())); } Save as FetchSdmx.java and run:" />
 
 
   <script type="application/ld+json">
   {
       "@context": "http://schema.org",
       "@type": "TechArticle",
-      "articleSection": "Usage",
-      "name": "Inspect metadata",
-      "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/inspect-metadata/",
-      "headline": "Inspect metadata",
-      "description": "Look up descriptive metadata (title, units, notes, source-specific attributes) attached to a series or a flow, without downloading the observations themselves.\nAPI \/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(\u0022ECB\u0022) .getData(DataRequest.builder() .flowOf(\u0022EXR\u0022) .keyOf(\u0022M.CHF.EUR.SP00.A\u0022) .detailOf(Detail.NO_DATA.name()) .build()) .forEach(series -\u003e series.getMeta().forEach((concept, value) -\u003e IO.println(concept \u002b \u0022 = \u0022 \u002b value))); } CLI sdmx-dl fetch meta ECB EXR M.CHF.EUR.SP00.A WS GetData\/GetDataStream accept the same detail parameter as the CLI\/API; pass NO_DATA to get series-level metadata without downloading observations.",
-      "wordCount": "181",
+      "articleSection": "Orchestration",
+      "name": "Use in jbang script",
+      "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/orchestration/use-in-jbang/",
+      "headline": "Use in jbang script",
+      "description": "Run sdmx-dl orchestration from a single Java script using jbang, leveraging the Java API without Maven\/Gradle setup.\nA simple jbang Java script that uses the sdmx-dl API:\n\/\/usr\/bin\/env jbang \u0022$0\u0022 \u0022$@\u0022 ; exit $? \/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager.ofServiceLoader() .usingName(\u0022ECB\u0022) .getData(DataRequest.builder() .flowOf(\u0022EXR\u0022) .keyOf(\u0022M.CHF.EUR.SP00.A\u0022) .lastNObservations(12) .build()) .forEach(series -\u003e System.out.println(series.getKey())); } Save as FetchSdmx.java and run:",
+      "wordCount": "163",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
           "@type": "WebPage",
-          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/inspect-metadata/"
+          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/orchestration/use-in-jbang/"
       },
       "copyrightHolder": "sdmx-dl",
       "copyrightYear": "0001",
@@ -155,7 +158,7 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
   href="/sdmx-dl/docs/develop/custom.css"
   media="all"
 />
-  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/inspect-metadata/" rel="canonical" type="text/html" />
+  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/orchestration/use-in-jbang/" rel="canonical" type="text/html" />
 
 <!-- Made with Geekdoc theme https://github.com/thegeeklab/hugo-geekdoc -->
 
@@ -681,7 +684,7 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
                 <span class="flex">
                   <a
                     href="/sdmx-dl/docs/develop/usage/inspect-metadata/"
-                    class="gdoc-nav__entry is-active"
+                    class="gdoc-nav__entry"
                   >
                     Inspect metadata
                   </a>
@@ -1087,7 +1090,7 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
                 <span class="flex">
                   <a
                     href="/sdmx-dl/docs/develop/orchestration/use-in-jbang/"
-                    class="gdoc-nav__entry"
+                    class="gdoc-nav__entry is-active"
                   >
                     Use in jbang script
                   </a>
@@ -1711,7 +1714,7 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
     
   
   
-    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/usage/' href='/sdmx-dl/docs/develop/usage/'><span itemprop='name'>Usage</span></a><meta itemprop='position' content='5' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Inspect metadata</span><meta itemprop='position' content='6' /></li>
+    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/orchestration/' href='/sdmx-dl/docs/develop/orchestration/'><span itemprop='name'>Orchestration</span></a><meta itemprop='position' content='5' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Use in jbang script</span><meta itemprop='position' content='6' /></li>
   
 
   
@@ -1730,133 +1733,73 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
     class="gdoc-markdown gdoc-markdown__align--left"
     id="main-content" tabindex="-1"
   >
-    <h1>Inspect metadata</h1>
+    <h1>Use in jbang script</h1>
     
-    <p>Look up descriptive metadata (title, units, notes, source-specific attributes) attached to a series or a flow, without downloading the observations themselves.</p>
-
-
-
-<div class="gdoc-tabs">
-    <input
-      type="radio"
-      class="gdoc-tabs__control hidden"
-      name="tabs-inspect-metadata"
-      id="tabs-inspect-metadata-0"
-      checked="checked"/>
-    <label for="tabs-inspect-metadata-0" class="gdoc-tabs__label">
-      API
-    </label>
-    <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
+    <p>Run <strong>sdmx-dl</strong> orchestration from a single Java script using <a
+  class="gdoc-markdown__link"
+  href="https://www.jbang.dev/"
+>jbang</a>, leveraging the Java API without Maven/Gradle setup.</p>
+<p>A simple jbang Java script that uses the sdmx-dl API:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//usr/bin/env jbang &#34;$0&#34; &#34;$@&#34; ; exit $?</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.*</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.DataRequest</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.SdmxWebManager</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">()</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">DataRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">flowOf</span><span class="p">(</span><span class="s">&#34;EXR&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">keyOf</span><span class="p">(</span><span class="s">&#34;M.CHF.EUR.SP00.A&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">detailOf</span><span class="p">(</span><span class="n">Detail</span><span class="p">.</span><span class="na">NO_DATA</span><span class="p">.</span><span class="na">name</span><span class="p">())</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">series</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">series</span><span class="p">.</span><span class="na">getMeta</span><span class="p">().</span><span class="na">forEach</span><span class="p">((</span><span class="n">concept</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">concept</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34; = &#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">value</span><span class="p">)));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">DataRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">flowOf</span><span class="p">(</span><span class="s">&#34;EXR&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">keyOf</span><span class="p">(</span><span class="s">&#34;M.CHF.EUR.SP00.A&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">lastNObservations</span><span class="p">(</span><span class="n">12</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">series</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">series</span><span class="p">.</span><span class="na">getKey</span><span class="p">()));</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
-</span></span></span></code></pre></div></div>
-    <input
-      type="radio"
-      class="gdoc-tabs__control hidden"
-      name="tabs-inspect-metadata"
-      id="tabs-inspect-metadata-1"
-      />
-    <label for="tabs-inspect-metadata-1" class="gdoc-tabs__label">
-      CLI
-    </label>
-    <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl fetch meta ECB EXR M.CHF.EUR.SP00.A
-</span></span></code></pre></div></div>
-    <input
-      type="radio"
-      class="gdoc-tabs__control hidden"
-      name="tabs-inspect-metadata"
-      id="tabs-inspect-metadata-2"
-      />
-    <label for="tabs-inspect-metadata-2" class="gdoc-tabs__label">
-      WS
-    </label>
-    <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <p><code>GetData</code>/<code>GetDataStream</code> accept the same <code>detail</code> parameter as the CLI/API; pass <code>NO_DATA</code> to get series-level metadata without downloading observations.</p>
-<div class="flex align-center gdoc-page__anchorwrap">
-    <h3 id="rest"
-    >
-        REST
-    </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/inspect-metadata/#rest" class="gdoc-page__anchor clip flex align-center" title="Anchor to: REST" aria-label="Anchor to: REST" href="#rest">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;key=M.CHF.EUR.SP00.A&#34;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;detail=NO_DATA&#34;</span>
+</span></span></span></code></pre></div><p>Save as <code>FetchSdmx.java</code> and run:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">jbang FetchSdmx.java
 </span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
-    <h3 id="grpc"
-    >
-        gRPC
-    </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/inspect-metadata/#grpc" class="gdoc-page__anchor clip flex align-center" title="Anchor to: gRPC" aria-label="Anchor to: gRPC" href="#grpc">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;,&#34;detail&#34;:&#34;NO_DATA&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
-</span></span></code></pre></div><p>For flow-level metadata (dimensions, attributes, codelists) instead of series-level, use <code>GetMeta</code>:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/ECB/EXR/meta&#34;</span>
-</span></span><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetMeta
-</span></span></code></pre></div></div>
-</div>
-
-<div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="notes"
     >
         Notes
     </h2>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/inspect-metadata/#notes" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Notes" aria-label="Anchor to: Notes" href="#notes">
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/orchestration/use-in-jbang/#notes" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Notes" aria-label="Anchor to: Notes" href="#notes">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
 <ul>
-<li><code>detail=NO_DATA</code> is the series-level equivalent of the CLI&rsquo;s <code>fetch meta</code> and the API&rsquo;s <code>Detail.NO_DATA</code>: every flavor now shares the same request shape as <a
+<li><strong>jbang setup</strong>: Download jbang from <a
   class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/usage/retrieve-data/"
->Retrieve data</a>, just with <code>detail</code> set to skip observations.</li>
-<li>Don&rsquo;t confuse this with flow/structure-level metadata (dimensions, attributes, codelists): that&rsquo;s <code>GetMeta</code>/<code>getMeta(...)</code> on every flavor � see <a
-  class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/usage/browse-structure/"
->Browse dimensions and attributes</a>.</li>
+  href="https://www.jbang.dev/"
+>https://www.jbang.dev/</a> or install via your package manager (<code>brew install jbang</code>, <code>choco install jbang</code>, etc.). After install, the first line (<code>#!/usr/bin/env jbang</code>) makes the script executable on Linux/macOS.</li>
+<li>Everything in a single <code>.java</code> file: no project setup, no build tools needed.</li>
+<li>The <code>//JAVA 25+</code> line tells jbang which Java level the script expects.</li>
+<li>The <code>//DEPS</code> line declares the sdmx-dl dependency; jbang downloads it automatically on first run.</li>
+<li>Use jbang when you want to use the full sdmx-dl Java API without setting up a Maven/Gradle project.</li>
 </ul>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="related-features"
     >
         Related features
     </h2>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/inspect-metadata/#related-features" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Related features" aria-label="Anchor to: Related features" href="#related-features">
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/orchestration/use-in-jbang/#related-features" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Related features" aria-label="Anchor to: Related features" href="#related-features">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
 <ul>
 <li><a
   class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/usage/discover-sources/"
+>Discover sources</a></li>
+<li><a
+  class="gdoc-markdown__link"
   href="/sdmx-dl/docs/develop/usage/retrieve-data/"
 >Retrieve data</a></li>
 <li><a
   class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/usage/browse-structure/"
->Browse dimensions and attributes</a></li>
-<li><a
-  class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/usage/browse-codes/"
->Browse codes</a></li>
+  href="/sdmx-dl/docs/develop/ws/"
+>Web service</a></li>
 </ul>
 
   </article>
@@ -2136,6 +2079,311 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
         
 
         
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+          
+  
+  
+
+  
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
           
           
         
@@ -2145,6 +2393,12 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
         
 
         
+        
+      
+    
+
+  
+
         
       
     
@@ -2174,317 +2428,6 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
             
             
           
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-          
-  
-  
-
-  
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
         
 
         
@@ -2878,11 +2821,11 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
   
     <a
       class="gdoc-page__nav--prev flex align-center"
-      href="/sdmx-dl/docs/develop/usage/browse-availability/"
-      title="Browse availability"
+      href="/sdmx-dl/docs/develop/orchestration/use-in-jupyter/"
+      title="Use in Jupyter"
     >
       <i class="gdoc-icon">gdoc_arrow_left_alt</i>
-      Browse availability
+      Use in Jupyter
     </a>
   
 </span>
@@ -2890,10 +2833,10 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
   
     <a
       class="gdoc-page__nav--next flex align-center"
-      href="/sdmx-dl/docs/develop/usage/narrow-your-request/"
-      title="Narrow your request"
+      href="/sdmx-dl/docs/develop/api/"
+      title="Java library"
     >
-      Narrow your request
+      Java library
       <i class="gdoc-icon">gdoc_arrow_right_alt</i>
     </a>
   

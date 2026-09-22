@@ -12,10 +12,11 @@
 <meta name="generator" content="Hugo 0.166.0">
 
 
-  <meta name="description" content="Look up descriptive metadata (title, units, notes, source-specific attributes) attached to a series or a flow, without downloading the observations themselves.
-API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .detailOf(Detail.NO_DATA.name()) .build()) .forEach(series -&gt; series.getMeta().forEach((concept, value) -&gt; IO.println(concept &#43; &#34; = &#34; &#43; value))); } CLI sdmx-dl fetch meta ECB EXR M.CHF.EUR.SP00.A WS GetData/GetDataStream accept the same detail parameter as the CLI/API; pass NO_DATA to get series-level metadata without downloading observations." />
+  <meta name="description" content="Bring sdmx-dl into Jupyter notebooks when you want interactive exploration, live charting, or reproducible analysis alongside your data fetching.
+CLI Jupyter can call sdmx-dl using shell commands and then load the output:
+import subprocess import pandas as pd import tempfile import os outfile = tempfile.NamedTemporaryFile(mode=&#39;w&#39;, suffix=&#39;.csv&#39;, delete=False).name subprocess.run([ &#39;sdmx-dl&#39;, &#39;fetch&#39;, &#39;data&#39;, &#39;ECB&#39;, &#39;EXR&#39;, &#39;M.CHF.EUR.SP00.A&#39;, &#39;--last-n&#39;, &#39;12&#39;, &#39;-o&#39;, outfile ], check=True) df = pd.read_csv(outfile) os.unlink(outfile) df This approach is ideal when you already use the CLI interactively and want your notebook to reuse the same commands." />
 
-    <title>Inspect metadata | sdmx-dl</title>
+    <title>Use in Jupyter | sdmx-dl</title>
 
     <link rel="icon" type="image/svg+xml" href="/sdmx-dl/docs/develop/favicon/favicon.svg" />
 <link
@@ -36,15 +37,16 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
     
   <meta
     property="og:title"
-    content="Inspect metadata"
+    content="Use in Jupyter"
   />
   <meta property="og:site_name" content="sdmx-dl" />
-  <meta property="og:description" content="Look up descriptive metadata (title, units, notes, source-specific attributes) attached to a series or a flow, without downloading the observations themselves.
-API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .detailOf(Detail.NO_DATA.name()) .build()) .forEach(series -&gt; series.getMeta().forEach((concept, value) -&gt; IO.println(concept &#43; &#34; = &#34; &#43; value))); } CLI sdmx-dl fetch meta ECB EXR M.CHF.EUR.SP00.A WS GetData/GetDataStream accept the same detail parameter as the CLI/API; pass NO_DATA to get series-level metadata without downloading observations." />
+  <meta property="og:description" content="Bring sdmx-dl into Jupyter notebooks when you want interactive exploration, live charting, or reproducible analysis alongside your data fetching.
+CLI Jupyter can call sdmx-dl using shell commands and then load the output:
+import subprocess import pandas as pd import tempfile import os outfile = tempfile.NamedTemporaryFile(mode=&#39;w&#39;, suffix=&#39;.csv&#39;, delete=False).name subprocess.run([ &#39;sdmx-dl&#39;, &#39;fetch&#39;, &#39;data&#39;, &#39;ECB&#39;, &#39;EXR&#39;, &#39;M.CHF.EUR.SP00.A&#39;, &#39;--last-n&#39;, &#39;12&#39;, &#39;-o&#39;, outfile ], check=True) df = pd.read_csv(outfile) os.unlink(outfile) df This approach is ideal when you already use the CLI interactively and want your notebook to reuse the same commands." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/inspect-metadata/" />
+<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/orchestration/use-in-jupyter/" />
 
-<meta property="article:section" content="Usage" />
+<meta property="article:section" content="Orchestration" />
     <meta
       property="article:modified_time"
       content="2026-09-22T15:48:35+02:00"
@@ -52,26 +54,27 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
 
 
   <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Inspect metadata" />
-  <meta name="twitter:description" content="Look up descriptive metadata (title, units, notes, source-specific attributes) attached to a series or a flow, without downloading the observations themselves.
-API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .detailOf(Detail.NO_DATA.name()) .build()) .forEach(series -&gt; series.getMeta().forEach((concept, value) -&gt; IO.println(concept &#43; &#34; = &#34; &#43; value))); } CLI sdmx-dl fetch meta ECB EXR M.CHF.EUR.SP00.A WS GetData/GetDataStream accept the same detail parameter as the CLI/API; pass NO_DATA to get series-level metadata without downloading observations." />
+<meta name="twitter:title" content="Use in Jupyter" />
+  <meta name="twitter:description" content="Bring sdmx-dl into Jupyter notebooks when you want interactive exploration, live charting, or reproducible analysis alongside your data fetching.
+CLI Jupyter can call sdmx-dl using shell commands and then load the output:
+import subprocess import pandas as pd import tempfile import os outfile = tempfile.NamedTemporaryFile(mode=&#39;w&#39;, suffix=&#39;.csv&#39;, delete=False).name subprocess.run([ &#39;sdmx-dl&#39;, &#39;fetch&#39;, &#39;data&#39;, &#39;ECB&#39;, &#39;EXR&#39;, &#39;M.CHF.EUR.SP00.A&#39;, &#39;--last-n&#39;, &#39;12&#39;, &#39;-o&#39;, outfile ], check=True) df = pd.read_csv(outfile) os.unlink(outfile) df This approach is ideal when you already use the CLI interactively and want your notebook to reuse the same commands." />
 
 
   <script type="application/ld+json">
   {
       "@context": "http://schema.org",
       "@type": "TechArticle",
-      "articleSection": "Usage",
-      "name": "Inspect metadata",
-      "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/inspect-metadata/",
-      "headline": "Inspect metadata",
-      "description": "Look up descriptive metadata (title, units, notes, source-specific attributes) attached to a series or a flow, without downloading the observations themselves.\nAPI \/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(\u0022ECB\u0022) .getData(DataRequest.builder() .flowOf(\u0022EXR\u0022) .keyOf(\u0022M.CHF.EUR.SP00.A\u0022) .detailOf(Detail.NO_DATA.name()) .build()) .forEach(series -\u003e series.getMeta().forEach((concept, value) -\u003e IO.println(concept \u002b \u0022 = \u0022 \u002b value))); } CLI sdmx-dl fetch meta ECB EXR M.CHF.EUR.SP00.A WS GetData\/GetDataStream accept the same detail parameter as the CLI\/API; pass NO_DATA to get series-level metadata without downloading observations.",
-      "wordCount": "181",
+      "articleSection": "Orchestration",
+      "name": "Use in Jupyter",
+      "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/orchestration/use-in-jupyter/",
+      "headline": "Use in Jupyter",
+      "description": "Bring sdmx-dl into Jupyter notebooks when you want interactive exploration, live charting, or reproducible analysis alongside your data fetching.\nCLI Jupyter can call sdmx-dl using shell commands and then load the output:\nimport subprocess import pandas as pd import tempfile import os outfile = tempfile.NamedTemporaryFile(mode=\u0027w\u0027, suffix=\u0027.csv\u0027, delete=False).name subprocess.run([ \u0027sdmx-dl\u0027, \u0027fetch\u0027, \u0027data\u0027, \u0027ECB\u0027, \u0027EXR\u0027, \u0027M.CHF.EUR.SP00.A\u0027, \u0027--last-n\u0027, \u002712\u0027, \u0027-o\u0027, outfile ], check=True) df = pd.read_csv(outfile) os.unlink(outfile) df This approach is ideal when you already use the CLI interactively and want your notebook to reuse the same commands.",
+      "wordCount": "323",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
           "@type": "WebPage",
-          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/inspect-metadata/"
+          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/orchestration/use-in-jupyter/"
       },
       "copyrightHolder": "sdmx-dl",
       "copyrightYear": "0001",
@@ -155,7 +158,7 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
   href="/sdmx-dl/docs/develop/custom.css"
   media="all"
 />
-  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/inspect-metadata/" rel="canonical" type="text/html" />
+  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/orchestration/use-in-jupyter/" rel="canonical" type="text/html" />
 
 <!-- Made with Geekdoc theme https://github.com/thegeeklab/hugo-geekdoc -->
 
@@ -681,7 +684,7 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
                 <span class="flex">
                   <a
                     href="/sdmx-dl/docs/develop/usage/inspect-metadata/"
-                    class="gdoc-nav__entry is-active"
+                    class="gdoc-nav__entry"
                   >
                     Inspect metadata
                   </a>
@@ -1043,7 +1046,7 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
                 <span class="flex">
                   <a
                     href="/sdmx-dl/docs/develop/orchestration/use-in-jupyter/"
-                    class="gdoc-nav__entry"
+                    class="gdoc-nav__entry is-active"
                   >
                     Use in Jupyter
                   </a>
@@ -1711,7 +1714,7 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
     
   
   
-    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/usage/' href='/sdmx-dl/docs/develop/usage/'><span itemprop='name'>Usage</span></a><meta itemprop='position' content='5' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Inspect metadata</span><meta itemprop='position' content='6' /></li>
+    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/orchestration/' href='/sdmx-dl/docs/develop/orchestration/'><span itemprop='name'>Orchestration</span></a><meta itemprop='position' content='5' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Use in Jupyter</span><meta itemprop='position' content='6' /></li>
   
 
   
@@ -1730,9 +1733,9 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
     class="gdoc-markdown gdoc-markdown__align--left"
     id="main-content" tabindex="-1"
   >
-    <h1>Inspect metadata</h1>
+    <h1>Use in Jupyter</h1>
     
-    <p>Look up descriptive metadata (title, units, notes, source-specific attributes) attached to a series or a flow, without downloading the observations themselves.</p>
+    <p>Bring <strong>sdmx-dl</strong> into Jupyter notebooks when you want interactive exploration, live charting, or reproducible analysis alongside your data fetching.</p>
 
 
 
@@ -1740,79 +1743,67 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
     <input
       type="radio"
       class="gdoc-tabs__control hidden"
-      name="tabs-inspect-metadata"
-      id="tabs-inspect-metadata-0"
+      name="tabs-use-in-jupyter"
+      id="tabs-use-in-jupyter-0"
       checked="checked"/>
-    <label for="tabs-inspect-metadata-0" class="gdoc-tabs__label">
-      API
-    </label>
-    <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.*</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.SdmxWebManager</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">()</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">DataRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">flowOf</span><span class="p">(</span><span class="s">&#34;EXR&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">keyOf</span><span class="p">(</span><span class="s">&#34;M.CHF.EUR.SP00.A&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">detailOf</span><span class="p">(</span><span class="n">Detail</span><span class="p">.</span><span class="na">NO_DATA</span><span class="p">.</span><span class="na">name</span><span class="p">())</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">series</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">series</span><span class="p">.</span><span class="na">getMeta</span><span class="p">().</span><span class="na">forEach</span><span class="p">((</span><span class="n">concept</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">concept</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34; = &#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">value</span><span class="p">)));</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
-</span></span></span></code></pre></div></div>
-    <input
-      type="radio"
-      class="gdoc-tabs__control hidden"
-      name="tabs-inspect-metadata"
-      id="tabs-inspect-metadata-1"
-      />
-    <label for="tabs-inspect-metadata-1" class="gdoc-tabs__label">
+    <label for="tabs-use-in-jupyter-0" class="gdoc-tabs__label">
       CLI
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl fetch meta ECB EXR M.CHF.EUR.SP00.A
-</span></span></code></pre></div></div>
+      <p>Jupyter can call <code>sdmx-dl</code> using shell commands and then load the output:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">subprocess</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">tempfile</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">os</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">outfile</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;.csv&#39;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;sdmx-dl&#39;</span><span class="p">,</span> <span class="s1">&#39;fetch&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;ECB&#39;</span><span class="p">,</span> <span class="s1">&#39;EXR&#39;</span><span class="p">,</span> <span class="s1">&#39;M.CHF.EUR.SP00.A&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;--last-n&#39;</span><span class="p">,</span> <span class="s1">&#39;12&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;-o&#39;</span><span class="p">,</span> <span class="n">outfile</span>
+</span></span><span class="line"><span class="cl"><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">df</span>
+</span></span></code></pre></div><p>This approach is ideal when you already use the CLI interactively and want your notebook to reuse the same commands.</p>
+</div>
     <input
       type="radio"
       class="gdoc-tabs__control hidden"
-      name="tabs-inspect-metadata"
-      id="tabs-inspect-metadata-2"
+      name="tabs-use-in-jupyter"
+      id="tabs-use-in-jupyter-1"
       />
-    <label for="tabs-inspect-metadata-2" class="gdoc-tabs__label">
-      WS
+    <label for="tabs-use-in-jupyter-1" class="gdoc-tabs__label">
+      REST
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <p><code>GetData</code>/<code>GetDataStream</code> accept the same <code>detail</code> parameter as the CLI/API; pass <code>NO_DATA</code> to get series-level metadata without downloading observations.</p>
-<div class="flex align-center gdoc-page__anchorwrap">
-    <h3 id="rest"
-    >
-        REST
-    </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/inspect-metadata/#rest" class="gdoc-page__anchor clip flex align-center" title="Anchor to: REST" aria-label="Anchor to: REST" href="#rest">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;key=M.CHF.EUR.SP00.A&#34;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;detail=NO_DATA&#34;</span>
-</span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
-    <h3 id="grpc"
-    >
-        gRPC
-    </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/inspect-metadata/#grpc" class="gdoc-page__anchor clip flex align-center" title="Anchor to: gRPC" aria-label="Anchor to: gRPC" href="#grpc">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;,&#34;detail&#34;:&#34;NO_DATA&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
-</span></span></code></pre></div><p>For flow-level metadata (dimensions, attributes, codelists) instead of series-level, use <code>GetMeta</code>:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/ECB/EXR/meta&#34;</span>
-</span></span><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetMeta
+      <p>If the web service is running, notebooks can fetch JSON directly and reshape it:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">requests</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">url</span> <span class="o">=</span> <span class="s2">&#34;http://localhost:4559/sdmx-dl/v2/ECB/EXR/data?key=M.CHF.EUR.SP00.A&amp;lastNObservations=12&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">series</span> <span class="ow">in</span> <span class="n">payload</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">series</span><span class="p">[</span><span class="s1">&#39;obs&#39;</span><span class="p">]:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;Series&#39;</span><span class="p">:</span> <span class="n">series</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;ObsPeriod&#39;</span><span class="p">:</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;period&#39;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;ObsValue&#39;</span><span class="p">:</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">records</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">df</span>
+</span></span></code></pre></div><p>The same pattern works for discovery endpoints like <code>sources</code>, <code>flows</code>, or <code>dimensions</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">requests</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">sources</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;http://localhost:4559/sdmx-dl/v2/sources&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </span></span></code></pre></div></div>
 </div>
 
@@ -1821,42 +1812,41 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
     >
         Notes
     </h2>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/inspect-metadata/#notes" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Notes" aria-label="Anchor to: Notes" href="#notes">
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/orchestration/use-in-jupyter/#notes" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Notes" aria-label="Anchor to: Notes" href="#notes">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
 <ul>
-<li><code>detail=NO_DATA</code> is the series-level equivalent of the CLI&rsquo;s <code>fetch meta</code> and the API&rsquo;s <code>Detail.NO_DATA</code>: every flavor now shares the same request shape as <a
-  class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/usage/retrieve-data/"
->Retrieve data</a>, just with <code>detail</code> set to skip observations.</li>
-<li>Don&rsquo;t confuse this with flow/structure-level metadata (dimensions, attributes, codelists): that&rsquo;s <code>GetMeta</code>/<code>getMeta(...)</code> on every flavor � see <a
-  class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/usage/browse-structure/"
->Browse dimensions and attributes</a>.</li>
+<li><strong>Windows launcher</strong>: On Windows, if <code>subprocess</code> cannot find <code>sdmx-dl</code>, ensure the launcher is on your <code>PATH</code>. You may need to create it first. Alternatively, use the full path to the jar or <code>.bat</code> file in the subprocess call.</li>
+<li>The CLI examples produce CSV files that <code>pandas.read_csv(...)</code> can load directly.</li>
+<li>The REST examples return JSON (via <code>requests.get(...).json()</code>), which you reshape with <code>pandas.DataFrame(...)</code> or list comprehension.</li>
+<li>The CLI approach is simplest when <code>sdmx-dl</code> is already installed and available on your notebook server.</li>
+<li>The REST approach is often better when the notebook server and the sdmx-dl service run on different machines, or when you want to query the service from multiple notebooks without invoking subprocess.</li>
+<li>For real-time or exploratory work, combine discovery calls first (e.g. list sources, list flows, list dimensions) to interactively build your final data request before committing it to analysis code.</li>
+<li>Both approaches integrate well with <code>pandas</code>, <code>plotly</code>, <code>matplotlib</code>, and other data science libraries.</li>
 </ul>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="related-features"
     >
         Related features
     </h2>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/inspect-metadata/#related-features" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Related features" aria-label="Anchor to: Related features" href="#related-features">
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/orchestration/use-in-jupyter/#related-features" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Related features" aria-label="Anchor to: Related features" href="#related-features">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
 <ul>
 <li><a
   class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/usage/discover-sources/"
+>Discover sources</a></li>
+<li><a
+  class="gdoc-markdown__link"
   href="/sdmx-dl/docs/develop/usage/retrieve-data/"
 >Retrieve data</a></li>
 <li><a
   class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/usage/browse-structure/"
->Browse dimensions and attributes</a></li>
-<li><a
-  class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/usage/browse-codes/"
->Browse codes</a></li>
+  href="/sdmx-dl/docs/develop/ws/"
+>Web service</a></li>
 </ul>
 
   </article>
@@ -2136,6 +2126,278 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
         
 
         
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+          
+  
+  
+
+  
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
           
           
         
@@ -2174,278 +2436,6 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
             
             
           
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-          
-  
-  
-
-  
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
         
 
         
@@ -2878,11 +2868,11 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
   
     <a
       class="gdoc-page__nav--prev flex align-center"
-      href="/sdmx-dl/docs/develop/usage/browse-availability/"
-      title="Browse availability"
+      href="/sdmx-dl/docs/develop/orchestration/use-in-r/"
+      title="Use in R"
     >
       <i class="gdoc-icon">gdoc_arrow_left_alt</i>
-      Browse availability
+      Use in R
     </a>
   
 </span>
@@ -2890,10 +2880,10 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
   
     <a
       class="gdoc-page__nav--next flex align-center"
-      href="/sdmx-dl/docs/develop/usage/narrow-your-request/"
-      title="Narrow your request"
+      href="/sdmx-dl/docs/develop/orchestration/use-in-jbang/"
+      title="Use in jbang script"
     >
-      Narrow your request
+      Use in jbang script
       <i class="gdoc-icon">gdoc_arrow_right_alt</i>
     </a>
   
