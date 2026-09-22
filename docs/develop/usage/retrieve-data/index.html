@@ -12,11 +12,11 @@
 <meta name="generator" content="Hugo 0.166.0">
 
 
-  <meta name="description" content="Pick the right output for your use case: Java objects for the library, CSV for shell pipelines, or JSON/protobuf for a remote service.
-API The API is object-centric and can be used with the supported format modules and managers. A common entry point is the Java library or the standalone JAR distribution.
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .build()) .forEach(series -&gt; IO.println(series.getKey())); } CLI The CLI writes RFC4180 CSV to standard output by default and supports file output, gzip, append, and encoding options." />
+  <meta name="description" content="Download observations from a dataset using a source, flow, and key.
+API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .startPeriodOf(&#34;2020&#34;) .endPeriodOf(&#34;2022-12&#34;) .lastNObservations(3) .build()) .forEach(series -&gt; IO.println(series.getKey())); } CLI sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A With filters:
+sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --start 2020 --end 2022-12 --last-n 3 WS REST curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data \ --data-urlencode &#34;key=M.CHF.EUR.SP00.A&#34; \ --data-urlencode &#34;startPeriod=2020&#34; \ --data-urlencode &#34;endPeriod=2022-12&#34; \ --data-urlencode &#34;lastNObservations=3&#34; gRPC grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData Notes All flavors share the same request shape: source, flow, key, plus optional database, languages, and the filters described in Narrow your request. WS additionally offers GetDataStream/GET /sdmx-dl/v2/{source}/{flow}/data:stream to stream large responses instead of buffering the full dataset. Related features Discover sources Discover flows Inspect metadata " />
 
-    <title>Output and formats | sdmx-dl</title>
+    <title>Retrieve data | sdmx-dl</title>
 
     <link rel="icon" type="image/svg+xml" href="/sdmx-dl/docs/develop/favicon/favicon.svg" />
 <link
@@ -37,50 +37,50 @@ API The API is object-centric and can be used with the supported format modules 
     
   <meta
     property="og:title"
-    content="Output and formats"
+    content="Retrieve data"
   />
   <meta property="og:site_name" content="sdmx-dl" />
-  <meta property="og:description" content="Pick the right output for your use case: Java objects for the library, CSV for shell pipelines, or JSON/protobuf for a remote service.
-API The API is object-centric and can be used with the supported format modules and managers. A common entry point is the Java library or the standalone JAR distribution.
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .build()) .forEach(series -&gt; IO.println(series.getKey())); } CLI The CLI writes RFC4180 CSV to standard output by default and supports file output, gzip, append, and encoding options." />
+  <meta property="og:description" content="Download observations from a dataset using a source, flow, and key.
+API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .startPeriodOf(&#34;2020&#34;) .endPeriodOf(&#34;2022-12&#34;) .lastNObservations(3) .build()) .forEach(series -&gt; IO.println(series.getKey())); } CLI sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A With filters:
+sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --start 2020 --end 2022-12 --last-n 3 WS REST curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data \ --data-urlencode &#34;key=M.CHF.EUR.SP00.A&#34; \ --data-urlencode &#34;startPeriod=2020&#34; \ --data-urlencode &#34;endPeriod=2022-12&#34; \ --data-urlencode &#34;lastNObservations=3&#34; gRPC grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData Notes All flavors share the same request shape: source, flow, key, plus optional database, languages, and the filters described in Narrow your request. WS additionally offers GetDataStream/GET /sdmx-dl/v2/{source}/{flow}/data:stream to stream large responses instead of buffering the full dataset. Related features Discover sources Discover flows Inspect metadata " />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/features/output-and-formats/" />
+<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve-data/" />
 
-<meta property="article:section" content="Features" />
+<meta property="article:section" content="Usage" />
     <meta
       property="article:modified_time"
-      content="2026-09-21T15:02:05+02:00"
+      content="2026-09-22T10:26:41+02:00"
     />
 
 
   <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Output and formats" />
-  <meta name="twitter:description" content="Pick the right output for your use case: Java objects for the library, CSV for shell pipelines, or JSON/protobuf for a remote service.
-API The API is object-centric and can be used with the supported format modules and managers. A common entry point is the Java library or the standalone JAR distribution.
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .build()) .forEach(series -&gt; IO.println(series.getKey())); } CLI The CLI writes RFC4180 CSV to standard output by default and supports file output, gzip, append, and encoding options." />
+<meta name="twitter:title" content="Retrieve data" />
+  <meta name="twitter:description" content="Download observations from a dataset using a source, flow, and key.
+API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .startPeriodOf(&#34;2020&#34;) .endPeriodOf(&#34;2022-12&#34;) .lastNObservations(3) .build()) .forEach(series -&gt; IO.println(series.getKey())); } CLI sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A With filters:
+sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --start 2020 --end 2022-12 --last-n 3 WS REST curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data \ --data-urlencode &#34;key=M.CHF.EUR.SP00.A&#34; \ --data-urlencode &#34;startPeriod=2020&#34; \ --data-urlencode &#34;endPeriod=2022-12&#34; \ --data-urlencode &#34;lastNObservations=3&#34; gRPC grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData Notes All flavors share the same request shape: source, flow, key, plus optional database, languages, and the filters described in Narrow your request. WS additionally offers GetDataStream/GET /sdmx-dl/v2/{source}/{flow}/data:stream to stream large responses instead of buffering the full dataset. Related features Discover sources Discover flows Inspect metadata " />
 
 
   <script type="application/ld+json">
   {
       "@context": "http://schema.org",
       "@type": "TechArticle",
-      "articleSection": "Features",
-      "name": "Output and formats",
-      "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/features/output-and-formats/",
-      "headline": "Output and formats",
-      "description": "Pick the right output for your use case: Java objects for the library, CSV for shell pipelines, or JSON\/protobuf for a remote service.\nAPI The API is object-centric and can be used with the supported format modules and managers. A common entry point is the Java library or the standalone JAR distribution.\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(\u0022ECB\u0022) .getData(DataRequest.builder() .flowOf(\u0022EXR\u0022) .keyOf(\u0022M.CHF.EUR.SP00.A\u0022) .build()) .forEach(series -\u003e IO.println(series.getKey())); } CLI The CLI writes RFC4180 CSV to standard output by default and supports file output, gzip, append, and encoding options.",
-      "wordCount": "209",
+      "articleSection": "Usage",
+      "name": "Retrieve data",
+      "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve-data/",
+      "headline": "Retrieve data",
+      "description": "Download observations from a dataset using a source, flow, and key.\nAPI \/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(\u0022ECB\u0022) .getData(DataRequest.builder() .flowOf(\u0022EXR\u0022) .keyOf(\u0022M.CHF.EUR.SP00.A\u0022) .startPeriodOf(\u00222020\u0022) .endPeriodOf(\u00222022-12\u0022) .lastNObservations(3) .build()) .forEach(series -\u003e IO.println(series.getKey())); } CLI sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A With filters:\nsdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --start 2020 --end 2022-12 --last-n 3 WS REST curl -G localhost:4559\/sdmx-dl\/v2\/ECB\/EXR\/data \\ --data-urlencode \u0022key=M.CHF.EUR.SP00.A\u0022 \\ --data-urlencode \u0022startPeriod=2020\u0022 \\ --data-urlencode \u0022endPeriod=2022-12\u0022 \\ --data-urlencode \u0022lastNObservations=3\u0022 gRPC grpcurl -d \u0027{\u0022source\u0022:\u0022ECB\u0022,\u0022flow\u0022:\u0022EXR\u0022,\u0022key\u0022:\u0022M.CHF.EUR.SP00.A\u0022}\u0027 -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData Notes All flavors share the same request shape: source, flow, key, plus optional database, languages, and the filters described in Narrow your request. WS additionally offers GetDataStream\/GET \/sdmx-dl\/v2\/{source}\/{flow}\/data:stream to stream large responses instead of buffering the full dataset. Related features Discover sources Discover flows Inspect metadata ",
+      "wordCount": "130",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
           "@type": "WebPage",
-          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/features/output-and-formats/"
+          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve-data/"
       },
       "copyrightHolder": "sdmx-dl",
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-21T15:02:05.00Z",
+      "dateModified": "2026-09-22T10:26:41.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -158,7 +158,7 @@ API The API is object-centric and can be used with the supported format modules 
   href="/sdmx-dl/docs/develop/custom.css"
   media="all"
 />
-  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/features/output-and-formats/" rel="canonical" type="text/html" />
+  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve-data/" rel="canonical" type="text/html" />
 
 <!-- Made with Geekdoc theme https://github.com/thegeeklab/hugo-geekdoc -->
 
@@ -342,6 +342,686 @@ API The API is object-centric and can be used with the supported format modules 
 
   <ul class="gdoc-nav__list">
     
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/"
+                    class="gdoc-nav__entry"
+                  >
+                    Usage
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+              
+  
+
+
+  <ul class="gdoc-nav__list">
+    
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/discover-sources/"
+                    class="gdoc-nav__entry"
+                  >
+                    Discover sources
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/discover-databases/"
+                    class="gdoc-nav__entry"
+                  >
+                    Discover databases
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/discover-flows/"
+                    class="gdoc-nav__entry"
+                  >
+                    Discover flows
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/browse-structure/"
+                    class="gdoc-nav__entry"
+                  >
+                    Browse dimensions and attributes
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/browse-codes/"
+                    class="gdoc-nav__entry"
+                  >
+                    Browse codes
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/browse-availability/"
+                    class="gdoc-nav__entry"
+                  >
+                    Browse availability
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/inspect-metadata/"
+                    class="gdoc-nav__entry"
+                  >
+                    Inspect metadata
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/narrow-your-request/"
+                    class="gdoc-nav__entry"
+                  >
+                    Narrow your request
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/retrieve-data/"
+                    class="gdoc-nav__entry is-active"
+                  >
+                    Retrieve data
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/monitor-and-status/"
+                    class="gdoc-nav__entry"
+                  >
+                    Monitor and status
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+  </ul>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/orchestration/"
+                    class="gdoc-nav__entry"
+                  >
+                    Orchestration
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+              
+  
+
+
+  <ul class="gdoc-nav__list">
+    
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/orchestration/use-in-batch-file/"
+                    class="gdoc-nav__entry"
+                  >
+                    Use in batch file
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/orchestration/use-in-excel/"
+                    class="gdoc-nav__entry"
+                  >
+                    Use in Excel
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/orchestration/use-in-r/"
+                    class="gdoc-nav__entry"
+                  >
+                    Use in R
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+  </ul>
+
+            
+          </li>
+        
+      
     
       
 
@@ -792,6 +1472,14 @@ API The API is object-centric and can be used with the supported format modules 
           </li>
         
       
+    
+      
+
+      
+        
+      
+
+      
         
           
           
@@ -873,588 +1561,6 @@ API The API is object-centric and can be used with the supported format modules 
         
       
     
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/"
-                    class="gdoc-nav__entry"
-                  >
-                    Features
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-              
-  
-
-
-  <ul class="gdoc-nav__list">
-    
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/discover-sources/"
-                    class="gdoc-nav__entry"
-                  >
-                    Discover sources
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/discover-databases/"
-                    class="gdoc-nav__entry"
-                  >
-                    Discover databases
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/discover-flows/"
-                    class="gdoc-nav__entry"
-                  >
-                    Discover flows
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/browse-structure/"
-                    class="gdoc-nav__entry"
-                  >
-                    Browse dimensions and attributes
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/browse-codes/"
-                    class="gdoc-nav__entry"
-                  >
-                    Browse codes
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/browse-availability/"
-                    class="gdoc-nav__entry"
-                  >
-                    Browse availability
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/inspect-metadata/"
-                    class="gdoc-nav__entry"
-                  >
-                    Inspect metadata
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/narrow-your-request/"
-                    class="gdoc-nav__entry"
-                  >
-                    Narrow your request
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/retrieve-data/"
-                    class="gdoc-nav__entry"
-                  >
-                    Retrieve data
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/auth-and-credentials/"
-                    class="gdoc-nav__entry"
-                  >
-                    Authentication and credentials
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/monitor-and-status/"
-                    class="gdoc-nav__entry"
-                  >
-                    Monitor and status
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/output-and-formats/"
-                    class="gdoc-nav__entry is-active"
-                  >
-                    Output and formats
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-  </ul>
-
-            
-          </li>
-        
-      
-    
   </ul>
 
 
@@ -1520,7 +1626,7 @@ API The API is object-centric and can be used with the supported format modules 
     
   
   
-    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/features/' href='/sdmx-dl/docs/develop/features/'><span itemprop='name'>Features</span></a><meta itemprop='position' content='5' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Output and formats</span><meta itemprop='position' content='6' /></li>
+    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/usage/' href='/sdmx-dl/docs/develop/usage/'><span itemprop='name'>Usage</span></a><meta itemprop='position' content='5' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Retrieve data</span><meta itemprop='position' content='6' /></li>
   
 
   
@@ -1539,9 +1645,9 @@ API The API is object-centric and can be used with the supported format modules 
     class="gdoc-markdown gdoc-markdown__align--left"
     id="main-content" tabindex="-1"
   >
-    <h1>Output and formats</h1>
+    <h1>Retrieve data</h1>
     
-    <p>Pick the right output for your use case: Java objects for the library, CSV for shell pipelines, or JSON/protobuf for a remote service.</p>
+    <p>Download observations from a dataset using a source, flow, and key.</p>
 
 
 
@@ -1549,16 +1655,14 @@ API The API is object-centric and can be used with the supported format modules 
     <input
       type="radio"
       class="gdoc-tabs__control hidden"
-      name="tabs-output-and-formats"
-      id="tabs-output-and-formats-0"
+      name="tabs-retrieve-data"
+      id="tabs-retrieve-data-0"
       checked="checked"/>
-    <label for="tabs-output-and-formats-0" class="gdoc-tabs__label">
+    <label for="tabs-retrieve-data-0" class="gdoc-tabs__label">
       API
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <p>The API is object-centric and can be used with the supported format modules and managers.
-A common entry point is the Java library or the standalone JAR distribution.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
+      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.DataRequest</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.SdmxWebManager</span><span class="p">;</span><span class="w">
@@ -1570,6 +1674,9 @@ A common entry point is the Java library or the standalone JAR distribution.</p>
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">DataRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">flowOf</span><span class="p">(</span><span class="s">&#34;EXR&#34;</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">keyOf</span><span class="p">(</span><span class="s">&#34;M.CHF.EUR.SP00.A&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">startPeriodOf</span><span class="p">(</span><span class="s">&#34;2020&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">endPeriodOf</span><span class="p">(</span><span class="s">&#34;2022-12&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">lastNObservations</span><span class="p">(</span><span class="n">3</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">series</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">series</span><span class="p">.</span><span class="na">getKey</span><span class="p">()));</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
@@ -1577,97 +1684,92 @@ A common entry point is the Java library or the standalone JAR distribution.</p>
     <input
       type="radio"
       class="gdoc-tabs__control hidden"
-      name="tabs-output-and-formats"
-      id="tabs-output-and-formats-1"
+      name="tabs-retrieve-data"
+      id="tabs-retrieve-data-1"
       />
-    <label for="tabs-output-and-formats-1" class="gdoc-tabs__label">
+    <label for="tabs-retrieve-data-1" class="gdoc-tabs__label">
       CLI
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <p>The CLI writes RFC4180 CSV to standard output by default and supports file output, gzip, append, and encoding options.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv -z
+      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A
+</span></span></code></pre></div><p>With filters:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --start <span class="m">2020</span> --end 2022-12 --last-n <span class="m">3</span>
 </span></span></code></pre></div></div>
     <input
       type="radio"
       class="gdoc-tabs__control hidden"
-      name="tabs-output-and-formats"
-      id="tabs-output-and-formats-2"
+      name="tabs-retrieve-data"
+      id="tabs-retrieve-data-2"
       />
-    <label for="tabs-output-and-formats-2" class="gdoc-tabs__label">
+    <label for="tabs-retrieve-data-2" class="gdoc-tabs__label">
       WS
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <p>The web service exposes two transport formats:</p>
-<ul>
-<li>gRPC: protobuf messages on port <code>4557</code></li>
-<li>REST: JSON over HTTP on port <code>4559</code></li>
-</ul>
-<div class="flex align-center gdoc-page__anchorwrap">
-    <h3 id="grpc"
-    >
-        gRPC
-    </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/output-and-formats/#grpc" class="gdoc-page__anchor clip flex align-center" title="Anchor to: gRPC" aria-label="Anchor to: gRPC" href="#grpc">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
-</span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
+      <div class="flex align-center gdoc-page__anchorwrap">
     <h3 id="rest"
     >
         REST
     </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/output-and-formats/#rest" class="gdoc-page__anchor clip flex align-center" title="Anchor to: REST" aria-label="Anchor to: REST" href="#rest">
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve-data/#rest" class="gdoc-page__anchor clip flex align-center" title="Anchor to: REST" aria-label="Anchor to: REST" href="#rest">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/ECB/EXR/data?key=M.CHF.EUR.SP00.A&#34;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;key=M.CHF.EUR.SP00.A&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;startPeriod=2020&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;endPeriod=2022-12&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;lastNObservations=3&#34;</span>
+</span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
+    <h3 id="grpc"
+    >
+        gRPC
+    </h3>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve-data/#grpc" class="gdoc-page__anchor clip flex align-center" title="Anchor to: gRPC" aria-label="Anchor to: gRPC" href="#grpc">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
 </span></span></code></pre></div></div>
 </div>
 
-<div class="flex align-center gdoc-page__anchorwrap">
-    <h2 id="supported-file-formats"
-    >
-        Supported file formats
-    </h2>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/output-and-formats/#supported-file-formats" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Supported file formats" aria-label="Anchor to: Supported file formats" href="#supported-file-formats">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-<p>sdmx-dl also reads/writes several standard SDMX and interchange formats (SDMX-ML Generic/Compact Data, SDMX-ML Structure, CSV, protobuf, Kryo) — see the <a
-  class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/formats/"
->Formats</a> section for details.</p>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="notes"
     >
         Notes
     </h2>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/output-and-formats/#notes" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Notes" aria-label="Anchor to: Notes" href="#notes">
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve-data/#notes" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Notes" aria-label="Anchor to: Notes" href="#notes">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
 <ul>
-<li>This page is about <em>output shape per flavor</em>, not wire formats; see <a
+<li>All flavors share the same request shape: <code>source</code>, <code>flow</code>, <code>key</code>, plus optional <code>database</code>, <code>languages</code>, and the filters described in <a
   class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/formats/"
->Formats</a> for the on-disk/on-wire encodings.</li>
-<li>The CLI&rsquo;s <code>-o</code>/<code>-z</code>/<code>--encoding</code> options only affect how CSV is written (file vs stdout, gzip, character set) — the CSV field layout itself doesn&rsquo;t change.</li>
+  href="/sdmx-dl/docs/develop/usage/narrow-your-request/"
+>Narrow your request</a>.</li>
+<li>WS additionally offers <code>GetDataStream</code>/<code>GET /sdmx-dl/v2/{source}/{flow}/data:stream</code> to stream large responses instead of buffering the full dataset.</li>
 </ul>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="related-features"
     >
         Related features
     </h2>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/output-and-formats/#related-features" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Related features" aria-label="Anchor to: Related features" href="#related-features">
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve-data/#related-features" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Related features" aria-label="Anchor to: Related features" href="#related-features">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
 <ul>
 <li><a
   class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/features/retrieve-data/"
->Retrieve data</a></li>
+  href="/sdmx-dl/docs/develop/usage/discover-sources/"
+>Discover sources</a></li>
+<li><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/usage/discover-flows/"
+>Discover flows</a></li>
+<li><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/usage/inspect-metadata/"
+>Inspect metadata</a></li>
 </ul>
 
   </article>
@@ -1721,505 +1823,11 @@ A common entry point is the Java library or the standalone JAR distribution.</p>
 
         
         
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
           
   
   
 
   
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-          
-  
-  
-
-  
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
   
     
 
@@ -2521,7 +2129,589 @@ A common entry point is the Java library or the standalone JAR distribution.</p>
     
 
   
+    
 
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+          
+            
+            
+          
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+          
+  
+  
+
+  
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+          
+  
+  
+
+  
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
         
       
     
@@ -2535,15 +2725,24 @@ A common entry point is the Java library or the standalone JAR distribution.</p>
   
     <a
       class="gdoc-page__nav--prev flex align-center"
-      href="/sdmx-dl/docs/develop/features/monitor-and-status/"
-      title="Monitor and status"
+      href="/sdmx-dl/docs/develop/usage/narrow-your-request/"
+      title="Narrow your request"
     >
       <i class="gdoc-icon">gdoc_arrow_left_alt</i>
-      Monitor and status
+      Narrow your request
     </a>
   
 </span>
 <span class="gdoc-page__nav">
+  
+    <a
+      class="gdoc-page__nav--next flex align-center"
+      href="/sdmx-dl/docs/develop/usage/monitor-and-status/"
+      title="Monitor and status"
+    >
+      Monitor and status
+      <i class="gdoc-icon">gdoc_arrow_right_alt</i>
+    </a>
   
 </span>
 

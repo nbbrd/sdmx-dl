@@ -12,11 +12,11 @@
 <meta name="generator" content="Hugo 0.166.0">
 
 
-  <meta name="description" content="Find a database namespace within a multi-database source, when you don&rsquo;t know its exact name.
-API listDatabases(...) always accepts an optional query/maxResults; omit them to simply list every database.
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { Provider ecb = SdmxWebManager.ofServiceLoader().usingName(&#34;ECB&#34;); // List every database ecb.listDatabases(DatabasesRequest.DEFAULT) .forEach(database -&gt; IO.println(database.getRef())); // Search by name ecb.listDatabases(DatabasesRequest.builder() .query(&#34;central&#34;) .maxResults(5) .build()) .forEach(database -&gt; IO.println(database.getRef())); } CLI sdmx-dl list databases ECB sdmx-dl list databases ECB -q &#34;central&#34; -m 5 WS REST curl &#34;localhost:4559/sdmx-dl/v2/ECB/databases&#34; curl -G localhost:4559/sdmx-dl/v2/ECB/databases \ --data-urlencode &#34;query=central&#34; \ --data-urlencode &#34;maxResults=5&#34; gRPC grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListDatabases grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;query&#34;:&#34;central&#34;,&#34;maxResults&#34;:5}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListDatabases Notes Discovery and search are the same call: pass a query/maxResults to search within a source, or omit them to list every database it exposes. Most sources expose a single default database, so this feature is only useful for multi-database providers. Search is scoped to one source at a time; use Discover sources first if you don&rsquo;t know which source to search within. Related features Discover sources Discover flows " />
+  <meta name="description" content="Restrict a data request to a date range and/or a limited number of observations, so you download only what you need instead of a series&rsquo; full history.
+Both narrowing mechanisms are just extra fields on the same data request (DataRequest/Query in the API, options on fetch data in the CLI, fields on GetData in the WS), so they can be used separately or together.
+By period API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .startPeriodOf(&#34;2020&#34;) .endPeriodOf(&#34;2022-12&#34;) .build()) .forEach(series -&gt; IO.println(series.getKey())); } CLI sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --start 2020 --end 2022-12 WS REST curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data \ --data-urlencode &#34;key=M.CHF.EUR.SP00.A&#34; \ --data-urlencode &#34;startPeriod=2020&#34; \ --data-urlencode &#34;endPeriod=2022-12&#34; gRPC grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;,&#34;start_period&#34;:&#34;2020&#34;,&#34;end_period&#34;:&#34;2022-12&#34;}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData Bounds are inclusive and accept reduced-precision ISO-8601 (&quot;2020&quot;, &quot;2020-12&quot;, &quot;2020-12-01&quot;) on every flavor." />
 
-    <title>Discover databases | sdmx-dl</title>
+    <title>Narrow your request | sdmx-dl</title>
 
     <link rel="icon" type="image/svg+xml" href="/sdmx-dl/docs/develop/favicon/favicon.svg" />
 <link
@@ -37,50 +37,50 @@ API listDatabases(...) always accepts an optional query/maxResults; omit them to
     
   <meta
     property="og:title"
-    content="Discover databases"
+    content="Narrow your request"
   />
   <meta property="og:site_name" content="sdmx-dl" />
-  <meta property="og:description" content="Find a database namespace within a multi-database source, when you don’t know its exact name.
-API listDatabases(...) always accepts an optional query/maxResults; omit them to simply list every database.
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { Provider ecb = SdmxWebManager.ofServiceLoader().usingName(&#34;ECB&#34;); // List every database ecb.listDatabases(DatabasesRequest.DEFAULT) .forEach(database -&gt; IO.println(database.getRef())); // Search by name ecb.listDatabases(DatabasesRequest.builder() .query(&#34;central&#34;) .maxResults(5) .build()) .forEach(database -&gt; IO.println(database.getRef())); } CLI sdmx-dl list databases ECB sdmx-dl list databases ECB -q &#34;central&#34; -m 5 WS REST curl &#34;localhost:4559/sdmx-dl/v2/ECB/databases&#34; curl -G localhost:4559/sdmx-dl/v2/ECB/databases \ --data-urlencode &#34;query=central&#34; \ --data-urlencode &#34;maxResults=5&#34; gRPC grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListDatabases grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;query&#34;:&#34;central&#34;,&#34;maxResults&#34;:5}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListDatabases Notes Discovery and search are the same call: pass a query/maxResults to search within a source, or omit them to list every database it exposes. Most sources expose a single default database, so this feature is only useful for multi-database providers. Search is scoped to one source at a time; use Discover sources first if you don’t know which source to search within. Related features Discover sources Discover flows " />
+  <meta property="og:description" content="Restrict a data request to a date range and/or a limited number of observations, so you download only what you need instead of a series’ full history.
+Both narrowing mechanisms are just extra fields on the same data request (DataRequest/Query in the API, options on fetch data in the CLI, fields on GetData in the WS), so they can be used separately or together.
+By period API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .startPeriodOf(&#34;2020&#34;) .endPeriodOf(&#34;2022-12&#34;) .build()) .forEach(series -&gt; IO.println(series.getKey())); } CLI sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --start 2020 --end 2022-12 WS REST curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data \ --data-urlencode &#34;key=M.CHF.EUR.SP00.A&#34; \ --data-urlencode &#34;startPeriod=2020&#34; \ --data-urlencode &#34;endPeriod=2022-12&#34; gRPC grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;,&#34;start_period&#34;:&#34;2020&#34;,&#34;end_period&#34;:&#34;2022-12&#34;}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData Bounds are inclusive and accept reduced-precision ISO-8601 (&#34;2020&#34;, &#34;2020-12&#34;, &#34;2020-12-01&#34;) on every flavor." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/features/discover-databases/" />
+<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/narrow-your-request/" />
 
-<meta property="article:section" content="Features" />
+<meta property="article:section" content="Usage" />
     <meta
       property="article:modified_time"
-      content="2026-09-21T15:02:05+02:00"
+      content="2026-09-22T10:26:41+02:00"
     />
 
 
   <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Discover databases" />
-  <meta name="twitter:description" content="Find a database namespace within a multi-database source, when you don’t know its exact name.
-API listDatabases(...) always accepts an optional query/maxResults; omit them to simply list every database.
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { Provider ecb = SdmxWebManager.ofServiceLoader().usingName(&#34;ECB&#34;); // List every database ecb.listDatabases(DatabasesRequest.DEFAULT) .forEach(database -&gt; IO.println(database.getRef())); // Search by name ecb.listDatabases(DatabasesRequest.builder() .query(&#34;central&#34;) .maxResults(5) .build()) .forEach(database -&gt; IO.println(database.getRef())); } CLI sdmx-dl list databases ECB sdmx-dl list databases ECB -q &#34;central&#34; -m 5 WS REST curl &#34;localhost:4559/sdmx-dl/v2/ECB/databases&#34; curl -G localhost:4559/sdmx-dl/v2/ECB/databases \ --data-urlencode &#34;query=central&#34; \ --data-urlencode &#34;maxResults=5&#34; gRPC grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListDatabases grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;query&#34;:&#34;central&#34;,&#34;maxResults&#34;:5}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListDatabases Notes Discovery and search are the same call: pass a query/maxResults to search within a source, or omit them to list every database it exposes. Most sources expose a single default database, so this feature is only useful for multi-database providers. Search is scoped to one source at a time; use Discover sources first if you don’t know which source to search within. Related features Discover sources Discover flows " />
+<meta name="twitter:title" content="Narrow your request" />
+  <meta name="twitter:description" content="Restrict a data request to a date range and/or a limited number of observations, so you download only what you need instead of a series’ full history.
+Both narrowing mechanisms are just extra fields on the same data request (DataRequest/Query in the API, options on fetch data in the CLI, fields on GetData in the WS), so they can be used separately or together.
+By period API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .startPeriodOf(&#34;2020&#34;) .endPeriodOf(&#34;2022-12&#34;) .build()) .forEach(series -&gt; IO.println(series.getKey())); } CLI sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --start 2020 --end 2022-12 WS REST curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data \ --data-urlencode &#34;key=M.CHF.EUR.SP00.A&#34; \ --data-urlencode &#34;startPeriod=2020&#34; \ --data-urlencode &#34;endPeriod=2022-12&#34; gRPC grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;,&#34;start_period&#34;:&#34;2020&#34;,&#34;end_period&#34;:&#34;2022-12&#34;}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData Bounds are inclusive and accept reduced-precision ISO-8601 (&#34;2020&#34;, &#34;2020-12&#34;, &#34;2020-12-01&#34;) on every flavor." />
 
 
   <script type="application/ld+json">
   {
       "@context": "http://schema.org",
       "@type": "TechArticle",
-      "articleSection": "Features",
-      "name": "Discover databases",
-      "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/features/discover-databases/",
-      "headline": "Discover databases",
-      "description": "Find a database namespace within a multi-database source, when you don’t know its exact name.\nAPI listDatabases(...) always accepts an optional query\/maxResults; omit them to simply list every database.\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.*; import sdmxdl.web.SdmxWebManager; void main() throws Exception { Provider ecb = SdmxWebManager.ofServiceLoader().usingName(\u0022ECB\u0022); \/\/ List every database ecb.listDatabases(DatabasesRequest.DEFAULT) .forEach(database -\u003e IO.println(database.getRef())); \/\/ Search by name ecb.listDatabases(DatabasesRequest.builder() .query(\u0022central\u0022) .maxResults(5) .build()) .forEach(database -\u003e IO.println(database.getRef())); } CLI sdmx-dl list databases ECB sdmx-dl list databases ECB -q \u0022central\u0022 -m 5 WS REST curl \u0022localhost:4559\/sdmx-dl\/v2\/ECB\/databases\u0022 curl -G localhost:4559\/sdmx-dl\/v2\/ECB\/databases \\ --data-urlencode \u0022query=central\u0022 \\ --data-urlencode \u0022maxResults=5\u0022 gRPC grpcurl -d \u0027{\u0022source\u0022:\u0022ECB\u0022}\u0027 -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListDatabases grpcurl -d \u0027{\u0022source\u0022:\u0022ECB\u0022,\u0022query\u0022:\u0022central\u0022,\u0022maxResults\u0022:5}\u0027 -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListDatabases Notes Discovery and search are the same call: pass a query\/maxResults to search within a source, or omit them to list every database it exposes. Most sources expose a single default database, so this feature is only useful for multi-database providers. Search is scoped to one source at a time; use Discover sources first if you don’t know which source to search within. Related features Discover sources Discover flows ",
-      "wordCount": "174",
+      "articleSection": "Usage",
+      "name": "Narrow your request",
+      "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/narrow-your-request/",
+      "headline": "Narrow your request",
+      "description": "Restrict a data request to a date range and\/or a limited number of observations, so you download only what you need instead of a series’ full history.\nBoth narrowing mechanisms are just extra fields on the same data request (DataRequest\/Query in the API, options on fetch data in the CLI, fields on GetData in the WS), so they can be used separately or together.\nBy period API \/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(\u0022ECB\u0022) .getData(DataRequest.builder() .flowOf(\u0022EXR\u0022) .keyOf(\u0022M.CHF.EUR.SP00.A\u0022) .startPeriodOf(\u00222020\u0022) .endPeriodOf(\u00222022-12\u0022) .build()) .forEach(series -\u003e IO.println(series.getKey())); } CLI sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --start 2020 --end 2022-12 WS REST curl -G localhost:4559\/sdmx-dl\/v2\/ECB\/EXR\/data \\ --data-urlencode \u0022key=M.CHF.EUR.SP00.A\u0022 \\ --data-urlencode \u0022startPeriod=2020\u0022 \\ --data-urlencode \u0022endPeriod=2022-12\u0022 gRPC grpcurl -d \u0027{\u0022source\u0022:\u0022ECB\u0022,\u0022flow\u0022:\u0022EXR\u0022,\u0022key\u0022:\u0022M.CHF.EUR.SP00.A\u0022,\u0022start_period\u0022:\u00222020\u0022,\u0022end_period\u0022:\u00222022-12\u0022}\u0027 -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData Bounds are inclusive and accept reduced-precision ISO-8601 (\u00222020\u0022, \u00222020-12\u0022, \u00222020-12-01\u0022) on every flavor.",
+      "wordCount": "263",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
           "@type": "WebPage",
-          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/features/discover-databases/"
+          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/narrow-your-request/"
       },
       "copyrightHolder": "sdmx-dl",
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-21T15:02:05.00Z",
+      "dateModified": "2026-09-22T10:26:41.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -158,7 +158,7 @@ API listDatabases(...) always accepts an optional query/maxResults; omit them to
   href="/sdmx-dl/docs/develop/custom.css"
   media="all"
 />
-  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/features/discover-databases/" rel="canonical" type="text/html" />
+  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/narrow-your-request/" rel="canonical" type="text/html" />
 
 <!-- Made with Geekdoc theme https://github.com/thegeeklab/hugo-geekdoc -->
 
@@ -342,6 +342,686 @@ API listDatabases(...) always accepts an optional query/maxResults; omit them to
 
   <ul class="gdoc-nav__list">
     
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/"
+                    class="gdoc-nav__entry"
+                  >
+                    Usage
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+              
+  
+
+
+  <ul class="gdoc-nav__list">
+    
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/discover-sources/"
+                    class="gdoc-nav__entry"
+                  >
+                    Discover sources
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/discover-databases/"
+                    class="gdoc-nav__entry"
+                  >
+                    Discover databases
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/discover-flows/"
+                    class="gdoc-nav__entry"
+                  >
+                    Discover flows
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/browse-structure/"
+                    class="gdoc-nav__entry"
+                  >
+                    Browse dimensions and attributes
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/browse-codes/"
+                    class="gdoc-nav__entry"
+                  >
+                    Browse codes
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/browse-availability/"
+                    class="gdoc-nav__entry"
+                  >
+                    Browse availability
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/inspect-metadata/"
+                    class="gdoc-nav__entry"
+                  >
+                    Inspect metadata
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/narrow-your-request/"
+                    class="gdoc-nav__entry is-active"
+                  >
+                    Narrow your request
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/retrieve-data/"
+                    class="gdoc-nav__entry"
+                  >
+                    Retrieve data
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/monitor-and-status/"
+                    class="gdoc-nav__entry"
+                  >
+                    Monitor and status
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+  </ul>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/orchestration/"
+                    class="gdoc-nav__entry"
+                  >
+                    Orchestration
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+              
+  
+
+
+  <ul class="gdoc-nav__list">
+    
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/orchestration/use-in-batch-file/"
+                    class="gdoc-nav__entry"
+                  >
+                    Use in batch file
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/orchestration/use-in-excel/"
+                    class="gdoc-nav__entry"
+                  >
+                    Use in Excel
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/orchestration/use-in-r/"
+                    class="gdoc-nav__entry"
+                  >
+                    Use in R
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+  </ul>
+
+            
+          </li>
+        
+      
     
       
 
@@ -792,6 +1472,14 @@ API listDatabases(...) always accepts an optional query/maxResults; omit them to
           </li>
         
       
+    
+      
+
+      
+        
+      
+
+      
         
           
           
@@ -873,588 +1561,6 @@ API listDatabases(...) always accepts an optional query/maxResults; omit them to
         
       
     
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/"
-                    class="gdoc-nav__entry"
-                  >
-                    Features
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-              
-  
-
-
-  <ul class="gdoc-nav__list">
-    
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/discover-sources/"
-                    class="gdoc-nav__entry"
-                  >
-                    Discover sources
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/discover-databases/"
-                    class="gdoc-nav__entry is-active"
-                  >
-                    Discover databases
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/discover-flows/"
-                    class="gdoc-nav__entry"
-                  >
-                    Discover flows
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/browse-structure/"
-                    class="gdoc-nav__entry"
-                  >
-                    Browse dimensions and attributes
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/browse-codes/"
-                    class="gdoc-nav__entry"
-                  >
-                    Browse codes
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/browse-availability/"
-                    class="gdoc-nav__entry"
-                  >
-                    Browse availability
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/inspect-metadata/"
-                    class="gdoc-nav__entry"
-                  >
-                    Inspect metadata
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/narrow-your-request/"
-                    class="gdoc-nav__entry"
-                  >
-                    Narrow your request
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/retrieve-data/"
-                    class="gdoc-nav__entry"
-                  >
-                    Retrieve data
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/auth-and-credentials/"
-                    class="gdoc-nav__entry"
-                  >
-                    Authentication and credentials
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/monitor-and-status/"
-                    class="gdoc-nav__entry"
-                  >
-                    Monitor and status
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/output-and-formats/"
-                    class="gdoc-nav__entry"
-                  >
-                    Output and formats
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-  </ul>
-
-            
-          </li>
-        
-      
-    
   </ul>
 
 
@@ -1520,7 +1626,7 @@ API listDatabases(...) always accepts an optional query/maxResults; omit them to
     
   
   
-    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/features/' href='/sdmx-dl/docs/develop/features/'><span itemprop='name'>Features</span></a><meta itemprop='position' content='5' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Discover databases</span><meta itemprop='position' content='6' /></li>
+    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/usage/' href='/sdmx-dl/docs/develop/usage/'><span itemprop='name'>Usage</span></a><meta itemprop='position' content='5' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Narrow your request</span><meta itemprop='position' content='6' /></li>
   
 
   
@@ -1539,9 +1645,19 @@ API listDatabases(...) always accepts an optional query/maxResults; omit them to
     class="gdoc-markdown gdoc-markdown__align--left"
     id="main-content" tabindex="-1"
   >
-    <h1>Discover databases</h1>
+    <h1>Narrow your request</h1>
     
-    <p>Find a database namespace within a multi-database source, when you don&rsquo;t know its exact name.</p>
+    <p>Restrict a data request to a date range and/or a limited number of observations, so you download only what you need instead of a series&rsquo; full history.</p>
+<p>Both narrowing mechanisms are just extra fields on the same data request (<code>DataRequest</code>/<code>Query</code> in the API, options on <code>fetch data</code> in the CLI, fields on <code>GetData</code> in the WS), so they can be used separately or together.</p>
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="by-period"
+    >
+        By period
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/narrow-your-request/#by-period" class="gdoc-page__anchor clip flex align-center" title="Anchor to: By period" aria-label="Anchor to: By period" href="#by-period">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
 
 
 
@@ -1549,54 +1665,50 @@ API listDatabases(...) always accepts an optional query/maxResults; omit them to
     <input
       type="radio"
       class="gdoc-tabs__control hidden"
-      name="tabs-discover-databases"
-      id="tabs-discover-databases-0"
+      name="tabs-narrow-by-period"
+      id="tabs-narrow-by-period-0"
       checked="checked"/>
-    <label for="tabs-discover-databases-0" class="gdoc-tabs__label">
+    <label for="tabs-narrow-by-period-0" class="gdoc-tabs__label">
       API
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <p><code>listDatabases(...)</code> always accepts an optional <code>query</code>/<code>maxResults</code>; omit them to simply list every database.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
+      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.*</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.DataRequest</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.SdmxWebManager</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Provider</span><span class="w"> </span><span class="n">ecb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SdmxWebManager</span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">().</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// List every database</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">ecb</span><span class="p">.</span><span class="na">listDatabases</span><span class="p">(</span><span class="n">DatabasesRequest</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">database</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">database</span><span class="p">.</span><span class="na">getRef</span><span class="p">()));</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// Search by name</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">ecb</span><span class="p">.</span><span class="na">listDatabases</span><span class="p">(</span><span class="n">DatabasesRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">query</span><span class="p">(</span><span class="s">&#34;central&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">maxResults</span><span class="p">(</span><span class="n">5</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">DataRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">flowOf</span><span class="p">(</span><span class="s">&#34;EXR&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">keyOf</span><span class="p">(</span><span class="s">&#34;M.CHF.EUR.SP00.A&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">startPeriodOf</span><span class="p">(</span><span class="s">&#34;2020&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">endPeriodOf</span><span class="p">(</span><span class="s">&#34;2022-12&#34;</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">database</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">database</span><span class="p">.</span><span class="na">getRef</span><span class="p">()));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">series</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">series</span><span class="p">.</span><span class="na">getKey</span><span class="p">()));</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></div></div>
     <input
       type="radio"
       class="gdoc-tabs__control hidden"
-      name="tabs-discover-databases"
-      id="tabs-discover-databases-1"
+      name="tabs-narrow-by-period"
+      id="tabs-narrow-by-period-1"
       />
-    <label for="tabs-discover-databases-1" class="gdoc-tabs__label">
+    <label for="tabs-narrow-by-period-1" class="gdoc-tabs__label">
       CLI
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl list databases ECB
-</span></span><span class="line"><span class="cl">sdmx-dl list databases ECB -q <span class="s2">&#34;central&#34;</span> -m <span class="m">5</span>
+      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --start <span class="m">2020</span> --end 2022-12
 </span></span></code></pre></div></div>
     <input
       type="radio"
       class="gdoc-tabs__control hidden"
-      name="tabs-discover-databases"
-      id="tabs-discover-databases-2"
+      name="tabs-narrow-by-period"
+      id="tabs-narrow-by-period-2"
       />
-    <label for="tabs-discover-databases-2" class="gdoc-tabs__label">
+    <label for="tabs-narrow-by-period-2" class="gdoc-tabs__label">
       WS
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
@@ -1605,65 +1717,147 @@ API listDatabases(...) always accepts an optional query/maxResults; omit them to
     >
         REST
     </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/discover-databases/#rest" class="gdoc-page__anchor clip flex align-center" title="Anchor to: REST" aria-label="Anchor to: REST" href="#rest">
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/narrow-your-request/#rest" class="gdoc-page__anchor clip flex align-center" title="Anchor to: REST" aria-label="Anchor to: REST" href="#rest">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/ECB/databases&#34;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">curl -G localhost:4559/sdmx-dl/v2/ECB/databases <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;query=central&#34;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;maxResults=5&#34;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;key=M.CHF.EUR.SP00.A&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;startPeriod=2020&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;endPeriod=2022-12&#34;</span>
 </span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
     <h3 id="grpc"
     >
         gRPC
     </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/discover-databases/#grpc" class="gdoc-page__anchor clip flex align-center" title="Anchor to: gRPC" aria-label="Anchor to: gRPC" href="#grpc">
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/narrow-your-request/#grpc" class="gdoc-page__anchor clip flex align-center" title="Anchor to: gRPC" aria-label="Anchor to: gRPC" href="#grpc">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListDatabases
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;query&#34;:&#34;central&#34;,&#34;maxResults&#34;:5}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListDatabases
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;,&#34;start_period&#34;:&#34;2020&#34;,&#34;end_period&#34;:&#34;2022-12&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
 </span></span></code></pre></div></div>
 </div>
 
+<p>Bounds are inclusive and accept reduced-precision ISO-8601 (<code>&quot;2020&quot;</code>, <code>&quot;2020-12&quot;</code>, <code>&quot;2020-12-01&quot;</code>) on every flavor.</p>
 <div class="flex align-center gdoc-page__anchorwrap">
-    <h2 id="notes"
+    <h2 id="by-observation-count"
     >
-        Notes
+        By observation count
     </h2>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/discover-databases/#notes" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Notes" aria-label="Anchor to: Notes" href="#notes">
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/narrow-your-request/#by-observation-count" class="gdoc-page__anchor clip flex align-center" title="Anchor to: By observation count" aria-label="Anchor to: By observation count" href="#by-observation-count">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<ul>
-<li>Discovery and search are the same call: pass a <code>query</code>/<code>maxResults</code> to search within a source, or omit them to list every database it exposes.</li>
-<li>Most sources expose a single default database, so this feature is only useful for multi-database providers.</li>
-<li>Search is scoped to one source at a time; use <a
-  class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/features/discover-sources/"
->Discover sources</a> first if you don&rsquo;t know which source to search within.</li>
-</ul>
+
+
+
+<div class="gdoc-tabs">
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-narrow-by-count"
+      id="tabs-narrow-by-count-0"
+      checked="checked"/>
+    <label for="tabs-narrow-by-count-0" class="gdoc-tabs__label">
+      API
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.DataRequest</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.SdmxWebManager</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">DataRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">flowOf</span><span class="p">(</span><span class="s">&#34;EXR&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">keyOf</span><span class="p">(</span><span class="s">&#34;M.CHF.EUR.SP00.A&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">firstNObservations</span><span class="p">(</span><span class="n">3</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">lastNObservations</span><span class="p">(</span><span class="n">2</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">series</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">series</span><span class="p">.</span><span class="na">getKey</span><span class="p">()));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div></div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-narrow-by-count"
+      id="tabs-narrow-by-count-1"
+      />
+    <label for="tabs-narrow-by-count-1" class="gdoc-tabs__label">
+      CLI
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --first-n <span class="m">3</span> --last-n <span class="m">2</span>
+</span></span></code></pre></div></div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-narrow-by-count"
+      id="tabs-narrow-by-count-2"
+      />
+    <label for="tabs-narrow-by-count-2" class="gdoc-tabs__label">
+      WS
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <div class="flex align-center gdoc-page__anchorwrap">
+    <h3 id="rest"
+    >
+        REST
+    </h3>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/narrow-your-request/#rest" class="gdoc-page__anchor clip flex align-center" title="Anchor to: REST" aria-label="Anchor to: REST" href="#rest">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;key=M.CHF.EUR.SP00.A&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;firstNObservations=3&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;lastNObservations=2&#34;</span>
+</span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
+    <h3 id="grpc"
+    >
+        gRPC
+    </h3>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/narrow-your-request/#grpc" class="gdoc-page__anchor clip flex align-center" title="Anchor to: gRPC" aria-label="Anchor to: gRPC" href="#grpc">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;,&#34;first_n_observations&#34;:3,&#34;last_n_observations&#34;:2}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
+</span></span></code></pre></div></div>
+</div>
+
+<p><code>first-n</code> and <code>last-n</code> can be combined (as above) to get both ends of a series in one call.</p>
 <div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="combining-both"
+    >
+        Combining both
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/narrow-your-request/#combining-both" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Combining both" aria-label="Anchor to: Combining both" href="#combining-both">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>Period and observation-count limits apply together in the same request, e.g. &ldquo;the last 3 observations up to end of 2022, starting no earlier than 2020&rdquo;:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --start <span class="m">2020</span> --end 2022-12 --last-n <span class="m">3</span>
+</span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="related-features"
     >
         Related features
     </h2>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/discover-databases/#related-features" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Related features" aria-label="Anchor to: Related features" href="#related-features">
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/narrow-your-request/#related-features" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Related features" aria-label="Anchor to: Related features" href="#related-features">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
 <ul>
 <li><a
   class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/features/discover-sources/"
->Discover sources</a></li>
+  href="/sdmx-dl/docs/develop/usage/retrieve-data/"
+>Retrieve data</a></li>
 <li><a
   class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/features/discover-flows/"
->Discover flows</a></li>
+  href="/sdmx-dl/docs/develop/usage/browse-availability/"
+>Browse availability</a></li>
 </ul>
 
   </article>
@@ -1717,513 +1911,11 @@ API listDatabases(...) always accepts an optional query/maxResults; omit them to
 
         
         
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
           
   
   
 
   
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-          
-  
-  
-
-  
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-          
-          
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-          
-            
-            
-          
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
   
     
 
@@ -2478,6 +2170,47 @@ API listDatabases(...) always accepts an optional query/maxResults; omit them to
         
 
         
+          
+          
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+          
+            
+            
+          
+        
+
+        
 
         
           
@@ -2523,6 +2256,550 @@ API listDatabases(...) always accepts an optional query/maxResults; omit them to
 
   
 
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+          
+  
+  
+
+  
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+          
+  
+  
+
+  
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
         
       
     
@@ -2536,11 +2813,11 @@ API listDatabases(...) always accepts an optional query/maxResults; omit them to
   
     <a
       class="gdoc-page__nav--prev flex align-center"
-      href="/sdmx-dl/docs/develop/features/discover-sources/"
-      title="Discover sources"
+      href="/sdmx-dl/docs/develop/usage/inspect-metadata/"
+      title="Inspect metadata"
     >
       <i class="gdoc-icon">gdoc_arrow_left_alt</i>
-      Discover sources
+      Inspect metadata
     </a>
   
 </span>
@@ -2548,10 +2825,10 @@ API listDatabases(...) always accepts an optional query/maxResults; omit them to
   
     <a
       class="gdoc-page__nav--next flex align-center"
-      href="/sdmx-dl/docs/develop/features/discover-flows/"
-      title="Discover flows"
+      href="/sdmx-dl/docs/develop/usage/retrieve-data/"
+      title="Retrieve data"
     >
-      Discover flows
+      Retrieve data
       <i class="gdoc-icon">gdoc_arrow_right_alt</i>
     </a>
   

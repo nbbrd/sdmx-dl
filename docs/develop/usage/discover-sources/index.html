@@ -12,10 +12,11 @@
 <meta name="generator" content="Hugo 0.166.0">
 
 
-  <meta name="description" content="Check whether a source is up, and how it has been performing, before relying on it in an automated job.
-API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); IO.println(manager.getMonitorReport(&#34;ECB&#34;)); } CLI sdmx-dl check status ECB check status also accepts several sources at once, or the keyword all to check every configured source in parallel:" />
+  <meta name="description" content="See which data providers sdmx-dl can connect to, and find one by name or topic when you don&rsquo;t know its exact ID (with typo tolerance).
+API listSources(...) always accepts an optional query/maxResults; omit them to simply list every source.
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); // List every source manager.listSources(WebSourcesRequest.DEFAULT) .forEach(source -&gt; IO.println(source.getId())); // Search by name or topic manager.listSources(WebSourcesRequest.builder() .query(&#34;european central&#34;) .maxResults(5) .build()) .forEach(source -&gt; IO.println(source.getId())); } CLI sdmx-dl list sources sdmx-dl list sources -q &#34;european central&#34; -m 5 WS REST curl &#34;localhost:4559/sdmx-dl/v2/sources&#34; curl -G localhost:4559/sdmx-dl/v2/sources \ --data-urlencode &#34;query=european central&#34; \ --data-urlencode &#34;maxResults=5&#34; gRPC grpcurl -d &#39;{}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListSources grpcurl -d &#39;{&#34;query&#34;:&#34;european central&#34;,&#34;maxResults&#34;:5}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListSources Notes Discovery and search are the same call: pass a query/maxResults to search, or omit them to list every source. Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so both &quot;ecb&quot; and &quot;eurpean central&quot; find the European Central Bank. When query is empty, results fall back to being sorted by id instead of ranked by relevance. Some sources are aliases of others (e.g. renamed or mirrored endpoints); the API exposes WebSource.isAlias() to filter them out (and they&rsquo;re excluded from search results), while the CLI table lists them alongside their target. WebSourcesRequest also carries a threshold (a Confidentiality level) so that sources requiring stricter confidentiality can be excluded from the results; it defaults to allowing every source. Related features Discover databases Discover flows " />
 
-    <title>Monitor and status | sdmx-dl</title>
+    <title>Discover sources | sdmx-dl</title>
 
     <link rel="icon" type="image/svg+xml" href="/sdmx-dl/docs/develop/favicon/favicon.svg" />
 <link
@@ -36,48 +37,50 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
     
   <meta
     property="og:title"
-    content="Monitor and status"
+    content="Discover sources"
   />
   <meta property="og:site_name" content="sdmx-dl" />
-  <meta property="og:description" content="Check whether a source is up, and how it has been performing, before relying on it in an automated job.
-API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); IO.println(manager.getMonitorReport(&#34;ECB&#34;)); } CLI sdmx-dl check status ECB check status also accepts several sources at once, or the keyword all to check every configured source in parallel:" />
+  <meta property="og:description" content="See which data providers sdmx-dl can connect to, and find one by name or topic when you don’t know its exact ID (with typo tolerance).
+API listSources(...) always accepts an optional query/maxResults; omit them to simply list every source.
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); // List every source manager.listSources(WebSourcesRequest.DEFAULT) .forEach(source -&gt; IO.println(source.getId())); // Search by name or topic manager.listSources(WebSourcesRequest.builder() .query(&#34;european central&#34;) .maxResults(5) .build()) .forEach(source -&gt; IO.println(source.getId())); } CLI sdmx-dl list sources sdmx-dl list sources -q &#34;european central&#34; -m 5 WS REST curl &#34;localhost:4559/sdmx-dl/v2/sources&#34; curl -G localhost:4559/sdmx-dl/v2/sources \ --data-urlencode &#34;query=european central&#34; \ --data-urlencode &#34;maxResults=5&#34; gRPC grpcurl -d &#39;{}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListSources grpcurl -d &#39;{&#34;query&#34;:&#34;european central&#34;,&#34;maxResults&#34;:5}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListSources Notes Discovery and search are the same call: pass a query/maxResults to search, or omit them to list every source. Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so both &#34;ecb&#34; and &#34;eurpean central&#34; find the European Central Bank. When query is empty, results fall back to being sorted by id instead of ranked by relevance. Some sources are aliases of others (e.g. renamed or mirrored endpoints); the API exposes WebSource.isAlias() to filter them out (and they’re excluded from search results), while the CLI table lists them alongside their target. WebSourcesRequest also carries a threshold (a Confidentiality level) so that sources requiring stricter confidentiality can be excluded from the results; it defaults to allowing every source. Related features Discover databases Discover flows " />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/features/monitor-and-status/" />
+<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/discover-sources/" />
 
-<meta property="article:section" content="Features" />
+<meta property="article:section" content="Usage" />
     <meta
       property="article:modified_time"
-      content="2026-09-21T15:02:05+02:00"
+      content="2026-09-22T10:26:41+02:00"
     />
 
 
   <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Monitor and status" />
-  <meta name="twitter:description" content="Check whether a source is up, and how it has been performing, before relying on it in an automated job.
-API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); IO.println(manager.getMonitorReport(&#34;ECB&#34;)); } CLI sdmx-dl check status ECB check status also accepts several sources at once, or the keyword all to check every configured source in parallel:" />
+<meta name="twitter:title" content="Discover sources" />
+  <meta name="twitter:description" content="See which data providers sdmx-dl can connect to, and find one by name or topic when you don’t know its exact ID (with typo tolerance).
+API listSources(...) always accepts an optional query/maxResults; omit them to simply list every source.
+//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); // List every source manager.listSources(WebSourcesRequest.DEFAULT) .forEach(source -&gt; IO.println(source.getId())); // Search by name or topic manager.listSources(WebSourcesRequest.builder() .query(&#34;european central&#34;) .maxResults(5) .build()) .forEach(source -&gt; IO.println(source.getId())); } CLI sdmx-dl list sources sdmx-dl list sources -q &#34;european central&#34; -m 5 WS REST curl &#34;localhost:4559/sdmx-dl/v2/sources&#34; curl -G localhost:4559/sdmx-dl/v2/sources \ --data-urlencode &#34;query=european central&#34; \ --data-urlencode &#34;maxResults=5&#34; gRPC grpcurl -d &#39;{}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListSources grpcurl -d &#39;{&#34;query&#34;:&#34;european central&#34;,&#34;maxResults&#34;:5}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListSources Notes Discovery and search are the same call: pass a query/maxResults to search, or omit them to list every source. Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so both &#34;ecb&#34; and &#34;eurpean central&#34; find the European Central Bank. When query is empty, results fall back to being sorted by id instead of ranked by relevance. Some sources are aliases of others (e.g. renamed or mirrored endpoints); the API exposes WebSource.isAlias() to filter them out (and they’re excluded from search results), while the CLI table lists them alongside their target. WebSourcesRequest also carries a threshold (a Confidentiality level) so that sources requiring stricter confidentiality can be excluded from the results; it defaults to allowing every source. Related features Discover databases Discover flows " />
 
 
   <script type="application/ld+json">
   {
       "@context": "http://schema.org",
       "@type": "TechArticle",
-      "articleSection": "Features",
-      "name": "Monitor and status",
-      "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/features/monitor-and-status/",
-      "headline": "Monitor and status",
-      "description": "Check whether a source is up, and how it has been performing, before relying on it in an automated job.\nAPI \/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); IO.println(manager.getMonitorReport(\u0022ECB\u0022)); } CLI sdmx-dl check status ECB check status also accepts several sources at once, or the keyword all to check every configured source in parallel:",
-      "wordCount": "174",
+      "articleSection": "Usage",
+      "name": "Discover sources",
+      "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/discover-sources/",
+      "headline": "Discover sources",
+      "description": "See which data providers sdmx-dl can connect to, and find one by name or topic when you don’t know its exact ID (with typo tolerance).\nAPI listSources(...) always accepts an optional query\/maxResults; omit them to simply list every source.\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); \/\/ List every source manager.listSources(WebSourcesRequest.DEFAULT) .forEach(source -\u003e IO.println(source.getId())); \/\/ Search by name or topic manager.listSources(WebSourcesRequest.builder() .query(\u0022european central\u0022) .maxResults(5) .build()) .forEach(source -\u003e IO.println(source.getId())); } CLI sdmx-dl list sources sdmx-dl list sources -q \u0022european central\u0022 -m 5 WS REST curl \u0022localhost:4559\/sdmx-dl\/v2\/sources\u0022 curl -G localhost:4559\/sdmx-dl\/v2\/sources \\ --data-urlencode \u0022query=european central\u0022 \\ --data-urlencode \u0022maxResults=5\u0022 gRPC grpcurl -d \u0027{}\u0027 -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListSources grpcurl -d \u0027{\u0022query\u0022:\u0022european central\u0022,\u0022maxResults\u0022:5}\u0027 -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListSources Notes Discovery and search are the same call: pass a query\/maxResults to search, or omit them to list every source. Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so both \u0022ecb\u0022 and \u0022eurpean central\u0022 find the European Central Bank. When query is empty, results fall back to being sorted by id instead of ranked by relevance. Some sources are aliases of others (e.g. renamed or mirrored endpoints); the API exposes WebSource.isAlias() to filter them out (and they’re excluded from search results), while the CLI table lists them alongside their target. WebSourcesRequest also carries a threshold (a Confidentiality level) so that sources requiring stricter confidentiality can be excluded from the results; it defaults to allowing every source. Related features Discover databases Discover flows ",
+      "wordCount": "244",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
           "@type": "WebPage",
-          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/features/monitor-and-status/"
+          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/discover-sources/"
       },
       "copyrightHolder": "sdmx-dl",
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-21T15:02:05.00Z",
+      "dateModified": "2026-09-22T10:26:41.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -155,7 +158,7 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
   href="/sdmx-dl/docs/develop/custom.css"
   media="all"
 />
-  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/features/monitor-and-status/" rel="canonical" type="text/html" />
+  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/discover-sources/" rel="canonical" type="text/html" />
 
 <!-- Made with Geekdoc theme https://github.com/thegeeklab/hugo-geekdoc -->
 
@@ -339,6 +342,686 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
 
   <ul class="gdoc-nav__list">
     
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/"
+                    class="gdoc-nav__entry"
+                  >
+                    Usage
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+              
+  
+
+
+  <ul class="gdoc-nav__list">
+    
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/discover-sources/"
+                    class="gdoc-nav__entry is-active"
+                  >
+                    Discover sources
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/discover-databases/"
+                    class="gdoc-nav__entry"
+                  >
+                    Discover databases
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/discover-flows/"
+                    class="gdoc-nav__entry"
+                  >
+                    Discover flows
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/browse-structure/"
+                    class="gdoc-nav__entry"
+                  >
+                    Browse dimensions and attributes
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/browse-codes/"
+                    class="gdoc-nav__entry"
+                  >
+                    Browse codes
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/browse-availability/"
+                    class="gdoc-nav__entry"
+                  >
+                    Browse availability
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/inspect-metadata/"
+                    class="gdoc-nav__entry"
+                  >
+                    Inspect metadata
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/narrow-your-request/"
+                    class="gdoc-nav__entry"
+                  >
+                    Narrow your request
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/retrieve-data/"
+                    class="gdoc-nav__entry"
+                  >
+                    Retrieve data
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/monitor-and-status/"
+                    class="gdoc-nav__entry"
+                  >
+                    Monitor and status
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+  </ul>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/orchestration/"
+                    class="gdoc-nav__entry"
+                  >
+                    Orchestration
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+              
+  
+
+
+  <ul class="gdoc-nav__list">
+    
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/orchestration/use-in-batch-file/"
+                    class="gdoc-nav__entry"
+                  >
+                    Use in batch file
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/orchestration/use-in-excel/"
+                    class="gdoc-nav__entry"
+                  >
+                    Use in Excel
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/orchestration/use-in-r/"
+                    class="gdoc-nav__entry"
+                  >
+                    Use in R
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+  </ul>
+
+            
+          </li>
+        
+      
     
       
 
@@ -789,6 +1472,14 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
           </li>
         
       
+    
+      
+
+      
+        
+      
+
+      
         
           
           
@@ -870,588 +1561,6 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
         
       
     
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/"
-                    class="gdoc-nav__entry"
-                  >
-                    Features
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-              
-  
-
-
-  <ul class="gdoc-nav__list">
-    
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/discover-sources/"
-                    class="gdoc-nav__entry"
-                  >
-                    Discover sources
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/discover-databases/"
-                    class="gdoc-nav__entry"
-                  >
-                    Discover databases
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/discover-flows/"
-                    class="gdoc-nav__entry"
-                  >
-                    Discover flows
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/browse-structure/"
-                    class="gdoc-nav__entry"
-                  >
-                    Browse dimensions and attributes
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/browse-codes/"
-                    class="gdoc-nav__entry"
-                  >
-                    Browse codes
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/browse-availability/"
-                    class="gdoc-nav__entry"
-                  >
-                    Browse availability
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/inspect-metadata/"
-                    class="gdoc-nav__entry"
-                  >
-                    Inspect metadata
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/narrow-your-request/"
-                    class="gdoc-nav__entry"
-                  >
-                    Narrow your request
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/retrieve-data/"
-                    class="gdoc-nav__entry"
-                  >
-                    Retrieve data
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/auth-and-credentials/"
-                    class="gdoc-nav__entry"
-                  >
-                    Authentication and credentials
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/monitor-and-status/"
-                    class="gdoc-nav__entry is-active"
-                  >
-                    Monitor and status
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/output-and-formats/"
-                    class="gdoc-nav__entry"
-                  >
-                    Output and formats
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-  </ul>
-
-            
-          </li>
-        
-      
-    
   </ul>
 
 
@@ -1517,7 +1626,7 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
     
   
   
-    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/features/' href='/sdmx-dl/docs/develop/features/'><span itemprop='name'>Features</span></a><meta itemprop='position' content='5' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Monitor and status</span><meta itemprop='position' content='6' /></li>
+    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/usage/' href='/sdmx-dl/docs/develop/usage/'><span itemprop='name'>Usage</span></a><meta itemprop='position' content='5' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Discover sources</span><meta itemprop='position' content='6' /></li>
   
 
   
@@ -1536,9 +1645,9 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
     class="gdoc-markdown gdoc-markdown__align--left"
     id="main-content" tabindex="-1"
   >
-    <h1>Monitor and status</h1>
+    <h1>Discover sources</h1>
     
-    <p>Check whether a source is up, and how it has been performing, before relying on it in an automated job.</p>
+    <p>See which data providers sdmx-dl can connect to, and find one by name or topic when you don&rsquo;t know its exact ID (with typo tolerance).</p>
 
 
 
@@ -1546,44 +1655,53 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
     <input
       type="radio"
       class="gdoc-tabs__control hidden"
-      name="tabs-monitor-and-status"
-      id="tabs-monitor-and-status-0"
+      name="tabs-discover-sources"
+      id="tabs-discover-sources-0"
       checked="checked"/>
-    <label for="tabs-monitor-and-status-0" class="gdoc-tabs__label">
+    <label for="tabs-discover-sources-0" class="gdoc-tabs__label">
       API
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
+      <p><code>listSources(...)</code> always accepts an optional <code>query</code>/<code>maxResults</code>; omit them to simply list every source.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.SdmxWebManager</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.*</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w"> </span><span class="n">manager</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SdmxWebManager</span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">();</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">manager</span><span class="p">.</span><span class="na">getMonitorReport</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// List every source</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">manager</span><span class="p">.</span><span class="na">listSources</span><span class="p">(</span><span class="n">WebSourcesRequest</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">source</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">source</span><span class="p">.</span><span class="na">getId</span><span class="p">()));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// Search by name or topic</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">manager</span><span class="p">.</span><span class="na">listSources</span><span class="p">(</span><span class="n">WebSourcesRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">query</span><span class="p">(</span><span class="s">&#34;european central&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">maxResults</span><span class="p">(</span><span class="n">5</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">source</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">source</span><span class="p">.</span><span class="na">getId</span><span class="p">()));</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></div></div>
     <input
       type="radio"
       class="gdoc-tabs__control hidden"
-      name="tabs-monitor-and-status"
-      id="tabs-monitor-and-status-1"
+      name="tabs-discover-sources"
+      id="tabs-discover-sources-1"
       />
-    <label for="tabs-monitor-and-status-1" class="gdoc-tabs__label">
+    <label for="tabs-discover-sources-1" class="gdoc-tabs__label">
       CLI
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl check status ECB
-</span></span></code></pre></div><p><code>check status</code> also accepts several sources at once, or the keyword <code>all</code> to check every configured source in parallel:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl check status ECB IMF INSEE
-</span></span><span class="line"><span class="cl">sdmx-dl check status all
+      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl list sources
+</span></span><span class="line"><span class="cl">sdmx-dl list sources -q <span class="s2">&#34;european central&#34;</span> -m <span class="m">5</span>
 </span></span></code></pre></div></div>
     <input
       type="radio"
       class="gdoc-tabs__control hidden"
-      name="tabs-monitor-and-status"
-      id="tabs-monitor-and-status-2"
+      name="tabs-discover-sources"
+      id="tabs-discover-sources-2"
       />
-    <label for="tabs-monitor-and-status-2" class="gdoc-tabs__label">
+    <label for="tabs-discover-sources-2" class="gdoc-tabs__label">
       WS
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
@@ -1592,24 +1710,27 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
     >
         REST
     </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/monitor-and-status/#rest" class="gdoc-page__anchor clip flex align-center" title="Anchor to: REST" aria-label="Anchor to: REST" href="#rest">
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/discover-sources/#rest" class="gdoc-page__anchor clip flex align-center" title="Anchor to: REST" aria-label="Anchor to: REST" href="#rest">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB&#34;</span>
-</span></span></code></pre></div><p><code>ListStatuses</code> also accepts several comma-separated sources, or <code>all</code> to check every configured source:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB,IMF,INSEE&#34;</span>
-</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/statuses?sources=all&#34;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/sources&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">curl -G localhost:4559/sdmx-dl/v2/sources <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;query=european central&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;maxResults=5&#34;</span>
 </span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
     <h3 id="grpc"
     >
         gRPC
     </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/monitor-and-status/#grpc" class="gdoc-page__anchor clip flex align-center" title="Anchor to: gRPC" aria-label="Anchor to: gRPC" href="#grpc">
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/discover-sources/#grpc" class="gdoc-page__anchor clip flex align-center" title="Anchor to: gRPC" aria-label="Anchor to: gRPC" href="#grpc">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;sources&#34;:[&#34;ECB&#34;]}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListStatuses
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListSources
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;query&#34;:&#34;european central&#34;,&#34;maxResults&#34;:5}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListSources
 </span></span></code></pre></div></div>
 </div>
 
@@ -1618,33 +1739,34 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
     >
         Notes
     </h2>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/monitor-and-status/#notes" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Notes" aria-label="Anchor to: Notes" href="#notes">
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/discover-sources/#notes" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Notes" aria-label="Anchor to: Notes" href="#notes">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
 <ul>
-<li>A report includes a status (UP/DOWN/UNKNOWN), an uptime ratio, and an average response time; the CLI table adds an error message column when a check fails.</li>
-<li>Only sources that declare a monitor endpoint in their configuration can be checked; others report &ldquo;No monitor defined&rdquo;.</li>
-<li>WS&rsquo;s <code>ListStatuses</code> mirrors the CLI&rsquo;s ability to batch-check several sources (or <code>all</code>) in a single call, instead of one request per source.</li>
+<li>Discovery and search are the same call: pass a <code>query</code>/<code>maxResults</code> to search, or omit them to list every source.</li>
+<li>Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so both <code>&quot;ecb&quot;</code> and <code>&quot;eurpean central&quot;</code> find the European Central Bank. When <code>query</code> is empty, results fall back to being sorted by id instead of ranked by relevance.</li>
+<li>Some sources are aliases of others (e.g. renamed or mirrored endpoints); the API exposes <code>WebSource.isAlias()</code> to filter them out (and they&rsquo;re excluded from search results), while the CLI table lists them alongside their target.</li>
+<li><code>WebSourcesRequest</code> also carries a <code>threshold</code> (a <code>Confidentiality</code> level) so that sources requiring stricter confidentiality can be excluded from the results; it defaults to allowing every source.</li>
 </ul>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="related-features"
     >
         Related features
     </h2>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/monitor-and-status/#related-features" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Related features" aria-label="Anchor to: Related features" href="#related-features">
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/discover-sources/#related-features" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Related features" aria-label="Anchor to: Related features" href="#related-features">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
 <ul>
 <li><a
   class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/features/discover-sources/"
->Discover sources</a></li>
+  href="/sdmx-dl/docs/develop/usage/discover-databases/"
+>Discover databases</a></li>
 <li><a
   class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/features/auth-and-credentials/"
->Authentication and credentials</a></li>
+  href="/sdmx-dl/docs/develop/usage/discover-flows/"
+>Discover flows</a></li>
 </ul>
 
   </article>
@@ -1698,736 +1820,11 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
 
         
         
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
           
   
   
 
   
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-          
-  
-  
-
-  
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
   
     
 
@@ -2503,7 +1900,815 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
     
 
   
+    
 
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+          
+  
+  
+
+  
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+          
+  
+  
+
+  
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
         
       
     
@@ -2517,11 +2722,11 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
   
     <a
       class="gdoc-page__nav--prev flex align-center"
-      href="/sdmx-dl/docs/develop/features/auth-and-credentials/"
-      title="Authentication and credentials"
+      href="/sdmx-dl/docs/develop/usage/"
+      title="Usage"
     >
       <i class="gdoc-icon">gdoc_arrow_left_alt</i>
-      Authentication and credentials
+      Usage
     </a>
   
 </span>
@@ -2529,10 +2734,10 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
   
     <a
       class="gdoc-page__nav--next flex align-center"
-      href="/sdmx-dl/docs/develop/features/output-and-formats/"
-      title="Output and formats"
+      href="/sdmx-dl/docs/develop/usage/discover-databases/"
+      title="Discover databases"
     >
-      Output and formats
+      Discover databases
       <i class="gdoc-icon">gdoc_arrow_right_alt</i>
     </a>
   

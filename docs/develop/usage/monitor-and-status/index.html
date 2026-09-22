@@ -12,12 +12,10 @@
 <meta name="generator" content="Hugo 0.166.0">
 
 
-  <meta name="description" content="Configure how sdmx-dl authenticates against protected data sources — credentials are configured once, in a source config file shared by every flavor.
-API sdmxdl.driver.authScheme=BASIC For OAuth2/Msal-backed sources, the same source configuration can also define:
-sdmxdl.authenticator.clientId=... sdmxdl.authenticator.authority=... sdmxdl.authenticator.scopes=... CLI The CLI reads the same source configuration file, so the same authentication properties apply when running commands such as:
-sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --sources sources.csv WS The web service uses the same source configuration model." />
+  <meta name="description" content="Check whether a source is up, and how it has been performing, before relying on it in an automated job.
+API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); IO.println(manager.getMonitorReport(&#34;ECB&#34;)); } CLI sdmx-dl check status ECB check status also accepts several sources at once, or the keyword all to check every configured source in parallel:" />
 
-    <title>Authentication and credentials | sdmx-dl</title>
+    <title>Monitor and status | sdmx-dl</title>
 
     <link rel="icon" type="image/svg+xml" href="/sdmx-dl/docs/develop/favicon/favicon.svg" />
 <link
@@ -38,52 +36,48 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --sources sources.csv WS The web ser
     
   <meta
     property="og:title"
-    content="Authentication and credentials"
+    content="Monitor and status"
   />
   <meta property="og:site_name" content="sdmx-dl" />
-  <meta property="og:description" content="Configure how sdmx-dl authenticates against protected data sources — credentials are configured once, in a source config file shared by every flavor.
-API sdmxdl.driver.authScheme=BASIC For OAuth2/Msal-backed sources, the same source configuration can also define:
-sdmxdl.authenticator.clientId=... sdmxdl.authenticator.authority=... sdmxdl.authenticator.scopes=... CLI The CLI reads the same source configuration file, so the same authentication properties apply when running commands such as:
-sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --sources sources.csv WS The web service uses the same source configuration model." />
+  <meta property="og:description" content="Check whether a source is up, and how it has been performing, before relying on it in an automated job.
+API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); IO.println(manager.getMonitorReport(&#34;ECB&#34;)); } CLI sdmx-dl check status ECB check status also accepts several sources at once, or the keyword all to check every configured source in parallel:" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/features/auth-and-credentials/" />
+<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/monitor-and-status/" />
 
-<meta property="article:section" content="Features" />
+<meta property="article:section" content="Usage" />
     <meta
       property="article:modified_time"
-      content="2026-09-21T15:02:05+02:00"
+      content="2026-09-22T10:26:41+02:00"
     />
 
 
   <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Authentication and credentials" />
-  <meta name="twitter:description" content="Configure how sdmx-dl authenticates against protected data sources — credentials are configured once, in a source config file shared by every flavor.
-API sdmxdl.driver.authScheme=BASIC For OAuth2/Msal-backed sources, the same source configuration can also define:
-sdmxdl.authenticator.clientId=... sdmxdl.authenticator.authority=... sdmxdl.authenticator.scopes=... CLI The CLI reads the same source configuration file, so the same authentication properties apply when running commands such as:
-sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --sources sources.csv WS The web service uses the same source configuration model." />
+<meta name="twitter:title" content="Monitor and status" />
+  <meta name="twitter:description" content="Check whether a source is up, and how it has been performing, before relying on it in an automated job.
+API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); IO.println(manager.getMonitorReport(&#34;ECB&#34;)); } CLI sdmx-dl check status ECB check status also accepts several sources at once, or the keyword all to check every configured source in parallel:" />
 
 
   <script type="application/ld+json">
   {
       "@context": "http://schema.org",
       "@type": "TechArticle",
-      "articleSection": "Features",
-      "name": "Authentication and credentials",
-      "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/features/auth-and-credentials/",
-      "headline": "Authentication and credentials",
-      "description": "Configure how sdmx-dl authenticates against protected data sources — credentials are configured once, in a source config file shared by every flavor.\nAPI sdmxdl.driver.authScheme=BASIC For OAuth2\/Msal-backed sources, the same source configuration can also define:\nsdmxdl.authenticator.clientId=... sdmxdl.authenticator.authority=... sdmxdl.authenticator.scopes=... CLI The CLI reads the same source configuration file, so the same authentication properties apply when running commands such as:\nsdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --sources sources.csv WS The web service uses the same source configuration model.",
-      "wordCount": "175",
+      "articleSection": "Usage",
+      "name": "Monitor and status",
+      "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/monitor-and-status/",
+      "headline": "Monitor and status",
+      "description": "Check whether a source is up, and how it has been performing, before relying on it in an automated job.\nAPI \/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); IO.println(manager.getMonitorReport(\u0022ECB\u0022)); } CLI sdmx-dl check status ECB check status also accepts several sources at once, or the keyword all to check every configured source in parallel:",
+      "wordCount": "171",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
           "@type": "WebPage",
-          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/features/auth-and-credentials/"
+          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/monitor-and-status/"
       },
       "copyrightHolder": "sdmx-dl",
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-21T15:02:05.00Z",
+      "dateModified": "2026-09-22T10:26:41.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -161,7 +155,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --sources sources.csv WS The web ser
   href="/sdmx-dl/docs/develop/custom.css"
   media="all"
 />
-  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/features/auth-and-credentials/" rel="canonical" type="text/html" />
+  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/monitor-and-status/" rel="canonical" type="text/html" />
 
 <!-- Made with Geekdoc theme https://github.com/thegeeklab/hugo-geekdoc -->
 
@@ -345,6 +339,686 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --sources sources.csv WS The web ser
 
   <ul class="gdoc-nav__list">
     
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/"
+                    class="gdoc-nav__entry"
+                  >
+                    Usage
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+              
+  
+
+
+  <ul class="gdoc-nav__list">
+    
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/discover-sources/"
+                    class="gdoc-nav__entry"
+                  >
+                    Discover sources
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/discover-databases/"
+                    class="gdoc-nav__entry"
+                  >
+                    Discover databases
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/discover-flows/"
+                    class="gdoc-nav__entry"
+                  >
+                    Discover flows
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/browse-structure/"
+                    class="gdoc-nav__entry"
+                  >
+                    Browse dimensions and attributes
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/browse-codes/"
+                    class="gdoc-nav__entry"
+                  >
+                    Browse codes
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/browse-availability/"
+                    class="gdoc-nav__entry"
+                  >
+                    Browse availability
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/inspect-metadata/"
+                    class="gdoc-nav__entry"
+                  >
+                    Inspect metadata
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/narrow-your-request/"
+                    class="gdoc-nav__entry"
+                  >
+                    Narrow your request
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/retrieve-data/"
+                    class="gdoc-nav__entry"
+                  >
+                    Retrieve data
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/monitor-and-status/"
+                    class="gdoc-nav__entry is-active"
+                  >
+                    Monitor and status
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+  </ul>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/orchestration/"
+                    class="gdoc-nav__entry"
+                  >
+                    Orchestration
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+              
+  
+
+
+  <ul class="gdoc-nav__list">
+    
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/orchestration/use-in-batch-file/"
+                    class="gdoc-nav__entry"
+                  >
+                    Use in batch file
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/orchestration/use-in-excel/"
+                    class="gdoc-nav__entry"
+                  >
+                    Use in Excel
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/orchestration/use-in-r/"
+                    class="gdoc-nav__entry"
+                  >
+                    Use in R
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+  </ul>
+
+            
+          </li>
+        
+      
     
       
 
@@ -795,6 +1469,14 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --sources sources.csv WS The web ser
           </li>
         
       
+    
+      
+
+      
+        
+      
+
+      
         
           
           
@@ -876,588 +1558,6 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --sources sources.csv WS The web ser
         
       
     
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/"
-                    class="gdoc-nav__entry"
-                  >
-                    Features
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-              
-  
-
-
-  <ul class="gdoc-nav__list">
-    
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/discover-sources/"
-                    class="gdoc-nav__entry"
-                  >
-                    Discover sources
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/discover-databases/"
-                    class="gdoc-nav__entry"
-                  >
-                    Discover databases
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/discover-flows/"
-                    class="gdoc-nav__entry"
-                  >
-                    Discover flows
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/browse-structure/"
-                    class="gdoc-nav__entry"
-                  >
-                    Browse dimensions and attributes
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/browse-codes/"
-                    class="gdoc-nav__entry"
-                  >
-                    Browse codes
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/browse-availability/"
-                    class="gdoc-nav__entry"
-                  >
-                    Browse availability
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/inspect-metadata/"
-                    class="gdoc-nav__entry"
-                  >
-                    Inspect metadata
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/narrow-your-request/"
-                    class="gdoc-nav__entry"
-                  >
-                    Narrow your request
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/retrieve-data/"
-                    class="gdoc-nav__entry"
-                  >
-                    Retrieve data
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/auth-and-credentials/"
-                    class="gdoc-nav__entry is-active"
-                  >
-                    Authentication and credentials
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/monitor-and-status/"
-                    class="gdoc-nav__entry"
-                  >
-                    Monitor and status
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/output-and-formats/"
-                    class="gdoc-nav__entry"
-                  >
-                    Output and formats
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-  </ul>
-
-            
-          </li>
-        
-      
-    
   </ul>
 
 
@@ -1523,7 +1623,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --sources sources.csv WS The web ser
     
   
   
-    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/features/' href='/sdmx-dl/docs/develop/features/'><span itemprop='name'>Features</span></a><meta itemprop='position' content='5' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Authentication and credentials</span><meta itemprop='position' content='6' /></li>
+    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/usage/' href='/sdmx-dl/docs/develop/usage/'><span itemprop='name'>Usage</span></a><meta itemprop='position' content='5' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Monitor and status</span><meta itemprop='position' content='6' /></li>
   
 
   
@@ -1542,9 +1642,9 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --sources sources.csv WS The web ser
     class="gdoc-markdown gdoc-markdown__align--left"
     id="main-content" tabindex="-1"
   >
-    <h1>Authentication and credentials</h1>
+    <h1>Monitor and status</h1>
     
-    <p>Configure how sdmx-dl authenticates against protected data sources — credentials are configured once, in a source config file shared by every flavor.</p>
+    <p>Check whether a source is up, and how it has been performing, before relying on it in an automated job.</p>
 
 
 
@@ -1552,64 +1652,70 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --sources sources.csv WS The web ser
     <input
       type="radio"
       class="gdoc-tabs__control hidden"
-      name="tabs-auth-and-credentials"
-      id="tabs-auth-and-credentials-0"
+      name="tabs-monitor-and-status"
+      id="tabs-monitor-and-status-0"
       checked="checked"/>
-    <label for="tabs-auth-and-credentials-0" class="gdoc-tabs__label">
+    <label for="tabs-monitor-and-status-0" class="gdoc-tabs__label">
       API
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-properties" data-lang="properties"><span class="line"><span class="cl"><span class="na">sdmxdl.driver.authScheme</span><span class="o">=</span><span class="s">BASIC</span>
-</span></span></code></pre></div><p>For OAuth2/Msal-backed sources, the same source configuration can also define:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-properties" data-lang="properties"><span class="line"><span class="cl"><span class="na">sdmxdl.authenticator.clientId</span><span class="o">=</span><span class="s">...</span>
-</span></span><span class="line"><span class="cl"><span class="na">sdmxdl.authenticator.authority</span><span class="o">=</span><span class="s">...</span>
-</span></span><span class="line"><span class="cl"><span class="na">sdmxdl.authenticator.scopes</span><span class="o">=</span><span class="s">...</span>
-</span></span></code></pre></div></div>
+      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.SdmxWebManager</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w"> </span><span class="n">manager</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SdmxWebManager</span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">manager</span><span class="p">.</span><span class="na">getMonitorReport</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div></div>
     <input
       type="radio"
       class="gdoc-tabs__control hidden"
-      name="tabs-auth-and-credentials"
-      id="tabs-auth-and-credentials-1"
+      name="tabs-monitor-and-status"
+      id="tabs-monitor-and-status-1"
       />
-    <label for="tabs-auth-and-credentials-1" class="gdoc-tabs__label">
+    <label for="tabs-monitor-and-status-1" class="gdoc-tabs__label">
       CLI
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <p>The CLI reads the same source configuration file, so the same authentication properties apply when running commands such as:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --sources sources.csv
+      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl check status ECB
+</span></span></code></pre></div><p><code>check status</code> also accepts several sources at once, or the keyword <code>all</code> to check every configured source in parallel:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl check status ECB IMF INSEE
+</span></span><span class="line"><span class="cl">sdmx-dl check status all
 </span></span></code></pre></div></div>
     <input
       type="radio"
       class="gdoc-tabs__control hidden"
-      name="tabs-auth-and-credentials"
-      id="tabs-auth-and-credentials-2"
+      name="tabs-monitor-and-status"
+      id="tabs-monitor-and-status-2"
       />
-    <label for="tabs-auth-and-credentials-2" class="gdoc-tabs__label">
+    <label for="tabs-monitor-and-status-2" class="gdoc-tabs__label">
       WS
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <p>The web service uses the same source configuration model.</p>
-<p>When a protected source is accessed through REST or gRPC, the credential flow is triggered on first use and secrets are stored in the native OS keystore when available.</p>
-<div class="flex align-center gdoc-page__anchorwrap">
+      <div class="flex align-center gdoc-page__anchorwrap">
     <h3 id="rest"
     >
         REST
     </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/auth-and-credentials/#rest" class="gdoc-page__anchor clip flex align-center" title="Anchor to: REST" aria-label="Anchor to: REST" href="#rest">
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/monitor-and-status/#rest" class="gdoc-page__anchor clip flex align-center" title="Anchor to: REST" aria-label="Anchor to: REST" href="#rest">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/ECB/EXR/data?key=M.CHF.EUR.SP00.A&#34;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB&#34;</span>
+</span></span></code></pre></div><p><code>ListStatuses</code> also accepts several comma-separated sources, or <code>all</code> to check every configured source:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB,IMF,INSEE&#34;</span>
+</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/statuses?sources=all&#34;</span>
 </span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
     <h3 id="grpc"
     >
         gRPC
     </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/auth-and-credentials/#grpc" class="gdoc-page__anchor clip flex align-center" title="Anchor to: gRPC" aria-label="Anchor to: gRPC" href="#grpc">
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/monitor-and-status/#grpc" class="gdoc-page__anchor clip flex align-center" title="Anchor to: gRPC" aria-label="Anchor to: gRPC" href="#grpc">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;sources&#34;:[&#34;ECB&#34;]}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListStatuses
 </span></span></code></pre></div></div>
 </div>
 
@@ -1618,36 +1724,29 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --sources sources.csv WS The web ser
     >
         Notes
     </h2>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/auth-and-credentials/#notes" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Notes" aria-label="Anchor to: Notes" href="#notes">
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/monitor-and-status/#notes" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Notes" aria-label="Anchor to: Notes" href="#notes">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
 <ul>
-<li>Authentication is configuration, not code: the same <code>sdmxdl.driver.authScheme</code>/<code>sdmxdl.authenticator.*</code> properties apply whether the source config is read by the Java library, the CLI, or the web service.</li>
-<li>See <a
-  class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/auth/"
->Authentication</a> for the full list of supported schemes (BASIC, MSAL) and their properties.</li>
-<li>Credentials/tokens are cached in the native OS keystore; the current implementation only supports Windows.</li>
+<li>A report includes a status (UP/DOWN/UNKNOWN), an uptime ratio, and an average response time; the CLI table adds an error message column when a check fails.</li>
+<li>Only sources that declare a monitor endpoint in their configuration can be checked; others report &ldquo;No monitor defined&rdquo;.</li>
+<li>WS&rsquo;s <code>ListStatuses</code> mirrors the CLI&rsquo;s ability to batch-check several sources (or <code>all</code>) in a single call, instead of one request per source.</li>
 </ul>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="related-features"
     >
         Related features
     </h2>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/auth-and-credentials/#related-features" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Related features" aria-label="Anchor to: Related features" href="#related-features">
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/monitor-and-status/#related-features" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Related features" aria-label="Anchor to: Related features" href="#related-features">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
 <ul>
 <li><a
   class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/features/discover-sources/"
+  href="/sdmx-dl/docs/develop/usage/discover-sources/"
 >Discover sources</a></li>
-<li><a
-  class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/features/retrieve-data/"
->Retrieve data</a></li>
 </ul>
 
   </article>
@@ -1701,401 +1800,6 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --sources sources.csv WS The web ser
 
         
         
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-          
-  
-  
-
-  
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
           
   
   
@@ -2430,6 +2134,12 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --sources sources.csv WS The web ser
         
 
         
+        
+      
+    
+
+  
+
         
       
     
@@ -2469,6 +2179,74 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --sources sources.csv WS The web ser
 
         
         
+          
+  
+  
+
+  
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
       
     
 
@@ -2507,6 +2285,410 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --sources sources.csv WS The web ser
 
   
 
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+          
+  
+  
+
+  
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
         
       
     
@@ -2520,7 +2702,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --sources sources.csv WS The web ser
   
     <a
       class="gdoc-page__nav--prev flex align-center"
-      href="/sdmx-dl/docs/develop/features/retrieve-data/"
+      href="/sdmx-dl/docs/develop/usage/retrieve-data/"
       title="Retrieve data"
     >
       <i class="gdoc-icon">gdoc_arrow_left_alt</i>
@@ -2532,10 +2714,10 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --sources sources.csv WS The web ser
   
     <a
       class="gdoc-page__nav--next flex align-center"
-      href="/sdmx-dl/docs/develop/features/monitor-and-status/"
-      title="Monitor and status"
+      href="/sdmx-dl/docs/develop/orchestration/"
+      title="Orchestration"
     >
-      Monitor and status
+      Orchestration
       <i class="gdoc-icon">gdoc_arrow_right_alt</i>
     </a>
   

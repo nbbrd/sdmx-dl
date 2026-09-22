@@ -12,11 +12,11 @@
 <meta name="generator" content="Hugo 0.166.0">
 
 
-  <meta name="description" content="See which data providers sdmx-dl can connect to, and find one by name or topic when you don&rsquo;t know its exact ID (with typo tolerance).
-API listSources(...) always accepts an optional query/maxResults; omit them to simply list every source.
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); // List every source manager.listSources(WebSourcesRequest.DEFAULT) .forEach(source -&gt; IO.println(source.getId())); // Search by name or topic manager.listSources(WebSourcesRequest.builder() .query(&#34;european central&#34;) .maxResults(5) .build()) .forEach(source -&gt; IO.println(source.getId())); } CLI sdmx-dl list sources sdmx-dl list sources -q &#34;european central&#34; -m 5 WS REST curl &#34;localhost:4559/sdmx-dl/v2/sources&#34; curl -G localhost:4559/sdmx-dl/v2/sources \ --data-urlencode &#34;query=european central&#34; \ --data-urlencode &#34;maxResults=5&#34; gRPC grpcurl -d &#39;{}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListSources grpcurl -d &#39;{&#34;query&#34;:&#34;european central&#34;,&#34;maxResults&#34;:5}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListSources Notes Discovery and search are the same call: pass a query/maxResults to search, or omit them to list every source. Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so both &quot;ecb&quot; and &quot;eurpean central&quot; find the European Central Bank. When query is empty, results fall back to being sorted by id instead of ranked by relevance. Some sources are aliases of others (e.g. renamed or mirrored endpoints); the API exposes WebSource.isAlias() to filter them out (and they&rsquo;re excluded from search results), while the CLI table lists them alongside their target. WebSourcesRequest also carries a threshold (a Confidentiality level) so that sources requiring stricter confidentiality can be excluded from the results; it defaults to allowing every source. Related features Discover databases Discover flows " />
+  <meta name="description" content="Automate sdmx-dl from R when you want to blend discovery or retrieval with analysis, plotting, or reporting. Two common approaches are to call the CLI from R, or to query the local/remote web service directly.
+CLI If sdmx-dl is on your PATH, R can launch it and then read the generated CSV:
+outfile &lt;- tempfile(fileext = &#34;.csv&#34;) system2( command = &#34;sdmx-dl&#34;, args = c(&#34;fetch&#34;, &#34;data&#34;, &#34;ECB&#34;, &#34;EXR&#34;, &#34;M.CHF.EUR.SP00.A&#34;, &#34;--last-n&#34;, &#34;12&#34;, &#34;-o&#34;, outfile) ) dat &lt;- read.csv(outfile) head(dat) This is convenient when you already use the CLI interactively and want your R script to reuse the same commands." />
 
-    <title>Discover sources | sdmx-dl</title>
+    <title>Use in R | sdmx-dl</title>
 
     <link rel="icon" type="image/svg+xml" href="/sdmx-dl/docs/develop/favicon/favicon.svg" />
 <link
@@ -37,50 +37,50 @@ API listSources(...) always accepts an optional query/maxResults; omit them to s
     
   <meta
     property="og:title"
-    content="Discover sources"
+    content="Use in R"
   />
   <meta property="og:site_name" content="sdmx-dl" />
-  <meta property="og:description" content="See which data providers sdmx-dl can connect to, and find one by name or topic when you don’t know its exact ID (with typo tolerance).
-API listSources(...) always accepts an optional query/maxResults; omit them to simply list every source.
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); // List every source manager.listSources(WebSourcesRequest.DEFAULT) .forEach(source -&gt; IO.println(source.getId())); // Search by name or topic manager.listSources(WebSourcesRequest.builder() .query(&#34;european central&#34;) .maxResults(5) .build()) .forEach(source -&gt; IO.println(source.getId())); } CLI sdmx-dl list sources sdmx-dl list sources -q &#34;european central&#34; -m 5 WS REST curl &#34;localhost:4559/sdmx-dl/v2/sources&#34; curl -G localhost:4559/sdmx-dl/v2/sources \ --data-urlencode &#34;query=european central&#34; \ --data-urlencode &#34;maxResults=5&#34; gRPC grpcurl -d &#39;{}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListSources grpcurl -d &#39;{&#34;query&#34;:&#34;european central&#34;,&#34;maxResults&#34;:5}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListSources Notes Discovery and search are the same call: pass a query/maxResults to search, or omit them to list every source. Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so both &#34;ecb&#34; and &#34;eurpean central&#34; find the European Central Bank. When query is empty, results fall back to being sorted by id instead of ranked by relevance. Some sources are aliases of others (e.g. renamed or mirrored endpoints); the API exposes WebSource.isAlias() to filter them out (and they’re excluded from search results), while the CLI table lists them alongside their target. WebSourcesRequest also carries a threshold (a Confidentiality level) so that sources requiring stricter confidentiality can be excluded from the results; it defaults to allowing every source. Related features Discover databases Discover flows " />
+  <meta property="og:description" content="Automate sdmx-dl from R when you want to blend discovery or retrieval with analysis, plotting, or reporting. Two common approaches are to call the CLI from R, or to query the local/remote web service directly.
+CLI If sdmx-dl is on your PATH, R can launch it and then read the generated CSV:
+outfile &lt;- tempfile(fileext = &#34;.csv&#34;) system2( command = &#34;sdmx-dl&#34;, args = c(&#34;fetch&#34;, &#34;data&#34;, &#34;ECB&#34;, &#34;EXR&#34;, &#34;M.CHF.EUR.SP00.A&#34;, &#34;--last-n&#34;, &#34;12&#34;, &#34;-o&#34;, outfile) ) dat &lt;- read.csv(outfile) head(dat) This is convenient when you already use the CLI interactively and want your R script to reuse the same commands." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/features/discover-sources/" />
+<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/orchestration/use-in-r/" />
 
-<meta property="article:section" content="Features" />
+<meta property="article:section" content="Orchestration" />
     <meta
       property="article:modified_time"
-      content="2026-09-21T15:02:05+02:00"
+      content="2026-09-22T10:26:41+02:00"
     />
 
 
   <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Discover sources" />
-  <meta name="twitter:description" content="See which data providers sdmx-dl can connect to, and find one by name or topic when you don’t know its exact ID (with typo tolerance).
-API listSources(...) always accepts an optional query/maxResults; omit them to simply list every source.
-//JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); // List every source manager.listSources(WebSourcesRequest.DEFAULT) .forEach(source -&gt; IO.println(source.getId())); // Search by name or topic manager.listSources(WebSourcesRequest.builder() .query(&#34;european central&#34;) .maxResults(5) .build()) .forEach(source -&gt; IO.println(source.getId())); } CLI sdmx-dl list sources sdmx-dl list sources -q &#34;european central&#34; -m 5 WS REST curl &#34;localhost:4559/sdmx-dl/v2/sources&#34; curl -G localhost:4559/sdmx-dl/v2/sources \ --data-urlencode &#34;query=european central&#34; \ --data-urlencode &#34;maxResults=5&#34; gRPC grpcurl -d &#39;{}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListSources grpcurl -d &#39;{&#34;query&#34;:&#34;european central&#34;,&#34;maxResults&#34;:5}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListSources Notes Discovery and search are the same call: pass a query/maxResults to search, or omit them to list every source. Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so both &#34;ecb&#34; and &#34;eurpean central&#34; find the European Central Bank. When query is empty, results fall back to being sorted by id instead of ranked by relevance. Some sources are aliases of others (e.g. renamed or mirrored endpoints); the API exposes WebSource.isAlias() to filter them out (and they’re excluded from search results), while the CLI table lists them alongside their target. WebSourcesRequest also carries a threshold (a Confidentiality level) so that sources requiring stricter confidentiality can be excluded from the results; it defaults to allowing every source. Related features Discover databases Discover flows " />
+<meta name="twitter:title" content="Use in R" />
+  <meta name="twitter:description" content="Automate sdmx-dl from R when you want to blend discovery or retrieval with analysis, plotting, or reporting. Two common approaches are to call the CLI from R, or to query the local/remote web service directly.
+CLI If sdmx-dl is on your PATH, R can launch it and then read the generated CSV:
+outfile &lt;- tempfile(fileext = &#34;.csv&#34;) system2( command = &#34;sdmx-dl&#34;, args = c(&#34;fetch&#34;, &#34;data&#34;, &#34;ECB&#34;, &#34;EXR&#34;, &#34;M.CHF.EUR.SP00.A&#34;, &#34;--last-n&#34;, &#34;12&#34;, &#34;-o&#34;, outfile) ) dat &lt;- read.csv(outfile) head(dat) This is convenient when you already use the CLI interactively and want your R script to reuse the same commands." />
 
 
   <script type="application/ld+json">
   {
       "@context": "http://schema.org",
       "@type": "TechArticle",
-      "articleSection": "Features",
-      "name": "Discover sources",
-      "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/features/discover-sources/",
-      "headline": "Discover sources",
-      "description": "See which data providers sdmx-dl can connect to, and find one by name or topic when you don’t know its exact ID (with typo tolerance).\nAPI listSources(...) always accepts an optional query\/maxResults; omit them to simply list every source.\n\/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.*; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); \/\/ List every source manager.listSources(WebSourcesRequest.DEFAULT) .forEach(source -\u003e IO.println(source.getId())); \/\/ Search by name or topic manager.listSources(WebSourcesRequest.builder() .query(\u0022european central\u0022) .maxResults(5) .build()) .forEach(source -\u003e IO.println(source.getId())); } CLI sdmx-dl list sources sdmx-dl list sources -q \u0022european central\u0022 -m 5 WS REST curl \u0022localhost:4559\/sdmx-dl\/v2\/sources\u0022 curl -G localhost:4559\/sdmx-dl\/v2\/sources \\ --data-urlencode \u0022query=european central\u0022 \\ --data-urlencode \u0022maxResults=5\u0022 gRPC grpcurl -d \u0027{}\u0027 -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListSources grpcurl -d \u0027{\u0022query\u0022:\u0022european central\u0022,\u0022maxResults\u0022:5}\u0027 -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListSources Notes Discovery and search are the same call: pass a query\/maxResults to search, or omit them to list every source. Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so both \u0022ecb\u0022 and \u0022eurpean central\u0022 find the European Central Bank. When query is empty, results fall back to being sorted by id instead of ranked by relevance. Some sources are aliases of others (e.g. renamed or mirrored endpoints); the API exposes WebSource.isAlias() to filter them out (and they’re excluded from search results), while the CLI table lists them alongside their target. WebSourcesRequest also carries a threshold (a Confidentiality level) so that sources requiring stricter confidentiality can be excluded from the results; it defaults to allowing every source. Related features Discover databases Discover flows ",
-      "wordCount": "244",
+      "articleSection": "Orchestration",
+      "name": "Use in R",
+      "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/orchestration/use-in-r/",
+      "headline": "Use in R",
+      "description": "Automate sdmx-dl from R when you want to blend discovery or retrieval with analysis, plotting, or reporting. Two common approaches are to call the CLI from R, or to query the local\/remote web service directly.\nCLI If sdmx-dl is on your PATH, R can launch it and then read the generated CSV:\noutfile \u003c- tempfile(fileext = \u0022.csv\u0022) system2( command = \u0022sdmx-dl\u0022, args = c(\u0022fetch\u0022, \u0022data\u0022, \u0022ECB\u0022, \u0022EXR\u0022, \u0022M.CHF.EUR.SP00.A\u0022, \u0022--last-n\u0022, \u002212\u0022, \u0022-o\u0022, outfile) ) dat \u003c- read.csv(outfile) head(dat) This is convenient when you already use the CLI interactively and want your R script to reuse the same commands.",
+      "wordCount": "282",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
           "@type": "WebPage",
-          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/features/discover-sources/"
+          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/orchestration/use-in-r/"
       },
       "copyrightHolder": "sdmx-dl",
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-21T15:02:05.00Z",
+      "dateModified": "2026-09-22T10:26:41.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -158,7 +158,7 @@ API listSources(...) always accepts an optional query/maxResults; omit them to s
   href="/sdmx-dl/docs/develop/custom.css"
   media="all"
 />
-  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/features/discover-sources/" rel="canonical" type="text/html" />
+  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/orchestration/use-in-r/" rel="canonical" type="text/html" />
 
 <!-- Made with Geekdoc theme https://github.com/thegeeklab/hugo-geekdoc -->
 
@@ -342,6 +342,686 @@ API listSources(...) always accepts an optional query/maxResults; omit them to s
 
   <ul class="gdoc-nav__list">
     
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/"
+                    class="gdoc-nav__entry"
+                  >
+                    Usage
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+              
+  
+
+
+  <ul class="gdoc-nav__list">
+    
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/discover-sources/"
+                    class="gdoc-nav__entry"
+                  >
+                    Discover sources
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/discover-databases/"
+                    class="gdoc-nav__entry"
+                  >
+                    Discover databases
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/discover-flows/"
+                    class="gdoc-nav__entry"
+                  >
+                    Discover flows
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/browse-structure/"
+                    class="gdoc-nav__entry"
+                  >
+                    Browse dimensions and attributes
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/browse-codes/"
+                    class="gdoc-nav__entry"
+                  >
+                    Browse codes
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/browse-availability/"
+                    class="gdoc-nav__entry"
+                  >
+                    Browse availability
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/inspect-metadata/"
+                    class="gdoc-nav__entry"
+                  >
+                    Inspect metadata
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/narrow-your-request/"
+                    class="gdoc-nav__entry"
+                  >
+                    Narrow your request
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/retrieve-data/"
+                    class="gdoc-nav__entry"
+                  >
+                    Retrieve data
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/usage/monitor-and-status/"
+                    class="gdoc-nav__entry"
+                  >
+                    Monitor and status
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+  </ul>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/orchestration/"
+                    class="gdoc-nav__entry"
+                  >
+                    Orchestration
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+              
+  
+
+
+  <ul class="gdoc-nav__list">
+    
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/orchestration/use-in-batch-file/"
+                    class="gdoc-nav__entry"
+                  >
+                    Use in batch file
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/orchestration/use-in-excel/"
+                    class="gdoc-nav__entry"
+                  >
+                    Use in Excel
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/orchestration/use-in-r/"
+                    class="gdoc-nav__entry is-active"
+                  >
+                    Use in R
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+  </ul>
+
+            
+          </li>
+        
+      
     
       
 
@@ -792,6 +1472,14 @@ API listSources(...) always accepts an optional query/maxResults; omit them to s
           </li>
         
       
+    
+      
+
+      
+        
+      
+
+      
         
           
           
@@ -873,588 +1561,6 @@ API listSources(...) always accepts an optional query/maxResults; omit them to s
         
       
     
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/"
-                    class="gdoc-nav__entry"
-                  >
-                    Features
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-              
-  
-
-
-  <ul class="gdoc-nav__list">
-    
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/discover-sources/"
-                    class="gdoc-nav__entry is-active"
-                  >
-                    Discover sources
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/discover-databases/"
-                    class="gdoc-nav__entry"
-                  >
-                    Discover databases
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/discover-flows/"
-                    class="gdoc-nav__entry"
-                  >
-                    Discover flows
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/browse-structure/"
-                    class="gdoc-nav__entry"
-                  >
-                    Browse dimensions and attributes
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/browse-codes/"
-                    class="gdoc-nav__entry"
-                  >
-                    Browse codes
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/browse-availability/"
-                    class="gdoc-nav__entry"
-                  >
-                    Browse availability
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/inspect-metadata/"
-                    class="gdoc-nav__entry"
-                  >
-                    Inspect metadata
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/narrow-your-request/"
-                    class="gdoc-nav__entry"
-                  >
-                    Narrow your request
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/retrieve-data/"
-                    class="gdoc-nav__entry"
-                  >
-                    Retrieve data
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/auth-and-credentials/"
-                    class="gdoc-nav__entry"
-                  >
-                    Authentication and credentials
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/monitor-and-status/"
-                    class="gdoc-nav__entry"
-                  >
-                    Monitor and status
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/features/output-and-formats/"
-                    class="gdoc-nav__entry"
-                  >
-                    Output and formats
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-  </ul>
-
-            
-          </li>
-        
-      
-    
   </ul>
 
 
@@ -1520,7 +1626,7 @@ API listSources(...) always accepts an optional query/maxResults; omit them to s
     
   
   
-    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/features/' href='/sdmx-dl/docs/develop/features/'><span itemprop='name'>Features</span></a><meta itemprop='position' content='5' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Discover sources</span><meta itemprop='position' content='6' /></li>
+    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/orchestration/' href='/sdmx-dl/docs/develop/orchestration/'><span itemprop='name'>Orchestration</span></a><meta itemprop='position' content='5' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Use in R</span><meta itemprop='position' content='6' /></li>
   
 
   
@@ -1539,9 +1645,10 @@ API listSources(...) always accepts an optional query/maxResults; omit them to s
     class="gdoc-markdown gdoc-markdown__align--left"
     id="main-content" tabindex="-1"
   >
-    <h1>Discover sources</h1>
+    <h1>Use in R</h1>
     
-    <p>See which data providers sdmx-dl can connect to, and find one by name or topic when you don&rsquo;t know its exact ID (with typo tolerance).</p>
+    <p>Automate <strong>sdmx-dl</strong> from R when you want to blend discovery or retrieval with analysis, plotting, or reporting.
+Two common approaches are to call the CLI from R, or to query the local/remote web service directly.</p>
 
 
 
@@ -1549,82 +1656,61 @@ API listSources(...) always accepts an optional query/maxResults; omit them to s
     <input
       type="radio"
       class="gdoc-tabs__control hidden"
-      name="tabs-discover-sources"
-      id="tabs-discover-sources-0"
+      name="tabs-use-r-script"
+      id="tabs-use-r-script-0"
       checked="checked"/>
-    <label for="tabs-discover-sources-0" class="gdoc-tabs__label">
-      API
-    </label>
-    <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <p><code>listSources(...)</code> always accepts an optional <code>query</code>/<code>maxResults</code>; omit them to simply list every source.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.*</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w"> </span><span class="n">manager</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SdmxWebManager</span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">();</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// List every source</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">manager</span><span class="p">.</span><span class="na">listSources</span><span class="p">(</span><span class="n">WebSourcesRequest</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">source</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">source</span><span class="p">.</span><span class="na">getId</span><span class="p">()));</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// Search by name or topic</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">manager</span><span class="p">.</span><span class="na">listSources</span><span class="p">(</span><span class="n">WebSourcesRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">query</span><span class="p">(</span><span class="s">&#34;european central&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">maxResults</span><span class="p">(</span><span class="n">5</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">source</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">source</span><span class="p">.</span><span class="na">getId</span><span class="p">()));</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
-</span></span></span></code></pre></div></div>
-    <input
-      type="radio"
-      class="gdoc-tabs__control hidden"
-      name="tabs-discover-sources"
-      id="tabs-discover-sources-1"
-      />
-    <label for="tabs-discover-sources-1" class="gdoc-tabs__label">
+    <label for="tabs-use-r-script-0" class="gdoc-tabs__label">
       CLI
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl list sources
-</span></span><span class="line"><span class="cl">sdmx-dl list sources -q <span class="s2">&#34;european central&#34;</span> -m <span class="m">5</span>
-</span></span></code></pre></div></div>
+      <p>If <code>sdmx-dl</code> is on your <code>PATH</code>, R can launch it and then read the generated CSV:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-r" data-lang="r"><span class="line"><span class="cl"><span class="n">outfile</span> <span class="o">&lt;-</span> <span class="nf">tempfile</span><span class="p">(</span><span class="n">fileext</span> <span class="o">=</span> <span class="s">&#34;.csv&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">system2</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="n">command</span> <span class="o">=</span> <span class="s">&#34;sdmx-dl&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="n">args</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;fetch&#34;</span><span class="p">,</span> <span class="s">&#34;data&#34;</span><span class="p">,</span> <span class="s">&#34;ECB&#34;</span><span class="p">,</span> <span class="s">&#34;EXR&#34;</span><span class="p">,</span> <span class="s">&#34;M.CHF.EUR.SP00.A&#34;</span><span class="p">,</span> <span class="s">&#34;--last-n&#34;</span><span class="p">,</span> <span class="s">&#34;12&#34;</span><span class="p">,</span> <span class="s">&#34;-o&#34;</span><span class="p">,</span> <span class="n">outfile</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">dat</span> <span class="o">&lt;-</span> <span class="nf">read.csv</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nf">head</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span>
+</span></span></code></pre></div><p>This is convenient when you already use the CLI interactively and want your R script to reuse the same commands.</p>
+</div>
     <input
       type="radio"
       class="gdoc-tabs__control hidden"
-      name="tabs-discover-sources"
-      id="tabs-discover-sources-2"
+      name="tabs-use-r-script"
+      id="tabs-use-r-script-1"
       />
-    <label for="tabs-discover-sources-2" class="gdoc-tabs__label">
-      WS
+    <label for="tabs-use-r-script-1" class="gdoc-tabs__label">
+      REST
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <div class="flex align-center gdoc-page__anchorwrap">
-    <h3 id="rest"
-    >
-        REST
-    </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/discover-sources/#rest" class="gdoc-page__anchor clip flex align-center" title="Anchor to: REST" aria-label="Anchor to: REST" href="#rest">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/sources&#34;</span>
+      <p>If the web service is running, R can fetch the JSON response directly and then reshape it in R:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-r" data-lang="r"><span class="line"><span class="cl"><span class="nf">library</span><span class="p">(</span><span class="n">jsonlite</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">curl -G localhost:4559/sdmx-dl/v2/sources <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;query=european central&#34;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;maxResults=5&#34;</span>
-</span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
-    <h3 id="grpc"
-    >
-        gRPC
-    </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/discover-sources/#grpc" class="gdoc-page__anchor clip flex align-center" title="Anchor to: gRPC" aria-label="Anchor to: gRPC" href="#grpc">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListSources
+</span></span><span class="line"><span class="cl"><span class="n">url</span> <span class="o">&lt;-</span> <span class="nf">paste0</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;http://localhost:4559/sdmx-dl/v2/ECB/EXR/data&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;?key=M.CHF.EUR.SP00.A&amp;lastNObservations=12&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;query&#34;:&#34;european central&#34;,&#34;maxResults&#34;:5}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListSources
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">&lt;-</span> <span class="nf">fromJSON</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">simplifyDataFrame</span> <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">dat</span> <span class="o">&lt;-</span> <span class="nf">do.call</span><span class="p">(</span><span class="n">rbind</span><span class="p">,</span> <span class="nf">lapply</span><span class="p">(</span><span class="n">payload</span><span class="o">$</span><span class="n">data</span><span class="p">,</span> <span class="kr">function</span><span class="p">(</span><span class="n">series</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">do.call</span><span class="p">(</span><span class="n">rbind</span><span class="p">,</span> <span class="nf">lapply</span><span class="p">(</span><span class="n">series</span><span class="o">$</span><span class="n">obs</span><span class="p">,</span> <span class="kr">function</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">data.frame</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">      <span class="n">Series</span> <span class="o">=</span> <span class="n">series</span><span class="o">$</span><span class="n">key</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">ObsPeriod</span> <span class="o">=</span> <span class="n">obs</span><span class="o">$</span><span class="n">period</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">ObsValue</span> <span class="o">=</span> <span class="n">obs</span><span class="o">$</span><span class="n">value</span>
+</span></span><span class="line"><span class="cl">    <span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}))</span>
+</span></span><span class="line"><span class="cl"><span class="p">}))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">head</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span>
+</span></span></code></pre></div><p>The same pattern also works for discovery endpoints such as <code>sources</code>, <code>flows</code>, or <code>dimensions</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-r" data-lang="r"><span class="line"><span class="cl"><span class="nf">library</span><span class="p">(</span><span class="n">jsonlite</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">sources</span> <span class="o">&lt;-</span> <span class="nf">fromJSON</span><span class="p">(</span><span class="s">&#34;http://localhost:4559/sdmx-dl/v2/sources&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nf">head</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span>
 </span></span></code></pre></div></div>
 </div>
 
@@ -1633,34 +1719,38 @@ API listSources(...) always accepts an optional query/maxResults; omit them to s
     >
         Notes
     </h2>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/discover-sources/#notes" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Notes" aria-label="Anchor to: Notes" href="#notes">
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/orchestration/use-in-r/#notes" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Notes" aria-label="Anchor to: Notes" href="#notes">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
 <ul>
-<li>Discovery and search are the same call: pass a <code>query</code>/<code>maxResults</code> to search, or omit them to list every source.</li>
-<li>Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so both <code>&quot;ecb&quot;</code> and <code>&quot;eurpean central&quot;</code> find the European Central Bank. When <code>query</code> is empty, results fall back to being sorted by id instead of ranked by relevance.</li>
-<li>Some sources are aliases of others (e.g. renamed or mirrored endpoints); the API exposes <code>WebSource.isAlias()</code> to filter them out (and they&rsquo;re excluded from search results), while the CLI table lists them alongside their target.</li>
-<li><code>WebSourcesRequest</code> also carries a <code>threshold</code> (a <code>Confidentiality</code> level) so that sources requiring stricter confidentiality can be excluded from the results; it defaults to allowing every source.</li>
+<li>The CLI examples write CSV, while the REST endpoint returns JSON (<code>SdmxdlRestService2</code> is declared with <code>@Produces(APPLICATION_JSON)</code>), so use <code>jsonlite::fromJSON(...)</code> or a similar JSON client on the REST side.</li>
+<li>The CLI approach is usually simplest when <code>sdmx-dl</code> is already installed and configured on the machine running the script.</li>
+<li>The REST approach is often better when the script runs on another machine, or when you want several R processes to share one long-lived sdmx-dl service.</li>
+<li>If you need richer orchestration, combine discovery calls first (for example <code>list sources</code>, <code>list flows</code>, or <code>list dimensions</code>) and then build the final data request in R.</li>
 </ul>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="related-features"
     >
         Related features
     </h2>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/features/discover-sources/#related-features" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Related features" aria-label="Anchor to: Related features" href="#related-features">
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/orchestration/use-in-r/#related-features" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Related features" aria-label="Anchor to: Related features" href="#related-features">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
 <ul>
 <li><a
   class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/features/discover-databases/"
->Discover databases</a></li>
+  href="/sdmx-dl/docs/develop/usage/discover-sources/"
+>Discover sources</a></li>
 <li><a
   class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/features/discover-flows/"
->Discover flows</a></li>
+  href="/sdmx-dl/docs/develop/usage/retrieve-data/"
+>Retrieve data</a></li>
+<li><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/ws/"
+>Web service</a></li>
 </ul>
 
   </article>
@@ -1714,39 +1804,6 @@ API listSources(...) always accepts an optional query/maxResults; omit them to s
 
         
         
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
           
   
   
@@ -1951,7 +2008,67 @@ API listSources(...) always accepts an optional query/maxResults; omit them to s
     
 
   
+    
 
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
         
       
     
@@ -2021,6 +2138,56 @@ API listSources(...) always accepts an optional query/maxResults; omit them to s
         
       
     
+
+  
+
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+          
+  
+  
+
+  
+  
+    
+
+    
+      
+    
+
+    
       
       
 
@@ -2102,6 +2269,9 @@ API listSources(...) always accepts an optional query/maxResults; omit them to s
         
 
         
+          
+          
+        
 
         
           
@@ -2109,43 +2279,11 @@ API listSources(...) always accepts an optional query/maxResults; omit them to s
 
         
         
-          
-  
-  
-
-  
-  
-    
-
-    
       
     
 
-    
-      
-      
+  
 
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-          
-          
-        
-
-        
-          
-        
-
-        
         
       
     
@@ -2218,9 +2356,11 @@ API listSources(...) always accepts an optional query/maxResults; omit them to s
 
         
         
-      
-    
+          
+  
+  
 
+  
   
     
 
@@ -2420,34 +2560,7 @@ API listSources(...) always accepts an optional query/maxResults; omit them to s
     
 
   
-    
 
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
         
       
     
@@ -2519,7 +2632,67 @@ API listSources(...) always accepts an optional query/maxResults; omit them to s
     
 
   
+    
 
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
         
       
     
@@ -2533,11 +2706,11 @@ API listSources(...) always accepts an optional query/maxResults; omit them to s
   
     <a
       class="gdoc-page__nav--prev flex align-center"
-      href="/sdmx-dl/docs/develop/features/"
-      title="Features"
+      href="/sdmx-dl/docs/develop/orchestration/use-in-excel/"
+      title="Use in Excel"
     >
       <i class="gdoc-icon">gdoc_arrow_left_alt</i>
-      Features
+      Use in Excel
     </a>
   
 </span>
@@ -2545,10 +2718,10 @@ API listSources(...) always accepts an optional query/maxResults; omit them to s
   
     <a
       class="gdoc-page__nav--next flex align-center"
-      href="/sdmx-dl/docs/develop/features/discover-databases/"
-      title="Discover databases"
+      href="/sdmx-dl/docs/develop/api/"
+      title="Java library"
     >
-      Discover databases
+      Java library
       <i class="gdoc-icon">gdoc_arrow_right_alt</i>
     </a>
   
