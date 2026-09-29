@@ -1,6 +1,6 @@
 ---
 title: "Monitor and status"
-weight: 11
+weight: 5
 ---
 
 Check whether a source is up, and how it has been performing, before relying on it in an automated job.
@@ -58,13 +58,22 @@ grpcurl -d '{"sources":["ECB"]}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWe
 
 {{< /tabs >}}
 
+{{< expand "CLI output sample" >}}
+```plain
+Source,Status,UptimeRatio,AverageResponseTime,ErrorMessage
+ECB,UP,0.9753000000000001,1104,
+IMF,UP,0.9166,754,
+INSEE,UP,0.9832,1212,
+```
+{{< /expand >}}
+
 ## Notes
 
-- A report includes a status (UP/DOWN/UNKNOWN), an uptime ratio, and an average response time; the CLI table adds an error message column when a check fails.
+- A report includes a status (UP/DOWN/UNKNOWN), an uptime ratio, and an average response time (in milliseconds); the CLI table also has an error message column, filled when a check fails.
 - Only sources that declare a monitor endpoint in their configuration can be checked; others report "No monitor defined".
 - WS's `ListStatuses` mirrors the CLI's ability to batch-check several sources (or `all`) in a single call, instead of one request per source.
 
 ## Related features
 
-- [Discover sources]({{< relref "/usage/discover-sources" >}})
+- [Discover sources]({{< relref "/usage/discover#sources" >}})
 

@@ -13,35 +13,10 @@ weight: 1
 - [Command-line tool]({{< relref "/cli" >}}) - Run from a terminal or script, without writing any code.
 - [Web service]({{< relref "/ws" >}}) - Use from any language or application that can make HTTP or gRPC calls, including AI assistants and agents.
 
-Most tasks follow the same three steps, regardless of the flavor you use:  
-[discovery](#discovery) → [browsing](#browsing) → [retrieval](#retrieval).
+Most tasks follow the same three steps, regardless of the flavor you use (new here? follow the [Getting started]({{< relref "/usage/getting-started" >}}) walkthrough):
 
-## Discovery
+1. [**Discover**]({{< relref "/usage/discover" >}}) - Find the source, database, and flow you want to query.
+2. [**Browse**]({{< relref "/usage/browse" >}}) - Explore the flow's dimensions and codes to build a valid [key]({{< relref "/usage/browse#keys" >}}).
+3. [**Retrieve**]({{< relref "/usage/retrieve" >}}) - Fetch observations and metadata for that key, optionally narrowed by period or observation count.
 
-Find the source and flow you want to query.
-
-- [Discover sources]({{< relref "/usage/discover-sources" >}}) - See which data providers are available, or find one by name or topic.
-- [Discover databases]({{< relref "/usage/discover-databases" >}}) - Find a database namespace within a source.
-- [Discover flows]({{< relref "/usage/discover-flows" >}}) - List the datasets published by a source, or find one by topic.
-
-## Browsing
-
-Explore the flow's structure and narrow down valid keys.
-
-- [Browse dimensions and attributes]({{< relref "/usage/browse-structure" >}}) - List the components that make up a flow's structure.
-- [Browse codes]({{< relref "/usage/browse-codes" >}}) - Look up the labels behind a dimension's codes.
-- [Browse availability]({{< relref "/usage/browse-availability" >}}) - Narrow codes down to what's actually available under a key.
-
-## Retrieval
-
-Fetch metadata and observations for the key you've settled on.
-
-- [Inspect metadata]({{< relref "/usage/inspect-metadata" >}}) - Look up descriptive metadata for a series or flow.
-- [Narrow your request]({{< relref "/usage/narrow-your-request" >}}) - Restrict data to a date range and/or a limited number of observations.
-- [Retrieve data]({{< relref "/usage/retrieve-data" >}}) - Download observations for a source/flow/key.
-
-## Troubleshooting
-
-Check the health of sources and flows, and get help when things go wrong.
-
-- [Monitor and status]({{< relref "/usage/monitor-and-status" >}}) - Check a source's health before relying on it, at any point.
+At any step, [monitor]({{< relref "/usage/monitor-and-status" >}}) a source's health before relying on it.

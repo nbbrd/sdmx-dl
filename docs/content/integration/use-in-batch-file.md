@@ -1,10 +1,12 @@
 ---
 title: "Use in batch file"
 weight: 1
+aliases:
+  - /orchestration/use-in-batch-file/
 ---
 
 Automate repeated **sdmx-dl** CLI calls on Windows by putting them in a `.bat` file.
-This is a good fit for scheduled jobs, repeatable downloads, and small orchestration tasks that do not need a full programming language.
+This is a good fit for scheduled jobs, repeatable downloads, and small automation tasks that do not need a full programming language.
 
 {{< tabs "use-batch-file" >}}
 
@@ -48,14 +50,14 @@ endlocal
 
 ## Notes
 
-- A batch file is just orchestration around the CLI: each line runs a normal `sdmx-dl` command, so you can mix discovery (`list ...`), retrieval (`fetch ...`), and checks (`check ...`) in the same script.
+- A batch file is just automation around the CLI: each line runs a normal `sdmx-dl` command, so you can mix discovery (`list ...`), retrieval (`fetch ...`), and checks (`check ...`) in the same script.
 - Use `-o` when a command already supports writing to a file; use `>`/`>>` when you want standard output redirection instead.
 - Inside a `.bat` file, loop variables use doubled percent signs (`%%C`). If you type the same loop directly in `cmd.exe`, use a single percent sign instead (`%C`).
 - Some commands already support batching by themselves, such as `sdmx-dl check status ECB IMF`, so prefer a single CLI call when it already matches your workflow.
-- For more advanced control flow, error handling, or CSV post-processing, [PowerShell]({{< relref "/cli/examples" >}}) may be more convenient, but `.bat` files remain a simple zero-dependency option.
+- For more advanced control flow, error handling, or CSV post-processing, [PowerShell]({{< relref "/integration/use-in-powershell" >}}) may be more convenient, but `.bat` files remain a simple zero-dependency option.
 
 ## Related features
 
-- [Discover sources]({{< relref "/usage/discover-sources" >}})
-- [Retrieve data]({{< relref "/usage/retrieve-data" >}})
+- [Discover sources]({{< relref "/usage/discover#sources" >}})
+- [Retrieve data]({{< relref "/usage/retrieve#data" >}})
 - [Monitor and status]({{< relref "/usage/monitor-and-status" >}})

@@ -1,6 +1,8 @@
 ---
 title: "Use in Jupyter"
-weight: 4
+weight: 7
+aliases:
+  - /orchestration/use-in-jupyter/
 ---
 
 Bring **sdmx-dl** into Jupyter notebooks when you want interactive exploration, live charting, or reproducible analysis alongside your data fetching.
@@ -25,7 +27,7 @@ subprocess.run([
     '-o', outfile
 ], check=True)
 
-df = pd.read_csv(outfile)
+df = pd.read_csv(outfile)[['Series', 'ObsPeriod', 'ObsValue']]
 os.unlink(outfile)
 df
 ```
@@ -35,7 +37,7 @@ This approach is ideal when you already use the CLI interactively and want your 
 
 {{< tab "REST" >}}
 
-If the web service is running, notebooks can fetch JSON directly and reshape it:
+If the web service is running, notebooks can fetch JSON directly and reshape it (see the [response format]({{< relref "/ws#response-format" >}})):
 
 ```python
 import requests
@@ -49,7 +51,7 @@ for series in payload['data']:
     for obs in series['obs']:
         records.append({
             'Series': series['key'],
-            'ObsPeriod': obs['period'],
+            'ObsPeriod': obs['period'].split('/')[0],
             'ObsValue': obs['value']
         })
 
@@ -83,7 +85,7 @@ df.head()
 
 ## Related features
 
-- [Discover sources]({{< relref "/usage/discover-sources" >}})
-- [Retrieve data]({{< relref "/usage/retrieve-data" >}})
+- [Discover sources]({{< relref "/usage/discover#sources" >}})
+- [Retrieve data]({{< relref "/usage/retrieve#data" >}})
 - [Web service]({{< relref "/ws" >}})
 

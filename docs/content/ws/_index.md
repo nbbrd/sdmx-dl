@@ -72,6 +72,34 @@ curl "localhost:4559/sdmx-dl/v2/ECB/flows"
 
 All paths above are relative to `/sdmx-dl/v2`.
 
+### Response format
+
+Every operation returns JSON.
+
+`GetData` (`GET /{source}/{flow}/data`) returns the flow reference, the query that was executed, and a `data` array of series.
+Each series has a `key`, optional series-level `meta`, and an `obs` array; each observation has a `period`, a `value`, and optional observation-level `meta`:
+
+```json
+{
+  "ref": "all,EXR,latest",
+  "query": { "key": "M.CHF.EUR.SP00.A", "lastNObservations": 2 },
+  "data": [{
+    "key": "M.CHF.EUR.SP00.A",
+    "meta": { "TITLE": "Swiss franc/Euro ECB reference exchange rate", "UNIT": "CHF" },
+    "obs": [
+      { "period": "2026-07-01T00:00:00/P1M", "value": 0.9255739130434782, "meta": { "OBS_STATUS": "A" } },
+      { "period": "2026-08-01T00:00:00/P1M", "value": 0.9361857142857143, "meta": { "OBS_STATUS": "A" } }
+    ]
+  }]
+}
+```
+
+- `period` is an ISO-8601 interval (`start/duration`); keep the part before `/` if you only need the start date.
+- The `detail` parameter controls which parts are filled: `FULL` (default), `DATA_ONLY` (no `meta`), `NO_DATA` (no `obs`), or `SERIES_KEYS_ONLY` (keys only).
+- `GetDataStream` (`GET /{source}/{flow}/data:stream`) returns the same series objects as a plain JSON array, without the `ref`/`query` wrapper.
+- Listing operations (`/sources`, `/{source}/flows`, `/{source}/{flow}/dimensions`, …) return a JSON array of objects that can be turned into a table directly.
+- `ListCodes` and `ListAvailability` return a `codes` object mapping each code to its label, e.g. `{"codes": {"A": "Annual", "Q": "Quarterly"}}`.
+
 ## MCP endpoint
 
 The [Model Context Protocol](https://modelcontextprotocol.io/) (MCP) endpoint lets AI assistants and agents explore sources, flows and data through a set of read-only tools.

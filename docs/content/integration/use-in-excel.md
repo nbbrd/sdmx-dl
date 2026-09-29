@@ -1,6 +1,8 @@
 ---
 title: "Use in Excel"
-weight: 2
+weight: 4
+aliases:
+  - /orchestration/use-in-excel/
 ---
 
 Bring **sdmx-dl** output into Excel when you want lightweight analysis, ad-hoc filtering, or a workbook that non-developers can refresh.
@@ -22,7 +24,7 @@ This approach works well for scheduled exports, shared folders, or manual refres
 
 {{< tab "From REST" >}}
 
-Excel Power Query can also pull JSON directly from the web service.
+Excel Power Query can also pull JSON directly from the web service (see the [response format]({{< relref "/ws#response-format" >}})).
 Create a blank query and use this M script:
 
 ```powerquery
@@ -39,9 +41,11 @@ let
     SeriesTable = Table.FromRecords(Source[data]),
     ExpandedObs = Table.ExpandListColumn(SeriesTable, "obs"),
     ExpandedObsRecord = Table.ExpandRecordColumn(ExpandedObs, "obs", {"period", "value"}, {"ObsPeriod", "ObsValue"}),
-    RenamedColumns = Table.RenameColumns(ExpandedObsRecord, {{"key", "Series"}})
+    RenamedColumns = Table.RenameColumns(ExpandedObsRecord, {{"key", "Series"}}),
+    SelectedColumns = Table.SelectColumns(RenamedColumns, {"Series", "ObsPeriod", "ObsValue"}),
+    TrimmedPeriod = Table.TransformColumns(SelectedColumns, {{"ObsPeriod", each Text.BeforeDelimiter(_, "/"), type text}})
 in
-    RenamedColumns
+    TrimmedPeriod
 ```
 
 For simpler discovery endpoints such as `/sources` or `/{source}/flows`, you can often skip the expansion steps and convert the returned JSON list straight into a table.
@@ -58,7 +62,7 @@ For simpler discovery endpoints such as `/sources` or `/{source}/flows`, you can
 
 ## Related features
 
-- [Discover flows]({{< relref "/usage/discover-flows" >}})
-- [Retrieve data]({{< relref "/usage/retrieve-data" >}})
+- [Discover flows]({{< relref "/usage/discover#flows" >}})
+- [Retrieve data]({{< relref "/usage/retrieve#data" >}})
 - [Web service]({{< relref "/ws" >}})
 

@@ -1,6 +1,8 @@
 ---
 title: "Use in R"
-weight: 3
+weight: 5
+aliases:
+  - /orchestration/use-in-r/
 ---
 
 Automate **sdmx-dl** from R when you want to blend discovery or retrieval with analysis, plotting, or reporting.
@@ -20,7 +22,7 @@ system2(
   args = c("fetch", "data", "ECB", "EXR", "M.CHF.EUR.SP00.A", "--last-n", "12", "-o", outfile)
 )
 
-dat <- read.csv(outfile)
+dat <- read.csv(outfile)[, c("Series", "ObsPeriod", "ObsValue")]
 head(dat)
 ```
 
@@ -29,7 +31,7 @@ This is convenient when you already use the CLI interactively and want your R sc
 
 {{< tab "REST" >}}
 
-If the web service is running, R can fetch the JSON response directly and then reshape it in R:
+If the web service is running, R can fetch the JSON response directly and then reshape it in R (see the [response format]({{< relref "/ws#response-format" >}})):
 
 ```r
 library(jsonlite)
@@ -45,7 +47,7 @@ dat <- do.call(rbind, lapply(payload$data, function(series) {
   do.call(rbind, lapply(series$obs, function(obs) {
     data.frame(
       Series = series$key,
-      ObsPeriod = obs$period,
+      ObsPeriod = sub("/.*", "", obs$period),
       ObsValue = obs$value
     )
   }))
@@ -68,14 +70,14 @@ head(sources)
 
 ## Notes
 
-- The CLI examples write CSV, while the REST endpoint returns JSON (`SdmxdlRestService2` is declared with `@Produces(APPLICATION_JSON)`), so use `jsonlite::fromJSON(...)` or a similar JSON client on the REST side.
+- The CLI examples write CSV, while the REST endpoint returns JSON, so use `jsonlite::fromJSON(...)` or a similar JSON client on the REST side.
 - The CLI approach is usually simplest when `sdmx-dl` is already installed and configured on the machine running the script.
 - The REST approach is often better when the script runs on another machine, or when you want several R processes to share one long-lived sdmx-dl service.
-- If you need richer orchestration, combine discovery calls first (for example `list sources`, `list flows`, or `list dimensions`) and then build the final data request in R.
+- If you need a richer workflow, combine discovery calls first (for example `list sources`, `list flows`, or `list dimensions`) and then build the final data request in R.
 
 ## Related features
 
-- [Discover sources]({{< relref "/usage/discover-sources" >}})
-- [Retrieve data]({{< relref "/usage/retrieve-data" >}})
+- [Discover sources]({{< relref "/usage/discover#sources" >}})
+- [Retrieve data]({{< relref "/usage/retrieve#data" >}})
 - [Web service]({{< relref "/ws" >}})
 
