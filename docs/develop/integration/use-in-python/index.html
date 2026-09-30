@@ -12,10 +12,12 @@
 <meta name="generator" content="Hugo 0.167.0">
 
 
-  <meta name="description" content="sdmx-dl supports the following file formats:
-Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xml; version=2.0 SDMX-ML Generic Data 2.1 application/vnd.sdmx.genericdata&#43;xml; version=2.1 SDMX-ML Compact Data 2.0 application/vnd.sdmx.structurespecificdata&#43;xml; version=2.0 SDMX-ML Compact Data 2.1 application/vnd.sdmx.structurespecificdata&#43;xml; version=2.1 SDMX-ML Structure 2.0 application/vnd.sdmx.structure&#43;xml; version=2.0 SDMX-ML Structure 2.1 application/vnd.sdmx.structure&#43;xml; version=2.1 " />
+  <meta name="description" content="Automate sdmx-dl from a plain Python script, using only the standard library. This is a good fit for scheduled jobs and data pipelines; for interactive analysis with pandas, see Use in Jupyter.
+CLI If sdmx-dl is on your PATH, a script can run it with subprocess and parse its CSV output with the csv module:
+import csv import io import subprocess import sys result = subprocess.run( [&#34;sdmx-dl&#34;, &#34;fetch&#34;, &#34;data&#34;, &#34;ECB&#34;, &#34;EXR&#34;, &#34;M.CHF.EUR.SP00.A&#34;, &#34;--last-n&#34;, &#34;12&#34;], capture_output=True, text=True, check=True, ) writer = csv.writer(sys.stdout) writer.writerow([&#34;Series&#34;, &#34;ObsPeriod&#34;, &#34;ObsValue&#34;]) for row in csv.DictReader(io.StringIO(result.stdout)): writer.writerow([row[&#34;Series&#34;], row[&#34;ObsPeriod&#34;], row[&#34;ObsValue&#34;]]) REST If the web service is running, a script can query it with urllib and reshape the JSON response (see the response format):
+import csv import json import sys import urllib.parse import urllib.request params = urllib.parse.urlencode({&#34;key&#34;: &#34;M.CHF.EUR.SP00.A&#34;, &#34;lastNObservations&#34;: 12}) with urllib.request.urlopen(f&#34;http://localhost:4559/sdmx-dl/v2/ECB/EXR/data?{params}&#34;) as response: payload = json.load(response) writer = csv.writer(sys.stdout) writer.writerow([&#34;Series&#34;, &#34;ObsPeriod&#34;, &#34;ObsValue&#34;]) for series in payload[&#34;data&#34;]: for obs in series[&#34;obs&#34;]: writer.writerow([series[&#34;key&#34;], obs[&#34;period&#34;].split(&#34;/&#34;)[0], obs[&#34;value&#34;]]) " />
 
-    <title>Data formats | sdmx-dl</title>
+    <title>Use in Python | sdmx-dl</title>
 
     <link rel="icon" type="image/svg+xml" href="/sdmx-dl/docs/develop/favicon/favicon.svg" />
 <link
@@ -36,15 +38,17 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
     
   <meta
     property="og:title"
-    content="Data formats"
+    content="Use in Python"
   />
   <meta property="og:site_name" content="sdmx-dl" />
-  <meta property="og:description" content="sdmx-dl supports the following file formats:
-Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xml; version=2.0 SDMX-ML Generic Data 2.1 application/vnd.sdmx.genericdata&#43;xml; version=2.1 SDMX-ML Compact Data 2.0 application/vnd.sdmx.structurespecificdata&#43;xml; version=2.0 SDMX-ML Compact Data 2.1 application/vnd.sdmx.structurespecificdata&#43;xml; version=2.1 SDMX-ML Structure 2.0 application/vnd.sdmx.structure&#43;xml; version=2.0 SDMX-ML Structure 2.1 application/vnd.sdmx.structure&#43;xml; version=2.1 " />
+  <meta property="og:description" content="Automate sdmx-dl from a plain Python script, using only the standard library. This is a good fit for scheduled jobs and data pipelines; for interactive analysis with pandas, see Use in Jupyter.
+CLI If sdmx-dl is on your PATH, a script can run it with subprocess and parse its CSV output with the csv module:
+import csv import io import subprocess import sys result = subprocess.run( [&#34;sdmx-dl&#34;, &#34;fetch&#34;, &#34;data&#34;, &#34;ECB&#34;, &#34;EXR&#34;, &#34;M.CHF.EUR.SP00.A&#34;, &#34;--last-n&#34;, &#34;12&#34;], capture_output=True, text=True, check=True, ) writer = csv.writer(sys.stdout) writer.writerow([&#34;Series&#34;, &#34;ObsPeriod&#34;, &#34;ObsValue&#34;]) for row in csv.DictReader(io.StringIO(result.stdout)): writer.writerow([row[&#34;Series&#34;], row[&#34;ObsPeriod&#34;], row[&#34;ObsValue&#34;]]) REST If the web service is running, a script can query it with urllib and reshape the JSON response (see the response format):
+import csv import json import sys import urllib.parse import urllib.request params = urllib.parse.urlencode({&#34;key&#34;: &#34;M.CHF.EUR.SP00.A&#34;, &#34;lastNObservations&#34;: 12}) with urllib.request.urlopen(f&#34;http://localhost:4559/sdmx-dl/v2/ECB/EXR/data?{params}&#34;) as response: payload = json.load(response) writer = csv.writer(sys.stdout) writer.writerow([&#34;Series&#34;, &#34;ObsPeriod&#34;, &#34;ObsValue&#34;]) for series in payload[&#34;data&#34;]: for obs in series[&#34;obs&#34;]: writer.writerow([series[&#34;key&#34;], obs[&#34;period&#34;].split(&#34;/&#34;)[0], obs[&#34;value&#34;]]) " />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/formats/" />
+<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-python/" />
 
-<meta property="article:section" content="Formats" />
+<meta property="article:section" content="Integration" />
     <meta
       property="article:modified_time"
       content="2026-09-29T14:03:10+02:00"
@@ -52,26 +56,28 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
 
 
   <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Data formats" />
-  <meta name="twitter:description" content="sdmx-dl supports the following file formats:
-Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xml; version=2.0 SDMX-ML Generic Data 2.1 application/vnd.sdmx.genericdata&#43;xml; version=2.1 SDMX-ML Compact Data 2.0 application/vnd.sdmx.structurespecificdata&#43;xml; version=2.0 SDMX-ML Compact Data 2.1 application/vnd.sdmx.structurespecificdata&#43;xml; version=2.1 SDMX-ML Structure 2.0 application/vnd.sdmx.structure&#43;xml; version=2.0 SDMX-ML Structure 2.1 application/vnd.sdmx.structure&#43;xml; version=2.1 " />
+<meta name="twitter:title" content="Use in Python" />
+  <meta name="twitter:description" content="Automate sdmx-dl from a plain Python script, using only the standard library. This is a good fit for scheduled jobs and data pipelines; for interactive analysis with pandas, see Use in Jupyter.
+CLI If sdmx-dl is on your PATH, a script can run it with subprocess and parse its CSV output with the csv module:
+import csv import io import subprocess import sys result = subprocess.run( [&#34;sdmx-dl&#34;, &#34;fetch&#34;, &#34;data&#34;, &#34;ECB&#34;, &#34;EXR&#34;, &#34;M.CHF.EUR.SP00.A&#34;, &#34;--last-n&#34;, &#34;12&#34;], capture_output=True, text=True, check=True, ) writer = csv.writer(sys.stdout) writer.writerow([&#34;Series&#34;, &#34;ObsPeriod&#34;, &#34;ObsValue&#34;]) for row in csv.DictReader(io.StringIO(result.stdout)): writer.writerow([row[&#34;Series&#34;], row[&#34;ObsPeriod&#34;], row[&#34;ObsValue&#34;]]) REST If the web service is running, a script can query it with urllib and reshape the JSON response (see the response format):
+import csv import json import sys import urllib.parse import urllib.request params = urllib.parse.urlencode({&#34;key&#34;: &#34;M.CHF.EUR.SP00.A&#34;, &#34;lastNObservations&#34;: 12}) with urllib.request.urlopen(f&#34;http://localhost:4559/sdmx-dl/v2/ECB/EXR/data?{params}&#34;) as response: payload = json.load(response) writer = csv.writer(sys.stdout) writer.writerow([&#34;Series&#34;, &#34;ObsPeriod&#34;, &#34;ObsValue&#34;]) for series in payload[&#34;data&#34;]: for obs in series[&#34;obs&#34;]: writer.writerow([series[&#34;key&#34;], obs[&#34;period&#34;].split(&#34;/&#34;)[0], obs[&#34;value&#34;]]) " />
 
 
   <script type="application/ld+json">
   {
       "@context": "http://schema.org",
       "@type": "TechArticle",
-      "articleSection": "Formats",
-      "name": "Data formats",
-      "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/formats/",
-      "headline": "Data formats",
-      "description": "sdmx-dl supports the following file formats:\nName Media type SDMX-ML Generic Data 2.0 application\/vnd.sdmx.genericdata\u002bxml; version=2.0 SDMX-ML Generic Data 2.1 application\/vnd.sdmx.genericdata\u002bxml; version=2.1 SDMX-ML Compact Data 2.0 application\/vnd.sdmx.structurespecificdata\u002bxml; version=2.0 SDMX-ML Compact Data 2.1 application\/vnd.sdmx.structurespecificdata\u002bxml; version=2.1 SDMX-ML Structure 2.0 application\/vnd.sdmx.structure\u002bxml; version=2.0 SDMX-ML Structure 2.1 application\/vnd.sdmx.structure\u002bxml; version=2.1 ",
-      "wordCount": "43",
+      "articleSection": "Integration",
+      "name": "Use in Python",
+      "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-python/",
+      "headline": "Use in Python",
+      "description": "Automate sdmx-dl from a plain Python script, using only the standard library. This is a good fit for scheduled jobs and data pipelines; for interactive analysis with pandas, see Use in Jupyter.\nCLI If sdmx-dl is on your PATH, a script can run it with subprocess and parse its CSV output with the csv module:\nimport csv import io import subprocess import sys result = subprocess.run( [\u0022sdmx-dl\u0022, \u0022fetch\u0022, \u0022data\u0022, \u0022ECB\u0022, \u0022EXR\u0022, \u0022M.CHF.EUR.SP00.A\u0022, \u0022--last-n\u0022, \u002212\u0022], capture_output=True, text=True, check=True, ) writer = csv.writer(sys.stdout) writer.writerow([\u0022Series\u0022, \u0022ObsPeriod\u0022, \u0022ObsValue\u0022]) for row in csv.DictReader(io.StringIO(result.stdout)): writer.writerow([row[\u0022Series\u0022], row[\u0022ObsPeriod\u0022], row[\u0022ObsValue\u0022]]) REST If the web service is running, a script can query it with urllib and reshape the JSON response (see the response format):\nimport csv import json import sys import urllib.parse import urllib.request params = urllib.parse.urlencode({\u0022key\u0022: \u0022M.CHF.EUR.SP00.A\u0022, \u0022lastNObservations\u0022: 12}) with urllib.request.urlopen(f\u0022http:\/\/localhost:4559\/sdmx-dl\/v2\/ECB\/EXR\/data?{params}\u0022) as response: payload = json.load(response) writer = csv.writer(sys.stdout) writer.writerow([\u0022Series\u0022, \u0022ObsPeriod\u0022, \u0022ObsValue\u0022]) for series in payload[\u0022data\u0022]: for obs in series[\u0022obs\u0022]: writer.writerow([series[\u0022key\u0022], obs[\u0022period\u0022].split(\u0022\/\u0022)[0], obs[\u0022value\u0022]]) ",
+      "wordCount": "260",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
           "@type": "WebPage",
-          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/formats/"
+          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-python/"
       },
       "copyrightHolder": "sdmx-dl",
       "copyrightYear": "0001",
@@ -155,7 +161,7 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
   href="/sdmx-dl/docs/develop/custom.css"
   media="all"
 />
-  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/formats/" rel="canonical" type="text/html" />
+  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-python/" rel="canonical" type="text/html" />
 
 <!-- Made with Geekdoc theme https://github.com/thegeeklab/hugo-geekdoc -->
 
@@ -911,7 +917,7 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
                 <span class="flex">
                   <a
                     href="/sdmx-dl/docs/develop/integration/use-in-python/"
-                    class="gdoc-nav__entry"
+                    class="gdoc-nav__entry is-active"
                   >
                     Use in Python
                   </a>
@@ -1500,7 +1506,7 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
                 <span class="flex">
                   <a
                     href="/sdmx-dl/docs/develop/formats/"
-                    class="gdoc-nav__entry is-active"
+                    class="gdoc-nav__entry"
                   >
                     Data formats
                   </a>
@@ -1617,7 +1623,15 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
     
   
   
-    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Data formats</span><meta itemprop='position' content='5' /></li>
+    
+    
+    
+    
+  
+  
+    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/integration/' href='/sdmx-dl/docs/develop/integration/'><span itemprop='name'>Automation & integration</span></a><meta itemprop='position' content='5' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Use in Python</span><meta itemprop='position' content='6' /></li>
+  
+
   
 
   
@@ -1634,43 +1648,113 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
     class="gdoc-markdown gdoc-markdown__align--left"
     id="main-content" tabindex="-1"
   >
-    <h1>Data formats</h1>
+    <h1>Use in Python</h1>
     
-    <p><strong>sdmx-dl</strong> supports the following file formats:</p>
-<div class="table-wrap"> <table>
-	<thead>
-			<tr>
-					<th>Name</th>
-					<th>Media type</th>
-			</tr>
-	</thead>
-	<tbody>
-			<tr>
-					<td>SDMX-ML Generic Data 2.0</td>
-					<td><code>application/vnd.sdmx.genericdata+xml; version=2.0</code></td>
-			</tr>
-			<tr>
-					<td>SDMX-ML Generic Data 2.1</td>
-					<td><code>application/vnd.sdmx.genericdata+xml; version=2.1</code></td>
-			</tr>
-			<tr>
-					<td>SDMX-ML Compact Data 2.0</td>
-					<td><code>application/vnd.sdmx.structurespecificdata+xml; version=2.0</code></td>
-			</tr>
-			<tr>
-					<td>SDMX-ML Compact Data 2.1</td>
-					<td><code>application/vnd.sdmx.structurespecificdata+xml; version=2.1</code></td>
-			</tr>
-			<tr>
-					<td>SDMX-ML Structure 2.0</td>
-					<td><code>application/vnd.sdmx.structure+xml; version=2.0</code></td>
-			</tr>
-			<tr>
-					<td>SDMX-ML Structure 2.1</td>
-					<td><code>application/vnd.sdmx.structure+xml; version=2.1</code></td>
-			</tr>
-	</tbody>
-</table> </div>
+    <p>Automate <strong>sdmx-dl</strong> from a plain Python script, using only the standard library.
+This is a good fit for scheduled jobs and data pipelines; for interactive analysis with pandas, see <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/use-in-jupyter/"
+>Use in Jupyter</a>.</p>
+
+
+
+<div class="gdoc-tabs">
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-use-in-python"
+      id="tabs-use-in-python-0"
+      checked="checked"/>
+    <label for="tabs-use-in-python-0" class="gdoc-tabs__label">
+      CLI
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>If <code>sdmx-dl</code> is on your <code>PATH</code>, a script can run it with <code>subprocess</code> and parse its CSV output with the <code>csv</code> module:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">csv</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">io</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">subprocess</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">sys</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="p">[</span><span class="s2">&#34;sdmx-dl&#34;</span><span class="p">,</span> <span class="s2">&#34;fetch&#34;</span><span class="p">,</span> <span class="s2">&#34;data&#34;</span><span class="p">,</span> <span class="s2">&#34;ECB&#34;</span><span class="p">,</span> <span class="s2">&#34;EXR&#34;</span><span class="p">,</span> <span class="s2">&#34;M.CHF.EUR.SP00.A&#34;</span><span class="p">,</span> <span class="s2">&#34;--last-n&#34;</span><span class="p">,</span> <span class="s2">&#34;12&#34;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">    <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s2">&#34;Series&#34;</span><span class="p">,</span> <span class="s2">&#34;ObsPeriod&#34;</span><span class="p">,</span> <span class="s2">&#34;ObsValue&#34;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="p">)):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="s2">&#34;Series&#34;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">&#34;ObsPeriod&#34;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">&#34;ObsValue&#34;</span><span class="p">]])</span>
+</span></span></code></pre></div></div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-use-in-python"
+      id="tabs-use-in-python-1"
+      />
+    <label for="tabs-use-in-python-1" class="gdoc-tabs__label">
+      REST
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>If the web service is running, a script can query it with <code>urllib</code> and reshape the JSON response (see the <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/ws/#response-format"
+>response format</a>):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">csv</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">json</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">sys</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">urllib.parse</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">urllib.request</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">params</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">urlencode</span><span class="p">({</span><span class="s2">&#34;key&#34;</span><span class="p">:</span> <span class="s2">&#34;M.CHF.EUR.SP00.A&#34;</span><span class="p">,</span> <span class="s2">&#34;lastNObservations&#34;</span><span class="p">:</span> <span class="mi">12</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="k">with</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;http://localhost:4559/sdmx-dl/v2/ECB/EXR/data?</span><span class="si">{</span><span class="n">params</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">payload</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s2">&#34;Series&#34;</span><span class="p">,</span> <span class="s2">&#34;ObsPeriod&#34;</span><span class="p">,</span> <span class="s2">&#34;ObsValue&#34;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">series</span> <span class="ow">in</span> <span class="n">payload</span><span class="p">[</span><span class="s2">&#34;data&#34;</span><span class="p">]:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">series</span><span class="p">[</span><span class="s2">&#34;obs&#34;</span><span class="p">]:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="n">series</span><span class="p">[</span><span class="s2">&#34;key&#34;</span><span class="p">],</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&#34;period&#34;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&#34;/&#34;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&#34;value&#34;</span><span class="p">]])</span>
+</span></span></code></pre></div></div>
+</div>
+
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="notes"
+    >
+        Notes
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-python/#notes" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Notes" aria-label="Anchor to: Notes" href="#notes">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<ul>
+<li>Both examples use only the standard library; swap in <code>requests</code> or <code>pandas</code> if they&rsquo;re already part of your project.</li>
+<li><code>check=True</code> raises <code>subprocess.CalledProcessError</code> when <code>sdmx-dl</code> fails, and <code>urlopen</code> raises <code>urllib.error.HTTPError</code> on HTTP errors, so failures stop the script instead of producing empty output.</li>
+<li><strong>Windows launcher</strong>: <code>subprocess</code> doesn&rsquo;t resolve <code>.bat</code>/<code>.cmd</code> launchers from a bare command name; use the full path to the launcher, or call the jar with <code>[&quot;java&quot;, &quot;-jar&quot;, &quot;path/to/sdmx-dl-cli-bin.jar&quot;, ...]</code>.</li>
+<li>The REST approach is often better when the script runs on another machine than sdmx-dl, or when several scripts share one long-lived service and its cache.</li>
+</ul>
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="related-features"
+    >
+        Related features
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-python/#related-features" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Related features" aria-label="Anchor to: Related features" href="#related-features">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<ul>
+<li><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/usage/retrieve/#data"
+>Retrieve data</a></li>
+<li><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/use-in-jupyter/"
+>Use in Jupyter</a></li>
+<li><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/ws/"
+>Web service</a></li>
+</ul>
 
   </article>
 
@@ -2122,449 +2206,6 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
         
 
         
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-          
-  
-  
-
-  
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
           
           
         
@@ -2603,6 +2244,449 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
             
             
           
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+          
+  
+  
+
+  
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
         
 
         
@@ -2625,11 +2709,11 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
   
     <a
       class="gdoc-page__nav--prev flex align-center"
-      href="/sdmx-dl/docs/develop/auth/"
-      title="Authentication"
+      href="/sdmx-dl/docs/develop/integration/use-in-r/"
+      title="Use in R"
     >
       <i class="gdoc-icon">gdoc_arrow_left_alt</i>
-      Authentication
+      Use in R
     </a>
   
 </span>
@@ -2637,10 +2721,10 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
   
     <a
       class="gdoc-page__nav--next flex align-center"
-      href="/sdmx-dl/docs/develop/sources/"
-      title="Data sources"
+      href="/sdmx-dl/docs/develop/integration/use-in-jupyter/"
+      title="Use in Jupyter"
     >
-      Data sources
+      Use in Jupyter
       <i class="gdoc-icon">gdoc_arrow_right_alt</i>
     </a>
   

@@ -12,10 +12,11 @@
 <meta name="generator" content="Hugo 0.167.0">
 
 
-  <meta name="description" content="sdmx-dl supports the following file formats:
-Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xml; version=2.0 SDMX-ML Generic Data 2.1 application/vnd.sdmx.genericdata&#43;xml; version=2.1 SDMX-ML Compact Data 2.0 application/vnd.sdmx.structurespecificdata&#43;xml; version=2.0 SDMX-ML Compact Data 2.1 application/vnd.sdmx.structurespecificdata&#43;xml; version=2.1 SDMX-ML Structure 2.0 application/vnd.sdmx.structure&#43;xml; version=2.0 SDMX-ML Structure 2.1 application/vnd.sdmx.structure&#43;xml; version=2.1 " />
+  <meta name="description" content="Automate your workflow with scripts and scheduled jobs, or integrate sdmx-dl into the tools and applications you already use.
+Which approach? Every integration below relies on one of three approaches:
+Approach What you need Output Best for Call the CLI sdmx-dl installed on the machine running the script CSV (file or standard output) Scripts and scheduled jobs on a single machine; reusing commands you already run by hand. Query the web service A running sdmx-dl service (local or remote) and an HTTP client JSON Tools that speak HTTP (Excel, R, Python); sharing one service and its cache between users or processes. Use the Java library Java, plus a build tool or jbang Java objects Full control and custom logic in Java, without spawning processes or running a service. Integrations Every page uses the same running example: the last 12 monthly CHF/EUR exchange rates from the ECB (ECB, EXR, M.CHF.EUR.SP00.A), ending as a table with Series, ObsPeriod, and ObsValue columns." />
 
-    <title>Data formats | sdmx-dl</title>
+    <title>Automation &amp; integration | sdmx-dl</title>
 
     <link rel="icon" type="image/svg+xml" href="/sdmx-dl/docs/develop/favicon/favicon.svg" />
 <link
@@ -36,15 +37,16 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
     
   <meta
     property="og:title"
-    content="Data formats"
+    content="Automation & integration"
   />
   <meta property="og:site_name" content="sdmx-dl" />
-  <meta property="og:description" content="sdmx-dl supports the following file formats:
-Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xml; version=2.0 SDMX-ML Generic Data 2.1 application/vnd.sdmx.genericdata&#43;xml; version=2.1 SDMX-ML Compact Data 2.0 application/vnd.sdmx.structurespecificdata&#43;xml; version=2.0 SDMX-ML Compact Data 2.1 application/vnd.sdmx.structurespecificdata&#43;xml; version=2.1 SDMX-ML Structure 2.0 application/vnd.sdmx.structure&#43;xml; version=2.0 SDMX-ML Structure 2.1 application/vnd.sdmx.structure&#43;xml; version=2.1 " />
+  <meta property="og:description" content="Automate your workflow with scripts and scheduled jobs, or integrate sdmx-dl into the tools and applications you already use.
+Which approach? Every integration below relies on one of three approaches:
+Approach What you need Output Best for Call the CLI sdmx-dl installed on the machine running the script CSV (file or standard output) Scripts and scheduled jobs on a single machine; reusing commands you already run by hand. Query the web service A running sdmx-dl service (local or remote) and an HTTP client JSON Tools that speak HTTP (Excel, R, Python); sharing one service and its cache between users or processes. Use the Java library Java, plus a build tool or jbang Java objects Full control and custom logic in Java, without spawning processes or running a service. Integrations Every page uses the same running example: the last 12 monthly CHF/EUR exchange rates from the ECB (ECB, EXR, M.CHF.EUR.SP00.A), ending as a table with Series, ObsPeriod, and ObsValue columns." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/formats/" />
+<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/" />
 
-<meta property="article:section" content="Formats" />
+<meta property="article:section" content="Integration" />
     <meta
       property="article:modified_time"
       content="2026-09-29T14:03:10+02:00"
@@ -52,26 +54,27 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
 
 
   <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Data formats" />
-  <meta name="twitter:description" content="sdmx-dl supports the following file formats:
-Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xml; version=2.0 SDMX-ML Generic Data 2.1 application/vnd.sdmx.genericdata&#43;xml; version=2.1 SDMX-ML Compact Data 2.0 application/vnd.sdmx.structurespecificdata&#43;xml; version=2.0 SDMX-ML Compact Data 2.1 application/vnd.sdmx.structurespecificdata&#43;xml; version=2.1 SDMX-ML Structure 2.0 application/vnd.sdmx.structure&#43;xml; version=2.0 SDMX-ML Structure 2.1 application/vnd.sdmx.structure&#43;xml; version=2.1 " />
+<meta name="twitter:title" content="Automation & integration" />
+  <meta name="twitter:description" content="Automate your workflow with scripts and scheduled jobs, or integrate sdmx-dl into the tools and applications you already use.
+Which approach? Every integration below relies on one of three approaches:
+Approach What you need Output Best for Call the CLI sdmx-dl installed on the machine running the script CSV (file or standard output) Scripts and scheduled jobs on a single machine; reusing commands you already run by hand. Query the web service A running sdmx-dl service (local or remote) and an HTTP client JSON Tools that speak HTTP (Excel, R, Python); sharing one service and its cache between users or processes. Use the Java library Java, plus a build tool or jbang Java objects Full control and custom logic in Java, without spawning processes or running a service. Integrations Every page uses the same running example: the last 12 monthly CHF/EUR exchange rates from the ECB (ECB, EXR, M.CHF.EUR.SP00.A), ending as a table with Series, ObsPeriod, and ObsValue columns." />
 
 
   <script type="application/ld+json">
   {
       "@context": "http://schema.org",
       "@type": "TechArticle",
-      "articleSection": "Formats",
-      "name": "Data formats",
-      "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/formats/",
-      "headline": "Data formats",
-      "description": "sdmx-dl supports the following file formats:\nName Media type SDMX-ML Generic Data 2.0 application\/vnd.sdmx.genericdata\u002bxml; version=2.0 SDMX-ML Generic Data 2.1 application\/vnd.sdmx.genericdata\u002bxml; version=2.1 SDMX-ML Compact Data 2.0 application\/vnd.sdmx.structurespecificdata\u002bxml; version=2.0 SDMX-ML Compact Data 2.1 application\/vnd.sdmx.structurespecificdata\u002bxml; version=2.1 SDMX-ML Structure 2.0 application\/vnd.sdmx.structure\u002bxml; version=2.0 SDMX-ML Structure 2.1 application\/vnd.sdmx.structure\u002bxml; version=2.1 ",
-      "wordCount": "43",
+      "articleSection": "Integration",
+      "name": "Automation \u0026 integration",
+      "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/integration/",
+      "headline": "Automation \u0026 integration",
+      "description": "Automate your workflow with scripts and scheduled jobs, or integrate sdmx-dl into the tools and applications you already use.\nWhich approach? Every integration below relies on one of three approaches:\nApproach What you need Output Best for Call the CLI sdmx-dl installed on the machine running the script CSV (file or standard output) Scripts and scheduled jobs on a single machine; reusing commands you already run by hand. Query the web service A running sdmx-dl service (local or remote) and an HTTP client JSON Tools that speak HTTP (Excel, R, Python); sharing one service and its cache between users or processes. Use the Java library Java, plus a build tool or jbang Java objects Full control and custom logic in Java, without spawning processes or running a service. Integrations Every page uses the same running example: the last 12 monthly CHF\/EUR exchange rates from the ECB (ECB, EXR, M.CHF.EUR.SP00.A), ending as a table with Series, ObsPeriod, and ObsValue columns.",
+      "wordCount": "296",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
           "@type": "WebPage",
-          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/formats/"
+          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/integration/"
       },
       "copyrightHolder": "sdmx-dl",
       "copyrightYear": "0001",
@@ -155,7 +158,7 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
   href="/sdmx-dl/docs/develop/custom.css"
   media="all"
 />
-  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/formats/" rel="canonical" type="text/html" />
+  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/" rel="canonical" type="text/html" />
 
 <!-- Made with Geekdoc theme https://github.com/thegeeklab/hugo-geekdoc -->
 
@@ -644,7 +647,7 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
                 <span class="flex">
                   <a
                     href="/sdmx-dl/docs/develop/integration/"
-                    class="gdoc-nav__entry"
+                    class="gdoc-nav__entry is-active"
                   >
                     Automation &amp; integration
                   </a>
@@ -1500,7 +1503,7 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
                 <span class="flex">
                   <a
                     href="/sdmx-dl/docs/develop/formats/"
-                    class="gdoc-nav__entry is-active"
+                    class="gdoc-nav__entry"
                   >
                     Data formats
                   </a>
@@ -1617,7 +1620,7 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
     
   
   
-    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Data formats</span><meta itemprop='position' content='5' /></li>
+    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Automation & integration</span><meta itemprop='position' content='5' /></li>
   
 
   
@@ -1634,43 +1637,142 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
     class="gdoc-markdown gdoc-markdown__align--left"
     id="main-content" tabindex="-1"
   >
-    <h1>Data formats</h1>
+    <h1>Automation &amp; integration</h1>
     
-    <p><strong>sdmx-dl</strong> supports the following file formats:</p>
+    <p>Automate your workflow with scripts and scheduled jobs, or integrate sdmx-dl into the tools and applications you already use.</p>
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="which-approach"
+    >
+        Which approach?
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/#which-approach" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Which approach?" aria-label="Anchor to: Which approach?" href="#which-approach">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>Every integration below relies on one of three approaches:</p>
 <div class="table-wrap"> <table>
 	<thead>
 			<tr>
-					<th>Name</th>
-					<th>Media type</th>
+					<th>Approach</th>
+					<th>What you need</th>
+					<th>Output</th>
+					<th>Best for</th>
 			</tr>
 	</thead>
 	<tbody>
 			<tr>
-					<td>SDMX-ML Generic Data 2.0</td>
-					<td><code>application/vnd.sdmx.genericdata+xml; version=2.0</code></td>
+					<td><strong>Call the <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/cli/"
+>CLI</a></strong></td>
+					<td><code>sdmx-dl</code> <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/cli/installation/"
+>installed</a> on the machine running the script</td>
+					<td>CSV (file or standard output)</td>
+					<td>Scripts and scheduled jobs on a single machine; reusing commands you already run by hand.</td>
 			</tr>
 			<tr>
-					<td>SDMX-ML Generic Data 2.1</td>
-					<td><code>application/vnd.sdmx.genericdata+xml; version=2.1</code></td>
+					<td><strong>Query the <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/ws/"
+>web service</a></strong></td>
+					<td>A running sdmx-dl service (local or remote) and an HTTP client</td>
+					<td><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/ws/#response-format"
+>JSON</a></td>
+					<td>Tools that speak HTTP (Excel, R, Python); sharing one service and its cache between users or processes.</td>
 			</tr>
 			<tr>
-					<td>SDMX-ML Compact Data 2.0</td>
-					<td><code>application/vnd.sdmx.structurespecificdata+xml; version=2.0</code></td>
-			</tr>
-			<tr>
-					<td>SDMX-ML Compact Data 2.1</td>
-					<td><code>application/vnd.sdmx.structurespecificdata+xml; version=2.1</code></td>
-			</tr>
-			<tr>
-					<td>SDMX-ML Structure 2.0</td>
-					<td><code>application/vnd.sdmx.structure+xml; version=2.0</code></td>
-			</tr>
-			<tr>
-					<td>SDMX-ML Structure 2.1</td>
-					<td><code>application/vnd.sdmx.structure+xml; version=2.1</code></td>
+					<td><strong>Use the <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/api/"
+>Java library</a></strong></td>
+					<td>Java, plus a build tool or <a
+  class="gdoc-markdown__link"
+  href="https://www.jbang.dev/"
+>jbang</a></td>
+					<td>Java objects</td>
+					<td>Full control and custom logic in Java, without spawning processes or running a service.</td>
 			</tr>
 	</tbody>
 </table> </div>
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="integrations"
+    >
+        Integrations
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/#integrations" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Integrations" aria-label="Anchor to: Integrations" href="#integrations">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>Every page uses the same running example: the last 12 monthly CHF/EUR exchange rates from the ECB (<code>ECB</code>, <code>EXR</code>, <code>M.CHF.EUR.SP00.A</code>), ending as a table with <code>Series</code>, <code>ObsPeriod</code>, and <code>ObsValue</code> columns.</p>
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h3 id="scripting-the-cli"
+    >
+        Scripting the CLI
+    </h3>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/#scripting-the-cli" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Scripting the CLI" aria-label="Anchor to: Scripting the CLI" href="#scripting-the-cli">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<ul>
+<li><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/use-in-batch-file/"
+>Use in batch file</a> - Automate repeated CLI calls from a Windows <code>.bat</code> script.</li>
+<li><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/use-in-bash/"
+>Use in bash script</a> - Automate CLI or REST calls on Linux and macOS, and schedule them with cron.</li>
+<li><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/use-in-powershell/"
+>Use in PowerShell</a> - Parse CLI or REST output as objects, on Windows, Linux, or macOS.</li>
+</ul>
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h3 id="tools-and-languages"
+    >
+        Tools and languages
+    </h3>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/#tools-and-languages" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Tools and languages" aria-label="Anchor to: Tools and languages" href="#tools-and-languages">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<ul>
+<li><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/use-in-excel/"
+>Use in Excel</a> - Import CSV files or connect Power Query directly to the REST endpoint.</li>
+<li><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/use-in-r/"
+>Use in R</a> - Call the CLI or REST endpoint from R and load the results as data frames.</li>
+<li><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/use-in-python/"
+>Use in Python</a> - Call the CLI or REST endpoint from a plain Python script, standard library only.</li>
+<li><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/use-in-jupyter/"
+>Use in Jupyter</a> - Fetch data in Python notebooks with subprocess or HTTP, reshape with pandas.</li>
+</ul>
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h3 id="java"
+    >
+        Java
+    </h3>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/#java" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Java" aria-label="Anchor to: Java" href="#java">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<ul>
+<li><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/use-in-jbang/"
+>Use in jbang script</a> - Single-file Java scripts with zero project setup.</li>
+</ul>
 
   </article>
 
@@ -1922,343 +2024,8 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
         
 
         
-
-        
           
-        
-
-        
-        
           
-  
-  
-
-  
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
         
 
         
@@ -2272,312 +2039,6 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
   
 
   
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-          
-          
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
   
     
 
@@ -2603,6 +2064,647 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
             
             
           
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+          
+  
+  
+
+  
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
         
 
         
@@ -2625,11 +2727,11 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
   
     <a
       class="gdoc-page__nav--prev flex align-center"
-      href="/sdmx-dl/docs/develop/auth/"
-      title="Authentication"
+      href="/sdmx-dl/docs/develop/usage/monitor-and-status/"
+      title="Monitor and status"
     >
       <i class="gdoc-icon">gdoc_arrow_left_alt</i>
-      Authentication
+      Monitor and status
     </a>
   
 </span>
@@ -2637,10 +2739,10 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
   
     <a
       class="gdoc-page__nav--next flex align-center"
-      href="/sdmx-dl/docs/develop/sources/"
-      title="Data sources"
+      href="/sdmx-dl/docs/develop/integration/use-in-batch-file/"
+      title="Use in batch file"
     >
-      Data sources
+      Use in batch file
       <i class="gdoc-icon">gdoc_arrow_right_alt</i>
     </a>
   

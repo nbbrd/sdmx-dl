@@ -12,10 +12,10 @@
 <meta name="generator" content="Hugo 0.167.0">
 
 
-  <meta name="description" content="sdmx-dl supports the following file formats:
-Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xml; version=2.0 SDMX-ML Generic Data 2.1 application/vnd.sdmx.genericdata&#43;xml; version=2.1 SDMX-ML Compact Data 2.0 application/vnd.sdmx.structurespecificdata&#43;xml; version=2.0 SDMX-ML Compact Data 2.1 application/vnd.sdmx.structurespecificdata&#43;xml; version=2.1 SDMX-ML Structure 2.0 application/vnd.sdmx.structure&#43;xml; version=2.0 SDMX-ML Structure 2.1 application/vnd.sdmx.structure&#43;xml; version=2.1 " />
+  <meta name="description" content="This walkthrough answers a simple question from start to finish — how has the Swiss franc moved against the euro recently? — using the command-line tool. Every step has an equivalent in the Java library and the web service; follow the links to see them.
+Tip No installation needed: prefix every command with jbang sdmx-dl@nbbrd instead of sdmx-dl (see Installation). 1. Find the source Search the available data providers by name or topic:" />
 
-    <title>Data formats | sdmx-dl</title>
+    <title>Getting started | sdmx-dl</title>
 
     <link rel="icon" type="image/svg+xml" href="/sdmx-dl/docs/develop/favicon/favicon.svg" />
 <link
@@ -36,15 +36,15 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
     
   <meta
     property="og:title"
-    content="Data formats"
+    content="Getting started"
   />
   <meta property="og:site_name" content="sdmx-dl" />
-  <meta property="og:description" content="sdmx-dl supports the following file formats:
-Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xml; version=2.0 SDMX-ML Generic Data 2.1 application/vnd.sdmx.genericdata&#43;xml; version=2.1 SDMX-ML Compact Data 2.0 application/vnd.sdmx.structurespecificdata&#43;xml; version=2.0 SDMX-ML Compact Data 2.1 application/vnd.sdmx.structurespecificdata&#43;xml; version=2.1 SDMX-ML Structure 2.0 application/vnd.sdmx.structure&#43;xml; version=2.0 SDMX-ML Structure 2.1 application/vnd.sdmx.structure&#43;xml; version=2.1 " />
+  <meta property="og:description" content="This walkthrough answers a simple question from start to finish — how has the Swiss franc moved against the euro recently? — using the command-line tool. Every step has an equivalent in the Java library and the web service; follow the links to see them.
+Tip No installation needed: prefix every command with jbang sdmx-dl@nbbrd instead of sdmx-dl (see Installation). 1. Find the source Search the available data providers by name or topic:" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/formats/" />
+<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/getting-started/" />
 
-<meta property="article:section" content="Formats" />
+<meta property="article:section" content="Usage" />
     <meta
       property="article:modified_time"
       content="2026-09-29T14:03:10+02:00"
@@ -52,26 +52,26 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
 
 
   <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Data formats" />
-  <meta name="twitter:description" content="sdmx-dl supports the following file formats:
-Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xml; version=2.0 SDMX-ML Generic Data 2.1 application/vnd.sdmx.genericdata&#43;xml; version=2.1 SDMX-ML Compact Data 2.0 application/vnd.sdmx.structurespecificdata&#43;xml; version=2.0 SDMX-ML Compact Data 2.1 application/vnd.sdmx.structurespecificdata&#43;xml; version=2.1 SDMX-ML Structure 2.0 application/vnd.sdmx.structure&#43;xml; version=2.0 SDMX-ML Structure 2.1 application/vnd.sdmx.structure&#43;xml; version=2.1 " />
+<meta name="twitter:title" content="Getting started" />
+  <meta name="twitter:description" content="This walkthrough answers a simple question from start to finish — how has the Swiss franc moved against the euro recently? — using the command-line tool. Every step has an equivalent in the Java library and the web service; follow the links to see them.
+Tip No installation needed: prefix every command with jbang sdmx-dl@nbbrd instead of sdmx-dl (see Installation). 1. Find the source Search the available data providers by name or topic:" />
 
 
   <script type="application/ld+json">
   {
       "@context": "http://schema.org",
       "@type": "TechArticle",
-      "articleSection": "Formats",
-      "name": "Data formats",
-      "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/formats/",
-      "headline": "Data formats",
-      "description": "sdmx-dl supports the following file formats:\nName Media type SDMX-ML Generic Data 2.0 application\/vnd.sdmx.genericdata\u002bxml; version=2.0 SDMX-ML Generic Data 2.1 application\/vnd.sdmx.genericdata\u002bxml; version=2.1 SDMX-ML Compact Data 2.0 application\/vnd.sdmx.structurespecificdata\u002bxml; version=2.0 SDMX-ML Compact Data 2.1 application\/vnd.sdmx.structurespecificdata\u002bxml; version=2.1 SDMX-ML Structure 2.0 application\/vnd.sdmx.structure\u002bxml; version=2.0 SDMX-ML Structure 2.1 application\/vnd.sdmx.structure\u002bxml; version=2.1 ",
-      "wordCount": "43",
+      "articleSection": "Usage",
+      "name": "Getting started",
+      "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/getting-started/",
+      "headline": "Getting started",
+      "description": "This walkthrough answers a simple question from start to finish — how has the Swiss franc moved against the euro recently? — using the command-line tool. Every step has an equivalent in the Java library and the web service; follow the links to see them.\nTip No installation needed: prefix every command with jbang sdmx-dl@nbbrd instead of sdmx-dl (see Installation). 1. Find the source Search the available data providers by name or topic:",
+      "wordCount": "372",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
           "@type": "WebPage",
-          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/formats/"
+          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/getting-started/"
       },
       "copyrightHolder": "sdmx-dl",
       "copyrightYear": "0001",
@@ -155,7 +155,7 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
   href="/sdmx-dl/docs/develop/custom.css"
   media="all"
 />
-  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/formats/" rel="canonical" type="text/html" />
+  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/getting-started/" rel="canonical" type="text/html" />
 
 <!-- Made with Geekdoc theme https://github.com/thegeeklab/hugo-geekdoc -->
 
@@ -417,7 +417,7 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
                 <span class="flex">
                   <a
                     href="/sdmx-dl/docs/develop/usage/getting-started/"
-                    class="gdoc-nav__entry"
+                    class="gdoc-nav__entry is-active"
                   >
                     Getting started
                   </a>
@@ -1500,7 +1500,7 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
                 <span class="flex">
                   <a
                     href="/sdmx-dl/docs/develop/formats/"
-                    class="gdoc-nav__entry is-active"
+                    class="gdoc-nav__entry"
                   >
                     Data formats
                   </a>
@@ -1617,7 +1617,15 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
     
   
   
-    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Data formats</span><meta itemprop='position' content='5' /></li>
+    
+    
+    
+    
+  
+  
+    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/usage/' href='/sdmx-dl/docs/develop/usage/'><span itemprop='name'>Usage</span></a><meta itemprop='position' content='5' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Getting started</span><meta itemprop='position' content='6' /></li>
+  
+
   
 
   
@@ -1634,43 +1642,172 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
     class="gdoc-markdown gdoc-markdown__align--left"
     id="main-content" tabindex="-1"
   >
-    <h1>Data formats</h1>
+    <h1>Getting started</h1>
     
-    <p><strong>sdmx-dl</strong> supports the following file formats:</p>
-<div class="table-wrap"> <table>
-	<thead>
-			<tr>
-					<th>Name</th>
-					<th>Media type</th>
-			</tr>
-	</thead>
-	<tbody>
-			<tr>
-					<td>SDMX-ML Generic Data 2.0</td>
-					<td><code>application/vnd.sdmx.genericdata+xml; version=2.0</code></td>
-			</tr>
-			<tr>
-					<td>SDMX-ML Generic Data 2.1</td>
-					<td><code>application/vnd.sdmx.genericdata+xml; version=2.1</code></td>
-			</tr>
-			<tr>
-					<td>SDMX-ML Compact Data 2.0</td>
-					<td><code>application/vnd.sdmx.structurespecificdata+xml; version=2.0</code></td>
-			</tr>
-			<tr>
-					<td>SDMX-ML Compact Data 2.1</td>
-					<td><code>application/vnd.sdmx.structurespecificdata+xml; version=2.1</code></td>
-			</tr>
-			<tr>
-					<td>SDMX-ML Structure 2.0</td>
-					<td><code>application/vnd.sdmx.structure+xml; version=2.0</code></td>
-			</tr>
-			<tr>
-					<td>SDMX-ML Structure 2.1</td>
-					<td><code>application/vnd.sdmx.structure+xml; version=2.1</code></td>
-			</tr>
-	</tbody>
-</table> </div>
+    <p>This walkthrough answers a simple question from start to finish — <em>how has the Swiss franc moved against the euro recently?</em> — using the <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/cli/"
+>command-line tool</a>.
+Every step has an equivalent in the <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/api/"
+>Java library</a> and the <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/ws/"
+>web service</a>; follow the links to see them.</p>
+
+
+
+<blockquote class="gdoc-hint tip">
+  <div class="gdoc-hint__title flex gap-8 align-center"><i class="fa tip"></i>
+      <span>Tip</span></div>
+  <div class="gdoc-hint__text">No installation needed: prefix every command with <code>jbang sdmx-dl@nbbrd</code> instead of <code>sdmx-dl</code> (see <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/cli/installation/"
+>Installation</a>).</div>
+</blockquote>
+
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="1-find-the-source"
+    >
+        1. Find the source
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/getting-started/#1-find-the-source" class="gdoc-page__anchor clip flex align-center" title="Anchor to: 1. Find the source" aria-label="Anchor to: 1. Find the source" href="#1-find-the-source">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>Search the available data providers by name or topic:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl list sources -q <span class="s2">&#34;european central&#34;</span> -m <span class="m">3</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Name,Description,Driver,Confidentiality,...
+</span></span><span class="line"><span class="cl">ECB,European Central Bank,RI_SDMX21,PUBLIC,...
+</span></span><span class="line"><span class="cl">ECB_RESTR,European Central Bank (restricted access),RI_SDMX21,RESTRICTED,...
+</span></span><span class="line"><span class="cl">IMF_SDMX_CENTRAL,International Monetary Fund (SDMX Central),RI_SDMX21,PUBLIC,...
+</span></span></code></pre></div><p>The European Central Bank is <code>ECB</code>. → <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/usage/discover/#sources"
+>Discover sources</a></p>
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="2-find-the-flow"
+    >
+        2. Find the flow
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/getting-started/#2-find-the-flow" class="gdoc-page__anchor clip flex align-center" title="Anchor to: 2. Find the flow" aria-label="Anchor to: 2. Find the flow" href="#2-find-the-flow">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>Search the datasets published by <code>ECB</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl list flows ECB -q <span class="s2">&#34;exchange rates&#34;</span> -m <span class="m">5</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Ref,Name,Description
+</span></span><span class="line"><span class="cl">ECB:EXR(1.0),Exchange Rates,
+</span></span><span class="line"><span class="cl">ECB.DISS:EXR_PUB(1.0),Exchange Rates - Published series,
+</span></span><span class="line"><span class="cl">ECB.DISS:MOBILE_EXR(1.0),Exchange rates,Dataflow for the exchange rates section of the ECB Statistical Tablet Application.
+</span></span><span class="line"><span class="cl">ECB:FXI(1.0),Foreign Exchange Statistics,
+</span></span><span class="line"><span class="cl">ECB:SEE(1.0),Securities exchange - Trading Statistics,
+</span></span></code></pre></div><p>The exchange rates flow is <code>EXR</code>. → <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/usage/discover/#flows"
+>Discover flows</a></p>
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="3-understand-the-key"
+    >
+        3. Understand the key
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/getting-started/#3-understand-the-key" class="gdoc-page__anchor clip flex align-center" title="Anchor to: 3. Understand the key" aria-label="Anchor to: 3. Understand the key" href="#3-understand-the-key">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>List the dimensions of <code>EXR</code>; they make up the <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/usage/browse/#keys"
+>key</a>, in this order:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl list dimensions ECB EXR
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Name,Label,Coded,Index
+</span></span><span class="line"><span class="cl">FREQ,Frequency,true,0
+</span></span><span class="line"><span class="cl">CURRENCY,Currency,true,1
+</span></span><span class="line"><span class="cl">CURRENCY_DENOM,Currency denominator,true,2
+</span></span><span class="line"><span class="cl">EXR_TYPE,Exchange rate type,true,3
+</span></span><span class="line"><span class="cl">EXR_SUFFIX,Series variation - EXR context,true,4
+</span></span></code></pre></div><p>So a key looks like <code>FREQ.CURRENCY.CURRENCY_DENOM.EXR_TYPE.EXR_SUFFIX</code>. → <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/usage/browse/#dimensions-and-attributes"
+>Browse dimensions and attributes</a></p>
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="4-pick-the-codes"
+    >
+        4. Pick the codes
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/getting-started/#4-pick-the-codes" class="gdoc-page__anchor clip flex align-center" title="Anchor to: 4. Pick the codes" aria-label="Anchor to: 4. Pick the codes" href="#4-pick-the-codes">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>Look up the codes of each dimension, for example the frequency:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl list codes ECB EXR FREQ
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Code,Label
+</span></span><span class="line"><span class="cl">A,Annual
+</span></span><span class="line"><span class="cl">Q,Quarterly
+</span></span><span class="line"><span class="cl">B,Daily - businessweek
+</span></span><span class="line"><span class="cl">D,Daily
+</span></span><span class="line"><span class="cl">M,Monthly
+</span></span><span class="line"><span class="cl">...
+</span></span></code></pre></div><p>Doing the same for the other dimensions gives <code>M</code> (monthly), <code>CHF</code> (Swiss franc), <code>EUR</code> (euro), <code>SP00</code> (spot) and <code>A</code> (average). → <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/usage/browse/#codes"
+>Browse codes</a></p>
+<p>Not every combination exists. Leave a position empty to check which codes are actually available for it — here, the exchange rate type (index <code>3</code>) of monthly average CHF/EUR rates:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl list availability ECB EXR M.CHF.EUR..A <span class="m">3</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Code,Label
+</span></span><span class="line"><span class="cl">SP00,Spot
+</span></span></code></pre></div><p>The key is <code>M.CHF.EUR.SP00.A</code>. → <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/usage/browse/#availability"
+>Browse availability</a></p>
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="5-retrieve-the-data"
+    >
+        5. Retrieve the data
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/getting-started/#5-retrieve-the-data" class="gdoc-page__anchor clip flex align-center" title="Anchor to: 5. Retrieve the data" aria-label="Anchor to: 5. Retrieve the data" href="#5-retrieve-the-data">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>Fetch the last 3 observations of that series:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --last-n <span class="m">3</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Series,ObsAttributes,ObsPeriod,ObsValue
+</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A,&#34;OBS_STATUS=A,OBS_CONF=F&#34;,2026-06-01T00:00:00,.9205454545454544
+</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A,&#34;OBS_STATUS=A,OBS_CONF=F&#34;,2026-07-01T00:00:00,.9255739130434782
+</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A,&#34;OBS_STATUS=A,OBS_CONF=F&#34;,2026-08-01T00:00:00,.9361857142857143
+</span></span></code></pre></div><p>Add <code>-o chf.csv</code> to save the result to a file. → <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/usage/retrieve/#data"
+>Retrieve data</a>, <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/usage/retrieve/#narrow-your-request"
+>Narrow your request</a></p>
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="next-steps"
+    >
+        Next steps
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/getting-started/#next-steps" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Next steps" aria-label="Anchor to: Next steps" href="#next-steps">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<ul>
+<li>Explore each step in detail, in every flavor: <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/usage/discover/"
+>Discover</a>, <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/usage/browse/"
+>Browse</a>, <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/usage/retrieve/"
+>Retrieve</a>.</li>
+<li>Automate this workflow in a script, Excel, R, or Python: <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/"
+>Automation &amp; integration</a>.</li>
+</ul>
 
   </article>
 
@@ -1751,820 +1888,6 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
         
 
         
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-          
-  
-  
-
-  
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-          
-  
-  
-
-  
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
           
           
         
@@ -2603,6 +1926,820 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
             
             
           
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+          
+  
+  
+
+  
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+          
+  
+  
+
+  
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
         
 
         
@@ -2625,11 +2762,11 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
   
     <a
       class="gdoc-page__nav--prev flex align-center"
-      href="/sdmx-dl/docs/develop/auth/"
-      title="Authentication"
+      href="/sdmx-dl/docs/develop/usage/"
+      title="Usage"
     >
       <i class="gdoc-icon">gdoc_arrow_left_alt</i>
-      Authentication
+      Usage
     </a>
   
 </span>
@@ -2637,10 +2774,10 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
   
     <a
       class="gdoc-page__nav--next flex align-center"
-      href="/sdmx-dl/docs/develop/sources/"
-      title="Data sources"
+      href="/sdmx-dl/docs/develop/usage/discover/"
+      title="Discover"
     >
-      Data sources
+      Discover
       <i class="gdoc-icon">gdoc_arrow_right_alt</i>
     </a>
   

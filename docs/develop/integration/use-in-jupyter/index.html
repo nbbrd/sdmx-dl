@@ -12,10 +12,14 @@
 <meta name="generator" content="Hugo 0.167.0">
 
 
-  <meta name="description" content="sdmx-dl supports the following file formats:
-Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xml; version=2.0 SDMX-ML Generic Data 2.1 application/vnd.sdmx.genericdata&#43;xml; version=2.1 SDMX-ML Compact Data 2.0 application/vnd.sdmx.structurespecificdata&#43;xml; version=2.0 SDMX-ML Compact Data 2.1 application/vnd.sdmx.structurespecificdata&#43;xml; version=2.1 SDMX-ML Structure 2.0 application/vnd.sdmx.structure&#43;xml; version=2.0 SDMX-ML Structure 2.1 application/vnd.sdmx.structure&#43;xml; version=2.1 " />
+  <meta name="description" content="Bring sdmx-dl into Jupyter notebooks when you want interactive exploration, live charting, or reproducible analysis alongside your data fetching.
+CLI Jupyter can call sdmx-dl using shell commands and then load the output:
+import subprocess import pandas as pd import tempfile import os outfile = tempfile.NamedTemporaryFile(mode=&#39;w&#39;, suffix=&#39;.csv&#39;, delete=False).name subprocess.run([ &#39;sdmx-dl&#39;, &#39;fetch&#39;, &#39;data&#39;, &#39;ECB&#39;, &#39;EXR&#39;, &#39;M.CHF.EUR.SP00.A&#39;, &#39;--last-n&#39;, &#39;12&#39;, &#39;-o&#39;, outfile ], check=True) df = pd.read_csv(outfile)[[&#39;Series&#39;, &#39;ObsPeriod&#39;, &#39;ObsValue&#39;]] os.unlink(outfile) df This approach is ideal when you already use the CLI interactively and want your notebook to reuse the same commands.
+REST If the web service is running, notebooks can fetch JSON directly and reshape it (see the response format):
+import requests import pandas as pd url = &#34;http://localhost:4559/sdmx-dl/v2/ECB/EXR/data?key=M.CHF.EUR.SP00.A&amp;lastNObservations=12&#34; payload = requests.get(url).json() records = [] for series in payload[&#39;data&#39;]: for obs in series[&#39;obs&#39;]: records.append({ &#39;Series&#39;: series[&#39;key&#39;], &#39;ObsPeriod&#39;: obs[&#39;period&#39;].split(&#39;/&#39;)[0], &#39;ObsValue&#39;: obs[&#39;value&#39;] }) df = pd.DataFrame(records) df The same pattern works for discovery endpoints like sources, flows, or dimensions:
+import requests import pandas as pd sources = requests.get(&#34;http://localhost:4559/sdmx-dl/v2/sources&#34;).json() df = pd.DataFrame(sources) df.head() " />
 
-    <title>Data formats | sdmx-dl</title>
+    <title>Use in Jupyter | sdmx-dl</title>
 
     <link rel="icon" type="image/svg+xml" href="/sdmx-dl/docs/develop/favicon/favicon.svg" />
 <link
@@ -36,15 +40,19 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
     
   <meta
     property="og:title"
-    content="Data formats"
+    content="Use in Jupyter"
   />
   <meta property="og:site_name" content="sdmx-dl" />
-  <meta property="og:description" content="sdmx-dl supports the following file formats:
-Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xml; version=2.0 SDMX-ML Generic Data 2.1 application/vnd.sdmx.genericdata&#43;xml; version=2.1 SDMX-ML Compact Data 2.0 application/vnd.sdmx.structurespecificdata&#43;xml; version=2.0 SDMX-ML Compact Data 2.1 application/vnd.sdmx.structurespecificdata&#43;xml; version=2.1 SDMX-ML Structure 2.0 application/vnd.sdmx.structure&#43;xml; version=2.0 SDMX-ML Structure 2.1 application/vnd.sdmx.structure&#43;xml; version=2.1 " />
+  <meta property="og:description" content="Bring sdmx-dl into Jupyter notebooks when you want interactive exploration, live charting, or reproducible analysis alongside your data fetching.
+CLI Jupyter can call sdmx-dl using shell commands and then load the output:
+import subprocess import pandas as pd import tempfile import os outfile = tempfile.NamedTemporaryFile(mode=&#39;w&#39;, suffix=&#39;.csv&#39;, delete=False).name subprocess.run([ &#39;sdmx-dl&#39;, &#39;fetch&#39;, &#39;data&#39;, &#39;ECB&#39;, &#39;EXR&#39;, &#39;M.CHF.EUR.SP00.A&#39;, &#39;--last-n&#39;, &#39;12&#39;, &#39;-o&#39;, outfile ], check=True) df = pd.read_csv(outfile)[[&#39;Series&#39;, &#39;ObsPeriod&#39;, &#39;ObsValue&#39;]] os.unlink(outfile) df This approach is ideal when you already use the CLI interactively and want your notebook to reuse the same commands.
+REST If the web service is running, notebooks can fetch JSON directly and reshape it (see the response format):
+import requests import pandas as pd url = &#34;http://localhost:4559/sdmx-dl/v2/ECB/EXR/data?key=M.CHF.EUR.SP00.A&amp;lastNObservations=12&#34; payload = requests.get(url).json() records = [] for series in payload[&#39;data&#39;]: for obs in series[&#39;obs&#39;]: records.append({ &#39;Series&#39;: series[&#39;key&#39;], &#39;ObsPeriod&#39;: obs[&#39;period&#39;].split(&#39;/&#39;)[0], &#39;ObsValue&#39;: obs[&#39;value&#39;] }) df = pd.DataFrame(records) df The same pattern works for discovery endpoints like sources, flows, or dimensions:
+import requests import pandas as pd sources = requests.get(&#34;http://localhost:4559/sdmx-dl/v2/sources&#34;).json() df = pd.DataFrame(sources) df.head() " />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/formats/" />
+<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-jupyter/" />
 
-<meta property="article:section" content="Formats" />
+<meta property="article:section" content="Integration" />
     <meta
       property="article:modified_time"
       content="2026-09-29T14:03:10+02:00"
@@ -52,26 +60,30 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
 
 
   <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Data formats" />
-  <meta name="twitter:description" content="sdmx-dl supports the following file formats:
-Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xml; version=2.0 SDMX-ML Generic Data 2.1 application/vnd.sdmx.genericdata&#43;xml; version=2.1 SDMX-ML Compact Data 2.0 application/vnd.sdmx.structurespecificdata&#43;xml; version=2.0 SDMX-ML Compact Data 2.1 application/vnd.sdmx.structurespecificdata&#43;xml; version=2.1 SDMX-ML Structure 2.0 application/vnd.sdmx.structure&#43;xml; version=2.0 SDMX-ML Structure 2.1 application/vnd.sdmx.structure&#43;xml; version=2.1 " />
+<meta name="twitter:title" content="Use in Jupyter" />
+  <meta name="twitter:description" content="Bring sdmx-dl into Jupyter notebooks when you want interactive exploration, live charting, or reproducible analysis alongside your data fetching.
+CLI Jupyter can call sdmx-dl using shell commands and then load the output:
+import subprocess import pandas as pd import tempfile import os outfile = tempfile.NamedTemporaryFile(mode=&#39;w&#39;, suffix=&#39;.csv&#39;, delete=False).name subprocess.run([ &#39;sdmx-dl&#39;, &#39;fetch&#39;, &#39;data&#39;, &#39;ECB&#39;, &#39;EXR&#39;, &#39;M.CHF.EUR.SP00.A&#39;, &#39;--last-n&#39;, &#39;12&#39;, &#39;-o&#39;, outfile ], check=True) df = pd.read_csv(outfile)[[&#39;Series&#39;, &#39;ObsPeriod&#39;, &#39;ObsValue&#39;]] os.unlink(outfile) df This approach is ideal when you already use the CLI interactively and want your notebook to reuse the same commands.
+REST If the web service is running, notebooks can fetch JSON directly and reshape it (see the response format):
+import requests import pandas as pd url = &#34;http://localhost:4559/sdmx-dl/v2/ECB/EXR/data?key=M.CHF.EUR.SP00.A&amp;lastNObservations=12&#34; payload = requests.get(url).json() records = [] for series in payload[&#39;data&#39;]: for obs in series[&#39;obs&#39;]: records.append({ &#39;Series&#39;: series[&#39;key&#39;], &#39;ObsPeriod&#39;: obs[&#39;period&#39;].split(&#39;/&#39;)[0], &#39;ObsValue&#39;: obs[&#39;value&#39;] }) df = pd.DataFrame(records) df The same pattern works for discovery endpoints like sources, flows, or dimensions:
+import requests import pandas as pd sources = requests.get(&#34;http://localhost:4559/sdmx-dl/v2/sources&#34;).json() df = pd.DataFrame(sources) df.head() " />
 
 
   <script type="application/ld+json">
   {
       "@context": "http://schema.org",
       "@type": "TechArticle",
-      "articleSection": "Formats",
-      "name": "Data formats",
-      "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/formats/",
-      "headline": "Data formats",
-      "description": "sdmx-dl supports the following file formats:\nName Media type SDMX-ML Generic Data 2.0 application\/vnd.sdmx.genericdata\u002bxml; version=2.0 SDMX-ML Generic Data 2.1 application\/vnd.sdmx.genericdata\u002bxml; version=2.1 SDMX-ML Compact Data 2.0 application\/vnd.sdmx.structurespecificdata\u002bxml; version=2.0 SDMX-ML Compact Data 2.1 application\/vnd.sdmx.structurespecificdata\u002bxml; version=2.1 SDMX-ML Structure 2.0 application\/vnd.sdmx.structure\u002bxml; version=2.0 SDMX-ML Structure 2.1 application\/vnd.sdmx.structure\u002bxml; version=2.1 ",
-      "wordCount": "43",
+      "articleSection": "Integration",
+      "name": "Use in Jupyter",
+      "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-jupyter/",
+      "headline": "Use in Jupyter",
+      "description": "Bring sdmx-dl into Jupyter notebooks when you want interactive exploration, live charting, or reproducible analysis alongside your data fetching.\nCLI Jupyter can call sdmx-dl using shell commands and then load the output:\nimport subprocess import pandas as pd import tempfile import os outfile = tempfile.NamedTemporaryFile(mode=\u0027w\u0027, suffix=\u0027.csv\u0027, delete=False).name subprocess.run([ \u0027sdmx-dl\u0027, \u0027fetch\u0027, \u0027data\u0027, \u0027ECB\u0027, \u0027EXR\u0027, \u0027M.CHF.EUR.SP00.A\u0027, \u0027--last-n\u0027, \u002712\u0027, \u0027-o\u0027, outfile ], check=True) df = pd.read_csv(outfile)[[\u0027Series\u0027, \u0027ObsPeriod\u0027, \u0027ObsValue\u0027]] os.unlink(outfile) df This approach is ideal when you already use the CLI interactively and want your notebook to reuse the same commands.\nREST If the web service is running, notebooks can fetch JSON directly and reshape it (see the response format):\nimport requests import pandas as pd url = \u0022http:\/\/localhost:4559\/sdmx-dl\/v2\/ECB\/EXR\/data?key=M.CHF.EUR.SP00.A\u0026lastNObservations=12\u0022 payload = requests.get(url).json() records = [] for series in payload[\u0027data\u0027]: for obs in series[\u0027obs\u0027]: records.append({ \u0027Series\u0027: series[\u0027key\u0027], \u0027ObsPeriod\u0027: obs[\u0027period\u0027].split(\u0027\/\u0027)[0], \u0027ObsValue\u0027: obs[\u0027value\u0027] }) df = pd.DataFrame(records) df The same pattern works for discovery endpoints like sources, flows, or dimensions:\nimport requests import pandas as pd sources = requests.get(\u0022http:\/\/localhost:4559\/sdmx-dl\/v2\/sources\u0022).json() df = pd.DataFrame(sources) df.head() ",
+      "wordCount": "329",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
           "@type": "WebPage",
-          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/formats/"
+          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-jupyter/"
       },
       "copyrightHolder": "sdmx-dl",
       "copyrightYear": "0001",
@@ -155,7 +167,7 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
   href="/sdmx-dl/docs/develop/custom.css"
   media="all"
 />
-  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/formats/" rel="canonical" type="text/html" />
+  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-jupyter/" rel="canonical" type="text/html" />
 
 <!-- Made with Geekdoc theme https://github.com/thegeeklab/hugo-geekdoc -->
 
@@ -955,7 +967,7 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
                 <span class="flex">
                   <a
                     href="/sdmx-dl/docs/develop/integration/use-in-jupyter/"
-                    class="gdoc-nav__entry"
+                    class="gdoc-nav__entry is-active"
                   >
                     Use in Jupyter
                   </a>
@@ -1500,7 +1512,7 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
                 <span class="flex">
                   <a
                     href="/sdmx-dl/docs/develop/formats/"
-                    class="gdoc-nav__entry is-active"
+                    class="gdoc-nav__entry"
                   >
                     Data formats
                   </a>
@@ -1617,7 +1629,15 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
     
   
   
-    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Data formats</span><meta itemprop='position' content='5' /></li>
+    
+    
+    
+    
+  
+  
+    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/integration/' href='/sdmx-dl/docs/develop/integration/'><span itemprop='name'>Automation & integration</span></a><meta itemprop='position' content='5' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Use in Jupyter</span><meta itemprop='position' content='6' /></li>
+  
+
   
 
   
@@ -1634,43 +1654,124 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
     class="gdoc-markdown gdoc-markdown__align--left"
     id="main-content" tabindex="-1"
   >
-    <h1>Data formats</h1>
+    <h1>Use in Jupyter</h1>
     
-    <p><strong>sdmx-dl</strong> supports the following file formats:</p>
-<div class="table-wrap"> <table>
-	<thead>
-			<tr>
-					<th>Name</th>
-					<th>Media type</th>
-			</tr>
-	</thead>
-	<tbody>
-			<tr>
-					<td>SDMX-ML Generic Data 2.0</td>
-					<td><code>application/vnd.sdmx.genericdata+xml; version=2.0</code></td>
-			</tr>
-			<tr>
-					<td>SDMX-ML Generic Data 2.1</td>
-					<td><code>application/vnd.sdmx.genericdata+xml; version=2.1</code></td>
-			</tr>
-			<tr>
-					<td>SDMX-ML Compact Data 2.0</td>
-					<td><code>application/vnd.sdmx.structurespecificdata+xml; version=2.0</code></td>
-			</tr>
-			<tr>
-					<td>SDMX-ML Compact Data 2.1</td>
-					<td><code>application/vnd.sdmx.structurespecificdata+xml; version=2.1</code></td>
-			</tr>
-			<tr>
-					<td>SDMX-ML Structure 2.0</td>
-					<td><code>application/vnd.sdmx.structure+xml; version=2.0</code></td>
-			</tr>
-			<tr>
-					<td>SDMX-ML Structure 2.1</td>
-					<td><code>application/vnd.sdmx.structure+xml; version=2.1</code></td>
-			</tr>
-	</tbody>
-</table> </div>
+    <p>Bring <strong>sdmx-dl</strong> into Jupyter notebooks when you want interactive exploration, live charting, or reproducible analysis alongside your data fetching.</p>
+
+
+
+<div class="gdoc-tabs">
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-use-in-jupyter"
+      id="tabs-use-in-jupyter-0"
+      checked="checked"/>
+    <label for="tabs-use-in-jupyter-0" class="gdoc-tabs__label">
+      CLI
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>Jupyter can call <code>sdmx-dl</code> using shell commands and then load the output:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">subprocess</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">tempfile</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">os</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">outfile</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;.csv&#39;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;sdmx-dl&#39;</span><span class="p">,</span> <span class="s1">&#39;fetch&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;ECB&#39;</span><span class="p">,</span> <span class="s1">&#39;EXR&#39;</span><span class="p">,</span> <span class="s1">&#39;M.CHF.EUR.SP00.A&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;--last-n&#39;</span><span class="p">,</span> <span class="s1">&#39;12&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;-o&#39;</span><span class="p">,</span> <span class="n">outfile</span>
+</span></span><span class="line"><span class="cl"><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">outfile</span><span class="p">)[[</span><span class="s1">&#39;Series&#39;</span><span class="p">,</span> <span class="s1">&#39;ObsPeriod&#39;</span><span class="p">,</span> <span class="s1">&#39;ObsValue&#39;</span><span class="p">]]</span>
+</span></span><span class="line"><span class="cl"><span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">df</span>
+</span></span></code></pre></div><p>This approach is ideal when you already use the CLI interactively and want your notebook to reuse the same commands.</p>
+</div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-use-in-jupyter"
+      id="tabs-use-in-jupyter-1"
+      />
+    <label for="tabs-use-in-jupyter-1" class="gdoc-tabs__label">
+      REST
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>If the web service is running, notebooks can fetch JSON directly and reshape it (see the <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/ws/#response-format"
+>response format</a>):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">requests</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">url</span> <span class="o">=</span> <span class="s2">&#34;http://localhost:4559/sdmx-dl/v2/ECB/EXR/data?key=M.CHF.EUR.SP00.A&amp;lastNObservations=12&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">series</span> <span class="ow">in</span> <span class="n">payload</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">series</span><span class="p">[</span><span class="s1">&#39;obs&#39;</span><span class="p">]:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;Series&#39;</span><span class="p">:</span> <span class="n">series</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;ObsPeriod&#39;</span><span class="p">:</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;period&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;ObsValue&#39;</span><span class="p">:</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">records</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">df</span>
+</span></span></code></pre></div><p>The same pattern works for discovery endpoints like <code>sources</code>, <code>flows</code>, or <code>dimensions</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">requests</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">sources</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;http://localhost:4559/sdmx-dl/v2/sources&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</span></span></code></pre></div></div>
+</div>
+
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="notes"
+    >
+        Notes
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-jupyter/#notes" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Notes" aria-label="Anchor to: Notes" href="#notes">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<ul>
+<li><strong>Windows launcher</strong>: On Windows, if <code>subprocess</code> cannot find <code>sdmx-dl</code>, ensure the launcher is on your <code>PATH</code>. You may need to create it first. Alternatively, use the full path to the jar or <code>.bat</code> file in the subprocess call.</li>
+<li>The CLI examples produce CSV files that <code>pandas.read_csv(...)</code> can load directly.</li>
+<li>The REST examples return JSON (via <code>requests.get(...).json()</code>), which you reshape with <code>pandas.DataFrame(...)</code> or list comprehension.</li>
+<li>The CLI approach is simplest when <code>sdmx-dl</code> is already installed and available on your notebook server.</li>
+<li>The REST approach is often better when the notebook server and the sdmx-dl service run on different machines, or when you want to query the service from multiple notebooks without invoking subprocess.</li>
+<li>For real-time or exploratory work, combine discovery calls first (e.g. list sources, list flows, list dimensions) to interactively build your final data request before committing it to analysis code.</li>
+<li>Both approaches integrate well with <code>pandas</code>, <code>plotly</code>, <code>matplotlib</code>, and other data science libraries.</li>
+</ul>
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="related-features"
+    >
+        Related features
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-jupyter/#related-features" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Related features" aria-label="Anchor to: Related features" href="#related-features">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<ul>
+<li><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/usage/discover/#sources"
+>Discover sources</a></li>
+<li><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/usage/retrieve/#data"
+>Retrieve data</a></li>
+<li><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/ws/"
+>Web service</a></li>
+</ul>
 
   </article>
 
@@ -2155,416 +2256,6 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
         
 
         
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-          
-  
-  
-
-  
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
           
           
         
@@ -2603,6 +2294,416 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
             
             
           
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+          
+  
+  
+
+  
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
         
 
         
@@ -2625,11 +2726,11 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
   
     <a
       class="gdoc-page__nav--prev flex align-center"
-      href="/sdmx-dl/docs/develop/auth/"
-      title="Authentication"
+      href="/sdmx-dl/docs/develop/integration/use-in-python/"
+      title="Use in Python"
     >
       <i class="gdoc-icon">gdoc_arrow_left_alt</i>
-      Authentication
+      Use in Python
     </a>
   
 </span>
@@ -2637,10 +2738,10 @@ Name Media type SDMX-ML Generic Data 2.0 application/vnd.sdmx.genericdata&#43;xm
   
     <a
       class="gdoc-page__nav--next flex align-center"
-      href="/sdmx-dl/docs/develop/sources/"
-      title="Data sources"
+      href="/sdmx-dl/docs/develop/integration/use-in-jbang/"
+      title="Use in jbang script"
     >
-      Data sources
+      Use in jbang script
       <i class="gdoc-icon">gdoc_arrow_right_alt</i>
     </a>
   

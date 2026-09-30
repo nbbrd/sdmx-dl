@@ -9,12 +9,17 @@
 <meta name="referrer" content="no-referrer" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="color-scheme" content="light dark" />
-<meta name="generator" content="Hugo 0.166.0">
+<meta name="generator" content="Hugo 0.167.0">
 
 
   <meta name="description" content="sdmx-dl CLI is designed to work out-of-the-box but can be configured if needed by using command-line options, properties files, execution properties and environmental variables.
 Properties files Execution properties Environmental variables Troubleshooting Properties files The properties files are just text files that contains a list of key-value pairs.
-All these files are named sdmx-dl.properties and are located in 3 different folders which are parsed in a specific order to define a scope:" />
+All these files are named sdmx-dl.properties and are located in 3 different folders which are parsed in a specific order to define a scope:
+SYSTEM: the installation folder (where the binary is located) GLOBAL: the user profile folder (%userprofile% on Windows) LOCAL: the execution folder (where the CLI is called) Each of these scopes overwrites properties defined in the previous scope; for example, properties in execution folder overrides those in user profile folder.
+The default values of command-line options can be overridden in two ways:
+Widely by targeting any command using their option names. # enable verbose mode on all commands verbose=true # set languages on all commands languages=fr,nl,en Narrowly by targeting a specific command using their option names prefixed by the command full path. # enable verbose mode on status command sdmx-dl.check.status.verbose=true # set languages on status command sdmx-dl.check.status.languages=fr,nl,en Execution properties Execution properties can be customized using Java system property.
+There are several types of system properties: some are defined by the platform, others by the libraries.
+Specific sdmx-dl properties ↕ Property Description sdmxdl.caching.noCache Disable caching sdmxdl.caching.cacheFolder Set cache folder sdmxdl.caching.noCompression Disable cache compression sdmxdl.caching.persistenceId Set cache persistence backend sdmxdl.caching.maxConfidentiality Set max confidentiality sdmxdl.networking.autoProxy Enable automatic proxy detection sdmxdl.networking.noSystemSSL Disable system truststore sdmxdl.networking.noDefaultSSL Disable default truststore sdmxdl.networking.urlBackend Set networking URL backend sdmxdl.registry.sourceFile Set data source definitions file " />
 
     <title>Configuration | sdmx-dl</title>
 
@@ -42,14 +47,19 @@ All these files are named sdmx-dl.properties and are located in 3 different fold
   <meta property="og:site_name" content="sdmx-dl" />
   <meta property="og:description" content="sdmx-dl CLI is designed to work out-of-the-box but can be configured if needed by using command-line options, properties files, execution properties and environmental variables.
 Properties files Execution properties Environmental variables Troubleshooting Properties files The properties files are just text files that contains a list of key-value pairs.
-All these files are named sdmx-dl.properties and are located in 3 different folders which are parsed in a specific order to define a scope:" />
+All these files are named sdmx-dl.properties and are located in 3 different folders which are parsed in a specific order to define a scope:
+SYSTEM: the installation folder (where the binary is located) GLOBAL: the user profile folder (%userprofile% on Windows) LOCAL: the execution folder (where the CLI is called) Each of these scopes overwrites properties defined in the previous scope; for example, properties in execution folder overrides those in user profile folder.
+The default values of command-line options can be overridden in two ways:
+Widely by targeting any command using their option names. # enable verbose mode on all commands verbose=true # set languages on all commands languages=fr,nl,en Narrowly by targeting a specific command using their option names prefixed by the command full path. # enable verbose mode on status command sdmx-dl.check.status.verbose=true # set languages on status command sdmx-dl.check.status.languages=fr,nl,en Execution properties Execution properties can be customized using Java system property.
+There are several types of system properties: some are defined by the platform, others by the libraries.
+Specific sdmx-dl properties ↕ Property Description sdmxdl.caching.noCache Disable caching sdmxdl.caching.cacheFolder Set cache folder sdmxdl.caching.noCompression Disable cache compression sdmxdl.caching.persistenceId Set cache persistence backend sdmxdl.caching.maxConfidentiality Set max confidentiality sdmxdl.networking.autoProxy Enable automatic proxy detection sdmxdl.networking.noSystemSSL Disable system truststore sdmxdl.networking.noDefaultSSL Disable default truststore sdmxdl.networking.urlBackend Set networking URL backend sdmxdl.registry.sourceFile Set data source definitions file " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/configuration/" />
 
 <meta property="article:section" content="CLI" />
     <meta
       property="article:modified_time"
-      content="2026-09-28T09:42:58+02:00"
+      content="2026-09-29T14:03:10+02:00"
     />
 
 
@@ -57,7 +67,12 @@ All these files are named sdmx-dl.properties and are located in 3 different fold
 <meta name="twitter:title" content="Configuration" />
   <meta name="twitter:description" content="sdmx-dl CLI is designed to work out-of-the-box but can be configured if needed by using command-line options, properties files, execution properties and environmental variables.
 Properties files Execution properties Environmental variables Troubleshooting Properties files The properties files are just text files that contains a list of key-value pairs.
-All these files are named sdmx-dl.properties and are located in 3 different folders which are parsed in a specific order to define a scope:" />
+All these files are named sdmx-dl.properties and are located in 3 different folders which are parsed in a specific order to define a scope:
+SYSTEM: the installation folder (where the binary is located) GLOBAL: the user profile folder (%userprofile% on Windows) LOCAL: the execution folder (where the CLI is called) Each of these scopes overwrites properties defined in the previous scope; for example, properties in execution folder overrides those in user profile folder.
+The default values of command-line options can be overridden in two ways:
+Widely by targeting any command using their option names. # enable verbose mode on all commands verbose=true # set languages on all commands languages=fr,nl,en Narrowly by targeting a specific command using their option names prefixed by the command full path. # enable verbose mode on status command sdmx-dl.check.status.verbose=true # set languages on status command sdmx-dl.check.status.languages=fr,nl,en Execution properties Execution properties can be customized using Java system property.
+There are several types of system properties: some are defined by the platform, others by the libraries.
+Specific sdmx-dl properties ↕ Property Description sdmxdl.caching.noCache Disable caching sdmxdl.caching.cacheFolder Set cache folder sdmxdl.caching.noCompression Disable cache compression sdmxdl.caching.persistenceId Set cache persistence backend sdmxdl.caching.maxConfidentiality Set max confidentiality sdmxdl.networking.autoProxy Enable automatic proxy detection sdmxdl.networking.noSystemSSL Disable system truststore sdmxdl.networking.noDefaultSSL Disable default truststore sdmxdl.networking.urlBackend Set networking URL backend sdmxdl.registry.sourceFile Set data source definitions file " />
 
 
   <script type="application/ld+json">
@@ -68,7 +83,7 @@ All these files are named sdmx-dl.properties and are located in 3 different fold
       "name": "Configuration",
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/cli/configuration/",
       "headline": "Configuration",
-      "description": "sdmx-dl CLI is designed to work out-of-the-box but can be configured if needed by using command-line options, properties files, execution properties and environmental variables.\nProperties files Execution properties Environmental variables Troubleshooting Properties files The properties files are just text files that contains a list of key-value pairs.\nAll these files are named sdmx-dl.properties and are located in 3 different folders which are parsed in a specific order to define a scope:",
+      "description": "sdmx-dl CLI is designed to work out-of-the-box but can be configured if needed by using command-line options, properties files, execution properties and environmental variables.\nProperties files Execution properties Environmental variables Troubleshooting Properties files The properties files are just text files that contains a list of key-value pairs.\nAll these files are named sdmx-dl.properties and are located in 3 different folders which are parsed in a specific order to define a scope:\nSYSTEM: the installation folder (where the binary is located) GLOBAL: the user profile folder (%userprofile% on Windows) LOCAL: the execution folder (where the CLI is called) Each of these scopes overwrites properties defined in the previous scope; for example, properties in execution folder overrides those in user profile folder.\nThe default values of command-line options can be overridden in two ways:\nWidely by targeting any command using their option names. # enable verbose mode on all commands verbose=true # set languages on all commands languages=fr,nl,en Narrowly by targeting a specific command using their option names prefixed by the command full path. # enable verbose mode on status command sdmx-dl.check.status.verbose=true # set languages on status command sdmx-dl.check.status.languages=fr,nl,en Execution properties Execution properties can be customized using Java system property.\nThere are several types of system properties: some are defined by the platform, others by the libraries.\nSpecific sdmx-dl properties ↕ Property Description sdmxdl.caching.noCache Disable caching sdmxdl.caching.cacheFolder Set cache folder sdmxdl.caching.noCompression Disable cache compression sdmxdl.caching.persistenceId Set cache persistence backend sdmxdl.caching.maxConfidentiality Set max confidentiality sdmxdl.networking.autoProxy Enable automatic proxy detection sdmxdl.networking.noSystemSSL Disable system truststore sdmxdl.networking.noDefaultSSL Disable default truststore sdmxdl.networking.urlBackend Set networking URL backend sdmxdl.registry.sourceFile Set data source definitions file ",
       "wordCount": "462",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
@@ -80,7 +95,7 @@ All these files are named sdmx-dl.properties and are located in 3 different fold
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-28T09:42:58.00Z",
+      "dateModified": "2026-09-29T14:03:10.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -419,10 +434,10 @@ All these files are named sdmx-dl.properties and are located in 3 different fold
               
                 <span class="flex">
                   <a
-                    href="/sdmx-dl/docs/develop/usage/discover-sources/"
+                    href="/sdmx-dl/docs/develop/usage/getting-started/"
                     class="gdoc-nav__entry"
                   >
-                    Discover sources
+                    Getting started
                   </a>
                 </span>
               
@@ -463,10 +478,10 @@ All these files are named sdmx-dl.properties and are located in 3 different fold
               
                 <span class="flex">
                   <a
-                    href="/sdmx-dl/docs/develop/usage/discover-databases/"
+                    href="/sdmx-dl/docs/develop/usage/discover/"
                     class="gdoc-nav__entry"
                   >
-                    Discover databases
+                    Discover
                   </a>
                 </span>
               
@@ -507,10 +522,10 @@ All these files are named sdmx-dl.properties and are located in 3 different fold
               
                 <span class="flex">
                   <a
-                    href="/sdmx-dl/docs/develop/usage/discover-flows/"
+                    href="/sdmx-dl/docs/develop/usage/browse/"
                     class="gdoc-nav__entry"
                   >
-                    Discover flows
+                    Browse
                   </a>
                 </span>
               
@@ -551,230 +566,10 @@ All these files are named sdmx-dl.properties and are located in 3 different fold
               
                 <span class="flex">
                   <a
-                    href="/sdmx-dl/docs/develop/usage/browse-structure/"
+                    href="/sdmx-dl/docs/develop/usage/retrieve/"
                     class="gdoc-nav__entry"
                   >
-                    Browse dimensions and attributes
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/usage/browse-codes/"
-                    class="gdoc-nav__entry"
-                  >
-                    Browse codes
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/usage/browse-availability/"
-                    class="gdoc-nav__entry"
-                  >
-                    Browse availability
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/usage/inspect-metadata/"
-                    class="gdoc-nav__entry"
-                  >
-                    Inspect metadata
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/usage/narrow-your-request/"
-                    class="gdoc-nav__entry"
-                  >
-                    Narrow your request
-                  </a>
-                </span>
-              
-              
-            </label>
-
-            
-          </li>
-        
-      
-    
-      
-
-      
-        
-      
-
-      
-        
-          
-          
-          
-          
-          
-          
-
-
-          <li>
-            <input
-              type="checkbox"
-              
-                class="hidden"
-              
-            />
-            <label
-              
-            >
-              
-                <span class="flex">
-                  <a
-                    href="/sdmx-dl/docs/develop/usage/retrieve-data/"
-                    class="gdoc-nav__entry"
-                  >
-                    Retrieve data
+                    Retrieve
                   </a>
                 </span>
               
@@ -866,10 +661,10 @@ All these files are named sdmx-dl.properties and are located in 3 different fold
               
                 <span class="flex">
                   <a
-                    href="/sdmx-dl/docs/develop/orchestration/"
+                    href="/sdmx-dl/docs/develop/integration/"
                     class="gdoc-nav__entry"
                   >
-                    Orchestration
+                    Automation &amp; integration
                   </a>
                 </span>
               
@@ -913,7 +708,7 @@ All these files are named sdmx-dl.properties and are located in 3 different fold
               
                 <span class="flex">
                   <a
-                    href="/sdmx-dl/docs/develop/orchestration/use-in-batch-file/"
+                    href="/sdmx-dl/docs/develop/integration/use-in-batch-file/"
                     class="gdoc-nav__entry"
                   >
                     Use in batch file
@@ -957,7 +752,95 @@ All these files are named sdmx-dl.properties and are located in 3 different fold
               
                 <span class="flex">
                   <a
-                    href="/sdmx-dl/docs/develop/orchestration/use-in-excel/"
+                    href="/sdmx-dl/docs/develop/integration/use-in-bash/"
+                    class="gdoc-nav__entry"
+                  >
+                    Use in bash script
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/integration/use-in-powershell/"
+                    class="gdoc-nav__entry"
+                  >
+                    Use in PowerShell
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/integration/use-in-excel/"
                     class="gdoc-nav__entry"
                   >
                     Use in Excel
@@ -1001,7 +884,7 @@ All these files are named sdmx-dl.properties and are located in 3 different fold
               
                 <span class="flex">
                   <a
-                    href="/sdmx-dl/docs/develop/orchestration/use-in-r/"
+                    href="/sdmx-dl/docs/develop/integration/use-in-r/"
                     class="gdoc-nav__entry"
                   >
                     Use in R
@@ -1045,7 +928,51 @@ All these files are named sdmx-dl.properties and are located in 3 different fold
               
                 <span class="flex">
                   <a
-                    href="/sdmx-dl/docs/develop/orchestration/use-in-jupyter/"
+                    href="/sdmx-dl/docs/develop/integration/use-in-python/"
+                    class="gdoc-nav__entry"
+                  >
+                    Use in Python
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/integration/use-in-jupyter/"
                     class="gdoc-nav__entry"
                   >
                     Use in Jupyter
@@ -1089,7 +1016,7 @@ All these files are named sdmx-dl.properties and are located in 3 different fold
               
                 <span class="flex">
                   <a
-                    href="/sdmx-dl/docs/develop/orchestration/use-in-jbang/"
+                    href="/sdmx-dl/docs/develop/integration/use-in-jbang/"
                     class="gdoc-nav__entry"
                   >
                     Use in jbang script
@@ -2251,6 +2178,47 @@ Fortunately, sdmx-dl CLI includes a <a
     
 
   
+
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+          
+  
+  
+
+  
+  
     
 
     
@@ -2349,113 +2317,6 @@ Fortunately, sdmx-dl CLI includes a <a
       
     
 
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-          
-  
-  
-
-  
   
     
 
