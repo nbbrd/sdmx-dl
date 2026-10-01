@@ -44,8 +44,8 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
                 .query(request.hasQuery() ? request.getQuery() : HasSearchQuery.NO_QUERY)
                 .maxResults(request.hasMaxResults() ? request.getMaxResults() : HasLimit.NO_LIMIT)
                 .confidentialityThreshold(
-                        request.hasConfidentialityThreshold()
-                                ? ProtoApi.toConfidentiality(request.getConfidentialityThreshold())
+                        request.hasMaxConfidentiality()
+                                ? ProtoApi.toConfidentiality(request.getMaxConfidentiality())
                                 : Confidentiality.SECRET)
                 .build());
 
@@ -120,12 +120,10 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
                                 .keyOf(request.getKey())
                                 .databaseOf(request.hasDatabase() ? request.getDatabase() : NO_DATABASE_KEYWORD)
                                 .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
-                                .startPeriodOf(request.hasStartPeriod() ? request.getStartPeriod() : null)
-                                .endPeriodOf(request.hasEndPeriod() ? request.getEndPeriod() : null)
-                                .firstNObservations(
-                                        request.hasFirstNObservations() ? request.getFirstNObservations() : null)
-                                .lastNObservations(
-                                        request.hasLastNObservations() ? request.getLastNObservations() : null)
+                                .startPeriodOf(request.hasStart() ? request.getStart() : null)
+                                .endPeriodOf(request.hasEnd() ? request.getEnd() : null)
+                                .firstNObservations(request.hasFirstN() ? request.getFirstN() : null)
+                                .lastNObservations(request.hasLastN() ? request.getLastN() : null)
                                 .detail(ProtoApi.toDataDetail(request.getDetail()))
                                 .build()))
                 .map(ProtoApi::fromDataSet);
@@ -139,12 +137,10 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
                                 .keyOf(request.getKey())
                                 .databaseOf(request.hasDatabase() ? request.getDatabase() : NO_DATABASE_KEYWORD)
                                 .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
-                                .startPeriodOf(request.hasStartPeriod() ? request.getStartPeriod() : null)
-                                .endPeriodOf(request.hasEndPeriod() ? request.getEndPeriod() : null)
-                                .firstNObservations(
-                                        request.hasFirstNObservations() ? request.getFirstNObservations() : null)
-                                .lastNObservations(
-                                        request.hasLastNObservations() ? request.getLastNObservations() : null)
+                                .startPeriodOf(request.hasStart() ? request.getStart() : null)
+                                .endPeriodOf(request.hasEnd() ? request.getEnd() : null)
+                                .firstNObservations(request.hasFirstN() ? request.getFirstN() : null)
+                                .lastNObservations(request.hasLastN() ? request.getLastN() : null)
                                 .detail(ProtoApi.toDataDetail(request.getDetail()))
                                 .build()))
                 .map(ProtoApi::fromSeries);

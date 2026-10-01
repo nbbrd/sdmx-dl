@@ -38,7 +38,7 @@ library(jsonlite)
 
 url <- paste0(
   "http://localhost:4559/sdmx-dl/v2/ECB/EXR/data",
-  "?key=M.CHF.EUR.SP00.A&lastNObservations=12"
+  "?key=M.CHF.EUR.SP00.A&lastN=12"
 )
 
 payload <- fromJSON(url, simplifyDataFrame = FALSE)

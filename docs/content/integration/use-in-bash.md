@@ -46,7 +46,7 @@ set -euo pipefail
 echo "Series,ObsPeriod,ObsValue"
 curl -fsS -G "http://localhost:4559/sdmx-dl/v2/ECB/EXR/data" \
   --data-urlencode "key=M.CHF.EUR.SP00.A" \
-  --data-urlencode "lastNObservations=12" \
+  --data-urlencode "lastN=12" \
   | jq -r '.data[] | .key as $key | .obs[] | [$key, (.period | split("/")[0]), .value] | @csv'
 ```
 {{< /tab >}}

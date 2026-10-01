@@ -78,12 +78,12 @@ public class SdmxdlRestService2 {
             @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages,
             @QueryParam("query") @DefaultValue(NO_QUERY) String query,
             @QueryParam("maxResults") @DefaultValue("" + NO_LIMIT) int maxResults,
-            @QueryParam("confidentialityThreshold") @DefaultValue("SECRET") String confidentialityThreshold) {
+            @QueryParam("maxConfidentiality") @DefaultValue("SECRET") String maxConfidentiality) {
         List<WebSource> result = manager.listSources(WebSourcesRequest.builder()
                 .languagesOf(languages)
                 .query(query)
                 .maxResults(maxResults)
-                .confidentialityThreshold(Confidentiality.valueOf(confidentialityThreshold))
+                .confidentialityThreshold(Confidentiality.valueOf(maxConfidentiality))
                 .build());
 
         return Multi.createFrom().iterable(result).map(ProtoWeb::fromWebSource);
@@ -187,10 +187,10 @@ public class SdmxdlRestService2 {
             @QueryParam("key") @DefaultValue("all") String key,
             @QueryParam("database") @DefaultValue(NO_DATABASE_KEYWORD) String database,
             @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages,
-            @QueryParam("startPeriod") String startPeriod,
-            @QueryParam("endPeriod") String endPeriod,
-            @QueryParam("firstNObservations") Integer firstNObservations,
-            @QueryParam("lastNObservations") Integer lastNObservations,
+            @QueryParam("start") String start,
+            @QueryParam("end") String end,
+            @QueryParam("firstN") Integer firstN,
+            @QueryParam("lastN") Integer lastN,
             @QueryParam("detail") @DefaultValue("FULL") Detail detail) {
         return uniOfIO(() -> manager.usingName(source)
                         .getData(DataRequest.builder()
@@ -198,10 +198,10 @@ public class SdmxdlRestService2 {
                                 .keyOf(key)
                                 .databaseOf(database)
                                 .languagesOf(languages)
-                                .startPeriodOf(startPeriod)
-                                .endPeriodOf(endPeriod)
-                                .firstNObservations(firstNObservations)
-                                .lastNObservations(lastNObservations)
+                                .startPeriodOf(start)
+                                .endPeriodOf(end)
+                                .firstNObservations(firstN)
+                                .lastNObservations(lastN)
                                 .detail(detail)
                                 .build()))
                 .map(ProtoApi::fromDataSet);
@@ -215,10 +215,10 @@ public class SdmxdlRestService2 {
             @QueryParam("key") @DefaultValue("all") String key,
             @QueryParam("database") @DefaultValue(NO_DATABASE_KEYWORD) String database,
             @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages,
-            @QueryParam("startPeriod") String startPeriod,
-            @QueryParam("endPeriod") String endPeriod,
-            @QueryParam("firstNObservations") Integer firstNObservations,
-            @QueryParam("lastNObservations") Integer lastNObservations,
+            @QueryParam("start") String start,
+            @QueryParam("end") String end,
+            @QueryParam("firstN") Integer firstN,
+            @QueryParam("lastN") Integer lastN,
             @QueryParam("detail") @DefaultValue("FULL") Detail detail) {
         return multiOfIO(() -> manager.usingName(source)
                         .getData(DataRequest.builder()
@@ -226,21 +226,21 @@ public class SdmxdlRestService2 {
                                 .keyOf(key)
                                 .databaseOf(database)
                                 .languagesOf(languages)
-                                .startPeriodOf(startPeriod)
-                                .endPeriodOf(endPeriod)
-                                .firstNObservations(firstNObservations)
-                                .lastNObservations(lastNObservations)
+                                .startPeriodOf(start)
+                                .endPeriodOf(end)
+                                .firstNObservations(firstN)
+                                .lastNObservations(lastN)
                                 .detail(detail)
                                 .build()))
                 .map(ProtoApi::fromSeries);
     }
 
     @GET
-    @Path("/{source}/{flow}/codes/{dimension}")
+    @Path("/{source}/{flow}/codes/{concept}")
     public Uni<CodelistDto> getCodes(
             @PathParam("source") String source,
             @PathParam("flow") String flow,
-            @PathParam("dimension") String dimension,
+            @PathParam("concept") String concept,
             @QueryParam("query") @DefaultValue(NO_QUERY) String query,
             @QueryParam("maxResults") @DefaultValue("" + NO_LIMIT) int maxResults,
             @QueryParam("database") @DefaultValue(NO_DATABASE_KEYWORD) String database,
@@ -248,7 +248,7 @@ public class SdmxdlRestService2 {
         return uniOfIO(() -> manager.usingName(source)
                         .listCodes(CodesRequest.builder()
                                 .flowOf(flow)
-                                .concept(dimension)
+                                .concept(concept)
                                 .databaseOf(database)
                                 .languagesOf(languages)
                                 .query(query)

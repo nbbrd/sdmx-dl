@@ -38,7 +38,7 @@ If the web service is running, `Invoke-RestMethod` returns the JSON response as 
 
 ```powershell
 $response = Invoke-RestMethod -Uri 'http://localhost:4559/sdmx-dl/v2/ECB/EXR/data' `
-    -Body @{ key = 'M.CHF.EUR.SP00.A'; lastNObservations = 12 }
+    -Body @{ key = 'M.CHF.EUR.SP00.A'; lastN = 12 }
 
 $response.data | ForEach-Object {
     $series = $_

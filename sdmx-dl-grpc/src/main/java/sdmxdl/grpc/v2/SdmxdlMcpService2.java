@@ -44,16 +44,18 @@ public class SdmxdlMcpService2 {
     private static final String MAX_RESULTS_ARG =
             "Maximum number of entries to return (default 20). Use 0 for no limit; raise it when results look truncated.";
     private static final String DIMENSION_ARG =
-            "Dimension id exactly as returned by getMeta or listDimensions (e.g. 'CURRENCY'). For listCodes, an attribute id is also accepted.";
+            "Dimension id exactly as returned by getMeta or listDimensions (e.g. 'CURRENCY').";
+    private static final String CONCEPT_ARG =
+            "Dimension or attribute id exactly as returned by getMeta, listDimensions or listAttributes (e.g. 'CURRENCY', 'OBS_STATUS').";
     private static final String DIMENSIONS_ARG =
             "Recommended way to filter series: a map of dimension id to code, e.g. {\"FREQ\":\"M\",\"CURRENCY\":\"CHF\"}. Dimension ids are matched case-insensitively and unlisted dimensions match any code. Several codes can be combined with '+' (e.g. \"CHF+USD\"). Takes precedence over 'key'; an unknown dimension id raises an error listing the valid ids.";
     private static final String LAST_N_ARG =
             "Keep only the N most recent observations of each series (default 20; use 0 for no limit). Applied after the period filters. Increase it or set it to 0 to get a full history.";
     private static final String FIRST_N_ARG =
             "Keep only the N oldest observations of each series (default 0 = no limit). Applied after the period filters. Combining 'firstN' and 'lastN' returns the union of both ends of each series.";
-    private static final String START_PERIOD_ARG =
+    private static final String START_ARG =
             "Inclusive lower bound on the observation period, as reduced-precision ISO-8601 (e.g. '2000', '2000-01', '2000-01-01'). Omit for no lower bound.";
-    private static final String END_PERIOD_ARG =
+    private static final String END_ARG =
             "Inclusive upper bound on the observation period, as reduced-precision ISO-8601 (e.g. '2020', '2020-12'). Omit for no upper bound.";
 
     private static final int MAX_DESCRIPTION_LENGTH = 200;
@@ -222,7 +224,7 @@ public class SdmxdlMcpService2 {
     public CodelistDto listCodes(
             @ToolArg(description = SOURCE_ARG) String source,
             @ToolArg(description = FLOW_ARG) String flow,
-            @ToolArg(description = DIMENSION_ARG) String dimension,
+            @ToolArg(description = CONCEPT_ARG) String concept,
             @ToolArg(description = QUERY_ARG, required = false, defaultValue = DEFAULT_QUERY) String query,
             @ToolArg(description = DATABASE_ARG, required = false, defaultValue = NO_DATABASE_KEYWORD) String database,
             @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages,
@@ -236,7 +238,7 @@ public class SdmxdlMcpService2 {
                 .languagesOf(languages)
                 .query(query)
                 .maxResults(maxResults)
-                .concept(dimension)
+                .concept(concept)
                 .build();
 
         Map<String, String> codes = manager.using(getPublicSourceForMcp(source)).listCodes(request);
@@ -279,7 +281,7 @@ public class SdmxdlMcpService2 {
 
     @Tool(
             description =
-                    "Fetch the actual observations of a flow, as series with their key, metadata and time/value pairs, together with the query that was applied. Filter series with the 'dimensions' map (recommended, e.g. {\"FREQ\":\"M\",\"CURRENCY\":\"CHF\"}) or with the positional 'key'; 'dimensions' wins when both are given and unspecified dimensions match everything. Filter observations by period ('startPeriod'/'endPeriod') and/or by count ('firstN'/'lastN'); by default only the last 20 observations of each series are returned, so set 'lastN' to 0 for a full history. Count filters apply after period filters, and combining 'firstN' with 'lastN' returns both ends of each series. Filters are pushed to the source when it supports them and are always re-applied locally, and the returned query echoes what was applied. Tip: an unfiltered call can be huge, so first call with detail=SERIES_KEYS_ONLY to see which series exist, then call again with a narrower key and detail=DATA_ONLY.")
+                    "Fetch the actual observations of a flow, as series with their key, metadata and time/value pairs, together with the query that was applied. Filter series with the 'dimensions' map (recommended, e.g. {\"FREQ\":\"M\",\"CURRENCY\":\"CHF\"}) or with the positional 'key'; 'dimensions' wins when both are given and unspecified dimensions match everything. Filter observations by period ('start'/'end') and/or by count ('firstN'/'lastN'); by default only the last 20 observations of each series are returned, so set 'lastN' to 0 for a full history. Count filters apply after period filters, and combining 'firstN' with 'lastN' returns both ends of each series. Filters are pushed to the source when it supports them and are always re-applied locally, and the returned query echoes what was applied. Tip: an unfiltered call can be huge, so first call with detail=SERIES_KEYS_ONLY to see which series exist, then call again with a narrower key and detail=DATA_ONLY.")
     public DataSetDto getData(
             @ToolArg(description = SOURCE_ARG) String source,
             @ToolArg(description = FLOW_ARG) String flow,
@@ -288,8 +290,8 @@ public class SdmxdlMcpService2 {
             @ToolArg(description = DIMENSIONS_ARG, required = false) Map<String, String> dimensions,
             @ToolArg(description = DATABASE_ARG, required = false, defaultValue = NO_DATABASE_KEYWORD) String database,
             @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages,
-            @ToolArg(description = START_PERIOD_ARG, required = false) String startPeriod,
-            @ToolArg(description = END_PERIOD_ARG, required = false) String endPeriod,
+            @ToolArg(description = START_ARG, required = false) String start,
+            @ToolArg(description = END_ARG, required = false) String end,
             @ToolArg(description = FIRST_N_ARG, required = false, defaultValue = DEFAULT_FIRST_N) int firstN,
             @ToolArg(description = LAST_N_ARG, required = false, defaultValue = DEFAULT_LAST_N) int lastN)
             throws IOException {
@@ -310,11 +312,11 @@ public class SdmxdlMcpService2 {
                 .detailOf(detail)
                 .databaseOf(database)
                 .languagesOf(languages);
-        if (startPeriod != null && !startPeriod.isBlank()) {
-            request.startPeriodOf(startPeriod.trim());
+        if (start != null && !start.isBlank()) {
+            request.startPeriodOf(start.trim());
         }
-        if (endPeriod != null && !endPeriod.isBlank()) {
-            request.endPeriodOf(endPeriod.trim());
+        if (end != null && !end.isBlank()) {
+            request.endPeriodOf(end.trim());
         }
         if (firstN > 0) {
             request.firstNObservations(firstN);

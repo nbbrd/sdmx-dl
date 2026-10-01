@@ -34,7 +34,7 @@ let
             "http://localhost:4559",
             [
                 RelativePath = "sdmx-dl/v2/ECB/EXR/data",
-                Query = [key = "M.CHF.EUR.SP00.A", lastNObservations = "12"]
+                Query = [key = "M.CHF.EUR.SP00.A", lastN = "12"]
             ]
         )
     ),

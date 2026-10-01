@@ -43,7 +43,7 @@ If the web service is running, notebooks can fetch JSON directly and reshape it 
 import requests
 import pandas as pd
 
-url = "http://localhost:4559/sdmx-dl/v2/ECB/EXR/data?key=M.CHF.EUR.SP00.A&lastNObservations=12"
+url = "http://localhost:4559/sdmx-dl/v2/ECB/EXR/data?key=M.CHF.EUR.SP00.A&lastN=12"
 payload = requests.get(url).json()
 
 records = []

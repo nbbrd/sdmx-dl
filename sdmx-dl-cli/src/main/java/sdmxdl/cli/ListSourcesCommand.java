@@ -46,9 +46,9 @@ public final class ListSourcesCommand implements Callable<Void> {
     private ListSearchOptions listSearch;
 
     @CommandLine.Option(
-            names = {"-c", "--confidentiality"},
+            names = {"-c", "--max-confidentiality"},
             defaultValue = "SECRET",
-            description = "Filter sources by confidentiality threshold")
+            description = "Maximum confidentiality level of the listed sources")
     private Confidentiality confidentialityThreshold;
 
     @CommandLine.Mixin

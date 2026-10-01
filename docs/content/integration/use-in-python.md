@@ -41,7 +41,7 @@ import sys
 import urllib.parse
 import urllib.request
 
-params = urllib.parse.urlencode({"key": "M.CHF.EUR.SP00.A", "lastNObservations": 12})
+params = urllib.parse.urlencode({"key": "M.CHF.EUR.SP00.A", "lastN": 12})
 with urllib.request.urlopen(f"http://localhost:4559/sdmx-dl/v2/ECB/EXR/data?{params}") as response:
     payload = json.load(response)
 

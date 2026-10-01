@@ -121,13 +121,13 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --start 2020 --end 2022-12
 ```shell
 curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data \
   --data-urlencode "key=M.CHF.EUR.SP00.A" \
-  --data-urlencode "startPeriod=2020" \
-  --data-urlencode "endPeriod=2022-12"
+  --data-urlencode "start=2020" \
+  --data-urlencode "end=2022-12"
 ```
 
 #### gRPC
 ```shell
-grpcurl -d '{"source":"ECB","flow":"EXR","key":"M.CHF.EUR.SP00.A","startPeriod":"2020","endPeriod":"2022-12"}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
+grpcurl -d '{"source":"ECB","flow":"EXR","key":"M.CHF.EUR.SP00.A","start":"2020","end":"2022-12"}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
 ```
 {{< /tab >}}
 
@@ -187,13 +187,13 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --first-n 3 --last-n 2
 ```shell
 curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data \
   --data-urlencode "key=M.CHF.EUR.SP00.A" \
-  --data-urlencode "firstNObservations=3" \
-  --data-urlencode "lastNObservations=2"
+  --data-urlencode "firstN=3" \
+  --data-urlencode "lastN=2"
 ```
 
 #### gRPC
 ```shell
-grpcurl -d '{"source":"ECB","flow":"EXR","key":"M.CHF.EUR.SP00.A","firstNObservations":3,"lastNObservations":2}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
+grpcurl -d '{"source":"ECB","flow":"EXR","key":"M.CHF.EUR.SP00.A","firstN":3,"lastN":2}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
 ```
 {{< /tab >}}
 

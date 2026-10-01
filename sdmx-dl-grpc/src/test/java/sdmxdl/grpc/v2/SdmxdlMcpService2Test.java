@@ -344,7 +344,7 @@ public class SdmxdlMcpService2Test {
             client.when()
                     .toolsCall(
                             "listCodes",
-                            Map.of("source", "ECB", "flow", "EXR", "dimension", "CURRENCY", "query", "CHF"),
+                            Map.of("source", "ECB", "flow", "EXR", "concept", "CURRENCY", "query", "CHF"),
                             r -> {
                                 assertThat(r).returns(false, ToolResponse::isError);
                                 CodelistDto codes = fromJson(CodelistDto.class, firstText(r));
@@ -357,13 +357,12 @@ public class SdmxdlMcpService2Test {
     }
 
     @Test
-    public void codesReturnsErrorForUnknownDimension() {
+    public void codesReturnsErrorForUnknownConcept() {
         try (McpAssured.McpStreamableTestClient client = McpAssured.newConnectedStreamableClient()) {
             client.when()
-                    .toolsCall(
-                            "listCodes", Map.of("source", "ECB", "flow", "EXR", "dimension", "NOT_A_DIMENSION"), r -> {
-                                assertThat(r).returns(true, ToolResponse::isError);
-                            })
+                    .toolsCall("listCodes", Map.of("source", "ECB", "flow", "EXR", "concept", "NOT_A_DIMENSION"), r -> {
+                        assertThat(r).returns(true, ToolResponse::isError);
+                    })
                     .thenAssertResults();
         }
     }
@@ -372,7 +371,7 @@ public class SdmxdlMcpService2Test {
     public void codesDefaultMaxResultsCapsAt20() {
         try (McpAssured.McpStreamableTestClient client = McpAssured.newConnectedStreamableClient()) {
             client.when()
-                    .toolsCall("listCodes", Map.of("source", "ECB", "flow", "EXR", "dimension", "CURRENCY"), r -> {
+                    .toolsCall("listCodes", Map.of("source", "ECB", "flow", "EXR", "concept", "CURRENCY"), r -> {
                         assertThat(r).returns(false, ToolResponse::isError);
                         CodelistDto codes = fromJson(CodelistDto.class, firstText(r));
                         assertThat(codes.getCodesCount()).isLessThanOrEqualTo(20);
@@ -463,9 +462,9 @@ public class SdmxdlMcpService2Test {
                                     "EXR",
                                     "key",
                                     "M.CHF.EUR.SP00.A",
-                                    "startPeriod",
+                                    "start",
                                     "2020-01",
-                                    "endPeriod",
+                                    "end",
                                     "2020-12",
                                     "lastN",
                                     "0"),

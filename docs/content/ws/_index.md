@@ -64,7 +64,7 @@ curl "localhost:4559/sdmx-dl/v2/ECB/flows"
 | `GetMeta`          | `GET /{source}/{flow}/meta`                      | Flow-level structure (dimensions, attributes).                  |
 | `ListDimensions`   | `GET /{source}/{flow}/dimensions`                | List or search a flow's dimensions.                              |
 | `ListAttributes`   | `GET /{source}/{flow}/attributes`                | List or search a flow's attributes.                              |
-| `ListCodes`        | `GET /{source}/{flow}/codes/{dimension}`         | List or search the codes of a dimension.                         |
+| `ListCodes`        | `GET /{source}/{flow}/codes/{concept}`           | List or search the codes of a dimension or attribute.            |
 | `ListAvailability` | `GET /{source}/{flow}/availability/{dimension}`  | Codes that actually occur under a key constraint.                |
 | `GetData`          | `GET /{source}/{flow}/data`                      | Fetch observations for a key.                                    |
 | `GetDataStream`    | `GET /{source}/{flow}/data:stream`               | Same as `GetData`, streamed observation by observation.          |
@@ -94,6 +94,7 @@ Each series has a `key`, optional series-level `meta`, and an `obs` array; each 
 }
 ```
 
+- `query` echoes the request with the [Java library]({{< relref "/api" >}}) names (`startPeriod`, `endPeriod`, `firstNObservations`, `lastNObservations`), which correspond to the `start`, `end`, `firstN`, and `lastN` request parameters.
 - `period` is an ISO-8601 interval (`start/duration`); keep the part before `/` if you only need the start date.
 - The `detail` parameter controls which parts are filled: `FULL` (default), `DATA_ONLY` (no `meta`), `NO_DATA` (no `obs`), or `SERIES_KEYS_ONLY` (keys only).
 - `GetDataStream` (`GET /{source}/{flow}/data:stream`) returns the same series objects as a plain JSON array, without the `ref`/`query` wrapper.

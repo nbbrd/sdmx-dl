@@ -689,16 +689,16 @@ paths:
       tags:
       - sdmx-dl v2
       parameters:
-      - name: confidentialityThreshold
-        in: query
-        schema:
-          type: string
-          default: SECRET
       - name: languages
         in: query
         schema:
           type: string
           default: '*'
+      - name: maxConfidentiality
+        in: query
+        schema:
+          type: string
+          default: SECRET
       - name: maxResults
         in: query
         schema:
@@ -906,12 +906,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/CodelistDto"
       summary: Get Availability
-  /sdmx-dl/v2/{source}/{flow}/codes/{dimension}:
+  /sdmx-dl/v2/{source}/{flow}/codes/{concept}:
     get:
       tags:
       - sdmx-dl v2
       parameters:
-      - name: dimension
+      - name: concept
         in: path
         required: true
         schema:
@@ -981,11 +981,11 @@ paths:
           allOf:
           - $ref: "#/components/schemas/Detail"
           - default: FULL
-      - name: endPeriod
+      - name: end
         in: query
         schema:
           type: string
-      - name: firstNObservations
+      - name: firstN
         in: query
         schema:
           type: integer
@@ -1000,12 +1000,12 @@ paths:
         schema:
           type: string
           default: '*'
-      - name: lastNObservations
+      - name: lastN
         in: query
         schema:
           type: integer
           format: int32
-      - name: startPeriod
+      - name: start
         in: query
         schema:
           type: string
@@ -1043,11 +1043,11 @@ paths:
           allOf:
           - $ref: "#/components/schemas/Detail"
           - default: FULL
-      - name: endPeriod
+      - name: end
         in: query
         schema:
           type: string
-      - name: firstNObservations
+      - name: firstN
         in: query
         schema:
           type: integer
@@ -1062,12 +1062,12 @@ paths:
         schema:
           type: string
           default: '*'
-      - name: lastNObservations
+      - name: lastN
         in: query
         schema:
           type: integer
           format: int32
-      - name: startPeriod
+      - name: start
         in: query
         schema:
           type: string

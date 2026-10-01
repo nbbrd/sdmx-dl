@@ -87,7 +87,7 @@ Other columns: `Endpoint`, `Properties`, `Website`, `Monitor`, `MonitorWebsite`,
 
 - Both `"ecb"` and `"eurpean central"` find the European Central Bank.
 - Some sources are aliases of others (e.g. renamed or mirrored endpoints); the API exposes `WebSource.isAlias()` to filter them out (and they're excluded from search results), while the CLI table lists them alongside their target.
-- `WebSourcesRequest` also carries a `threshold` (a `Confidentiality` level) so that sources requiring stricter confidentiality can be excluded from the results; it defaults to allowing every source.
+- Sources can be restricted to a maximum confidentiality level (`PUBLIC`, `RESTRICTED`, …): `confidentialityThreshold` in the API, `--max-confidentiality` in the CLI, `maxConfidentiality` in the WS. It defaults to allowing every source.
 
 ## Databases
 

@@ -36,26 +36,28 @@ service SdmxWebManager {
 message EmptyDto {
 }
 
+// Field order convention: what is addressed (source, flow, key, ...), then filters, then context (database, languages).
+
 message WebSourcesRequestDto {
-  optional string languages = 1;
-  optional string query = 2;
-  optional int32 maxResults = 3;
-  optional sdmxdl.format.protobuf.ConfidentialityDto confidentiality_threshold = 4;
+  optional string query = 1;
+  optional int32 max_results = 2;
+  optional sdmxdl.format.protobuf.ConfidentialityDto max_confidentiality = 3; /* absent = every source */
+  optional string languages = 4;
 }
 
 message WebDatabasesRequestDto {
   string source = 1;
-  optional string languages = 2;
-  optional string query = 3;
-  optional int32 maxResults = 4;
+  optional string query = 2;
+  optional int32 max_results = 3;
+  optional string languages = 4;
 }
 
 message WebFlowsRequestDto {
   string source = 1;
-  optional string database = 2;
-  optional string languages = 3;
-  optional string query = 4;
-  optional int32 maxResults = 5;
+  optional string query = 2;
+  optional int32 max_results = 3;
+  optional string database = 4;
+  optional string languages = 5;
 }
 
 message WebMetaRequestDto {
@@ -69,7 +71,7 @@ message WebDimensionsRequestDto {
   string source = 1;
   string flow = 2;
   optional string query = 3;
-  optional int32 maxResults = 4;
+  optional int32 max_results = 4;
   optional string database = 5;
   optional string languages = 6;
 }
@@ -78,7 +80,7 @@ message WebAttributesRequestDto {
   string source = 1;
   string flow = 2;
   optional string query = 3;
-  optional int32 maxResults = 4;
+  optional int32 max_results = 4;
   optional string database = 5;
   optional string languages = 6;
 }
@@ -87,21 +89,21 @@ message WebDataRequestDto {
   string source = 1;
   string flow = 2;
   string key = 3;
-  optional string database = 4;
-  optional string languages = 5;
-  optional string start_period = 6; /* ISO-8601 reduced-precision date-time; absent = unbounded */
-  optional string end_period = 7; /* ISO-8601 reduced-precision date-time; absent = unbounded */
-  optional int32 first_n_observations = 8; /* absent = no first-N truncation */
-  optional int32 last_n_observations = 9; /* absent = no last-N truncation */
-  optional sdmxdl.format.protobuf.DetailDto detail = 10;
+  optional string start = 4; /* inclusive lower bound on the period, ISO-8601 reduced-precision date-time; absent = unbounded */
+  optional string end = 5; /* inclusive upper bound on the period, ISO-8601 reduced-precision date-time; absent = unbounded */
+  optional int32 first_n = 6; /* keep only the N first observations of each series; absent = no limit */
+  optional int32 last_n = 7; /* keep only the N last observations of each series; absent = no limit */
+  optional sdmxdl.format.protobuf.DetailDto detail = 8;
+  optional string database = 9;
+  optional string languages = 10;
 }
 
 message WebCodesRequestDto {
   string source = 1;
   string flow = 2;
-  string concept = 3; /* concept id, as returned by GetMeta */
+  string concept = 3; /* dimension or attribute id, as returned by ListDimensions/ListAttributes */
   optional string query = 4;
-  optional int32 maxResults = 5;
+  optional int32 max_results = 5;
   optional string database = 6;
   optional string languages = 7;
 }
@@ -109,8 +111,8 @@ message WebCodesRequestDto {
 message WebAvailabilityRequestDto {
   string source = 1;
   string flow = 2;
-  string key = 3;
-  string dimension = 4; /* dimension id, as returned by GetMeta */
+  string dimension = 3; /* dimension id, as returned by ListDimensions */
+  string key = 4;
   optional string database = 5;
   optional string languages = 6;
 }
@@ -118,4 +120,3 @@ message WebAvailabilityRequestDto {
 message WebStatusesRequestDto {
   repeated string sources = 1; /* empty, or a single "all" entry (case-insensitive), means every known source */
 }
-

@@ -170,7 +170,7 @@ N,Minutely
 
 - This lists **all defined codes** for a dimension, regardless of whether they actually occur in the dataset. To narrow codes down to what's actually available under a key constraint, use [Availability](#availability) instead.
 - Accepts an optional `query`/`maxResults` to search/limit results.
-- The gRPC `concept` field is the same value as the REST path segment; use a dimension or attribute id from [Dimensions and attributes](#dimensions-and-attributes).
+- The code lookup takes a **concept**, which can be a dimension or an attribute id from [Dimensions and attributes](#dimensions-and-attributes) (gRPC `concept` field, REST `/codes/{concept}` path segment).
 
 ## Availability
 
