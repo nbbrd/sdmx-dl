@@ -1,0 +1,37 @@
+{{#warnings}}
+# Warning: {{.}}
+{{/warnings}}
+{{#hasWarnings}}
+
+{{/hasWarnings}}
+import pandas as pd
+import requests
+
+{{#hasParameters}}
+response = requests.get({{url}}, params={{parameters}})
+{{/hasParameters}}
+{{^hasParameters}}
+response = requests.get({{url}})
+{{/hasParameters}}
+response.raise_for_status()
+payload = response.json()
+
+{{#dataSet}}
+records = []
+for series in payload.get("data", []):
+    for obs in series.get("obs", []):
+        records.append({
+            "Series": series["key"],
+            "ObsPeriod": obs["period"].split("/")[0],
+            "ObsValue": obs.get("value", 0.0),
+        })
+
+df = pd.DataFrame(records, columns=["Series", "ObsPeriod", "ObsValue"])
+{{/dataSet}}
+{{#list}}
+df = pd.DataFrame([{{row}} for item in payload], columns={{header}})
+{{/list}}
+{{#hasOutputFile}}
+df.to_csv({{outputFile}}, index=False)
+{{/hasOutputFile}}
+df

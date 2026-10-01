@@ -1,0 +1,10 @@
+@echo off
+{{#warnings}}
+rem Warning: {{.}}
+{{/warnings}}
+setlocal
+
+call {{command}}
+if errorlevel 1 exit /b %errorlevel%
+
+endlocal

@@ -1,0 +1,29 @@
+{{#warnings}}
+# Warning: {{.}}
+{{/warnings}}
+{{#hasWarnings}}
+
+{{/hasWarnings}}
+{{#hasParameters}}
+$response = Invoke-RestMethod -Uri {{url}} `
+    -Body {{parameters}}
+{{/hasParameters}}
+{{^hasParameters}}
+$response = Invoke-RestMethod -Uri {{url}}
+{{/hasParameters}}
+
+{{#dataSet}}
+$response.data | ForEach-Object {
+    $series = $_
+    $series.obs | ForEach-Object {
+        [pscustomobject]@{
+            Series    = $series.key
+            ObsPeriod = ($_.period -split '/')[0]
+            ObsValue  = if ($null -eq $_.value) { 0.0 } else { $_.value }
+        }
+    }
+} | {{sink}}
+{{/dataSet}}
+{{#list}}
+$response | Select-Object {{fields}} | {{sink}}
+{{/list}}

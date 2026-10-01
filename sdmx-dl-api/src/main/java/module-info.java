@@ -1,21 +1,22 @@
 import sdmxdl.ext.Persistence;
 import sdmxdl.file.spi.FileCaching;
 import sdmxdl.file.spi.Reader;
+import sdmxdl.script.spi.ScriptGenerator;
 import sdmxdl.web.spi.*;
 
 module sdmxdl.api {
-
     requires static lombok;
     requires static nbbrd.design;
     requires static nbbrd.service;
     requires static org.jspecify;
-
     requires java.logging;
 
     exports sdmxdl;
     exports sdmxdl.ext;
     exports sdmxdl.file;
     exports sdmxdl.file.spi;
+    exports sdmxdl.script;
+    exports sdmxdl.script.spi;
     exports sdmxdl.web;
     exports sdmxdl.web.spi;
 
@@ -29,6 +30,7 @@ module sdmxdl.api {
     uses Persistence;
     uses Registry;
     uses SearchScoringProvider;
+    uses ScriptGenerator;
 
     provides SearchScoringProvider with
             internal.sdmxdl.web.Bm25ScoringProvider,

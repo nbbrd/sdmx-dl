@@ -1,0 +1,43 @@
+//usr/bin/env jbang "$0" "$@" ; exit $?
+//JAVA 25+
+//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:{{version}}
+{{#warnings}}
+// Warning: {{.}}
+{{/warnings}}
+
+import java.io.PrintWriter;
+{{#hasOutputFile}}
+import java.nio.file.Files;
+import java.nio.file.Path;
+{{/hasOutputFile}}
+import sdmxdl.{{requestType}};
+import sdmxdl.web.SdmxWebManager;
+
+void main() throws Exception {
+    var result = SdmxWebManager.ofServiceLoader()
+        .usingName({{source}})
+        .{{providerMethod}}({{requestType}}.builder()
+{{#arguments}}
+            .{{.}}
+{{/arguments}}
+            .build());
+
+    try (var out = {{output}}) {
+{{#dataSet}}
+        out.println("Series,ObsPeriod,ObsValue");
+        result.forEach(series -> series.getObs().forEach(obs ->
+            out.println(csv(series.getKey()) + "," + csv(obs.getPeriod().getStart()) + "," + csv(obs.getValue()))));
+{{/dataSet}}
+{{#list}}
+        out.println({{header}});
+        result.forEach(item -> out.println({{row}}));
+{{/list}}
+    }
+}
+
+String csv(Object value) {
+    var text = value == null ? "" : value.toString();
+    return text.contains(",") || text.contains("\"") || text.contains("\n") || text.contains("\r")
+        ? "\"" + text.replace("\"", "\"\"") + "\""
+        : text;
+}

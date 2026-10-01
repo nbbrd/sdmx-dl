@@ -24,6 +24,7 @@ Core domain model and SPI contracts. All other modules depend on this.
 - **Web SPI** (`sdmxdl.web.spi`): `Driver`, `Monitor`, `Registry`, `Networking`, `Authenticator`, `WebCaching`, `SSLFactory`, `URLConnectionFactory`
 - **File SPI** (`sdmxdl.file.spi`): `Reader`, `FileCaching`
 - **Extension SPI** (`sdmxdl.ext`): `Cache`, `Persistence`, `FileFormat`
+- **Script SPI** (`sdmxdl.script.spi`): `ScriptGenerator`, used by `ScriptManager` to turn a source id and a `Request` into a script for a language and a transport (CLI, REST, …)
 - SPIs are discovered at runtime via Java `ServiceLoader`
 
 ### 2. Format (`sdmx-dl-format-*`)
@@ -49,6 +50,7 @@ Serialization/deserialization implementations, used by providers and caching:
 | `sdmx-dl-provider-dialects`   | Source-specific dialect adaptations on top of the RI                                                               |
 | `sdmx-dl-provider-connectors` | Adapter wrapping legacy SDMX Connectors library                                                                    |
 | `sdmx-dl-provider-px`         | PX (PC-Axis) file format provider                                                                                  |
+| `sdmx-dl-script`              | `ScriptGenerator` implementations (Python over CLI and REST)                                                       |
 
 ### 4. Delivery
 
@@ -56,7 +58,7 @@ End-user and integration artifacts:
 
 | Module               | Purpose                                                              |
 |----------------------|----------------------------------------------------------------------|
-| `sdmx-dl-cli`        | picocli-based CLI (`fetch`, `list`, `check`, `debug` command groups) |
+| `sdmx-dl-cli`        | picocli-based CLI (`fetch`, `list`, `check`, `debug`, `script` command groups) |
 | `sdmx-dl-desktop`    | Swing desktop GUI                                                    |
 | `sdmx-dl-grpc`       | gRPC server exposing the API over the network                        |
 | `sdmx-dl-standalone` | Self-contained fat-jar distribution bundling providers               |

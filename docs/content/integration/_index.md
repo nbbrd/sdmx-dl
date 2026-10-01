@@ -20,6 +20,7 @@ Every integration below relies on one of three approaches:
 ## Integrations
 
 Every page uses the same running example: the last 12 monthly CHF/EUR exchange rates from the ECB (`ECB`, `EXR`, `M.CHF.EUR.SP00.A`), ending as a table with `Series`, `ObsPeriod`, and `ObsValue` columns.
+You don't have to adapt these examples by hand: sdmx-dl can [generate them]({{< relref "/integration/generate-scripts" >}}) for your own request.
 
 ### Scripting the CLI
 
@@ -37,4 +38,8 @@ Every page uses the same running example: the last 12 monthly CHF/EUR exchange r
 ### Java
 
 - [Use in jbang script]({{< relref "/integration/use-in-jbang" >}}) - Single-file Java scripts with zero project setup.
+
+### Script generation
+
+- [Generate scripts]({{< relref "/integration/generate-scripts" >}}) - Let sdmx-dl write any of the scripts above for your own request, from the CLI, the web service, or an AI assistant.
 

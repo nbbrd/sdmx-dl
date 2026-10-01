@@ -19,6 +19,9 @@ package sdmxdl.cli;
 import internal.sdmxdl.cli.SpecialProperties;
 import internal.sdmxdl.cli.ext.KeychainStoreIgnoredExceptionFix;
 import internal.sdmxdl.cli.ext.PrintAndLogExceptionHandler;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.Callable;
 import nbbrd.console.picocli.ConfigHelper;
 import nbbrd.console.picocli.LoggerHelper;
 import picocli.CommandLine;
@@ -26,10 +29,6 @@ import picocli.jansi.graalvm.AnsiConsole;
 import sdmxdl.About;
 import sdmxdl.cli.experimental.DebugCommand;
 import sdmxdl.cli.experimental.ExploreCommand;
-
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.Callable;
 
 /**
  * @author Philippe Charles
@@ -47,15 +46,15 @@ import java.util.concurrent.Callable;
         commandListHeading = "%nCommands:%n",
         headerHeading = "%n",
         subcommands = {
-                FetchCommand.class,
-                ListCommand.class,
-                SearchCommand.class,
-                CheckCommand.class,
-                SetupCommand.class,
-                DebugCommand.class,
-                ExploreCommand.class
-        }
-)
+            FetchCommand.class,
+            ListCommand.class,
+            SearchCommand.class,
+            CheckCommand.class,
+            SetupCommand.class,
+            DebugCommand.class,
+            ExploreCommand.class,
+            ScriptCommand.class
+        })
 public final class MainCommand implements Callable<Void> {
 
     public static void main(String[] args) {
@@ -78,7 +77,8 @@ public final class MainCommand implements Callable<Void> {
             CommandLine cmd = new CommandLine(new MainCommand());
             cmd.setCaseInsensitiveEnumValuesAllowed(true);
             cmd.setDefaultValueProvider(new CommandLine.PropertiesDefaultProvider(properties));
-            cmd.setExecutionExceptionHandler(new PrintAndLogExceptionHandler(MainCommand.class, specialProperties.isDebugRequired()));
+            cmd.setExecutionExceptionHandler(
+                    new PrintAndLogExceptionHandler(MainCommand.class, specialProperties.isDebugRequired()));
             return cmd.execute(args);
         }
     }
@@ -105,10 +105,10 @@ public final class MainCommand implements Callable<Void> {
 
         @Override
         public String[] getVersion() {
-            return new String[]{
-                    "@|bold " + About.NAME + " " + About.VERSION + "|@",
-                    "JVM: ${java.version} (${java.vendor} ${java.vm.name} ${java.vm.version})",
-                    "OS: ${os.name} ${os.version} ${os.arch}"
+            return new String[] {
+                "@|bold " + About.NAME + " " + About.VERSION + "|@",
+                "JVM: ${java.version} (${java.vendor} ${java.vm.name} ${java.vm.version})",
+                "OS: ${os.name} ${os.version} ${os.arch}"
             };
         }
     }

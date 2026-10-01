@@ -1,25 +1,24 @@
 package sdmxdl.desktop;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import internal.sdmxdl.desktop.SdmxIconSupport;
 import internal.sdmxdl.desktop.util.AsyncSupport;
+import java.beans.PropertyChangeSupport;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Optional;
+import javax.swing.*;
 import lombok.Getter;
 import lombok.NonNull;
 import sdmxdl.HasPersistence;
 import sdmxdl.Languages;
 import sdmxdl.MetaSet;
 import sdmxdl.ext.FileFormat;
+import sdmxdl.script.ScriptManager;
 import sdmxdl.web.SdmxWebManager;
 
-import javax.swing.*;
-import java.beans.PropertyChangeSupport;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Optional;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 public enum Sdmxdl implements HasSdmxProperties<SdmxWebManager> {
-
     INSTANCE;
 
     private final PropertyChangeSupport broadcaster = new PropertyChangeSupport(this);
@@ -42,15 +41,17 @@ public enum Sdmxdl implements HasSdmxProperties<SdmxWebManager> {
     private final DefaultListModel<Event> eventList = new DefaultListModel<>();
 
     @Getter
+    private final ScriptManager scriptManager = ScriptManager.ofServiceLoader();
+
+    @Getter
     private final SdmxIconSupport iconSupport = SdmxIconSupport.of(this);
 
     @Getter
-    private final AsyncSupport<DataSourceRef, MetaSet> metaSetAsyncSupport = AsyncSupport.of(ref -> this.getSdmxManager().usingName(ref.getSource()).getMeta(ref.toFlowRequest()));
+    private final AsyncSupport<DataSourceRef, MetaSet> metaSetAsyncSupport = AsyncSupport.of(
+            ref -> this.getSdmxManager().usingName(ref.getSource()).getMeta(ref.toFlowRequest()));
 
     public <T extends HasPersistence> String formatAsJson(Class<T> type, T value) {
-        Optional<FileFormat<T>> dsdFormat = getSdmxManager()
-                .getPersistences()
-                .stream()
+        Optional<FileFormat<T>> dsdFormat = getSdmxManager().getPersistences().stream()
                 .filter(persistence -> persistence.getFormatSupportedTypes().contains(type))
                 .map(persistence -> persistence.getFormat(type))
                 .filter(format -> format.getFileExtension().equals(".json"))

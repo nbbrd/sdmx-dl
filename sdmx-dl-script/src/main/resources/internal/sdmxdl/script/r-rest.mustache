@@ -1,0 +1,34 @@
+{{#warnings}}
+# Warning: {{.}}
+{{/warnings}}
+{{#hasWarnings}}
+
+{{/hasWarnings}}
+library(jsonlite)
+
+or_else <- function(x, default) if (is.null(x)) default else x
+
+payload <- fromJSON({{url}}, simplifyDataFrame = FALSE)
+
+{{#dataSet}}
+dat <- do.call(rbind, lapply(payload$data, function(series) {
+  do.call(rbind, lapply(series$obs, function(obs) {
+    data.frame(
+      Series = series$key,
+      ObsPeriod = sub("/.*", "", obs$period),
+      ObsValue = or_else(obs$value, 0)
+    )
+  }))
+}))
+{{/dataSet}}
+{{#list}}
+dat <- do.call(rbind, lapply(payload, function(item) {
+  data.frame(
+{{#fields}}
+    {{column}} = or_else(item${{field}}, ""){{^last}},{{/last}}
+{{/fields}}
+  )
+}))
+{{/list}}
+
+write.csv(dat, {{output}}, row.names = FALSE)

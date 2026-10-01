@@ -4,7 +4,7 @@ import lombok.NonNull;
 
 @lombok.Value
 @lombok.Builder
-public class AttributesRequest implements HasSearch {
+public class AttributesRequest implements HasSearch, Request {
 
     @lombok.Builder.Default
     @NonNull DatabaseRef database = DatabaseRef.NO_DATABASE;
@@ -19,6 +19,11 @@ public class AttributesRequest implements HasSearch {
 
     @lombok.Builder.Default
     int maxResults = AUTO_LIMIT;
+
+    @Override
+    public <T> T accept(@NonNull RequestVisitor<T> visitor) {
+        return visitor.visitAttributes(this);
+    }
 
     public static final class Builder {
 

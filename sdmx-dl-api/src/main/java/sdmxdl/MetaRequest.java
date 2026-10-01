@@ -4,7 +4,7 @@ import lombok.NonNull;
 
 @lombok.Value
 @lombok.Builder
-public class MetaRequest {
+public class MetaRequest implements Request {
 
     @NonNull @lombok.Builder.Default
     DatabaseRef database = DatabaseRef.NO_DATABASE;
@@ -13,6 +13,11 @@ public class MetaRequest {
 
     @NonNull @lombok.Builder.Default
     Languages languages = Languages.ANY;
+
+    @Override
+    public <T> T accept(@NonNull RequestVisitor<T> visitor) {
+        return visitor.visitMeta(this);
+    }
 
     public static final class Builder {
 

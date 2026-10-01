@@ -70,6 +70,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sdmx-dl-script</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.github.nbbrd.sdmx-dl</groupId>
             <artifactId>sdmx-dl-format-protobuf</artifactId>
             <version>${project.version}</version>

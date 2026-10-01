@@ -68,6 +68,15 @@ head(sources)
 
 {{< /tabs >}}
 
+## Generate these scripts
+
+sdmx-dl can [generate]({{< relref "/integration/generate-scripts" >}}) the scripts above for any request:
+
+```shell
+sdmx-dl script data ECB EXR M.CHF.EUR.SP00.A --last-n 12 -t r/cli
+sdmx-dl script data ECB EXR M.CHF.EUR.SP00.A --last-n 12 -t r/rest
+```
+
 ## Notes
 
 - The CLI examples write CSV, while the REST endpoint returns JSON, so use `jsonlite::fromJSON(...)` or a similar JSON client on the REST side.

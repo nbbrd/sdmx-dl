@@ -12,6 +12,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![API] Add observation count filtering on data queries [#205](https://github.com/nbbrd/sdmx-dl/issues/205)
 - ![API] Add time filtering on data queries [#204](https://github.com/nbbrd/sdmx-dl/issues/204)
 - ![API] ![GRPC] Add new APIs to improve feature parity [#1337](https://github.com/nbbrd/sdmx-dl/issues/1337)
+- ![API] Generate ready-to-use scripts from sdmx-dl requests [#1350](https://github.com/nbbrd/sdmx-dl/issues/1350)
 - ![PROVIDER] Add a credible but obviously-fake data source for demos and testing [#1310](https://github.com/nbbrd/sdmx-dl/issues/1310)
 
 ### Changed

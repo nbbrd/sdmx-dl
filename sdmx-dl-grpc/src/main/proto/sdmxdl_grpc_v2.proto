@@ -31,6 +31,12 @@ service SdmxWebManager {
   rpc ListAvailability(WebAvailabilityRequestDto) returns (sdmxdl.format.protobuf.CodelistDto);
 
   rpc ListStatuses(WebStatusesRequestDto) returns (stream sdmxdl.format.protobuf.web.MonitorReportDto);
+
+  rpc ListScriptTargets(EmptyDto) returns (stream ScriptTargetDto);
+
+  rpc GenerateDataScript(WebDataScriptRequestDto) returns (ScriptDto);
+
+  rpc GenerateFlowsScript(WebFlowsScriptRequestDto) returns (ScriptDto);
 }
 
 message EmptyDto {
@@ -119,4 +125,35 @@ message WebAvailabilityRequestDto {
 
 message WebStatusesRequestDto {
   repeated string sources = 1; /* empty, or a single "all" entry (case-insensitive), means every known source */
+}
+
+message ScriptOptionsDto {
+  optional string target = 1; /* <language>/<transport>, e.g. "python/cli"; absent = "python/cli" */
+  repeated string cli_launcher = 2; /* command used to launch the CLI, e.g. ["java", "-jar", "sdmx-dl-cli-bin.jar"]; empty = ["sdmx-dl"] */
+  optional string rest_endpoint = 3; /* base URI of the REST API; absent = default endpoint */
+  optional string output_file = 4; /* file written by the script; absent = standard output */
+}
+
+message WebDataScriptRequestDto {
+  WebDataRequestDto request = 1;
+  ScriptOptionsDto options = 2;
+}
+
+message WebFlowsScriptRequestDto {
+  WebFlowsRequestDto request = 1;
+  ScriptOptionsDto options = 2;
+}
+
+message ScriptTargetDto {
+  string target = 1; /* <language>/<transport> */
+  string language = 2;
+  string transport = 3;
+  repeated string commands = 4; /* supported request types, e.g. "data", "flows" */
+}
+
+message ScriptDto {
+  string target = 1;
+  string file_extension = 2;
+  string content = 3;
+  repeated string warnings = 4; /* request parameters that the target cannot honor */
 }

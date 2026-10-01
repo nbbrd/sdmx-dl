@@ -1,0 +1,26 @@
+{{#warnings}}
+# Warning: {{.}}
+{{/warnings}}
+{{#hasWarnings}}
+
+{{/hasWarnings}}
+{{#stdout}}
+import contextlib
+{{/stdout}}
+import csv
+import io
+import subprocess
+{{#stdout}}
+import sys
+{{/stdout}}
+
+result = subprocess.run(
+    {{arguments}},
+    capture_output=True, text=True, check=True,
+)
+
+with {{output}} as output:
+    writer = csv.writer(output)
+    writer.writerow({{header}})
+    for row in csv.DictReader(io.StringIO(result.stdout)):
+        writer.writerow({{row}})

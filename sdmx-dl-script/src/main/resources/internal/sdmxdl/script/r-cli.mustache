@@ -1,0 +1,18 @@
+{{#warnings}}
+# Warning: {{.}}
+{{/warnings}}
+{{#hasWarnings}}
+
+{{/hasWarnings}}
+outfile <- tempfile(fileext = ".csv")
+
+status <- system2(
+  command = {{command}},
+  args = shQuote(c({{arguments}}, "-o", outfile))
+)
+if (status != 0) stop("sdmx-dl failed with exit code ", status)
+
+dat <- read.csv(outfile, check.names = FALSE)[, {{columns}}, drop = FALSE]
+unlink(outfile)
+
+write.csv(dat, {{output}}, row.names = FALSE)

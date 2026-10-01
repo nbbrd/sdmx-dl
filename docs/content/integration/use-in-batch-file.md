@@ -48,6 +48,14 @@ endlocal
 
 {{< /tabs >}}
 
+## Generate this script
+
+sdmx-dl can [generate]({{< relref "/integration/generate-scripts" >}}) the script above for any request:
+
+```shell
+sdmx-dl script data ECB EXR M.CHF.EUR.SP00.A --last-n 12 -t batch/cli
+```
+
 ## Notes
 
 - A batch file is just automation around the CLI: each line runs a normal `sdmx-dl` command, so you can mix discovery (`list ...`), retrieval (`fetch ...`), and checks (`check ...`) in the same script.

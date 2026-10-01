@@ -61,6 +61,15 @@ Invoke-RestMethod 'http://localhost:4559/sdmx-dl/v2/ECB/flows' | Select-Object -
 
 {{< /tabs >}}
 
+## Generate these scripts
+
+sdmx-dl can [generate]({{< relref "/integration/generate-scripts" >}}) the scripts above for any request:
+
+```shell
+sdmx-dl script data ECB EXR M.CHF.EUR.SP00.A --last-n 12 -t powershell/cli
+sdmx-dl script data ECB EXR M.CHF.EUR.SP00.A --last-n 12 -t powershell/rest
+```
+
 ## Notes
 
 - Native commands don't throw on failure; check `$LASTEXITCODE` after each `sdmx-dl` call (or set `$PSNativeCommandUseErrorActionPreference = $true` in PowerShell 7.3+).

@@ -19,6 +19,7 @@ import sdmxdl.format.protobuf.*;
 import sdmxdl.format.protobuf.web.MonitorReportDto;
 import sdmxdl.format.protobuf.web.MonitorStatusDto;
 import sdmxdl.format.protobuf.web.WebSourceDto;
+import sdmxdl.script.ScriptManager;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.WebSourcesRequest;
 
@@ -31,6 +32,9 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
     // is resolved programmatically to guarantee a single instance across gRPC, REST and MCP.
     private final sdmxdl.web.SdmxWebManager manager =
             Arc.container().select(sdmxdl.web.SdmxWebManager.class).get();
+
+    private final ScriptManager scripts =
+            Arc.container().select(ScriptManager.class).get();
 
     @Override
     public Uni<AboutDto> getAbout(EmptyDto request) {
@@ -65,13 +69,7 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
 
     @Override
     public Multi<FlowDto> listFlows(WebFlowsRequestDto request) {
-        return multiOfIO(() -> manager.usingName(request.getSource())
-                        .listFlows(FlowsRequest.builder()
-                                .databaseOf(request.hasDatabase() ? request.getDatabase() : NO_DATABASE_KEYWORD)
-                                .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
-                                .query(request.hasQuery() ? request.getQuery() : NO_QUERY)
-                                .maxResults(request.hasMaxResults() ? request.getMaxResults() : AUTO_LIMIT)
-                                .build()))
+        return multiOfIO(() -> manager.usingName(request.getSource()).listFlows(toFlowsRequest(request)))
                 .map(ProtoApi::fromDataflow);
     }
 
@@ -114,35 +112,13 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
 
     @Override
     public Uni<DataSetDto> getData(WebDataRequestDto request) {
-        return uniOfIO(() -> manager.usingName(request.getSource())
-                        .getData(DataRequest.builder()
-                                .flowOf(request.getFlow())
-                                .keyOf(request.getKey())
-                                .databaseOf(request.hasDatabase() ? request.getDatabase() : NO_DATABASE_KEYWORD)
-                                .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
-                                .startPeriodOf(request.hasStart() ? request.getStart() : null)
-                                .endPeriodOf(request.hasEnd() ? request.getEnd() : null)
-                                .firstNObservations(request.hasFirstN() ? request.getFirstN() : null)
-                                .lastNObservations(request.hasLastN() ? request.getLastN() : null)
-                                .detail(ProtoApi.toDataDetail(request.getDetail()))
-                                .build()))
+        return uniOfIO(() -> manager.usingName(request.getSource()).getData(toDataRequest(request)))
                 .map(ProtoApi::fromDataSet);
     }
 
     @Override
     public Multi<SeriesDto> getDataStream(WebDataRequestDto request) {
-        return multiOfIO(() -> manager.usingName(request.getSource())
-                        .getData(DataRequest.builder()
-                                .flowOf(request.getFlow())
-                                .keyOf(request.getKey())
-                                .databaseOf(request.hasDatabase() ? request.getDatabase() : NO_DATABASE_KEYWORD)
-                                .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
-                                .startPeriodOf(request.hasStart() ? request.getStart() : null)
-                                .endPeriodOf(request.hasEnd() ? request.getEnd() : null)
-                                .firstNObservations(request.hasFirstN() ? request.getFirstN() : null)
-                                .lastNObservations(request.hasLastN() ? request.getLastN() : null)
-                                .detail(ProtoApi.toDataDetail(request.getDetail()))
-                                .build()))
+        return multiOfIO(() -> manager.usingName(request.getSource()).getData(toDataRequest(request)))
                 .map(ProtoApi::fromSeries);
     }
 
@@ -196,6 +172,54 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
             }
         }
         return Multi.createFrom().iterable(reports);
+    }
+
+    @Override
+    public Multi<ScriptTargetDto> listScriptTargets(EmptyDto request) {
+        return Multi.createFrom()
+                .iterable(scripts.getTargets())
+                .map(target -> ProtoScript.fromScriptTarget(scripts, target));
+    }
+
+    @Override
+    public Uni<ScriptDto> generateDataScript(WebDataScriptRequestDto request) {
+        return generateScript(
+                request.getRequest().getSource(), toDataRequest(request.getRequest()), request.getOptions());
+    }
+
+    @Override
+    public Uni<ScriptDto> generateFlowsScript(WebFlowsScriptRequestDto request) {
+        return generateScript(
+                request.getRequest().getSource(), toFlowsRequest(request.getRequest()), request.getOptions());
+    }
+
+    private Uni<ScriptDto> generateScript(String source, Request request, ScriptOptionsDto options) {
+        return Uni.createFrom()
+                .item(() -> ProtoScript.fromScript(scripts.generate(
+                        ProtoScript.toScriptTarget(options), source, request, ProtoScript.toScriptOptions(options))));
+    }
+
+    private static FlowsRequest toFlowsRequest(WebFlowsRequestDto request) {
+        return FlowsRequest.builder()
+                .databaseOf(request.hasDatabase() ? request.getDatabase() : NO_DATABASE_KEYWORD)
+                .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
+                .query(request.hasQuery() ? request.getQuery() : NO_QUERY)
+                .maxResults(request.hasMaxResults() ? request.getMaxResults() : AUTO_LIMIT)
+                .build();
+    }
+
+    private static DataRequest toDataRequest(WebDataRequestDto request) {
+        return DataRequest.builder()
+                .flowOf(request.getFlow())
+                .keyOf(request.getKey())
+                .databaseOf(request.hasDatabase() ? request.getDatabase() : NO_DATABASE_KEYWORD)
+                .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
+                .startPeriodOf(request.hasStart() ? request.getStart() : null)
+                .endPeriodOf(request.hasEnd() ? request.getEnd() : null)
+                .firstNObservations(request.hasFirstN() ? request.getFirstN() : null)
+                .lastNObservations(request.hasLastN() ? request.getLastN() : null)
+                .detail(ProtoApi.toDataDetail(request.getDetail()))
+                .build();
     }
 
     private List<String> resolveSources(List<String> requested) {

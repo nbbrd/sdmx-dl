@@ -331,6 +331,46 @@
           }
         }
       },
+      "ScriptDto" : {
+        "type" : "object",
+        "properties" : {
+          "descriptorForType" : {
+            "type" : "object"
+          },
+          "target" : {
+            "type" : "string"
+          },
+          "fileExtension" : {
+            "type" : "string"
+          },
+          "content" : {
+            "type" : "string"
+          },
+          "warnings" : {
+            "type" : "array"
+          }
+        }
+      },
+      "ScriptTargetDto" : {
+        "type" : "object",
+        "properties" : {
+          "descriptorForType" : {
+            "type" : "object"
+          },
+          "target" : {
+            "type" : "string"
+          },
+          "language" : {
+            "type" : "string"
+          },
+          "transport" : {
+            "type" : "string"
+          },
+          "commands" : {
+            "type" : "array"
+          }
+        }
+      },
       "SearchDatabaseRequestDto" : {
         "type" : "object",
         "properties" : {
@@ -1001,6 +1041,27 @@
         "summary" : "Get About"
       }
     },
+    "/sdmx-dl/v2/script/targets" : {
+      "get" : {
+        "tags" : [ "sdmx-dl v2" ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/ScriptTargetDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary" : "List Script Targets"
+      }
+    },
     "/sdmx-dl/v2/sources" : {
       "get" : {
         "tags" : [ "sdmx-dl v2" ],
@@ -1188,6 +1249,89 @@
           }
         },
         "summary" : "List Flows"
+      }
+    },
+    "/sdmx-dl/v2/{source}/flows:script" : {
+      "get" : {
+        "tags" : [ "sdmx-dl v2" ],
+        "parameters" : [ {
+          "name" : "source",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "cliLauncher",
+          "in" : "query",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "name" : "database",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : ""
+          }
+        }, {
+          "name" : "languages",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : "*"
+          }
+        }, {
+          "name" : "maxResults",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : -1
+          }
+        }, {
+          "name" : "outputFile",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "query",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : ""
+          }
+        }, {
+          "name" : "restEndpoint",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "target",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : "python/cli"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ScriptDto"
+                }
+              }
+            }
+          }
+        },
+        "summary" : "Generate Flows Script"
       }
     },
     "/sdmx-dl/v2/{source}/{flow}/attributes" : {
@@ -1473,6 +1617,124 @@
           }
         },
         "summary" : "Get Data"
+      }
+    },
+    "/sdmx-dl/v2/{source}/{flow}/data:script" : {
+      "get" : {
+        "tags" : [ "sdmx-dl v2" ],
+        "parameters" : [ {
+          "name" : "flow",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "source",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "cliLauncher",
+          "in" : "query",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "name" : "database",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : ""
+          }
+        }, {
+          "name" : "detail",
+          "in" : "query",
+          "schema" : {
+            "allOf" : [ {
+              "$ref" : "#/components/schemas/Detail"
+            }, {
+              "default" : "FULL"
+            } ]
+          }
+        }, {
+          "name" : "end",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "firstN",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "key",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : "all"
+          }
+        }, {
+          "name" : "languages",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : "*"
+          }
+        }, {
+          "name" : "lastN",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "outputFile",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "restEndpoint",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "start",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "target",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : "python/cli"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ScriptDto"
+                }
+              }
+            }
+          }
+        },
+        "summary" : "Generate Data Script"
       }
     },
     "/sdmx-dl/v2/{source}/{flow}/data:stream" : {

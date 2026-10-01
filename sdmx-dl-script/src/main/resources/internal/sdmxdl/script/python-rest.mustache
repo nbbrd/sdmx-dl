@@ -1,0 +1,41 @@
+{{#warnings}}
+# Warning: {{.}}
+{{/warnings}}
+{{#hasWarnings}}
+
+{{/hasWarnings}}
+{{#stdout}}
+import contextlib
+{{/stdout}}
+import csv
+import json
+{{#stdout}}
+import sys
+{{/stdout}}
+{{#hasParameters}}
+import urllib.parse
+{{/hasParameters}}
+import urllib.request
+
+{{#hasParameters}}
+params = urllib.parse.urlencode({{parameters}})
+with urllib.request.urlopen(f{{urlWithParameters}}) as response:
+{{/hasParameters}}
+{{^hasParameters}}
+with urllib.request.urlopen({{url}}) as response:
+{{/hasParameters}}
+    payload = json.load(response)
+
+with {{output}} as output:
+    writer = csv.writer(output)
+{{#dataSet}}
+    writer.writerow(["Series", "ObsPeriod", "ObsValue"])
+    for series in payload.get("data", []):
+        for obs in series.get("obs", []):
+            writer.writerow([series["key"], obs["period"].split("/")[0], obs.get("value", 0.0)])
+{{/dataSet}}
+{{#list}}
+    writer.writerow({{header}})
+    for item in payload:
+        writer.writerow({{row}})
+{{/list}}

@@ -69,6 +69,9 @@ curl "localhost:4559/sdmx-dl/v2/ECB/flows"
 | `GetData`          | `GET /{source}/{flow}/data`                      | Fetch observations for a key.                                    |
 | `GetDataStream`    | `GET /{source}/{flow}/data:stream`               | Same as `GetData`, streamed observation by observation.          |
 | `ListStatuses`     | `GET /statuses`                                  | Check the health of one, several, or all sources.                |
+| `ListScriptTargets`   | `GET /script/targets`                         | List the available [script targets]({{< relref "/integration/generate-scripts#targets" >}}). |
+| `GenerateDataScript`  | `GET /{source}/{flow}/data:script`            | Generate a script that performs `GetData` (same parameters, plus `target`). |
+| `GenerateFlowsScript` | `GET /{source}/flows:script`                  | Generate a script that performs `ListFlows` (same parameters, plus `target`). |
 
 All paths above are relative to `/sdmx-dl/v2`.
 
@@ -100,6 +103,7 @@ Each series has a `key`, optional series-level `meta`, and an `obs` array; each 
 - `GetDataStream` (`GET /{source}/{flow}/data:stream`) returns the same series objects as a plain JSON array, without the `ref`/`query` wrapper.
 - Listing operations (`/sources`, `/{source}/flows`, `/{source}/{flow}/dimensions`, …) return a JSON array of objects that can be turned into a table directly.
 - `ListCodes` and `ListAvailability` return a `codes` object mapping each code to its label, e.g. `{"codes": {"A": "Annual", "Q": "Quarterly"}}`.
+- Script operations return the generated script, without executing it: `{"target": "r/rest", "fileExtension": "R", "content": "...", "warnings": []}`. See [Generate scripts]({{< relref "/integration/generate-scripts" >}}) for their options (`cliLauncher`, `restEndpoint`, `outputFile`).
 
 ## MCP endpoint
 
@@ -129,6 +133,9 @@ Available tools:
 | `listAvailability` | Get the codes that actually occur for a dimension under a key.         |
 | `getData`          | Fetch data series for a flow, optionally filtered by key/period.       |
 | `status`           | Get the monitor status of a single source.                             |
+| `listScriptTargets`   | List the available script targets.                                  |
+| `generateDataScript`  | Generate a ready-to-run script that fetches data (not executed).    |
+| `generateFlowsScript` | Generate a ready-to-run script that lists flows (not executed).     |
 
 The typical workflow is: find a source (`listSources`) → find a flow (`listFlows`) → inspect its dimensions/attributes (`getMeta` or `listDimensions`/`listAttributes`) → resolve dimension codes (`listCodes`) → fetch data (`getData`, preferring the structured `dimensions` map over a positional `key`).
 

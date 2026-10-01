@@ -73,6 +73,15 @@ df.head()
 
 {{< /tabs >}}
 
+## Generate these cells
+
+sdmx-dl can [generate]({{< relref "/integration/generate-scripts" >}}) the notebook cells above for any request:
+
+```shell
+sdmx-dl script data ECB EXR M.CHF.EUR.SP00.A --last-n 12 -t jupyter/cli
+sdmx-dl script data ECB EXR M.CHF.EUR.SP00.A --last-n 12 -t jupyter/rest
+```
+
 ## Notes
 
 - **Windows launcher**: On Windows, if `subprocess` cannot find `sdmx-dl`, ensure the launcher is on your `PATH`. You may need to create it first. Alternatively, use the full path to the jar or `.bat` file in the subprocess call.

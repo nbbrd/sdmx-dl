@@ -1,5 +1,16 @@
 package sdmxdl.desktop;
 
+import static internal.sdmxdl.desktop.Collectors2.getSingle;
+import static internal.sdmxdl.desktop.util.Actions.hideWhenDisabled;
+import static internal.sdmxdl.desktop.util.Actions.onActionPerformed;
+import static internal.sdmxdl.desktop.util.JTrees.toDefaultMutableTreeNode;
+import static internal.sdmxdl.desktop.util.MouseListeners.onDoubleClick;
+import static internal.sdmxdl.swing.MoreSwing.documentListenerOf;
+import static java.awt.event.KeyEvent.VK_ENTER;
+import static java.util.stream.Collectors.toList;
+import static javax.swing.KeyStroke.getKeyStroke;
+import static org.kordamp.ikonli.materialdesign.MaterialDesign.*;
+
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.FlatIconColors;
 import ec.util.completion.AutoCompletionSource;
@@ -12,29 +23,6 @@ import internal.sdmxdl.desktop.SdmxCommand;
 import internal.sdmxdl.desktop.XmlDataSetRef;
 import internal.sdmxdl.desktop.XmlDataSourceRef;
 import internal.sdmxdl.desktop.util.*;
-import lombok.NonNull;
-import nbbrd.design.MightBePromoted;
-import nbbrd.io.function.IOBiConsumer;
-import org.kordamp.ikonli.Ikon;
-import sdmxdl.desktop.panels.*;
-import sdmxdl.ext.Persistence;
-import sdmxdl.provider.caching.DiskCachingSupport;
-import sdmxdl.provider.ri.http.DumpingDecoration;
-import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.WebFlowRequest;
-import sdmxdl.web.WebKeyRequest;
-import sdmxdl.web.WebSource;
-import sdmxdl.web.spi.*;
-
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.beans.PropertyChangeEvent;
@@ -47,17 +35,33 @@ import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 import java.util.prefs.Preferences;
 import java.util.stream.Stream;
-
-import static internal.sdmxdl.desktop.Collectors2.getSingle;
-import static internal.sdmxdl.desktop.util.Actions.hideWhenDisabled;
-import static internal.sdmxdl.desktop.util.Actions.onActionPerformed;
-import static internal.sdmxdl.desktop.util.JTrees.toDefaultMutableTreeNode;
-import static internal.sdmxdl.desktop.util.MouseListeners.onDoubleClick;
-import static internal.sdmxdl.swing.MoreSwing.documentListenerOf;
-import static java.awt.event.KeyEvent.VK_ENTER;
-import static java.util.stream.Collectors.toList;
-import static javax.swing.KeyStroke.getKeyStroke;
-import static org.kordamp.ikonli.materialdesign.MaterialDesign.*;
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
+import lombok.NonNull;
+import nbbrd.design.MightBePromoted;
+import nbbrd.io.function.IOBiConsumer;
+import org.kordamp.ikonli.Ikon;
+import sdmxdl.FlowsRequest;
+import sdmxdl.Request;
+import sdmxdl.desktop.panels.*;
+import sdmxdl.ext.Persistence;
+import sdmxdl.provider.caching.DiskCachingSupport;
+import sdmxdl.provider.ri.http.DumpingDecoration;
+import sdmxdl.script.ScriptManager;
+import sdmxdl.script.ScriptOptions;
+import sdmxdl.script.ScriptTarget;
+import sdmxdl.web.SdmxWebManager;
+import sdmxdl.web.WebFlowRequest;
+import sdmxdl.web.WebKeyRequest;
+import sdmxdl.web.WebSource;
+import sdmxdl.web.spi.*;
 
 public final class MainComponent extends JComponent {
 
@@ -102,8 +106,10 @@ public final class MainComponent extends JComponent {
         datasetsTree.setCellRenderer(new DefaultTreeCellRenderer() {
 
             @Override
-            public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-                JLabel label = (JLabel) super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+            public Component getTreeCellRendererComponent(
+                    JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+                JLabel label =
+                        (JLabel) super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
                 if (value instanceof DefaultMutableTreeNode) {
                     Object userObject = ((DefaultMutableTreeNode) value).getUserObject();
                     if (userObject instanceof DataSourceRef) {
@@ -119,7 +125,8 @@ public final class MainComponent extends JComponent {
                 return label;
             }
         });
-        DynamicTree.enable(datasetsTree, new DataNodeFactory(Sdmxdl.INSTANCE::getSdmxManager), new DefaultMutableTreeNode("root"));
+        DynamicTree.enable(
+                datasetsTree, new DataNodeFactory(Sdmxdl.INSTANCE::getSdmxManager), new DefaultMutableTreeNode("root"));
         datasetsTree.addMouseListener(onDoubleClick(this::openCurrentDataSetRef));
         datasetsTree.getInputMap().put(getKeyStroke(VK_ENTER, 0), "SELECT_ACTION");
         datasetsTree.getActionMap().put("SELECT_ACTION", onActionPerformed(this::openCurrentDataSetRef));
@@ -132,14 +139,20 @@ public final class MainComponent extends JComponent {
         });
 
         sourcesList.setCellRenderer(WebSourceRenderer.INSTANCE.asListCellRenderer(sourcesList::repaint));
-        sourcesList.addMouseListener(onDoubleClick(e -> sourcesList.getActionMap().get("SELECT_ACTION").actionPerformed(null)));
+        sourcesList.addMouseListener(onDoubleClick(
+                e -> sourcesList.getActionMap().get("SELECT_ACTION").actionPerformed(null)));
         sourcesList.getInputMap().put(getKeyStroke(VK_ENTER, 0), "SELECT_ACTION");
-        sourcesList.getActionMap().put("SELECT_ACTION",
-                new OpenCurrentSourceCommand().toAction(this)
-                        .withWeakListSelectionListener(sourcesList.getSelectionModel()));
+        sourcesList
+                .getActionMap()
+                .put(
+                        "SELECT_ACTION",
+                        new OpenCurrentSourceCommand()
+                                .toAction(this)
+                                .withWeakListSelectionListener(sourcesList.getSelectionModel()));
         sourcesList.setComponentPopupMenu(newSourcesMenu().getPopupMenu());
 
-        pluginsTree.setCellRenderer(JTrees.cellRendererOf(Object.class, (label, value) -> renderPlugin(label, value, pluginsTree::repaint)));
+        pluginsTree.setCellRenderer(JTrees.cellRendererOf(
+                Object.class, (label, value) -> renderPlugin(label, value, pluginsTree::repaint)));
         pluginsTree.addMouseListener(onDoubleClick(this::openCurrentPlugin));
         pluginsTree.getInputMap().put(getKeyStroke(VK_ENTER, 0), "SELECT_ACTION");
         pluginsTree.getActionMap().put("SELECT_ACTION", onActionPerformed(this::openCurrentPlugin));
@@ -181,7 +194,10 @@ public final class MainComponent extends JComponent {
                 view.setRowSorter(sorter);
 
                 JTextField filterField = new JTextField(10);
-                filterField.getDocument().addDocumentListener(documentListenerOf(e -> sorter.setRowFilter(TokensRowFilter.of(getText(e)))));
+                filterField
+                        .getDocument()
+                        .addDocumentListener(
+                                documentListenerOf(e -> sorter.setRowFilter(TokensRowFilter.of(getText(e)))));
 
                 JAutoCompletion autoCompletion = new JAutoCompletion(filterField);
                 autoCompletion.setSeparator(" ");
@@ -202,7 +218,8 @@ public final class MainComponent extends JComponent {
                         return JLists.stream(Sdmxdl.INSTANCE.getEventList())
                                 .flatMap(event -> Stream.of(event.getSource(), event.getMarker()))
                                 .distinct()
-                                .filter(item -> AutoCompletionSources.normalize(item).contains(normalizedTerm))
+                                .filter(item ->
+                                        AutoCompletionSources.normalize(item).contains(normalizedTerm))
                                 .sorted()
                                 .limit(10)
                                 .collect(toList());
@@ -212,12 +229,48 @@ public final class MainComponent extends JComponent {
                 JTables.setWidthAsPercentages(view, .15, .2, .65);
 
                 JPanel result = new JPanel(new GridBagLayout());
-                result.add(new JLabel("Filter: "), new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
-                        GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
-                result.add(filterField, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0,
-                        GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
-                result.add(new JScrollPane(view), new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0,
-                        GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+                result.add(
+                        new JLabel("Filter: "),
+                        new GridBagConstraints(
+                                0,
+                                0,
+                                1,
+                                1,
+                                0.0,
+                                0.0,
+                                GridBagConstraints.CENTER,
+                                GridBagConstraints.BOTH,
+                                new Insets(5, 5, 5, 5),
+                                0,
+                                0));
+                result.add(
+                        filterField,
+                        new GridBagConstraints(
+                                1,
+                                0,
+                                1,
+                                1,
+                                1.0,
+                                0.0,
+                                GridBagConstraints.CENTER,
+                                GridBagConstraints.BOTH,
+                                new Insets(5, 5, 5, 5),
+                                0,
+                                0));
+                result.add(
+                        new JScrollPane(view),
+                        new GridBagConstraints(
+                                0,
+                                1,
+                                2,
+                                1,
+                                1.0,
+                                1.0,
+                                GridBagConstraints.CENTER,
+                                GridBagConstraints.BOTH,
+                                new Insets(5, 5, 5, 5),
+                                0,
+                                0));
                 result.setPreferredSize(new Dimension(200, 200));
                 return result;
             }
@@ -240,37 +293,74 @@ public final class MainComponent extends JComponent {
         JMenu result = new JMenu();
         JMenuItem item;
 
-        item = hideWhenDisabled(result.add(DataRefCommand.of(DataSourceRef.class).execution(MainComponent::editDataSource).build().toAction(this)));
+        item = hideWhenDisabled(result.add(DataRefCommand.of(DataSourceRef.class)
+                .execution(MainComponent::editDataSource)
+                .build()
+                .toAction(this)));
         item.setText("Edit");
 
-        item = hideWhenDisabled(result.add(DataRefCommand.of(DataSourceRef.class).execution(MainComponent::duplicateDataSource).build().toAction(this)));
+        item = hideWhenDisabled(result.add(DataRefCommand.of(DataSourceRef.class)
+                .execution(MainComponent::duplicateDataSource)
+                .build()
+                .toAction(this)));
         item.setText("Duplicate");
 
-        item = hideWhenDisabled(result.add(DataRefCommand.of(DataSourceRef.class).execution(MainComponent::removeDataSource).build().toAction(this)));
+        item = hideWhenDisabled(result.add(DataRefCommand.of(DataSourceRef.class)
+                .execution(MainComponent::removeDataSource)
+                .build()
+                .toAction(this)));
         item.setText("Remove");
 
-        item = hideWhenDisabled(result.add(DataRefCommand.of(DataSourceRef.class).execution(MainComponent::openWebsite).predicate(MainComponent::hasWebsite).build().toAction(this)));
+        item = hideWhenDisabled(result.add(DataRefCommand.of(DataSourceRef.class)
+                .execution(MainComponent::openWebsite)
+                .predicate(MainComponent::hasWebsite)
+                .build()
+                .toAction(this)));
         item.setText("Open website");
 
-        item = hideWhenDisabled(result.add(DataRefCommand.of(DataSourceRef.class).execution(MainComponent::openMonitor).predicate(MainComponent::hasMonitor).build().toAction(this)));
+        item = hideWhenDisabled(result.add(DataRefCommand.of(DataSourceRef.class)
+                .execution(MainComponent::openMonitor)
+                .predicate(MainComponent::hasMonitor)
+                .build()
+                .toAction(this)));
         item.setText("Open monitor");
 
-        item = hideWhenDisabled(result.add(DataRefCommand.of(DataSourceRef.class).execution(MainComponent::copyPath).build().toAction(this)));
+        item = hideWhenDisabled(result.add(DataRefCommand.of(DataSourceRef.class)
+                .execution(MainComponent::copyPath)
+                .build()
+                .toAction(this)));
         item.setText("Copy Path/Reference...");
 
-        item = hideWhenDisabled(result.add(DataRefCommand.of(DataSourceRef.class).execution(MainComponent::debug).predicate(MainComponent::isDebug).build().toAction(this)));
+        item = hideWhenDisabled(result.add(DataRefCommand.of(DataSourceRef.class)
+                .execution(MainComponent::debug)
+                .predicate(MainComponent::isDebug)
+                .build()
+                .toAction(this)));
         item.setText("Debug...");
 
-        item = hideWhenDisabled(result.add(DataRefCommand.of(DataSetRef.class).execution(MainComponent::openDataSet).predicate((c, ref) -> ref.getKey().isSeries()).build().toAction(this)));
+        item = hideWhenDisabled(result.add(DataRefCommand.of(DataSetRef.class)
+                .execution(MainComponent::openDataSet)
+                .predicate((c, ref) -> ref.getKey().isSeries())
+                .build()
+                .toAction(this)));
         item.setText("<html><b>Open");
 
-        item = hideWhenDisabled(result.add(DataRefCommand.of(DataSetRef.class).execution(MainComponent::copyPath).build().toAction(this)));
+        item = hideWhenDisabled(result.add(DataRefCommand.of(DataSetRef.class)
+                .execution(MainComponent::copyPath)
+                .build()
+                .toAction(this)));
         item.setText("Copy Path/Reference...");
 
-        item = hideWhenDisabled(result.add(DataRefCommand.of(Exception.class).execution(MainComponent::openException).build().toAction(this)));
+        item = hideWhenDisabled(result.add(DataRefCommand.of(Exception.class)
+                .execution(MainComponent::openException)
+                .build()
+                .toAction(this)));
         item.setText("<html><b>Open");
 
-        item = hideWhenDisabled(result.add(DataRefCommand.of(Exception.class).execution(MainComponent::copyException).build().toAction(this)));
+        item = hideWhenDisabled(result.add(DataRefCommand.of(Exception.class)
+                .execution(MainComponent::copyException)
+                .build()
+                .toAction(this)));
         item.setText("Copy");
 
         return result;
@@ -285,13 +375,20 @@ public final class MainComponent extends JComponent {
         item.setText("<html><b>Open</b>");
         item.setAccelerator(getKeyStroke(VK_ENTER, 0));
 
-        item = result.add(new AddDatasetCommand(() -> DataSourceRef.builder().source(getSelectedSource(sourcesList)).build()).toAction(this));
+        item = result.add(new AddDatasetCommand(() -> DataSourceRef.builder()
+                        .source(getSelectedSource(sourcesList))
+                        .build())
+                .toAction(this));
         item.setText("Add dataset");
 
-        item = result.add(BrowseCommand.ofURL(MainComponent::getSelectedWebsite).toAction(sourcesList).withWeakListSelectionListener(sourcesList.getSelectionModel()));
+        item = result.add(BrowseCommand.ofURL(MainComponent::getSelectedWebsite)
+                .toAction(sourcesList)
+                .withWeakListSelectionListener(sourcesList.getSelectionModel()));
         item.setText("Open website");
 
-        item = result.add(BrowseCommand.ofURL(MainComponent::getSelectedMonitorWebsite).toAction(sourcesList).withWeakListSelectionListener(sourcesList.getSelectionModel()));
+        item = result.add(BrowseCommand.ofURL(MainComponent::getSelectedMonitorWebsite)
+                .toAction(sourcesList)
+                .withWeakListSelectionListener(sourcesList.getSelectionModel()));
         item.setText("Open monitor");
 
         return result;
@@ -302,7 +399,9 @@ public final class MainComponent extends JComponent {
         result.add(Box.createHorizontalGlue());
 
         result.add(new ButtonBuilder()
-                .action(new AddDatasetCommand(() -> DataSourceRef.builder().source("").build()).toAction(this))
+                .action(new AddDatasetCommand(
+                                () -> DataSourceRef.builder().source("").build())
+                        .toAction(this))
                 .ikon(MDI_DATABASE_PLUS)
                 .toolTipText("Add dataset")
                 .build());
@@ -401,7 +500,8 @@ public final class MainComponent extends JComponent {
 
     private void onSdmxWebManagerChange(PropertyChangeEvent ignore) {
         SdmxWebManager manager = Sdmxdl.INSTANCE.getSdmxManager();
-        sourcesList.setModel(JLists.modelOf(manager.getSources().values().stream().filter(o -> !o.isAlias()).collect(toList())));
+        sourcesList.setModel(JLists.modelOf(
+                manager.getSources().values().stream().filter(o -> !o.isAlias()).collect(toList())));
         DefaultMutableTreeNode plugins = new DefaultMutableTreeNode();
         plugins.add(manager.getDrivers().stream().collect(toDefaultMutableTreeNode("Drivers")));
         plugins.add(manager.getAuthenticators().stream().collect(toDefaultMutableTreeNode("Authenticators")));
@@ -427,7 +527,8 @@ public final class MainComponent extends JComponent {
     }
 
     private void contentsChanged(ListDataEvent e) {
-        DefaultMutableTreeNode root = (DefaultMutableTreeNode) datasetsTree.getModel().getRoot();
+        DefaultMutableTreeNode root =
+                (DefaultMutableTreeNode) datasetsTree.getModel().getRoot();
         root.removeAllChildren();
         JLists.stream(dataSources).forEach(dataSourceRef -> root.add(new DynamicTree.CustomNode(dataSourceRef, false)));
         datasetsTree.setModel(new DefaultTreeModel(root));
@@ -443,9 +544,7 @@ public final class MainComponent extends JComponent {
         @Override
         public void execute(@NonNull MainComponent component) {
             component.main.addIfAbsent(
-                    component.sourcesList.getSelectedValue(),
-                    WebSourceRenderer.INSTANCE.asTabFactory(component)
-            );
+                    component.sourcesList.getSelectedValue(), WebSourceRenderer.INSTANCE.asTabFactory(component));
         }
     }
 
@@ -491,8 +590,7 @@ public final class MainComponent extends JComponent {
             return super.toAction(c).withWeakPropertyChangeListener(c, SELECTED_DATA_REF_PROPERTY);
         }
 
-        private static void noExecution(MainComponent c, Object ref) {
-        }
+        private static void noExecution(MainComponent c, Object ref) {}
 
         private static boolean noPredicate(MainComponent c, Object ref) {
             return true;
@@ -508,15 +606,24 @@ public final class MainComponent extends JComponent {
     }
 
     private static URL getSelectedMonitorWebsite(JList<WebSource> x) {
-        return getSingle(x.getSelectedValuesList()).map(WebSource::getMonitorWebsite).orElse(null);
+        return getSingle(x.getSelectedValuesList())
+                .map(WebSource::getMonitorWebsite)
+                .orElse(null);
     }
 
     public void addDataSource(DataSourceRef base) {
         DataSourceRefPanel panel = new DataSourceRefPanel();
         panel.setModel(base);
-        if (JOptionPane.showOptionDialog(this, panel, "Add datasource",
-                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-                new Object[]{"Add", "Cancel"}, "Add") == 0) {
+        if (JOptionPane.showOptionDialog(
+                        this,
+                        panel,
+                        "Add datasource",
+                        JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.PLAIN_MESSAGE,
+                        null,
+                        new Object[] {"Add", "Cancel"},
+                        "Add")
+                == 0) {
             getDataSources().addElement(panel.getModel());
         }
     }
@@ -530,9 +637,16 @@ public final class MainComponent extends JComponent {
     public void editDataSource(DataSourceRef base) {
         DataSourceRefPanel panel = new DataSourceRefPanel();
         panel.setModel(base);
-        if (JOptionPane.showOptionDialog(this, panel, "Edit datasource",
-                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-                new Object[]{"Edit", "Cancel"}, "Add") == 0) {
+        if (JOptionPane.showOptionDialog(
+                        this,
+                        panel,
+                        "Edit datasource",
+                        JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.PLAIN_MESSAGE,
+                        null,
+                        new Object[] {"Edit", "Cancel"},
+                        "Add")
+                == 0) {
             getDataSources().removeElement(base);
             getDataSources().addElement(panel.getModel());
         }
@@ -541,9 +655,16 @@ public final class MainComponent extends JComponent {
     public void duplicateDataSource(DataSourceRef base) {
         DataSourceRefPanel panel = new DataSourceRefPanel();
         panel.setModel(base);
-        if (JOptionPane.showOptionDialog(this, panel, "Duplicate datasource",
-                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-                new Object[]{"Duplicate", "Cancel"}, "Add") == 0) {
+        if (JOptionPane.showOptionDialog(
+                        this,
+                        panel,
+                        "Duplicate datasource",
+                        JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.PLAIN_MESSAGE,
+                        null,
+                        new Object[] {"Duplicate", "Cancel"},
+                        "Add")
+                == 0) {
             getDataSources().addElement(panel.getModel());
         }
     }
@@ -557,8 +678,7 @@ public final class MainComponent extends JComponent {
     }
 
     private void copyException(Exception userObject) {
-        Toolkit.getDefaultToolkit().getSystemClipboard()
-                .setContents(new StringSelection(userObject.toString()), null);
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(userObject.toString()), null);
     }
 
     private boolean hasWebsite(DataSourceRef ref) {
@@ -607,26 +727,53 @@ public final class MainComponent extends JComponent {
 
     private void copyPath(DataSourceRef ref) {
         WebFlowRequest request = ref.toWebFlowRequest();
-        new OnDemandMenuBuilder()
+        OnDemandMenuBuilder menu = new OnDemandMenuBuilder()
                 .copyToClipboard("SDMX-DL URI", request.toString())
                 .copyToClipboard("XML reference", XmlDataSourceRef.formatToString(ref))
                 .addSeparator()
                 .copyToClipboard("List dimensions command", SdmxCommand.listDimensions(request))
                 .copyToClipboard("List attributes command", SdmxCommand.listAttributes(request))
-                .copyToClipboard("Fetch all keys command", SdmxCommand.fetchKeys(WebKeyRequest.builderOf(request).build()))
-                .showMenuAsPopup(this);
+                .copyToClipboard(
+                        "Fetch all keys command",
+                        SdmxCommand.fetchKeys(WebKeyRequest.builderOf(request).build()));
+        addScripts(
+                menu,
+                "List flows script",
+                ref.getSource(),
+                FlowsRequest.builder()
+                        .database(ref.getDatabase())
+                        .languages(ref.getLanguages())
+                        .build());
+        menu.showMenuAsPopup(this);
     }
 
     private void copyPath(DataSetRef ref) {
         WebKeyRequest request = ref.toWebKeyRequest();
-        new OnDemandMenuBuilder()
+        OnDemandMenuBuilder menu = new OnDemandMenuBuilder()
                 .copyToClipboard("SDMX-DL URI", request.toString())
                 .copyToClipboard("XML reference", XmlDataSetRef.formatToString(ref))
                 .addSeparator()
                 .copyToClipboard("Fetch data command", SdmxCommand.fetchData(request))
                 .copyToClipboard("Fetch meta command", SdmxCommand.fetchMeta(request))
-                .copyToClipboard("Fetch keys command", SdmxCommand.fetchKeys(request))
-                .showMenuAsPopup(this);
+                .copyToClipboard("Fetch keys command", SdmxCommand.fetchKeys(request));
+        addScripts(menu, "Fetch data script", request.getSource(), request.getRequest());
+        menu.showMenuAsPopup(this);
+    }
+
+    private static void addScripts(OnDemandMenuBuilder menu, String label, String source, Request request) {
+        ScriptManager manager = Sdmxdl.INSTANCE.getScriptManager();
+        List<ScriptTarget> targets = manager.getTargets().stream()
+                .filter(target -> manager.isSupported(target, request.getClass()))
+                .collect(toList());
+        if (!targets.isEmpty()) {
+            menu.addSeparator();
+            for (ScriptTarget target : targets) {
+                menu.copyToClipboard(
+                        label + " (" + target + ")",
+                        manager.generate(target, source, request, ScriptOptions.DEFAULT)
+                                .getContent());
+            }
+        }
     }
 
     public void load() {
@@ -656,7 +803,8 @@ public final class MainComponent extends JComponent {
         JOptionPane.showMessageDialog(null, panel, ex.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
     }
 
-    private static final Preferences PREFERENCES = Preferences.userNodeForPackage(MainComponent.class).node(MainComponent.class.getSimpleName());
+    private static final Preferences PREFERENCES =
+            Preferences.userNodeForPackage(MainComponent.class).node(MainComponent.class.getSimpleName());
 
     private static final class EventListTableModel extends AbstractListTableModel<Event> {
 

@@ -70,6 +70,18 @@ so the result is always consistent (but the download is not necessarily smaller)
 When `--first-n` and `--last-n` are combined, the result is the union of the first N and the last N
 observations of each series (computed independently after any period filtering).
 
+## Script
+
+Options used by the `script` commands to [generate scripts]({{< relref "/integration/generate-scripts" >}}) instead of executing requests.
+
+| Name                                                                | Shortcut | Parameter                       | Description                                                                                         |
+|---------------------------------------------------------------------|----------|---------------------------------|-----------------------------------------------------------------------------------------------------|
+| <a id="target" href="#target">`--target`</a>                        | `-t`     | `<language/transport>`          | Script target, e.g. `r/rest` (default: `python/cli`); see `script targets` for the available ones. |
+| <a id="cli-launcher" href="#cli-launcher">`--cli-launcher`</a>      | -        | `<command>[,<command>...]`      | Command used by the script to launch sdmx-dl, comma-separated (default: `sdmx-dl`).               |
+| <a id="rest-endpoint" href="#rest-endpoint">`--rest-endpoint`</a>   | -        | [`<url>`](../datatypes#url)     | Base URI of the web service used by the script (default: `http://localhost:4559/sdmx-dl/v2`).     |
+| <a id="script-output" href="#script-output">`--output`</a>          | `-o`     | [`<file>`](../datatypes#file)   | File written by the generated script (default: standard output).                                   |
+| <a id="script-file" href="#script-file">`--script-file`</a>         | -        | [`<file>`](../datatypes#file)   | File where the generated script is saved (default: standard output).                               |
+
 ## CSV
 
 CSV options used to output content.  

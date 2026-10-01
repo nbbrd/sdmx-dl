@@ -1,18 +1,17 @@
 package spreadsheet4j.standalone;
 
-import _test.DependencyResolver;
-import nbbrd.io.text.TextParser;
-import org.assertj.core.api.Condition;
-import org.assertj.core.api.ListAssert;
-import org.junit.jupiter.api.Test;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import _test.DependencyResolver;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.assertj.core.api.Assertions.assertThat;
+import nbbrd.io.text.TextParser;
+import org.assertj.core.api.Condition;
+import org.assertj.core.api.ListAssert;
+import org.junit.jupiter.api.Test;
 
 public class RuntimeDependenciesTest {
 
@@ -29,7 +28,14 @@ public class RuntimeDependenciesTest {
                 .satisfies(RuntimeDependenciesTest::checkJavaNetProxy)
                 .satisfies(RuntimeDependenciesTest::checkKryo5)
                 .satisfies(RuntimeDependenciesTest::checkMsal)
-                .hasSize(27);
+                .satisfies(RuntimeDependenciesTest::checkMustache)
+                .hasSize(29);
+    }
+
+    private static void checkMustache(List<? extends DependencyResolver.GAV> coordinates) {
+        assertThatGroupId(coordinates, "com.github.spullara.mustache.java")
+                .extracting(DependencyResolver.GAV::getArtifactId)
+                .containsExactlyInAnyOrder("compiler");
     }
 
     private static void checkJavaIoUtil(List<? extends DependencyResolver.GAV> coordinates) {
@@ -37,12 +43,7 @@ public class RuntimeDependenciesTest {
                 .has(sameVersion())
                 .extracting(DependencyResolver.GAV::getArtifactId)
                 .containsExactlyInAnyOrder(
-                        "java-io-picocsv",
-                        "java-io-xml",
-                        "java-io-base",
-                        "java-io-curl",
-                        "java-io-http"
-                );
+                        "java-io-picocsv", "java-io-xml", "java-io-base", "java-io-curl", "java-io-http");
     }
 
     private static void checkSdmxdl(List<? extends DependencyResolver.GAV> coordinates) {
@@ -58,8 +59,8 @@ public class RuntimeDependenciesTest {
                         "sdmx-dl-provider-base",
                         "sdmx-dl-provider-dialects",
                         "sdmx-dl-provider-px",
-                        "sdmx-dl-provider-ri"
-                );
+                        "sdmx-dl-provider-ri",
+                        "sdmx-dl-script");
     }
 
     private static void checkPicocsv(List<? extends DependencyResolver.GAV> coordinates) {
@@ -112,7 +113,8 @@ public class RuntimeDependenciesTest {
                 .containsExactlyInAnyOrder("slf4j-api", "slf4j-jdk14");
     }
 
-    private static ListAssert<? extends DependencyResolver.GAV> assertThatGroupId(List<? extends DependencyResolver.GAV> coordinates, String groupId) {
+    private static ListAssert<? extends DependencyResolver.GAV> assertThatGroupId(
+            List<? extends DependencyResolver.GAV> coordinates, String groupId) {
         return assertThat(coordinates)
                 .describedAs("Check " + groupId)
                 .filteredOn(DependencyResolver.GAV::getGroupId, groupId);
@@ -123,7 +125,8 @@ public class RuntimeDependenciesTest {
     }
 
     private static List<DependencyResolver.GAV> getRuntimeDependencies() throws IOException {
-        return TextParser.onParsingReader(reader -> DependencyResolver.parse(asBufferedReader(reader).lines()))
+        return TextParser.onParsingReader(reader ->
+                        DependencyResolver.parse(asBufferedReader(reader).lines()))
                 .parseResource(RuntimeDependenciesTest.class, "/runtime-dependencies.txt", UTF_8);
     }
 

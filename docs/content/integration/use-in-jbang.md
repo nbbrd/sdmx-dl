@@ -38,6 +38,14 @@ Save as `FetchSdmx.java` and run:
 jbang FetchSdmx.java
 ```
 
+## Generate this script
+
+sdmx-dl can [generate]({{< relref "/integration/generate-scripts" >}}) the script above for any request:
+
+```shell
+sdmx-dl script data ECB EXR M.CHF.EUR.SP00.A --last-n 12 -t jbang/java
+```
+
 ## Notes
 
 - **jbang setup**: Download jbang from https://www.jbang.dev/ or install via your package manager (`brew install jbang`, `choco install jbang`, etc.). After install, the first line (`//usr/bin/env jbang "$0" "$@" ; exit $?`) makes the script directly executable on Linux/macOS (`chmod +x FetchSdmx.java && ./FetchSdmx.java`).

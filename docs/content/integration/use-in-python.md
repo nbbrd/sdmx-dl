@@ -55,6 +55,15 @@ for series in payload["data"]:
 
 {{< /tabs >}}
 
+## Generate these scripts
+
+sdmx-dl can [generate]({{< relref "/integration/generate-scripts" >}}) the scripts above for any request:
+
+```shell
+sdmx-dl script data ECB EXR M.CHF.EUR.SP00.A --last-n 12 -t python/cli
+sdmx-dl script data ECB EXR M.CHF.EUR.SP00.A --last-n 12 -t python/rest
+```
+
 ## Notes
 
 - Both examples use only the standard library; swap in `requests` or `pandas` if they're already part of your project.

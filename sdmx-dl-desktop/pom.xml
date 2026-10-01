@@ -126,6 +126,12 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>sdmx-dl-script</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-format-protobuf</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>

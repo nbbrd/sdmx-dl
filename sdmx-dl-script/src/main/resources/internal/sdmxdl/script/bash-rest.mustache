@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+{{#warnings}}
+# Warning: {{.}}
+{{/warnings}}
+set -euo pipefail
+{{#hasOutputFile}}
+
+exec > {{outputFile}}
+{{/hasOutputFile}}
+
+echo {{header}}
+curl -fsS -G {{url}}{{#parameters}} \
+  --data-urlencode {{.}}{{/parameters}} \
+  | jq -r {{filter}}

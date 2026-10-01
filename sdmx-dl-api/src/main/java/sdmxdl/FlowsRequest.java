@@ -5,7 +5,7 @@ import nbbrd.design.NonNegative;
 
 @lombok.Value
 @lombok.Builder
-public class FlowsRequest implements HasSearch {
+public class FlowsRequest implements HasSearch, Request {
 
     public static final FlowsRequest DEFAULT = FlowsRequest.builder().build();
 
@@ -34,6 +34,11 @@ public class FlowsRequest implements HasSearch {
      */
     @lombok.Builder.Default
     @NonNegative int maxDescriptionLength = HasDescription.NO_DESCRIPTION_LIMIT;
+
+    @Override
+    public <T> T accept(@NonNull RequestVisitor<T> visitor) {
+        return visitor.visitFlows(this);
+    }
 
     public static final class Builder {
 

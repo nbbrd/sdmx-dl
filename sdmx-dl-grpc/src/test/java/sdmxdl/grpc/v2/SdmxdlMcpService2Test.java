@@ -496,6 +496,120 @@ public class SdmxdlMcpService2Test {
         }
     }
 
+    // --- scripts ---
+
+    @Test
+    public void scriptTargetsListsPythonTargets() {
+        try (McpAssured.McpStreamableTestClient client = McpAssured.newConnectedStreamableClient()) {
+            client.when()
+                    .toolsCall("listScriptTargets", r -> {
+                        assertThat(r).returns(false, ToolResponse::isError);
+                        assertThat(fromJsonList(ScriptTargetDto.class, firstText(r)))
+                                .extracting(ScriptTargetDto::getTarget)
+                                .contains("python/cli", "python/rest");
+                    })
+                    .thenAssertResults();
+        }
+    }
+
+    @Test
+    public void dataScriptDefaultsToFullHistoryWithCliTarget() {
+        try (McpAssured.McpStreamableTestClient client = McpAssured.newConnectedStreamableClient()) {
+            client.when()
+                    .toolsCall(
+                            "generateDataScript",
+                            Map.of("source", "ECB", "flow", "EXR", "key", "M.CHF.EUR.SP00.A"),
+                            r -> {
+                                assertThat(r).returns(false, ToolResponse::isError);
+                                ScriptDto script = fromJson(ScriptDto.class, firstText(r));
+                                assertThat(script.getTarget()).isEqualTo("python/cli");
+                                assertThat(script.getContent())
+                                        .contains(
+                                                "[\"sdmx-dl\", \"fetch\", \"data\", \"ECB\", \"EXR\", \"M.CHF.EUR.SP00.A\"]");
+                                assertThat(script.getWarningsList()).isEmpty();
+                            })
+                    .thenAssertResults();
+        }
+    }
+
+    @Test
+    public void dataScriptSupportsDimensionsAndRestTarget() {
+        try (McpAssured.McpStreamableTestClient client = McpAssured.newConnectedStreamableClient()) {
+            client.when()
+                    .toolsCall(
+                            "generateDataScript",
+                            Map.of(
+                                    "source", "ECB",
+                                    "flow", "EXR",
+                                    "dimensions", Map.of("FREQ", "M", "CURRENCY", "CHF"),
+                                    "lastN", 12,
+                                    "target", "python/rest",
+                                    "restEndpoint", "http://example.org/api"),
+                            r -> {
+                                assertThat(r).returns(false, ToolResponse::isError);
+                                ScriptDto script = fromJson(ScriptDto.class, firstText(r));
+                                assertThat(script.getTarget()).isEqualTo("python/rest");
+                                assertThat(script.getContent())
+                                        .contains("http://example.org/api/ECB/EXR/data")
+                                        .contains("M.CHF...")
+                                        .contains("12");
+                            })
+                    .thenAssertResults();
+        }
+    }
+
+    @Test
+    public void flowsScriptUsesCliLauncherAndOutputFile() {
+        try (McpAssured.McpStreamableTestClient client = McpAssured.newConnectedStreamableClient()) {
+            client.when()
+                    .toolsCall(
+                            "generateFlowsScript",
+                            Map.of(
+                                    "source", "ECB",
+                                    "query", "exchange",
+                                    "cliLauncher", List.of("java", "-jar", "sdmx-dl-cli-bin.jar"),
+                                    "outputFile", "flows.csv"),
+                            r -> {
+                                assertThat(r).returns(false, ToolResponse::isError);
+                                ScriptDto script = fromJson(ScriptDto.class, firstText(r));
+                                assertThat(script.getContent())
+                                        .contains(
+                                                "[\"java\", \"-jar\", \"sdmx-dl-cli-bin.jar\", \"list\", \"flows\", \"ECB\", \"-q\", \"exchange\"]")
+                                        .contains("flows.csv");
+                            })
+                    .thenAssertResults();
+        }
+    }
+
+    @Test
+    public void scriptUnknownTargetReturnsInstructiveError() {
+        try (McpAssured.McpStreamableTestClient client = McpAssured.newConnectedStreamableClient()) {
+            client.when()
+                    .toolsCall("generateFlowsScript", Map.of("source", "ECB", "target", "cobol/cli"), r -> {
+                        assertThat(r)
+                                .returns(true, ToolResponse::isError)
+                                .extracting(SdmxdlMcpService2Test::firstText, STRING)
+                                .contains("cobol/cli")
+                                .contains("python/cli");
+                    })
+                    .thenAssertResults();
+        }
+    }
+
+    @Test
+    public void scriptUnknownSourceReturnsInstructiveError() {
+        try (McpAssured.McpStreamableTestClient client = McpAssured.newConnectedStreamableClient()) {
+            client.when()
+                    .toolsCall("generateFlowsScript", Map.of("source", "INVALID_SOURCE_XYZ"), r -> {
+                        assertThat(r)
+                                .returns(true, ToolResponse::isError)
+                                .extracting(SdmxdlMcpService2Test::firstText, STRING)
+                                .contains("listSources");
+                    })
+                    .thenAssertResults();
+        }
+    }
+
     // --- Helpers ---
 
     private static String toJson(Message message) {

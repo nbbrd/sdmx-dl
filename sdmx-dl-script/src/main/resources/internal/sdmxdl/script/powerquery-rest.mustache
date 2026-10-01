@@ -1,0 +1,34 @@
+{{=<% %>=}}let
+<%#warnings%>
+    // Warning: <%.%>
+<%/warnings%>
+    Source = Json.Document(
+        Web.Contents(
+            <%base%>,
+            [
+<%#hasParameters%>
+                RelativePath = <%relativePath%>,
+                Query = <%parameters%>
+<%/hasParameters%>
+<%^hasParameters%>
+                RelativePath = <%relativePath%>
+<%/hasParameters%>
+            ]
+        )
+    ),
+<%#dataSet%>
+    SeriesTable = Table.FromRecords(Source[data]),
+    ExpandedObs = Table.ExpandListColumn(SeriesTable, "obs"),
+    ExpandedObsRecord = Table.ExpandRecordColumn(ExpandedObs, "obs", {"period", "value"}, {"ObsPeriod", "ObsValue"}),
+    RenamedColumns = Table.RenameColumns(ExpandedObsRecord, {{"key", "Series"}}),
+    SelectedColumns = Table.SelectColumns(RenamedColumns, {"Series", "ObsPeriod", "ObsValue"}),
+    TrimmedPeriod = Table.TransformColumns(SelectedColumns, {{"ObsPeriod", each Text.BeforeDelimiter(_, "/"), type text}})
+in
+    TrimmedPeriod
+<%/dataSet%>
+<%#list%>
+    ItemsTable = Table.FromRecords(Source, <%fieldNames%>, MissingField.UseNull),
+    RenamedColumns = Table.RenameColumns(ItemsTable, <%renames%>)
+in
+    RenamedColumns
+<%/list%>

@@ -1,0 +1,10 @@
+{{#warnings}}
+# Warning: {{.}}
+{{/warnings}}
+{{#hasWarnings}}
+
+{{/hasWarnings}}
+$data = & {{command}} | ConvertFrom-Csv
+if ($LASTEXITCODE -ne 0) { throw "sdmx-dl failed with exit code $LASTEXITCODE" }
+
+$data | Select-Object {{columns}} | {{sink}}

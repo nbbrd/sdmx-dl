@@ -53,6 +53,11 @@
             <artifactId>sdmx-dl-provider-px</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sdmx-dl-script</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- test only -->
         <dependency>
@@ -152,6 +157,10 @@
                                     <shadedPattern>standalone_sdmxdl.sdmxdl.provider</shadedPattern>
                                 </relocation>
                                 <relocation>
+                                    <pattern>sdmxdl.script.std</pattern>
+                                    <shadedPattern>standalone_sdmxdl.sdmxdl.script.std</shadedPattern>
+                                </relocation>
+                                <relocation>
                                     <pattern>internal</pattern>
                                     <shadedPattern>standalone_sdmxdl.internal</shadedPattern>
                                 </relocation>
@@ -166,6 +175,10 @@
                                 <relocation>
                                     <pattern>com.github.tuupertunut</pattern>
                                     <shadedPattern>standalone_sdmxdl.com.github.tuupertunut</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.github.mustachejava</pattern>
+                                    <shadedPattern>standalone_sdmxdl.com.github.mustachejava</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.google.gson</pattern>

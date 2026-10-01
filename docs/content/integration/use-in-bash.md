@@ -53,6 +53,15 @@ curl -fsS -G "http://localhost:4559/sdmx-dl/v2/ECB/EXR/data" \
 
 {{< /tabs >}}
 
+## Generate these scripts
+
+sdmx-dl can [generate]({{< relref "/integration/generate-scripts" >}}) the scripts above for any request:
+
+```shell
+sdmx-dl script data ECB EXR M.CHF.EUR.SP00.A --last-n 12 -t bash/cli
+sdmx-dl script data ECB EXR M.CHF.EUR.SP00.A --last-n 12 -t bash/rest
+```
+
 ## Notes
 
 - `set -euo pipefail` makes the script stop at the first failing command, including a failing `sdmx-dl` call in the middle of a pipeline.

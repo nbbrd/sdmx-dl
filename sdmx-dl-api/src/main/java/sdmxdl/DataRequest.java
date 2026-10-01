@@ -6,7 +6,7 @@ import org.jspecify.annotations.Nullable;
 
 @lombok.Value
 @lombok.Builder
-public class DataRequest {
+public class DataRequest implements Request {
 
     @NonNull @lombok.Builder.Default
     DatabaseRef database = DatabaseRef.NO_DATABASE;
@@ -39,6 +39,11 @@ public class DataRequest {
                 .firstNObservations(getFirstNObservations())
                 .lastNObservations(getLastNObservations())
                 .build();
+    }
+
+    @Override
+    public <T> T accept(@NonNull RequestVisitor<T> visitor) {
+        return visitor.visitData(this);
     }
 
     public static final class Builder {

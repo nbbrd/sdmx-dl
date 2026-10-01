@@ -94,6 +94,11 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>sdmx-dl-script</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>sdmx-dl-provider-base</artifactId>
                 <version>${project.version}</version>
             </dependency>

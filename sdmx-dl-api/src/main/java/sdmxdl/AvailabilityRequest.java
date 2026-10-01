@@ -4,7 +4,7 @@ import lombok.NonNull;
 
 @lombok.Value
 @lombok.Builder
-public class AvailabilityRequest {
+public class AvailabilityRequest implements Request {
 
     @lombok.Builder.Default
     @NonNull DatabaseRef database = DatabaseRef.NO_DATABASE;
@@ -17,6 +17,11 @@ public class AvailabilityRequest {
 
     @lombok.Builder.Default
     @NonNull Languages languages = Languages.ANY;
+
+    @Override
+    public <T> T accept(@NonNull RequestVisitor<T> visitor) {
+        return visitor.visitAvailability(this);
+    }
 
     public static final class Builder {
 

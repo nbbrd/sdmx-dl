@@ -1,7 +1,9 @@
 package sdmxdl.grpc.v2;
 
 import static sdmxdl.DatabaseRef.NO_DATABASE_KEYWORD;
+import static sdmxdl.HasSearch.AUTO_LIMIT;
 import static sdmxdl.HasSearch.NO_QUERY;
+import static sdmxdl.Languages.ANY_KEYWORD;
 
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
@@ -18,6 +20,8 @@ import sdmxdl.*;
 import sdmxdl.format.protobuf.*;
 import sdmxdl.format.protobuf.web.MonitorReportDto;
 import sdmxdl.format.protobuf.web.WebSourceDto;
+import sdmxdl.script.ScriptManager;
+import sdmxdl.script.ScriptTarget;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.WebSourcesRequest;
@@ -57,9 +61,24 @@ public class SdmxdlMcpService2 {
             "Inclusive lower bound on the observation period, as reduced-precision ISO-8601 (e.g. '2000', '2000-01', '2000-01-01'). Omit for no lower bound.";
     private static final String END_ARG =
             "Inclusive upper bound on the observation period, as reduced-precision ISO-8601 (e.g. '2020', '2020-12'). Omit for no upper bound.";
+    private static final String SCRIPT_LANGUAGES_ARG =
+            "Language priority list for labels, as comma-separated IETF tags (e.g. 'en', 'fr,en'). Defaults to any language (the source default); only set it when the user asks for a specific language.";
+    private static final String SCRIPT_LAST_N_ARG =
+            "Keep only the N most recent observations of each series (default 0 = no limit, i.e. full history). Applied after the period filters.";
+    private static final String SCRIPT_MAX_RESULTS_ARG =
+            "Maximum number of entries to return: 0 for no limit, -1 (default) for no limit without query and 10 with a query.";
+    private static final String TARGET_ARG =
+            "Script target as '<language>/<transport>', exactly as returned by listScriptTargets (default 'python/cli'). The 'cli' transport calls the sdmx-dl command-line tool; the 'rest' transport calls the sdmx-dl REST server.";
+    private static final String CLI_LAUNCHER_ARG =
+            "Command used by the script to launch the sdmx-dl CLI, as a list of arguments (e.g. [\"java\", \"-jar\", \"sdmx-dl-cli-bin.jar\"]). Defaults to [\"sdmx-dl\"]. Only used by 'cli' targets.";
+    private static final String REST_ENDPOINT_ARG =
+            "Base URI of the sdmx-dl REST server called by the script (default 'http://localhost:4559/sdmx-dl/v2'). Only used by 'rest' targets.";
+    private static final String OUTPUT_FILE_ARG =
+            "File written by the script (e.g. 'data.csv'). Omit to write to the standard output.";
 
     private static final int MAX_DESCRIPTION_LENGTH = 200;
     private static final String DEFAULT_LAST_N = "20";
+    private static final String DEFAULT_SCRIPT_LAST_N = "0";
     private static final String DEFAULT_FIRST_N = "0";
     private static final String DEFAULT_MAX_RESULTS = "10";
     private static final String DEFAULT_QUERY = NO_QUERY;
@@ -73,6 +92,9 @@ public class SdmxdlMcpService2 {
 
     @Inject
     SdmxWebManager manager;
+
+    @Inject
+    ScriptManager scripts;
 
     private WebSource getPublicSourceForMcp(String source) {
         WebSource webSource = manager.getSources().get(source);
@@ -296,22 +318,115 @@ public class SdmxdlMcpService2 {
             @ToolArg(description = LAST_N_ARG, required = false, defaultValue = DEFAULT_LAST_N) int lastN)
             throws IOException {
         Provider<WebSource> provider = manager.using(getPublicSourceForMcp(source));
-        String effectiveKey = key;
-        if (dimensions != null && !dimensions.isEmpty()) {
-            Structure structure = provider.getMeta(MetaRequest.builder()
-                            .flowOf(flow)
-                            .databaseOf(database)
-                            .languagesOf(languages)
-                            .build())
-                    .getStructure();
-            effectiveKey = buildKey(structure, dimensions).toString();
-        }
         DataRequest.Builder request = DataRequest.builder()
                 .flowOf(flow)
-                .keyOf(effectiveKey)
+                .keyOf(resolveKey(provider, flow, key, dimensions, database, languages))
                 .detailOf(detail)
                 .databaseOf(database)
                 .languagesOf(languages);
+        applyObsFilters(request, start, end, firstN, lastN);
+        return ProtoApi.fromDataSet(provider.getData(request.build()));
+    }
+
+    @Tool(
+            description =
+                    "List the available script targets as '<language>/<transport>' (e.g. 'python/cli', 'python/rest') with the commands each one supports (e.g. 'data', 'flows'). Use it before generateDataScript/generateFlowsScript to pick a valid 'target'.")
+    public List<ScriptTargetDto> listScriptTargets() {
+        return scripts.getTargets().stream()
+                .map(target -> ProtoScript.fromScriptTarget(scripts, target))
+                .toList();
+    }
+
+    @Tool(
+            description =
+                    "Generate a ready-to-run script that fetches the observations of a flow and writes them as CSV (Series, ObsPeriod, ObsValue), so that the user can reproduce or automate a getData call in their own workflow without writing code. Takes the same filters as getData, but defaults to the full history (lastN=0). The script is NOT executed: return its 'content' to the user, mentioning any 'warnings' (request parameters the target cannot honor). Call listScriptTargets to discover the valid targets.")
+    public ScriptDto generateDataScript(
+            @ToolArg(description = SOURCE_ARG) String source,
+            @ToolArg(description = FLOW_ARG) String flow,
+            @ToolArg(description = KEY_ARG, required = false, defaultValue = DEFAULT_KEY) String key,
+            @ToolArg(description = DIMENSIONS_ARG, required = false) Map<String, String> dimensions,
+            @ToolArg(description = DATABASE_ARG, required = false, defaultValue = NO_DATABASE_KEYWORD) String database,
+            @ToolArg(description = SCRIPT_LANGUAGES_ARG, required = false, defaultValue = ANY_KEYWORD) String languages,
+            @ToolArg(description = START_ARG, required = false) String start,
+            @ToolArg(description = END_ARG, required = false) String end,
+            @ToolArg(description = FIRST_N_ARG, required = false, defaultValue = DEFAULT_FIRST_N) int firstN,
+            @ToolArg(description = SCRIPT_LAST_N_ARG, required = false, defaultValue = DEFAULT_SCRIPT_LAST_N) int lastN,
+            @ToolArg(description = TARGET_ARG, required = false, defaultValue = ProtoScript.DEFAULT_TARGET)
+                    String target,
+            @ToolArg(description = CLI_LAUNCHER_ARG, required = false) List<String> cliLauncher,
+            @ToolArg(description = REST_ENDPOINT_ARG, required = false) String restEndpoint,
+            @ToolArg(description = OUTPUT_FILE_ARG, required = false) String outputFile)
+            throws IOException {
+        Provider<WebSource> provider = manager.using(getPublicSourceForMcp(source));
+        DataRequest.Builder request = DataRequest.builder()
+                .flowOf(flow)
+                .keyOf(resolveKey(provider, flow, key, dimensions, database, languages))
+                .databaseOf(database)
+                .languagesOf(languages);
+        applyObsFilters(request, start, end, firstN, lastN);
+        return generateScript(source, request.build(), target, cliLauncher, restEndpoint, outputFile);
+    }
+
+    @Tool(
+            description =
+                    "Generate a ready-to-run script that lists or searches the data flows of a source and writes them as CSV (Ref, Name, Description), so that the user can reproduce or automate a listFlows call in their own workflow without writing code. The script is NOT executed: return its 'content' to the user, mentioning any 'warnings'. Call listScriptTargets to discover the valid targets.")
+    public ScriptDto generateFlowsScript(
+            @ToolArg(description = SOURCE_ARG) String source,
+            @ToolArg(description = QUERY_ARG, required = false, defaultValue = DEFAULT_QUERY) String query,
+            @ToolArg(description = DATABASE_ARG, required = false, defaultValue = NO_DATABASE_KEYWORD) String database,
+            @ToolArg(description = SCRIPT_LANGUAGES_ARG, required = false, defaultValue = ANY_KEYWORD) String languages,
+            @ToolArg(description = SCRIPT_MAX_RESULTS_ARG, required = false, defaultValue = "" + AUTO_LIMIT)
+                    int maxResults,
+            @ToolArg(description = TARGET_ARG, required = false, defaultValue = ProtoScript.DEFAULT_TARGET)
+                    String target,
+            @ToolArg(description = CLI_LAUNCHER_ARG, required = false) List<String> cliLauncher,
+            @ToolArg(description = REST_ENDPOINT_ARG, required = false) String restEndpoint,
+            @ToolArg(description = OUTPUT_FILE_ARG, required = false) String outputFile) {
+        getPublicSourceForMcp(source);
+        FlowsRequest request = FlowsRequest.builder()
+                .databaseOf(database)
+                .languagesOf(languages)
+                .query(query)
+                .maxResults(maxResults)
+                .build();
+        return generateScript(source, request, target, cliLauncher, restEndpoint, outputFile);
+    }
+
+    private ScriptDto generateScript(
+            String source,
+            Request request,
+            String target,
+            List<String> cliLauncher,
+            String restEndpoint,
+            String outputFile) {
+        return ProtoScript.fromScript(scripts.generate(
+                ScriptTarget.parse(target),
+                source,
+                request,
+                ProtoScript.toScriptOptions(cliLauncher, restEndpoint, blankToNull(outputFile))));
+    }
+
+    private static String resolveKey(
+            Provider<WebSource> provider,
+            String flow,
+            String key,
+            Map<String, String> dimensions,
+            String database,
+            String languages)
+            throws IOException {
+        if (dimensions == null || dimensions.isEmpty()) {
+            return key;
+        }
+        Structure structure = provider.getMeta(MetaRequest.builder()
+                        .flowOf(flow)
+                        .databaseOf(database)
+                        .languagesOf(languages)
+                        .build())
+                .getStructure();
+        return buildKey(structure, dimensions).toString();
+    }
+
+    private static void applyObsFilters(DataRequest.Builder request, String start, String end, int firstN, int lastN) {
         if (start != null && !start.isBlank()) {
             request.startPeriodOf(start.trim());
         }
@@ -324,7 +439,10 @@ public class SdmxdlMcpService2 {
         if (lastN > 0) {
             request.lastNObservations(lastN);
         }
-        return ProtoApi.fromDataSet(provider.getData(request.build()));
+    }
+
+    private static String blankToNull(String value) {
+        return value != null && !value.isBlank() ? value : null;
     }
 
     @Tool(

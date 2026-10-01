@@ -1,0 +1,23 @@
+{{#warnings}}
+# Warning: {{.}}
+{{/warnings}}
+{{#hasWarnings}}
+
+{{/hasWarnings}}
+import os
+import subprocess
+import tempfile
+
+import pandas as pd
+
+with tempfile.NamedTemporaryFile(suffix=".csv", delete=False) as tmp:
+    outfile = tmp.name
+
+subprocess.run({{arguments}}, check=True)
+
+df = pd.read_csv(outfile)[{{columns}}]
+os.unlink(outfile)
+{{#hasOutputFile}}
+df.to_csv({{outputFile}}, index=False)
+{{/hasOutputFile}}
+df

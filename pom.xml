@@ -39,6 +39,7 @@
         <module>sdmx-dl-provider-dialects</module>
         <module>sdmx-dl-provider-connectors</module>
         <module>sdmx-dl-provider-px</module>
+        <module>sdmx-dl-script</module>
         <module>sdmx-dl-cli</module>
         <module>sdmx-dl-desktop</module>
         <module>sdmx-dl-standalone</module>
@@ -136,6 +137,11 @@
                 <groupId>dev.failsafe</groupId>
                 <artifactId>failsafe</artifactId>
                 <version>3.3.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.spullara.mustache.java</groupId>
+                <artifactId>compiler</artifactId>
+                <version>0.9.14</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

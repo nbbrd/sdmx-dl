@@ -28,6 +28,7 @@ flowchart TB
     r --- l([list]) --- sources & databases & flows & dimensions & attributes & codes & availability & features & plugins
     r --- c([check]) --- status & access & config & xsources[sources]
     r --- s([setup]) --- completion & launcher
+    r --- x([script]) --- xdata[data] & xflows[flows] & targets
 
     classDef default fill:#93a1a1,stroke-width:0px 
     linkStyle default stroke:#93a1a1
@@ -65,6 +66,13 @@ flowchart TB
     click s "#setup" "setup command"
     click completion "#setup-completion" "setup completion command"
     click launcher "#setup-launcher" "setup launcher command"
+
+    classDef xx fill:#6c71c4
+    class x,xdata,xflows,targets xx;
+    click x "#script" "script command"
+    click xdata "#script-data" "script data command"
+    click xflows "#script-flows" "script flows command"
+    click targets "#script-targets" "script targets command"
 ```
 
 {{< shields_io/badge label="fetch" color="dc322f" >}}
@@ -114,6 +122,15 @@ Setup sdmx-dl.
 Subcommands:
 [completion](#setup-completion),
 [launcher](#setup-launcher)
+
+{{< shields_io/badge label="script" color="6c71c4" >}}
+
+Generate ready-to-run scripts that perform a request in another language (see [Generate scripts]({{< relref "/integration/generate-scripts" >}})).
+
+Subcommands:
+[data](#script-data),
+[flows](#script-flows),
+[targets](#script-targets)
 
 ## Commands details
 
@@ -775,3 +792,95 @@ CSV columns:
 
 {{< shields_io/badge label="setup" message="launcher" color="b58900" >}}<br>
 
+{{< shields_io/badge label="script" message="data" color="6c71c4" >}}
+
+Generate a script that downloads time series observations, reshaped as `Series`, `ObsPeriod`, `ObsValue` columns.
+
+Example: <code>sdmx-dl <font color="#6c71c4">script data</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M.CHF.EUR.SP00.A</abbr> <abbr title="options">--last-n 12 -t r/rest</abbr></code>  
+
+{{< tabs "script-data" >}}
+{{< tab "Parameters" >}}
+
+1. [`source`](../datatypes#source) - Data source name.
+2. [`flow`](../datatypes#flow) - Data flow reference.
+3. [`key`](../datatypes#key) - Data key.
+
+{{< /tab >}}
+{{< tab "Options" >}}
+
+Main options:
+- [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
+- [`-d, --database<database>`](../options#database) - Database reference.
+- [`-l, --languages<langs>`](../options#languages) - Language priority list.
+
+Other options:
+[`Data filtering`](../options#data-filtering),
+[`Script`](../options#script),
+[`Network`](../options#network)
+
+{{< /tab >}}
+{{< tab "Output" >}}
+
+Script content, in the language of the [target](../options#target).
+
+{{< /tab >}}
+{{< /tabs >}}
+
+{{< shields_io/badge label="script" message="flows" color="6c71c4" >}}
+
+Generate a script that lists or searches data flows, as `Ref`, `Name`, `Description` columns.
+
+Example: <code>sdmx-dl <font color="#6c71c4">script flows</font> <abbr title="source">ECB</abbr> <abbr title="options">-t python/rest</abbr></code>  
+
+{{< tabs "script-flows" >}}
+{{< tab "Parameters" >}}
+
+1. [`source`](../datatypes#source) - Data source name.
+
+{{< /tab >}}
+{{< tab "Options" >}}
+
+Main options:
+- [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
+- [`-d, --database<database>`](../options#database) - Database reference.
+- [`-l, --languages<langs>`](../options#languages) - Language priority list.
+- [`-q, --query<query>`](../options#query) - Free-text search query.
+- [`-m, --max-results<n>`](../options#max-results) - Maximum number of results.
+- [`--plain-description`](../options#plain-description) - Strip markup from descriptions.
+- [`--max-description-length<length>`](../options#max-description-length) - Maximum description length.
+
+Other options:
+[`Script`](../options#script),
+[`Network`](../options#network)
+
+{{< /tab >}}
+{{< tab "Output" >}}
+
+Script content, in the language of the [target](../options#target).
+
+{{< /tab >}}
+{{< /tabs >}}
+
+{{< shields_io/badge label="script" message="targets" color="6c71c4" >}}
+
+List the available script targets.
+
+Example: <code>sdmx-dl <font color="#6c71c4">script targets</font></code>  
+
+{{< tabs "script-targets" >}}
+{{< tab "Options" >}}
+
+Other options:
+[`CSV`](../options#csv)
+
+{{< /tab >}}
+{{< tab "Output" >}}
+
+CSV columns:
+1. [`Target:string`](../datatypes#string)
+2. [`Language:string`](../datatypes#string)
+3. [`Transport:string`](../datatypes#string)
+4. [`Commands:list`](../datatypes#list)
+
+{{< /tab >}}
+{{< /tabs >}}

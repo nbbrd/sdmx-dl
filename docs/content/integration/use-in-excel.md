@@ -53,6 +53,14 @@ For simpler discovery endpoints such as `/sources` or `/{source}/flows`, you can
 
 {{< /tabs >}}
 
+## Generate this query
+
+sdmx-dl can [generate]({{< relref "/integration/generate-scripts" >}}) the Power Query query above for any request:
+
+```shell
+sdmx-dl script data ECB EXR M.CHF.EUR.SP00.A --last-n 12 -t powerquery/rest
+```
+
 ## Notes
 
 - The CLI route is the simplest option when Excel only needs a file to open or refresh from disk.
