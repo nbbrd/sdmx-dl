@@ -5,7 +5,7 @@ import nbbrd.design.NonNegative;
 
 @lombok.Value
 @lombok.Builder
-public class FlowsRequest implements HasSearchQuery, HasLimit {
+public class FlowsRequest implements HasSearch {
 
     public static final FlowsRequest DEFAULT = FlowsRequest.builder().build();
 
@@ -19,7 +19,7 @@ public class FlowsRequest implements HasSearchQuery, HasLimit {
     @NonNull String query = NO_QUERY;
 
     @lombok.Builder.Default
-    @NonNegative int maxResults = NO_LIMIT;
+    int maxResults = AUTO_LIMIT;
 
     /**
      * Whether flow descriptions should have markup (e.g. HTML tags) stripped

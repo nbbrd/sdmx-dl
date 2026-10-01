@@ -1,8 +1,8 @@
 package sdmxdl.grpc.v2;
 
 import static sdmxdl.DatabaseRef.NO_DATABASE_KEYWORD;
-import static sdmxdl.HasLimit.NO_LIMIT;
-import static sdmxdl.HasSearchQuery.NO_QUERY;
+import static sdmxdl.HasSearch.AUTO_LIMIT;
+import static sdmxdl.HasSearch.NO_QUERY;
 import static sdmxdl.Languages.ANY_KEYWORD;
 
 import io.quarkus.arc.Arc;
@@ -41,8 +41,8 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
     public Multi<WebSourceDto> listSources(WebSourcesRequestDto request) {
         List<WebSource> result = manager.listSources(WebSourcesRequest.builder()
                 .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
-                .query(request.hasQuery() ? request.getQuery() : HasSearchQuery.NO_QUERY)
-                .maxResults(request.hasMaxResults() ? request.getMaxResults() : HasLimit.NO_LIMIT)
+                .query(request.hasQuery() ? request.getQuery() : NO_QUERY)
+                .maxResults(request.hasMaxResults() ? request.getMaxResults() : AUTO_LIMIT)
                 .confidentialityThreshold(
                         request.hasMaxConfidentiality()
                                 ? ProtoApi.toConfidentiality(request.getMaxConfidentiality())
@@ -57,8 +57,8 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
         return multiOfIO(() -> manager.usingName(request.getSource())
                         .listDatabases(DatabasesRequest.builder()
                                 .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
-                                .query(request.hasQuery() ? request.getQuery() : HasSearchQuery.NO_QUERY)
-                                .maxResults(request.hasMaxResults() ? request.getMaxResults() : HasLimit.NO_LIMIT)
+                                .query(request.hasQuery() ? request.getQuery() : NO_QUERY)
+                                .maxResults(request.hasMaxResults() ? request.getMaxResults() : AUTO_LIMIT)
                                 .build()))
                 .map(ProtoApi::fromDatabase);
     }
@@ -69,8 +69,8 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
                         .listFlows(FlowsRequest.builder()
                                 .databaseOf(request.hasDatabase() ? request.getDatabase() : NO_DATABASE_KEYWORD)
                                 .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
-                                .query(request.hasQuery() ? request.getQuery() : HasSearchQuery.NO_QUERY)
-                                .maxResults(request.hasMaxResults() ? request.getMaxResults() : HasLimit.NO_LIMIT)
+                                .query(request.hasQuery() ? request.getQuery() : NO_QUERY)
+                                .maxResults(request.hasMaxResults() ? request.getMaxResults() : AUTO_LIMIT)
                                 .build()))
                 .map(ProtoApi::fromDataflow);
     }
@@ -94,7 +94,7 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
                                 .databaseOf(request.hasDatabase() ? request.getDatabase() : NO_DATABASE_KEYWORD)
                                 .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
                                 .query(request.hasQuery() ? request.getQuery() : NO_QUERY)
-                                .maxResults(request.hasMaxResults() ? request.getMaxResults() : NO_LIMIT)
+                                .maxResults(request.hasMaxResults() ? request.getMaxResults() : AUTO_LIMIT)
                                 .build()))
                 .map(ProtoApi::fromDimension);
     }
@@ -107,7 +107,7 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
                                 .databaseOf(request.hasDatabase() ? request.getDatabase() : NO_DATABASE_KEYWORD)
                                 .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
                                 .query(request.hasQuery() ? request.getQuery() : NO_QUERY)
-                                .maxResults(request.hasMaxResults() ? request.getMaxResults() : NO_LIMIT)
+                                .maxResults(request.hasMaxResults() ? request.getMaxResults() : AUTO_LIMIT)
                                 .build()))
                 .map(ProtoApi::fromAttribute);
     }
@@ -155,7 +155,7 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
                                 .databaseOf(request.hasDatabase() ? request.getDatabase() : NO_DATABASE_KEYWORD)
                                 .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
                                 .query(request.hasQuery() ? request.getQuery() : NO_QUERY)
-                                .maxResults(request.hasMaxResults() ? request.getMaxResults() : NO_LIMIT)
+                                .maxResults(request.hasMaxResults() ? request.getMaxResults() : AUTO_LIMIT)
                                 .build()))
                 .map(codes -> CodelistDto.newBuilder()
                         .setRef("")

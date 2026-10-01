@@ -112,7 +112,7 @@ A few things to keep in mind:
 - Only sources marked as **public** are exposed; restricted/private sources are hidden.
 - It is **read-only**: there is no way to modify configuration or state through it.
 - Some fields are truncated or simplified to save tokens (for example, flow descriptions are capped in length, and metadata is returned as a skeleton without the codes of coded dimensions).
-- List and search are unified: every listing tool accepts an optional `query`. When `query` is empty, entries are returned in their natural order (sorted or as defined) and truncated to `maxResults` (`0` = no limit). When `query` is non-empty, entries are ranked by relevance (hybrid BM25 + trigram search) and limited to `maxResults`.
+- List and search are unified: every listing tool accepts an optional `query`. When `query` is empty, entries are returned in their natural order (sorted or as defined) and truncated to `maxResults`. When `query` is non-empty, entries are ranked by relevance (hybrid BM25 + trigram search) and limited to `maxResults`. By default, `maxResults` returns everything without query and the 10 best matches with a query; `0` means no limit. The MCP tools always default to 10.
 
 Available tools:
 

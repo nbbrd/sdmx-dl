@@ -2,8 +2,8 @@ package sdmxdl.grpc.v2;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static sdmxdl.DatabaseRef.NO_DATABASE_KEYWORD;
-import static sdmxdl.HasLimit.NO_LIMIT;
-import static sdmxdl.HasSearchQuery.NO_QUERY;
+import static sdmxdl.HasSearch.AUTO_LIMIT;
+import static sdmxdl.HasSearch.NO_QUERY;
 import static sdmxdl.Languages.ANY_KEYWORD;
 
 import io.quarkus.arc.Arc;
@@ -77,7 +77,7 @@ public class SdmxdlRestService2 {
     public Multi<WebSourceDto> listSources(
             @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages,
             @QueryParam("query") @DefaultValue(NO_QUERY) String query,
-            @QueryParam("maxResults") @DefaultValue("" + NO_LIMIT) int maxResults,
+            @QueryParam("maxResults") @DefaultValue("" + AUTO_LIMIT) int maxResults,
             @QueryParam("maxConfidentiality") @DefaultValue("SECRET") String maxConfidentiality) {
         List<WebSource> result = manager.listSources(WebSourcesRequest.builder()
                 .languagesOf(languages)
@@ -95,7 +95,7 @@ public class SdmxdlRestService2 {
             @PathParam("source") String source,
             @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages,
             @QueryParam("query") @DefaultValue(NO_QUERY) String query,
-            @QueryParam("maxResults") @DefaultValue("" + NO_LIMIT) int maxResults) {
+            @QueryParam("maxResults") @DefaultValue("" + AUTO_LIMIT) int maxResults) {
         return multiOfIO(() -> manager.usingName(source)
                         .listDatabases(DatabasesRequest.builder()
                                 .languagesOf(languages)
@@ -112,7 +112,7 @@ public class SdmxdlRestService2 {
             @QueryParam("database") @DefaultValue(NO_DATABASE_KEYWORD) String database,
             @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages,
             @QueryParam("query") @DefaultValue(NO_QUERY) String query,
-            @QueryParam("maxResults") @DefaultValue("" + NO_LIMIT) int maxResults) {
+            @QueryParam("maxResults") @DefaultValue("" + AUTO_LIMIT) int maxResults) {
         return multiOfIO(() -> manager.usingName(source)
                         .listFlows(FlowsRequest.builder()
                                 .databaseOf(database)
@@ -145,7 +145,7 @@ public class SdmxdlRestService2 {
             @PathParam("source") String source,
             @PathParam("flow") String flow,
             @QueryParam("query") @DefaultValue(NO_QUERY) String query,
-            @QueryParam("maxResults") @DefaultValue("" + NO_LIMIT) int maxResults,
+            @QueryParam("maxResults") @DefaultValue("" + AUTO_LIMIT) int maxResults,
             @QueryParam("database") @DefaultValue(NO_DATABASE_KEYWORD) String database,
             @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages) {
         return multiOfIO(() -> manager.usingName(source)
@@ -165,7 +165,7 @@ public class SdmxdlRestService2 {
             @PathParam("source") String source,
             @PathParam("flow") String flow,
             @QueryParam("query") @DefaultValue(NO_QUERY) String query,
-            @QueryParam("maxResults") @DefaultValue("" + NO_LIMIT) int maxResults,
+            @QueryParam("maxResults") @DefaultValue("" + AUTO_LIMIT) int maxResults,
             @QueryParam("database") @DefaultValue(NO_DATABASE_KEYWORD) String database,
             @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages) {
         return multiOfIO(() -> manager.usingName(source)
@@ -242,7 +242,7 @@ public class SdmxdlRestService2 {
             @PathParam("flow") String flow,
             @PathParam("concept") String concept,
             @QueryParam("query") @DefaultValue(NO_QUERY) String query,
-            @QueryParam("maxResults") @DefaultValue("" + NO_LIMIT) int maxResults,
+            @QueryParam("maxResults") @DefaultValue("" + AUTO_LIMIT) int maxResults,
             @QueryParam("database") @DefaultValue(NO_DATABASE_KEYWORD) String database,
             @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages) {
         return uniOfIO(() -> manager.usingName(source)

@@ -12,7 +12,9 @@ import sdmxdl.DatabasesRequest;
 
 /**
  * @author Philippe Charles
+ * @deprecated use {@code list databases --query} instead
  */
+@Deprecated
 @CommandLine.Command(name = "databases")
 public final class SearchDatabasesCommand implements Callable<Void> {
 

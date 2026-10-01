@@ -11,7 +11,9 @@ import sdmxdl.web.WebSourcesRequest;
 
 /**
  * @author Philippe Charles
+ * @deprecated use {@code list sources --query} instead
  */
+@Deprecated
 @CommandLine.Command(name = "sources")
 public final class SearchSourcesCommand implements Callable<Void> {
 

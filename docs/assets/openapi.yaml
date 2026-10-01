@@ -704,7 +704,7 @@ paths:
         schema:
           type: integer
           format: int32
-          default: 0
+          default: -1
       - name: query
         in: query
         schema:
@@ -760,7 +760,7 @@ paths:
         schema:
           type: integer
           format: int32
-          default: 0
+          default: -1
       - name: query
         in: query
         schema:
@@ -801,7 +801,7 @@ paths:
         schema:
           type: integer
           format: int32
-          default: 0
+          default: -1
       - name: query
         in: query
         schema:
@@ -847,7 +847,7 @@ paths:
         schema:
           type: integer
           format: int32
-          default: 0
+          default: -1
       - name: query
         in: query
         schema:
@@ -941,7 +941,7 @@ paths:
         schema:
           type: integer
           format: int32
-          default: 0
+          default: -1
       - name: query
         in: query
         schema:
@@ -1111,7 +1111,7 @@ paths:
         schema:
           type: integer
           format: int32
-          default: 0
+          default: -1
       - name: query
         in: query
         schema:

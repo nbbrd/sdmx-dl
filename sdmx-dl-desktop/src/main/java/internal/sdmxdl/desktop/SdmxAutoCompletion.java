@@ -166,7 +166,7 @@ public abstract class SdmxAutoCompletion {
         private List<Database> load(String term) throws IOException {
             DatabasesRequest request = DatabasesRequest.builder()
                     .languages(languages)
-                    .query(term != null ? term : HasSearchQuery.NO_QUERY)
+                    .query(term != null ? term : HasSearch.NO_QUERY)
                     .build();
             return manager.using(source.get()).listDatabases(request);
         }
@@ -209,7 +209,7 @@ public abstract class SdmxAutoCompletion {
             FlowsRequest request = FlowsRequest.builder()
                     .languages(languages)
                     .database(database.get())
-                    .query(term != null ? term : HasSearchQuery.NO_QUERY)
+                    .query(term != null ? term : HasSearch.NO_QUERY)
                     .build();
             return manager.using(source.get()).listFlows(request);
         }

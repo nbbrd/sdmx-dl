@@ -80,12 +80,11 @@ public final class Provider<SOURCE extends Source> {
      * Lists databases available for the given source request.
      *
      * <p>When {@link DatabasesRequest#getQuery()} is empty, entries are returned sorted by
-     * database reference string value and truncated to {@link DatabasesRequest#getMaxResults()}
-     * when a positive limit is set.
+     * database reference string value and truncated to {@link DatabasesRequest#getEffectiveMaxResults()}.
      *
      * <p>When a non-empty query is provided, entries are ranked by relevance using
      * {@link sdmxdl.web.Search#ofDatabases(java.util.Collection)} and returned best match
-     * first, limited to {@link DatabasesRequest#getMaxResults()} results.
+     * first, limited to {@link DatabasesRequest#getEffectiveMaxResults()} results.
      *
      * @param request source-level request parameters (non-null)
      * @return non-null list of databases (possibly empty), sorted or ranked depending on the query
@@ -109,12 +108,11 @@ public final class Provider<SOURCE extends Source> {
      * Lists flows available in the requested database context.
      *
      * <p>When {@link FlowsRequest#getQuery()} is empty, entries are returned sorted by
-     * flow reference string value and truncated to {@link FlowsRequest#getMaxResults()}
-     * when a positive limit is set.
+     * flow reference string value and truncated to {@link FlowsRequest#getEffectiveMaxResults()}.
      *
      * <p>When a non-empty query is provided, entries are ranked by relevance using
      * {@link sdmxdl.web.Search#ofFlows(java.util.Collection)} and returned best match first,
-     * limited to {@link FlowsRequest#getMaxResults()} results.
+     * limited to {@link FlowsRequest#getEffectiveMaxResults()} results.
      *
      * <p>When {@link FlowsRequest#isPlainDescription()} is {@code true} and/or
      * {@link FlowsRequest#getMaxDescriptionLength()} is set, each flow's description is
@@ -163,12 +161,11 @@ public final class Provider<SOURCE extends Source> {
      * Lists dimensions of the structure associated with the requested flow.
      *
      * <p>When {@link DimensionsRequest#getQuery()} is empty, entries are returned sorted by
-     * index and truncated to {@link DimensionsRequest#getMaxResults()} when a positive
-     * limit is set.
+     * index and truncated to {@link DimensionsRequest#getEffectiveMaxResults()}.
      *
      * <p>When a non-empty query is provided, entries are ranked by relevance using
      * {@link sdmxdl.web.Search#ofDimensions(java.util.Collection)} and returned best match
-     * first, limited to {@link DimensionsRequest#getMaxResults()} results.
+     * first, limited to {@link DimensionsRequest#getEffectiveMaxResults()} results.
      *
      * @param request component-level request parameters (non-null)
      * @return non-null list of dimensions (possibly empty), sorted or ranked depending on the query
@@ -196,12 +193,11 @@ public final class Provider<SOURCE extends Source> {
      * Lists attributes of the structure associated with the requested flow.
      *
      * <p>When {@link AttributesRequest#getQuery()} is empty, entries are returned sorted by
-     * component id and truncated to {@link AttributesRequest#getMaxResults()} when a positive
-     * limit is set.
+     * component id and truncated to {@link AttributesRequest#getEffectiveMaxResults()}.
      *
      * <p>When a non-empty query is provided, entries are ranked by relevance using
      * {@link sdmxdl.web.Search#ofAttributes(java.util.Collection)} and returned best match
-     * first, limited to {@link AttributesRequest#getMaxResults()} results.
+     * first, limited to {@link AttributesRequest#getEffectiveMaxResults()} results.
      *
      * @param request component-level request parameters (non-null)
      * @return non-null list of attributes (possibly empty), sorted or ranked depending on the query
@@ -234,12 +230,11 @@ public final class Provider<SOURCE extends Source> {
      * the matching component is not coded, an empty map is returned.
      *
      * <p>When {@link CodesRequest#getQuery()} is empty, entries are returned in codelist
-     * order and truncated to {@link CodesRequest#getMaxResults()} when a positive limit is
-     * set.
+     * order and truncated to {@link CodesRequest#getEffectiveMaxResults()}.
      *
      * <p>When a non-empty query is provided, entries are ranked by relevance using
      * {@link sdmxdl.web.Search#ofCodes(java.util.Map)} and returned best match first, limited
-     * to {@link CodesRequest#getMaxResults()} results.
+     * to {@link CodesRequest#getEffectiveMaxResults()} results.
      *
      * @param request concept-level request parameters (non-null)
      * @return non-null map of code id to code label (possibly empty), ordered or ranked depending on the query

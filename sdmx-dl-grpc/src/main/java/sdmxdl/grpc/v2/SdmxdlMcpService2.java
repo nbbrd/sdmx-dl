@@ -1,7 +1,7 @@
 package sdmxdl.grpc.v2;
 
 import static sdmxdl.DatabaseRef.NO_DATABASE_KEYWORD;
-import static sdmxdl.HasSearchQuery.NO_QUERY;
+import static sdmxdl.HasSearch.NO_QUERY;
 
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
@@ -42,7 +42,7 @@ public class SdmxdlMcpService2 {
     private static final String QUERY_ARG =
             "Free-text search terms (words from ids or labels, e.g. 'unemployment rate'). Leave empty (default) to list everything instead of searching.";
     private static final String MAX_RESULTS_ARG =
-            "Maximum number of entries to return (default 20). Use 0 for no limit; raise it when results look truncated.";
+            "Maximum number of entries to return (default 10). Use 0 for no limit; raise it when results look truncated.";
     private static final String DIMENSION_ARG =
             "Dimension id exactly as returned by getMeta or listDimensions (e.g. 'CURRENCY').";
     private static final String CONCEPT_ARG =
@@ -61,7 +61,7 @@ public class SdmxdlMcpService2 {
     private static final int MAX_DESCRIPTION_LENGTH = 200;
     private static final String DEFAULT_LAST_N = "20";
     private static final String DEFAULT_FIRST_N = "0";
-    private static final String DEFAULT_MAX_RESULTS = "20";
+    private static final String DEFAULT_MAX_RESULTS = "10";
     private static final String DEFAULT_QUERY = NO_QUERY;
     private static final String DEFAULT_DETAIL = "DATA_ONLY";
     private static final String DEFAULT_KEY = "all";

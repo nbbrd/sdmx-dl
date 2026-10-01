@@ -163,13 +163,12 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
      * Sources are first restricted to non-alias sources whose confidentiality is allowed
      * by {@link WebSourcesRequest#getConfidentialityThreshold()}. Then:
      * <ul>
-     *     <li>if the request has no query ({@link HasSearchQuery#NO_QUERY}), the remaining
+     *     <li>if the request has no query ({@link HasSearch#NO_QUERY}), the remaining
      *     sources are sorted by {@linkplain WebSource#getId() id} and truncated to
-     *     {@link WebSourcesRequest#getMaxResults()} (or all of them if
-     *     {@link HasLimit#NO_LIMIT})</li>
+     *     {@link WebSourcesRequest#getEffectiveMaxResults()}</li>
      *     <li>otherwise, the remaining sources are ranked by relevance to
      *     {@link WebSourcesRequest#getQuery()} using {@link Search#ofSources(Collection, Languages)}
-     *     and limited to {@link WebSourcesRequest#getMaxResults()}</li>
+     *     and limited to {@link WebSourcesRequest#getEffectiveMaxResults()}</li>
      * </ul>
      *
      * @param request the non-null request describing the query, threshold and limit to apply

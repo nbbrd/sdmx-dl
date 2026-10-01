@@ -1,15 +1,13 @@
 package sdmxdl.web;
 
 import lombok.NonNull;
-import nbbrd.design.NonNegative;
 import sdmxdl.Confidentiality;
-import sdmxdl.HasLimit;
-import sdmxdl.HasSearchQuery;
+import sdmxdl.HasSearch;
 import sdmxdl.Languages;
 
 @lombok.Value
 @lombok.Builder
-public class WebSourcesRequest implements HasSearchQuery, HasLimit {
+public class WebSourcesRequest implements HasSearch {
 
     public static final WebSourcesRequest DEFAULT = WebSourcesRequest.builder().build();
 
@@ -20,7 +18,7 @@ public class WebSourcesRequest implements HasSearchQuery, HasLimit {
     @NonNull String query = NO_QUERY;
 
     @lombok.Builder.Default
-    @NonNegative int maxResults = NO_LIMIT;
+    int maxResults = AUTO_LIMIT;
 
     @lombok.Builder.Default
     @NonNull Confidentiality confidentialityThreshold = Confidentiality.SECRET;

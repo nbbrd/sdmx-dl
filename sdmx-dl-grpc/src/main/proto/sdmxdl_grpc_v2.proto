@@ -40,7 +40,7 @@ message EmptyDto {
 
 message WebSourcesRequestDto {
   optional string query = 1;
-  optional int32 max_results = 2;
+  optional int32 max_results = 2; /* absent = all without query, 10 with query; 0 = no limit */
   optional sdmxdl.format.protobuf.ConfidentialityDto max_confidentiality = 3; /* absent = every source */
   optional string languages = 4;
 }
@@ -48,14 +48,14 @@ message WebSourcesRequestDto {
 message WebDatabasesRequestDto {
   string source = 1;
   optional string query = 2;
-  optional int32 max_results = 3;
+  optional int32 max_results = 3; /* absent = all without query, 10 with query; 0 = no limit */
   optional string languages = 4;
 }
 
 message WebFlowsRequestDto {
   string source = 1;
   optional string query = 2;
-  optional int32 max_results = 3;
+  optional int32 max_results = 3; /* absent = all without query, 10 with query; 0 = no limit */
   optional string database = 4;
   optional string languages = 5;
 }
@@ -71,7 +71,7 @@ message WebDimensionsRequestDto {
   string source = 1;
   string flow = 2;
   optional string query = 3;
-  optional int32 max_results = 4;
+  optional int32 max_results = 4; /* absent = all without query, 10 with query; 0 = no limit */
   optional string database = 5;
   optional string languages = 6;
 }
@@ -80,7 +80,7 @@ message WebAttributesRequestDto {
   string source = 1;
   string flow = 2;
   optional string query = 3;
-  optional int32 max_results = 4;
+  optional int32 max_results = 4; /* absent = all without query, 10 with query; 0 = no limit */
   optional string database = 5;
   optional string languages = 6;
 }
@@ -103,7 +103,7 @@ message WebCodesRequestDto {
   string flow = 2;
   string concept = 3; /* dimension or attribute id, as returned by ListDimensions/ListAttributes */
   optional string query = 4;
-  optional int32 max_results = 5;
+  optional int32 max_results = 5; /* absent = all without query, 10 with query; 0 = no limit */
   optional string database = 6;
   optional string languages = 7;
 }

@@ -1,7 +1,7 @@
 package internal.sdmxdl.cli;
 
 import picocli.CommandLine;
-import sdmxdl.HasSearchQuery;
+import sdmxdl.HasSearch;
 
 /**
  * @author Philippe Charles
@@ -12,7 +12,7 @@ public final class ListSearchOptions {
 
     @CommandLine.Option(
             names = {"-q", "--query"},
-            defaultValue = HasSearchQuery.NO_QUERY,
+            defaultValue = HasSearch.NO_QUERY,
             paramLabel = "query",
             descriptionKey = "cli.sdmx.searchQuery")
     private String searchQuery;
@@ -20,7 +20,7 @@ public final class ListSearchOptions {
     @CommandLine.Option(
             names = {"-m", "--max-results"},
             paramLabel = "<limit>",
-            defaultValue = "0",
-            descriptionKey = "cli.sdmx.maxResults")
+            defaultValue = "" + HasSearch.AUTO_LIMIT,
+            descriptionKey = "cli.sdmx.listMaxResults")
     private int maxResults;
 }

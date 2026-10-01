@@ -9,7 +9,7 @@ aliases:
 
 Find the source, database, and flow you want to query.
 
-Discovery and search are the same call at every level: pass a `query`/`maxResults` to search, or omit them to list everything.
+Discovery and search are the same call at every level: pass a `query` to search, or omit it to list everything. By default, a search returns the 10 best matches; set `maxResults` to change it (`0` = no limit).
 Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so partial or approximate queries still surface the right result.
 When `query` is empty, results fall back to being sorted by id instead of ranked by relevance.
 

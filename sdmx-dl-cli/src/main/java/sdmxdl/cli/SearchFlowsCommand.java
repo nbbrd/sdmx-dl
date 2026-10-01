@@ -14,7 +14,9 @@ import sdmxdl.format.csv.SdmxCsvFields;
 
 /**
  * @author Philippe Charles
+ * @deprecated use {@code list flows --query} instead
  */
+@Deprecated
 @CommandLine.Command(name = "flows")
 public final class SearchFlowsCommand implements Callable<Void> {
 

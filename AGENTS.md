@@ -77,7 +77,7 @@ mvn test -pl <module-name> -am    # full test a single module
 - **JUnit 5** with parallel execution enabled (`junit.jupiter.execution.parallel.enabled=true`); **AssertJ** for assertions
 - **Spotless** (`ratchetFrom origin/develop`) runs `check` in the `validate` phase, so only changed files are checked and a violation fails the build before tests run. Fix with `mvn spotless:apply -pl <module-name>`
 - **Slow and network tests**: tests tagged `webQueries` hit live sources and are excluded by default (enable with `-PwebQueries`). The `sdmx-dl-grpc` Quarkus tests start the server and take a few minutes; run them only when that module changes
-- **Generated files**: building `sdmx-dl-grpc` regenerates `docs/assets/openapi.json` and `docs/assets/openapi.yaml`; commit them together with REST/MCP changes
+- **Generated files**: the `package` phase of `sdmx-dl-grpc` copies the generated `openapi.json` and `openapi.yaml` to `docs/assets/` (`mvn package -pl sdmx-dl-grpc -Pyolo -DskipTests`); commit them together with REST/MCP changes
 - **Local artifacts** (after `mvn install -Pyolo`): `sdmx-dl-cli/target/sdmx-dl-cli-<version>-bin.jar` (run with `java -jar`) and `sdmx-dl-grpc/target/sdmx-dl-grpc-<version>-runner.jar` (gRPC port 4557, HTTP/REST/MCP port 4559; override with `-Dquarkus.grpc.server.port=` / `-Dquarkus.http.port=`). Use them to capture real outputs for docs
 
 ## Documentation

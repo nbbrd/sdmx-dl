@@ -95,13 +95,13 @@ public class SdmxdlMcpService2Test {
     }
 
     @Test
-    public void flowsDefaultMaxResultsCapsAt20() {
+    public void flowsDefaultMaxResultsCapsAt10() {
         try (McpAssured.McpStreamableTestClient client = McpAssured.newConnectedStreamableClient()) {
             client.when()
                     .toolsCall("listFlows", Map.of("source", "ECB"), r -> {
                         assertThat(r).returns(false, ToolResponse::isError);
                         List<JsonNode> flows = fromJsonArray(firstText(r));
-                        assertThat(flows).hasSizeLessThanOrEqualTo(20);
+                        assertThat(flows).hasSizeLessThanOrEqualTo(10);
                     })
                     .thenAssertResults();
         }
@@ -148,13 +148,13 @@ public class SdmxdlMcpService2Test {
     }
 
     @Test
-    public void sourcesDefaultMaxResultsCapsAt20() {
+    public void sourcesDefaultMaxResultsCapsAt10() {
         try (McpAssured.McpStreamableTestClient client = McpAssured.newConnectedStreamableClient()) {
             client.when()
                     .toolsCall("listSources", Map.of(), r -> {
                         assertThat(r).returns(false, ToolResponse::isError);
                         List<JsonNode> sources = fromJsonArray(firstText(r));
-                        assertThat(sources).hasSizeLessThanOrEqualTo(20);
+                        assertThat(sources).hasSizeLessThanOrEqualTo(10);
                     })
                     .thenAssertResults();
         }
@@ -227,13 +227,13 @@ public class SdmxdlMcpService2Test {
     }
 
     @Test
-    public void databasesDefaultMaxResultsCapsAt20() {
+    public void databasesDefaultMaxResultsCapsAt10() {
         try (McpAssured.McpStreamableTestClient client = McpAssured.newConnectedStreamableClient()) {
             client.when()
                     .toolsCall("listDatabases", Map.of("source", "ECB"), r -> {
                         assertThat(r).returns(false, ToolResponse::isError);
                         List<JsonNode> databases = fromJsonArray(firstText(r));
-                        assertThat(databases).hasSizeLessThanOrEqualTo(20);
+                        assertThat(databases).hasSizeLessThanOrEqualTo(10);
                     })
                     .thenAssertResults();
         }
@@ -258,13 +258,13 @@ public class SdmxdlMcpService2Test {
     }
 
     @Test
-    public void dimensionsDefaultMaxResultsCapsAt20() {
+    public void dimensionsDefaultMaxResultsCapsAt10() {
         try (McpAssured.McpStreamableTestClient client = McpAssured.newConnectedStreamableClient()) {
             client.when()
                     .toolsCall("listDimensions", Map.of("source", "ECB", "flow", "EXR"), r -> {
                         assertThat(r).returns(false, ToolResponse::isError);
                         List<JsonNode> dimensions = fromJsonArray(firstText(r));
-                        assertThat(dimensions).hasSizeLessThanOrEqualTo(20);
+                        assertThat(dimensions).hasSizeLessThanOrEqualTo(10);
                     })
                     .thenAssertResults();
         }
@@ -298,13 +298,13 @@ public class SdmxdlMcpService2Test {
     }
 
     @Test
-    public void attributesDefaultMaxResultsCapsAt20() {
+    public void attributesDefaultMaxResultsCapsAt10() {
         try (McpAssured.McpStreamableTestClient client = McpAssured.newConnectedStreamableClient()) {
             client.when()
                     .toolsCall("listAttributes", Map.of("source", "ECB", "flow", "EXR"), r -> {
                         assertThat(r).returns(false, ToolResponse::isError);
                         List<JsonNode> attributes = fromJsonArray(firstText(r));
-                        assertThat(attributes).hasSizeLessThanOrEqualTo(20);
+                        assertThat(attributes).hasSizeLessThanOrEqualTo(10);
                     })
                     .thenAssertResults();
         }
@@ -368,13 +368,13 @@ public class SdmxdlMcpService2Test {
     }
 
     @Test
-    public void codesDefaultMaxResultsCapsAt20() {
+    public void codesDefaultMaxResultsCapsAt10() {
         try (McpAssured.McpStreamableTestClient client = McpAssured.newConnectedStreamableClient()) {
             client.when()
                     .toolsCall("listCodes", Map.of("source", "ECB", "flow", "EXR", "concept", "CURRENCY"), r -> {
                         assertThat(r).returns(false, ToolResponse::isError);
                         CodelistDto codes = fromJson(CodelistDto.class, firstText(r));
-                        assertThat(codes.getCodesCount()).isLessThanOrEqualTo(20);
+                        assertThat(codes.getCodesCount()).isLessThanOrEqualTo(10);
                     })
                     .thenAssertResults();
         }

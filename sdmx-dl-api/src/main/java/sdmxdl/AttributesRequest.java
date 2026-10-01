@@ -1,11 +1,10 @@
 package sdmxdl;
 
 import lombok.NonNull;
-import nbbrd.design.NonNegative;
 
 @lombok.Value
 @lombok.Builder
-public class AttributesRequest implements HasSearchQuery, HasLimit {
+public class AttributesRequest implements HasSearch {
 
     @lombok.Builder.Default
     @NonNull DatabaseRef database = DatabaseRef.NO_DATABASE;
@@ -19,7 +18,7 @@ public class AttributesRequest implements HasSearchQuery, HasLimit {
     @NonNull String query = NO_QUERY;
 
     @lombok.Builder.Default
-    @NonNegative int maxResults = NO_LIMIT;
+    int maxResults = AUTO_LIMIT;
 
     public static final class Builder {
 
