@@ -50,7 +50,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
 <meta property="article:section" content="Ws" />
     <meta
       property="article:modified_time"
-      content="2026-09-29T14:03:10+02:00"
+      content="2026-10-01T11:22:50+02:00"
     />
 
 
@@ -71,7 +71,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/ws/",
       "headline": "Web service",
       "description": "\nsdmx-dl WS is a web service that serves as a bridge to any application or language.\nThis service has three endpoints:\na gRPC endpoint which has the best performances but a limited set of clients a REST endpoint which has a wider range of clients but is less efficient an MCP endpoint which lets AI assistants and agents browse and fetch data These endpoints also provides specifications (.proto files and OpenAPI respectively) that can be used to generate client code. They are designed to operate locally as well as on remote machines.",
-      "wordCount": "913",
+      "wordCount": "961",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -82,7 +82,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-29T14:03:10.00Z",
+      "dateModified": "2026-10-01T11:22:50.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1820,8 +1820,8 @@ Its default port is <code>4559</code>, under the <code>/sdmx-dl/v2</code> path p
 			</tr>
 			<tr>
 					<td><code>ListCodes</code></td>
-					<td><code>GET /{source}/{flow}/codes/{dimension}</code></td>
-					<td>List or search the codes of a dimension.</td>
+					<td><code>GET /{source}/{flow}/codes/{concept}</code></td>
+					<td>List or search the codes of a dimension or attribute.</td>
 			</tr>
 			<tr>
 					<td><code>ListAvailability</code></td>
@@ -1871,6 +1871,10 @@ Each series has a <code>key</code>, optional series-level <code>meta</code>, and
 </span></span><span class="line"><span class="cl">  <span class="p">}]</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><ul>
+<li><code>query</code> echoes the request with the <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/api/"
+>Java library</a> names (<code>startPeriod</code>, <code>endPeriod</code>, <code>firstNObservations</code>, <code>lastNObservations</code>), which correspond to the <code>start</code>, <code>end</code>, <code>firstN</code>, and <code>lastN</code> request parameters.</li>
 <li><code>period</code> is an ISO-8601 interval (<code>start/duration</code>); keep the part before <code>/</code> if you only need the start date.</li>
 <li>The <code>detail</code> parameter controls which parts are filled: <code>FULL</code> (default), <code>DATA_ONLY</code> (no <code>meta</code>), <code>NO_DATA</code> (no <code>obs</code>), or <code>SERIES_KEYS_ONLY</code> (keys only).</li>
 <li><code>GetDataStream</code> (<code>GET /{source}/{flow}/data:stream</code>) returns the same series objects as a plain JSON array, without the <code>ref</code>/<code>query</code> wrapper.</li>
@@ -1899,7 +1903,7 @@ Each series has a <code>key</code>, optional series-level <code>meta</code>, and
 <li>Only sources marked as <strong>public</strong> are exposed; restricted/private sources are hidden.</li>
 <li>It is <strong>read-only</strong>: there is no way to modify configuration or state through it.</li>
 <li>Some fields are truncated or simplified to save tokens (for example, flow descriptions are capped in length, and metadata is returned as a skeleton without the codes of coded dimensions).</li>
-<li>List and search are unified: every listing tool accepts an optional <code>query</code>. When <code>query</code> is empty, entries are returned in their natural order (sorted or as defined) and truncated to <code>maxResults</code> (<code>0</code> = no limit). When <code>query</code> is non-empty, entries are ranked by relevance (hybrid BM25 + trigram search) and limited to <code>maxResults</code>.</li>
+<li>List and search are unified: every listing tool accepts an optional <code>query</code>. When <code>query</code> is empty, entries are returned in their natural order (sorted or as defined) and truncated to <code>maxResults</code>. When <code>query</code> is non-empty, entries are ranked by relevance (hybrid BM25 + trigram search) and limited to <code>maxResults</code>. By default, <code>maxResults</code> returns everything without query and the 10 best matches with a query; <code>0</code> means no limit. The MCP tools always default to 10.</li>
 </ul>
 <p>Available tools:</p>
 <div class="table-wrap"> <table>

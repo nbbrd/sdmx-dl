@@ -49,7 +49,7 @@ Keys A key selects one or more series of a flow. It has one code per dimension, 
 <meta property="article:section" content="Usage" />
     <meta
       property="article:modified_time"
-      content="2026-09-29T14:03:10+02:00"
+      content="2026-10-01T11:22:50+02:00"
     />
 
 
@@ -69,7 +69,7 @@ Keys A key selects one or more series of a flow. It has one code per dimension, 
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/browse/",
       "headline": "Browse",
       "description": "Explore a flow’s structure and narrow down valid keys before retrieving data.\nA flow is described by ordered dimensions (which make up the key) and attributes (extra descriptive metadata, not part of the key). Coded dimensions and attributes draw their values from a codelist.\nKeys A key selects one or more series of a flow. It has one code per dimension, in dimension order, separated by dots:",
-      "wordCount": "698",
+      "wordCount": "701",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -80,7 +80,7 @@ Keys A key selects one or more series of a flow. It has one code per dimension, 
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-29T14:03:10.00Z",
+      "dateModified": "2026-10-01T11:22:50.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1944,10 +1944,10 @@ Use <a
   href="#availability"
 >Availability</a> instead.</li>
 <li>Accepts an optional <code>query</code>/<code>maxResults</code> to search/limit results.</li>
-<li>The gRPC <code>concept</code> field is the same value as the REST path segment; use a dimension or attribute id from <a
+<li>The code lookup takes a <strong>concept</strong>, which can be a dimension or an attribute id from <a
   class="gdoc-markdown__link"
   href="#dimensions-and-attributes"
->Dimensions and attributes</a>.</li>
+>Dimensions and attributes</a> (gRPC <code>concept</code> field, REST <code>/codes/{concept}</code> path segment).</li>
 </ul>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="availability"

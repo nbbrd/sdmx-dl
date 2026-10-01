@@ -51,7 +51,7 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
 <meta property="article:section" content="Usage" />
     <meta
       property="article:modified_time"
-      content="2026-09-29T14:03:10+02:00"
+      content="2026-10-01T11:22:50+02:00"
     />
 
 
@@ -83,7 +83,7 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-29T14:03:10.00Z",
+      "dateModified": "2026-10-01T11:22:50.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1849,8 +1849,8 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
 </div>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data <span class="se">\
 </span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;key=M.CHF.EUR.SP00.A&#34;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;startPeriod=2020&#34;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;endPeriod=2022-12&#34;</span>
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;start=2020&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;end=2022-12&#34;</span>
 </span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
     <h4 id="grpc"
     >
@@ -1860,7 +1860,7 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;,&#34;startPeriod&#34;:&#34;2020&#34;,&#34;endPeriod&#34;:&#34;2022-12&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;,&#34;start&#34;:&#34;2020&#34;,&#34;end&#34;:&#34;2022-12&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
 </span></span></code></pre></div></div>
 </div>
 
@@ -1957,8 +1957,8 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
 </div>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data <span class="se">\
 </span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;key=M.CHF.EUR.SP00.A&#34;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;firstNObservations=3&#34;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;lastNObservations=2&#34;</span>
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;firstN=3&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;lastN=2&#34;</span>
 </span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
     <h4 id="grpc"
     >
@@ -1968,7 +1968,7 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;,&#34;firstNObservations&#34;:3,&#34;lastNObservations&#34;:2}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;,&#34;firstN&#34;:3,&#34;lastN&#34;:2}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
 </span></span></code></pre></div></div>
 </div>
 

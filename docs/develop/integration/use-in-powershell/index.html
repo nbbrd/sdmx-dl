@@ -16,7 +16,7 @@
 CLI If sdmx-dl is on your PATH, a script can call it directly and parse its CSV output with ConvertFrom-Csv:
 $data = sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --last-n 12 | ConvertFrom-Csv if ($LASTEXITCODE -ne 0) { throw &#34;sdmx-dl failed with exit code $LASTEXITCODE&#34; } $data | Select-Object Series, ObsPeriod, ObsValue | Format-Table To download several series into files, loop over their keys:
 $outDir = Join-Path $PSScriptRoot &#39;out&#39; New-Item -ItemType Directory -Force -Path $outDir | Out-Null foreach ($currency in &#39;CHF&#39;, &#39;USD&#39;, &#39;GBP&#39;) { sdmx-dl fetch data ECB EXR &#34;M.$currency.EUR.SP00.A&#34; --last-n 12 -o (Join-Path $outDir &#34;ecb-$currency.csv&#34;) if ($LASTEXITCODE -ne 0) { throw &#34;sdmx-dl failed for $currency&#34; } } REST If the web service is running, Invoke-RestMethod returns the JSON response as objects that can be reshaped directly (see the response format):
-$response = Invoke-RestMethod -Uri &#39;http://localhost:4559/sdmx-dl/v2/ECB/EXR/data&#39; ` -Body @{ key = &#39;M.CHF.EUR.SP00.A&#39;; lastNObservations = 12 } $response.data | ForEach-Object { $series = $_ $series.obs | ForEach-Object { [pscustomobject]@{ Series = $series.key ObsPeriod = ($_.period -split &#39;/&#39;)[0] ObsValue = $_.value } } } | Format-Table The same pattern works for discovery endpoints such as sources, flows, or dimensions:
+$response = Invoke-RestMethod -Uri &#39;http://localhost:4559/sdmx-dl/v2/ECB/EXR/data&#39; ` -Body @{ key = &#39;M.CHF.EUR.SP00.A&#39;; lastN = 12 } $response.data | ForEach-Object { $series = $_ $series.obs | ForEach-Object { [pscustomobject]@{ Series = $series.key ObsPeriod = ($_.period -split &#39;/&#39;)[0] ObsValue = $_.value } } } | Format-Table The same pattern works for discovery endpoints such as sources, flows, or dimensions:
 Invoke-RestMethod &#39;http://localhost:4559/sdmx-dl/v2/ECB/flows&#39; | Select-Object -First 5 " />
 
     <title>Use in PowerShell | sdmx-dl</title>
@@ -47,7 +47,7 @@ Invoke-RestMethod &#39;http://localhost:4559/sdmx-dl/v2/ECB/flows&#39; | Select-
 CLI If sdmx-dl is on your PATH, a script can call it directly and parse its CSV output with ConvertFrom-Csv:
 $data = sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --last-n 12 | ConvertFrom-Csv if ($LASTEXITCODE -ne 0) { throw &#34;sdmx-dl failed with exit code $LASTEXITCODE&#34; } $data | Select-Object Series, ObsPeriod, ObsValue | Format-Table To download several series into files, loop over their keys:
 $outDir = Join-Path $PSScriptRoot &#39;out&#39; New-Item -ItemType Directory -Force -Path $outDir | Out-Null foreach ($currency in &#39;CHF&#39;, &#39;USD&#39;, &#39;GBP&#39;) { sdmx-dl fetch data ECB EXR &#34;M.$currency.EUR.SP00.A&#34; --last-n 12 -o (Join-Path $outDir &#34;ecb-$currency.csv&#34;) if ($LASTEXITCODE -ne 0) { throw &#34;sdmx-dl failed for $currency&#34; } } REST If the web service is running, Invoke-RestMethod returns the JSON response as objects that can be reshaped directly (see the response format):
-$response = Invoke-RestMethod -Uri &#39;http://localhost:4559/sdmx-dl/v2/ECB/EXR/data&#39; ` -Body @{ key = &#39;M.CHF.EUR.SP00.A&#39;; lastNObservations = 12 } $response.data | ForEach-Object { $series = $_ $series.obs | ForEach-Object { [pscustomobject]@{ Series = $series.key ObsPeriod = ($_.period -split &#39;/&#39;)[0] ObsValue = $_.value } } } | Format-Table The same pattern works for discovery endpoints such as sources, flows, or dimensions:
+$response = Invoke-RestMethod -Uri &#39;http://localhost:4559/sdmx-dl/v2/ECB/EXR/data&#39; ` -Body @{ key = &#39;M.CHF.EUR.SP00.A&#39;; lastN = 12 } $response.data | ForEach-Object { $series = $_ $series.obs | ForEach-Object { [pscustomobject]@{ Series = $series.key ObsPeriod = ($_.period -split &#39;/&#39;)[0] ObsValue = $_.value } } } | Format-Table The same pattern works for discovery endpoints such as sources, flows, or dimensions:
 Invoke-RestMethod &#39;http://localhost:4559/sdmx-dl/v2/ECB/flows&#39; | Select-Object -First 5 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-powershell/" />
@@ -55,7 +55,7 @@ Invoke-RestMethod &#39;http://localhost:4559/sdmx-dl/v2/ECB/flows&#39; | Select-
 <meta property="article:section" content="Integration" />
     <meta
       property="article:modified_time"
-      content="2026-09-29T14:03:10+02:00"
+      content="2026-10-01T11:22:50+02:00"
     />
 
 
@@ -65,7 +65,7 @@ Invoke-RestMethod &#39;http://localhost:4559/sdmx-dl/v2/ECB/flows&#39; | Select-
 CLI If sdmx-dl is on your PATH, a script can call it directly and parse its CSV output with ConvertFrom-Csv:
 $data = sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --last-n 12 | ConvertFrom-Csv if ($LASTEXITCODE -ne 0) { throw &#34;sdmx-dl failed with exit code $LASTEXITCODE&#34; } $data | Select-Object Series, ObsPeriod, ObsValue | Format-Table To download several series into files, loop over their keys:
 $outDir = Join-Path $PSScriptRoot &#39;out&#39; New-Item -ItemType Directory -Force -Path $outDir | Out-Null foreach ($currency in &#39;CHF&#39;, &#39;USD&#39;, &#39;GBP&#39;) { sdmx-dl fetch data ECB EXR &#34;M.$currency.EUR.SP00.A&#34; --last-n 12 -o (Join-Path $outDir &#34;ecb-$currency.csv&#34;) if ($LASTEXITCODE -ne 0) { throw &#34;sdmx-dl failed for $currency&#34; } } REST If the web service is running, Invoke-RestMethod returns the JSON response as objects that can be reshaped directly (see the response format):
-$response = Invoke-RestMethod -Uri &#39;http://localhost:4559/sdmx-dl/v2/ECB/EXR/data&#39; ` -Body @{ key = &#39;M.CHF.EUR.SP00.A&#39;; lastNObservations = 12 } $response.data | ForEach-Object { $series = $_ $series.obs | ForEach-Object { [pscustomobject]@{ Series = $series.key ObsPeriod = ($_.period -split &#39;/&#39;)[0] ObsValue = $_.value } } } | Format-Table The same pattern works for discovery endpoints such as sources, flows, or dimensions:
+$response = Invoke-RestMethod -Uri &#39;http://localhost:4559/sdmx-dl/v2/ECB/EXR/data&#39; ` -Body @{ key = &#39;M.CHF.EUR.SP00.A&#39;; lastN = 12 } $response.data | ForEach-Object { $series = $_ $series.obs | ForEach-Object { [pscustomobject]@{ Series = $series.key ObsPeriod = ($_.period -split &#39;/&#39;)[0] ObsValue = $_.value } } } | Format-Table The same pattern works for discovery endpoints such as sources, flows, or dimensions:
 Invoke-RestMethod &#39;http://localhost:4559/sdmx-dl/v2/ECB/flows&#39; | Select-Object -First 5 " />
 
 
@@ -77,7 +77,7 @@ Invoke-RestMethod &#39;http://localhost:4559/sdmx-dl/v2/ECB/flows&#39; | Select-
       "name": "Use in PowerShell",
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-powershell/",
       "headline": "Use in PowerShell",
-      "description": "Automate sdmx-dl with PowerShell, on Windows, Linux, or macOS. PowerShell turns CSV and JSON into objects natively, which makes it convenient for filtering, reshaping, and error handling without extra tools.\nCLI If sdmx-dl is on your PATH, a script can call it directly and parse its CSV output with ConvertFrom-Csv:\n$data = sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --last-n 12 | ConvertFrom-Csv if ($LASTEXITCODE -ne 0) { throw \u0022sdmx-dl failed with exit code $LASTEXITCODE\u0022 } $data | Select-Object Series, ObsPeriod, ObsValue | Format-Table To download several series into files, loop over their keys:\n$outDir = Join-Path $PSScriptRoot \u0027out\u0027 New-Item -ItemType Directory -Force -Path $outDir | Out-Null foreach ($currency in \u0027CHF\u0027, \u0027USD\u0027, \u0027GBP\u0027) { sdmx-dl fetch data ECB EXR \u0022M.$currency.EUR.SP00.A\u0022 --last-n 12 -o (Join-Path $outDir \u0022ecb-$currency.csv\u0022) if ($LASTEXITCODE -ne 0) { throw \u0022sdmx-dl failed for $currency\u0022 } } REST If the web service is running, Invoke-RestMethod returns the JSON response as objects that can be reshaped directly (see the response format):\n$response = Invoke-RestMethod -Uri \u0027http:\/\/localhost:4559\/sdmx-dl\/v2\/ECB\/EXR\/data\u0027 \u0060 -Body @{ key = \u0027M.CHF.EUR.SP00.A\u0027; lastNObservations = 12 } $response.data | ForEach-Object { $series = $_ $series.obs | ForEach-Object { [pscustomobject]@{ Series = $series.key ObsPeriod = ($_.period -split \u0027\/\u0027)[0] ObsValue = $_.value } } } | Format-Table The same pattern works for discovery endpoints such as sources, flows, or dimensions:\nInvoke-RestMethod \u0027http:\/\/localhost:4559\/sdmx-dl\/v2\/ECB\/flows\u0027 | Select-Object -First 5 ",
+      "description": "Automate sdmx-dl with PowerShell, on Windows, Linux, or macOS. PowerShell turns CSV and JSON into objects natively, which makes it convenient for filtering, reshaping, and error handling without extra tools.\nCLI If sdmx-dl is on your PATH, a script can call it directly and parse its CSV output with ConvertFrom-Csv:\n$data = sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --last-n 12 | ConvertFrom-Csv if ($LASTEXITCODE -ne 0) { throw \u0022sdmx-dl failed with exit code $LASTEXITCODE\u0022 } $data | Select-Object Series, ObsPeriod, ObsValue | Format-Table To download several series into files, loop over their keys:\n$outDir = Join-Path $PSScriptRoot \u0027out\u0027 New-Item -ItemType Directory -Force -Path $outDir | Out-Null foreach ($currency in \u0027CHF\u0027, \u0027USD\u0027, \u0027GBP\u0027) { sdmx-dl fetch data ECB EXR \u0022M.$currency.EUR.SP00.A\u0022 --last-n 12 -o (Join-Path $outDir \u0022ecb-$currency.csv\u0022) if ($LASTEXITCODE -ne 0) { throw \u0022sdmx-dl failed for $currency\u0022 } } REST If the web service is running, Invoke-RestMethod returns the JSON response as objects that can be reshaped directly (see the response format):\n$response = Invoke-RestMethod -Uri \u0027http:\/\/localhost:4559\/sdmx-dl\/v2\/ECB\/EXR\/data\u0027 \u0060 -Body @{ key = \u0027M.CHF.EUR.SP00.A\u0027; lastN = 12 } $response.data | ForEach-Object { $series = $_ $series.obs | ForEach-Object { [pscustomobject]@{ Series = $series.key ObsPeriod = ($_.period -split \u0027\/\u0027)[0] ObsValue = $_.value } } } | Format-Table The same pattern works for discovery endpoints such as sources, flows, or dimensions:\nInvoke-RestMethod \u0027http:\/\/localhost:4559\/sdmx-dl\/v2\/ECB\/flows\u0027 | Select-Object -First 5 ",
       "wordCount": "317",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
@@ -89,7 +89,7 @@ Invoke-RestMethod &#39;http://localhost:4559/sdmx-dl/v2/ECB/flows&#39; | Select-
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-09-29T14:03:10.00Z",
+      "dateModified": "2026-10-01T11:22:50.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1704,7 +1704,7 @@ PowerShell turns CSV and JSON into objects natively, which makes it convenient f
   href="/sdmx-dl/docs/develop/ws/#response-format"
 >response format</a>):</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nv">$response</span> <span class="p">=</span> <span class="nb">Invoke-RestMethod</span> <span class="n">-Uri</span> <span class="s1">&#39;http://localhost:4559/sdmx-dl/v2/ECB/EXR/data&#39;</span> <span class="p">`</span>
-</span></span><span class="line"><span class="cl">    <span class="n">-Body</span> <span class="vm">@</span><span class="p">{</span> <span class="n">key</span> <span class="p">=</span> <span class="s1">&#39;M.CHF.EUR.SP00.A&#39;</span><span class="p">;</span> <span class="n">lastNObservations</span> <span class="p">=</span> <span class="mf">12</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">-Body</span> <span class="vm">@</span><span class="p">{</span> <span class="n">key</span> <span class="p">=</span> <span class="s1">&#39;M.CHF.EUR.SP00.A&#39;</span><span class="p">;</span> <span class="n">lastN</span> <span class="p">=</span> <span class="mf">12</span> <span class="p">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="nv">$response</span><span class="p">.</span><span class="py">data</span> <span class="p">|</span> <span class="nb">ForEach-Object</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="nv">$series</span> <span class="p">=</span> <span class="nv">$_</span>
