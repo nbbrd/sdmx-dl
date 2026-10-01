@@ -73,7 +73,20 @@ mvn test -pl <module-name> -am    # full test a single module
 ```
 
 - **Java 8 target** with JPMS `module-info.java` compiled separately on JDK 9+ (see `java8-with-jpms` profile in root POM)
+- **JDK per module**: most modules build on JDK 11+; `sdmx-dl-grpc` (Quarkus, `release 17`) is only part of the reactor on JDK 17+ (`java17-modules` profile). Check `java -version` and point `JAVA_HOME` to a JDK 17+ before building or testing it
 - **JUnit 5** with parallel execution enabled (`junit.jupiter.execution.parallel.enabled=true`); **AssertJ** for assertions
+- **Spotless** (`ratchetFrom origin/develop`) runs `check` in the `validate` phase, so only changed files are checked and a violation fails the build before tests run. Fix with `mvn spotless:apply -pl <module-name>`
+- **Slow and network tests**: tests tagged `webQueries` hit live sources and are excluded by default (enable with `-PwebQueries`). The `sdmx-dl-grpc` Quarkus tests start the server and take a few minutes; run them only when that module changes
+- **Generated files**: building `sdmx-dl-grpc` regenerates `docs/assets/openapi.json` and `docs/assets/openapi.yaml`; commit them together with REST/MCP changes
+- **Local artifacts** (after `mvn install -Pyolo`): `sdmx-dl-cli/target/sdmx-dl-cli-<version>-bin.jar` (run with `java -jar`) and `sdmx-dl-grpc/target/sdmx-dl-grpc-<version>-runner.jar` (gRPC port 4557, HTTP/REST/MCP port 4559; override with `-Dquarkus.grpc.server.port=` / `-Dquarkus.http.port=`). Use them to capture real outputs for docs
+
+## Documentation
+
+- `docs/` is a [Hugo](https://gohugo.io) site (extended edition) using the `hugo-geekdoc` theme; content lives in `docs/content/`
+- Check the build with `hugo --quiet -d <temp-dir> --cleanDestinationDir` from `docs/`, then delete the temp dir; never build into `docs/public`
+- Shortcodes: theme ones (`tabs`/`tab` with a unique group name per page, `expand`, `hint`, `relref`) and custom ones in `docs/layouts/shortcodes/` (`sdmx-dl-version`, `sources`, `shields_io`)
+- When moving or merging pages, add `aliases` in the front matter to keep old URLs working
+- Examples and output samples should come from real runs of the local artifacts, not be invented
 
 ## Key Conventions
 
@@ -99,5 +112,5 @@ mvn test -pl <module-name> -am    # full test a single module
 - Do preserve backward compatibility
 - Do not introduce new dependencies without justification
 - Do not rewrite large sections for cleanliness
-- Do not reformat code
+- Do not reformat unrelated code; run `mvn spotless:apply -pl <module-name>` on modules you changed
 - Do not propose additional features or changes beyond the scope of the task
