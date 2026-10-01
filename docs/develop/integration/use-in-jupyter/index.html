@@ -55,7 +55,7 @@ import requests import pandas as pd sources = requests.get(&#34;http://localhost
 <meta property="article:section" content="Integration" />
     <meta
       property="article:modified_time"
-      content="2026-10-01T11:22:50+02:00"
+      content="2026-10-01T14:49:33+02:00"
     />
 
 
@@ -78,7 +78,7 @@ import requests import pandas as pd sources = requests.get(&#34;http://localhost
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-jupyter/",
       "headline": "Use in Jupyter",
       "description": "Bring sdmx-dl into Jupyter notebooks when you want interactive exploration, live charting, or reproducible analysis alongside your data fetching.\nCLI Jupyter can call sdmx-dl using shell commands and then load the output:\nimport subprocess import pandas as pd import tempfile import os outfile = tempfile.NamedTemporaryFile(mode=\u0027w\u0027, suffix=\u0027.csv\u0027, delete=False).name subprocess.run([ \u0027sdmx-dl\u0027, \u0027fetch\u0027, \u0027data\u0027, \u0027ECB\u0027, \u0027EXR\u0027, \u0027M.CHF.EUR.SP00.A\u0027, \u0027--last-n\u0027, \u002712\u0027, \u0027-o\u0027, outfile ], check=True) df = pd.read_csv(outfile)[[\u0027Series\u0027, \u0027ObsPeriod\u0027, \u0027ObsValue\u0027]] os.unlink(outfile) df This approach is ideal when you already use the CLI interactively and want your notebook to reuse the same commands.\nREST If the web service is running, notebooks can fetch JSON directly and reshape it (see the response format):\nimport requests import pandas as pd url = \u0022http:\/\/localhost:4559\/sdmx-dl\/v2\/ECB\/EXR\/data?key=M.CHF.EUR.SP00.A\u0026lastN=12\u0022 payload = requests.get(url).json() records = [] for series in payload[\u0027data\u0027]: for obs in series[\u0027obs\u0027]: records.append({ \u0027Series\u0027: series[\u0027key\u0027], \u0027ObsPeriod\u0027: obs[\u0027period\u0027].split(\u0027\/\u0027)[0], \u0027ObsValue\u0027: obs[\u0027value\u0027] }) df = pd.DataFrame(records) df The same pattern works for discovery endpoints like sources, flows, or dimensions:\nimport requests import pandas as pd sources = requests.get(\u0022http:\/\/localhost:4559\/sdmx-dl\/v2\/sources\u0022).json() df = pd.DataFrame(sources) df.head() ",
-      "wordCount": "329",
+      "wordCount": "362",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -89,7 +89,7 @@ import requests import pandas as pd sources = requests.get(&#34;http://localhost
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-01T11:22:50.00Z",
+      "dateModified": "2026-10-01T14:49:33.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1025,6 +1025,50 @@ import requests import pandas as pd sources = requests.get(&#34;http://localhost
         
       
     
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/integration/generate-scripts/"
+                    class="gdoc-nav__entry"
+                  >
+                    Generate scripts
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
   </ul>
 
             
@@ -1732,6 +1776,21 @@ import requests import pandas as pd sources = requests.get(&#34;http://localhost
 </div>
 
 <div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="generate-these-cells"
+    >
+        Generate these cells
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-jupyter/#generate-these-cells" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Generate these cells" aria-label="Anchor to: Generate these cells" href="#generate-these-cells">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>sdmx-dl can <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/generate-scripts/"
+>generate</a> the notebook cells above for any request:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl script data ECB EXR M.CHF.EUR.SP00.A --last-n <span class="m">12</span> -t jupyter/cli
+</span></span><span class="line"><span class="cl">sdmx-dl script data ECB EXR M.CHF.EUR.SP00.A --last-n <span class="m">12</span> -t jupyter/rest
+</span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="notes"
     >
         Notes
@@ -2294,6 +2353,39 @@ import requests import pandas as pd sources = requests.get(&#34;http://localhost
             
             
           
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
         
 
         

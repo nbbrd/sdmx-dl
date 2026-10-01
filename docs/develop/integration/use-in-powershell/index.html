@@ -55,7 +55,7 @@ Invoke-RestMethod &#39;http://localhost:4559/sdmx-dl/v2/ECB/flows&#39; | Select-
 <meta property="article:section" content="Integration" />
     <meta
       property="article:modified_time"
-      content="2026-10-01T11:22:50+02:00"
+      content="2026-10-01T14:49:33+02:00"
     />
 
 
@@ -78,7 +78,7 @@ Invoke-RestMethod &#39;http://localhost:4559/sdmx-dl/v2/ECB/flows&#39; | Select-
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-powershell/",
       "headline": "Use in PowerShell",
       "description": "Automate sdmx-dl with PowerShell, on Windows, Linux, or macOS. PowerShell turns CSV and JSON into objects natively, which makes it convenient for filtering, reshaping, and error handling without extra tools.\nCLI If sdmx-dl is on your PATH, a script can call it directly and parse its CSV output with ConvertFrom-Csv:\n$data = sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --last-n 12 | ConvertFrom-Csv if ($LASTEXITCODE -ne 0) { throw \u0022sdmx-dl failed with exit code $LASTEXITCODE\u0022 } $data | Select-Object Series, ObsPeriod, ObsValue | Format-Table To download several series into files, loop over their keys:\n$outDir = Join-Path $PSScriptRoot \u0027out\u0027 New-Item -ItemType Directory -Force -Path $outDir | Out-Null foreach ($currency in \u0027CHF\u0027, \u0027USD\u0027, \u0027GBP\u0027) { sdmx-dl fetch data ECB EXR \u0022M.$currency.EUR.SP00.A\u0022 --last-n 12 -o (Join-Path $outDir \u0022ecb-$currency.csv\u0022) if ($LASTEXITCODE -ne 0) { throw \u0022sdmx-dl failed for $currency\u0022 } } REST If the web service is running, Invoke-RestMethod returns the JSON response as objects that can be reshaped directly (see the response format):\n$response = Invoke-RestMethod -Uri \u0027http:\/\/localhost:4559\/sdmx-dl\/v2\/ECB\/EXR\/data\u0027 \u0060 -Body @{ key = \u0027M.CHF.EUR.SP00.A\u0027; lastN = 12 } $response.data | ForEach-Object { $series = $_ $series.obs | ForEach-Object { [pscustomobject]@{ Series = $series.key ObsPeriod = ($_.period -split \u0027\/\u0027)[0] ObsValue = $_.value } } } | Format-Table The same pattern works for discovery endpoints such as sources, flows, or dimensions:\nInvoke-RestMethod \u0027http:\/\/localhost:4559\/sdmx-dl\/v2\/ECB\/flows\u0027 | Select-Object -First 5 ",
-      "wordCount": "317",
+      "wordCount": "349",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -89,7 +89,7 @@ Invoke-RestMethod &#39;http://localhost:4559/sdmx-dl/v2/ECB/flows&#39; | Select-
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-01T11:22:50.00Z",
+      "dateModified": "2026-10-01T14:49:33.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1025,6 +1025,50 @@ Invoke-RestMethod &#39;http://localhost:4559/sdmx-dl/v2/ECB/flows&#39; | Select-
         
       
     
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/integration/generate-scripts/"
+                    class="gdoc-nav__entry"
+                  >
+                    Generate scripts
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
   </ul>
 
             
@@ -1722,6 +1766,21 @@ PowerShell turns CSV and JSON into objects natively, which makes it convenient f
 </div>
 
 <div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="generate-these-scripts"
+    >
+        Generate these scripts
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-powershell/#generate-these-scripts" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Generate these scripts" aria-label="Anchor to: Generate these scripts" href="#generate-these-scripts">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>sdmx-dl can <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/generate-scripts/"
+>generate</a> the scripts above for any request:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl script data ECB EXR M.CHF.EUR.SP00.A --last-n <span class="m">12</span> -t powershell/cli
+</span></span><span class="line"><span class="cl">sdmx-dl script data ECB EXR M.CHF.EUR.SP00.A --last-n <span class="m">12</span> -t powershell/rest
+</span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="notes"
     >
         Notes
@@ -2156,6 +2215,39 @@ PowerShell turns CSV and JSON into objects natively, which makes it convenient f
             
             
           
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
         
 
         

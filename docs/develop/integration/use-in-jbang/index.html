@@ -49,7 +49,7 @@ A simple jbang Java script that uses the sdmx-dl API to print the last 12 observ
 <meta property="article:section" content="Integration" />
     <meta
       property="article:modified_time"
-      content="2026-10-01T11:22:50+02:00"
+      content="2026-10-01T14:49:33+02:00"
     />
 
 
@@ -69,7 +69,7 @@ A simple jbang Java script that uses the sdmx-dl API to print the last 12 observ
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-jbang/",
       "headline": "Use in jbang script",
       "description": "Automate sdmx-dl from a single Java script using jbang, leveraging the Java API without Maven\/Gradle setup.\nA simple jbang Java script that uses the sdmx-dl API to print the last 12 observations as a CSV table:\n\/\/usr\/bin\/env jbang \u0022$0\u0022 \u0022$@\u0022 ; exit $? \/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { var data = SdmxWebManager.ofServiceLoader() .usingName(\u0022ECB\u0022) .getData(DataRequest.builder() .flowOf(\u0022EXR\u0022) .keyOf(\u0022M.CHF.EUR.SP00.A\u0022) .lastNObservations(12) .build()); IO.println(\u0022Series,ObsPeriod,ObsValue\u0022); data.forEach(series -\u003e series.getObs().forEach(obs -\u003e IO.println(series.getKey() \u002b \u0022,\u0022 \u002b obs.getPeriod().getStart() \u002b \u0022,\u0022 \u002b obs.getValue()))); } Save as FetchSdmx.java and run:",
-      "wordCount": "197",
+      "wordCount": "219",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -80,7 +80,7 @@ A simple jbang Java script that uses the sdmx-dl API to print the last 12 observ
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-01T11:22:50.00Z",
+      "dateModified": "2026-10-01T14:49:33.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1016,6 +1016,50 @@ A simple jbang Java script that uses the sdmx-dl API to print the last 12 observ
         
       
     
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/integration/generate-scripts/"
+                    class="gdoc-nav__entry"
+                  >
+                    Generate scripts
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
   </ul>
 
             
@@ -1675,6 +1719,20 @@ A simple jbang Java script that uses the sdmx-dl API to print the last 12 observ
 </span></span></span></code></pre></div><p>Save as <code>FetchSdmx.java</code> and run:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">jbang FetchSdmx.java
 </span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="generate-this-script"
+    >
+        Generate this script
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-jbang/#generate-this-script" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Generate this script" aria-label="Anchor to: Generate this script" href="#generate-this-script">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>sdmx-dl can <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/generate-scripts/"
+>generate</a> the script above for any request:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl script data ECB EXR M.CHF.EUR.SP00.A --last-n <span class="m">12</span> -t jbang/java
+</span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="notes"
     >
         Notes
@@ -2247,6 +2305,44 @@ A simple jbang Java script that uses the sdmx-dl API to print the last 12 observ
     
 
   
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+          
+            
+            
+          
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
 
         
       
@@ -2272,11 +2368,6 @@ A simple jbang Java script that uses the sdmx-dl API to print the last 12 observ
         
         
 
-        
-          
-            
-            
-          
         
 
         
@@ -2682,10 +2773,10 @@ A simple jbang Java script that uses the sdmx-dl API to print the last 12 observ
   
     <a
       class="gdoc-page__nav--next flex align-center"
-      href="/sdmx-dl/docs/develop/api/"
-      title="Java library"
+      href="/sdmx-dl/docs/develop/integration/generate-scripts/"
+      title="Generate scripts"
     >
-      Java library
+      Generate scripts
       <i class="gdoc-icon">gdoc_arrow_right_alt</i>
     </a>
   

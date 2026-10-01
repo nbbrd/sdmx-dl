@@ -51,7 +51,7 @@ Common General-purpose options used by various commands." />
 <meta property="article:section" content="CLI" />
     <meta
       property="article:modified_time"
-      content="2026-10-01T11:22:50+02:00"
+      content="2026-10-01T14:49:33+02:00"
     />
 
 
@@ -72,7 +72,7 @@ Common General-purpose options used by various commands." />
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/cli/options/",
       "headline": "Options",
       "description": "An option has the following caracteristics:\nit has a name prefixed by two hyphens (e.g. --version). it may have a shortcut prefixed by one hyphen (e.g. -h is a shortcut of --help). it is case-sensitive Shortcuts can be grouped behind one hyphen (e.g. -vh is equivalent to -v -h).\nThe options default values are system-independent.\nCommon General-purpose options used by various commands.",
-      "wordCount": "489",
+      "wordCount": "577",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -83,7 +83,7 @@ Common General-purpose options used by various commands." />
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-01T11:22:50.00Z",
+      "dateModified": "2026-10-01T14:49:33.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1019,6 +1019,50 @@ Common General-purpose options used by various commands." />
         
       
     
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/integration/generate-scripts/"
+                    class="gdoc-nav__entry"
+                  >
+                    Generate scripts
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
   </ul>
 
             
@@ -1891,6 +1935,70 @@ so the result is always consistent (but the download is not necessarily smaller)
 <p>When <code>--first-n</code> and <code>--last-n</code> are combined, the result is the union of the first N and the last N
 observations of each series (computed independently after any period filtering).</p>
 <div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="script"
+    >
+        Script
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/options/#script" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Script" aria-label="Anchor to: Script" href="#script">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>Options used by the <code>script</code> commands to <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/generate-scripts/"
+>generate scripts</a> instead of executing requests.</p>
+<div class="table-wrap"> <table>
+	<thead>
+			<tr>
+					<th>Name</th>
+					<th>Shortcut</th>
+					<th>Parameter</th>
+					<th>Description</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td><a id="target" href="#target"><code>--target</code></a></td>
+					<td><code>-t</code></td>
+					<td><code>&lt;language/transport&gt;</code></td>
+					<td>Script target, e.g. <code>r/rest</code> (default: <code>python/cli</code>); see <code>script targets</code> for the available ones.</td>
+			</tr>
+			<tr>
+					<td><a id="cli-launcher" href="#cli-launcher"><code>--cli-launcher</code></a></td>
+					<td>-</td>
+					<td><code>&lt;command&gt;[,&lt;command&gt;...]</code></td>
+					<td>Command used by the script to launch sdmx-dl, comma-separated (default: <code>sdmx-dl</code>).</td>
+			</tr>
+			<tr>
+					<td><a id="rest-endpoint" href="#rest-endpoint"><code>--rest-endpoint</code></a></td>
+					<td>-</td>
+					<td><a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#url"
+><code>&lt;url&gt;</code></a></td>
+					<td>Base URI of the web service used by the script (default: <code>http://localhost:4559/sdmx-dl/v2</code>).</td>
+			</tr>
+			<tr>
+					<td><a id="script-output" href="#script-output"><code>--output</code></a></td>
+					<td><code>-o</code></td>
+					<td><a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#file"
+><code>&lt;file&gt;</code></a></td>
+					<td>File written by the generated script (default: standard output).</td>
+			</tr>
+			<tr>
+					<td><a id="script-file" href="#script-file"><code>--script-file</code></a></td>
+					<td>-</td>
+					<td><a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#file"
+><code>&lt;file&gt;</code></a></td>
+					<td>File where the generated script is saved (default: standard output).</td>
+			</tr>
+	</tbody>
+</table> </div>
+<div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="csv"
     >
         CSV
@@ -2276,6 +2384,39 @@ The format is <a
   
 
   
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
   
     
 

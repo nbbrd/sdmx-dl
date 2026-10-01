@@ -51,7 +51,7 @@ With launcher If sdmx-dl.bat is already on your PATH, a batch file can call it d
 <meta property="article:section" content="Integration" />
     <meta
       property="article:modified_time"
-      content="2026-10-01T11:22:50+02:00"
+      content="2026-10-01T14:49:33+02:00"
     />
 
 
@@ -72,7 +72,7 @@ With launcher If sdmx-dl.bat is already on your PATH, a batch file can call it d
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-batch-file/",
       "headline": "Use in batch file",
       "description": "Automate repeated sdmx-dl CLI calls on Windows by putting them in a .bat file. This is a good fit for scheduled jobs, repeatable downloads, and small automation tasks that do not need a full programming language.\nWith launcher If sdmx-dl.bat is already on your PATH, a batch file can call it directly:\n@echo off setlocal set \u0022OUTDIR=%~dp0out\u0022 if not exist \u0022%OUTDIR%\u0022 mkdir \u0022%OUTDIR%\u0022 sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --last-n 12 -o \u0022%OUTDIR%\\ecb-chf.csv\u0022 endlocal Without installation You can also batch calls without installing anything by invoking the CLI jar directly:\n@echo off setlocal set \u0022SDMX_DL_JAR=C:\\tools\\sdmx-dl-cli-3.2.0-bin.jar\u0022 set \u0022OUTDIR=%~dp0out\u0022 if not exist \u0022%OUTDIR%\u0022 mkdir \u0022%OUTDIR%\u0022 java -jar \u0022%SDMX_DL_JAR%\u0022 fetch data ECB EXR M.CHF.EUR.SP00.A --last-n 12 -o \u0022%OUTDIR%\\ecb-chf.csv\u0022 endlocal ",
-      "wordCount": "256",
+      "wordCount": "278",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -83,7 +83,7 @@ With launcher If sdmx-dl.bat is already on your PATH, a batch file can call it d
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-01T11:22:50.00Z",
+      "dateModified": "2026-10-01T14:49:33.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1019,6 +1019,50 @@ With launcher If sdmx-dl.bat is already on your PATH, a batch file can call it d
         
       
     
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/integration/generate-scripts/"
+                    class="gdoc-nav__entry"
+                  >
+                    Generate scripts
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
   </ul>
 
             
@@ -1702,6 +1746,20 @@ This is a good fit for scheduled jobs, repeatable downloads, and small automatio
 </div>
 
 <div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="generate-this-script"
+    >
+        Generate this script
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-batch-file/#generate-this-script" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Generate this script" aria-label="Anchor to: Generate this script" href="#generate-this-script">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>sdmx-dl can <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/generate-scripts/"
+>generate</a> the script above for any request:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl script data ECB EXR M.CHF.EUR.SP00.A --last-n <span class="m">12</span> -t batch/cli
+</span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="notes"
     >
         Notes
@@ -2067,6 +2125,39 @@ This is a good fit for scheduled jobs, repeatable downloads, and small automatio
             
             
           
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
         
 
         

@@ -50,7 +50,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
 <meta property="article:section" content="Ws" />
     <meta
       property="article:modified_time"
-      content="2026-10-01T11:22:50+02:00"
+      content="2026-10-01T14:49:33+02:00"
     />
 
 
@@ -71,7 +71,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/ws/",
       "headline": "Web service",
       "description": "\nsdmx-dl WS is a web service that serves as a bridge to any application or language.\nThis service has three endpoints:\na gRPC endpoint which has the best performances but a limited set of clients a REST endpoint which has a wider range of clients but is less efficient an MCP endpoint which lets AI assistants and agents browse and fetch data These endpoints also provides specifications (.proto files and OpenAPI respectively) that can be used to generate client code. They are designed to operate locally as well as on remote machines.",
-      "wordCount": "961",
+      "wordCount": "1047",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -82,7 +82,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-01T11:22:50.00Z",
+      "dateModified": "2026-10-01T14:49:33.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1018,6 +1018,50 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
         
       
     
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/integration/generate-scripts/"
+                    class="gdoc-nav__entry"
+                  >
+                    Generate scripts
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
   </ul>
 
             
@@ -1843,6 +1887,24 @@ Its default port is <code>4559</code>, under the <code>/sdmx-dl/v2</code> path p
 					<td><code>GET /statuses</code></td>
 					<td>Check the health of one, several, or all sources.</td>
 			</tr>
+			<tr>
+					<td><code>ListScriptTargets</code></td>
+					<td><code>GET /script/targets</code></td>
+					<td>List the available <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/generate-scripts/#targets"
+>script targets</a>.</td>
+			</tr>
+			<tr>
+					<td><code>GenerateDataScript</code></td>
+					<td><code>GET /{source}/{flow}/data:script</code></td>
+					<td>Generate a script that performs <code>GetData</code> (same parameters, plus <code>target</code>).</td>
+			</tr>
+			<tr>
+					<td><code>GenerateFlowsScript</code></td>
+					<td><code>GET /{source}/flows:script</code></td>
+					<td>Generate a script that performs <code>ListFlows</code> (same parameters, plus <code>target</code>).</td>
+			</tr>
 	</tbody>
 </table> </div>
 <p>All paths above are relative to <code>/sdmx-dl/v2</code>.</p>
@@ -1880,6 +1942,10 @@ Each series has a <code>key</code>, optional series-level <code>meta</code>, and
 <li><code>GetDataStream</code> (<code>GET /{source}/{flow}/data:stream</code>) returns the same series objects as a plain JSON array, without the <code>ref</code>/<code>query</code> wrapper.</li>
 <li>Listing operations (<code>/sources</code>, <code>/{source}/flows</code>, <code>/{source}/{flow}/dimensions</code>, …) return a JSON array of objects that can be turned into a table directly.</li>
 <li><code>ListCodes</code> and <code>ListAvailability</code> return a <code>codes</code> object mapping each code to its label, e.g. <code>{&quot;codes&quot;: {&quot;A&quot;: &quot;Annual&quot;, &quot;Q&quot;: &quot;Quarterly&quot;}}</code>.</li>
+<li>Script operations return the generated script, without executing it: <code>{&quot;target&quot;: &quot;r/rest&quot;, &quot;fileExtension&quot;: &quot;R&quot;, &quot;content&quot;: &quot;...&quot;, &quot;warnings&quot;: []}</code>. See <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/generate-scripts/"
+>Generate scripts</a> for their options (<code>cliLauncher</code>, <code>restEndpoint</code>, <code>outputFile</code>).</li>
 </ul>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="mcp-endpoint"
@@ -1957,6 +2023,18 @@ Each series has a <code>key</code>, optional series-level <code>meta</code>, and
 			<tr>
 					<td><code>status</code></td>
 					<td>Get the monitor status of a single source.</td>
+			</tr>
+			<tr>
+					<td><code>listScriptTargets</code></td>
+					<td>List the available script targets.</td>
+			</tr>
+			<tr>
+					<td><code>generateDataScript</code></td>
+					<td>Generate a ready-to-run script that fetches data (not executed).</td>
+			</tr>
+			<tr>
+					<td><code>generateFlowsScript</code></td>
+					<td>Generate a ready-to-run script that lists flows (not executed).</td>
 			</tr>
 	</tbody>
 </table> </div>
@@ -2230,6 +2308,39 @@ Each series has a <code>key</code>, optional series-level <code>meta</code>, and
   
 
   
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
   
     
 

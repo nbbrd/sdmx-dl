@@ -53,7 +53,7 @@ CLI If sdmx-dl is on your PATH, a script can call it directly and pipe its CSV o
 <meta property="article:section" content="Integration" />
     <meta
       property="article:modified_time"
-      content="2026-10-01T11:22:50+02:00"
+      content="2026-10-01T14:49:33+02:00"
     />
 
 
@@ -75,7 +75,7 @@ CLI If sdmx-dl is on your PATH, a script can call it directly and pipe its CSV o
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-bash/",
       "headline": "Use in bash script",
       "description": "Automate sdmx-dl on Linux and macOS with a bash script. This is a good fit for cron jobs, CI pipelines, and small automation tasks that chain sdmx-dl with other command-line tools.\nCLI If sdmx-dl is on your PATH, a script can call it directly and pipe its CSV output to a CSV-aware tool such as Miller:\n#!\/usr\/bin\/env bash set -euo pipefail sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --last-n 12 \\ | mlr --icsv --opprint cut -o -f Series,ObsPeriod,ObsValue To download several series into files, loop over their keys:\n#!\/usr\/bin\/env bash set -euo pipefail outdir=\u0022$(dirname \u0022$0\u0022)\/out\u0022 mkdir -p \u0022$outdir\u0022 for currency in CHF USD GBP; do sdmx-dl fetch data ECB EXR \u0022M.$currency.EUR.SP00.A\u0022 --last-n 12 -o \u0022$outdir\/ecb-$currency.csv\u0022 done REST If the web service is running, a script can query it with curl and reshape the JSON with jq (see the response format):\n#!\/usr\/bin\/env bash set -euo pipefail echo \u0022Series,ObsPeriod,ObsValue\u0022 curl -fsS -G \u0022http:\/\/localhost:4559\/sdmx-dl\/v2\/ECB\/EXR\/data\u0022 \\ --data-urlencode \u0022key=M.CHF.EUR.SP00.A\u0022 \\ --data-urlencode \u0022lastN=12\u0022 \\ | jq -r \u0027.data[] | .key as $key | .obs[] | [$key, (.period | split(\u0022\/\u0022)[0]), .value] | @csv\u0027 ",
-      "wordCount": "293",
+      "wordCount": "325",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -86,7 +86,7 @@ CLI If sdmx-dl is on your PATH, a script can call it directly and pipe its CSV o
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-01T11:22:50.00Z",
+      "dateModified": "2026-10-01T14:49:33.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1022,6 +1022,50 @@ CLI If sdmx-dl is on your PATH, a script can call it directly and pipe its CSV o
         
       
     
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/integration/generate-scripts/"
+                    class="gdoc-nav__entry"
+                  >
+                    Generate scripts
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
   </ul>
 
             
@@ -1718,6 +1762,21 @@ This is a good fit for cron jobs, CI pipelines, and small automation tasks that 
 </div>
 
 <div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="generate-these-scripts"
+    >
+        Generate these scripts
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-bash/#generate-these-scripts" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Generate these scripts" aria-label="Anchor to: Generate these scripts" href="#generate-these-scripts">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>sdmx-dl can <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/generate-scripts/"
+>generate</a> the scripts above for any request:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl script data ECB EXR M.CHF.EUR.SP00.A --last-n <span class="m">12</span> -t bash/cli
+</span></span><span class="line"><span class="cl">sdmx-dl script data ECB EXR M.CHF.EUR.SP00.A --last-n <span class="m">12</span> -t bash/rest
+</span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="notes"
     >
         Notes
@@ -2116,6 +2175,39 @@ This is a good fit for cron jobs, CI pipelines, and small automation tasks that 
             
             
           
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
         
 
         

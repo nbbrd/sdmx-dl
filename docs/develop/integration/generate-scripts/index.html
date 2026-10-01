@@ -12,12 +12,11 @@
 <meta name="generator" content="Hugo 0.167.0">
 
 
-  <meta name="description" content="Fetch observations and metadata for the key you&rsquo;ve settled on.
-All flavors share the same request shape: source, flow, key, plus optional database, languages, detail, and the period and observation-count filters described below.
-Data Download observations from a dataset using a source, flow, and key.
-API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .build()) .forEach(series -&gt; IO.println(series.getKey())); } CLI sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A WS REST curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data \ --data-urlencode &#34;key=M.CHF.EUR.SP00.A&#34; gRPC grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData CLI output sample ↕ Series,ObsAttributes,ObsPeriod,ObsValue M.CHF.EUR.SP00.A,&#34;OBS_STATUS=A,OBS_CONF=F&#34;,1999-01-01T00:00:00,1.605495 M.CHF.EUR.SP00.A,&#34;OBS_STATUS=A,OBS_CONF=F&#34;,1999-02-01T00:00:00,1.59785 M.CHF.EUR.SP00.A,&#34;OBS_STATUS=A,OBS_CONF=F&#34;,1999-03-01T00:00:00,1.5954304347826 ... WS additionally offers GetDataStream/GET /sdmx-dl/v2/{source}/{flow}/data:stream to stream large responses instead of buffering the full dataset. Narrow your request Restrict a data request to a date range and/or a limited number of observations, so you download only what you need instead of a series&rsquo; full history." />
+  <meta name="description" content="Let sdmx-dl write the integration script for you. Describe a request once (source, flow, key, filters…) and get a ready-to-run script in the language and transport of your choice, already reshaped into a table like the examples of this section.
+The script is only generated, never executed: copy it into your own workflow and run it there.
+Targets A target is written as &lt;language&gt;/&lt;transport&gt;, where the transport is the approach used by the script: cli, rest or java." />
 
-    <title>Retrieve | sdmx-dl</title>
+    <title>Generate scripts | sdmx-dl</title>
 
     <link rel="icon" type="image/svg+xml" href="/sdmx-dl/docs/develop/favicon/favicon.svg" />
 <link
@@ -38,17 +37,16 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
     
   <meta
     property="og:title"
-    content="Retrieve"
+    content="Generate scripts"
   />
   <meta property="og:site_name" content="sdmx-dl" />
-  <meta property="og:description" content="Fetch observations and metadata for the key you’ve settled on.
-All flavors share the same request shape: source, flow, key, plus optional database, languages, detail, and the period and observation-count filters described below.
-Data Download observations from a dataset using a source, flow, and key.
-API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .build()) .forEach(series -&gt; IO.println(series.getKey())); } CLI sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A WS REST curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data \ --data-urlencode &#34;key=M.CHF.EUR.SP00.A&#34; gRPC grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData CLI output sample ↕ Series,ObsAttributes,ObsPeriod,ObsValue M.CHF.EUR.SP00.A,&#34;OBS_STATUS=A,OBS_CONF=F&#34;,1999-01-01T00:00:00,1.605495 M.CHF.EUR.SP00.A,&#34;OBS_STATUS=A,OBS_CONF=F&#34;,1999-02-01T00:00:00,1.59785 M.CHF.EUR.SP00.A,&#34;OBS_STATUS=A,OBS_CONF=F&#34;,1999-03-01T00:00:00,1.5954304347826 ... WS additionally offers GetDataStream/GET /sdmx-dl/v2/{source}/{flow}/data:stream to stream large responses instead of buffering the full dataset. Narrow your request Restrict a data request to a date range and/or a limited number of observations, so you download only what you need instead of a series’ full history." />
+  <meta property="og:description" content="Let sdmx-dl write the integration script for you. Describe a request once (source, flow, key, filters…) and get a ready-to-run script in the language and transport of your choice, already reshaped into a table like the examples of this section.
+The script is only generated, never executed: copy it into your own workflow and run it there.
+Targets A target is written as &lt;language&gt;/&lt;transport&gt;, where the transport is the approach used by the script: cli, rest or java." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve/" />
+<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/generate-scripts/" />
 
-<meta property="article:section" content="Usage" />
+<meta property="article:section" content="Integration" />
     <meta
       property="article:modified_time"
       content="2026-10-01T14:49:33+02:00"
@@ -56,28 +54,27 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
 
 
   <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Retrieve" />
-  <meta name="twitter:description" content="Fetch observations and metadata for the key you’ve settled on.
-All flavors share the same request shape: source, flow, key, plus optional database, languages, detail, and the period and observation-count filters described below.
-Data Download observations from a dataset using a source, flow, and key.
-API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(&#34;ECB&#34;) .getData(DataRequest.builder() .flowOf(&#34;EXR&#34;) .keyOf(&#34;M.CHF.EUR.SP00.A&#34;) .build()) .forEach(series -&gt; IO.println(series.getKey())); } CLI sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A WS REST curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data \ --data-urlencode &#34;key=M.CHF.EUR.SP00.A&#34; gRPC grpcurl -d &#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData CLI output sample ↕ Series,ObsAttributes,ObsPeriod,ObsValue M.CHF.EUR.SP00.A,&#34;OBS_STATUS=A,OBS_CONF=F&#34;,1999-01-01T00:00:00,1.605495 M.CHF.EUR.SP00.A,&#34;OBS_STATUS=A,OBS_CONF=F&#34;,1999-02-01T00:00:00,1.59785 M.CHF.EUR.SP00.A,&#34;OBS_STATUS=A,OBS_CONF=F&#34;,1999-03-01T00:00:00,1.5954304347826 ... WS additionally offers GetDataStream/GET /sdmx-dl/v2/{source}/{flow}/data:stream to stream large responses instead of buffering the full dataset. Narrow your request Restrict a data request to a date range and/or a limited number of observations, so you download only what you need instead of a series’ full history." />
+<meta name="twitter:title" content="Generate scripts" />
+  <meta name="twitter:description" content="Let sdmx-dl write the integration script for you. Describe a request once (source, flow, key, filters…) and get a ready-to-run script in the language and transport of your choice, already reshaped into a table like the examples of this section.
+The script is only generated, never executed: copy it into your own workflow and run it there.
+Targets A target is written as &lt;language&gt;/&lt;transport&gt;, where the transport is the approach used by the script: cli, rest or java." />
 
 
   <script type="application/ld+json">
   {
       "@context": "http://schema.org",
       "@type": "TechArticle",
-      "articleSection": "Usage",
-      "name": "Retrieve",
-      "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve/",
-      "headline": "Retrieve",
-      "description": "Fetch observations and metadata for the key you’ve settled on.\nAll flavors share the same request shape: source, flow, key, plus optional database, languages, detail, and the period and observation-count filters described below.\nData Download observations from a dataset using a source, flow, and key.\nAPI \/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(\u0022ECB\u0022) .getData(DataRequest.builder() .flowOf(\u0022EXR\u0022) .keyOf(\u0022M.CHF.EUR.SP00.A\u0022) .build()) .forEach(series -\u003e IO.println(series.getKey())); } CLI sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A WS REST curl -G localhost:4559\/sdmx-dl\/v2\/ECB\/EXR\/data \\ --data-urlencode \u0022key=M.CHF.EUR.SP00.A\u0022 gRPC grpcurl -d \u0027{\u0022source\u0022:\u0022ECB\u0022,\u0022flow\u0022:\u0022EXR\u0022,\u0022key\u0022:\u0022M.CHF.EUR.SP00.A\u0022}\u0027 -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData CLI output sample ↕ Series,ObsAttributes,ObsPeriod,ObsValue M.CHF.EUR.SP00.A,\u0022OBS_STATUS=A,OBS_CONF=F\u0022,1999-01-01T00:00:00,1.605495 M.CHF.EUR.SP00.A,\u0022OBS_STATUS=A,OBS_CONF=F\u0022,1999-02-01T00:00:00,1.59785 M.CHF.EUR.SP00.A,\u0022OBS_STATUS=A,OBS_CONF=F\u0022,1999-03-01T00:00:00,1.5954304347826 ... WS additionally offers GetDataStream\/GET \/sdmx-dl\/v2\/{source}\/{flow}\/data:stream to stream large responses instead of buffering the full dataset. Narrow your request Restrict a data request to a date range and\/or a limited number of observations, so you download only what you need instead of a series’ full history.",
-      "wordCount": "589",
+      "articleSection": "Integration",
+      "name": "Generate scripts",
+      "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/integration/generate-scripts/",
+      "headline": "Generate scripts",
+      "description": "Let sdmx-dl write the integration script for you. Describe a request once (source, flow, key, filters…) and get a ready-to-run script in the language and transport of your choice, already reshaped into a table like the examples of this section.\nThe script is only generated, never executed: copy it into your own workflow and run it there.\nTargets A target is written as \u003clanguage\u003e\/\u003ctransport\u003e, where the transport is the approach used by the script: cli, rest or java.",
+      "wordCount": "697",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
           "@type": "WebPage",
-          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve/"
+          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/integration/generate-scripts/"
       },
       "copyrightHolder": "sdmx-dl",
       "copyrightYear": "0001",
@@ -161,7 +158,7 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
   href="/sdmx-dl/docs/develop/custom.css"
   media="all"
 />
-  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve/" rel="canonical" type="text/html" />
+  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/generate-scripts/" rel="canonical" type="text/html" />
 
 <!-- Made with Geekdoc theme https://github.com/thegeeklab/hugo-geekdoc -->
 
@@ -555,7 +552,7 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
                 <span class="flex">
                   <a
                     href="/sdmx-dl/docs/develop/usage/retrieve/"
-                    class="gdoc-nav__entry is-active"
+                    class="gdoc-nav__entry"
                   >
                     Retrieve
                   </a>
@@ -1049,7 +1046,7 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
                 <span class="flex">
                   <a
                     href="/sdmx-dl/docs/develop/integration/generate-scripts/"
-                    class="gdoc-nav__entry"
+                    class="gdoc-nav__entry is-active"
                   >
                     Generate scripts
                   </a>
@@ -1673,7 +1670,7 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
     
   
   
-    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/usage/' href='/sdmx-dl/docs/develop/usage/'><span itemprop='name'>Usage</span></a><meta itemprop='position' content='5' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Retrieve</span><meta itemprop='position' content='6' /></li>
+    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/integration/' href='/sdmx-dl/docs/develop/integration/'><span itemprop='name'>Automation & integration</span></a><meta itemprop='position' content='5' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Generate scripts</span><meta itemprop='position' content='6' /></li>
   
 
   
@@ -1692,26 +1689,171 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
     class="gdoc-markdown gdoc-markdown__align--left"
     id="main-content" tabindex="-1"
   >
-    <h1>Retrieve</h1>
+    <h1>Generate scripts</h1>
     
-    <p>Fetch observations and metadata for the key you&rsquo;ve settled on.</p>
-<p>All flavors share the same request shape: <code>source</code>, <code>flow</code>, <a
-  class="gdoc-markdown__link--code"
-  href="/sdmx-dl/docs/develop/usage/browse/#keys"
-><code>key</code></a>, plus optional <code>database</code>, <code>languages</code>, <code>detail</code>, and the <a
-  class="gdoc-markdown__link"
-  href="#narrow-your-request"
->period and observation-count filters</a> described below.</p>
+    <p>Let <strong>sdmx-dl</strong> write the integration script for you.
+Describe a request once (source, flow, key, filters…) and get a ready-to-run script in the language and transport of your choice, already reshaped into a table like the examples of this section.</p>
+<p>The script is only generated, never executed: copy it into your own workflow and run it there.</p>
 <div class="flex align-center gdoc-page__anchorwrap">
-    <h2 id="data"
+    <h2 id="targets"
     >
-        Data
+        Targets
     </h2>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve/#data" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Data" aria-label="Anchor to: Data" href="#data">
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/generate-scripts/#targets" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Targets" aria-label="Anchor to: Targets" href="#targets">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<p>Download observations from a dataset using a source, flow, and key.</p>
+<p>A target is written as <code>&lt;language&gt;/&lt;transport&gt;</code>, where the transport is the <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/#which-approach"
+>approach</a> used by the script: <code>cli</code>, <code>rest</code> or <code>java</code>.</p>
+<div class="table-wrap"> <table>
+	<thead>
+			<tr>
+					<th>Target</th>
+					<th>Script</th>
+					<th>Output</th>
+					<th>Example page</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td><code>batch/cli</code></td>
+					<td>Windows <code>.bat</code> file</td>
+					<td>Raw CLI CSV</td>
+					<td><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/use-in-batch-file/"
+>Use in batch file</a></td>
+			</tr>
+			<tr>
+					<td><code>bash/cli</code></td>
+					<td>bash script, reshaped with Miller (<code>mlr</code>)</td>
+					<td>CSV</td>
+					<td><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/use-in-bash/"
+>Use in bash script</a></td>
+			</tr>
+			<tr>
+					<td><code>bash/rest</code></td>
+					<td>bash script with <code>curl</code> and <code>jq</code></td>
+					<td>CSV</td>
+					<td><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/use-in-bash/"
+>Use in bash script</a></td>
+			</tr>
+			<tr>
+					<td><code>powershell/cli</code></td>
+					<td>PowerShell script</td>
+					<td>CSV</td>
+					<td><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/use-in-powershell/"
+>Use in PowerShell</a></td>
+			</tr>
+			<tr>
+					<td><code>powershell/rest</code></td>
+					<td>PowerShell script</td>
+					<td>CSV</td>
+					<td><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/use-in-powershell/"
+>Use in PowerShell</a></td>
+			</tr>
+			<tr>
+					<td><code>powerquery/rest</code></td>
+					<td>Power Query (M) query for Excel</td>
+					<td>Table</td>
+					<td><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/use-in-excel/"
+>Use in Excel</a></td>
+			</tr>
+			<tr>
+					<td><code>r/cli</code></td>
+					<td>R script</td>
+					<td>CSV</td>
+					<td><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/use-in-r/"
+>Use in R</a></td>
+			</tr>
+			<tr>
+					<td><code>r/rest</code></td>
+					<td>R script (<code>jsonlite</code>)</td>
+					<td>CSV</td>
+					<td><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/use-in-r/"
+>Use in R</a></td>
+			</tr>
+			<tr>
+					<td><code>python/cli</code></td>
+					<td>Python 3.7+ script, standard library only</td>
+					<td>CSV</td>
+					<td><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/use-in-python/"
+>Use in Python</a></td>
+			</tr>
+			<tr>
+					<td><code>python/rest</code></td>
+					<td>Python 3.7+ script, standard library only</td>
+					<td>CSV</td>
+					<td><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/use-in-python/"
+>Use in Python</a></td>
+			</tr>
+			<tr>
+					<td><code>jupyter/cli</code></td>
+					<td>Notebook cell with pandas</td>
+					<td>DataFrame</td>
+					<td><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/use-in-jupyter/"
+>Use in Jupyter</a></td>
+			</tr>
+			<tr>
+					<td><code>jupyter/rest</code></td>
+					<td>Notebook cell with pandas</td>
+					<td>DataFrame</td>
+					<td><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/use-in-jupyter/"
+>Use in Jupyter</a></td>
+			</tr>
+			<tr>
+					<td><code>jbang/java</code></td>
+					<td>Single-file Java script for jbang</td>
+					<td>CSV</td>
+					<td><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/integration/use-in-jbang/"
+>Use in jbang script</a></td>
+			</tr>
+	</tbody>
+</table> </div>
+<p>Every target supports two requests:</p>
+<ul>
+<li><strong>data</strong>: fetch observations, as <code>Series</code>, <code>ObsPeriod</code>, <code>ObsValue</code> columns;</li>
+<li><strong>flows</strong>: list or search the flows of a source, as <code>Ref</code>, <code>Name</code>, <code>Description</code> columns.</li>
+</ul>
+<p>The list of targets is extensible (see <a
+  class="gdoc-markdown__link"
+  href="#custom-targets"
+>Custom targets</a>); ask your installation for the current list with <code>sdmx-dl script targets</code>.</p>
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="usage"
+    >
+        Usage
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/generate-scripts/#usage" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Usage" aria-label="Anchor to: Usage" href="#usage">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
 
 
 
@@ -1719,473 +1861,193 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
     <input
       type="radio"
       class="gdoc-tabs__control hidden"
-      name="tabs-retrieve-data"
-      id="tabs-retrieve-data-0"
+      name="tabs-generate-scripts"
+      id="tabs-generate-scripts-0"
       checked="checked"/>
-    <label for="tabs-retrieve-data-0" class="gdoc-tabs__label">
+    <label for="tabs-generate-scripts-0" class="gdoc-tabs__label">
+      CLI
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>Use the <a
+  class="gdoc-markdown__link--code"
+  href="/sdmx-dl/docs/develop/cli/usage/#script"
+><code>script</code></a> command with the same parameters as <code>fetch data</code> or <code>list flows</code>, plus a <code>-t, --target</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl script data ECB EXR M.CHF.EUR.SP00.A --last-n <span class="m">12</span> -t r/rest
+</span></span><span class="line"><span class="cl">sdmx-dl script flows ECB -q <span class="s2">&#34;exchange rates&#34;</span> -t powershell/cli --script-file flows.ps1
+</span></span><span class="line"><span class="cl">sdmx-dl script targets
+</span></span></code></pre></div></div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-generate-scripts"
+      id="tabs-generate-scripts-1"
+      />
+    <label for="tabs-generate-scripts-1" class="gdoc-tabs__label">
+      REST
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>Call the <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/ws/#rest-endpoint"
+>web service</a> operations ending with <code>:script</code>; they take the same parameters as their regular counterpart, plus a <code>target</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/ECB/EXR/data:script?key=M.CHF.EUR.SP00.A&amp;lastN=12&amp;target=bash/rest&#34;</span>
+</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/ECB/flows:script?query=exchange&amp;target=python/cli&#34;</span>
+</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/script/targets&#34;</span>
+</span></span></code></pre></div><p>The response is a JSON object with the <code>target</code>, the <code>fileExtension</code>, the script <code>content</code> and its <code>warnings</code>.
+When the <code>restEndpoint</code> parameter is absent, REST scripts point to the server that generated them.</p>
+</div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-generate-scripts"
+      id="tabs-generate-scripts-2"
+      />
+    <label for="tabs-generate-scripts-2" class="gdoc-tabs__label">
+      MCP
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      AI assistants connected to the <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/ws/#mcp-endpoint"
+>MCP endpoint</a> can call the <code>listScriptTargets</code>, <code>generateDataScript</code> and <code>generateFlowsScript</code> tools, e.g. when asked <em>&ldquo;give me an R script that downloads the CHF/EUR exchange rate&rdquo;</em>.</div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-generate-scripts"
+      id="tabs-generate-scripts-3"
+      />
+    <label for="tabs-generate-scripts-3" class="gdoc-tabs__label">
       API
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
       <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.DataRequest</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.SdmxWebManager</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.script.ScriptManager</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.script.ScriptOptions</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.script.ScriptTarget</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">()</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">DataRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">flowOf</span><span class="p">(</span><span class="s">&#34;EXR&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">keyOf</span><span class="p">(</span><span class="s">&#34;M.CHF.EUR.SP00.A&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">series</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">series</span><span class="p">.</span><span class="na">getKey</span><span class="p">()));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="n">script</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ScriptManager</span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">().</span><span class="na">generate</span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">ScriptTarget</span><span class="p">.</span><span class="na">parse</span><span class="p">(</span><span class="s">&#34;python/rest&#34;</span><span class="p">),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="s">&#34;ECB&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">DataRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">().</span><span class="na">flowOf</span><span class="p">(</span><span class="s">&#34;EXR&#34;</span><span class="p">).</span><span class="na">keyOf</span><span class="p">(</span><span class="s">&#34;M.CHF.EUR.SP00.A&#34;</span><span class="p">).</span><span class="na">lastNObservations</span><span class="p">(</span><span class="n">12</span><span class="p">).</span><span class="na">build</span><span class="p">(),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">ScriptOptions</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">IO</span><span class="p">.</span><span class="na">print</span><span class="p">(</span><span class="n">script</span><span class="p">.</span><span class="na">getContent</span><span class="p">());</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
-</span></span></span></code></pre></div></div>
-    <input
-      type="radio"
-      class="gdoc-tabs__control hidden"
-      name="tabs-retrieve-data"
-      id="tabs-retrieve-data-1"
-      />
-    <label for="tabs-retrieve-data-1" class="gdoc-tabs__label">
-      CLI
-    </label>
-    <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A
-</span></span></code></pre></div></div>
-    <input
-      type="radio"
-      class="gdoc-tabs__control hidden"
-      name="tabs-retrieve-data"
-      id="tabs-retrieve-data-2"
-      />
-    <label for="tabs-retrieve-data-2" class="gdoc-tabs__label">
-      WS
-    </label>
-    <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <div class="flex align-center gdoc-page__anchorwrap">
-    <h3 id="rest"
+</span></span></span></code></pre></div><p>The generators are provided by the <code>sdmx-dl-script</code> module, which is included in <code>sdmx-dl-standalone</code>.</p></div>
+</div>
+
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="options"
     >
-        REST
-    </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve/#rest" class="gdoc-page__anchor clip flex align-center" title="Anchor to: REST" aria-label="Anchor to: REST" href="#rest">
+        Options
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/generate-scripts/#options" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Options" aria-label="Anchor to: Options" href="#options">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;key=M.CHF.EUR.SP00.A&#34;</span>
-</span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
-    <h3 id="grpc"
+<p>Besides the request itself, a few options adapt the script to the machine that will run it:</p>
+<div class="table-wrap"> <table>
+	<thead>
+			<tr>
+					<th>Option</th>
+					<th>CLI</th>
+					<th>REST / MCP</th>
+					<th>Default</th>
+					<th>Description</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>Target</td>
+					<td><code>-t, --target</code></td>
+					<td><code>target</code></td>
+					<td><code>python/cli</code></td>
+					<td>Language and transport of the script.</td>
+			</tr>
+			<tr>
+					<td>CLI launcher</td>
+					<td><code>--cli-launcher</code></td>
+					<td><code>cliLauncher</code></td>
+					<td><code>sdmx-dl</code></td>
+					<td>Command used by <code>cli</code> scripts to launch sdmx-dl, e.g. <code>jbang,sdmx-dl@nbbrd</code>.</td>
+			</tr>
+			<tr>
+					<td>REST endpoint</td>
+					<td><code>--rest-endpoint</code></td>
+					<td><code>restEndpoint</code></td>
+					<td><code>http://localhost:4559/sdmx-dl/v2</code></td>
+					<td>Base URI of the web service used by <code>rest</code> scripts.</td>
+			</tr>
+			<tr>
+					<td>Output file</td>
+					<td><code>-o, --output</code></td>
+					<td><code>outputFile</code></td>
+					<td>standard output</td>
+					<td>File written by the script.</td>
+			</tr>
+	</tbody>
+</table> </div>
+<p>The CLI also has a <code>--script-file</code> option to save the script itself into a file instead of printing it.</p>
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="warnings"
     >
-        gRPC
-    </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve/#grpc" class="gdoc-page__anchor clip flex align-center" title="Anchor to: gRPC" aria-label="Anchor to: gRPC" href="#grpc">
+        Warnings
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/generate-scripts/#warnings" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Warnings" aria-label="Anchor to: Warnings" href="#warnings">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
-</span></span></code></pre></div></div>
-</div>
-
-
-<div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="7d407e05-2">
-    <span>CLI output sample</span>
-    <span>↕</span>
-  </label>
-  <input id="7d407e05-2" type="checkbox" class="gdoc-expand__control hidden" />
-  <div class="gdoc-markdown--nested gdoc-expand__content">
-    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Series,ObsAttributes,ObsPeriod,ObsValue
-</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A,&#34;OBS_STATUS=A,OBS_CONF=F&#34;,1999-01-01T00:00:00,1.605495
-</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A,&#34;OBS_STATUS=A,OBS_CONF=F&#34;,1999-02-01T00:00:00,1.59785
-</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A,&#34;OBS_STATUS=A,OBS_CONF=F&#34;,1999-03-01T00:00:00,1.5954304347826
-</span></span><span class="line"><span class="cl">...
-</span></span></code></pre></div>
-  </div>
-</div>
-
+<p>Some targets cannot honor every request parameter; for example, the web service does not strip markup from flow descriptions, and a Power Query query returns a table instead of writing a file.
+In that case, the script is still generated, with a warning:</p>
 <ul>
-<li>WS additionally offers <code>GetDataStream</code>/<code>GET /sdmx-dl/v2/{source}/{flow}/data:stream</code> to stream large responses instead of buffering the full dataset.</li>
+<li>as a comment at the top of the script;</li>
+<li>in the <code>warnings</code> field of the REST, gRPC and MCP responses.</li>
 </ul>
 <div class="flex align-center gdoc-page__anchorwrap">
-    <h2 id="narrow-your-request"
+    <h2 id="custom-targets"
     >
-        Narrow your request
+        Custom targets
     </h2>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve/#narrow-your-request" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Narrow your request" aria-label="Anchor to: Narrow your request" href="#narrow-your-request">
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/generate-scripts/#custom-targets" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Custom targets" aria-label="Anchor to: Custom targets" href="#custom-targets">
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<p>Restrict a data request to a date range and/or a limited number of observations, so you download only what you need instead of a series&rsquo; full history.</p>
-<p>Both narrowing mechanisms are just extra fields on the same data request (<code>DataRequest</code>/<code>Query</code> in the API, options on <code>fetch data</code> in the CLI, fields on <code>GetData</code> in the WS), so they can be used separately or together.</p>
-<div class="flex align-center gdoc-page__anchorwrap">
-    <h3 id="by-period"
-    >
-        By period
-    </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve/#by-period" class="gdoc-page__anchor clip flex align-center" title="Anchor to: By period" aria-label="Anchor to: By period" href="#by-period">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-
-
-
-<div class="gdoc-tabs">
-    <input
-      type="radio"
-      class="gdoc-tabs__control hidden"
-      name="tabs-narrow-by-period"
-      id="tabs-narrow-by-period-0"
-      checked="checked"/>
-    <label for="tabs-narrow-by-period-0" class="gdoc-tabs__label">
-      API
-    </label>
-    <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.DataRequest</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.SdmxWebManager</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">()</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">DataRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">flowOf</span><span class="p">(</span><span class="s">&#34;EXR&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">keyOf</span><span class="p">(</span><span class="s">&#34;M.CHF.EUR.SP00.A&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">startPeriodOf</span><span class="p">(</span><span class="s">&#34;2020&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">endPeriodOf</span><span class="p">(</span><span class="s">&#34;2022-12&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">series</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">series</span><span class="p">.</span><span class="na">getKey</span><span class="p">()));</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
-</span></span></span></code></pre></div></div>
-    <input
-      type="radio"
-      class="gdoc-tabs__control hidden"
-      name="tabs-narrow-by-period"
-      id="tabs-narrow-by-period-1"
-      />
-    <label for="tabs-narrow-by-period-1" class="gdoc-tabs__label">
-      CLI
-    </label>
-    <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --start <span class="m">2020</span> --end 2022-12
-</span></span></code></pre></div></div>
-    <input
-      type="radio"
-      class="gdoc-tabs__control hidden"
-      name="tabs-narrow-by-period"
-      id="tabs-narrow-by-period-2"
-      />
-    <label for="tabs-narrow-by-period-2" class="gdoc-tabs__label">
-      WS
-    </label>
-    <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <div class="flex align-center gdoc-page__anchorwrap">
-    <h4 id="rest"
-    >
-        REST
-    </h4>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve/#rest" class="gdoc-page__anchor clip flex align-center" title="Anchor to: REST" aria-label="Anchor to: REST" href="#rest">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;key=M.CHF.EUR.SP00.A&#34;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;start=2020&#34;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;end=2022-12&#34;</span>
-</span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
-    <h4 id="grpc"
-    >
-        gRPC
-    </h4>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve/#grpc" class="gdoc-page__anchor clip flex align-center" title="Anchor to: gRPC" aria-label="Anchor to: gRPC" href="#grpc">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;,&#34;start&#34;:&#34;2020&#34;,&#34;end&#34;:&#34;2022-12&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
-</span></span></code></pre></div></div>
-</div>
-
-
-<div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="22165610-4">
-    <span>CLI output sample</span>
-    <span>↕</span>
-  </label>
-  <input id="22165610-4" type="checkbox" class="gdoc-expand__control hidden" />
-  <div class="gdoc-markdown--nested gdoc-expand__content">
-    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Series,ObsAttributes,ObsPeriod,ObsValue
-</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A,&#34;OBS_STATUS=A,OBS_CONF=F&#34;,2020-01-01T00:00:00,1.07645
-</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A,&#34;OBS_STATUS=A,OBS_CONF=F&#34;,2020-02-01T00:00:00,1.06478
-</span></span><span class="line"><span class="cl">...
-</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A,&#34;OBS_STATUS=A,OBS_CONF=F&#34;,2022-11-01T00:00:00,.9841545454545
-</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A,&#34;OBS_STATUS=A,OBS_CONF=F&#34;,2022-12-01T00:00:00,.9864904761905
-</span></span></code></pre></div>
-  </div>
-</div>
-
-<p>Bounds are inclusive and accept reduced-precision ISO-8601 (<code>&quot;2020&quot;</code>, <code>&quot;2020-12&quot;</code>, <code>&quot;2020-12-01&quot;</code>) on every flavor.</p>
-<div class="flex align-center gdoc-page__anchorwrap">
-    <h3 id="by-observation-count"
-    >
-        By observation count
-    </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve/#by-observation-count" class="gdoc-page__anchor clip flex align-center" title="Anchor to: By observation count" aria-label="Anchor to: By observation count" href="#by-observation-count">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-
-
-
-<div class="gdoc-tabs">
-    <input
-      type="radio"
-      class="gdoc-tabs__control hidden"
-      name="tabs-narrow-by-count"
-      id="tabs-narrow-by-count-0"
-      checked="checked"/>
-    <label for="tabs-narrow-by-count-0" class="gdoc-tabs__label">
-      API
-    </label>
-    <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.DataRequest</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.SdmxWebManager</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">()</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">DataRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">flowOf</span><span class="p">(</span><span class="s">&#34;EXR&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">keyOf</span><span class="p">(</span><span class="s">&#34;M.CHF.EUR.SP00.A&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">firstNObservations</span><span class="p">(</span><span class="n">3</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">lastNObservations</span><span class="p">(</span><span class="n">2</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">series</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">series</span><span class="p">.</span><span class="na">getKey</span><span class="p">()));</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
-</span></span></span></code></pre></div></div>
-    <input
-      type="radio"
-      class="gdoc-tabs__control hidden"
-      name="tabs-narrow-by-count"
-      id="tabs-narrow-by-count-1"
-      />
-    <label for="tabs-narrow-by-count-1" class="gdoc-tabs__label">
-      CLI
-    </label>
-    <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --first-n <span class="m">3</span> --last-n <span class="m">2</span>
-</span></span></code></pre></div></div>
-    <input
-      type="radio"
-      class="gdoc-tabs__control hidden"
-      name="tabs-narrow-by-count"
-      id="tabs-narrow-by-count-2"
-      />
-    <label for="tabs-narrow-by-count-2" class="gdoc-tabs__label">
-      WS
-    </label>
-    <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <div class="flex align-center gdoc-page__anchorwrap">
-    <h4 id="rest"
-    >
-        REST
-    </h4>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve/#rest" class="gdoc-page__anchor clip flex align-center" title="Anchor to: REST" aria-label="Anchor to: REST" href="#rest">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;key=M.CHF.EUR.SP00.A&#34;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;firstN=3&#34;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;lastN=2&#34;</span>
-</span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
-    <h4 id="grpc"
-    >
-        gRPC
-    </h4>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve/#grpc" class="gdoc-page__anchor clip flex align-center" title="Anchor to: gRPC" aria-label="Anchor to: gRPC" href="#grpc">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;,&#34;firstN&#34;:3,&#34;lastN&#34;:2}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
-</span></span></code></pre></div></div>
-</div>
-
-
-<div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="c5fa6552-6">
-    <span>CLI output sample</span>
-    <span>↕</span>
-  </label>
-  <input id="c5fa6552-6" type="checkbox" class="gdoc-expand__control hidden" />
-  <div class="gdoc-markdown--nested gdoc-expand__content">
-    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Series,ObsAttributes,ObsPeriod,ObsValue
-</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A,&#34;OBS_STATUS=A,OBS_CONF=F&#34;,1999-01-01T00:00:00,1.605495
-</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A,&#34;OBS_STATUS=A,OBS_CONF=F&#34;,1999-02-01T00:00:00,1.59785
-</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A,&#34;OBS_STATUS=A,OBS_CONF=F&#34;,1999-03-01T00:00:00,1.5954304347826
-</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A,&#34;OBS_STATUS=A,OBS_CONF=F&#34;,2026-07-01T00:00:00,.9255739130434782
-</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A,&#34;OBS_STATUS=A,OBS_CONF=F&#34;,2026-08-01T00:00:00,.9361857142857143
-</span></span></code></pre></div>
-  </div>
-</div>
-
-<p><code>first-n</code> and <code>last-n</code> can be combined (as above) to get both ends of a series in one call.</p>
-<div class="flex align-center gdoc-page__anchorwrap">
-    <h3 id="combining-both"
-    >
-        Combining both
-    </h3>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve/#combining-both" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Combining both" aria-label="Anchor to: Combining both" href="#combining-both">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-<p>Period and observation-count limits apply together in the same request, e.g. &ldquo;the last 3 observations up to end of 2022, starting no earlier than 2020&rdquo;:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A --start <span class="m">2020</span> --end 2022-12 --last-n <span class="m">3</span>
-</span></span></code></pre></div>
-<div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="d5d2d112-7">
-    <span>CLI output sample</span>
-    <span>↕</span>
-  </label>
-  <input id="d5d2d112-7" type="checkbox" class="gdoc-expand__control hidden" />
-  <div class="gdoc-markdown--nested gdoc-expand__content">
-    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Series,ObsAttributes,ObsPeriod,ObsValue
-</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A,&#34;OBS_STATUS=A,OBS_CONF=F&#34;,2022-10-01T00:00:00,.9790523809524
-</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A,&#34;OBS_STATUS=A,OBS_CONF=F&#34;,2022-11-01T00:00:00,.9841545454545
-</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A,&#34;OBS_STATUS=A,OBS_CONF=F&#34;,2022-12-01T00:00:00,.9864904761905
-</span></span></code></pre></div>
-  </div>
-</div>
-
-<div class="flex align-center gdoc-page__anchorwrap">
-    <h2 id="metadata"
-    >
-        Metadata
-    </h2>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve/#metadata" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Metadata" aria-label="Anchor to: Metadata" href="#metadata">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-<p>Look up descriptive metadata (title, units, notes, source-specific attributes) attached to a series, without downloading the observations themselves.</p>
-
-
-
-<div class="gdoc-tabs">
-    <input
-      type="radio"
-      class="gdoc-tabs__control hidden"
-      name="tabs-inspect-metadata"
-      id="tabs-inspect-metadata-0"
-      checked="checked"/>
-    <label for="tabs-inspect-metadata-0" class="gdoc-tabs__label">
-      API
-    </label>
-    <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.*</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.SdmxWebManager</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">()</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">DataRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">flowOf</span><span class="p">(</span><span class="s">&#34;EXR&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">keyOf</span><span class="p">(</span><span class="s">&#34;M.CHF.EUR.SP00.A&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">detail</span><span class="p">(</span><span class="n">Detail</span><span class="p">.</span><span class="na">NO_DATA</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">series</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">series</span><span class="p">.</span><span class="na">getMeta</span><span class="p">().</span><span class="na">forEach</span><span class="p">((</span><span class="n">concept</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">concept</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34; = &#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">value</span><span class="p">)));</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
-</span></span></span></code></pre></div></div>
-    <input
-      type="radio"
-      class="gdoc-tabs__control hidden"
-      name="tabs-inspect-metadata"
-      id="tabs-inspect-metadata-1"
-      />
-    <label for="tabs-inspect-metadata-1" class="gdoc-tabs__label">
-      CLI
-    </label>
-    <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl fetch meta ECB EXR M.CHF.EUR.SP00.A
-</span></span></code></pre></div></div>
-    <input
-      type="radio"
-      class="gdoc-tabs__control hidden"
-      name="tabs-inspect-metadata"
-      id="tabs-inspect-metadata-2"
-      />
-    <label for="tabs-inspect-metadata-2" class="gdoc-tabs__label">
-      WS
-    </label>
-    <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <p><code>GetData</code>/<code>GetDataStream</code> accept the same <code>detail</code> parameter as the CLI/API; pass <code>NO_DATA</code> to get series-level metadata without downloading observations.</p>
-<div class="flex align-center gdoc-page__anchorwrap">
-    <h4 id="rest"
-    >
-        REST
-    </h4>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve/#rest" class="gdoc-page__anchor clip flex align-center" title="Anchor to: REST" aria-label="Anchor to: REST" href="#rest">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;key=M.CHF.EUR.SP00.A&#34;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;detail=NO_DATA&#34;</span>
-</span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
-    <h4 id="grpc"
-    >
-        gRPC
-    </h4>
-    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve/#grpc" class="gdoc-page__anchor clip flex align-center" title="Anchor to: gRPC" aria-label="Anchor to: gRPC" href="#grpc">
-        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-    </a>
-</div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF.EUR.SP00.A&#34;,&#34;detail&#34;:&#34;NO_DATA&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
-</span></span></code></pre></div><p>For flow-level metadata (dimensions, attributes, codelists) instead of series-level, use <code>GetMeta</code>:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/ECB/EXR/meta&#34;</span>
-</span></span><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetMeta
-</span></span></code></pre></div></div>
-</div>
-
-
-<div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="291c05c3-9">
-    <span>CLI output sample</span>
-    <span>↕</span>
-  </label>
-  <input id="291c05c3-9" type="checkbox" class="gdoc-expand__control hidden" />
-  <div class="gdoc-markdown--nested gdoc-expand__content">
-    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Series,Concept,Value
-</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A,COLLECTION,A
-</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A,UNIT,CHF
-</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A,SOURCE_AGENCY,4F0
-</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A,DECIMALS,4
-</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A,UNIT_INDEX_BASE,99Q1=100
-</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A,UNIT_MULT,0
-</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A,TITLE,Swiss franc/Euro ECB reference exchange rate
-</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A,TIME_FORMAT,P1M
-</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A,TITLE_COMPL,&#34;ECB reference exchange rate, Swiss franc/Euro, 2.15 pm (C.E.T.)&#34;
-</span></span></code></pre></div>
-  </div>
-</div>
-
+<p>Script generation is an extension point of the <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/api/"
+>Java library</a>.
+To add a language, or to replace a built-in generator, implement the <code>sdmxdl.script.spi.ScriptGenerator</code> interface and register it with the Java <code>ServiceLoader</code> (<code>META-INF/services</code> or <code>provides</code> in <code>module-info.java</code>):</p>
 <ul>
-<li><code>detail=NO_DATA</code> is the series-level equivalent of the CLI&rsquo;s <code>fetch meta</code> and the API&rsquo;s <code>Detail.NO_DATA</code>: same request as <a
+<li><code>getScriptTarget()</code> declares the target, e.g. <code>julia/rest</code>;</li>
+<li><code>getScriptRequestTypes()</code> declares the supported requests (<code>DataRequest</code>, <code>FlowsRequest</code>, …);</li>
+<li><code>generateScript(source, request, options)</code> returns the script content, its file extension and its warnings;</li>
+<li><code>getScriptRank()</code> decides which generator wins when several share a target; use <code>EXTERNAL_SCRIPT_RANK</code> to override a built-in one.</li>
+</ul>
+<p>Once the module is on the classpath, its targets appear in every consumer: CLI, web service and MCP.</p>
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="related-features"
+    >
+        Related features
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/integration/generate-scripts/#related-features" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Related features" aria-label="Anchor to: Related features" href="#related-features">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<ul>
+<li><a
   class="gdoc-markdown__link"
-  href="#data"
->Data</a>, just with <code>detail</code> set to skip observations.</li>
-<li>Don&rsquo;t confuse this with flow/structure-level metadata (dimensions, attributes, codelists): that&rsquo;s <code>GetMeta</code>/<code>getMeta(...)</code> on every flavor — see <a
+  href="/sdmx-dl/docs/develop/usage/retrieve/#data"
+>Retrieve data</a></li>
+<li><a
   class="gdoc-markdown__link"
-  href="/sdmx-dl/docs/develop/usage/browse/#dimensions-and-attributes"
->Browse</a>.</li>
+  href="/sdmx-dl/docs/develop/usage/discover/"
+>Discover flows</a></li>
+<li><a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/ws/"
+>Web service</a></li>
 </ul>
 
   </article>
@@ -2366,6 +2228,377 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
         
 
         
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+          
+  
+  
+
+  
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
           
           
         
@@ -2375,6 +2608,12 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
         
 
         
+        
+      
+    
+
+  
+
         
       
     
@@ -2404,383 +2643,6 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
             
             
           
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-          
-  
-  
-
-  
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
-        
-
-        
-          
-        
-
-        
-        
-      
-    
-
-  
-
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
         
 
         
@@ -3174,11 +3036,11 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
   
     <a
       class="gdoc-page__nav--prev flex align-center"
-      href="/sdmx-dl/docs/develop/usage/browse/"
-      title="Browse"
+      href="/sdmx-dl/docs/develop/integration/use-in-jbang/"
+      title="Use in jbang script"
     >
       <i class="gdoc-icon">gdoc_arrow_left_alt</i>
-      Browse
+      Use in jbang script
     </a>
   
 </span>
@@ -3186,10 +3048,10 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
   
     <a
       class="gdoc-page__nav--next flex align-center"
-      href="/sdmx-dl/docs/develop/usage/monitor-and-status/"
-      title="Monitor and status"
+      href="/sdmx-dl/docs/develop/api/"
+      title="Java library"
     >
-      Monitor and status
+      Java library
       <i class="gdoc-icon">gdoc_arrow_right_alt</i>
     </a>
   
