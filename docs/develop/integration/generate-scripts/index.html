@@ -49,7 +49,7 @@ Targets A target is written as &lt;language&gt;/&lt;transport&gt;, where the tra
 <meta property="article:section" content="Integration" />
     <meta
       property="article:modified_time"
-      content="2026-10-02T11:29:06+02:00"
+      content="2026-10-02T12:57:10+02:00"
     />
 
 
@@ -69,7 +69,7 @@ Targets A target is written as &lt;language&gt;/&lt;transport&gt;, where the tra
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/integration/generate-scripts/",
       "headline": "Generate scripts",
       "description": "Let sdmx-dl write the integration script for you. Describe a request once (source, flow, key, filters…) and get a ready-to-run script in the language and transport of your choice, already reshaped into a table like the examples of this section.\nThe script is only generated, never executed: copy it into your own workflow and run it there.\nTargets A target is written as \u003clanguage\u003e\/\u003ctransport\u003e, where the transport is the approach used by the script: cli, rest or java.",
-      "wordCount": "697",
+      "wordCount": "783",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -80,7 +80,7 @@ Targets A target is written as &lt;language&gt;/&lt;transport&gt;, where the tra
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-02T11:29:06.00Z",
+      "dateModified": "2026-10-02T12:57:10.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1987,9 +1987,20 @@ When the <code>restEndpoint</code> parameter is absent, REST scripts point to th
 					<td>standard output</td>
 					<td>File written by the script.</td>
 			</tr>
+			<tr>
+					<td>Properties</td>
+					<td><code>-P, --property</code></td>
+					<td><code>property</code></td>
+					<td>none</td>
+					<td>Generator-specific <code>name=value</code> pairs (repeatable).</td>
+			</tr>
 	</tbody>
 </table> </div>
 <p>The CLI also has a <code>--script-file</code> option to save the script itself into a file instead of printing it.</p>
+<p>Properties let a generator offer options of its own without changing the other ones.
+Their names start with <code>sdmxdl.script.</code> and the supported ones are listed per target by <code>script targets</code> (CLI) or <code>listScriptTargets</code> (web service and MCP).
+Unsupported properties are ignored with a warning.
+In gRPC, properties are a <code>map&lt;string, string&gt;</code> field of the script options.</p>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="warnings"
     >
@@ -2022,8 +2033,9 @@ To add a language, or to replace a built-in generator, implement the <code>sdmxd
 <ul>
 <li><code>getScriptTarget()</code> declares the target, e.g. <code>julia/rest</code>;</li>
 <li><code>getScriptRequestTypes()</code> declares the supported requests (<code>DataRequest</code>, <code>FlowsRequest</code>, …);</li>
-<li><code>generateScript(source, request, options)</code> returns the script content, its file extension and its warnings;</li>
-<li><code>getScriptRank()</code> decides which generator wins when several share a target; use <code>EXTERNAL_SCRIPT_RANK</code> to override a built-in one.</li>
+<li><code>generateScript(sourceId, request, options)</code> returns the script content, its file extension and its warnings;</li>
+<li><code>getScriptPropertyNames()</code> optionally declares generator-specific properties, named <code>sdmxdl.script.&lt;language&gt;.&lt;name&gt;</code> by convention;</li>
+<li><code>getScriptRank()</code> decides which generator wins when several support the same target and request type; use <code>EXTERNAL_SCRIPT_RANK</code> to override a built-in one, for some request types or all of them.</li>
 </ul>
 <p>Once the module is on the classpath, its targets appear in every consumer: CLI, web service and MCP.</p>
 <div class="flex align-center gdoc-page__anchorwrap">
