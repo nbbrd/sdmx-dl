@@ -47,6 +47,7 @@ import javax.swing.tree.DefaultTreeModel;
 import lombok.NonNull;
 import nbbrd.design.MightBePromoted;
 import nbbrd.io.function.IOBiConsumer;
+import org.jspecify.annotations.Nullable;
 import org.kordamp.ikonli.Ikon;
 import sdmxdl.FlowsRequest;
 import sdmxdl.Request;
@@ -57,6 +58,7 @@ import sdmxdl.provider.ri.http.DumpingDecoration;
 import sdmxdl.script.ScriptManager;
 import sdmxdl.script.ScriptOptions;
 import sdmxdl.script.ScriptTarget;
+import sdmxdl.swing.ScriptPreviewPanel;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebFlowRequest;
 import sdmxdl.web.WebKeyRequest;
@@ -738,7 +740,7 @@ public final class MainComponent extends JComponent {
                         SdmxCommand.fetchKeys(WebKeyRequest.builderOf(request).build()));
         addScripts(
                 menu,
-                "List flows script",
+                "List flows",
                 ref.getSource(),
                 FlowsRequest.builder()
                         .database(ref.getDatabase())
@@ -756,25 +758,64 @@ public final class MainComponent extends JComponent {
                 .copyToClipboard("Fetch data command", SdmxCommand.fetchData(request))
                 .copyToClipboard("Fetch meta command", SdmxCommand.fetchMeta(request))
                 .copyToClipboard("Fetch keys command", SdmxCommand.fetchKeys(request));
-        addScripts(menu, "Fetch data script", request.getSource(), request.getRequest());
+        addScripts(menu, "Fetch data", request.getSource(), request.getRequest());
         menu.showMenuAsPopup(this);
     }
 
     private static void addScripts(OnDemandMenuBuilder menu, String label, String source, Request request) {
         ScriptManager manager = Sdmxdl.INSTANCE.getScriptManager();
-        List<ScriptTarget> targets = manager.getTargets().stream()
-                .filter(target -> manager.isSupported(target, request.getClass()))
-                .collect(toList());
-        if (!targets.isEmpty()) {
+        if (manager.getTargets().stream().anyMatch(target -> manager.isSupported(target, request.getClass()))) {
             menu.addSeparator();
-            for (ScriptTarget target : targets) {
-                menu.copyToClipboard(
-                        label + " (" + target + ")",
-                        manager.generate(target, source, request, ScriptOptions.DEFAULT)
-                                .getContent());
-            }
+            menu.addAction(label + " script…", () -> showScriptDialog(label, manager, source, request));
         }
     }
+
+    private static void showScriptDialog(String label, ScriptManager manager, String source, Request request) {
+        ScriptPreviewPanel panel = new ScriptPreviewPanel();
+        panel.setManager(manager);
+        panel.setTarget(loadScriptTarget());
+        panel.setOptions(loadScriptOptions());
+        panel.setSourceId(source);
+        panel.setRequest(request);
+        panel.addPropertyChangeListener(
+                ScriptPreviewPanel.TARGET_PROPERTY, evt -> storeScriptTarget(panel.getTarget()));
+        panel.addPropertyChangeListener(
+                ScriptPreviewPanel.OPTIONS_PROPERTY, evt -> storeScriptOptions(panel.getOptions()));
+        panel.showDialog(KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow(), label + " script");
+    }
+
+    private static @Nullable ScriptTarget loadScriptTarget() {
+        String text = PREFERENCES.get(SCRIPT_TARGET_KEY, null);
+        try {
+            return text != null ? ScriptTarget.parse(text) : null;
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
+    }
+
+    private static void storeScriptTarget(@Nullable ScriptTarget target) {
+        if (target != null) {
+            PREFERENCES.put(SCRIPT_TARGET_KEY, target.toString());
+        }
+    }
+
+    private static ScriptOptions loadScriptOptions() {
+        String restEndpoint = PREFERENCES.get(SCRIPT_REST_ENDPOINT_KEY, null);
+        try {
+            return restEndpoint != null
+                    ? ScriptOptions.builder().restEndpointOf(restEndpoint).build()
+                    : ScriptOptions.DEFAULT;
+        } catch (IllegalArgumentException ex) {
+            return ScriptOptions.DEFAULT;
+        }
+    }
+
+    private static void storeScriptOptions(ScriptOptions options) {
+        PREFERENCES.put(SCRIPT_REST_ENDPOINT_KEY, options.getRestEndpoint().toString());
+    }
+
+    private static final String SCRIPT_TARGET_KEY = "SCRIPT_TARGET";
+    private static final String SCRIPT_REST_ENDPOINT_KEY = "SCRIPT_REST_ENDPOINT";
 
     public void load() {
         String latest = MainComponent.PREFERENCES.get("LATEST", null);

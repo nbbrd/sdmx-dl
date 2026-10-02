@@ -21,6 +21,8 @@ public class BashScripts {
 
     public static final String FILE_EXTENSION = "sh";
 
+    public static final String MEDIA_TYPE = "application/x-sh";
+
     private static final Mustache CLI_TEMPLATE = ScriptTemplates.load("bash-cli.mustache");
 
     private static final Mustache REST_TEMPLATE = ScriptTemplates.load("bash-rest.mustache");

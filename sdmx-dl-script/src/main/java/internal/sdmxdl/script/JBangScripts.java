@@ -18,6 +18,8 @@ public class JBangScripts {
 
     public static final String FILE_EXTENSION = "java";
 
+    public static final String MEDIA_TYPE = "text/x-java-source";
+
     private static final Mustache JAVA_TEMPLATE = ScriptTemplates.load("jbang-java.mustache");
 
     public static void renderJava(

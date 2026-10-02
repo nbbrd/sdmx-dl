@@ -1,10 +1,10 @@
 package internal.sdmxdl.desktop.util;
 
+import static j2html.TagCreator.*;
+
 import j2html.tags.DomContent;
 import j2html.tags.UnescapedText;
 import j2html.tags.specialized.SpanTag;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
@@ -14,8 +14,7 @@ import java.io.UncheckedIOException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
-
-import static j2html.TagCreator.*;
+import javax.swing.*;
 
 public final class OnDemandMenuBuilder {
 
@@ -48,6 +47,16 @@ public final class OnDemandMenuBuilder {
         return this;
     }
 
+    public OnDemandMenuBuilder addAction(String textMenu, Runnable action) {
+        result.add(new AbstractAction(textMenu) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                action.run();
+            }
+        });
+        return this;
+    }
+
     public JMenu build() {
         return result;
     }
@@ -72,10 +81,7 @@ public final class OnDemandMenuBuilder {
     }
 
     private static Optional<Color> lookupColor(String... keys) {
-        return Stream.of(keys)
-                .map(UIManager::getColor)
-                .filter(Objects::nonNull)
-                .findFirst();
+        return Stream.of(keys).map(UIManager::getColor).filter(Objects::nonNull).findFirst();
     }
 
     private static String getHexString(Color color) {

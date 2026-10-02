@@ -4,7 +4,10 @@ import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.startsWith;
 
 import io.quarkus.grpc.GrpcClient;
 import io.quarkus.test.junit.QuarkusTest;
@@ -146,6 +149,72 @@ public class SdmxdlScriptService2Test {
                 .then()
                 .statusCode(400)
                 .body("message", containsString("novalue"));
+    }
+
+    @Test
+    public void restGenerateScriptAsJsonByDefault() {
+        given().urlEncodingEnabled(false)
+                .queryParam("target", "r/rest")
+                .when()
+                .get("/sdmx-dl/v2/ECB/flows:script")
+                .then()
+                .statusCode(200)
+                .contentType(startsWith("application/json"))
+                .body("fileExtension", equalTo("R"))
+                .body("mediaType", equalTo("text/x-r"));
+    }
+
+    @Test
+    public void restGenerateScriptAsRawWithFormat() {
+        given().urlEncodingEnabled(false)
+                .queryParam("key", "M.CHF.EUR.SP00.A")
+                .queryParam("target", "python/cli")
+                .queryParam("format", "raw")
+                .when()
+                .get("/sdmx-dl/v2/ECB/EXR/data:script")
+                .then()
+                .statusCode(200)
+                .contentType(startsWith("text/x-python"))
+                .header("Content-Disposition", equalTo("attachment; filename=\"ECB_EXR_data.py\""))
+                .body(startsWith("import contextlib"));
+    }
+
+    @Test
+    public void restGenerateScriptAsRawWithAccept() {
+        given().urlEncodingEnabled(false)
+                .accept("text/plain")
+                .queryParam("target", "powerquery/rest")
+                .queryParam("outputFile", "flows.csv")
+                .when()
+                .get("/sdmx-dl/v2/ECB/flows:script")
+                .then()
+                .statusCode(200)
+                .contentType(startsWith("text/plain"))
+                .header("Content-Disposition", equalTo("attachment; filename=\"ECB_flows.pq\""))
+                .header("Sdmxdl-Script-Warning", notNullValue());
+
+        given().urlEncodingEnabled(false)
+                .accept("application/octet-stream")
+                .queryParam("target", "bash/cli")
+                .when()
+                .get("/sdmx-dl/v2/ECB/flows:script")
+                .then()
+                .statusCode(200)
+                .contentType(startsWith("application/octet-stream"))
+                .header("Content-Disposition", equalTo("attachment; filename=\"ECB_flows.sh\""));
+    }
+
+    @Test
+    public void restGenerateScriptAsRawWithError() {
+        given().urlEncodingEnabled(false)
+                .accept("text/plain")
+                .queryParam("target", "cobol/cli")
+                .when()
+                .get("/sdmx-dl/v2/ECB/flows:script")
+                .then()
+                .statusCode(400)
+                .contentType(startsWith("application/json"))
+                .body("message", containsString("cobol/cli"));
     }
 
     @Test

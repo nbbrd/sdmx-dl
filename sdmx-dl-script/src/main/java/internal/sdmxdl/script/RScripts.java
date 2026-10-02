@@ -22,6 +22,8 @@ public class RScripts {
 
     public static final String FILE_EXTENSION = "R";
 
+    public static final String MEDIA_TYPE = "text/x-r";
+
     private static final Mustache CLI_TEMPLATE = ScriptTemplates.load("r-cli.mustache");
 
     private static final Mustache REST_TEMPLATE = ScriptTemplates.load("r-rest.mustache");

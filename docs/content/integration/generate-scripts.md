@@ -59,8 +59,16 @@ curl "localhost:4559/sdmx-dl/v2/ECB/flows:script?query=exchange&target=python/cl
 curl "localhost:4559/sdmx-dl/v2/script/targets"
 ```
 
-The response is a JSON object with the `target`, the `fileExtension`, the script `content` and its `warnings`.
+The response is a JSON object with the `target`, the `fileExtension`, the `mediaType`, the script `content` and its `warnings`.
 When the `restEndpoint` parameter is absent, REST scripts point to the server that generated them.
+
+To download the script itself, add `format=raw` or send an `Accept: text/plain` (or `application/octet-stream`) header.
+The response then has the media type of the script, a file name in its `Content-Disposition` header and one `Sdmxdl-Script-Warning` header per warning:
+
+```shell
+curl -OJ "localhost:4559/sdmx-dl/v2/ECB/EXR/data:script?key=M.CHF.EUR.SP00.A&target=r/rest&format=raw"
+# saves ECB_EXR_data.R
+```
 {{< /tab >}}
 
 {{< tab "MCP" >}}

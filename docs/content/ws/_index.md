@@ -103,7 +103,7 @@ Each series has a `key`, optional series-level `meta`, and an `obs` array; each 
 - `GetDataStream` (`GET /{source}/{flow}/data:stream`) returns the same series objects as a plain JSON array, without the `ref`/`query` wrapper.
 - Listing operations (`/sources`, `/{source}/flows`, `/{source}/{flow}/dimensions`, …) return a JSON array of objects that can be turned into a table directly.
 - `ListCodes` and `ListAvailability` return a `codes` object mapping each code to its label, e.g. `{"codes": {"A": "Annual", "Q": "Quarterly"}}`.
-- Script operations return the generated script, without executing it: `{"target": "r/rest", "fileExtension": "R", "content": "...", "warnings": []}`. See [Generate scripts]({{< relref "/integration/generate-scripts" >}}) for their options (`cliLauncher`, `restEndpoint`, `outputFile`, `property`).
+- Script operations return the generated script, without executing it: `{"target": "r/rest", "fileExtension": "R", "mediaType": "text/x-r", "content": "...", "warnings": []}`. With `format=raw`, or an `Accept` header that prefers `text/plain` or `application/octet-stream`, they return the script itself as a file to download. See [Generate scripts]({{< relref "/integration/generate-scripts" >}}) for their options (`cliLauncher`, `restEndpoint`, `outputFile`, `property`, `format`).
 
 ## MCP endpoint
 

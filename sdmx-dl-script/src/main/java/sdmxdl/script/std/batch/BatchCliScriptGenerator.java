@@ -19,6 +19,7 @@ public final class BatchCliScriptGenerator implements ScriptGenerator {
     private final ScriptGeneratorSupport generator = ScriptGeneratorSupport.builder()
             .scriptTarget(ScriptTarget.of(ScriptTarget.BATCH_LANGUAGE, ScriptTarget.CLI_TRANSPORT))
             .scriptFileExtension(BatchScripts.FILE_EXTENSION)
+            .scriptMediaType(BatchScripts.MEDIA_TYPE)
             .scriptRequestTypes(CliCalls.SUPPORTED_TYPES)
             .renderer(BatchScripts::renderCli)
             .build();

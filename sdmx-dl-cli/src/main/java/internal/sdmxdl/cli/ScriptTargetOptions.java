@@ -27,6 +27,7 @@ public class ScriptTargetOptions {
             paramLabel = "<language/transport>",
             defaultValue = "python/cli",
             converter = ScriptTargetConverter.class,
+            completionCandidates = ScriptTargetCandidates.class,
             descriptionKey = "cli.script.target")
     private ScriptTarget target;
 

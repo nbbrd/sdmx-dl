@@ -19,6 +19,7 @@ public final class JBangJavaScriptGenerator implements ScriptGenerator {
     private final ScriptGeneratorSupport generator = ScriptGeneratorSupport.builder()
             .scriptTarget(ScriptTarget.of(ScriptTarget.JBANG_LANGUAGE, ScriptTarget.JAVA_TRANSPORT))
             .scriptFileExtension(JBangScripts.FILE_EXTENSION)
+            .scriptMediaType(JBangScripts.MEDIA_TYPE)
             .scriptRequestTypes(ApiCalls.SUPPORTED_TYPES)
             .renderer(JBangScripts::renderJava)
             .build();

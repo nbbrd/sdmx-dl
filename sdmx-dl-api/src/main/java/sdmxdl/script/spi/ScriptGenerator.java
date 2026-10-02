@@ -33,6 +33,15 @@ public interface ScriptGenerator {
 
     @NonNull String getScriptFileExtension();
 
+    /**
+     * Gets the media type of the generated scripts, without parameters (e.g. {@code text/x-python}).
+     *
+     * @return a non-null media type, {@link #DEFAULT_SCRIPT_MEDIA_TYPE} by default
+     */
+    default @NonNull String getScriptMediaType() {
+        return DEFAULT_SCRIPT_MEDIA_TYPE;
+    }
+
     @NonNull Set<Class<? extends Request>> getScriptRequestTypes();
 
     /**
@@ -64,4 +73,6 @@ public interface ScriptGenerator {
     int UNKNOWN_SCRIPT_RANK = -1;
 
     String SCRIPT_PROPERTY_PREFIX = "sdmxdl.script";
+
+    String DEFAULT_SCRIPT_MEDIA_TYPE = "text/plain";
 }

@@ -19,6 +19,7 @@ public final class BashCliScriptGenerator implements ScriptGenerator {
     private final ScriptGeneratorSupport generator = ScriptGeneratorSupport.builder()
             .scriptTarget(ScriptTarget.of(ScriptTarget.BASH_LANGUAGE, ScriptTarget.CLI_TRANSPORT))
             .scriptFileExtension(BashScripts.FILE_EXTENSION)
+            .scriptMediaType(BashScripts.MEDIA_TYPE)
             .scriptRequestTypes(CliCalls.SUPPORTED_TYPES)
             .renderer(BashScripts::renderCli)
             .build();

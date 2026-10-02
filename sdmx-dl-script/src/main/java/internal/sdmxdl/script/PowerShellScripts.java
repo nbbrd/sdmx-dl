@@ -21,6 +21,8 @@ public class PowerShellScripts {
 
     public static final String FILE_EXTENSION = "ps1";
 
+    public static final String MEDIA_TYPE = "text/plain";
+
     private static final Mustache CLI_TEMPLATE = ScriptTemplates.load("powershell-cli.mustache");
 
     private static final Mustache REST_TEMPLATE = ScriptTemplates.load("powershell-rest.mustache");

@@ -346,10 +346,17 @@
           "content" : {
             "type" : "string"
           },
+          "mediaType" : {
+            "type" : "string"
+          },
           "warnings" : {
             "type" : "array"
           }
         }
+      },
+      "ScriptFormat" : {
+        "type" : "string",
+        "enum" : [ "JSON", "RAW" ]
       },
       "ScriptTargetDto" : {
         "type" : "object",
@@ -1281,6 +1288,12 @@
             "default" : ""
           }
         }, {
+          "name" : "format",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/ScriptFormat"
+          }
+        }, {
           "name" : "languages",
           "in" : "query",
           "schema" : {
@@ -1333,11 +1346,21 @@
         } ],
         "responses" : {
           "200" : {
-            "description" : "OK",
+            "description" : "The generated script, as a JSON object by default or as a downloadable file if format=raw or if the Accept header prefers text/plain or application/octet-stream",
             "content" : {
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ScriptDto"
+                }
+              },
+              "text/plain" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              },
+              "application/octet-stream" : {
+                "schema" : {
+                  "type" : "string"
                 }
               }
             }
@@ -1688,6 +1711,12 @@
             "format" : "int32"
           }
         }, {
+          "name" : "format",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/ScriptFormat"
+          }
+        }, {
           "name" : "key",
           "in" : "query",
           "schema" : {
@@ -1745,11 +1774,21 @@
         } ],
         "responses" : {
           "200" : {
-            "description" : "OK",
+            "description" : "The generated script, as a JSON object by default or as a downloadable file if format=raw or if the Accept header prefers text/plain or application/octet-stream",
             "content" : {
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ScriptDto"
+                }
+              },
+              "text/plain" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              },
+              "application/octet-stream" : {
+                "schema" : {
+                  "type" : "string"
                 }
               }
             }

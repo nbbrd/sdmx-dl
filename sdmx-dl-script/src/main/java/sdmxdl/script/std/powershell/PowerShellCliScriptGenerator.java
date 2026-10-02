@@ -19,6 +19,7 @@ public final class PowerShellCliScriptGenerator implements ScriptGenerator {
     private final ScriptGeneratorSupport generator = ScriptGeneratorSupport.builder()
             .scriptTarget(ScriptTarget.of(ScriptTarget.POWERSHELL_LANGUAGE, ScriptTarget.CLI_TRANSPORT))
             .scriptFileExtension(PowerShellScripts.FILE_EXTENSION)
+            .scriptMediaType(PowerShellScripts.MEDIA_TYPE)
             .scriptRequestTypes(CliCalls.SUPPORTED_TYPES)
             .renderer(PowerShellScripts::renderCli)
             .build();

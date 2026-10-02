@@ -19,6 +19,7 @@ public final class RRestScriptGenerator implements ScriptGenerator {
     private final ScriptGeneratorSupport generator = ScriptGeneratorSupport.builder()
             .scriptTarget(ScriptTarget.of(ScriptTarget.R_LANGUAGE, ScriptTarget.REST_TRANSPORT))
             .scriptFileExtension(RScripts.FILE_EXTENSION)
+            .scriptMediaType(RScripts.MEDIA_TYPE)
             .scriptRequestTypes(RestCalls.SUPPORTED_TYPES)
             .renderer(RScripts::renderRest)
             .build();

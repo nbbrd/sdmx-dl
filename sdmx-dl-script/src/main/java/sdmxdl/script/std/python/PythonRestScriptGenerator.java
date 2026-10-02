@@ -19,6 +19,7 @@ public final class PythonRestScriptGenerator implements ScriptGenerator {
     private final ScriptGeneratorSupport generator = ScriptGeneratorSupport.builder()
             .scriptTarget(ScriptTarget.of(ScriptTarget.PYTHON_LANGUAGE, ScriptTarget.REST_TRANSPORT))
             .scriptFileExtension(PythonScripts.FILE_EXTENSION)
+            .scriptMediaType(PythonScripts.MEDIA_TYPE)
             .scriptRequestTypes(RestCalls.SUPPORTED_TYPES)
             .renderer(PythonScripts::renderRest)
             .build();

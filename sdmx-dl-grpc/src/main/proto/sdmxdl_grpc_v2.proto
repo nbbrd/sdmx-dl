@@ -158,4 +158,5 @@ message ScriptDto {
   string file_extension = 2;
   string content = 3;
   repeated string warnings = 4; /* request parameters that the target cannot honor */
+  string media_type = 5; /* e.g. "text/x-python" */
 }

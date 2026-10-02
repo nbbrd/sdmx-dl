@@ -96,6 +96,11 @@
             <version>5.3</version>
         </dependency>
         <dependency>
+            <groupId>com.fifesoft</groupId>
+            <artifactId>rsyntaxtextarea</artifactId>
+            <version>${rsyntaxtextarea.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.github.nbbrd.java-io-util</groupId>
             <artifactId>java-io-xml-bind</artifactId>
         </dependency>

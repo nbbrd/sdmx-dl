@@ -19,6 +19,7 @@ public final class JupyterCliScriptGenerator implements ScriptGenerator {
     private final ScriptGeneratorSupport generator = ScriptGeneratorSupport.builder()
             .scriptTarget(ScriptTarget.of(ScriptTarget.JUPYTER_LANGUAGE, ScriptTarget.CLI_TRANSPORT))
             .scriptFileExtension(PythonScripts.FILE_EXTENSION)
+            .scriptMediaType(PythonScripts.MEDIA_TYPE)
             .scriptRequestTypes(CliCalls.SUPPORTED_TYPES)
             .renderer(PythonScripts::renderJupyterCli)
             .build();

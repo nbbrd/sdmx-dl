@@ -26,6 +26,8 @@ public class PowerQueryScripts {
 
     public static final String FILE_EXTENSION = "pq";
 
+    public static final String MEDIA_TYPE = "text/plain";
+
     private static final Mustache REST_TEMPLATE = ScriptTemplates.load("powerquery-rest.mustache");
 
     private static final Pattern IDENTIFIER = Pattern.compile("[A-Za-z_][A-Za-z0-9_]*");

@@ -40,6 +40,14 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- optional: syntax highlighting of scripts -->
+        <dependency>
+            <groupId>com.fifesoft</groupId>
+            <artifactId>rsyntaxtextarea</artifactId>
+            <version>${rsyntaxtextarea.version}</version>
+            <optional>true</optional>
+        </dependency>
+
         <!-- test only -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -88,6 +96,12 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-provider-px</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sdmx-dl-script</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>

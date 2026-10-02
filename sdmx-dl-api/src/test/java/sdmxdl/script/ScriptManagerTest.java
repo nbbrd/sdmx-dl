@@ -188,8 +188,11 @@ public class ScriptManagerTest {
         @Override
         public @NonNull Script generateScript(
                 @NonNull String sourceId, @NonNull Request request, @NonNull ScriptOptions options) {
-            Script.Builder result =
-                    Script.builder().target(target).fileExtension("txt").content(content);
+            Script.Builder result = Script.builder()
+                    .target(target)
+                    .fileExtension("txt")
+                    .mediaType("text/plain")
+                    .content(content);
             if (!options.getProperties().isEmpty()) {
                 result.warning("existing");
             }

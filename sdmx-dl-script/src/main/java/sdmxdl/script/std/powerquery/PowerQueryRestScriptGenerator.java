@@ -19,6 +19,7 @@ public final class PowerQueryRestScriptGenerator implements ScriptGenerator {
     private final ScriptGeneratorSupport generator = ScriptGeneratorSupport.builder()
             .scriptTarget(ScriptTarget.of(ScriptTarget.POWERQUERY_LANGUAGE, ScriptTarget.REST_TRANSPORT))
             .scriptFileExtension(PowerQueryScripts.FILE_EXTENSION)
+            .scriptMediaType(PowerQueryScripts.MEDIA_TYPE)
             .scriptRequestTypes(RestCalls.SUPPORTED_TYPES)
             .renderer(PowerQueryScripts::renderRest)
             .build();

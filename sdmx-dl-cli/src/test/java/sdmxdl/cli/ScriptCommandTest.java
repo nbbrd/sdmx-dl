@@ -24,6 +24,18 @@ public class ScriptCommandTest {
     }
 
     @Test
+    public void testTargetCompletion() {
+        CommandLine cmd = new CommandLine(new MainCommand());
+        assertThat(cmd.getSubcommands()
+                        .get("script")
+                        .getSubcommands()
+                        .get("data")
+                        .getUsageMessage())
+                .contains("python/cli", "r/rest");
+        assertThat(picocli.AutoComplete.bash("sdmx-dl", cmd)).contains("python/cli", "r/rest");
+    }
+
+    @Test
     public void testDataHelp() {
         CommandLine cmd = new CommandLine(new ScriptDataCommand());
         CommandWatcher watcher = CommandWatcher.on(cmd);

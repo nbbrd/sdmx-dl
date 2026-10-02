@@ -34,6 +34,7 @@ class ProtoScript {
         return ScriptDto.newBuilder()
                 .setTarget(script.getTarget().toString())
                 .setFileExtension(script.getFileExtension())
+                .setMediaType(script.getMediaType())
                 .setContent(script.getContent())
                 .addAllWarnings(script.getWarnings())
                 .build();

@@ -55,6 +55,9 @@ public class ScriptGeneratorsTest {
                 Script script = generator.generateScript("my source", request, options);
                 assertThat(script.getTarget()).isEqualTo(generator.getScriptTarget());
                 assertThat(script.getFileExtension()).isEqualTo(generator.getScriptFileExtension());
+                assertThat(script.getMediaType())
+                        .isEqualTo(generator.getScriptMediaType())
+                        .matches("[a-z]+/[a-z0-9.+-]+");
                 assertThat(script.getContent())
                         .isNotBlank()
                         .endsWith("\n")

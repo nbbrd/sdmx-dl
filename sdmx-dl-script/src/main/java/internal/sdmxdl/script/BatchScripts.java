@@ -23,6 +23,8 @@ public class BatchScripts {
 
     public static final String FILE_EXTENSION = "bat";
 
+    public static final String MEDIA_TYPE = "application/x-bat";
+
     private static final Mustache CLI_TEMPLATE = ScriptTemplates.load("batch-cli.mustache");
 
     private static final Pattern SAFE_WORD = Pattern.compile("[A-Za-z0-9_./:\\\\@+-]+");

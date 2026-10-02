@@ -36,6 +36,9 @@ public final class ScriptGeneratorSupport implements ScriptGenerator {
 
     private final @NonNull String scriptFileExtension;
 
+    @lombok.Builder.Default
+    private final @NonNull String scriptMediaType = DEFAULT_SCRIPT_MEDIA_TYPE;
+
     private final @NonNull Set<Class<? extends Request>> scriptRequestTypes;
 
     @lombok.Singular
@@ -64,6 +67,11 @@ public final class ScriptGeneratorSupport implements ScriptGenerator {
     }
 
     @Override
+    public @NonNull String getScriptMediaType() {
+        return scriptMediaType;
+    }
+
+    @Override
     public @NonNull Collection<String> getScriptPropertyNames() {
         return scriptPropertyNames;
     }
@@ -76,7 +84,10 @@ public final class ScriptGeneratorSupport implements ScriptGenerator {
             throw new IllegalArgumentException(
                     "Unsupported request type: " + request.getClass().getSimpleName());
         }
-        Script.Builder result = Script.builder().target(scriptTarget).fileExtension(scriptFileExtension);
+        Script.Builder result = Script.builder()
+                .target(scriptTarget)
+                .fileExtension(scriptFileExtension)
+                .mediaType(scriptMediaType);
         renderer.render(sourceId, request, options, result);
         return result.build();
     }

@@ -25,6 +25,8 @@ public class PythonScripts {
 
     public static final String FILE_EXTENSION = "py";
 
+    public static final String MEDIA_TYPE = "text/x-python";
+
     private static final Mustache CLI_TEMPLATE = ScriptTemplates.load("python-cli.mustache");
 
     private static final Mustache REST_TEMPLATE = ScriptTemplates.load("python-rest.mustache");

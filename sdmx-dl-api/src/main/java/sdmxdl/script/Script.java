@@ -21,6 +21,11 @@ public class Script {
     @NonNull String fileExtension;
 
     /**
+     * Media type of the script, without parameters (e.g. {@code text/x-python}).
+     */
+    @NonNull String mediaType;
+
+    /**
      * Content of the script.
      */
     @NonNull String content;

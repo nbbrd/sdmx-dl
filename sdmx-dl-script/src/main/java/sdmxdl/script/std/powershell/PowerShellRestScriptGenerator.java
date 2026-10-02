@@ -19,6 +19,7 @@ public final class PowerShellRestScriptGenerator implements ScriptGenerator {
     private final ScriptGeneratorSupport generator = ScriptGeneratorSupport.builder()
             .scriptTarget(ScriptTarget.of(ScriptTarget.POWERSHELL_LANGUAGE, ScriptTarget.REST_TRANSPORT))
             .scriptFileExtension(PowerShellScripts.FILE_EXTENSION)
+            .scriptMediaType(PowerShellScripts.MEDIA_TYPE)
             .scriptRequestTypes(RestCalls.SUPPORTED_TYPES)
             .renderer(PowerShellScripts::renderRest)
             .build();

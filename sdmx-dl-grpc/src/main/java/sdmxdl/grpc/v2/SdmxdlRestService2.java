@@ -1,6 +1,11 @@
 package sdmxdl.grpc.v2;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
+import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN;
+import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
 import static sdmxdl.DatabaseRef.NO_DATABASE_KEYWORD;
 import static sdmxdl.HasSearch.AUTO_LIMIT;
 import static sdmxdl.HasSearch.NO_QUERY;
@@ -17,13 +22,21 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import nbbrd.io.function.IOSupplier;
+import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
@@ -32,6 +45,7 @@ import sdmxdl.format.protobuf.*;
 import sdmxdl.format.protobuf.web.MonitorReportDto;
 import sdmxdl.format.protobuf.web.MonitorStatusDto;
 import sdmxdl.format.protobuf.web.WebSourceDto;
+import sdmxdl.script.Script;
 import sdmxdl.script.ScriptManager;
 import sdmxdl.script.ScriptOptions;
 import sdmxdl.script.ScriptTarget;
@@ -66,12 +80,19 @@ public class SdmxdlRestService2 {
 
     @ServerExceptionMapper
     public RestResponse<ErrorResponse> mapException(IllegalArgumentException x) {
-        return RestResponse.status(Response.Status.BAD_REQUEST, ErrorResponse.of(x));
+        return toErrorResponse(x);
     }
 
     @ServerExceptionMapper
     public RestResponse<ErrorResponse> mapException(IOException x) {
-        return RestResponse.status(Response.Status.BAD_REQUEST, ErrorResponse.of(x));
+        return toErrorResponse(x);
+    }
+
+    // errors are always JSON, even if the request accepts raw scripts only
+    private static RestResponse<ErrorResponse> toErrorResponse(Exception x) {
+        return RestResponse.ResponseBuilder.create(Response.Status.BAD_REQUEST, ErrorResponse.of(x))
+                .type(APPLICATION_JSON_TYPE)
+                .build();
     }
 
     @GET
@@ -321,7 +342,16 @@ public class SdmxdlRestService2 {
 
     @GET
     @Path("/{source}/{flow}/data:script")
-    public Uni<ScriptDto> generateDataScript(
+    @Produces({APPLICATION_JSON, TEXT_PLAIN, APPLICATION_OCTET_STREAM})
+    @APIResponse(
+            responseCode = "200",
+            description = SCRIPT_RESPONSE_DESCRIPTION,
+            content = {
+                @Content(mediaType = APPLICATION_JSON, schema = @Schema(implementation = ScriptDto.class)),
+                @Content(mediaType = TEXT_PLAIN, schema = @Schema(type = SchemaType.STRING)),
+                @Content(mediaType = APPLICATION_OCTET_STREAM, schema = @Schema(type = SchemaType.STRING))
+            })
+    public Uni<Response> generateDataScript(
             @PathParam("source") String source,
             @PathParam("flow") String flow,
             @QueryParam("key") @DefaultValue("all") String key,
@@ -337,7 +367,9 @@ public class SdmxdlRestService2 {
             @QueryParam("restEndpoint") String restEndpoint,
             @QueryParam("outputFile") String outputFile,
             @QueryParam("property") List<String> properties,
-            @Context UriInfo uriInfo) {
+            @QueryParam("format") ScriptFormat format,
+            @Context UriInfo uriInfo,
+            @Context HttpHeaders headers) {
         return generateScript(
                 source,
                 DataRequest.builder()
@@ -356,12 +388,24 @@ public class SdmxdlRestService2 {
                 restEndpoint,
                 outputFile,
                 properties,
-                uriInfo);
+                uriInfo,
+                format,
+                headers,
+                source + "_" + flow + "_data");
     }
 
     @GET
     @Path("/{source}/flows:script")
-    public Uni<ScriptDto> generateFlowsScript(
+    @Produces({APPLICATION_JSON, TEXT_PLAIN, APPLICATION_OCTET_STREAM})
+    @APIResponse(
+            responseCode = "200",
+            description = SCRIPT_RESPONSE_DESCRIPTION,
+            content = {
+                @Content(mediaType = APPLICATION_JSON, schema = @Schema(implementation = ScriptDto.class)),
+                @Content(mediaType = TEXT_PLAIN, schema = @Schema(type = SchemaType.STRING)),
+                @Content(mediaType = APPLICATION_OCTET_STREAM, schema = @Schema(type = SchemaType.STRING))
+            })
+    public Uni<Response> generateFlowsScript(
             @PathParam("source") String source,
             @QueryParam("database") @DefaultValue(NO_DATABASE_KEYWORD) String database,
             @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages,
@@ -372,7 +416,9 @@ public class SdmxdlRestService2 {
             @QueryParam("restEndpoint") String restEndpoint,
             @QueryParam("outputFile") String outputFile,
             @QueryParam("property") List<String> properties,
-            @Context UriInfo uriInfo) {
+            @QueryParam("format") ScriptFormat format,
+            @Context UriInfo uriInfo,
+            @Context HttpHeaders headers) {
         return generateScript(
                 source,
                 FlowsRequest.builder()
@@ -386,10 +432,36 @@ public class SdmxdlRestService2 {
                 restEndpoint,
                 outputFile,
                 properties,
-                uriInfo);
+                uriInfo,
+                format,
+                headers,
+                source + "_flows");
     }
 
-    private Uni<ScriptDto> generateScript(
+    /**
+     * Representation of a generated script in a REST response.
+     */
+    public enum ScriptFormat {
+        /**
+         * JSON object with the script content and its metadata.
+         */
+        JSON,
+        /**
+         * Script content only, downloadable as a file.
+         */
+        RAW;
+
+        public static ScriptFormat fromString(String text) {
+            return valueOf(text.toUpperCase(Locale.ROOT));
+        }
+    }
+
+    private static final String SCRIPT_RESPONSE_DESCRIPTION =
+            "The generated script, as a JSON object by default or as a downloadable file if format=raw or if the Accept header prefers text/plain or application/octet-stream";
+
+    private static final String SCRIPT_WARNING_HEADER = "Sdmxdl-Script-Warning";
+
+    private Uni<Response> generateScript(
             String source,
             Request request,
             String target,
@@ -397,7 +469,10 @@ public class SdmxdlRestService2 {
             String restEndpoint,
             String outputFile,
             List<String> properties,
-            UriInfo uriInfo) {
+            UriInfo uriInfo,
+            ScriptFormat format,
+            HttpHeaders headers,
+            String baseName) {
         // Scripts generated by this server target this server by default
         String endpoint = restEndpoint != null
                 ? restEndpoint
@@ -405,8 +480,47 @@ public class SdmxdlRestService2 {
         return Uni.createFrom().item(() -> {
             ScriptOptions options = ProtoScript.toScriptOptions(
                     cliLauncher, endpoint, outputFile, ProtoScript.parseProperties(properties));
-            return ProtoScript.fromScript(scripts.generate(ScriptTarget.parse(target), source, request, options));
+            Script script = scripts.generate(ScriptTarget.parse(target), source, request, options);
+            List<MediaType> acceptable = headers.getAcceptableMediaTypes();
+            return isRaw(format, acceptable)
+                    ? toRawResponse(script, acceptable, baseName)
+                    : Response.ok(ProtoScript.fromScript(script), APPLICATION_JSON_TYPE)
+                            .build();
         });
+    }
+
+    private static boolean isRaw(ScriptFormat format, List<MediaType> acceptable) {
+        if (format != null) {
+            return format == ScriptFormat.RAW;
+        }
+        // acceptable media types are sorted by preference; wildcards keep the JSON default
+        return acceptable.stream()
+                .filter(type -> !type.isWildcardType() && !type.isWildcardSubtype())
+                .findFirst()
+                .map(type -> !type.isCompatible(APPLICATION_JSON_TYPE))
+                .orElse(false);
+    }
+
+    private static Response toRawResponse(Script script, List<MediaType> acceptable, String baseName) {
+        MediaType scriptType = MediaType.valueOf(script.getMediaType());
+        MediaType contentType = acceptable.isEmpty() || acceptable.stream().anyMatch(scriptType::isCompatible)
+                ? scriptType
+                : acceptable.stream()
+                        .filter(type -> type.isCompatible(TEXT_PLAIN_TYPE))
+                        .findFirst()
+                        .map(ignore -> TEXT_PLAIN_TYPE)
+                        .orElse(APPLICATION_OCTET_STREAM_TYPE);
+        Response.ResponseBuilder result = Response.ok(
+                        script.getContent(), contentType.withCharset(StandardCharsets.UTF_8.name()))
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + toFileName(baseName, script.getFileExtension()) + "\"");
+        script.getWarnings().forEach(warning -> result.header(SCRIPT_WARNING_HEADER, warning));
+        return result.build();
+    }
+
+    private static String toFileName(String baseName, String fileExtension) {
+        return (baseName + "." + fileExtension).replaceAll("[^A-Za-z0-9._-]", "_");
     }
 
     private List<String> resolveSources(String sources) {

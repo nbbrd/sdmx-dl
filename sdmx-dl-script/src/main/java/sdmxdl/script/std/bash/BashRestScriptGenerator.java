@@ -19,6 +19,7 @@ public final class BashRestScriptGenerator implements ScriptGenerator {
     private final ScriptGeneratorSupport generator = ScriptGeneratorSupport.builder()
             .scriptTarget(ScriptTarget.of(ScriptTarget.BASH_LANGUAGE, ScriptTarget.REST_TRANSPORT))
             .scriptFileExtension(BashScripts.FILE_EXTENSION)
+            .scriptMediaType(BashScripts.MEDIA_TYPE)
             .scriptRequestTypes(RestCalls.SUPPORTED_TYPES)
             .renderer(BashScripts::renderRest)
             .build();

@@ -19,6 +19,7 @@ public final class RCliScriptGenerator implements ScriptGenerator {
     private final ScriptGeneratorSupport generator = ScriptGeneratorSupport.builder()
             .scriptTarget(ScriptTarget.of(ScriptTarget.R_LANGUAGE, ScriptTarget.CLI_TRANSPORT))
             .scriptFileExtension(RScripts.FILE_EXTENSION)
+            .scriptMediaType(RScripts.MEDIA_TYPE)
             .scriptRequestTypes(CliCalls.SUPPORTED_TYPES)
             .renderer(RScripts::renderCli)
             .build();

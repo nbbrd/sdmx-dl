@@ -790,6 +790,9 @@ CSV columns:
 
 {{< shields_io/badge label="setup" message="completion" color="b58900" >}}<br>
 
+The generated completion script also completes the script targets of `-t, --target` (e.g. `python/cl<TAB>`).
+These targets are resolved when the completion script is generated, so generate it again after adding a script generator to the classpath.
+
 {{< shields_io/badge label="setup" message="launcher" color="b58900" >}}<br>
 
 {{< shields_io/badge label="script" message="data" color="6c71c4" >}}
