@@ -17,7 +17,7 @@ public final class BashRestScriptGenerator implements ScriptGenerator {
 
     @lombok.experimental.Delegate(types = ScriptGenerator.class)
     private final ScriptGeneratorSupport generator = ScriptGeneratorSupport.builder()
-            .scriptTarget(ScriptTarget.of("bash", ScriptTarget.REST_TRANSPORT))
+            .scriptTarget(ScriptTarget.of(ScriptTarget.BASH_LANGUAGE, ScriptTarget.REST_TRANSPORT))
             .scriptFileExtension(BashScripts.FILE_EXTENSION)
             .scriptRequestTypes(RestCalls.SUPPORTED_TYPES)
             .renderer(BashScripts::renderRest)

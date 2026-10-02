@@ -881,6 +881,7 @@ CSV columns:
 2. [`Language:string`](../datatypes#string)
 3. [`Transport:string`](../datatypes#string)
 4. [`Commands:list`](../datatypes#list)
+5. [`Properties:list`](../datatypes#list)
 
 {{< /tab >}}
 {{< /tabs >}}

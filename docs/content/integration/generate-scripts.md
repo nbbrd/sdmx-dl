@@ -103,8 +103,14 @@ Besides the request itself, a few options adapt the script to the machine that w
 | CLI launcher   | `--cli-launcher`  | `cliLauncher`  | `sdmx-dl`                           | Command used by `cli` scripts to launch sdmx-dl, e.g. `jbang,sdmx-dl@nbbrd`. |
 | REST endpoint  | `--rest-endpoint` | `restEndpoint` | `http://localhost:4559/sdmx-dl/v2`  | Base URI of the web service used by `rest` scripts.                         |
 | Output file    | `-o, --output`    | `outputFile`   | standard output                     | File written by the script.                                                 |
+| Properties     | `-P, --property`  | `property`     | none                                | Generator-specific `name=value` pairs (repeatable).                         |
 
 The CLI also has a `--script-file` option to save the script itself into a file instead of printing it.
+
+Properties let a generator offer options of its own without changing the other ones.
+Their names start with `sdmxdl.script.` and the supported ones are listed per target by `script targets` (CLI) or `listScriptTargets` (web service and MCP).
+Unsupported properties are ignored with a warning.
+In gRPC, properties are a `map<string, string>` field of the script options.
 
 ## Warnings
 
@@ -119,8 +125,9 @@ Script generation is an extension point of the [Java library]({{< relref "/api" 
 To add a language, or to replace a built-in generator, implement the `sdmxdl.script.spi.ScriptGenerator` interface and register it with the Java `ServiceLoader` (`META-INF/services` or `provides` in `module-info.java`):
 - `getScriptTarget()` declares the target, e.g. `julia/rest`;
 - `getScriptRequestTypes()` declares the supported requests (`DataRequest`, `FlowsRequest`, …);
-- `generateScript(source, request, options)` returns the script content, its file extension and its warnings;
-- `getScriptRank()` decides which generator wins when several share a target; use `EXTERNAL_SCRIPT_RANK` to override a built-in one.
+- `generateScript(sourceId, request, options)` returns the script content, its file extension and its warnings;
+- `getScriptPropertyNames()` optionally declares generator-specific properties, named `sdmxdl.script.<language>.<name>` by convention;
+- `getScriptRank()` decides which generator wins when several support the same target and request type; use `EXTERNAL_SCRIPT_RANK` to override a built-in one, for some request types or all of them.
 
 Once the module is on the classpath, its targets appear in every consumer: CLI, web service and MCP.
 

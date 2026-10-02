@@ -17,7 +17,7 @@ public final class BashCliScriptGenerator implements ScriptGenerator {
 
     @lombok.experimental.Delegate(types = ScriptGenerator.class)
     private final ScriptGeneratorSupport generator = ScriptGeneratorSupport.builder()
-            .scriptTarget(ScriptTarget.of("bash", ScriptTarget.CLI_TRANSPORT))
+            .scriptTarget(ScriptTarget.of(ScriptTarget.BASH_LANGUAGE, ScriptTarget.CLI_TRANSPORT))
             .scriptFileExtension(BashScripts.FILE_EXTENSION)
             .scriptRequestTypes(CliCalls.SUPPORTED_TYPES)
             .renderer(BashScripts::renderCli)

@@ -17,7 +17,7 @@ public final class RCliScriptGenerator implements ScriptGenerator {
 
     @lombok.experimental.Delegate(types = ScriptGenerator.class)
     private final ScriptGeneratorSupport generator = ScriptGeneratorSupport.builder()
-            .scriptTarget(ScriptTarget.of("r", ScriptTarget.CLI_TRANSPORT))
+            .scriptTarget(ScriptTarget.of(ScriptTarget.R_LANGUAGE, ScriptTarget.CLI_TRANSPORT))
             .scriptFileExtension(RScripts.FILE_EXTENSION)
             .scriptRequestTypes(CliCalls.SUPPORTED_TYPES)
             .renderer(RScripts::renderCli)

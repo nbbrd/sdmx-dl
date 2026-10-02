@@ -116,6 +116,39 @@ public class SdmxdlScriptService2Test {
     }
 
     @Test
+    public void grpcGenerateScriptWithUnsupportedProperty() {
+        ScriptDto response = grpc.generateFlowsScript(WebFlowsScriptRequestDto.newBuilder()
+                        .setRequest(WebFlowsRequestDto.newBuilder().setSource("ECB"))
+                        .setOptions(ScriptOptionsDto.newBuilder().putProperties("sdmxdl.script.python.x", "y"))
+                        .build())
+                .await()
+                .atMost(TIMEOUT);
+        assertThat(response.getWarningsList()).contains("Unsupported property 'sdmxdl.script.python.x' was ignored");
+    }
+
+    @Test
+    public void restGenerateScriptWithUnsupportedProperty() {
+        given().urlEncodingEnabled(false)
+                .queryParam("property", "sdmxdl.script.python.x=y")
+                .when()
+                .get("/sdmx-dl/v2/ECB/flows:script")
+                .then()
+                .statusCode(200)
+                .body("warnings", hasItems("Unsupported property 'sdmxdl.script.python.x' was ignored"));
+    }
+
+    @Test
+    public void restGenerateScriptWithInvalidProperty() {
+        given().urlEncodingEnabled(false)
+                .queryParam("property", "novalue")
+                .when()
+                .get("/sdmx-dl/v2/ECB/flows:script")
+                .then()
+                .statusCode(400)
+                .body("message", containsString("novalue"));
+    }
+
+    @Test
     public void restGenerateScriptWithUnknownTarget() {
         given().urlEncodingEnabled(false)
                 .queryParam("target", "cobol/cli")

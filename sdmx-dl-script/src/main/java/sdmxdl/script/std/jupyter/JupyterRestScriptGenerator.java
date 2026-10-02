@@ -17,7 +17,7 @@ public final class JupyterRestScriptGenerator implements ScriptGenerator {
 
     @lombok.experimental.Delegate(types = ScriptGenerator.class)
     private final ScriptGeneratorSupport generator = ScriptGeneratorSupport.builder()
-            .scriptTarget(ScriptTarget.of("jupyter", ScriptTarget.REST_TRANSPORT))
+            .scriptTarget(ScriptTarget.of(ScriptTarget.JUPYTER_LANGUAGE, ScriptTarget.REST_TRANSPORT))
             .scriptFileExtension(PythonScripts.FILE_EXTENSION)
             .scriptRequestTypes(RestCalls.SUPPORTED_TYPES)
             .renderer(PythonScripts::renderJupyterRest)

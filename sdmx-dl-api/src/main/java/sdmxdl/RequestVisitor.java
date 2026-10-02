@@ -4,8 +4,12 @@ import lombok.NonNull;
 
 /**
  * Visitor over the concrete types of {@link Request}.
+ * <p>
+ * Evolution policy: new request types are added as default methods that throw an
+ * {@link UnsupportedOperationException}, so that adding a request type does not break existing
+ * implementations.
  *
- * @param <T> the type of the result
+ * @param <T> the type of the result; implementations decide whether it may be null
  */
 public interface RequestVisitor<T> {
 

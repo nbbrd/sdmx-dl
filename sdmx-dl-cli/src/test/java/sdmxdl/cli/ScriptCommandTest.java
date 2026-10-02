@@ -130,8 +130,19 @@ public class ScriptCommandTest {
         assertThat(watcher.getOut()).isEmpty();
         assertThat(watcher.getErr()).isEmpty();
         assertThat(new String(Files.readAllBytes(out), StandardCharsets.UTF_8))
-                .contains("Target,Language,Transport,Commands")
-                .contains("python/cli,python,cli,\"data,flows\"")
-                .contains("python/rest,python,rest,\"data,flows\"");
+                .contains("Target,Language,Transport,Commands,Properties")
+                .contains("python/cli,python,cli,\"data,flows\",")
+                .contains("python/rest,python,rest,\"data,flows\",");
+    }
+
+    @Test
+    public void testDataWithUnsupportedProperty() {
+        CommandLine cmd = new CommandLine(new ScriptDataCommand());
+        CommandWatcher watcher = CommandWatcher.on(cmd);
+
+        assertThat(cmd.execute("ECB", "EXR", "M.CHF.EUR.SP00.A", "--no-log", "-P", "sdmxdl.script.python.x=y"))
+                .isEqualTo(CommandLine.ExitCode.OK);
+        assertThat(watcher.getOut()).startsWith("import contextlib");
+        assertThat(watcher.getErr()).contains("Warning: Unsupported property 'sdmxdl.script.python.x' was ignored");
     }
 }

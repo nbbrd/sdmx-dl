@@ -17,7 +17,7 @@ public final class JBangJavaScriptGenerator implements ScriptGenerator {
 
     @lombok.experimental.Delegate(types = ScriptGenerator.class)
     private final ScriptGeneratorSupport generator = ScriptGeneratorSupport.builder()
-            .scriptTarget(ScriptTarget.of("jbang", ScriptTarget.JAVA_TRANSPORT))
+            .scriptTarget(ScriptTarget.of(ScriptTarget.JBANG_LANGUAGE, ScriptTarget.JAVA_TRANSPORT))
             .scriptFileExtension(JBangScripts.FILE_EXTENSION)
             .scriptRequestTypes(ApiCalls.SUPPORTED_TYPES)
             .renderer(JBangScripts::renderJava)

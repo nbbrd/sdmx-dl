@@ -81,6 +81,7 @@ Options used by the `script` commands to [generate scripts]({{< relref "/integra
 | <a id="rest-endpoint" href="#rest-endpoint">`--rest-endpoint`</a>   | -        | [`<url>`](../datatypes#url)     | Base URI of the web service used by the script (default: `http://localhost:4559/sdmx-dl/v2`).     |
 | <a id="script-output" href="#script-output">`--output`</a>          | `-o`     | [`<file>`](../datatypes#file)   | File written by the generated script (default: standard output).                                   |
 | <a id="script-file" href="#script-file">`--script-file`</a>         | -        | [`<file>`](../datatypes#file)   | File where the generated script is saved (default: standard output).                               |
+| <a id="property" href="#property">`--property`</a>                  | `-P`     | `<name=value>`                  | Generator-specific property of the target (repeatable); see `script targets` for the supported ones. |
 
 ## CSV
 

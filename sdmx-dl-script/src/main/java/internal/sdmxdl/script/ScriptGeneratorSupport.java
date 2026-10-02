@@ -1,5 +1,6 @@
 package internal.sdmxdl.script;
 
+import java.util.Collection;
 import java.util.Set;
 import lombok.NonNull;
 import sdmxdl.Request;
@@ -21,7 +22,7 @@ public final class ScriptGeneratorSupport implements ScriptGenerator {
          * Renders a script by setting its content and warnings in the specified builder.
          */
         void render(
-                @NonNull String source,
+                @NonNull String sourceId,
                 @NonNull Request request,
                 @NonNull ScriptOptions options,
                 Script.@NonNull Builder result)
@@ -36,6 +37,9 @@ public final class ScriptGeneratorSupport implements ScriptGenerator {
     private final @NonNull String scriptFileExtension;
 
     private final @NonNull Set<Class<? extends Request>> scriptRequestTypes;
+
+    @lombok.Singular
+    private final @NonNull Set<String> scriptPropertyNames;
 
     private final @NonNull Renderer renderer;
 
@@ -60,15 +64,20 @@ public final class ScriptGeneratorSupport implements ScriptGenerator {
     }
 
     @Override
+    public @NonNull Collection<String> getScriptPropertyNames() {
+        return scriptPropertyNames;
+    }
+
+    @Override
     public @NonNull Script generateScript(
-            @NonNull String source, @NonNull Request request, @NonNull ScriptOptions options)
+            @NonNull String sourceId, @NonNull Request request, @NonNull ScriptOptions options)
             throws IllegalArgumentException {
         if (!scriptRequestTypes.contains(request.getClass())) {
             throw new IllegalArgumentException(
                     "Unsupported request type: " + request.getClass().getSimpleName());
         }
         Script.Builder result = Script.builder().target(scriptTarget).fileExtension(scriptFileExtension);
-        renderer.render(source, request, options, result);
+        renderer.render(sourceId, request, options, result);
         return result.build();
     }
 }

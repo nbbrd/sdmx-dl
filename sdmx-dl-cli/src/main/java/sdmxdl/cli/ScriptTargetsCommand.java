@@ -31,6 +31,7 @@ public final class ScriptTargetsCommand implements Callable<Void> {
                 .columnOf("Language", ScriptTarget::getLanguage)
                 .columnOf("Transport", ScriptTarget::getTransport)
                 .columnOf("Commands", target -> getCommands(manager, target), CsvUtil.DEFAULT_LIST_FORMATTER)
+                .columnOf("Properties", manager::getPropertyNames, CsvUtil.DEFAULT_LIST_FORMATTER)
                 .build();
     }
 

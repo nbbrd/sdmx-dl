@@ -17,7 +17,7 @@ public final class PowerQueryRestScriptGenerator implements ScriptGenerator {
 
     @lombok.experimental.Delegate(types = ScriptGenerator.class)
     private final ScriptGeneratorSupport generator = ScriptGeneratorSupport.builder()
-            .scriptTarget(ScriptTarget.of("powerquery", ScriptTarget.REST_TRANSPORT))
+            .scriptTarget(ScriptTarget.of(ScriptTarget.POWERQUERY_LANGUAGE, ScriptTarget.REST_TRANSPORT))
             .scriptFileExtension(PowerQueryScripts.FILE_EXTENSION)
             .scriptRequestTypes(RestCalls.SUPPORTED_TYPES)
             .renderer(PowerQueryScripts::renderRest)

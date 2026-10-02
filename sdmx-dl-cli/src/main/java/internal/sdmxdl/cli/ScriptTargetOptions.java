@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import picocli.CommandLine;
 import sdmxdl.Request;
 import sdmxdl.script.Script;
@@ -54,6 +55,12 @@ public class ScriptTargetOptions {
             descriptionKey = "cli.script.scriptFile")
     private Path scriptFile;
 
+    @CommandLine.Option(
+            names = {"-P", "--property"},
+            paramLabel = "<name=value>",
+            descriptionKey = "cli.script.property")
+    private Map<String, String> properties;
+
     public ScriptOptions toScriptOptions() {
         ScriptOptions.Builder result = ScriptOptions.builder().outputFile(output);
         if (cliLauncher != null && !cliLauncher.isEmpty()) {
@@ -62,11 +69,19 @@ public class ScriptTargetOptions {
         if (restEndpoint != null) {
             result.restEndpoint(restEndpoint);
         }
+        if (properties != null) {
+            result.properties(properties);
+        }
         return result.build();
     }
 
     public void generate(CommandLine.Model.CommandSpec spec, String source, Request request) throws IOException {
         Script script = ScriptManager.ofServiceLoader().generate(target, source, request, toScriptOptions());
+        if (!script.getWarnings().isEmpty()) {
+            PrintWriter err = spec.commandLine().getErr();
+            script.getWarnings().forEach(warning -> err.println("Warning: " + warning));
+            err.flush();
+        }
         if (scriptFile != null) {
             Files.write(scriptFile, script.getContent().getBytes(StandardCharsets.UTF_8));
         } else {

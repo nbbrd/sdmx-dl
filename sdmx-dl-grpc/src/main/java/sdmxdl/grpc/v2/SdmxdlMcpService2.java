@@ -75,6 +75,8 @@ public class SdmxdlMcpService2 {
             "Base URI of the sdmx-dl REST server called by the script (default 'http://localhost:4559/sdmx-dl/v2'). Only used by 'rest' targets.";
     private static final String OUTPUT_FILE_ARG =
             "File written by the script (e.g. 'data.csv'). Omit to write to the standard output.";
+    private static final String PROPERTIES_ARG =
+            "Target-specific properties as a list of '<name>=<value>', where names are taken from the 'properties' returned by listScriptTargets. Omit when not needed.";
 
     private static final int MAX_DESCRIPTION_LENGTH = 200;
     private static final String DEFAULT_LAST_N = "20";
@@ -355,7 +357,8 @@ public class SdmxdlMcpService2 {
                     String target,
             @ToolArg(description = CLI_LAUNCHER_ARG, required = false) List<String> cliLauncher,
             @ToolArg(description = REST_ENDPOINT_ARG, required = false) String restEndpoint,
-            @ToolArg(description = OUTPUT_FILE_ARG, required = false) String outputFile)
+            @ToolArg(description = OUTPUT_FILE_ARG, required = false) String outputFile,
+            @ToolArg(description = PROPERTIES_ARG, required = false) List<String> properties)
             throws IOException {
         Provider<WebSource> provider = manager.using(getPublicSourceForMcp(source));
         DataRequest.Builder request = DataRequest.builder()
@@ -364,7 +367,7 @@ public class SdmxdlMcpService2 {
                 .databaseOf(database)
                 .languagesOf(languages);
         applyObsFilters(request, start, end, firstN, lastN);
-        return generateScript(source, request.build(), target, cliLauncher, restEndpoint, outputFile);
+        return generateScript(source, request.build(), target, cliLauncher, restEndpoint, outputFile, properties);
     }
 
     @Tool(
@@ -381,7 +384,8 @@ public class SdmxdlMcpService2 {
                     String target,
             @ToolArg(description = CLI_LAUNCHER_ARG, required = false) List<String> cliLauncher,
             @ToolArg(description = REST_ENDPOINT_ARG, required = false) String restEndpoint,
-            @ToolArg(description = OUTPUT_FILE_ARG, required = false) String outputFile) {
+            @ToolArg(description = OUTPUT_FILE_ARG, required = false) String outputFile,
+            @ToolArg(description = PROPERTIES_ARG, required = false) List<String> properties) {
         getPublicSourceForMcp(source);
         FlowsRequest request = FlowsRequest.builder()
                 .databaseOf(database)
@@ -389,7 +393,7 @@ public class SdmxdlMcpService2 {
                 .query(query)
                 .maxResults(maxResults)
                 .build();
-        return generateScript(source, request, target, cliLauncher, restEndpoint, outputFile);
+        return generateScript(source, request, target, cliLauncher, restEndpoint, outputFile, properties);
     }
 
     private ScriptDto generateScript(
@@ -398,12 +402,14 @@ public class SdmxdlMcpService2 {
             String target,
             List<String> cliLauncher,
             String restEndpoint,
-            String outputFile) {
+            String outputFile,
+            List<String> properties) {
         return ProtoScript.fromScript(scripts.generate(
                 ScriptTarget.parse(target),
                 source,
                 request,
-                ProtoScript.toScriptOptions(cliLauncher, restEndpoint, blankToNull(outputFile))));
+                ProtoScript.toScriptOptions(
+                        cliLauncher, restEndpoint, blankToNull(outputFile), ProtoScript.parseProperties(properties))));
     }
 
     private static String resolveKey(

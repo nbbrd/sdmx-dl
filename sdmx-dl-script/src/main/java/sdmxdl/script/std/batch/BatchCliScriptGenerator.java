@@ -17,7 +17,7 @@ public final class BatchCliScriptGenerator implements ScriptGenerator {
 
     @lombok.experimental.Delegate(types = ScriptGenerator.class)
     private final ScriptGeneratorSupport generator = ScriptGeneratorSupport.builder()
-            .scriptTarget(ScriptTarget.of("batch", ScriptTarget.CLI_TRANSPORT))
+            .scriptTarget(ScriptTarget.of(ScriptTarget.BATCH_LANGUAGE, ScriptTarget.CLI_TRANSPORT))
             .scriptFileExtension(BatchScripts.FILE_EXTENSION)
             .scriptRequestTypes(CliCalls.SUPPORTED_TYPES)
             .renderer(BatchScripts::renderCli)

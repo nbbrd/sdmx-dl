@@ -17,7 +17,7 @@ public final class PythonCliScriptGenerator implements ScriptGenerator {
 
     @lombok.experimental.Delegate(types = ScriptGenerator.class)
     private final ScriptGeneratorSupport generator = ScriptGeneratorSupport.builder()
-            .scriptTarget(ScriptTarget.of("python", ScriptTarget.CLI_TRANSPORT))
+            .scriptTarget(ScriptTarget.of(ScriptTarget.PYTHON_LANGUAGE, ScriptTarget.CLI_TRANSPORT))
             .scriptFileExtension(PythonScripts.FILE_EXTENSION)
             .scriptRequestTypes(CliCalls.SUPPORTED_TYPES)
             .renderer(PythonScripts::renderCli)

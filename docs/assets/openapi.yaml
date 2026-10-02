@@ -272,6 +272,8 @@ components:
           type: string
         commands:
           type: array
+        properties:
+          type: array
     SearchDatabaseRequestDto:
       type: object
       properties:
@@ -893,6 +895,12 @@ paths:
         in: query
         schema:
           type: string
+      - name: property
+        in: query
+        schema:
+          type: array
+          items:
+            type: string
       - name: query
         in: query
         schema:
@@ -1175,6 +1183,12 @@ paths:
         in: query
         schema:
           type: string
+      - name: property
+        in: query
+        schema:
+          type: array
+          items:
+            type: string
       - name: restEndpoint
         in: query
         schema:

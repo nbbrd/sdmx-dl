@@ -17,7 +17,7 @@ public final class RRestScriptGenerator implements ScriptGenerator {
 
     @lombok.experimental.Delegate(types = ScriptGenerator.class)
     private final ScriptGeneratorSupport generator = ScriptGeneratorSupport.builder()
-            .scriptTarget(ScriptTarget.of("r", ScriptTarget.REST_TRANSPORT))
+            .scriptTarget(ScriptTarget.of(ScriptTarget.R_LANGUAGE, ScriptTarget.REST_TRANSPORT))
             .scriptFileExtension(RScripts.FILE_EXTENSION)
             .scriptRequestTypes(RestCalls.SUPPORTED_TYPES)
             .renderer(RScripts::renderRest)

@@ -368,6 +368,9 @@
           },
           "commands" : {
             "type" : "array"
+          },
+          "properties" : {
+            "type" : "array"
           }
         }
       },
@@ -1299,6 +1302,15 @@
             "type" : "string"
           }
         }, {
+          "name" : "property",
+          "in" : "query",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
           "name" : "query",
           "in" : "query",
           "schema" : {
@@ -1701,6 +1713,15 @@
           "in" : "query",
           "schema" : {
             "type" : "string"
+          }
+        }, {
+          "name" : "property",
+          "in" : "query",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
           }
         }, {
           "name" : "restEndpoint",

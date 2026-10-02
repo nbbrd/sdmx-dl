@@ -17,7 +17,7 @@ public final class PowerShellRestScriptGenerator implements ScriptGenerator {
 
     @lombok.experimental.Delegate(types = ScriptGenerator.class)
     private final ScriptGeneratorSupport generator = ScriptGeneratorSupport.builder()
-            .scriptTarget(ScriptTarget.of("powershell", ScriptTarget.REST_TRANSPORT))
+            .scriptTarget(ScriptTarget.of(ScriptTarget.POWERSHELL_LANGUAGE, ScriptTarget.REST_TRANSPORT))
             .scriptFileExtension(PowerShellScripts.FILE_EXTENSION)
             .scriptRequestTypes(RestCalls.SUPPORTED_TYPES)
             .renderer(PowerShellScripts::renderRest)

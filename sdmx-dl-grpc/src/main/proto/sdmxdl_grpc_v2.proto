@@ -132,6 +132,7 @@ message ScriptOptionsDto {
   repeated string cli_launcher = 2; /* command used to launch the CLI, e.g. ["java", "-jar", "sdmx-dl-cli-bin.jar"]; empty = ["sdmx-dl"] */
   optional string rest_endpoint = 3; /* base URI of the REST API; absent = default endpoint */
   optional string output_file = 4; /* file written by the script; absent = standard output */
+  map<string, string> properties = 5; /* generator-specific properties, as listed by ListScriptTargets */
 }
 
 message WebDataScriptRequestDto {
@@ -149,6 +150,7 @@ message ScriptTargetDto {
   string language = 2;
   string transport = 3;
   repeated string commands = 4; /* supported request types, e.g. "data", "flows" */
+  repeated string properties = 5; /* names of the generator-specific properties */
 }
 
 message ScriptDto {

@@ -47,6 +47,8 @@ public class ScriptGeneratorsTest {
     @MethodSource("generators")
     public void testCompliance(ScriptGenerator generator) {
         assertThat(generator.getScriptRequestTypes()).contains(DataRequest.class, FlowsRequest.class);
+        assertThat(generator.getScriptPropertyNames())
+                .allMatch(name -> name.startsWith(ScriptGenerator.SCRIPT_PROPERTY_PREFIX + "."));
 
         for (Request request : requests()) {
             for (ScriptOptions options : options()) {
