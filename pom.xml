@@ -117,6 +117,32 @@
                 <artifactId>wiremock-standalone</artifactId>
                 <version>3.13.2</version>
             </dependency>
+            <!-- tree-sitter parsers used to check the syntax of generated scripts (test only) -->
+            <dependency>
+                <groupId>io.github.bonede</groupId>
+                <artifactId>tree-sitter</artifactId>
+                <version>0.26.6</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.bonede</groupId>
+                <artifactId>tree-sitter-bash</artifactId>
+                <version>0.25.1</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.bonede</groupId>
+                <artifactId>tree-sitter-java</artifactId>
+                <version>0.23.5</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.bonede</groupId>
+                <artifactId>tree-sitter-python</artifactId>
+                <version>0.25.0</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.bonede</groupId>
+                <artifactId>tree-sitter-r</artifactId>
+                <version>main-a</version>
+            </dependency>
 
             <!-- dependencies  -->
             <dependency>
@@ -342,7 +368,7 @@
                             junit.jupiter.execution.parallel.config.dynamic.max-pool-size-factor=4
                         </configurationParameters>
                     </properties>
-                    <groups>!webQueries</groups>
+                    <groups>!webQueries &amp; !scriptSyntax</groups>
                 </configuration>
             </plugin>
             <plugin>
@@ -934,6 +960,22 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <groups>webQueries</groups>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Check generated scripts with the native tools found on the machine -->
+        <profile>
+            <id>scriptSyntax</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <groups>scriptSyntax</groups>
                         </configuration>
                     </plugin>
                 </plugins>

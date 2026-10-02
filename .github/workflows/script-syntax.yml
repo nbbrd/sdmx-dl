@@ -1,0 +1,47 @@
+name: 📜 Script syntax
+
+on:
+  push:
+    paths:
+      - 'sdmx-dl-script/**'
+      - 'sdmx-dl-api/src/main/java/sdmxdl/script/**'
+      - '.github/workflows/script-syntax.yml'
+  pull_request:
+    paths:
+      - 'sdmx-dl-script/**'
+      - 'sdmx-dl-api/src/main/java/sdmxdl/script/**'
+      - '.github/workflows/script-syntax.yml'
+  workflow_dispatch:
+
+env:
+  MAVEN_ARGS: "-B -ntp"
+
+jobs:
+  script-syntax-job:
+    name: 🔍 Check the syntax of generated scripts
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⚙️ Checkout and Setup Maven
+        uses: s4u/setup-maven-action@v1.21.0
+        with:
+          checkout-submodules: true
+          checkout-fetch-depth: 0
+          # JDK 25+ is required to compile jbang scripts
+          java-version: 25
+
+      # Python 3, bash, ShellCheck, PowerShell and Node.js are preinstalled on ubuntu-latest
+      - name: 📦 Setup R
+        uses: r-lib/actions/setup-r@v2
+
+      - name: 📦 Install Power Query parser
+        run: npm install --global @microsoft/powerquery-parser
+
+      - name: ☕ Build with Maven
+        run: mvn install -pl sdmx-dl-script -am -Pyolo -DskipTests
+
+      - name: ☕ Check scripts with Maven
+        run: NODE_PATH="$(npm root --global)" mvn test -pl sdmx-dl-script -Pyolo,scriptSyntax
+        env:
+          # fail instead of skipping when a checker is missing
+          SDMXDL_SCRIPT_SYNTAX_STRICT: true
