@@ -49,7 +49,7 @@ Targets A target is written as &lt;language&gt;/&lt;transport&gt;, where the tra
 <meta property="article:section" content="Integration" />
     <meta
       property="article:modified_time"
-      content="2026-10-02T12:57:10+02:00"
+      content="2026-10-02T13:48:42+02:00"
     />
 
 
@@ -69,7 +69,7 @@ Targets A target is written as &lt;language&gt;/&lt;transport&gt;, where the tra
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/integration/generate-scripts/",
       "headline": "Generate scripts",
       "description": "Let sdmx-dl write the integration script for you. Describe a request once (source, flow, key, filters…) and get a ready-to-run script in the language and transport of your choice, already reshaped into a table like the examples of this section.\nThe script is only generated, never executed: copy it into your own workflow and run it there.\nTargets A target is written as \u003clanguage\u003e\/\u003ctransport\u003e, where the transport is the approach used by the script: cli, rest or java.",
-      "wordCount": "783",
+      "wordCount": "829",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -80,7 +80,7 @@ Targets A target is written as &lt;language&gt;/&lt;transport&gt;, where the tra
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-02T12:57:10.00Z",
+      "dateModified": "2026-10-02T13:48:42.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1893,9 +1893,13 @@ Describe a request once (source, flow, key, filters…) and get a ready-to-run s
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/ECB/EXR/data:script?key=M.CHF.EUR.SP00.A&amp;lastN=12&amp;target=bash/rest&#34;</span>
 </span></span><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/ECB/flows:script?query=exchange&amp;target=python/cli&#34;</span>
 </span></span><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/script/targets&#34;</span>
-</span></span></code></pre></div><p>The response is a JSON object with the <code>target</code>, the <code>fileExtension</code>, the script <code>content</code> and its <code>warnings</code>.
+</span></span></code></pre></div><p>The response is a JSON object with the <code>target</code>, the <code>fileExtension</code>, the <code>mediaType</code>, the script <code>content</code> and its <code>warnings</code>.
 When the <code>restEndpoint</code> parameter is absent, REST scripts point to the server that generated them.</p>
-</div>
+<p>To download the script itself, add <code>format=raw</code> or send an <code>Accept: text/plain</code> (or <code>application/octet-stream</code>) header.
+The response then has the media type of the script, a file name in its <code>Content-Disposition</code> header and one <code>Sdmxdl-Script-Warning</code> header per warning:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -OJ <span class="s2">&#34;localhost:4559/sdmx-dl/v2/ECB/EXR/data:script?key=M.CHF.EUR.SP00.A&amp;target=r/rest&amp;format=raw&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># saves ECB_EXR_data.R</span>
+</span></span></code></pre></div></div>
     <input
       type="radio"
       class="gdoc-tabs__control hidden"
