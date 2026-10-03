@@ -67,7 +67,7 @@
         <protobuf.version>3.25.5</protobuf.version>
         <flatlaf.version>3.7.2</flatlaf.version>
         <!-- 3.x is the last line compatible with Java 8 -->
-        <rsyntaxtextarea.version>3.6.3</rsyntaxtextarea.version>
+        <rsyntaxtextarea.version>4.0.1</rsyntaxtextarea.version>
         <heylogs.version>0.19.1</heylogs.version>
     </properties>
 
