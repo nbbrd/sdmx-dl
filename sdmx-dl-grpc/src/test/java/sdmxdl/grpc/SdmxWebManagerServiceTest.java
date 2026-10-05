@@ -1,16 +1,15 @@
 package sdmxdl.grpc;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.quarkus.grpc.GrpcClient;
 import io.quarkus.test.junit.QuarkusTest;
+import java.time.Duration;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import sdmxdl.format.protobuf.DatabaseDto;
 import sdmxdl.format.protobuf.FlowDto;
 import sdmxdl.format.protobuf.web.WebSourceDto;
-
-import java.time.Duration;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @QuarkusTest
 public class SdmxWebManagerServiceTest {
@@ -21,11 +20,9 @@ public class SdmxWebManagerServiceTest {
     @Test
     public void testGetSources() {
         EmptyDto request = EmptyDto.newBuilder().build();
-        List<WebSourceDto> response = grpc.getSources(request).collect().asList().await().atMost(Duration.ofSeconds(5));
-        assertThat(response)
-                .hasSizeGreaterThanOrEqualTo(33)
-                .extracting(WebSourceDto::getId)
-                .contains("ECB");
+        List<WebSourceDto> response =
+                grpc.getSources(request).collect().asList().await().atMost(Duration.ofSeconds(5));
+        assertThat(response).extracting(WebSourceDto::getId).containsExactlyInAnyOrder("BBK", "ECB", "ESTAT");
     }
 
     @Test
@@ -35,12 +32,10 @@ public class SdmxWebManagerServiceTest {
                 .setQuery("exchange rates")
                 .setMaxResults(5)
                 .build();
-        List<FlowDto> response = grpc.searchFlows(request).collect().asList().await().atMost(Duration.ofSeconds(30));
-        assertThat(response)
-                .isNotEmpty()
-                .hasSizeLessThanOrEqualTo(5);
-        assertThat(response.get(0).getRef())
-                .containsIgnoringCase("EXR");
+        List<FlowDto> response =
+                grpc.searchFlows(request).collect().asList().await().atMost(Duration.ofSeconds(30));
+        assertThat(response).isNotEmpty().hasSizeLessThanOrEqualTo(5);
+        assertThat(response.get(0).getRef()).containsIgnoringCase("EXR");
     }
 
     @Test
@@ -50,7 +45,8 @@ public class SdmxWebManagerServiceTest {
                 .setQuery("")
                 .setMaxResults(10)
                 .build();
-        List<FlowDto> response = grpc.searchFlows(request).collect().asList().await().atMost(Duration.ofSeconds(30));
+        List<FlowDto> response =
+                grpc.searchFlows(request).collect().asList().await().atMost(Duration.ofSeconds(30));
         assertThat(response).isEmpty();
     }
 
@@ -61,7 +57,8 @@ public class SdmxWebManagerServiceTest {
                 .setQuery("balance")
                 .setMaxResults(1)
                 .build();
-        List<FlowDto> response = grpc.searchFlows(request).collect().asList().await().atMost(Duration.ofSeconds(30));
+        List<FlowDto> response =
+                grpc.searchFlows(request).collect().asList().await().atMost(Duration.ofSeconds(30));
         assertThat(response).hasSizeLessThanOrEqualTo(1);
     }
 
@@ -71,12 +68,10 @@ public class SdmxWebManagerServiceTest {
                 .setQuery("european central")
                 .setMaxResults(5)
                 .build();
-        List<WebSourceDto> response = grpc.searchSources(request).collect().asList().await().atMost(Duration.ofSeconds(5));
-        assertThat(response)
-                .isNotEmpty()
-                .hasSizeLessThanOrEqualTo(5);
-        assertThat(response.get(0).getId())
-                .isEqualTo("ECB");
+        List<WebSourceDto> response =
+                grpc.searchSources(request).collect().asList().await().atMost(Duration.ofSeconds(5));
+        assertThat(response).isNotEmpty().hasSizeLessThanOrEqualTo(5);
+        assertThat(response.get(0).getId()).isEqualTo("ECB");
     }
 
     @Test
@@ -85,7 +80,8 @@ public class SdmxWebManagerServiceTest {
                 .setQuery("")
                 .setMaxResults(10)
                 .build();
-        List<WebSourceDto> response = grpc.searchSources(request).collect().asList().await().atMost(Duration.ofSeconds(5));
+        List<WebSourceDto> response =
+                grpc.searchSources(request).collect().asList().await().atMost(Duration.ofSeconds(5));
         assertThat(response).isEmpty();
     }
 
@@ -95,7 +91,8 @@ public class SdmxWebManagerServiceTest {
                 .setQuery("bank")
                 .setMaxResults(2)
                 .build();
-        List<WebSourceDto> response = grpc.searchSources(request).collect().asList().await().atMost(Duration.ofSeconds(5));
+        List<WebSourceDto> response =
+                grpc.searchSources(request).collect().asList().await().atMost(Duration.ofSeconds(5));
         assertThat(response).hasSizeLessThanOrEqualTo(2);
     }
 
@@ -105,11 +102,9 @@ public class SdmxWebManagerServiceTest {
                 .setQuery("ECB")
                 .setMaxResults(5)
                 .build();
-        List<WebSourceDto> response = grpc.searchSources(request).collect().asList().await().atMost(Duration.ofSeconds(5));
-        assertThat(response)
-                .isNotEmpty()
-                .extracting(WebSourceDto::getId)
-                .contains("ECB");
+        List<WebSourceDto> response =
+                grpc.searchSources(request).collect().asList().await().atMost(Duration.ofSeconds(5));
+        assertThat(response).isNotEmpty().extracting(WebSourceDto::getId).contains("ECB");
     }
 
     @Test
@@ -119,8 +114,8 @@ public class SdmxWebManagerServiceTest {
                 .setQuery("")
                 .setMaxResults(10)
                 .build();
-        List<DatabaseDto> response = grpc.searchDatabases(request).collect().asList().await().atMost(Duration.ofSeconds(30));
+        List<DatabaseDto> response =
+                grpc.searchDatabases(request).collect().asList().await().atMost(Duration.ofSeconds(30));
         assertThat(response).isEmpty();
     }
 }
-
