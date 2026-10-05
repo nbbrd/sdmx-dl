@@ -22,6 +22,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - ![PROVIDER] Fix key trailing wildcards in rest queries [#1312](https://github.com/nbbrd/sdmx-dl/issues/1312)
+- ![API] Fix partial key support in drivers that don't expand keys themselves [#1086](https://github.com/nbbrd/sdmx-dl/issues/1086)
 
 ## [3.2.0] - 2026-08-14
 

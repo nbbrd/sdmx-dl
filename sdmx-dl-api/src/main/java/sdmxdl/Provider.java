@@ -260,6 +260,9 @@ public final class Provider<SOURCE extends Source> {
      * <p>Entries are returned sorted by code id and mapped to their label as defined in the
      * dimension's codelist. When a code has no matching label, its value is {@code null}.
      *
+     * <p>A partial key (fewer dimensions than the structure) is expanded with trailing
+     * wildcards before being sent to the connection; see {@link Key#normalize(Structure)}.
+     *
      * @param request dimension/key-level request parameters (non-null)
      * @return non-null sorted map of available code id to code label (possibly empty)
      * @throws IOException if the requested dimension cannot be found, or if metadata/data
@@ -268,12 +271,12 @@ public final class Provider<SOURCE extends Source> {
     public @NonNull SortedMap<String, String> listAvailability(@NonNull AvailabilityRequest request)
             throws IOException {
         try (Connection connection = manager.getConnection(source, request.getLanguages())) {
-            Dimension dimension =
-                    connection.getMeta(request.getDatabase(), request.getFlow()).getStructure().getDimensions().stream()
-                            .filter(o -> o.getId().equals(request.getDimension()))
-                            .findFirst()
-                            .orElseThrow(
-                                    () -> new IOException("Cannot find dimension '" + request.getDimension() + "'"));
+            Structure structure =
+                    connection.getMeta(request.getDatabase(), request.getFlow()).getStructure();
+            Dimension dimension = structure.getDimensions().stream()
+                    .filter(o -> o.getId().equals(request.getDimension()))
+                    .findFirst()
+                    .orElseThrow(() -> new IOException("Cannot find dimension '" + request.getDimension() + "'"));
 
             Map<String, String> codes = dimension.getCodes();
             // NB: a plain Collectors.toMap(..., TreeMap::new) would throw a NullPointerException
@@ -281,7 +284,10 @@ public final class Provider<SOURCE extends Source> {
             // values), so the map is built manually to keep the label as null in that case.
             SortedMap<String, String> result = new TreeMap<>();
             for (String code : connection.getAvailableDimensionCodes(
-                    request.getDatabase(), request.getFlow(), request.getKey(), dimension.getIndex())) {
+                    request.getDatabase(),
+                    request.getFlow(),
+                    request.getKey().normalize(structure),
+                    dimension.getIndex())) {
                 result.putIfAbsent(code, codes.get(code));
             }
             return result;
@@ -304,13 +310,25 @@ public final class Provider<SOURCE extends Source> {
     /**
      * Retrieves data matching the given key request.
      *
+     * <p>A partial key (fewer dimensions than the structure) is expanded with trailing
+     * wildcards before being sent to the connection; see {@link Key#normalize(Structure)}.
+     *
      * @param request key/data query parameters (non-null)
      * @return non-null dataset containing matching observations/series
      * @throws IOException if data retrieval fails due to I/O issues
      */
     public @NonNull DataSet getData(@NonNull DataRequest request) throws IOException {
         try (Connection connection = manager.getConnection(source, request.getLanguages())) {
-            return connection.getData(request.getDatabase(), request.getFlow(), request.toQuery());
+            Query query = request.toQuery();
+            if (!Key.ALL.equals(query.getKey())) {
+                Structure structure = connection
+                        .getMeta(request.getDatabase(), request.getFlow())
+                        .getStructure();
+                query = query.toBuilder()
+                        .key(query.getKey().normalize(structure))
+                        .build();
+            }
+            return connection.getData(request.getDatabase(), request.getFlow(), query);
         }
     }
 

@@ -21,10 +21,17 @@ A key selects one or more series of a flow. It has one code per dimension, in di
 | `M.CHF.EUR.SP00.A`     | Exactly one series (`FREQ=M`, `CURRENCY=CHF`, …).                   |
 | `M..EUR.SP00.A`        | An empty position matches any code (here: every currency).          |
 | `M.CHF+USD.EUR.SP00.A` | `+` selects several codes in the same position (here: CHF and USD). |
+| `M.CHF`                | Omitted trailing positions match any code (same as `M.CHF...`).     |
 | `all`                  | Every series of the flow.                                           |
 
 The same key syntax is used by every flavor (API `keyOf(...)`, CLI argument, WS `key` parameter).
 Use [Dimensions and attributes](#dimensions-and-attributes) to find the dimension order, [Codes](#codes) to find valid codes, and [Availability](#availability) to check which codes actually occur.
+
+{{< hint type="info" >}}
+**Partial keys** come from the [SDMX 3.0 REST API](https://github.com/sdmx-twg/sdmx-rest/blob/master/doc/data.md), where _"any dimension value omitted at the end of the key is assumed as equivalent to a wildcard"_.
+sdmx-dl expands them against the flow's structure before querying the source, so they work with every source, including SDMX 2.1 and non-SDMX ones.
+A key can't have more positions than the flow has dimensions.
+{{< /hint >}}
 
 ## Dimensions and attributes
 

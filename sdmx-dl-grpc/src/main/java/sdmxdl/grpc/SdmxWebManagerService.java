@@ -207,8 +207,11 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
         Key key = Key.parse(request.getKey());
         Languages languages = request.hasLanguages() ? Languages.parse(request.getLanguages()) : Languages.ANY;
         try (Connection connection = manager.getConnection(request.getSource(), languages)) {
+            Key normalizedKey =
+                    key.normalize(connection.getMeta(databaseRef, flowRef).getStructure());
             return Multi.createFrom()
-                    .items(connection.getAvailableDimensionCodes(databaseRef, flowRef, key, request.getDimension()))
+                    .items(connection.getAvailableDimensionCodes(
+                            databaseRef, flowRef, normalizedKey, request.getDimension()))
                     .map(codes ->
                             DimensionCodesDto.newBuilder().addAllCodes(codes).build());
         } catch (IOException ex) {

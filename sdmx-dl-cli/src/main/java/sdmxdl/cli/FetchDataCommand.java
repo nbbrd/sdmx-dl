@@ -47,13 +47,17 @@ import sdmxdl.format.csv.SdmxPicocsvFormatter;
 @SuppressWarnings("FieldMayBeFinal")
 public final class FetchDataCommand implements Callable<Void> {
 
-    @CommandLine.Mixin private WebKeyOptions web;
+    @CommandLine.Mixin
+    private WebKeyOptions web;
 
-    @CommandLine.Mixin private final WebFilterOptions filter = new WebFilterOptions();
+    @CommandLine.Mixin
+    private final WebFilterOptions filter = new WebFilterOptions();
 
-    @CommandLine.Mixin private final RFC4180OutputOptions csv = new RFC4180OutputOptions();
+    @CommandLine.Mixin
+    private final RFC4180OutputOptions csv = new RFC4180OutputOptions();
 
-    @CommandLine.Mixin private final IsoObsFormatOptions format = new IsoObsFormatOptions();
+    @CommandLine.Mixin
+    private final IsoObsFormatOptions format = new IsoObsFormatOptions();
 
     @Override
     public Void call() throws Exception {
@@ -72,9 +76,7 @@ public final class FetchDataCommand implements Callable<Void> {
     private void writeBody(Csv.Writer w) throws IOException {
         try (Connection conn = web.loadManager().getConnection(web.getSource(), web.getLangs())) {
             Structure dsd = conn.getMeta(web.getDatabase(), web.getFlow()).getStructure();
-            getBodyFormatter(dsd, format)
-                    .getFormatter(dsd)
-                    .formatCsv(getSortedSeries(conn, web, filter), w);
+            getBodyFormatter(dsd, format).getFormatter(dsd).formatCsv(getSortedSeries(conn, dsd, web, filter), w);
         }
     }
 
@@ -84,15 +86,10 @@ public final class FetchDataCommand implements Callable<Void> {
                 .fields(Arrays.asList(SERIESKEY, ATTRIBUTES, TIME_DIMENSION, OBS_VALUE))
                 .customFactory(
                         ATTRIBUTES,
-                        dataSet ->
-                                SdmxCsvFieldWriter.onCompactObsAttributes(
-                                        ATTRIBUTES, DEFAULT_MAP_FORMATTER))
+                        dataSet -> SdmxCsvFieldWriter.onCompactObsAttributes(ATTRIBUTES, DEFAULT_MAP_FORMATTER))
                 .customFactory(
-                        TIME_DIMENSION,
-                        dataSet -> SdmxCsvFieldWriter.onTimeDimension(dsd, getPeriodFormat(format)))
-                .customFactory(
-                        OBS_VALUE,
-                        dataSet -> SdmxCsvFieldWriter.onObsValue(OBS_VALUE, getValueFormat(format)))
+                        TIME_DIMENSION, dataSet -> SdmxCsvFieldWriter.onTimeDimension(dsd, getPeriodFormat(format)))
+                .customFactory(OBS_VALUE, dataSet -> SdmxCsvFieldWriter.onObsValue(OBS_VALUE, getValueFormat(format)))
                 .build();
     }
 
@@ -104,13 +101,13 @@ public final class FetchDataCommand implements Callable<Void> {
         return Formatter.onDateTimeFormatter(format.newDateTimeFormatter(true));
     }
 
-    private static DataSet getSortedSeries(
-            Connection conn, WebKeyOptions web, WebFilterOptions filter) throws IOException {
-        Query query =
-                filter.configure(Query.builder().key(web.getKey()).detail(getDetail())).build();
+    private static DataSet getSortedSeries(Connection conn, Structure dsd, WebKeyOptions web, WebFilterOptions filter)
+            throws IOException {
+        Query query = filter.configure(
+                        Query.builder().key(web.getKey().normalize(dsd)).detail(getDetail()))
+                .build();
         try (Stream<Series> stream = conn.getDataStream(web.getDatabase(), web.getFlow(), query)) {
-            return stream.sorted(WebFlowOptions.SERIES_BY_KEY)
-                    .collect(toDataSet(web.getFlow(), query));
+            return stream.sorted(WebFlowOptions.SERIES_BY_KEY).collect(toDataSet(web.getFlow(), query));
         } catch (UncheckedIOException ex) {
             throw ex.getCause();
         }

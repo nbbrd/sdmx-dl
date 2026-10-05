@@ -397,6 +397,25 @@ public class ProviderTest {
     }
 
     @Test
+    public void testListAvailabilityWithPartialKey() throws IOException {
+        assertThat(validProvider()
+                        .listAvailability(AvailabilityRequest.builder()
+                                .flow(FLOW_REF)
+                                .keyOf("M.FR")
+                                .dimension("SECTOR")
+                                .build()))
+                .containsExactly(entry("INDUSTRY", "Industry"));
+
+        assertThat(validProvider()
+                        .listAvailability(AvailabilityRequest.builder()
+                                .flow(FLOW_REF)
+                                .keyOf("M")
+                                .dimension("REGION")
+                                .build()))
+                .containsExactly(entry("BE", "Belgium"), entry("FR", "France"));
+    }
+
+    @Test
     public void testListAvailabilityWithUnknownDimension() {
         assertThatIOException()
                 .isThrownBy(() -> validProvider()
@@ -439,6 +458,34 @@ public class ProviderTest {
     public void testGetData() throws IOException {
         assertThat(validProvider().getData(DataRequest.builder().flow(FLOW_REF).build()))
                 .isEqualTo(DATA_SET);
+    }
+
+    @Test
+    public void testGetDataWithPartialKey() throws IOException {
+        Provider<WebSource> provider = providerOf(new ForwardingConnection() {
+            @Override
+            public @NonNull DataSet getData(
+                    @NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) {
+                return DATA_SET.getData(query);
+            }
+        });
+
+        DataSet partial = provider.getData(
+                DataRequest.builder().flow(FLOW_REF).keyOf("M.BE").build());
+        assertThat(partial.getQuery().getKey()).hasToString("M.BE.");
+        assertThat(partial).extracting(Series::getKey).containsExactlyInAnyOrder(K1, K2);
+
+        assertThat(provider.getData(
+                        DataRequest.builder().flow(FLOW_REF).keyOf("M").build()))
+                .extracting(Series::getKey)
+                .containsExactlyInAnyOrder(K1, K2, K3);
+
+        assertThat(provider.getData(DataRequest.builder()
+                        .flow(FLOW_REF)
+                        .keyOf("M.FR.INDUSTRY")
+                        .build()))
+                .extracting(Series::getKey)
+                .containsExactly(K3);
     }
 
     private static Provider<WebSource> validProvider() {

@@ -67,6 +67,7 @@ A key is a string that identifies a data subset of a dataset
 A key can identify single or multiple time series.
 
 **Format:** either an ordered list of dimension values separated by a dot (`.`) or the special keyword `all`.  
+Trailing dimensions can be omitted: they are then treated as wildcards (partial key).
 
 {{< expand "Examples" >}}
 
@@ -76,6 +77,7 @@ A key can identify single or multiple time series.
 | `M+D.CHF.EUR.SP00.A`   | multiple | Monthly + Daily; Swiss franc; …     |
 | `M.CHF+USD.EUR.SP00.A` | multiple | Monthly; Swiss franc + US dollar; … |
 | `M..EUR.SP00.A`        | multiple | Monthly; all currencies; …          |
+| `M.CHF`                | multiple | same as `M.CHF...`                  |
 | `all`                  | multiple | everything                          |
 
 {{< /expand >}}

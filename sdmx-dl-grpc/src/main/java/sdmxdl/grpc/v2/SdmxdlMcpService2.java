@@ -40,7 +40,7 @@ public class SdmxdlMcpService2 {
     private static final String FLOW_ARG =
             "Flow (dataset) ref exactly as returned by listFlows, e.g. 'EXR' or 'ECB:EXR(1.0)'. Never invent a value: call listFlows first if unsure.";
     private static final String KEY_ARG =
-            "Positional dimension filter: one part per dimension, in the exact dimension order given by getMeta/listDimensions, separated by '.'. An empty part matches any code, '+' separates alternatives (e.g. 'M.CHF+USD.EUR.SP00.A'). Use 'all' (default) to match every series. Prefer the 'dimensions' map instead, which builds this key for you.";
+            "Positional dimension filter: one part per dimension, in the exact dimension order given by getMeta/listDimensions, separated by '.'. An empty part matches any code, '+' separates alternatives (e.g. 'M.CHF+USD.EUR.SP00.A') and omitted trailing parts match any code (e.g. 'M.CHF' is 'M.CHF...'). Use 'all' (default) to match every series. Prefer the 'dimensions' map instead, which builds this key for you.";
     private static final String DETAIL_ARG =
             "Amount of information to retrieve: FULL (observations + attributes), DATA_ONLY (observations without attributes, default), NO_DATA (series keys + attributes, no observations), SERIES_KEYS_ONLY (series keys only; cheapest way to discover which series exist).";
     private static final String QUERY_ARG =

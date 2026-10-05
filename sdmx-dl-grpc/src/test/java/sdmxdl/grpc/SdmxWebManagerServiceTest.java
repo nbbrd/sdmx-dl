@@ -9,6 +9,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import sdmxdl.format.protobuf.DatabaseDto;
 import sdmxdl.format.protobuf.FlowDto;
+import sdmxdl.format.protobuf.SeriesDto;
 import sdmxdl.format.protobuf.web.WebSourceDto;
 
 @QuarkusTest
@@ -23,6 +24,34 @@ public class SdmxWebManagerServiceTest {
         List<WebSourceDto> response =
                 grpc.getSources(request).collect().asList().await().atMost(Duration.ofSeconds(5));
         assertThat(response).extracting(WebSourceDto::getId).containsExactlyInAnyOrder("BBK", "ECB", "ESTAT");
+    }
+
+    @Test
+    public void testGetDataWithPartialKey() {
+        KeyRequestDto request = KeyRequestDto.newBuilder()
+                .setSource("ECB")
+                .setFlow("EXR")
+                .setKey("M.CHF")
+                .build();
+        assertThat(grpc.getData(request).await().atMost(Duration.ofSeconds(5)).getDataList())
+                .extracting(SeriesDto::getKey)
+                .containsExactly("M.CHF.EUR.SP00.A");
+        assertThat(grpc.getDataStream(request).collect().asList().await().atMost(Duration.ofSeconds(5)))
+                .extracting(SeriesDto::getKey)
+                .containsExactly("M.CHF.EUR.SP00.A");
+    }
+
+    @Test
+    public void testGetAvailabilityWithPartialKey() {
+        KeyDimensionRequestDto request = KeyDimensionRequestDto.newBuilder()
+                .setSource("ECB")
+                .setFlow("EXR")
+                .setKey("M")
+                .setDimension(1)
+                .build();
+        assertThat(grpc.getAvailability(request).collect().asList().await().atMost(Duration.ofSeconds(5)))
+                .flatExtracting(DimensionCodesDto::getCodesList)
+                .containsExactlyInAnyOrder("CHF", "USD");
     }
 
     @Test
