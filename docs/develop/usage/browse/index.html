@@ -49,7 +49,7 @@ Keys A key selects one or more series of a flow. It has one code per dimension, 
 <meta property="article:section" content="Usage" />
     <meta
       property="article:modified_time"
-      content="2026-10-05T15:13:08+02:00"
+      content="2026-10-05T16:14:14+02:00"
     />
 
 
@@ -69,7 +69,7 @@ Keys A key selects one or more series of a flow. It has one code per dimension, 
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/browse/",
       "headline": "Browse",
       "description": "Explore a flow’s structure and narrow down valid keys before retrieving data.\nA flow is described by ordered dimensions (which make up the key) and attributes (extra descriptive metadata, not part of the key). Coded dimensions and attributes draw their values from a codelist.\nKeys A key selects one or more series of a flow. It has one code per dimension, in dimension order, separated by dots:",
-      "wordCount": "773",
+      "wordCount": "829",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -80,7 +80,7 @@ Keys A key selects one or more series of a flow. It has one code per dimension, 
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-05T15:13:08.00Z",
+      "dateModified": "2026-10-05T16:14:14.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -2049,6 +2049,7 @@ A key can&rsquo;t have more positions than the flow has dimensions.</div>
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">keyOf</span><span class="p">(</span><span class="s">&#34;M..EUR.SP00.A&#34;</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">dimension</span><span class="p">(</span><span class="s">&#34;CURRENCY&#34;</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">getCodes</span><span class="p">()</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">((</span><span class="n">code</span><span class="p">,</span><span class="w"> </span><span class="n">label</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">code</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34; = &#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">label</span><span class="p">));</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></div></div>
@@ -2062,7 +2063,7 @@ A key can&rsquo;t have more positions than the flow has dimensions.</div>
       CLI
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl list availability ECB EXR M..EUR.SP00.A <span class="m">1</span>
+      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl list availability ECB EXR M..EUR.SP00.A CURRENCY
 </span></span></code></pre></div></div>
     <input
       type="radio"
@@ -2083,8 +2084,9 @@ A key can&rsquo;t have more positions than the flow has dimensions.</div>
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/availability/CURRENCY <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;key=M..EUR.SP00.A&#34;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/availability <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;key=M..EUR.SP00.A&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;dimension=CURRENCY&#34;</span>
 </span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
     <h3 id="grpc"
     >
@@ -2100,20 +2102,20 @@ A key can&rsquo;t have more positions than the flow has dimensions.</div>
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="a14b98fd-8">
+  <label class="gdoc-expand__head flex justify-between" for="952bc477-8">
     <span>CLI output sample</span>
     <span>↕</span>
   </label>
-  <input id="a14b98fd-8" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="952bc477-8" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
-    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Code,Label
-</span></span><span class="line"><span class="cl">ARS,Argentine peso
-</span></span><span class="line"><span class="cl">AUD,Australian dollar
-</span></span><span class="line"><span class="cl">BGN,Bulgarian lev
-</span></span><span class="line"><span class="cl">BRL,Brazilian real
-</span></span><span class="line"><span class="cl">CAD,Canadian dollar
-</span></span><span class="line"><span class="cl">CHF,Swiss franc
-</span></span><span class="line"><span class="cl">CNY,Chinese yuan renminbi
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Code,Label,Dimension
+</span></span><span class="line"><span class="cl">ARS,Argentine peso,CURRENCY
+</span></span><span class="line"><span class="cl">AUD,Australian dollar,CURRENCY
+</span></span><span class="line"><span class="cl">BGN,Bulgarian lev,CURRENCY
+</span></span><span class="line"><span class="cl">BRL,Brazilian real,CURRENCY
+</span></span><span class="line"><span class="cl">CAD,Canadian dollar,CURRENCY
+</span></span><span class="line"><span class="cl">CHF,Swiss franc,CURRENCY
+</span></span><span class="line"><span class="cl">CNY,Chinese yuan renminbi,CURRENCY
 </span></span><span class="line"><span class="cl">...
 </span></span></code></pre></div>
   </div>
@@ -2124,10 +2126,17 @@ A key can&rsquo;t have more positions than the flow has dimensions.</div>
   class="gdoc-markdown__link"
   href="#codes"
 >Codes</a>, this only returns codes that actually occur in the data under the given constraint — not every code defined in the codelist.</li>
-<li>The dimension is <strong>not</strong> referenced the same way across flavors: the API and WS (<code>AvailabilityRequest.dimension</code>/gRPC <code>dimension</code> field/REST <code>/availability/{dimension}</code> path segment) take the dimension by its <strong>id</strong> (e.g. <code>CURRENCY</code>, as returned by <a
+<li>The dimension is referenced the same way in every flavor (API <code>AvailabilityRequest.dimension</code>, CLI <code>&lt;dimension&gt;</code> parameter, REST <code>dimension</code> query parameter, gRPC and MCP <code>dimension</code> field):
+<ul>
+<li>a dimension <strong>id</strong> (e.g. <code>CURRENCY</code>, as returned by <a
   class="gdoc-markdown__link"
   href="#dimensions-and-attributes"
->Dimensions and attributes</a>), while the CLI conveniently accepts a zero-based <strong>index</strong> into the key instead (e.g. <code>1</code> for the second component of <code>M..EUR.SP00.A</code>, which is <code>CURRENCY</code>) and resolves it to an id internally before calling the same request.</li>
+>Dimensions and attributes</a>) is matched first;</li>
+<li>otherwise, an integer is read as the zero-based <strong>index</strong> of the dimension in the key (e.g. <code>1</code> for the second component of <code>M..EUR.SP00.A</code>, which is <code>CURRENCY</code>);</li>
+<li>an <strong>empty</strong> value (the default) selects the first wildcard dimension of the key (e.g. <code>CURRENCY</code> for <code>M..EUR.SP00.A</code>), which makes it easy to narrow a key step by step.</li>
+</ul>
+</li>
+<li>The selected dimension must be a wildcard in the key. The response reports its id along with the codes (<code>Dimension</code> column in the CLI, <code>dimension</code> field in the WS).</li>
 </ul>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="next-step"

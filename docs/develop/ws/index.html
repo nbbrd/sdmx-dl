@@ -50,7 +50,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
 <meta property="article:section" content="Ws" />
     <meta
       property="article:modified_time"
-      content="2026-10-05T15:13:08+02:00"
+      content="2026-10-05T16:14:14+02:00"
     />
 
 
@@ -71,7 +71,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/ws/",
       "headline": "Web service",
       "description": "\nsdmx-dl WS is a web service that serves as a bridge to any application or language.\nThis service has three endpoints:\na gRPC endpoint which has the best performances but a limited set of clients a REST endpoint which has a wider range of clients but is less efficient an MCP endpoint which lets AI assistants and agents browse and fetch data These endpoints also provides specifications (.proto files and OpenAPI respectively) that can be used to generate client code. They are designed to operate locally as well as on remote machines.",
-      "wordCount": "1072",
+      "wordCount": "1111",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -82,7 +82,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-05T15:13:08.00Z",
+      "dateModified": "2026-10-05T16:14:14.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1869,7 +1869,7 @@ Its default port is <code>4559</code>, under the <code>/sdmx-dl/v2</code> path p
 			</tr>
 			<tr>
 					<td><code>ListAvailability</code></td>
-					<td><code>GET /{source}/{flow}/availability/{dimension}</code></td>
+					<td><code>GET /{source}/{flow}/availability</code></td>
 					<td>Codes that actually occur under a key constraint.</td>
 			</tr>
 			<tr>
@@ -1941,7 +1941,11 @@ Each series has a <code>key</code>, optional series-level <code>meta</code>, and
 <li>The <code>detail</code> parameter controls which parts are filled: <code>FULL</code> (default), <code>DATA_ONLY</code> (no <code>meta</code>), <code>NO_DATA</code> (no <code>obs</code>), or <code>SERIES_KEYS_ONLY</code> (keys only).</li>
 <li><code>GetDataStream</code> (<code>GET /{source}/{flow}/data:stream</code>) returns the same series objects as a plain JSON array, without the <code>ref</code>/<code>query</code> wrapper.</li>
 <li>Listing operations (<code>/sources</code>, <code>/{source}/flows</code>, <code>/{source}/{flow}/dimensions</code>, …) return a JSON array of objects that can be turned into a table directly.</li>
-<li><code>ListCodes</code> and <code>ListAvailability</code> return a <code>codes</code> object mapping each code to its label, e.g. <code>{&quot;codes&quot;: {&quot;A&quot;: &quot;Annual&quot;, &quot;Q&quot;: &quot;Quarterly&quot;}}</code>.</li>
+<li><code>ListCodes</code> returns a <code>codes</code> object mapping each code to its label, e.g. <code>{&quot;codes&quot;: {&quot;A&quot;: &quot;Annual&quot;, &quot;Q&quot;: &quot;Quarterly&quot;}}</code>.</li>
+<li><code>ListAvailability</code> also returns the id of the selected dimension, e.g. <code>{&quot;dimension&quot;: &quot;FREQ&quot;, &quot;codes&quot;: {&quot;A&quot;: &quot;Annual&quot;, &quot;Q&quot;: &quot;Quarterly&quot;}, &quot;codeCount&quot;: 2}</code>. Its <code>dimension</code> parameter takes a dimension id, a zero-based index, or nothing for the first wildcard dimension of the <code>key</code> (see <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/usage/browse/#availability"
+>Availability</a>).</li>
 <li>Script operations return the generated script, without executing it: <code>{&quot;target&quot;: &quot;r/rest&quot;, &quot;fileExtension&quot;: &quot;R&quot;, &quot;mediaType&quot;: &quot;text/x-r&quot;, &quot;content&quot;: &quot;...&quot;, &quot;warnings&quot;: []}</code>. With <code>format=raw</code>, or an <code>Accept</code> header that prefers <code>text/plain</code> or <code>application/octet-stream</code>, they return the script itself as a file to download. See <a
   class="gdoc-markdown__link"
   href="/sdmx-dl/docs/develop/integration/generate-scripts/"

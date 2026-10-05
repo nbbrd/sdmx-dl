@@ -47,7 +47,7 @@ Tip No installation needed: prefix every command with jbang sdmx-dl@nbbrd instea
 <meta property="article:section" content="Usage" />
     <meta
       property="article:modified_time"
-      content="2026-10-05T15:13:08+02:00"
+      content="2026-10-05T16:14:14+02:00"
     />
 
 
@@ -66,7 +66,7 @@ Tip No installation needed: prefix every command with jbang sdmx-dl@nbbrd instea
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/getting-started/",
       "headline": "Getting started",
       "description": "This walkthrough answers a simple question from start to finish — how has the Swiss franc moved against the euro recently? — using the command-line tool. Every step has an equivalent in the Java library and the web service; follow the links to see them.\nTip No installation needed: prefix every command with jbang sdmx-dl@nbbrd instead of sdmx-dl (see Installation). 1. Find the source Search the available data providers by name or topic:",
-      "wordCount": "372",
+      "wordCount": "391",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -77,7 +77,7 @@ Tip No installation needed: prefix every command with jbang sdmx-dl@nbbrd instea
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-05T15:13:08.00Z",
+      "dateModified": "2026-10-05T16:14:14.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1797,10 +1797,10 @@ Every step has an equivalent in the <a
   class="gdoc-markdown__link"
   href="/sdmx-dl/docs/develop/usage/browse/#codes"
 >Browse codes</a></p>
-<p>Not every combination exists. Leave a position empty to check which codes are actually available for it — here, the exchange rate type (index <code>3</code>) of monthly average CHF/EUR rates:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl list availability ECB EXR M.CHF.EUR..A <span class="m">3</span>
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Code,Label
-</span></span><span class="line"><span class="cl">SP00,Spot
+<p>Not every combination exists. Leave a position empty to check which codes are actually available for it — here, the exchange rate type of monthly average CHF/EUR rates (the first wildcard dimension of the key is used by default; pass a dimension id or zero-based index to pick another one):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl list availability ECB EXR M.CHF.EUR..A
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Code,Label,Dimension
+</span></span><span class="line"><span class="cl">SP00,Spot,EXR_TYPE
 </span></span></code></pre></div><p>The key is <code>M.CHF.EUR.SP00.A</code>. → <a
   class="gdoc-markdown__link"
   href="/sdmx-dl/docs/develop/usage/browse/#availability"

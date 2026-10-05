@@ -53,7 +53,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
 <meta property="article:section" content="CLI" />
     <meta
       property="article:modified_time"
-      content="2026-10-05T15:13:08+02:00"
+      content="2026-10-05T16:14:14+02:00"
     />
 
 
@@ -75,7 +75,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/cli/usage/",
       "headline": "Usage",
       "description": "By default, all commands print the result on the standard output.\nMost commands produce RFC4180 compliant CSV content.\nCommand arguments are composed of options and positional parameters. Options have a name, positional parameters are usually the values that follow the options, but they may be mixed. The general pattern is:\nsdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters options All commands share the following options:\n-h, --help - Show an help message and exit. -v, --verbose - Enable verbose mode. Commands summary The commands follow a verb\u002bnoun hierarchy.",
-      "wordCount": "1964",
+      "wordCount": "1979",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -86,7 +86,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-05T15:13:08.00Z",
+      "dateModified": "2026-10-05T16:14:14.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -3406,7 +3406,7 @@ empty; ranked by relevance (typo-tolerant) otherwise.</p>
 
 
 <p>List available dimension codes.</p>
-<p>Example: <code>sdmx-dl <font color="#859900">list availability</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M.CHF&hellip;</abbr> <abbr title="index">4</abbr></code></p>
+<p>Example: <code>sdmx-dl <font color="#859900">list availability</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M..EUR.SP00.A</abbr> <abbr title="dimension">CURRENCY</abbr></code></p>
 
 
 
@@ -3436,8 +3436,8 @@ empty; ranked by relevance (typo-tolerant) otherwise.</p>
 ><code>key</code></a> - Data key.</li>
 <li><a
   class="gdoc-markdown__link--code"
-  href="../datatypes#int"
-><code>index</code></a> - Zero-based index of key dimension.</li>
+  href="../datatypes#string"
+><code>dimension</code></a> - Dimension id, zero-based index of key dimension, or nothing for the first wildcard dimension of the key (optional).</li>
 </ol>
 </div>
     <input
@@ -3495,6 +3495,14 @@ empty; ranked by relevance (typo-tolerant) otherwise.</p>
   class="gdoc-markdown__link--code"
   href="../datatypes#string"
 ><code>Code:string</code></a></li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#string"
+><code>Label:string</code></a></li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#string"
+><code>Dimension:string</code></a></li>
 </ol></div>
 </div>
 
