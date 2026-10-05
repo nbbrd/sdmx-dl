@@ -45,7 +45,7 @@
 <meta property="article:section" content="CLI" />
     <meta
       property="article:modified_time"
-      content="2026-10-05T13:34:48+02:00"
+      content="2026-10-05T15:13:08+02:00"
     />
 
 
@@ -63,7 +63,7 @@
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/",
       "headline": "Data types",
       "description": " Common file encoding char string locale datetime The date-time format is ISO-8601.",
-      "wordCount": "295",
+      "wordCount": "313",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -74,7 +74,7 @@
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-05T13:34:48.00Z",
+      "dateModified": "2026-10-05T15:13:08.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1902,14 +1902,15 @@
 <p>A key is a string that identifies a data subset of a dataset
 (<em>In a cube, it would be a slice identifier</em>).<br>
 A key can identify single or multiple time series.</p>
-<p><strong>Format:</strong> either an ordered list of dimension values separated by a dot (<code>.</code>) or the special keyword <code>all</code>.</p>
+<p><strong>Format:</strong> either an ordered list of dimension values separated by a dot (<code>.</code>) or the special keyword <code>all</code>.<br>
+Trailing dimensions can be omitted: they are then treated as wildcards (partial key).</p>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="3d7f2f0b-2">
+  <label class="gdoc-expand__head flex justify-between" for="588a310a-2">
     <span>Examples</span>
     <span>↕</span>
   </label>
-  <input id="3d7f2f0b-2" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="588a310a-2" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="table-wrap"> <table>
 	<thead>
@@ -1939,6 +1940,11 @@ A key can identify single or multiple time series.</p>
 					<td><code>M..EUR.SP00.A</code></td>
 					<td>multiple</td>
 					<td>Monthly; all currencies; …</td>
+			</tr>
+			<tr>
+					<td><code>M.CHF</code></td>
+					<td>multiple</td>
+					<td>same as <code>M.CHF...</code></td>
 			</tr>
 			<tr>
 					<td><code>all</code></td>

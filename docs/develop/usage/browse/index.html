@@ -49,7 +49,7 @@ Keys A key selects one or more series of a flow. It has one code per dimension, 
 <meta property="article:section" content="Usage" />
     <meta
       property="article:modified_time"
-      content="2026-10-05T13:34:48+02:00"
+      content="2026-10-05T15:13:08+02:00"
     />
 
 
@@ -69,7 +69,7 @@ Keys A key selects one or more series of a flow. It has one code per dimension, 
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/browse/",
       "headline": "Browse",
       "description": "Explore a flow’s structure and narrow down valid keys before retrieving data.\nA flow is described by ordered dimensions (which make up the key) and attributes (extra descriptive metadata, not part of the key). Coded dimensions and attributes draw their values from a codelist.\nKeys A key selects one or more series of a flow. It has one code per dimension, in dimension order, separated by dots:",
-      "wordCount": "701",
+      "wordCount": "773",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -80,7 +80,7 @@ Keys A key selects one or more series of a flow. It has one code per dimension, 
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-05T13:34:48.00Z",
+      "dateModified": "2026-10-05T15:13:08.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1725,6 +1725,10 @@ Coded dimensions and attributes draw their values from a codelist.</p>
 					<td><code>+</code> selects several codes in the same position (here: CHF and USD).</td>
 			</tr>
 			<tr>
+					<td><code>M.CHF</code></td>
+					<td>Omitted trailing positions match any code (same as <code>M.CHF...</code>).</td>
+			</tr>
+			<tr>
 					<td><code>all</code></td>
 					<td>Every series of the flow.</td>
 			</tr>
@@ -1741,6 +1745,20 @@ Use <a
   class="gdoc-markdown__link"
   href="#availability"
 >Availability</a> to check which codes actually occur.</p>
+
+
+
+<blockquote class="gdoc-hint info">
+  <div class="gdoc-hint__title flex gap-8 align-center"><i class="fa info"></i>
+      <span>Info</span></div>
+  <div class="gdoc-hint__text"><strong>Partial keys</strong> come from the <a
+  class="gdoc-markdown__link"
+  href="https://github.com/sdmx-twg/sdmx-rest/blob/master/doc/data.md"
+>SDMX 3.0 REST API</a>, where <em>&ldquo;any dimension value omitted at the end of the key is assumed as equivalent to a wildcard&rdquo;</em>.
+sdmx-dl expands them against the flow&rsquo;s structure before querying the source, so they work with every source, including SDMX 2.1 and non-SDMX ones.
+A key can&rsquo;t have more positions than the flow has dimensions.</div>
+</blockquote>
+
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="dimensions-and-attributes"
     >
@@ -1830,11 +1848,11 @@ Use <a
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="d127f252-1">
+  <label class="gdoc-expand__head flex justify-between" for="d127f252-2">
     <span>CLI output sample</span>
     <span>↕</span>
   </label>
-  <input id="d127f252-1" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="d127f252-2" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Name,Label,Coded,Index
 </span></span><span class="line"><span class="cl">FREQ,Frequency,true,0
@@ -1961,11 +1979,11 @@ Use <a
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="a086b1cd-5">
+  <label class="gdoc-expand__head flex justify-between" for="a086b1cd-6">
     <span>CLI output sample</span>
     <span>↕</span>
   </label>
-  <input id="a086b1cd-5" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="a086b1cd-6" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Code,Label
 </span></span><span class="line"><span class="cl">A,Annual
@@ -2082,11 +2100,11 @@ Use <a
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="a14b98fd-7">
+  <label class="gdoc-expand__head flex justify-between" for="a14b98fd-8">
     <span>CLI output sample</span>
     <span>↕</span>
   </label>
-  <input id="a14b98fd-7" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="a14b98fd-8" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Code,Label
 </span></span><span class="line"><span class="cl">ARS,Argentine peso
