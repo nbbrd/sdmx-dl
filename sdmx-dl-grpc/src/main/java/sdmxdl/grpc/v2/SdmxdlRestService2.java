@@ -291,12 +291,12 @@ public class SdmxdlRestService2 {
     }
 
     @GET
-    @Path("/{source}/{flow}/availability/{dimension}")
-    public Uni<CodelistDto> getAvailability(
+    @Path("/{source}/{flow}/availability")
+    public Uni<AvailabilityDto> getAvailability(
             @PathParam("source") String source,
             @PathParam("flow") String flow,
-            @PathParam("dimension") String dimension,
             @QueryParam("key") @DefaultValue("all") String key,
+            @QueryParam("dimension") @DefaultValue(AvailabilityRequest.FIRST_WILDCARD_DIMENSION) String dimension,
             @QueryParam("database") @DefaultValue(NO_DATABASE_KEYWORD) String database,
             @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages) {
         return uniOfIO(() -> manager.usingName(source)
@@ -307,11 +307,7 @@ public class SdmxdlRestService2 {
                                 .keyOf(key)
                                 .dimension(dimension)
                                 .build()))
-                .map(codes -> CodelistDto.newBuilder()
-                        .setRef("")
-                        .setCodeCount(codes.size())
-                        .putAllCodes(codes)
-                        .build());
+                .map(ProtoApi::fromAvailability);
     }
 
     @GET

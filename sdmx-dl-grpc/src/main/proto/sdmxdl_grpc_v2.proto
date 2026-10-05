@@ -28,7 +28,7 @@ service SdmxWebManager {
 
   rpc ListCodes(WebCodesRequestDto) returns (sdmxdl.format.protobuf.CodelistDto);
 
-  rpc ListAvailability(WebAvailabilityRequestDto) returns (sdmxdl.format.protobuf.CodelistDto);
+  rpc ListAvailability(WebAvailabilityRequestDto) returns (sdmxdl.format.protobuf.AvailabilityDto);
 
   rpc ListStatuses(WebStatusesRequestDto) returns (stream sdmxdl.format.protobuf.web.MonitorReportDto);
 
@@ -117,7 +117,7 @@ message WebCodesRequestDto {
 message WebAvailabilityRequestDto {
   string source = 1;
   string flow = 2;
-  string dimension = 3; /* dimension id, as returned by ListDimensions */
+  string dimension = 3; /* dimension id (as returned by ListDimensions), zero-based dimension index, or empty for the first wildcard dimension of the key */
   string key = 4;
   optional string database = 5;
   optional string languages = 6;

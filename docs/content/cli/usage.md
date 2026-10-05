@@ -522,7 +522,7 @@ CSV columns:
 
 List available dimension codes.
 
-Example: <code>sdmx-dl <font color="#859900">list availability</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M.CHF...</abbr> <abbr title="index">4</abbr></code>
+Example: <code>sdmx-dl <font color="#859900">list availability</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M..EUR.SP00.A</abbr> <abbr title="dimension">CURRENCY</abbr></code>
 
 {{< tabs "list-availability" >}}
 {{< tab "Parameters" >}}
@@ -530,7 +530,7 @@ Example: <code>sdmx-dl <font color="#859900">list availability</font> <abbr titl
 1. [`source`](../datatypes#source) - Data source name.
 2. [`flow`](../datatypes#flow) - Data flow reference.
 3. [`key`](../datatypes#key) - Data key.
-4. [`index`](../datatypes#int) - Zero-based index of key dimension.
+4. [`dimension`](../datatypes#string) - Dimension id, zero-based index of key dimension, or nothing for the first wildcard dimension of the key (optional).
 
 {{< /tab >}}
 {{< tab "Options" >}}
@@ -550,6 +550,8 @@ Other options:
 
 CSV columns:
 1. [`Code:string`](../datatypes#string)
+2. [`Label:string`](../datatypes#string)
+3. [`Dimension:string`](../datatypes#string)
 
 {{< /tab >}}
 {{< /tabs >}}

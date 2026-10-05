@@ -202,6 +202,7 @@ void main() throws Exception {
                     .keyOf("M..EUR.SP00.A")
                     .dimension("CURRENCY")
                     .build())
+            .getCodes()
             .forEach((code, label) -> IO.println(code + " = " + label));
 }
 ```
@@ -210,7 +211,7 @@ void main() throws Exception {
 {{< tab "CLI" >}}
 
 ```shell
-sdmx-dl list availability ECB EXR M..EUR.SP00.A 1
+sdmx-dl list availability ECB EXR M..EUR.SP00.A CURRENCY
 ```
 {{< /tab >}}
 
@@ -219,8 +220,9 @@ sdmx-dl list availability ECB EXR M..EUR.SP00.A 1
 ### REST
 
 ```shell
-curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/availability/CURRENCY \
-  --data-urlencode "key=M..EUR.SP00.A"
+curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/availability \
+  --data-urlencode "key=M..EUR.SP00.A" \
+  --data-urlencode "dimension=CURRENCY"
 ```
 
 ### gRPC
@@ -233,20 +235,24 @@ grpcurl -d '{"source":"ECB","flow":"EXR","key":"M..EUR.SP00.A","dimension":"CURR
 
 {{< expand "CLI output sample" >}}
 ```plain
-Code,Label
-ARS,Argentine peso
-AUD,Australian dollar
-BGN,Bulgarian lev
-BRL,Brazilian real
-CAD,Canadian dollar
-CHF,Swiss franc
-CNY,Chinese yuan renminbi
+Code,Label,Dimension
+ARS,Argentine peso,CURRENCY
+AUD,Australian dollar,CURRENCY
+BGN,Bulgarian lev,CURRENCY
+BRL,Brazilian real,CURRENCY
+CAD,Canadian dollar,CURRENCY
+CHF,Swiss franc,CURRENCY
+CNY,Chinese yuan renminbi,CURRENCY
 ...
 ```
 {{< /expand >}}
 
 - Unlike [Codes](#codes), this only returns codes that actually occur in the data under the given constraint — not every code defined in the codelist.
-- The dimension is **not** referenced the same way across flavors: the API and WS (`AvailabilityRequest.dimension`/gRPC `dimension` field/REST `/availability/{dimension}` path segment) take the dimension by its **id** (e.g. `CURRENCY`, as returned by [Dimensions and attributes](#dimensions-and-attributes)), while the CLI conveniently accepts a zero-based **index** into the key instead (e.g. `1` for the second component of `M..EUR.SP00.A`, which is `CURRENCY`) and resolves it to an id internally before calling the same request.
+- The dimension is referenced the same way in every flavor (API `AvailabilityRequest.dimension`, CLI `<dimension>` parameter, REST `dimension` query parameter, gRPC and MCP `dimension` field):
+  - a dimension **id** (e.g. `CURRENCY`, as returned by [Dimensions and attributes](#dimensions-and-attributes)) is matched first;
+  - otherwise, an integer is read as the zero-based **index** of the dimension in the key (e.g. `1` for the second component of `M..EUR.SP00.A`, which is `CURRENCY`);
+  - an **empty** value (the default) selects the first wildcard dimension of the key (e.g. `CURRENCY` for `M..EUR.SP00.A`), which makes it easy to narrow a key step by step.
+- The selected dimension must be a wildcard in the key. The response reports its id along with the codes (`Dimension` column in the CLI, `dimension` field in the WS).
 
 ## Next step
 

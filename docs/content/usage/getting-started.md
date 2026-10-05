@@ -85,15 +85,15 @@ M,Monthly
 
 Doing the same for the other dimensions gives `M` (monthly), `CHF` (Swiss franc), `EUR` (euro), `SP00` (spot) and `A` (average). → [Browse codes]({{< relref "/usage/browse#codes" >}})
 
-Not every combination exists. Leave a position empty to check which codes are actually available for it — here, the exchange rate type (index `3`) of monthly average CHF/EUR rates:
+Not every combination exists. Leave a position empty to check which codes are actually available for it — here, the exchange rate type of monthly average CHF/EUR rates (the first wildcard dimension of the key is used by default; pass a dimension id or zero-based index to pick another one):
 
 ```shell
-sdmx-dl list availability ECB EXR M.CHF.EUR..A 3
+sdmx-dl list availability ECB EXR M.CHF.EUR..A
 ```
 
 ```plain
-Code,Label
-SP00,Spot
+Code,Label,Dimension
+SP00,Spot,EXR_TYPE
 ```
 
 The key is `M.CHF.EUR.SP00.A`. → [Browse availability]({{< relref "/usage/browse#availability" >}})

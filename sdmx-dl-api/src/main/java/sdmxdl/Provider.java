@@ -257,40 +257,36 @@ public final class Provider<SOURCE extends Source> {
      * Lists the codes that are actually available for the requested dimension, given the
      * requested key constraints, within the structure of the requested flow.
      *
-     * <p>Entries are returned sorted by code id and mapped to their label as defined in the
+     * <p>The requested dimension is resolved as described in {@link AvailabilityRequest}: by id,
+     * then by zero-based index, or as the first wildcard dimension of the key when empty. The
+     * resolved dimension must be a wildcard in the key.
+     *
+     * <p>Codes are returned sorted by id and mapped to their label as defined in the
      * dimension's codelist. When a code has no matching label, its value is {@code null}.
      *
      * <p>A partial key (fewer dimensions than the structure) is expanded with trailing
      * wildcards before being sent to the connection; see {@link Key#normalize(Structure)}.
      *
      * @param request dimension/key-level request parameters (non-null)
-     * @return non-null sorted map of available code id to code label (possibly empty)
-     * @throws IOException if the requested dimension cannot be found, or if metadata/data
-     *                      retrieval fails due to I/O issues
+     * @return non-null availability of the resolved dimension (possibly without codes)
+     * @throws IOException if the requested dimension cannot be resolved or is not a wildcard
+     *                      in the key, or if metadata/data retrieval fails due to I/O issues
      */
-    public @NonNull SortedMap<String, String> listAvailability(@NonNull AvailabilityRequest request)
-            throws IOException {
+    public @NonNull Availability listAvailability(@NonNull AvailabilityRequest request) throws IOException {
         try (Connection connection = manager.getConnection(source, request.getLanguages())) {
             Structure structure =
                     connection.getMeta(request.getDatabase(), request.getFlow()).getStructure();
-            Dimension dimension = structure.getDimensions().stream()
-                    .filter(o -> o.getId().equals(request.getDimension()))
-                    .findFirst()
-                    .orElseThrow(() -> new IOException("Cannot find dimension '" + request.getDimension() + "'"));
+            Key key = request.getKey().normalize(structure);
+            int index = resolveDimensionIndex(structure, key, request.getDimension());
+            Dimension dimension = structure.getDimensions().get(index);
 
-            Map<String, String> codes = dimension.getCodes();
-            // NB: a plain Collectors.toMap(..., TreeMap::new) would throw a NullPointerException
-            // as soon as a returned code has no matching label (its Map.merge call rejects null
-            // values), so the map is built manually to keep the label as null in that case.
-            SortedMap<String, String> result = new TreeMap<>();
-            for (String code : connection.getAvailableDimensionCodes(
-                    request.getDatabase(),
-                    request.getFlow(),
-                    request.getKey().normalize(structure),
-                    dimension.getIndex())) {
-                result.putIfAbsent(code, codes.get(code));
+            Map<String, String> labels = dimension.getCodes();
+            Availability.Builder result = Availability.builder().dimension(dimension.getId());
+            for (String code :
+                    connection.getAvailableDimensionCodes(request.getDatabase(), request.getFlow(), key, index)) {
+                result.code(code, labels.get(code));
             }
-            return result;
+            return result.build();
         }
     }
 
@@ -350,6 +346,55 @@ public final class Provider<SOURCE extends Source> {
                 .map(Component::getCodes)
                 .findFirst()
                 .orElseThrow(() -> new IOException("Cannot find concept '" + request.getConcept() + "'"));
+    }
+
+    /**
+     * Resolves the dimension requested by {@link AvailabilityRequest#getDimension()} to its
+     * position in the structure, and checks that it is a wildcard in the key.
+     *
+     * @param structure the structure of the flow
+     * @param key the normalized key constraint
+     * @param dimension a dimension id, a zero-based index or an empty value for the first wildcard
+     * @return the zero-based position of the resolved dimension
+     * @throws IOException if the dimension cannot be resolved or is not a wildcard in the key
+     */
+    private static int resolveDimensionIndex(Structure structure, Key key, String dimension) throws IOException {
+        List<Dimension> dimensions = structure.getDimensions();
+        if (dimension.equals(AvailabilityRequest.FIRST_WILDCARD_DIMENSION)) {
+            for (int i = 0; i < dimensions.size(); i++) {
+                if (isWildcard(key, i)) {
+                    return i;
+                }
+            }
+            throw new IOException("Cannot find a wildcard dimension in key '" + key + "'");
+        }
+        int result = indexOfDimension(dimensions, dimension);
+        if (result == -1) {
+            throw new IOException("Cannot find dimension '" + dimension + "'");
+        }
+        if (!isWildcard(key, result)) {
+            throw new IOException("Expecting dimension '"
+                    + dimensions.get(result).getId() + "' to be a wildcard in key '" + key + "'");
+        }
+        return result;
+    }
+
+    private static int indexOfDimension(List<Dimension> dimensions, String dimension) {
+        for (int i = 0; i < dimensions.size(); i++) {
+            if (dimensions.get(i).getId().equals(dimension)) {
+                return i;
+            }
+        }
+        try {
+            int result = Integer.parseInt(dimension);
+            return result >= 0 && result < dimensions.size() ? result : -1;
+        } catch (NumberFormatException ex) {
+            return -1;
+        }
+    }
+
+    private static boolean isWildcard(Key key, int index) {
+        return Key.ALL.equals(key) || index >= key.size() || key.isWildcard(index);
     }
 
     /**

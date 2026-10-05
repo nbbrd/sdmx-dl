@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIOException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.entry;
+import static org.assertj.core.api.InstanceOfAssertFactories.MAP;
 import static tests.sdmxdl.api.RepoSamples.*;
 
 import _test.sdmxdl.CustomException;
@@ -376,55 +377,99 @@ public class ProviderTest {
 
     @Test
     public void testListAvailability() throws IOException {
-        assertThat(validProvider()
-                        .listAvailability(AvailabilityRequest.builder()
-                                .flow(FLOW_REF)
-                                .key(Key.ALL)
-                                .dimension("REGION")
-                                .build()))
+        assertThat(validProvider().listAvailability(availabilityOf(Key.ALL, "REGION")))
+                .returns("REGION", Availability::getDimension)
+                .extracting(Availability::getCodes, MAP)
                 .containsExactly(entry("BE", "Belgium"), entry("FR", "France"));
     }
 
     @Test
     public void testListAvailabilityWithKey() throws IOException {
-        assertThat(validProvider()
-                        .listAvailability(AvailabilityRequest.builder()
-                                .flow(FLOW_REF)
-                                .keyOf("M..XXX")
-                                .dimension("REGION")
-                                .build()))
+        assertThat(validProvider().listAvailability(availabilityOf(Key.parse("M..XXX"), "REGION")))
+                .returns("REGION", Availability::getDimension)
+                .extracting(Availability::getCodes, MAP)
                 .containsExactly(entry("BE", "Belgium"));
     }
 
     @Test
     public void testListAvailabilityWithPartialKey() throws IOException {
-        assertThat(validProvider()
-                        .listAvailability(AvailabilityRequest.builder()
-                                .flow(FLOW_REF)
-                                .keyOf("M.FR")
-                                .dimension("SECTOR")
-                                .build()))
+        assertThat(validProvider().listAvailability(availabilityOf(Key.parse("M.FR"), "SECTOR")))
+                .returns("SECTOR", Availability::getDimension)
+                .extracting(Availability::getCodes, MAP)
                 .containsExactly(entry("INDUSTRY", "Industry"));
 
+        assertThat(validProvider().listAvailability(availabilityOf(Key.parse("M"), "REGION")))
+                .returns("REGION", Availability::getDimension)
+                .extracting(Availability::getCodes, MAP)
+                .containsExactly(entry("BE", "Belgium"), entry("FR", "France"));
+    }
+
+    @Test
+    public void testListAvailabilityWithDimensionIndex() throws IOException {
+        assertThat(validProvider().listAvailability(availabilityOf(Key.ALL, "1")))
+                .returns("REGION", Availability::getDimension)
+                .extracting(Availability::getCodes, MAP)
+                .containsExactly(entry("BE", "Belgium"), entry("FR", "France"));
+
+        assertThat(validProvider().listAvailability(availabilityOf(Key.parse("M.FR"), "2")))
+                .returns("SECTOR", Availability::getDimension)
+                .extracting(Availability::getCodes, MAP)
+                .containsExactly(entry("INDUSTRY", "Industry"));
+    }
+
+    @Test
+    public void testListAvailabilityWithFirstWildcardDimension() throws IOException {
         assertThat(validProvider()
                         .listAvailability(AvailabilityRequest.builder()
                                 .flow(FLOW_REF)
-                                .keyOf("M")
-                                .dimension("REGION")
+                                .key(Key.ALL)
                                 .build()))
-                .containsExactly(entry("BE", "Belgium"), entry("FR", "France"));
+                .returns("FREQ", Availability::getDimension)
+                .extracting(Availability::getCodes, MAP)
+                .containsExactly(entry("M", "Monthly"));
+
+        assertThat(validProvider().listAvailability(availabilityOf(Key.parse("M..XXX"), "")))
+                .returns("REGION", Availability::getDimension)
+                .extracting(Availability::getCodes, MAP)
+                .containsExactly(entry("BE", "Belgium"));
+
+        assertThat(validProvider().listAvailability(availabilityOf(Key.parse("M.FR"), "")))
+                .returns("SECTOR", Availability::getDimension)
+                .extracting(Availability::getCodes, MAP)
+                .containsExactly(entry("INDUSTRY", "Industry"));
+    }
+
+    @Test
+    public void testListAvailabilityWithoutWildcardDimension() {
+        assertThatIOException()
+                .isThrownBy(() -> validProvider().listAvailability(availabilityOf(Key.parse("M.FR.INDUSTRY"), "")))
+                .withMessageContaining("Cannot find a wildcard dimension in key 'M.FR.INDUSTRY'");
+    }
+
+    @Test
+    public void testListAvailabilityWithNonWildcardDimension() {
+        assertThatIOException()
+                .isThrownBy(() -> validProvider().listAvailability(availabilityOf(Key.parse("M.FR"), "REGION")))
+                .withMessageContaining("Expecting dimension 'REGION' to be a wildcard in key 'M.FR.'");
+
+        assertThatIOException()
+                .isThrownBy(() -> validProvider().listAvailability(availabilityOf(Key.parse("M.FR"), "1")))
+                .withMessageContaining("Expecting dimension 'REGION' to be a wildcard in key 'M.FR.'");
     }
 
     @Test
     public void testListAvailabilityWithUnknownDimension() {
         assertThatIOException()
-                .isThrownBy(() -> validProvider()
-                        .listAvailability(AvailabilityRequest.builder()
-                                .flow(FLOW_REF)
-                                .key(Key.ALL)
-                                .dimension("zzzyyyxxxwww")
-                                .build()))
+                .isThrownBy(() -> validProvider().listAvailability(availabilityOf(Key.ALL, "zzzyyyxxxwww")))
                 .withMessageContaining("Cannot find dimension 'zzzyyyxxxwww'");
+
+        assertThatIOException()
+                .isThrownBy(() -> validProvider().listAvailability(availabilityOf(Key.ALL, "3")))
+                .withMessageContaining("Cannot find dimension '3'");
+
+        assertThatIOException()
+                .isThrownBy(() -> validProvider().listAvailability(availabilityOf(Key.ALL, "-1")))
+                .withMessageContaining("Cannot find dimension '-1'");
     }
 
     @Test
@@ -440,12 +485,17 @@ public class ProviderTest {
             }
         });
 
-        assertThat(provider.listAvailability(AvailabilityRequest.builder()
-                        .flow(FLOW_REF)
-                        .key(Key.ALL)
-                        .dimension("REGION")
-                        .build()))
+        assertThat(provider.listAvailability(availabilityOf(Key.ALL, "REGION")))
+                .extracting(Availability::getCodes, MAP)
                 .containsExactly(entry("zzzyyyxxxwww", null));
+    }
+
+    private static AvailabilityRequest availabilityOf(Key key, String dimension) {
+        return AvailabilityRequest.builder()
+                .flow(FLOW_REF)
+                .key(key)
+                .dimension(dimension)
+                .build();
     }
 
     @Test

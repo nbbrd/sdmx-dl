@@ -105,6 +105,20 @@ public class ProtoApi {
                 .build();
     }
 
+    public static AvailabilityDto fromAvailability(Availability value) {
+        AvailabilityDto.Builder result = AvailabilityDto.newBuilder().setDimension(value.getDimension());
+        // NB: protobuf maps reject null values, so a code without label is mapped to an empty label
+        value.getCodes().forEach((code, label) -> result.putCodes(code, label != null ? label : ""));
+        return result.setCodeCount(value.getCodes().size()).build();
+    }
+
+    public static Availability toAvailability(AvailabilityDto value) {
+        return Availability.builder()
+                .dimension(value.getDimension())
+                .codes(value.getCodesMap())
+                .build();
+    }
+
     public static AttributeDto fromAttribute(Attribute value) {
         AttributeDto.Builder result =
                 AttributeDto.newBuilder().setId(value.getId()).setName(value.getName());

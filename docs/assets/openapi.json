@@ -41,6 +41,24 @@
         "type" : "string",
         "enum" : [ "UNKNOWN", "DATAFLOW", "GROUP", "SERIES", "OBSERVATION", "UNRECOGNIZED" ]
       },
+      "AvailabilityDto" : {
+        "type" : "object",
+        "properties" : {
+          "dimension" : {
+            "type" : "string"
+          },
+          "codes" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "codeCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
       "CodelistDto" : {
         "type" : "object",
         "properties" : {
@@ -1434,17 +1452,10 @@
         "summary" : "List Attributes"
       }
     },
-    "/sdmx-dl/v2/{source}/{flow}/availability/{dimension}" : {
+    "/sdmx-dl/v2/{source}/{flow}/availability" : {
       "get" : {
         "tags" : [ "sdmx-dl v2" ],
         "parameters" : [ {
-          "name" : "dimension",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
           "name" : "flow",
           "in" : "path",
           "required" : true,
@@ -1460,6 +1471,13 @@
           }
         }, {
           "name" : "database",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : ""
+          }
+        }, {
+          "name" : "dimension",
           "in" : "query",
           "schema" : {
             "type" : "string",
@@ -1486,7 +1504,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/CodelistDto"
+                  "$ref" : "#/components/schemas/AvailabilityDto"
                 }
               }
             }

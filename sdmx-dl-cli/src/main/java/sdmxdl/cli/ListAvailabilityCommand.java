@@ -23,10 +23,8 @@ import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.Callable;
-import nbbrd.design.MightBePromoted;
 import picocli.CommandLine;
 import sdmxdl.*;
-import sdmxdl.web.WebSource;
 
 /**
  * @author Philippe Charles
@@ -43,42 +41,38 @@ public final class ListAvailabilityCommand implements Callable<Void> {
     @CommandLine.Mixin
     private HiddenSortOptions sortOptions;
 
-    @CommandLine.Parameters(index = "3", paramLabel = "<index>", descriptionKey = "cli.sdmx.dimensionIndex")
-    private int dimensionIndex;
+    @CommandLine.Parameters(
+            index = "3",
+            arity = "0..1",
+            paramLabel = "<dimension>",
+            defaultValue = AvailabilityRequest.FIRST_WILDCARD_DIMENSION,
+            descriptionKey = "cli.sdmx.availabilityDimension")
+    private String dimension;
 
     @Override
     public Void call() throws Exception {
-        getTable().write(csv, getRows());
+        Availability availability = getAvailability();
+        getTable(availability.getDimension()).write(csv, availability.getCodes().entrySet());
         return null;
     }
 
-    private CsvTable<Map.Entry<String, String>> getTable() {
+    private CsvTable<Map.Entry<String, String>> getTable(String dimensionId) {
         return CsvTable.<Map.Entry<String, String>>builder()
                 .columnOf("Code", Map.Entry::getKey)
                 .columnOf("Label", Map.Entry::getValue)
+                .columnOf("Dimension", ignore -> dimensionId)
                 .build();
     }
 
-    private Set<Map.Entry<String, String>> getRows() throws IOException {
-        Provider<WebSource> provider = web.loadManager().usingName(web.getSource());
-        return provider.listAvailability(AvailabilityRequest.builder()
+    private Availability getAvailability() throws IOException {
+        return web.loadManager()
+                .usingName(web.getSource())
+                .listAvailability(AvailabilityRequest.builder()
                         .languages(web.getLangs())
                         .database(web.getDatabase())
                         .flow(web.getFlow())
                         .key(web.getKey())
-                        .dimension(dimensionOfIndex(provider))
-                        .build())
-                .entrySet();
-    }
-
-    @MightBePromoted
-    private String dimensionOfIndex(Provider<WebSource> provider) throws IOException {
-        return provider.listDimensions(DimensionsRequest.builder()
-                        .languages(web.getLangs())
-                        .database(web.getDatabase())
-                        .flow(web.getFlow())
-                        .build())
-                .get(dimensionIndex)
-                .getId();
+                        .dimension(dimension)
+                        .build());
     }
 }

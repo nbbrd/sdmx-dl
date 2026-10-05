@@ -141,7 +141,7 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
     }
 
     @Override
-    public Uni<CodelistDto> listAvailability(WebAvailabilityRequestDto request) {
+    public Uni<AvailabilityDto> listAvailability(WebAvailabilityRequestDto request) {
         return uniOfIO(() -> manager.usingName(request.getSource())
                         .listAvailability(AvailabilityRequest.builder()
                                 .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
@@ -150,11 +150,7 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
                                 .keyOf(request.getKey())
                                 .dimension(request.getDimension())
                                 .build()))
-                .map(codes -> CodelistDto.newBuilder()
-                        .setRef("")
-                        .setCodeCount(codes.size())
-                        .putAllCodes(codes)
-                        .build());
+                .map(ProtoApi::fromAvailability);
     }
 
     @Override

@@ -65,7 +65,7 @@ curl "localhost:4559/sdmx-dl/v2/ECB/flows"
 | `ListDimensions`   | `GET /{source}/{flow}/dimensions`                | List or search a flow's dimensions.                              |
 | `ListAttributes`   | `GET /{source}/{flow}/attributes`                | List or search a flow's attributes.                              |
 | `ListCodes`        | `GET /{source}/{flow}/codes/{concept}`           | List or search the codes of a dimension or attribute.            |
-| `ListAvailability` | `GET /{source}/{flow}/availability/{dimension}`  | Codes that actually occur under a key constraint.                |
+| `ListAvailability` | `GET /{source}/{flow}/availability`              | Codes that actually occur under a key constraint.                |
 | `GetData`          | `GET /{source}/{flow}/data`                      | Fetch observations for a key.                                    |
 | `GetDataStream`    | `GET /{source}/{flow}/data:stream`               | Same as `GetData`, streamed observation by observation.          |
 | `ListStatuses`     | `GET /statuses`                                  | Check the health of one, several, or all sources.                |
@@ -102,7 +102,8 @@ Each series has a `key`, optional series-level `meta`, and an `obs` array; each 
 - The `detail` parameter controls which parts are filled: `FULL` (default), `DATA_ONLY` (no `meta`), `NO_DATA` (no `obs`), or `SERIES_KEYS_ONLY` (keys only).
 - `GetDataStream` (`GET /{source}/{flow}/data:stream`) returns the same series objects as a plain JSON array, without the `ref`/`query` wrapper.
 - Listing operations (`/sources`, `/{source}/flows`, `/{source}/{flow}/dimensions`, …) return a JSON array of objects that can be turned into a table directly.
-- `ListCodes` and `ListAvailability` return a `codes` object mapping each code to its label, e.g. `{"codes": {"A": "Annual", "Q": "Quarterly"}}`.
+- `ListCodes` returns a `codes` object mapping each code to its label, e.g. `{"codes": {"A": "Annual", "Q": "Quarterly"}}`.
+- `ListAvailability` also returns the id of the selected dimension, e.g. `{"dimension": "FREQ", "codes": {"A": "Annual", "Q": "Quarterly"}, "codeCount": 2}`. Its `dimension` parameter takes a dimension id, a zero-based index, or nothing for the first wildcard dimension of the `key` (see [Availability]({{< relref "/usage/browse#availability" >}})).
 - Script operations return the generated script, without executing it: `{"target": "r/rest", "fileExtension": "R", "mediaType": "text/x-r", "content": "...", "warnings": []}`. With `format=raw`, or an `Accept` header that prefers `text/plain` or `application/octet-stream`, they return the script itself as a file to download. See [Generate scripts]({{< relref "/integration/generate-scripts" >}}) for their options (`cliLauncher`, `restEndpoint`, `outputFile`, `property`, `format`).
 
 ## MCP endpoint

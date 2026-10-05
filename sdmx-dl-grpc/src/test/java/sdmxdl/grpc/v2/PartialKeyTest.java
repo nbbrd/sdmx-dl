@@ -16,7 +16,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
-import sdmxdl.format.protobuf.CodelistDto;
+import sdmxdl.format.protobuf.AvailabilityDto;
 import sdmxdl.format.protobuf.DataSetDto;
 import sdmxdl.format.protobuf.SeriesDto;
 
@@ -152,7 +152,7 @@ public class PartialKeyTest {
                             Map.of("source", "ECB", "flow", "EXR", "key", "M", "dimension", "CURRENCY"),
                             r -> {
                                 assertThat(r).returns(false, ToolResponse::isError);
-                                assertThat(fromJson(CodelistDto.getDefaultInstance(), firstText(r))
+                                assertThat(fromJson(AvailabilityDto.getDefaultInstance(), firstText(r))
                                                 .getCodesMap())
                                         .containsOnlyKeys("CHF", "USD");
                             })
@@ -161,7 +161,7 @@ public class PartialKeyTest {
                             Map.of("source", "ECB", "flow", "EXR", "key", "M.CHF", "dimension", "CURRENCY_DENOM"),
                             r -> {
                                 assertThat(r).returns(false, ToolResponse::isError);
-                                assertThat(fromJson(CodelistDto.getDefaultInstance(), firstText(r))
+                                assertThat(fromJson(AvailabilityDto.getDefaultInstance(), firstText(r))
                                                 .getCodesMap())
                                         .containsOnlyKeys("EUR");
                             })
@@ -214,13 +214,14 @@ public class PartialKeyTest {
 
     private static Map<String, String> restAvailability(String key, String dimension) {
         String json = given().queryParam("key", key)
+                .queryParam("dimension", dimension)
                 .when()
-                .get("/sdmx-dl/v2/ECB/EXR/availability/" + dimension)
+                .get("/sdmx-dl/v2/ECB/EXR/availability")
                 .then()
                 .statusCode(200)
                 .extract()
                 .asString();
-        return fromJson(CodelistDto.getDefaultInstance(), json).getCodesMap();
+        return fromJson(AvailabilityDto.getDefaultInstance(), json).getCodesMap();
     }
 
     @SuppressWarnings("unchecked")

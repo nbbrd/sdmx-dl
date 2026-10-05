@@ -48,7 +48,7 @@ public class SdmxdlMcpService2 {
     private static final String MAX_RESULTS_ARG =
             "Maximum number of entries to return (default 10). Use 0 for no limit; raise it when results look truncated.";
     private static final String DIMENSION_ARG =
-            "Dimension id exactly as returned by getMeta or listDimensions (e.g. 'CURRENCY').";
+            "Dimension to inspect: its id exactly as returned by getMeta or listDimensions (e.g. 'CURRENCY'), or its zero-based position in the key (e.g. '1'). Leave empty (default) to inspect the first dimension left as a wildcard in 'key'. The dimension must be a wildcard in 'key'.";
     private static final String CONCEPT_ARG =
             "Dimension or attribute id exactly as returned by getMeta, listDimensions or listAttributes (e.g. 'CURRENCY', 'OBS_STATUS').";
     private static final String DIMENSIONS_ARG =
@@ -276,11 +276,11 @@ public class SdmxdlMcpService2 {
 
     @Tool(
             description =
-                    "List the codes of one dimension that actually have data, given the other dimensions already fixed in 'key'. Unlike listCodes, which returns every code allowed by the codelist, this returns only the codes really present in the dataset for that key, sorted by code id and mapped to their label (label may be empty). Use it to narrow a key step by step and to avoid empty getData results, for example: fix FREQ in 'key', then ask which REF_AREA codes remain. 'key' uses the same positional format as getData; use 'all' to apply no constraint. Fails when 'dimension' is unknown.")
-    public CodelistDto listAvailability(
+                    "List the codes of one dimension that actually have data, given the other dimensions already fixed in 'key'. Unlike listCodes, which returns every code allowed by the codelist, this returns only the codes really present in the dataset for that key, sorted by code id and mapped to their label (label may be empty), together with the id of the inspected 'dimension'. Use it to narrow a key step by step and to avoid empty getData results, for example: fix FREQ in 'key', then ask which REF_AREA codes remain (or leave 'dimension' empty to inspect the next wildcard dimension). 'key' uses the same positional format as getData; use 'all' to apply no constraint. Fails when 'dimension' is unknown or is not a wildcard in 'key'.")
+    public AvailabilityDto listAvailability(
             @ToolArg(description = SOURCE_ARG) String source,
             @ToolArg(description = FLOW_ARG) String flow,
-            @ToolArg(description = DIMENSION_ARG) String dimension,
+            @ToolArg(description = DIMENSION_ARG, required = false) String dimension,
             @ToolArg(description = KEY_ARG, required = false, defaultValue = DEFAULT_KEY) String key,
             @ToolArg(description = DATABASE_ARG, required = false, defaultValue = NO_DATABASE_KEYWORD) String database,
             @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages)
@@ -291,16 +291,11 @@ public class SdmxdlMcpService2 {
                 .databaseOf(database)
                 .languagesOf(languages)
                 .keyOf(key)
-                .dimension(dimension)
+                .dimension(dimension != null ? dimension : AvailabilityRequest.FIRST_WILDCARD_DIMENSION)
                 .build();
 
-        Map<String, String> codes = manager.using(getPublicSourceForMcp(source)).listAvailability(request);
-
-        return CodelistDto.newBuilder()
-                .setRef("")
-                .setCodeCount(codes.size())
-                .putAllCodes(codes)
-                .build();
+        return ProtoApi.fromAvailability(
+                manager.using(getPublicSourceForMcp(source)).listAvailability(request));
     }
 
     @Tool(
