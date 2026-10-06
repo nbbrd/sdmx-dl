@@ -52,7 +52,7 @@ curl "localhost:4559/sdmx-dl/v2/statuses?sources=all"
 
 ### gRPC
 ```shell
-grpcurl -d '{"sources":["ECB"]}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListStatuses
+grpcurl -d '{"sources":["ECB"]}' -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListStatuses
 ```
 {{< /tab >}}
 

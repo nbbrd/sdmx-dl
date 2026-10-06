@@ -56,7 +56,7 @@ curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data \
 
 ### gRPC
 ```shell
-grpcurl -d '{"source":"ECB","flow":"EXR","key":"M.CHF.EUR.SP00.A"}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
+grpcurl -d '{"source":"ECB","flow":"EXR","key":"M.CHF.EUR.SP00.A"}' -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.GetData
 ```
 {{< /tab >}}
 
@@ -127,7 +127,7 @@ curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data \
 
 #### gRPC
 ```shell
-grpcurl -d '{"source":"ECB","flow":"EXR","key":"M.CHF.EUR.SP00.A","start":"2020","end":"2022-12"}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
+grpcurl -d '{"source":"ECB","flow":"EXR","key":"M.CHF.EUR.SP00.A","start":"2020","end":"2022-12"}' -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.GetData
 ```
 {{< /tab >}}
 
@@ -193,7 +193,7 @@ curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data \
 
 #### gRPC
 ```shell
-grpcurl -d '{"source":"ECB","flow":"EXR","key":"M.CHF.EUR.SP00.A","firstN":3,"lastN":2}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
+grpcurl -d '{"source":"ECB","flow":"EXR","key":"M.CHF.EUR.SP00.A","firstN":3,"lastN":2}' -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.GetData
 ```
 {{< /tab >}}
 
@@ -278,14 +278,14 @@ curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data \
 
 #### gRPC
 ```shell
-grpcurl -d '{"source":"ECB","flow":"EXR","key":"M.CHF.EUR.SP00.A","detail":"NO_DATA"}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetData
+grpcurl -d '{"source":"ECB","flow":"EXR","key":"M.CHF.EUR.SP00.A","detail":"NO_DATA"}' -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.GetData
 ```
 
 For flow-level metadata (dimensions, attributes, codelists) instead of series-level, use `GetMeta`:
 
 ```shell
 curl "localhost:4559/sdmx-dl/v2/ECB/EXR/meta"
-grpcurl -d '{"source":"ECB","flow":"EXR"}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.GetMeta
+grpcurl -d '{"source":"ECB","flow":"EXR"}' -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.GetMeta
 ```
 {{< /tab >}}
 

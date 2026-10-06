@@ -77,8 +77,8 @@ curl "localhost:4559/sdmx-dl/v2/ECB/EXR/attributes"
 
 ### gRPC
 ```shell
-grpcurl -d '{"source":"ECB","flow":"EXR"}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListDimensions
-grpcurl -d '{"source":"ECB","flow":"EXR"}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListAttributes
+grpcurl -d '{"source":"ECB","flow":"EXR"}' -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListDimensions
+grpcurl -d '{"source":"ECB","flow":"EXR"}' -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListAttributes
 ```
 {{< /tab >}}
 
@@ -153,7 +153,7 @@ curl "localhost:4559/sdmx-dl/v2/ECB/EXR/codes/FREQ"
 
 ### gRPC
 ```shell
-grpcurl -d '{"source":"ECB","flow":"EXR","concept":"FREQ"}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListCodes
+grpcurl -d '{"source":"ECB","flow":"EXR","concept":"FREQ"}' -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListCodes
 ```
 {{< /tab >}}
 
@@ -227,7 +227,7 @@ curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/availability \
 
 ### gRPC
 ```shell
-grpcurl -d '{"source":"ECB","flow":"EXR","key":"M..EUR.SP00.A","dimension":"CURRENCY"}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListAvailability
+grpcurl -d '{"source":"ECB","flow":"EXR","key":"M..EUR.SP00.A","dimension":"CURRENCY"}' -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListAvailability
 ```
 {{< /tab >}}
 

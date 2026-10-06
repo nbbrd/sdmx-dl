@@ -19,6 +19,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - ![CLI] Move search capability to list commands [#1338](https://github.com/nbbrd/sdmx-dl/issues/1338)
 - ![API] Unify the dimension parameter of availability queries (id, zero-based index or first wildcard dimension) and report the selected dimension
+- ![GRPC] Serve gRPC on the HTTP port using the unified Quarkus HTTP server [#1356](https://github.com/nbbrd/sdmx-dl/issues/1356)
 
 ### Fixed
 

@@ -24,21 +24,21 @@ To run it, just use the following command: `java -jar sdmx-dl-grpc-VERSION-runne
 
 Custom config:
 
-| Option                     | Description                                                                                        |
-|----------------------------|----------------------------------------------------------------------------------------------------|
-| `quarkus.grpc.server.port` | [The gRPC server port](https://quarkus.io/guides/all-config#quarkus-grpc_quarkus-grpc-server-port) |
-| `quarkus.http.port`        | [The HTTP port](https://quarkus.io/guides/all-config#quarkus-vertx-http_quarkus-http-port)         |
+| Option              | Description                                                                                                  |
+|---------------------|--------------------------------------------------------------------------------------------------------------|
+| `quarkus.http.port` | [The HTTP port](https://quarkus.io/guides/all-config#quarkus-vertx-http_quarkus-http-port), shared by all endpoints |
 
+All endpoints are served by a single HTTP server on port `4559` by default.  
 More info at Quarkus [all configuration options page](https://quarkus.io/guides/all-config) and [HTTP reference page](https://quarkus.io/guides/http-reference).
 
 ## gRPC endpoint
 
 The gRPC endpoint is the most efficient way to interact with the web service.  
-Its default port is `4557`. For convenience, the [reflection protocol](https://grpc.io/docs/guides/reflection/) is enabled. The service is `sdmxdl.grpc.v2.SdmxWebManager`.
+Its default port is `4559` (plaintext HTTP/2, shared with the other endpoints). For convenience, the [reflection protocol](https://grpc.io/docs/guides/reflection/) is enabled. The service is `sdmxdl.grpc.v2.SdmxWebManager`.
 
 Call example using [gRPCurl](https://github.com/fullstorydev/grpcurl):
 ```shell
-grpcurl -d "{\"source\":\"ECB\"}" -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListFlows
+grpcurl -d "{\"source\":\"ECB\"}" -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListFlows
 ```
 
 ## REST endpoint

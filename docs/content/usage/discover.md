@@ -65,9 +65,9 @@ curl -G localhost:4559/sdmx-dl/v2/sources \
 
 ### gRPC
 ```shell
-grpcurl -d '{}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListSources
+grpcurl -d '{}' -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListSources
 
-grpcurl -d '{"query":"european central","maxResults":5}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListSources
+grpcurl -d '{"query":"european central","maxResults":5}' -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListSources
 ```
 {{< /tab >}}
 
@@ -142,9 +142,9 @@ curl -G localhost:4559/sdmx-dl/v2/ECB/databases \
 
 ### gRPC
 ```shell
-grpcurl -d '{"source":"ECB"}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListDatabases
+grpcurl -d '{"source":"ECB"}' -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListDatabases
 
-grpcurl -d '{"source":"ECB","query":"central","maxResults":5}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListDatabases
+grpcurl -d '{"source":"ECB","query":"central","maxResults":5}' -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListDatabases
 ```
 {{< /tab >}}
 
@@ -213,9 +213,9 @@ curl -G localhost:4559/sdmx-dl/v2/ECB/flows \
 
 ### gRPC
 ```shell
-grpcurl -d '{"source":"ECB"}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListFlows
+grpcurl -d '{"source":"ECB"}' -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListFlows
 
-grpcurl -d '{"source":"ECB","query":"exchange rates","maxResults":5}' -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListFlows
+grpcurl -d '{"source":"ECB","query":"exchange rates","maxResults":5}' -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListFlows
 ```
 {{< /tab >}}
 
