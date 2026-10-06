@@ -47,7 +47,7 @@ Discovery and search are the same call at every level: pass a query to search, o
 <meta property="article:section" content="Usage" />
     <meta
       property="article:modified_time"
-      content="2026-10-05T16:14:14+02:00"
+      content="2026-10-06T12:06:22+02:00"
     />
 
 
@@ -66,7 +66,7 @@ Discovery and search are the same call at every level: pass a query to search, o
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/discover/",
       "headline": "Discover",
       "description": "Find the source, database, and flow you want to query.\nDiscovery and search are the same call at every level: pass a query to search, or omit it to list everything. By default, a search returns the 10 best matches; set maxResults to change it (0 = no limit). Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so partial or approximate queries still surface the right result. When query is empty, results fall back to being sorted by id instead of ranked by relevance.",
-      "wordCount": "644",
+      "wordCount": "686",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -77,7 +77,7 @@ Discovery and search are the same call at every level: pass a query to search, o
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-05T16:14:14.00Z",
+      "dateModified": "2026-10-06T12:06:22.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -2049,6 +2049,7 @@ When <code>query</code> is empty, results fall back to being sorted by id instea
   class="gdoc-markdown__link"
   href="#databases"
 >Databases</a>.</li>
+<li>Descriptions may contain markup (e.g. HTML tags) and be quite long; pass <code>plainText</code> to strip markup and <code>truncate</code> to limit their length (CLI: <code>--plain-text</code> and <code>--truncate</code>; gRPC: <code>plain_text</code> and <code>truncate</code>). The MCP tools return plain descriptions truncated to 200 characters by default.</li>
 </ul>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="next-step"
