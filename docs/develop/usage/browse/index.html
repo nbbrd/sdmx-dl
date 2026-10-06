@@ -49,7 +49,7 @@ Keys A key selects one or more series of a flow. It has one code per dimension, 
 <meta property="article:section" content="Usage" />
     <meta
       property="article:modified_time"
-      content="2026-10-06T12:06:22+02:00"
+      content="2026-10-06T12:45:49+02:00"
     />
 
 
@@ -80,7 +80,7 @@ Keys A key selects one or more series of a flow. It has one code per dimension, 
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-06T12:06:22.00Z",
+      "dateModified": "2026-10-06T12:45:49.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1841,8 +1841,8 @@ A key can&rsquo;t have more positions than the flow has dimensions.</div>
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListDimensions
-</span></span><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListAttributes
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;}&#39;</span> -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListDimensions
+</span></span><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;}&#39;</span> -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListAttributes
 </span></span></code></pre></div></div>
 </div>
 
@@ -1973,7 +1973,7 @@ A key can&rsquo;t have more positions than the flow has dimensions.</div>
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;concept&#34;:&#34;FREQ&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListCodes
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;concept&#34;:&#34;FREQ&#34;}&#39;</span> -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListCodes
 </span></span></code></pre></div></div>
 </div>
 
@@ -2096,7 +2096,7 @@ A key can&rsquo;t have more positions than the flow has dimensions.</div>
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M..EUR.SP00.A&#34;,&#34;dimension&#34;:&#34;CURRENCY&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListAvailability
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M..EUR.SP00.A&#34;,&#34;dimension&#34;:&#34;CURRENCY&#34;}&#39;</span> -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListAvailability
 </span></span></code></pre></div></div>
 </div>
 

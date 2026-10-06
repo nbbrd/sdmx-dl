@@ -3,91 +3,91 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/usage/getting-started/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/cli/installation/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/usage/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-batch-file/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/integration/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/cli/configuration/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/usage/discover/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-bash/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/usage/browse/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/api/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/cli/usage/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-powershell/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/cli/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/cli/options/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-excel/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/usage/monitor-and-status/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-r/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/ws/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/auth/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/cli/examples/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-python/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/formats/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-jupyter/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/sources/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/integration/use-in-jbang/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/integration/generate-scripts/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/</loc>
-    <lastmod>2026-10-06T12:06:22+02:00</lastmod>
+    <lastmod>2026-10-06T12:45:49+02:00</lastmod>
   </url><url>
     <loc>https://nbbrd.github.io/sdmx-dl/docs/develop/tags/</loc>
   </url>

@@ -15,7 +15,7 @@
   <meta name="description" content="Check whether a source is up, and how it has been performing, before relying on it in an automated job.
 API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); IO.println(manager.getMonitorReport(&#34;ECB&#34;)); } CLI sdmx-dl check status ECB check status also accepts several sources at once, or the keyword all to check every configured source in parallel:
 sdmx-dl check status ECB IMF INSEE sdmx-dl check status all WS REST curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB&#34; ListStatuses also accepts several comma-separated sources, or all to check every configured source:
-curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB,IMF,INSEE&#34; curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=all&#34; gRPC grpcurl -d &#39;{&#34;sources&#34;:[&#34;ECB&#34;]}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListStatuses " />
+curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB,IMF,INSEE&#34; curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=all&#34; gRPC grpcurl -d &#39;{&#34;sources&#34;:[&#34;ECB&#34;]}&#39; -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListStatuses " />
 
     <title>Monitor and status | sdmx-dl</title>
 
@@ -44,14 +44,14 @@ curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB,IMF,INSEE&#34; curl &#3
   <meta property="og:description" content="Check whether a source is up, and how it has been performing, before relying on it in an automated job.
 API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); IO.println(manager.getMonitorReport(&#34;ECB&#34;)); } CLI sdmx-dl check status ECB check status also accepts several sources at once, or the keyword all to check every configured source in parallel:
 sdmx-dl check status ECB IMF INSEE sdmx-dl check status all WS REST curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB&#34; ListStatuses also accepts several comma-separated sources, or all to check every configured source:
-curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB,IMF,INSEE&#34; curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=all&#34; gRPC grpcurl -d &#39;{&#34;sources&#34;:[&#34;ECB&#34;]}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListStatuses " />
+curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB,IMF,INSEE&#34; curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=all&#34; gRPC grpcurl -d &#39;{&#34;sources&#34;:[&#34;ECB&#34;]}&#39; -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListStatuses " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/monitor-and-status/" />
 
 <meta property="article:section" content="Usage" />
     <meta
       property="article:modified_time"
-      content="2026-10-06T12:06:22+02:00"
+      content="2026-10-06T12:45:49+02:00"
     />
 
 
@@ -60,7 +60,7 @@ curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB,IMF,INSEE&#34; curl &#3
   <meta name="twitter:description" content="Check whether a source is up, and how it has been performing, before relying on it in an automated job.
 API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); IO.println(manager.getMonitorReport(&#34;ECB&#34;)); } CLI sdmx-dl check status ECB check status also accepts several sources at once, or the keyword all to check every configured source in parallel:
 sdmx-dl check status ECB IMF INSEE sdmx-dl check status all WS REST curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB&#34; ListStatuses also accepts several comma-separated sources, or all to check every configured source:
-curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB,IMF,INSEE&#34; curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=all&#34; gRPC grpcurl -d &#39;{&#34;sources&#34;:[&#34;ECB&#34;]}&#39; -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListStatuses " />
+curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB,IMF,INSEE&#34; curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=all&#34; gRPC grpcurl -d &#39;{&#34;sources&#34;:[&#34;ECB&#34;]}&#39; -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListStatuses " />
 
 
   <script type="application/ld+json">
@@ -71,7 +71,7 @@ curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB,IMF,INSEE&#34; curl &#3
       "name": "Monitor and status",
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/monitor-and-status/",
       "headline": "Monitor and status",
-      "description": "Check whether a source is up, and how it has been performing, before relying on it in an automated job.\nAPI \/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); IO.println(manager.getMonitorReport(\u0022ECB\u0022)); } CLI sdmx-dl check status ECB check status also accepts several sources at once, or the keyword all to check every configured source in parallel:\nsdmx-dl check status ECB IMF INSEE sdmx-dl check status all WS REST curl \u0022localhost:4559\/sdmx-dl\/v2\/statuses?sources=ECB\u0022 ListStatuses also accepts several comma-separated sources, or all to check every configured source:\ncurl \u0022localhost:4559\/sdmx-dl\/v2\/statuses?sources=ECB,IMF,INSEE\u0022 curl \u0022localhost:4559\/sdmx-dl\/v2\/statuses?sources=all\u0022 gRPC grpcurl -d \u0027{\u0022sources\u0022:[\u0022ECB\u0022]}\u0027 -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListStatuses ",
+      "description": "Check whether a source is up, and how it has been performing, before relying on it in an automated job.\nAPI \/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); IO.println(manager.getMonitorReport(\u0022ECB\u0022)); } CLI sdmx-dl check status ECB check status also accepts several sources at once, or the keyword all to check every configured source in parallel:\nsdmx-dl check status ECB IMF INSEE sdmx-dl check status all WS REST curl \u0022localhost:4559\/sdmx-dl\/v2\/statuses?sources=ECB\u0022 ListStatuses also accepts several comma-separated sources, or all to check every configured source:\ncurl \u0022localhost:4559\/sdmx-dl\/v2\/statuses?sources=ECB,IMF,INSEE\u0022 curl \u0022localhost:4559\/sdmx-dl\/v2\/statuses?sources=all\u0022 gRPC grpcurl -d \u0027{\u0022sources\u0022:[\u0022ECB\u0022]}\u0027 -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListStatuses ",
       "wordCount": "183",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
@@ -83,7 +83,7 @@ curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB,IMF,INSEE&#34; curl &#3
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-06T12:06:22.00Z",
+      "dateModified": "2026-10-06T12:45:49.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1765,7 +1765,7 @@ curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB,IMF,INSEE&#34; curl &#3
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;sources&#34;:[&#34;ECB&#34;]}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListStatuses
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;sources&#34;:[&#34;ECB&#34;]}&#39;</span> -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListStatuses
 </span></span></code></pre></div></div>
 </div>
 

@@ -47,7 +47,7 @@ Discovery and search are the same call at every level: pass a query to search, o
 <meta property="article:section" content="Usage" />
     <meta
       property="article:modified_time"
-      content="2026-10-06T12:06:22+02:00"
+      content="2026-10-06T12:45:49+02:00"
     />
 
 
@@ -77,7 +77,7 @@ Discovery and search are the same call at every level: pass a query to search, o
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-06T12:06:22.00Z",
+      "dateModified": "2026-10-06T12:45:49.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1781,9 +1781,9 @@ When <code>query</code> is empty, results fall back to being sorted by id instea
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListSources
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{}&#39;</span> -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListSources
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;query&#34;:&#34;european central&#34;,&#34;maxResults&#34;:5}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListSources
+</span></span><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;query&#34;:&#34;european central&#34;,&#34;maxResults&#34;:5}&#39;</span> -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListSources
 </span></span></code></pre></div></div>
 </div>
 
@@ -1900,9 +1900,9 @@ When <code>query</code> is empty, results fall back to being sorted by id instea
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListDatabases
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;}&#39;</span> -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListDatabases
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;query&#34;:&#34;central&#34;,&#34;maxResults&#34;:5}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListDatabases
+</span></span><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;query&#34;:&#34;central&#34;,&#34;maxResults&#34;:5}&#39;</span> -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListDatabases
 </span></span></code></pre></div></div>
 </div>
 
@@ -2016,9 +2016,9 @@ When <code>query</code> is empty, results fall back to being sorted by id instea
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListFlows
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;}&#39;</span> -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListFlows
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;query&#34;:&#34;exchange rates&#34;,&#34;maxResults&#34;:5}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.ListFlows
+</span></span><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;query&#34;:&#34;exchange rates&#34;,&#34;maxResults&#34;:5}&#39;</span> -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListFlows
 </span></span></code></pre></div></div>
 </div>
 
