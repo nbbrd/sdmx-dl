@@ -12,15 +12,17 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumSet;
 import java.util.List;
 import nbbrd.io.function.IOSupplier;
 import sdmxdl.*;
 import sdmxdl.format.protobuf.*;
-import sdmxdl.format.protobuf.web.MonitorReportDto;
-import sdmxdl.format.protobuf.web.MonitorStatusDto;
+import sdmxdl.format.protobuf.web.HealthReportDto;
 import sdmxdl.format.protobuf.web.WebSourceDto;
 import sdmxdl.script.ScriptManager;
+import sdmxdl.web.HealthCheck;
+import sdmxdl.web.WebHealthRequest;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.WebSourcesRequest;
 
@@ -155,20 +157,13 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
     }
 
     @Override
-    public Multi<MonitorReportDto> listStatuses(WebStatusesRequestDto request) {
-        List<String> sources = resolveSources(request.getSourcesList());
-        List<MonitorReportDto> reports = new ArrayList<>(sources.size());
-        for (String name : sources) {
-            try {
-                reports.add(ProtoWeb.fromMonitorReport(manager.getMonitorReport(name)));
-            } catch (IOException ex) {
-                reports.add(MonitorReportDto.newBuilder()
-                        .setSource(name)
-                        .setStatus(MonitorStatusDto.UNKNOWN)
-                        .build());
-            }
-        }
-        return Multi.createFrom().iterable(reports);
+    public Multi<HealthReportDto> checkHealth(WebHealthRequestDto request) {
+        return multiOfIO(() -> manager.checkHealth(toHealthRequest(
+                        request.getSourcesList(),
+                        request.getChecksList().stream()
+                                .map(ProtoWeb::toHealthCheck)
+                                .toList())))
+                .map(ProtoWeb::fromHealthReport);
     }
 
     @Override
@@ -221,14 +216,19 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
                 .build();
     }
 
-    private List<String> resolveSources(List<String> requested) {
-        if (requested.isEmpty() || (requested.size() == 1 && "all".equalsIgnoreCase(requested.get(0)))) {
-            return manager.getSources().values().stream()
-                    .filter(source -> !source.isAlias())
-                    .map(WebSource::getId)
-                    .toList();
+    /**
+     * Builds a health request; empty sources or a single "all" entry (case-insensitive) means every
+     * source, and empty checks means the default (monitor only).
+     */
+    static WebHealthRequest toHealthRequest(List<String> sources, Collection<HealthCheck> checks) {
+        WebHealthRequest.Builder result = WebHealthRequest.builder();
+        if (!(sources.size() == 1 && "all".equalsIgnoreCase(sources.get(0)))) {
+            result.sources(sources);
         }
-        return requested;
+        if (!checks.isEmpty()) {
+            result.checks(EnumSet.copyOf(checks));
+        }
+        return result.build();
     }
 
     private static <T> Uni<T> uniOfIO(IOSupplier<T> supplier) {

@@ -137,13 +137,95 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
         return driver.connect(source, languages, getContext());
     }
 
+    /**
+     * @deprecated use {@link #checkHealth(WebHealthRequest)} with {@link HealthCheck#MONITOR} instead
+     */
+    @Deprecated
     public @NonNull MonitorReport getMonitorReport(@NonNull String name) throws IOException {
         WebSource source = lookupSource(name).orElseThrow(() -> newMissingSource(name));
 
         return getMonitorReport(source);
     }
 
+    /**
+     * @deprecated use {@link #checkHealth(WebHealthRequest)} with {@link HealthCheck#MONITOR} instead
+     */
+    @Deprecated
     public @NonNull MonitorReport getMonitorReport(@NonNull WebSource source) throws IOException {
+        return loadMonitorReport(source);
+    }
+
+    /**
+     * Checks the health of the requested web sources.
+     * <p>
+     * Each requested {@linkplain WebHealthRequest#getChecks() check} is performed on every
+     * {@linkplain WebHealthRequest#getSources() source}, in parallel unless
+     * {@linkplain WebHealthRequest#isParallel() disabled}. Failures of individual checks are
+     * reported in the returned reports instead of being thrown.
+     *
+     * @param request the non-null request describing the sources and the checks to perform
+     * @return a non-null list of reports, sorted by source id
+     * @throws IOException if a requested source cannot be found
+     */
+    public @NonNull List<HealthReport> checkHealth(@NonNull WebHealthRequest request) throws IOException {
+        List<WebSource> sources = new ArrayList<>();
+        if (request.getSources().isEmpty()) {
+            getSources().values().stream().filter(source -> !source.isAlias()).forEach(sources::add);
+        } else {
+            for (String name : request.getSources()) {
+                sources.add(lookupSource(name).orElseThrow(() -> newMissingSource(name)));
+            }
+        }
+        if (request.getChecks().contains(HealthCheck.ACCESS)) {
+            networking.warmupNetwork();
+        }
+        return (request.isParallel() ? sources.parallelStream() : sources.stream())
+                .map(source -> checkHealth(source, request.getChecks()))
+                .sorted(comparing(HealthReport::getSource))
+                .collect(toList());
+    }
+
+    /**
+     * Checks the health of a single web source.
+     *
+     * @param name   the non-null source id
+     * @param checks the non-null checks to perform
+     * @return a non-null report
+     * @throws IOException if the source cannot be found
+     * @see #checkHealth(WebHealthRequest)
+     */
+    public @NonNull HealthReport checkHealth(@NonNull String name, @NonNull Set<HealthCheck> checks)
+            throws IOException {
+        WebSource source = lookupSource(name).orElseThrow(() -> newMissingSource(name));
+        if (checks.contains(HealthCheck.ACCESS)) {
+            networking.warmupNetwork();
+        }
+        return checkHealth(source, checks);
+    }
+
+    private HealthReport checkHealth(WebSource source, Set<HealthCheck> checks) {
+        HealthReport.Builder result = HealthReport.builder().source(source.getId());
+        MonitorReport monitor = null;
+        if (checks.contains(HealthCheck.MONITOR)) {
+            if (source.getMonitor() == null) {
+                result.monitorError("No monitor defined");
+            } else {
+                try {
+                    monitor = loadMonitorReport(source);
+                } catch (IOException | IllegalArgumentException ex) {
+                    result.monitorError(ex.getMessage());
+                }
+            }
+        }
+        AccessReport access =
+                checks.contains(HealthCheck.ACCESS) ? using(source).checkAccess() : null;
+        return result.monitor(monitor)
+                .access(access)
+                .verdict(HealthVerdict.of(monitor != null ? monitor.getStatus() : null, access))
+                .build();
+    }
+
+    private MonitorReport loadMonitorReport(WebSource source) throws IOException {
         URI monitorURI = source.getMonitor();
 
         if (monitorURI == null) {

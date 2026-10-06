@@ -6,12 +6,14 @@ import static java.util.stream.Collectors.toMap;
 
 import java.io.IOException;
 import java.net.URI;
+import java.time.Duration;
 import java.util.*;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.design.MightBePromoted;
+import sdmxdl.web.HttpStatusException;
 import sdmxdl.web.Search;
 
 /**
@@ -49,16 +51,41 @@ public final class Provider<SOURCE extends Source> {
     }
 
     /**
-     * Performs a connectivity check against the underlying remote/local source.
+     * Performs a live access check against the underlying remote/local source.
      *
-     * <p>If a specific endpoint was tested, it may be returned.
+     * <p>This method does not throw on failure: errors are reported in the returned
+     * {@link AccessReport}. A source that answers with an error status is reported as
+     * reachable but not accessible.
      *
-     * @return optional URI of the tested endpoint when available
-     * @throws IOException if the connectivity check fails due to I/O issues
+     * @return non-null access report
      */
-    public @NonNull Optional<URI> testConnection() throws IOException {
+    public @NonNull AccessReport checkAccess() {
         try (Connection connection = manager.getConnection(source, Languages.ANY)) {
-            return connection.testConnection();
+            long start = System.nanoTime();
+            try {
+                URI uri = connection.testConnection().orElse(null);
+                return AccessReport.builder()
+                        .reachable(true)
+                        .accessible(true)
+                        .uri(uri)
+                        .duration(Duration.ofNanos(System.nanoTime() - start))
+                        .build();
+            } catch (HttpStatusException ex) {
+                return AccessReport.builder()
+                        .reachable(true)
+                        .accessible(false)
+                        .uri(ex.getUri())
+                        .duration(Duration.ofNanos(System.nanoTime() - start))
+                        .statusCode(ex.getStatusCode())
+                        .errorMessage(ex.getMessage())
+                        .build();
+            }
+        } catch (IOException ex) {
+            return AccessReport.builder()
+                    .reachable(false)
+                    .accessible(false)
+                    .errorMessage(ex.getMessage())
+                    .build();
         }
     }
 

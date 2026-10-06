@@ -16,11 +16,24 @@
  */
 package sdmxdl.provider.dialects.drivers;
 
+import static java.util.Collections.emptyList;
+import static sdmxdl.Confidentiality.PUBLIC;
+import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
+
 import com.google.gson.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.lang.reflect.Type;
+import java.net.URI;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.http.*;
+import nbbrd.io.http.ext.ThrowingStatusException;
 import nbbrd.io.net.MediaType;
 import nbbrd.io.text.BaseProperty;
 import nbbrd.service.ServiceProvider;
@@ -31,22 +44,10 @@ import sdmxdl.provider.ri.http.HttpFactory;
 import sdmxdl.provider.ri.http.HttpManager;
 import sdmxdl.provider.web.ConnectionFactory;
 import sdmxdl.provider.web.DriverSupport;
+import sdmxdl.web.HttpStatusException;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.lang.reflect.Type;
-import java.net.URI;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static java.util.Collections.emptyList;
-import static sdmxdl.Confidentiality.PUBLIC;
-import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
 
 /**
  * Driver for the UIS Data API (https://api.uis.unesco.org).
@@ -64,13 +65,11 @@ public final class UisDialectDriver implements Driver {
     private static final String DIALECTS_UIS = "DIALECTS_UIS";
 
     @lombok.experimental.Delegate
-    private final DriverSupport support = DriverSupport
-            .builder()
+    private final DriverSupport support = DriverSupport.builder()
             .id(DIALECTS_UIS)
             .rank(NATIVE_DRIVER_RANK)
             .connector(new UisConnectionFactory())
-            .source(WebSource
-                    .builder()
+            .source(WebSource.builder()
                     .id("UIS")
                     .name("en", "Unesco Institute for Statistics")
                     .name("fr", "Unesco Institut de statistique")
@@ -93,18 +92,17 @@ public final class UisDialectDriver implements Driver {
         }
 
         @Override
-        public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) {
+        public @NonNull Connection connect(
+                @NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) {
             UisClient client = new DefaultUisClient(
-                    HasMarker.of(source),
-                    source.getEndpoint(),
-                    httpFactory.createHttpClient(source, context)
-            );
+                    HasMarker.of(source), source.getEndpoint(), httpFactory.createHttpClient(source, context));
 
             UisClient cachedClient = CachedUisClient.of(
                     client,
-                    context.getDriverCache(source), CACHE_TTL_PROPERTY.get(source.getProperties()),
-                    source, languages
-            );
+                    context.getDriverCache(source),
+                    CACHE_TTL_PROPERTY.get(source.getProperties()),
+                    source,
+                    languages);
 
             return new UisConnection(cachedClient);
         }
@@ -113,8 +111,7 @@ public final class UisDialectDriver implements Driver {
     @lombok.AllArgsConstructor
     private static final class UisConnection implements Connection {
 
-        @lombok.NonNull
-        private final UisClient client;
+        @lombok.NonNull private final UisClient client;
 
         @Override
         public @NonNull Collection<Database> getDatabases() {
@@ -127,24 +124,29 @@ public final class UisDialectDriver implements Driver {
         }
 
         @Override
-        public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
+        public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef)
+                throws IOException, IllegalArgumentException {
             Flow flow = ConnectionSupport.getFlowFromFlows(database, flowRef, this, client);
             Structure structure = client.getStructure();
             return MetaSet.builder().flow(flow).structure(structure).build();
         }
 
         @Override
-        public @NonNull DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
+        public @NonNull DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query)
+                throws IOException {
             return client.getData(flowRef.getId()).getData(query);
         }
 
         @Override
-        public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
+        public @NonNull Stream<Series> getDataStream(
+                @NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
             return client.getData(flowRef.getId()).getData(query).stream();
         }
 
         @Override
-        public @NonNull Collection<String> getAvailableDimensionCodes(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, int dimensionIndex) throws IOException, IllegalArgumentException {
+        public @NonNull Collection<String> getAvailableDimensionCodes(
+                @NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, int dimensionIndex)
+                throws IOException, IllegalArgumentException {
             return ConnectionSupport.getAvailableDimensionCodes(this, database, flowRef, constraints, dimensionIndex);
         }
 
@@ -159,24 +161,19 @@ public final class UisDialectDriver implements Driver {
         }
 
         @Override
-        public void close() {
-        }
+        public void close() {}
     }
 
     @VisibleForTesting
     interface UisClient extends HasMarker {
 
-        @NonNull
-        List<Flow> getIndicators() throws IOException;
+        @NonNull List<Flow> getIndicators() throws IOException;
 
-        @NonNull
-        Structure getStructure() throws IOException;
+        @NonNull Structure getStructure() throws IOException;
 
-        @NonNull
-        DataSet getData(@NonNull String indicatorCode) throws IOException;
+        @NonNull DataSet getData(@NonNull String indicatorCode) throws IOException;
 
-        @NonNull
-        URI ping() throws IOException;
+        @NonNull URI ping() throws IOException;
     }
 
     @VisibleForTesting
@@ -185,16 +182,18 @@ public final class UisDialectDriver implements Driver {
 
         @lombok.Getter
         private final Marker marker;
+
         private final URI endpoint;
         private final HttpClient client;
 
         @Override
         public @NonNull List<Flow> getIndicators() throws IOException {
-            HttpRequest request = HttpRequest
-                    .builder()
-                    .query(UriQueryBuilder
-                            .of(endpoint)
-                            .path("api").path("public").path("definitions").path("indicators")
+            HttpRequest request = HttpRequest.builder()
+                    .query(UriQueryBuilder.of(endpoint)
+                            .path("api")
+                            .path("public")
+                            .path("definitions")
+                            .path("indicators")
                             .build())
                     .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
                     .build();
@@ -208,11 +207,12 @@ public final class UisDialectDriver implements Driver {
 
         @Override
         public @NonNull Structure getStructure() throws IOException {
-            HttpRequest request = HttpRequest
-                    .builder()
-                    .query(UriQueryBuilder
-                            .of(endpoint)
-                            .path("api").path("public").path("definitions").path("geounits")
+            HttpRequest request = HttpRequest.builder()
+                    .query(UriQueryBuilder.of(endpoint)
+                            .path("api")
+                            .path("public")
+                            .path("definitions")
+                            .path("geounits")
                             .build())
                     .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
                     .build();
@@ -226,11 +226,12 @@ public final class UisDialectDriver implements Driver {
 
         @Override
         public @NonNull DataSet getData(@NonNull String indicatorCode) throws IOException {
-            HttpRequest request = HttpRequest
-                    .builder()
-                    .query(UriQueryBuilder
-                            .of(endpoint)
-                            .path("api").path("public").path("data").path("indicators")
+            HttpRequest request = HttpRequest.builder()
+                    .query(UriQueryBuilder.of(endpoint)
+                            .path("api")
+                            .path("public")
+                            .path("data")
+                            .path("indicators")
                             .param("indicator", indicatorCode)
                             .build())
                     .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
@@ -240,25 +241,27 @@ public final class UisDialectDriver implements Driver {
                 try (Reader reader = response.getBodyAsReader()) {
                     return Converter.toDataSet(
                             FlowRef.of(AGENCY, indicatorCode, VERSION),
-                            IndicatorDataResponse.parse(reader).getRecords()
-                    );
+                            IndicatorDataResponse.parse(reader).getRecords());
                 }
             }
         }
 
         @Override
         public @NonNull URI ping() throws IOException {
-            HttpRequest request = HttpRequest
-                    .builder()
-                    .query(UriQueryBuilder
-                            .of(endpoint)
-                            .path("api").path("public").path("versions").path("default")
+            HttpRequest request = HttpRequest.builder()
+                    .query(UriQueryBuilder.of(endpoint)
+                            .path("api")
+                            .path("public")
+                            .path("versions")
+                            .path("default")
                             .build())
                     .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
                     .build();
 
             try (HttpResponse ignore = client.send(request)) {
                 return request.getQuery();
+            } catch (ThrowingStatusException ex) {
+                throw new HttpStatusException(ex.getResponseCode(), request.getQuery(), ex);
             }
         }
     }
@@ -268,26 +271,26 @@ public final class UisDialectDriver implements Driver {
     static class CachedUisClient implements UisClient {
 
         static @NonNull CachedUisClient of(
-                @NonNull UisClient client, @NonNull Cache<DataRepository> cache, long ttlInMillis,
-                @NonNull WebSource source, @NonNull Languages languages) {
-            return new CachedUisClient(client, cache, getBase(source, languages), java.time.Duration.ofMillis(ttlInMillis));
+                @NonNull UisClient client,
+                @NonNull Cache<DataRepository> cache,
+                long ttlInMillis,
+                @NonNull WebSource source,
+                @NonNull Languages languages) {
+            return new CachedUisClient(
+                    client, cache, getBase(source, languages), java.time.Duration.ofMillis(ttlInMillis));
         }
 
         private static URI getBase(WebSource source, Languages languages) {
             return TypedId.resolveURI(URI.create("cache:uis"), TypedId.getUniqueID(source), languages.toString());
         }
 
-        @lombok.NonNull
-        private final UisClient delegate;
+        @lombok.NonNull private final UisClient delegate;
 
-        @lombok.NonNull
-        private final Cache<DataRepository> cache;
+        @lombok.NonNull private final Cache<DataRepository> cache;
 
-        @lombok.NonNull
-        private final URI base;
+        @lombok.NonNull private final URI base;
 
-        @lombok.NonNull
-        private final java.time.Duration ttl;
+        @lombok.NonNull private final java.time.Duration ttl;
 
         @lombok.Getter(lazy = true)
         private final TypedId<List<Flow>> idOfIndicators = initIdOfIndicators(base);
@@ -299,24 +302,25 @@ public final class UisDialectDriver implements Driver {
         private final TypedId<DataSet> idOfData = initIdOfData(base);
 
         private static TypedId<List<Flow>> initIdOfIndicators(URI base) {
-            return TypedId.of(base,
-                    DataRepository::getFlows,
-                    flows -> DataRepository.builder().flows(flows).build()
-            ).with("indicators");
+            return TypedId.of(
+                            base,
+                            DataRepository::getFlows,
+                            flows -> DataRepository.builder().flows(flows).build())
+                    .with("indicators");
         }
 
         private static TypedId<DataRepository> initIdOfStructure(URI base) {
-            return TypedId.of(base,
-                    repo -> repo,
-                    repo -> repo
-            ).with("structure");
+            return TypedId.of(base, repo -> repo, repo -> repo).with("structure");
         }
 
         private static TypedId<DataSet> initIdOfData(URI base) {
-            return TypedId.of(base,
-                    repo -> repo.getDataSets().isEmpty() ? null : repo.getDataSets().get(0),
-                    dataSet -> DataRepository.builder().dataSet(dataSet).build()
-            ).with("data");
+            return TypedId.of(
+                            base,
+                            repo -> repo.getDataSets().isEmpty()
+                                    ? null
+                                    : repo.getDataSets().get(0),
+                            dataSet -> DataRepository.builder().dataSet(dataSet).build())
+                    .with("data");
         }
 
         @Override
@@ -331,11 +335,13 @@ public final class UisDialectDriver implements Driver {
 
         @Override
         public @NonNull Structure getStructure() throws IOException {
-            DataRepository repo = getIdOfStructure().load(
-                    cache,
-                    () -> DataRepository.builder().structure(delegate.getStructure()).build(),
-                    o -> ttl
-            );
+            DataRepository repo = getIdOfStructure()
+                    .load(
+                            cache,
+                            () -> DataRepository.builder()
+                                    .structure(delegate.getStructure())
+                                    .build(),
+                            o -> ttl);
             return repo.getStructures().get(0);
         }
 
@@ -371,8 +377,7 @@ public final class UisDialectDriver implements Driver {
             return new Indicator(
                     x.get("indicatorCode").getAsString(),
                     x.get("name").getAsString(),
-                    x.get("theme").getAsString()
-            );
+                    x.get("theme").getAsString());
         }
     }
 
@@ -397,8 +402,7 @@ public final class UisDialectDriver implements Driver {
             return new GeoUnit(
                     x.get("id").getAsString(),
                     x.get("name").getAsString(),
-                    x.get("type").getAsString()
-            );
+                    x.get("type").getAsString());
         }
     }
 
@@ -425,11 +429,14 @@ public final class UisDialectDriver implements Driver {
         }
 
         private static final Gson GSON = new GsonBuilder()
-                .registerTypeAdapter(IndicatorDataResponse.class, (JsonDeserializer<IndicatorDataResponse>) IndicatorDataResponse::deserialize)
-                .registerTypeAdapter(IndicatorRecord.class, (JsonDeserializer<IndicatorRecord>) IndicatorDataResponse::deserializeRecord)
+                .registerTypeAdapter(IndicatorDataResponse.class, (JsonDeserializer<IndicatorDataResponse>)
+                        IndicatorDataResponse::deserialize)
+                .registerTypeAdapter(IndicatorRecord.class, (JsonDeserializer<IndicatorRecord>)
+                        IndicatorDataResponse::deserializeRecord)
                 .create();
 
-        private static IndicatorDataResponse deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+        private static IndicatorDataResponse deserialize(
+                JsonElement json, Type typeOfT, JsonDeserializationContext context) {
             JsonArray records = json.getAsJsonObject().getAsJsonArray("records");
             List<IndicatorRecord> result = new ArrayList<>();
             for (JsonElement element : records) {
@@ -438,7 +445,8 @@ public final class UisDialectDriver implements Driver {
             return new IndicatorDataResponse(result);
         }
 
-        private static IndicatorRecord deserializeRecord(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+        private static IndicatorRecord deserializeRecord(
+                JsonElement json, Type typeOfT, JsonDeserializationContext context) {
             JsonObject x = json.getAsJsonObject();
             return new IndicatorRecord(
                     x.get("indicatorId").getAsString(),
@@ -446,8 +454,7 @@ public final class UisDialectDriver implements Driver {
                     x.get("year").getAsInt(),
                     x.get("value").isJsonNull() ? null : x.get("value").getAsDouble(),
                     x.get("magnitude").isJsonNull() ? null : x.get("magnitude").getAsString(),
-                    x.get("qualifier").isJsonNull() ? null : x.get("qualifier").getAsString()
-            );
+                    x.get("qualifier").isJsonNull() ? null : x.get("qualifier").getAsString());
         }
     }
 
@@ -456,9 +463,7 @@ public final class UisDialectDriver implements Driver {
     static class Converter {
 
         static @NonNull List<Flow> toFlows(@NonNull Indicator[] indicators) {
-            return Arrays.stream(indicators)
-                    .map(Converter::toFlow)
-                    .collect(Collectors.toList());
+            return Arrays.stream(indicators).map(Converter::toFlow).collect(Collectors.toList());
         }
 
         static @NonNull Flow toFlow(@NonNull Indicator indicator) {
@@ -505,8 +510,8 @@ public final class UisDialectDriver implements Driver {
             Map<String, Series.Builder> seriesBuilders = new LinkedHashMap<>();
             for (IndicatorRecord record : records) {
                 String geoUnit = record.getGeoUnit();
-                Series.Builder builder = seriesBuilders.computeIfAbsent(geoUnit,
-                        k -> Series.builder().key(Key.of(k)));
+                Series.Builder builder = seriesBuilders.computeIfAbsent(
+                        geoUnit, k -> Series.builder().key(Key.of(k)));
                 TimeInterval period = toYearlyPeriod(record.getYear());
                 double value = record.getValue() != null ? record.getValue() : Double.NaN;
                 Obs.Builder obsBuilder = Obs.builder().period(period).value(value);
@@ -537,8 +542,6 @@ public final class UisDialectDriver implements Driver {
     static final String MAGNITUDE_ID = "MAGNITUDE";
     static final String QUALIFIER_ID = "QUALIFIER";
     static final sdmxdl.Duration ANNUAL_DURATION = sdmxdl.Duration.parse("P1Y");
-    static final MediaType JSON_TYPE = MediaType.builder().type("application").subtype("json").build();
+    static final MediaType JSON_TYPE =
+            MediaType.builder().type("application").subtype("json").build();
 }
-
-
-

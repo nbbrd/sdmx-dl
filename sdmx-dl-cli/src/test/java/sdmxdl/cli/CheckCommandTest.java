@@ -1,10 +1,10 @@
 package sdmxdl.cli;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import _test.CommandWatcher;
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class CheckCommandTest {
 
@@ -14,7 +14,10 @@ public class CheckCommandTest {
         CommandWatcher watcher = CommandWatcher.on(cmd);
 
         assertThat(cmd.execute()).isEqualTo(CommandLine.ExitCode.OK);
-        assertThat(watcher.getOut()).isNotEmpty().contains("status", "access", "config", "sources");
+        assertThat(watcher.getOut())
+                .isNotEmpty()
+                .contains("health", "config", "sources")
+                .doesNotContain("status", "access");
         assertThat(watcher.getErr()).isEmpty();
     }
 }

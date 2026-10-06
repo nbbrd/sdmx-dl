@@ -45,9 +45,8 @@ Rule of thumb: only mark something n/a or waived when it is a deliberate design 
 | getData             |                          | fetch data        |      |                   |        |
 | fetchKeys           | n/a: getData with detail=SERIES_KEYS_ONLY | fetch keys | n/a: getData with detail=SERIES_KEYS_ONLY | n/a: getData with detail=SERIES_KEYS_ONLY | n/a: getData with detail=SERIES_KEYS_ONLY |
 | getDataStream       | n/a: transport-specific streaming variant of getData | n/a: transport-specific streaming variant of getData | | | n/a: transport-specific streaming variant of getData |
-| listStatuses        | getMonitorReport         | check status      |      |                   | status |
+| checkHealth         |                          | check health      |      |                   |        |
 | listFeatures        | getSupportedFeatures     | list features     |      |                   |        |
-| checkAccess         | testConnection           | check access      |      |                   |        |
 | listPlugins         |                          | list plugins      |      |                   |        |
 | listScriptTargets   | getTargets               | script targets    |      |                   |        |
 | generateDataScript  | generate + getData       | script data       |      |                   |        |
@@ -58,7 +57,7 @@ Rule of thumb: only mark something n/a or waived when it is a deliberate design 
 | parameter          | operation    | api                      | cli                    | grpc        | rest        | mcp     |
 |--------------------|--------------|--------------------------|------------------------|-------------|-------------|---------|
 | source             |              | source, sourceId         |                        |             |             |         |
-| sources            | listStatuses | name, source             | source                 |             |             | source  |
+| sources            | checkHealth  | name, source             | source                 |             |             | source  |
 | flow               |              |                          |                        |             |             |         |
 | key                |              |                          |                        |             |             |         |
 | database           |              |                          |                        |             |             |         |
@@ -91,8 +90,7 @@ Rule of thumb: only mark something n/a or waived when it is a deliberate design 
 | listDatabases | database | *    | n/a     | databases are listed for a whole source            |
 | listFeatures  | database | *    | n/a     | features are defined for a whole source            |
 | listFeatures  | languages | *   | n/a     | features have no localized labels                  |
-| checkAccess   | languages | *   | n/a     | access check has no localized labels               |
-| listStatuses  | languages | *   | n/a     | statuses have no localized labels                  |
+| checkHealth   | languages | *   | n/a     | health reports have no localized labels            |
 | fetchKeys | detail     | cli    | n/a     | `fetch keys` is the SERIES_KEYS_ONLY detail itself |
 | listFlows | plainText  | mcp    | default | plain text keeps LLM responses small               |
 | listFlows | truncate   | mcp    | default | truncated descriptions keep LLM responses small    |
@@ -106,6 +104,9 @@ Rule of thumb: only mark something n/a or waived when it is a deliberate design 
 | api    | operation | getConnection              | low-level connection, wrapped by Provider        |
 | api    | operation | using                      | session accessor                                 |
 | api    | operation | usingName                  | obtains the Provider bound to a source           |
+| api    | operation | getMonitorReport           | deprecated, replaced by checkHealth              |
+| api    | operation | checkAccess                | building block of checkHealth (ACCESS check)     |
+| rest   | operation | checkSourceHealth          | single-source shortcut of checkHealth            |
 | api    | operation | getOnEvent                 | listener accessor                                |
 | api    | operation | getOnError                 | listener accessor                                |
 | api    | operation | getSource                  | Provider accessor                                |

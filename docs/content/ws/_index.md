@@ -68,7 +68,7 @@ curl "localhost:4559/sdmx-dl/v2/ECB/flows"
 | `ListAvailability` | `GET /{source}/{flow}/availability`              | Codes that actually occur under a key constraint.                |
 | `GetData`          | `GET /{source}/{flow}/data`                      | Fetch observations for a key.                                    |
 | `GetDataStream`    | `GET /{source}/{flow}/data:stream`               | Same as `GetData`, streamed observation by observation.          |
-| `ListStatuses`     | `GET /statuses`                                  | Check the health of one, several, or all sources.                |
+| `CheckHealth`      | `GET /health`, `GET /{source}/health`            | Check the health (monitor and/or live access) of one, several, or all sources. |
 | `ListScriptTargets`   | `GET /script/targets`                         | List the available [script targets]({{< relref "/integration/generate-scripts#targets" >}}). |
 | `GenerateDataScript`  | `GET /{source}/{flow}/data:script`            | Generate a script that performs `GetData` (same parameters, plus `target`). |
 | `GenerateFlowsScript` | `GET /{source}/flows:script`                  | Generate a script that performs `ListFlows` (same parameters, plus `target`). |
@@ -133,7 +133,7 @@ Available tools:
 | `listCodes`        | List or search the codes of a dimension or attribute.                  |
 | `listAvailability` | Get the codes that actually occur for a dimension under a key.         |
 | `getData`          | Fetch data series for a flow, optionally filtered by key/period.       |
-| `status`           | Get the monitor status of a single source.                             |
+| `checkHealth`      | Diagnose the health of a single source (monitor and/or live access).   |
 | `listScriptTargets`   | List the available script targets.                                  |
 | `generateDataScript`  | Generate a ready-to-run script that fetches data (not executed).    |
 | `generateFlowsScript` | Generate a ready-to-run script that lists flows (not executed).     |

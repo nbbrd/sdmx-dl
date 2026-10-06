@@ -20,6 +20,31 @@
           }
         }
       },
+      "AccessReportDto" : {
+        "type" : "object",
+        "properties" : {
+          "reachable" : {
+            "type" : "boolean"
+          },
+          "accessible" : {
+            "type" : "boolean"
+          },
+          "uri" : {
+            "type" : "string"
+          },
+          "duration" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "statusCode" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "errorMessage" : {
+            "type" : "string"
+          }
+        }
+      },
       "AttributeDto" : {
         "type" : "object",
         "properties" : {
@@ -205,6 +230,26 @@
           },
           "languages" : {
             "type" : "string"
+          }
+        }
+      },
+      "HealthReportDto" : {
+        "type" : "object",
+        "properties" : {
+          "source" : {
+            "type" : "string"
+          },
+          "verdict" : {
+            "$ref" : "#/components/schemas/Verdict"
+          },
+          "monitor" : {
+            "$ref" : "#/components/schemas/MonitorReportDto"
+          },
+          "monitorError" : {
+            "type" : "string"
+          },
+          "access" : {
+            "$ref" : "#/components/schemas/AccessReportDto"
           }
         }
       },
@@ -524,6 +569,10 @@
             }
           }
         }
+      },
+      "Verdict" : {
+        "type" : "string",
+        "enum" : [ "UNKNOWN", "OK", "DEGRADED", "LOCAL_ISSUE", "REMOTE_OUTAGE", "UNREACHABLE", "UNRECOGNIZED" ]
       },
       "WebSourceDto" : {
         "type" : "object",
@@ -1069,6 +1118,43 @@
         "summary" : "Get About"
       }
     },
+    "/sdmx-dl/v2/health" : {
+      "get" : {
+        "tags" : [ "sdmx-dl v2" ],
+        "parameters" : [ {
+          "description" : "Comma-separated checks: 'monitor' (third-party monitor, default) and/or 'access' (live request against the source)",
+          "name" : "checks",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : "monitor"
+          }
+        }, {
+          "name" : "sources",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : "all"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/HealthReportDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary" : "Check Health"
+      }
+    },
     "/sdmx-dl/v2/script/targets" : {
       "get" : {
         "tags" : [ "sdmx-dl v2" ],
@@ -1139,35 +1225,6 @@
           }
         },
         "summary" : "List Sources"
-      }
-    },
-    "/sdmx-dl/v2/statuses" : {
-      "get" : {
-        "tags" : [ "sdmx-dl v2" ],
-        "parameters" : [ {
-          "name" : "sources",
-          "in" : "query",
-          "schema" : {
-            "type" : "string",
-            "default" : "all"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/MonitorReportDto"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary" : "List Statuses"
       }
     },
     "/sdmx-dl/v2/{source}/databases" : {
@@ -1415,6 +1472,40 @@
           }
         },
         "summary" : "Generate Flows Script"
+      }
+    },
+    "/sdmx-dl/v2/{source}/health" : {
+      "get" : {
+        "tags" : [ "sdmx-dl v2" ],
+        "parameters" : [ {
+          "name" : "source",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Comma-separated checks: 'monitor' (third-party monitor, default) and/or 'access' (live request against the source)",
+          "name" : "checks",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : "monitor"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/HealthReportDto"
+                }
+              }
+            }
+          }
+        },
+        "summary" : "Check Source Health"
       }
     },
     "/sdmx-dl/v2/{source}/{flow}/attributes" : {

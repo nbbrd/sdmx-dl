@@ -1,9 +1,17 @@
 package internal.sdmxdl.provider.px.drivers;
 
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.*;
+import java.util.stream.Stream;
 import lombok.NonNull;
 import nbbrd.io.FileParser;
 import nbbrd.io.function.IOSupplier;
 import nbbrd.io.http.*;
+import nbbrd.io.http.ext.ThrowingStatusException;
 import nbbrd.io.net.MediaType;
 import nbbrd.io.text.TextParser;
 import sdmxdl.Database;
@@ -13,43 +21,34 @@ import sdmxdl.Structure;
 import sdmxdl.format.DataCursor;
 import sdmxdl.provider.Marker;
 import sdmxdl.provider.px.drivers.PxWebDriver;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.*;
-import java.util.stream.Stream;
-
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
+import sdmxdl.web.HttpStatusException;
 
 @lombok.AllArgsConstructor
 public final class DefaultPxWebClient implements PxWebClient {
 
     @lombok.Getter
-    @lombok.NonNull
-    private final Marker marker;
+    @lombok.NonNull private final Marker marker;
 
-    @lombok.NonNull
-    private final URI endpoint;
+    @lombok.NonNull private final URI endpoint;
 
-    @lombok.NonNull
-    private final HttpClient client;
+    @lombok.NonNull private final HttpClient client;
 
-    @lombok.NonNull
-    private final PxWebDriver.TableListing listing;
+    @lombok.NonNull private final PxWebDriver.TableListing listing;
 
     @Override
     public @NonNull URI ping() throws IOException {
-        try (HttpResponse ignore = client.send(getConfigRequest(endpoint))) {
-            return getConfigRequest(endpoint).getQuery();
+        HttpRequest request = getConfigRequest(endpoint);
+        try (HttpResponse ignore = client.send(request)) {
+            return request.getQuery();
+        } catch (ThrowingStatusException ex) {
+            throw new HttpStatusException(ex.getResponseCode(), request.getQuery(), ex);
         }
     }
 
     @Override
     public @NonNull List<Database> getDataBases() throws IOException {
         try (HttpResponse response = client.send(getDataBasesRequest(endpoint))) {
-            return getDatabasesParser(response.getContentType())
-                    .parseReader(response::getBodyAsReader);
+            return getDatabasesParser(response.getContentType()).parseReader(response::getBodyAsReader);
         }
     }
 
@@ -58,24 +57,21 @@ public final class DefaultPxWebClient implements PxWebClient {
         // The flat "?query=*&filter=*" search is fast but unreliable (rejected by some
         // servers, stale index on others), so it is combined with the reliable folder-tree
         // navigation according to the configured strategy.
-        return selectTables(listing,
-                () -> getFlatTables(dbId),
-                () -> collectTables(folder -> getNodes(dbId, folder)));
+        return selectTables(listing, () -> getFlatTables(dbId), () -> collectTables(folder -> getNodes(dbId, folder)));
     }
 
     @FunctionalInterface
-//    @VisibleForTesting
+    //    @VisibleForTesting
     public interface NodeLister {
 
-        @NonNull
-        List<PxNode> list(@NonNull List<String> folder) throws IOException;
+        @NonNull List<PxNode> list(@NonNull List<String> folder) throws IOException;
     }
 
     /**
      * Defensive bound on the number of folder listings issued while navigating a database tree,
      * so that a misbehaving or cyclic source cannot trigger an unbounded number of requests.
      */
-//    @VisibleForTesting
+    //    @VisibleForTesting
     public static final int MAX_FOLDER_REQUESTS = 10_000;
 
     /**
@@ -85,7 +81,7 @@ public final class DefaultPxWebClient implements PxWebClient {
      * The listing of the database root propagates its failure (a genuine flow failure), but a
      * single unreachable sub-folder is skipped so that it cannot abort the whole catalog.
      */
-//    @VisibleForTesting
+    //    @VisibleForTesting
     public static List<Flow> collectTables(@NonNull NodeLister lister) throws IOException {
         List<Flow> result = new ArrayList<>();
         Deque<List<String>> pending = new ArrayDeque<>();
@@ -106,7 +102,8 @@ public final class DefaultPxWebClient implements PxWebClient {
         return result;
     }
 
-    private static void collectNodes(List<PxNode> nodes, List<String> folder, List<Flow> result, Deque<List<String>> pending) {
+    private static void collectNodes(
+            List<PxNode> nodes, List<String> folder, List<Flow> result, Deque<List<String>> pending) {
         for (PxNode node : nodes) {
             List<String> childPath = new ArrayList<>(folder);
             childPath.add(node.getId());
@@ -119,10 +116,8 @@ public final class DefaultPxWebClient implements PxWebClient {
     }
 
     private List<Flow> getFlatTables(String dbId) throws IOException {
-        HttpRequest request = HttpRequest
-                .builder()
-                .query(UriQueryBuilder
-                        .of(endpoint)
+        HttpRequest request = HttpRequest.builder()
+                .query(UriQueryBuilder.of(endpoint)
                         .path(dbId)
                         .param("query", "*")
                         .param("filter", "*")
@@ -130,50 +125,41 @@ public final class DefaultPxWebClient implements PxWebClient {
                 .build();
 
         try (HttpResponse response = client.send(request)) {
-            return getFlatTablesParser(response.getContentType())
-                    .parseReader(response::getBodyAsReader);
+            return getFlatTablesParser(response.getContentType()).parseReader(response::getBodyAsReader);
         }
     }
 
     private List<PxNode> getNodes(String dbId, List<String> folder) throws IOException {
-        HttpRequest request = HttpRequest
-                .builder()
-                .query(UriQueryBuilder
-                        .of(endpoint)
-                        .path(dbId)
-                        .path(folder)
-                        .build())
+        HttpRequest request = HttpRequest.builder()
+                .query(UriQueryBuilder.of(endpoint).path(dbId).path(folder).build())
                 .build();
 
         try (HttpResponse response = client.send(request)) {
-            return getNodesParser(response.getContentType())
-                    .parseReader(response::getBodyAsReader);
+            return getNodesParser(response.getContentType()).parseReader(response::getBodyAsReader);
         }
     }
 
     @Override
-    public @NonNull Structure getMeta(@NonNull String dbId, @NonNull String tablePath) throws IOException, IllegalArgumentException {
-        HttpRequest request = HttpRequest
-                .builder()
-                .query(UriQueryBuilder
-                        .of(endpoint)
+    public @NonNull Structure getMeta(@NonNull String dbId, @NonNull String tablePath)
+            throws IOException, IllegalArgumentException {
+        HttpRequest request = HttpRequest.builder()
+                .query(UriQueryBuilder.of(endpoint)
                         .path(dbId)
                         .path(PxConverter.tablePathToSegments(tablePath))
                         .build())
                 .build();
 
         try (HttpResponse response = client.send(request)) {
-            return getMetaParser(tablePath, response.getContentType())
-                    .parseReader(response::getBodyAsReader);
+            return getMetaParser(tablePath, response.getContentType()).parseReader(response::getBodyAsReader);
         }
     }
 
     @Override
-    public @NonNull DataCursor getData(@NonNull String dbId, @NonNull String tablePath, @NonNull Structure dsd, @NonNull Key key) throws IOException, IllegalArgumentException {
-        HttpRequest request = HttpRequest
-                .builder()
-                .query(UriQueryBuilder
-                        .of(endpoint)
+    public @NonNull DataCursor getData(
+            @NonNull String dbId, @NonNull String tablePath, @NonNull Structure dsd, @NonNull Key key)
+            throws IOException, IllegalArgumentException {
+        HttpRequest request = HttpRequest.builder()
+                .query(UriQueryBuilder.of(endpoint)
                         .path(dbId)
                         .path(PxConverter.tablePathToSegments(tablePath))
                         .build())
@@ -182,8 +168,7 @@ public final class DefaultPxWebClient implements PxWebClient {
                 .build();
 
         HttpResponse response = client.send(request);
-        return getDataParser(dsd, response.getContentType())
-                .parseStream(response::asDisconnectingInputStream);
+        return getDataParser(dsd, response.getContentType()).parseStream(response::asDisconnectingInputStream);
     }
 
     /**
@@ -192,8 +177,12 @@ public final class DefaultPxWebClient implements PxWebClient {
      * is tried first and the tree navigation is used as a fallback when the search is
      * unsupported (throws) or returns nothing.
      */
-//    @VisibleForTesting
-    public static List<Flow> selectTables(@NonNull PxWebDriver.TableListing listing, @NonNull IOSupplier<List<Flow>> flat, @NonNull IOSupplier<List<Flow>> tree) throws IOException {
+    //    @VisibleForTesting
+    public static List<Flow> selectTables(
+            @NonNull PxWebDriver.TableListing listing,
+            @NonNull IOSupplier<List<Flow>> flat,
+            @NonNull IOSupplier<List<Flow>> tree)
+            throws IOException {
         switch (listing) {
             case FLAT:
                 return flat.getWithIO();
@@ -218,27 +207,23 @@ public final class DefaultPxWebClient implements PxWebClient {
     }
 
     private static HttpRequest getConfigRequest(URI endpoint) {
-        return HttpRequest
-                .builder()
+        return HttpRequest.builder()
                 .query(UriQueryBuilder.of(endpoint).param("config").build())
                 .build();
     }
 
     private static HttpRequest getDataBasesRequest(URI endpoint) {
-        return HttpRequest
-                .builder()
-                .query(endpoint)
-                .build();
+        return HttpRequest.builder().query(endpoint).build();
     }
 
     private static TextParser<List<Database>> getDatabasesParser(MediaType ignore) {
-        return PxDatabase.JSON_PARSER
-                .andThen(tables -> Stream.of(tables).map(PxDatabase::toDatabase).collect(toList()));
+        return PxDatabase.JSON_PARSER.andThen(
+                tables -> Stream.of(tables).map(PxDatabase::toDatabase).collect(toList()));
     }
 
     private static TextParser<List<Flow>> getFlatTablesParser(MediaType ignore) {
-        return PxSearchTable.JSON_PARSER
-                .andThen(tables -> Stream.of(tables).map(PxSearchTable::toFlow).collect(toList()));
+        return PxSearchTable.JSON_PARSER.andThen(
+                tables -> Stream.of(tables).map(PxSearchTable::toFlow).collect(toList()));
     }
 
     private static TextParser<List<PxNode>> getNodesParser(MediaType ignore) {
@@ -246,8 +231,8 @@ public final class DefaultPxWebClient implements PxWebClient {
     }
 
     private static TextParser<Structure> getMetaParser(String tablePath, MediaType ignore) {
-        return PxTableMeta.JSON_PARSER
-                .andThen(tableMeta -> tableMeta.toStructure(PxConverter.tablePathToStructureRef(tablePath)));
+        return PxTableMeta.JSON_PARSER.andThen(
+                tableMeta -> tableMeta.toStructure(PxConverter.tablePathToStructureRef(tablePath)));
     }
 
     private static FileParser<DataCursor> getDataParser(Structure dsd, MediaType ignore) {

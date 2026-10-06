@@ -20,28 +20,24 @@ import internal.sdmxdl.cli.SortOptions;
 import internal.sdmxdl.cli.WebSourcesOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
-import lombok.AccessLevel;
-import lombok.NonNull;
-import org.jspecify.annotations.Nullable;
-import picocli.CommandLine;
-import sdmxdl.Connection;
-import sdmxdl.Languages;
-import sdmxdl.web.SdmxWebManager;
-
 import java.io.IOException;
 import java.net.URI;
-import java.time.Clock;
 import java.time.Duration;
-import java.time.Instant;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
+import lombok.AccessLevel;
+import lombok.NonNull;
+import org.jspecify.annotations.Nullable;
+import picocli.CommandLine;
+import sdmxdl.AccessReport;
+import sdmxdl.web.SdmxWebManager;
 
 /**
  * @author Philippe Charles
  */
-@CommandLine.Command(name = "access")
+@CommandLine.Command(name = "access", hidden = true)
 @SuppressWarnings("FieldMayBeFinal")
 public final class CheckAccessCommand implements Callable<Void> {
 
@@ -61,8 +57,7 @@ public final class CheckAccessCommand implements Callable<Void> {
     }
 
     private CsvTable<Access> getTable() {
-        return CsvTable
-                .builderOf(Access.class)
+        return CsvTable.builderOf(Access.class)
                 .columnOf("Source", Access::getSource)
                 .columnOf("Accessible", Access::isAccessible, o -> Boolean.TRUE.equals(o) ? "YES" : "NO")
                 .columnOf("URI", Access::getUri, Objects::toString)
@@ -74,8 +69,9 @@ public final class CheckAccessCommand implements Callable<Void> {
     private Stream<Access> getRows() throws IOException {
         SdmxWebManager manager = web.loadManager();
         web.warmup(manager);
-        Stream<String> sources = web.isAllSources() ? WebSourcesOptions.getAllSourceNames(manager) : web.getSources().stream();
-        return sort.applySort(web.applyParallel(sources).map(sourceName -> Access.of(manager, web.getLangs(), sourceName)), BY_SOURCE);
+        Stream<String> sources =
+                web.isAllSources() ? WebSourcesOptions.getAllSourceNames(manager) : web.getSources().stream();
+        return sort.applySort(web.applyParallel(sources).map(sourceName -> Access.of(manager, sourceName)), BY_SOURCE);
     }
 
     private static String formatDuration(Duration o) {
@@ -88,35 +84,26 @@ public final class CheckAccessCommand implements Callable<Void> {
     @lombok.Value
     private static class Access {
 
-        static @NonNull Access of(@NonNull SdmxWebManager manager, @NonNull Languages languages, @NonNull String source) {
-            try (Connection conn = manager.getConnection(source, languages)) {
-                Clock clock = Clock.systemDefaultZone();
-                Instant start = clock.instant();
-                return success(source, conn.testConnection().orElse(null), Duration.between(start, clock.instant()));
+        static @NonNull Access of(@NonNull SdmxWebManager manager, @NonNull String source) {
+            try {
+                AccessReport report = manager.usingName(source).checkAccess();
+                return new Access(
+                        source,
+                        report.getUri(),
+                        report.isReachable() ? report.getDuration() : null,
+                        report.getErrorMessage());
             } catch (IOException ex) {
-                return failure(source, ex);
+                return new Access(source, null, null, ex.getMessage());
             }
         }
 
-        static @NonNull Access success(@NonNull String source, @Nullable URI uri, @NonNull Duration duration) {
-            return new Access(source, uri, duration, null);
-        }
+        @lombok.NonNull String source;
 
-        static @NonNull Access failure(@NonNull String source, @NonNull IOException cause) {
-            return new Access(source, null, null, cause.getMessage());
-        }
+        @Nullable URI uri;
 
-        @lombok.NonNull
-        String source;
+        @Nullable Duration duration;
 
-        @Nullable
-        URI uri;
-
-        @Nullable
-        Duration duration;
-
-        @Nullable
-        String cause;
+        @Nullable String cause;
 
         public boolean isAccessible() {
             return cause == null;

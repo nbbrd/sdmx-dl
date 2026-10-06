@@ -437,7 +437,7 @@ public final class Explorer {
         }
 
         public @NonNull String toShortError() {
-            if (error != null && error.equals("ThrowingStatusException")) {
+            if (error != null && (error.equals("ThrowingStatusException") || error.equals("HttpStatusException"))) {
                 return message != null ? message : "-";
             }
             return error != null ? (error + ": " + message) : "-";

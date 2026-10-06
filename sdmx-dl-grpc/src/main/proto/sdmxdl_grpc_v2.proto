@@ -30,7 +30,7 @@ service SdmxWebManager {
 
   rpc ListAvailability(WebAvailabilityRequestDto) returns (sdmxdl.format.protobuf.AvailabilityDto);
 
-  rpc ListStatuses(WebStatusesRequestDto) returns (stream sdmxdl.format.protobuf.web.MonitorReportDto);
+  rpc CheckHealth(WebHealthRequestDto) returns (stream sdmxdl.format.protobuf.web.HealthReportDto);
 
   rpc ListScriptTargets(EmptyDto) returns (stream ScriptTargetDto);
 
@@ -125,8 +125,9 @@ message WebAvailabilityRequestDto {
   optional string languages = 6;
 }
 
-message WebStatusesRequestDto {
+message WebHealthRequestDto {
   repeated string sources = 1; /* empty, or a single "all" entry (case-insensitive), means every known source */
+  repeated sdmxdl.format.protobuf.web.HealthCheckDto checks = 2; /* empty = MONITOR only; ACCESS performs a live request against each source */
 }
 
 message ScriptOptionsDto {

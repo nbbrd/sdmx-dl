@@ -70,6 +70,15 @@ so the result is always consistent (but the download is not necessarily smaller)
 When `--first-n` and `--last-n` are combined, the result is the union of the first N and the last N
 observations of each series (computed independently after any period filtering).
 
+## Health
+
+Options used by the `check health` command.
+
+| Name                                                              | Shortcut | Parameter  | Description                                                                                         |
+|-------------------------------------------------------------------|----------|------------|-----------------------------------------------------------------------------------------------------|
+| <a id="checks" href="#checks">`--checks`</a>                      | `-c`     | `<checks>` | Comma-separated checks: `MONITOR` (third-party monitor, default) and/or `ACCESS` (live request).   |
+| <a id="fail-on-issue" href="#fail-on-issue">`--fail-on-issue`</a> | -        | -          | Exit with a non-zero code if any verdict is not `OK`.                                               |
+
 ## Script
 
 Options used by the `script` commands to [generate scripts]({{< relref "/integration/generate-scripts" >}}) instead of executing requests.

@@ -12,17 +12,20 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.io.IOException;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import sdmxdl.*;
 import sdmxdl.format.protobuf.*;
-import sdmxdl.format.protobuf.web.MonitorReportDto;
+import sdmxdl.format.protobuf.web.HealthReportDto;
 import sdmxdl.format.protobuf.web.WebSourceDto;
 import sdmxdl.script.ScriptManager;
 import sdmxdl.script.ScriptTarget;
+import sdmxdl.web.HealthCheck;
 import sdmxdl.web.SdmxWebManager;
+import sdmxdl.web.WebHealthRequest;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.WebSourcesRequest;
 
@@ -468,10 +471,25 @@ public class SdmxdlMcpService2 {
 
     @Tool(
             description =
-                    "Get the health of one source: current status (up/down), uptime ratio and average response time. Use it to explain or diagnose failures of the other tools, not as part of the normal data workflow. Requires a valid source id from listSources.")
-    public MonitorReportDto status(@ToolArg(description = SOURCE_ARG) String source) throws IOException {
+                    "Diagnose the health of one source. Use it to explain failures of the other tools, not as part of the normal data workflow. Requires a valid source id from listSources. Returns a verdict: OK (works), DEGRADED (answers with errors, or monitor and live check disagree), LOCAL_ISSUE (monitor says up but the source cannot be reached from this server: proxy, firewall, SSL), REMOTE_OUTAGE (monitor says down), UNREACHABLE (cannot be reached and no monitor to tell why), UNKNOWN (not enough information). Also returns the monitor report (status, uptime ratio, average response time in ms) and, if requested, the live access check (reachable, accessible, duration in ms, status code, error message).")
+    public HealthReportDto checkHealth(
+            @ToolArg(description = SOURCE_ARG) String source,
+            @ToolArg(
+                            description =
+                                    "Comma-separated checks: 'monitor' (third-party monitor, cheap, default) and/or 'access' (live request from this server against the source; use it when the monitor is missing or says up but calls fail).",
+                            required = false,
+                            defaultValue = "monitor")
+                    String checks)
+            throws IOException {
         getPublicSourceForMcp(source);
-        return ProtoWeb.fromMonitorReport(manager.getMonitorReport(source));
+        EnumSet<HealthCheck> set = EnumSet.noneOf(HealthCheck.class);
+        for (String check : checks.split(",")) {
+            if (!check.isBlank()) {
+                set.add(HealthCheck.valueOf(check.trim().toUpperCase(Locale.ROOT)));
+            }
+        }
+        return ProtoWeb.fromHealthReport(
+                manager.checkHealth(source, set.isEmpty() ? WebHealthRequest.DEFAULT_CHECKS : set));
     }
 
     private static Key buildKey(Structure structure, Map<String, String> dimensions) {

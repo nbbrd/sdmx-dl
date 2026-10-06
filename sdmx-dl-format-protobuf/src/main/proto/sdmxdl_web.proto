@@ -41,3 +41,33 @@ message MonitorReportsDto {
   string creation_time = 3;
   string expiration_time = 4;
 }
+
+enum HealthCheckDto {
+  MONITOR = 0;
+  ACCESS = 1;
+}
+
+message AccessReportDto {
+  bool reachable = 1; /* the source answered, successfully or not */
+  bool accessible = 2; /* the source answered successfully */
+  optional string uri = 3;
+  int64 duration = 4; /* in milliseconds */
+  optional int32 status_code = 5; /* error status returned by the source, if any */
+  optional string error_message = 6;
+}
+
+message HealthReportDto {
+  enum Verdict {
+    UNKNOWN = 0;
+    OK = 1;
+    DEGRADED = 2;
+    LOCAL_ISSUE = 3;
+    REMOTE_OUTAGE = 4;
+    UNREACHABLE = 5;
+  }
+  string source = 1;
+  optional Verdict verdict = 2; /* always set; optional to keep UNKNOWN in JSON output */
+  optional MonitorReportDto monitor = 3; /* absent if not requested or unavailable */
+  optional string monitor_error = 4; /* why the monitor report is unavailable */
+  optional AccessReportDto access = 5; /* absent if not requested */
+}

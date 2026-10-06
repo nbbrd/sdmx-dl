@@ -33,6 +33,7 @@ import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import nbbrd.console.picocli.text.TextOutputOptions;
 import picocli.CommandLine;
+import sdmxdl.AccessReport;
 import sdmxdl.Languages;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
@@ -53,8 +54,10 @@ public final class ListUpptimeCommand implements Callable<Void> {
     @Override
     public Void call() throws Exception {
         try (Writer writer = output.newCharWriter()) {
-            for (UpptimeSite site : getSiteList(web.loadManager(), web.getLangs(), msg -> web.getVerboseOptions()
-                    .reportToErrorStream(null, null, msg))) {
+            for (UpptimeSite site : getSiteList(
+                    web.loadManager(),
+                    web.getLangs(),
+                    msg -> web.getVerboseOptions().reportToErrorStream(null, null, msg))) {
                 writer.write("  - name: " + site.getName() + lineSeparator());
                 writer.write(
                         "    url: " + (site.getUri() != null ? site.getUri().toString() : "N/A") + lineSeparator());
@@ -91,10 +94,11 @@ public final class ListUpptimeCommand implements Callable<Void> {
 
     private static UpptimeSite getUpptimeSite(SdmxWebManager manager, Languages languages, WebSource source)
             throws IOException {
-        return manager.using(source)
-                .testConnection()
-                .map(value -> UpptimeSite.ok(source, value))
-                .orElseGet(() -> UpptimeSite.missing(source));
+        AccessReport report = manager.using(source).checkAccess();
+        if (!report.isReachable()) {
+            throw new IOException(report.getErrorMessage());
+        }
+        return report.getUri() != null ? UpptimeSite.ok(source, report.getUri()) : UpptimeSite.missing(source);
     }
 
     @lombok.Value

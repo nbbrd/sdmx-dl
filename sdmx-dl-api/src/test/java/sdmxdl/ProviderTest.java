@@ -22,17 +22,23 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
+import sdmxdl.web.HttpStatusException;
 import sdmxdl.web.WebSource;
 
 public class ProviderTest {
 
     @Test
-    public void testTestConnection() throws IOException {
-        assertThat(validProvider().testConnection()).contains(URI.create("http://localhost"));
+    public void testCheckAccess() {
+        assertThat(validProvider().checkAccess())
+                .returns(true, AccessReport::isReachable)
+                .returns(true, AccessReport::isAccessible)
+                .returns(URI.create("http://localhost"), AccessReport::getUri)
+                .returns(null, AccessReport::getStatusCode)
+                .returns(null, AccessReport::getErrorMessage);
     }
 
     @Test
-    public void testTestConnectionWhenAbsent() throws IOException {
+    public void testCheckAccessWhenAbsent() {
         Provider<WebSource> provider = providerOf(new ForwardingConnection() {
             @Override
             public @NonNull Optional<URI> testConnection() {
@@ -40,7 +46,42 @@ public class ProviderTest {
             }
         });
 
-        assertThat(provider.testConnection()).isEmpty();
+        assertThat(provider.checkAccess())
+                .returns(true, AccessReport::isAccessible)
+                .returns(null, AccessReport::getUri);
+    }
+
+    @Test
+    public void testCheckAccessWhenHttpStatus() {
+        Provider<WebSource> provider = providerOf(new ForwardingConnection() {
+            @Override
+            public @NonNull Optional<URI> testConnection() throws IOException {
+                throw new HttpStatusException(503, URI.create("http://localhost"), null);
+            }
+        });
+
+        assertThat(provider.checkAccess())
+                .returns(true, AccessReport::isReachable)
+                .returns(false, AccessReport::isAccessible)
+                .returns(URI.create("http://localhost"), AccessReport::getUri)
+                .returns(503, AccessReport::getStatusCode)
+                .returns("HTTP 503 on 'http://localhost'", AccessReport::getErrorMessage);
+    }
+
+    @Test
+    public void testCheckAccessWhenFailure() {
+        Provider<WebSource> provider = providerOf(new ForwardingConnection() {
+            @Override
+            public @NonNull Optional<URI> testConnection() throws IOException {
+                throw new IOException("boom");
+            }
+        });
+
+        assertThat(provider.checkAccess())
+                .returns(false, AccessReport::isReachable)
+                .returns(false, AccessReport::isAccessible)
+                .returns(null, AccessReport::getStatusCode)
+                .returns("boom", AccessReport::getErrorMessage);
     }
 
     @Test

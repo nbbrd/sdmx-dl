@@ -16,9 +16,8 @@
  */
 package sdmxdl.cli;
 
-import picocli.CommandLine;
-
 import java.util.concurrent.Callable;
+import picocli.CommandLine;
 
 /**
  * @author Philippe Charles
@@ -26,12 +25,12 @@ import java.util.concurrent.Callable;
 @CommandLine.Command(
         name = "check",
         subcommands = {
-                CheckStatusCommand.class,
-                CheckAccessCommand.class,
-                CheckConfigCommand.class,
-                CheckSourcesCommand.class
-        }
-)
+            CheckHealthCommand.class,
+            CheckStatusCommand.class,
+            CheckAccessCommand.class,
+            CheckConfigCommand.class,
+            CheckSourcesCommand.class
+        })
 public final class CheckCommand implements Callable<Void> {
 
     @CommandLine.Spec

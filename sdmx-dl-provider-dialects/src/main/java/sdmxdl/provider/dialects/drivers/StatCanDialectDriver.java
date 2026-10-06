@@ -1,6 +1,27 @@
 package sdmxdl.provider.dialects.drivers;
 
+import static java.util.Arrays.asList;
+import static java.util.function.Function.identity;
+import static java.util.regex.Pattern.compile;
+import static java.util.stream.Collectors.toMap;
+import static sdmxdl.Confidentiality.PUBLIC;
+import static sdmxdl.DataSet.toDataSet;
+import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
+import static sdmxdl.provider.web.WebValidators.dataflowRefOf;
+
 import com.google.gson.*;
+import java.io.*;
+import java.lang.reflect.Type;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.time.Duration;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.design.MightBePromoted;
@@ -10,6 +31,7 @@ import nbbrd.io.FileParser;
 import nbbrd.io.function.IOFunction;
 import nbbrd.io.function.IOSupplier;
 import nbbrd.io.http.*;
+import nbbrd.io.http.ext.ThrowingStatusException;
 import nbbrd.io.net.MediaType;
 import nbbrd.io.text.BaseProperty;
 import nbbrd.service.ServiceProvider;
@@ -23,31 +45,10 @@ import sdmxdl.provider.ri.http.HttpFactory;
 import sdmxdl.provider.ri.http.HttpManager;
 import sdmxdl.provider.web.ConnectionFactory;
 import sdmxdl.provider.web.DriverSupport;
+import sdmxdl.web.HttpStatusException;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
-
-import java.io.*;
-import java.lang.reflect.Type;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.time.Duration;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
-import static java.util.Arrays.asList;
-import static java.util.function.Function.identity;
-import static java.util.regex.Pattern.compile;
-import static java.util.stream.Collectors.toMap;
-import static sdmxdl.Confidentiality.PUBLIC;
-import static sdmxdl.DataSet.toDataSet;
-import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
-import static sdmxdl.provider.web.WebValidators.dataflowRefOf;
 
 @DirectImpl
 @ServiceProvider
@@ -56,13 +57,11 @@ public final class StatCanDialectDriver implements Driver {
     private static final String DIALECTS_STATCAN = "DIALECTS_STATCAN";
 
     @lombok.experimental.Delegate
-    private final DriverSupport support = DriverSupport
-            .builder()
+    private final DriverSupport support = DriverSupport.builder()
             .id(DIALECTS_STATCAN)
             .rank(NATIVE_DRIVER_RANK)
             .connector(new StatCanConnectionFactory())
-            .source(WebSource
-                    .builder()
+            .source(WebSource.builder()
                     .id("STATCAN")
                     .name("en", "Statistics Canada")
                     .name("fr", "Statistique Canada")
@@ -70,7 +69,9 @@ public final class StatCanDialectDriver implements Driver {
                     .confidentiality(PUBLIC)
                     .endpointOf("https://www150.statcan.gc.ca/t1/wds/rest")
                     .websiteOf("https://www150.statcan.gc.ca/n1/en/type/data?MM=1")
-                    .propertyOf(CACHE_TTL_PROPERTY, Long.toString(Duration.ofHours(1).toMillis()))
+                    .propertyOf(
+                            CACHE_TTL_PROPERTY,
+                            Long.toString(Duration.ofHours(1).toMillis()))
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/STATCAN")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/statcan")
                     .build())
@@ -86,19 +87,21 @@ public final class StatCanDialectDriver implements Driver {
         }
 
         @Override
-        public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
+        public @NonNull Connection connect(
+                @NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context)
+                throws IOException {
             StatCanClient client = new DefaultStatCanClient(
                     HasMarker.of(source),
                     source.getEndpoint(),
                     languages,
-                    httpFactory.createHttpClient(source, context)
-            );
+                    httpFactory.createHttpClient(source, context));
 
             StatCanClient cachedClient = CachedStatCanClient.of(
                     client,
-                    context.getDriverCache(source), CACHE_TTL_PROPERTY.get(source.getProperties()),
-                    source, languages
-            );
+                    context.getDriverCache(source),
+                    CACHE_TTL_PROPERTY.get(source.getProperties()),
+                    source,
+                    languages);
 
             return new StatCanConnection(cachedClient);
         }
@@ -107,8 +110,7 @@ public final class StatCanDialectDriver implements Driver {
     @lombok.AllArgsConstructor
     private static final class StatCanConnection implements Connection {
 
-        @lombok.NonNull
-        private final StatCanClient client;
+        @lombok.NonNull private final StatCanClient client;
 
         @Override
         public @NonNull Collection<Database> getDatabases() throws IOException {
@@ -121,7 +123,8 @@ public final class StatCanDialectDriver implements Driver {
         }
 
         @Override
-        public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
+        public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef)
+                throws IOException, IllegalArgumentException {
             Converter.DATAFLOW_REF_VALIDATOR.checkValidity(flowRef);
             Flow flow = ConnectionSupport.getFlowFromFlows(database, flowRef, this, client);
 
@@ -131,11 +134,7 @@ public final class StatCanDialectDriver implements Driver {
                     .getStructure(dsdRef)
                     .orElseThrow(() -> CommonSdmxExceptions.missingStructure(client, dsdRef));
 
-            return MetaSet
-                    .builder()
-                    .flow(flow)
-                    .structure(structure)
-                    .build();
+            return MetaSet.builder().flow(flow).structure(structure).build();
         }
 
         private Optional<DataSet> getDataSet(FlowRef ref) throws IOException {
@@ -149,21 +148,28 @@ public final class StatCanDialectDriver implements Driver {
         }
 
         @Override
-        public @NonNull DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
+        public @NonNull DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query)
+                throws IOException {
             return getDataSet(flowRef)
                     .map(dataSet -> dataSet.getData(query))
                     .orElseGet(() -> emptyDataSet(flowRef, query));
         }
 
         @Override
-        public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
+        public @NonNull Stream<Series> getDataStream(
+                @NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
             return getDataSet(flowRef)
                     .map(dataSet -> dataSet.getDataStream(query))
                     .orElseGet(Stream::empty);
         }
 
         @Override
-        public @NonNull Collection<String> getAvailableDimensionCodes(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, @NonNegative int dimensionIndex) throws IOException, IllegalArgumentException {
+        public @NonNull Collection<String> getAvailableDimensionCodes(
+                @NonNull DatabaseRef database,
+                @NonNull FlowRef flowRef,
+                @NonNull Key constraints,
+                @NonNegative int dimensionIndex)
+                throws IOException, IllegalArgumentException {
             return ConnectionSupport.getAvailableDimensionCodes(this, database, flowRef, constraints, dimensionIndex);
         }
 
@@ -178,21 +184,17 @@ public final class StatCanDialectDriver implements Driver {
         }
 
         @Override
-        public void close() {
-        }
+        public void close() {}
     }
 
     @VisibleForTesting
     interface StatCanClient extends HasMarker {
 
-        @NonNull
-        List<Flow> getFlows() throws IOException;
+        @NonNull List<Flow> getFlows() throws IOException;
 
-        @NonNull
-        DataRepository getStructAndData(int productId) throws IOException;
+        @NonNull DataRepository getStructAndData(int productId) throws IOException;
 
-        @NonNull
-        URI ping() throws IOException;
+        @NonNull URI ping() throws IOException;
     }
 
     @VisibleForTesting
@@ -201,6 +203,7 @@ public final class StatCanDialectDriver implements Driver {
 
         @lombok.Getter
         private final Marker marker;
+
         private final URI endpoint;
         private final Languages langs;
         private final HttpClient client;
@@ -225,10 +228,8 @@ public final class StatCanDialectDriver implements Driver {
 
         @Override
         public @NonNull URI ping() throws IOException {
-            HttpRequest request = HttpRequest
-                    .builder()
-                    .query(UriQueryBuilder
-                            .of(endpoint)
+            HttpRequest request = HttpRequest.builder()
+                    .query(UriQueryBuilder.of(endpoint)
                             .path("getAllCubesListLite")
                             .build())
                     .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
@@ -236,14 +237,14 @@ public final class StatCanDialectDriver implements Driver {
 
             try (HttpResponse ignore = client.send(request)) {
                 return request.getQuery();
+            } catch (ThrowingStatusException ex) {
+                throw new HttpStatusException(ex.getResponseCode(), request.getQuery(), ex);
             }
         }
 
         private DataTable[] getAllCubesListLite() throws IOException {
-            HttpRequest request = HttpRequest
-                    .builder()
-                    .query(UriQueryBuilder
-                            .of(endpoint)
+            HttpRequest request = HttpRequest.builder()
+                    .query(UriQueryBuilder.of(endpoint)
                             .path("getAllCubesListLite")
                             .build())
                     .headers(HttpHeaders.builder().mediaType(JSON_TYPE).build())
@@ -257,10 +258,8 @@ public final class StatCanDialectDriver implements Driver {
         }
 
         private FullTableDownloadSDMX getFullTableDownloadSDMX(int productId) throws IOException {
-            HttpRequest request = HttpRequest
-                    .builder()
-                    .query(UriQueryBuilder
-                            .of(endpoint)
+            HttpRequest request = HttpRequest.builder()
+                    .query(UriQueryBuilder.of(endpoint)
                             .path("getFullTableDownloadSDMX")
                             .path(String.valueOf(productId))
                             .build())
@@ -275,8 +274,7 @@ public final class StatCanDialectDriver implements Driver {
         }
 
         private File getFullTableDownloadSDMX(FullTableDownloadSDMX ref) throws IOException {
-            HttpRequest request = HttpRequest
-                    .builder()
+            HttpRequest request = HttpRequest.builder()
                     .query(ref.getObject())
                     .headers(HttpHeaders.builder().mediaType(ZIP_TYPE).build())
                     .build();
@@ -296,8 +294,11 @@ public final class StatCanDialectDriver implements Driver {
     static class CachedStatCanClient implements StatCanClient {
 
         static @NonNull CachedStatCanClient of(
-                @NonNull StatCanClient client, @NonNull Cache<DataRepository> cache, long ttlInMillis,
-                @NonNull WebSource source, @NonNull Languages languages) {
+                @NonNull StatCanClient client,
+                @NonNull Cache<DataRepository> cache,
+                long ttlInMillis,
+                @NonNull WebSource source,
+                @NonNull Languages languages) {
             return new CachedStatCanClient(client, cache, getBase(source, languages), Duration.ofMillis(ttlInMillis));
         }
 
@@ -305,17 +306,13 @@ public final class StatCanDialectDriver implements Driver {
             return TypedId.resolveURI(URI.create("cache:statcan"), TypedId.getUniqueID(source), languages.toString());
         }
 
-        @lombok.NonNull
-        private final StatCanClient delegate;
+        @lombok.NonNull private final StatCanClient delegate;
 
-        @lombok.NonNull
-        private final Cache<DataRepository> cache;
+        @lombok.NonNull private final Cache<DataRepository> cache;
 
-        @lombok.NonNull
-        private final URI base;
+        @lombok.NonNull private final URI base;
 
-        @lombok.NonNull
-        private final Duration ttl;
+        @lombok.NonNull private final Duration ttl;
 
         @lombok.Getter(lazy = true)
         private final TypedId<List<Flow>> idOfFlows = initIdOfFlows(base);
@@ -324,15 +321,15 @@ public final class StatCanDialectDriver implements Driver {
         private final TypedId<DataRepository> idOfRepo = initIdOfRepo(base);
 
         private static TypedId<List<Flow>> initIdOfFlows(URI base) {
-            return TypedId.of(base,
-                    DataRepository::getFlows,
-                    flows -> DataRepository.builder().flows(flows).build()
-            ).with("flows");
+            return TypedId.of(
+                            base,
+                            DataRepository::getFlows,
+                            flows -> DataRepository.builder().flows(flows).build())
+                    .with("flows");
         }
 
         private static TypedId<DataRepository> initIdOfRepo(URI base) {
-            return TypedId.of(base, identity(), identity())
-                    .with("structAndData");
+            return TypedId.of(base, identity(), identity()).with("structAndData");
         }
 
         @Override
@@ -377,8 +374,7 @@ public final class StatCanDialectDriver implements Driver {
             return new DataTable(
                     x.get("productId").getAsInt(),
                     x.get("cubeTitleEn").getAsString(),
-                    x.get("cubeTitleFr").getAsString()
-            );
+                    x.get("cubeTitleFr").getAsString());
         }
     }
 
@@ -394,15 +390,15 @@ public final class StatCanDialectDriver implements Driver {
         }
 
         private static final Gson GSON = new GsonBuilder()
-                .registerTypeAdapter(FullTableDownloadSDMX.class, (JsonDeserializer<FullTableDownloadSDMX>) FullTableDownloadSDMX::deserialize)
+                .registerTypeAdapter(FullTableDownloadSDMX.class, (JsonDeserializer<FullTableDownloadSDMX>)
+                        FullTableDownloadSDMX::deserialize)
                 .create();
 
-        private static FullTableDownloadSDMX deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+        private static FullTableDownloadSDMX deserialize(
+                JsonElement json, Type typeOfT, JsonDeserializationContext context) {
             JsonObject x = json.getAsJsonObject();
             return new FullTableDownloadSDMX(
-                    x.get("status").getAsString(),
-                    URI.create(x.get("object").getAsString())
-            );
+                    x.get("status").getAsString(), URI.create(x.get("object").getAsString()));
         }
     }
 
@@ -426,11 +422,8 @@ public final class StatCanDialectDriver implements Driver {
         static final String STRUCT_PREFIX = "Data_Structure_";
         static final String VERSION = "1.0";
 
-        static final Validator<FlowRef> DATAFLOW_REF_VALIDATOR = dataflowRefOf(
-                compile("StatCan|all"),
-                compile("DF_\\d+"),
-                compile("1\\.0|latest")
-        );
+        static final Validator<FlowRef> DATAFLOW_REF_VALIDATOR =
+                dataflowRefOf(compile("StatCan|all"), compile("DF_\\d+"), compile("1\\.0|latest"));
 
         static FlowRef toDataflowRef(int productId) throws IllegalArgumentException {
             return FlowRef.of(AGENCY, FLOW_PREFIX + checkProductId(productId), VERSION);
@@ -447,11 +440,13 @@ public final class StatCanDialectDriver implements Driver {
         }
 
         static Flow toDataFlow(DataTable dataTable, Languages langs) {
-            return Flow
-                    .builder()
+            return Flow.builder()
                     .ref(toDataflowRef(dataTable.getProductId()))
                     .structureRef(toDataStructureRef(dataTable.getProductId()))
-                    .name("fr".equals(langs.lookupTag(asList("en", "fr"))) ? dataTable.cubeTitleFr : dataTable.cubeTitleEn)
+                    .name(
+                            "fr".equals(langs.lookupTag(asList("en", "fr")))
+                                    ? dataTable.cubeTitleFr
+                                    : dataTable.cubeTitleEn)
                     .build();
         }
 
@@ -460,8 +455,7 @@ public final class StatCanDialectDriver implements Driver {
 
                 Structure dsd = parseStruct(zipFile, langs);
 
-                return DataRepository
-                        .builder()
+                return DataRepository.builder()
                         .structure(dsd)
                         .dataSet(parseData(zipFile, dsd).collect(toDataSet(toDataflowRef(productId), Query.ALL)))
                         .build();
@@ -485,8 +479,8 @@ public final class StatCanDialectDriver implements Driver {
         }
 
         private static Stream<Series> parseData(ZipFile file, Structure dsd) throws IOException {
-            FileParser<Stream<Series>> parser = SdmxXmlStreams.compactData21(dsd, ObsParser::newDefault)
-                    .andThen(DataCursor::asCloseableStream);
+            FileParser<Stream<Series>> parser =
+                    SdmxXmlStreams.compactData21(dsd, ObsParser::newDefault).andThen(DataCursor::asCloseableStream);
 
             try {
                 return file.stream()
@@ -524,7 +518,9 @@ public final class StatCanDialectDriver implements Driver {
         }
     }
 
-    static final MediaType JSON_TYPE = MediaType.builder().type("application").subtype("json").build();
+    static final MediaType JSON_TYPE =
+            MediaType.builder().type("application").subtype("json").build();
 
-    static final MediaType ZIP_TYPE = MediaType.builder().type("application").subtype("zip").build();
+    static final MediaType ZIP_TYPE =
+            MediaType.builder().type("application").subtype("zip").build();
 }

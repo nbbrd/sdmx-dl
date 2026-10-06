@@ -23,16 +23,21 @@ import static sdmxdl.web.spi.Driver.WRAPPED_DRIVER_RANK;
 
 import java.io.IOException;
 import java.util.AbstractMap;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+import lombok.NonNull;
 import org.junit.jupiter.api.Test;
 import sdmxdl.Confidentiality;
 import sdmxdl.Connection;
 import sdmxdl.DataRepository;
 import sdmxdl.Feature;
 import sdmxdl.web.spi.Driver;
+import sdmxdl.web.spi.Monitor;
 import sdmxdl.web.spi.Networking;
 import sdmxdl.web.spi.WebCaching;
+import sdmxdl.web.spi.WebContext;
 import tests.sdmxdl.api.SdmxManagerAssert;
 import tests.sdmxdl.web.spi.MockedDriver;
 import tests.sdmxdl.web.spi.MockedRegistry;
@@ -335,6 +340,103 @@ public class SdmxWebManagerTest {
                                 sampleSource.toBuilder().id("other").build(), ANY)
                         .close())
                 .doesNotThrowAnyException();
+    }
+
+    @Test
+    public void testCheckHealth() throws IOException {
+        WebSource up = sampleSource.toBuilder().id("up").monitorOf("mock:up").build();
+        WebSource down =
+                sampleSource.toBuilder().id("down").monitorOf("mock:down").build();
+        WebSource ko = sampleSource.toBuilder()
+                .id("ko")
+                .endpointOf("http://ko")
+                .monitorOf("mock:up")
+                .build();
+        WebSource none = sampleSource.toBuilder().id("none").alias("alias").build();
+
+        Monitor monitor = new Monitor() {
+            @Override
+            public @NonNull String getMonitorId() {
+                return "MOCK";
+            }
+
+            @Override
+            public @NonNull String getMonitorUriScheme() {
+                return "mock";
+            }
+
+            @Override
+            public @NonNull MonitorReport getReport(@NonNull WebSource source, @NonNull WebContext context) {
+                return MonitorReport.builder()
+                        .source(source.getId())
+                        .status(MonitorStatus.valueOf(
+                                source.getMonitor().getSchemeSpecificPart().toUpperCase(java.util.Locale.ROOT)))
+                        .build();
+            }
+
+            @Override
+            public @NonNull Collection<String> getMonitorPropertyNames() {
+                return Collections.emptyList();
+            }
+        };
+
+        SdmxWebManager manager = SdmxWebManager.builder()
+                .driver(MockedDriver.builder()
+                        .id("repoDriver")
+                        .available(true)
+                        .repo(sample, EnumSet.allOf(Feature.class))
+                        .customSource(up)
+                        .customSource(down)
+                        .customSource(ko)
+                        .customSource(none)
+                        .build())
+                .monitor(monitor)
+                .build();
+
+        assertThatNullPointerException().isThrownBy(() -> manager.checkHealth(null));
+
+        assertThatIOException()
+                .isThrownBy(() -> manager.checkHealth(
+                        WebHealthRequest.builder().source("other").build()))
+                .withMessageContaining("other");
+
+        assertThat(manager.checkHealth(WebHealthRequest.DEFAULT))
+                .describedAs("default request checks the monitor of every non-alias source")
+                .extracting(
+                        HealthReport::getSource,
+                        HealthReport::getVerdict,
+                        HealthReport::getMonitorError,
+                        HealthReport::getAccess)
+                .containsExactly(
+                        tuple("down", HealthVerdict.REMOTE_OUTAGE, null, null),
+                        tuple("ko", HealthVerdict.OK, null, null),
+                        tuple("none", HealthVerdict.UNKNOWN, "No monitor defined", null),
+                        tuple("repo", HealthVerdict.UNKNOWN, "No monitor defined", null),
+                        tuple("up", HealthVerdict.OK, null, null));
+
+        assertThat(manager.checkHealth(WebHealthRequest.builder()
+                        .source("up")
+                        .source("down")
+                        .source("ko")
+                        .source("none")
+                        .checks(EnumSet.allOf(HealthCheck.class))
+                        .build()))
+                .describedAs("both checks are combined into a verdict")
+                .extracting(
+                        HealthReport::getSource,
+                        HealthReport::getVerdict,
+                        o -> o.getAccess().isAccessible())
+                .containsExactly(
+                        tuple("down", HealthVerdict.DEGRADED, true),
+                        tuple("ko", HealthVerdict.LOCAL_ISSUE, false),
+                        tuple("none", HealthVerdict.OK, true),
+                        tuple("up", HealthVerdict.OK, true));
+
+        assertThat(manager.checkHealth("ko", EnumSet.of(HealthCheck.ACCESS)))
+                .describedAs("access check without monitor")
+                .returns(HealthVerdict.UNREACHABLE, HealthReport::getVerdict)
+                .returns(null, HealthReport::getMonitor)
+                .returns(null, HealthReport::getMonitorError);
     }
 
     private final DataRepository sample = DataRepository.builder().name("repo").build();

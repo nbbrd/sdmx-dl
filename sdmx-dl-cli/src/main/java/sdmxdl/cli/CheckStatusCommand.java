@@ -20,24 +20,26 @@ import internal.sdmxdl.cli.SortOptions;
 import internal.sdmxdl.cli.WebSourcesOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
+import java.io.IOException;
+import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.concurrent.Callable;
+import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.io.text.Formatter;
 import org.jspecify.annotations.Nullable;
 import picocli.CommandLine;
+import sdmxdl.web.HealthCheck;
+import sdmxdl.web.HealthReport;
 import sdmxdl.web.MonitorReport;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 
-import java.io.IOException;
-import java.util.Comparator;
-import java.util.concurrent.Callable;
-import java.util.stream.Stream;
-
 /**
  * @author Philippe Charles
  */
-@CommandLine.Command(name = "status")
+@CommandLine.Command(name = "status", hidden = true)
 @SuppressWarnings("FieldMayBeFinal")
 public final class CheckStatusCommand implements Callable<Void> {
 
@@ -57,8 +59,7 @@ public final class CheckStatusCommand implements Callable<Void> {
     }
 
     private CsvTable<Status> getTable() {
-        return CsvTable
-                .builderOf(Status.class)
+        return CsvTable.builderOf(Status.class)
                 .columnOf("Source", Status::getSource)
                 .columnOf("Status", Status::getStatus, Formatter.onObjectToString())
                 .columnOf("UptimeRatio", Status::getUptimeRatio, Formatter.onObjectToString())
@@ -69,7 +70,8 @@ public final class CheckStatusCommand implements Callable<Void> {
 
     private Stream<Status> getRows() throws IOException {
         SdmxWebManager manager = web.loadManager();
-        Stream<String> sources = web.isAllSources() ? WebSourcesOptions.getAllSourceNames(manager) : web.getSources().stream();
+        Stream<String> sources =
+                web.isAllSources() ? WebSourcesOptions.getAllSourceNames(manager) : web.getSources().stream();
         return sort.applySort(web.applyParallel(sources).map(sourceName -> Status.of(manager, sourceName)), BY_SOURCE);
     }
 
@@ -88,7 +90,10 @@ public final class CheckStatusCommand implements Callable<Void> {
                 return failure(sourceName, "No monitor defined");
             }
             try {
-                return success(manager.getMonitorReport(source));
+                HealthReport health = manager.checkHealth(sourceName, EnumSet.of(HealthCheck.MONITOR));
+                return health.getMonitor() != null
+                        ? success(health.getMonitor())
+                        : failure(sourceName, String.valueOf(health.getMonitorError()));
             } catch (IOException ex) {
                 return failure(sourceName, ex);
             }
@@ -106,11 +111,9 @@ public final class CheckStatusCommand implements Callable<Void> {
             return new Status(MonitorReport.builder().source(source).build(), cause);
         }
 
-        @lombok.NonNull
-        @lombok.experimental.Delegate
+        @lombok.NonNull @lombok.experimental.Delegate
         MonitorReport report;
 
-        @Nullable
-        String cause;
+        @Nullable String cause;
     }
 }

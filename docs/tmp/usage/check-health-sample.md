@@ -1,0 +1,3 @@
+| Source | Verdict | Status | UptimeRatio | AverageResponseTime | MonitorError | Reachable | Accessible | StatusCode | DurationInMillis | URI                                                            | AccessError |
+|--------|---------|--------|-------------|---------------------|--------------|-----------|------------|------------|------------------|----------------------------------------------------------------|-------------|
+| ECB    | OK      | UP     | 0.9754      | 1165                |              | YES       | YES        |            | 756              | https://data-api.ecb.europa.eu/service/dataflow/all/all/latest |             |

@@ -26,7 +26,7 @@ flowchart TB
     r{{sdmx-dl}}
     r --- f([fetch]) --- data & meta & keys
     r --- l([list]) --- sources & databases & flows & dimensions & attributes & codes & availability & features & plugins
-    r --- c([check]) --- status & access & config & xsources[sources]
+    r --- c([check]) --- health & config & xsources[sources]
     r --- s([setup]) --- completion & launcher
     r --- x([script]) --- xdata[data] & xflows[flows] & targets
 
@@ -54,10 +54,9 @@ flowchart TB
     click plugins "#list-plugins" "list plugins command"
 
     classDef cx fill:#268bd2
-    class c,status,access,config,xsources cx;
+    class c,health,config,xsources cx;
     click c "#check" "check command"
-    click status "#check-status" "check status command"
-    click access "#check-access" "check access command"
+    click health "#check-health" "check health command"
     click config "#check-config" "check config command"
     click xsources "#check-sources" "check sources command"
     
@@ -110,8 +109,7 @@ Subcommands:
 Check resources and services.
 
 Subcommands:
-[status](#check-status),
-[access](#check-access),
+[health](#check-health),
 [config](#check-config),
 [sources](#check-sources)
 
@@ -631,24 +629,24 @@ CSV columns:
 <small>{{< include file="/tmp/usage/list-plugins-sample.md" >}}</small>
 {{< /expand >}}
 
-{{< shields_io/badge label="check" message="status" color="268bd2" >}}
+{{< shields_io/badge label="check" message="health" color="268bd2" >}}
 
-Check service availability.  
+Check service health using its monitor and/or a live access check.  
 
-Example: <code>sdmx-dl <font color="#268bd2">check status</font> <abbr title="source">ECB</abbr></code>  
+Example: <code>sdmx-dl <font color="#268bd2">check health</font> <abbr title="source">ECB</abbr> --checks monitor,access</code>  
 
-{{< tabs "check-status" >}}
+{{< tabs "check-health" >}}
 {{< tab "Parameters" >}}
 
-1. [`sources`](../datatypes#list) - Data source names.
+1. [`sources`](../datatypes#list) - Data source names, or `all`.
 
 {{< /tab >}}
 {{< tab "Options" >}}
 
 Main options:
+- [`-c, --checks<checks>`](../options#checks) - Checks to perform: `MONITOR` (default) and/or `ACCESS`.
+- [`--fail-on-issue`](../options#fail-on-issue) - Exit with a non-zero code if any verdict is not `OK`.
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
-- [`-d, --database<database>`](../options#database) - Database reference.
-- [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--no-parallel`](../options#no-parallel) - Disable parallel queries.
 - [`--sort`](../options#sort) - Sort output.
 
@@ -661,58 +659,29 @@ Other options:
 
 CSV columns:
 1. [`Source:source`](../datatypes#source)
-2. [`Status:enum`](../datatypes#enum)
-3. [`UptimeRatio:double`](../datatypes#double)
-4. [`AverageResponseTime:double`](../datatypes#double)
-5. [`ErrorMessage:string`](../datatypes#string)
+2. [`Verdict:enum`](../datatypes#enum)
+
+With the `MONITOR` check:
+
+3. [`Status:enum`](../datatypes#enum)
+4. [`UptimeRatio:double`](../datatypes#double)
+5. [`AverageResponseTime:double`](../datatypes#double)
+6. [`MonitorError:string`](../datatypes#string)
+
+With the `ACCESS` check:
+
+7. [`Reachable:enum`](../datatypes#enum)
+8. [`Accessible:enum`](../datatypes#enum)
+9. [`StatusCode:int`](../datatypes#int)
+10. [`DurationInMillis:int`](../datatypes#int)
+11. [`URI:uri`](../datatypes#uri)
+12. [`AccessError:string`](../datatypes#string)
 
 {{< /tab >}}
 {{< /tabs >}}
 
 {{< expand "Output sample" >}}
-<small>{{< include file="/tmp/usage/check-status-sample.md" >}}</small>
-{{< /expand >}}
-
-{{< shields_io/badge label="check" message="access" color="268bd2" >}}
-
-Check service accessibility.  
-
-Example: <code>sdmx-dl <font color="#268bd2">check access</font> <abbr title="source">ECB</abbr></code>  
-
-{{< tabs "check-access" >}}
-{{< tab "Parameters" >}}
-
-1. [`sources`](../datatypes#list) - Data source names.
-
-{{< /tab >}}
-{{< tab "Options" >}}
-
-Main options:
-- [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
-- [`-d, --database<database>`](../options#database) - Database reference.
-- [`-l, --languages<langs>`](../options#languages) - Language priority list.
-- [`--no-parallel`](../options#no-parallel) - Disable parallel queries.
-- [`--sort`](../options#sort) - Sort output.
-
-Other options: 
-[`CSV`](../options#csv),
-[`Network`](../options#network)
-
-{{< /tab >}}
-{{< tab "Output" >}}
-
-CSV columns:
-1. [`Source:source`](../datatypes#source)
-2. [`Accessible:enum`](../datatypes#enum)
-3. [`URI:uri`](../datatypes#uri)
-4. [`DurationInMillis:int`](../datatypes#int)
-5. [`ErrorMessage:string`](../datatypes#string)
-
-{{< /tab >}}
-{{< /tabs >}}
-
-{{< expand "Output sample" >}}
-<small>{{< include file="/tmp/usage/check-access-sample.md" >}}</small>
+<small>{{< include file="/tmp/usage/check-health-sample.md" >}}</small>
 {{< /expand >}}
 
 {{< shields_io/badge label="check" message="config" color="268bd2" >}}

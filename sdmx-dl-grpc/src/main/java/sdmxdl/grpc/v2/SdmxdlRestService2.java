@@ -29,28 +29,30 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 import nbbrd.io.function.IOSupplier;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import sdmxdl.*;
 import sdmxdl.format.protobuf.*;
-import sdmxdl.format.protobuf.web.MonitorReportDto;
-import sdmxdl.format.protobuf.web.MonitorStatusDto;
+import sdmxdl.format.protobuf.web.HealthReportDto;
 import sdmxdl.format.protobuf.web.WebSourceDto;
 import sdmxdl.script.Script;
 import sdmxdl.script.ScriptManager;
 import sdmxdl.script.ScriptOptions;
 import sdmxdl.script.ScriptTarget;
+import sdmxdl.web.HealthCheck;
 import sdmxdl.web.SdmxWebManager;
+import sdmxdl.web.WebHealthRequest;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.WebSourcesRequest;
 
@@ -315,22 +317,28 @@ public class SdmxdlRestService2 {
                 .map(ProtoApi::fromAvailability);
     }
 
+    private static final String CHECKS_DESCRIPTION =
+            "Comma-separated checks: 'monitor' (third-party monitor, default) and/or 'access' (live request against the source)";
+
     @GET
-    @Path("/statuses")
-    public Multi<MonitorReportDto> listStatuses(@QueryParam("sources") @DefaultValue("all") String sources) {
-        List<String> resolved = resolveSources(sources);
-        List<MonitorReportDto> reports = new ArrayList<>(resolved.size());
-        for (String name : resolved) {
-            try {
-                reports.add(ProtoWeb.fromMonitorReport(manager.getMonitorReport(name)));
-            } catch (IOException ex) {
-                reports.add(MonitorReportDto.newBuilder()
-                        .setSource(name)
-                        .setStatus(MonitorStatusDto.UNKNOWN)
-                        .build());
-            }
-        }
-        return Multi.createFrom().iterable(reports);
+    @Path("/health")
+    public Multi<HealthReportDto> checkHealth(
+            @QueryParam("sources") @DefaultValue("all") String sources,
+            @QueryParam("checks") @DefaultValue("monitor") @Parameter(description = CHECKS_DESCRIPTION) String checks) {
+        return multiOfIO(() -> manager.checkHealth(
+                        SdmxdlGrpcService2.toHealthRequest(splitList(sources), parseChecks(checks))))
+                .map(ProtoWeb::fromHealthReport);
+    }
+
+    @GET
+    @Path("/{source}/health")
+    public Uni<HealthReportDto> checkSourceHealth(
+            @PathParam("source") String source,
+            @QueryParam("checks") @DefaultValue("monitor") @Parameter(description = CHECKS_DESCRIPTION) String checks) {
+        List<HealthCheck> list = parseChecks(checks);
+        return uniOfIO(() -> manager.checkHealth(
+                        source, list.isEmpty() ? WebHealthRequest.DEFAULT_CHECKS : EnumSet.copyOf(list)))
+                .map(ProtoWeb::fromHealthReport);
     }
 
     @GET
@@ -528,16 +536,18 @@ public class SdmxdlRestService2 {
         return (baseName + "." + fileExtension).replaceAll("[^A-Za-z0-9._-]", "_");
     }
 
-    private List<String> resolveSources(String sources) {
-        if (sources == null || sources.isBlank() || sources.equalsIgnoreCase("all")) {
-            return manager.getSources().values().stream()
-                    .filter(source -> !source.isAlias())
-                    .map(WebSource::getId)
-                    .toList();
-        }
-        return Arrays.stream(sources.split(","))
-                .map(String::trim)
-                .filter(name -> !name.isEmpty())
+    private static List<String> splitList(String text) {
+        return text == null
+                ? List.of()
+                : Arrays.stream(text.split(","))
+                        .map(String::trim)
+                        .filter(item -> !item.isEmpty())
+                        .toList();
+    }
+
+    private static List<HealthCheck> parseChecks(String checks) {
+        return splitList(checks).stream()
+                .map(check -> HealthCheck.valueOf(check.toUpperCase(Locale.ROOT)))
                 .toList();
     }
 

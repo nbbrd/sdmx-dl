@@ -16,7 +16,21 @@
  */
 package sdmxdl.provider.dialects.drivers;
 
+import static sdmxdl.Confidentiality.PUBLIC;
+import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
+
 import com.google.gson.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.design.VisibleForTesting;
@@ -32,24 +46,10 @@ import sdmxdl.provider.ri.http.HttpFactory;
 import sdmxdl.provider.ri.http.HttpManager;
 import sdmxdl.provider.web.ConnectionFactory;
 import sdmxdl.provider.web.DriverSupport;
+import sdmxdl.web.HttpStatusException;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.lang.reflect.Type;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static sdmxdl.Confidentiality.PUBLIC;
-import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
 
 /**
  * Driver for the INE (Instituto Nacional de Estadística) JSON API.
@@ -74,13 +74,11 @@ public final class IneDialectDriver implements Driver {
     private static final String DIALECTS_INE = "DIALECTS_INE";
 
     @lombok.experimental.Delegate
-    private final DriverSupport support = DriverSupport
-            .builder()
+    private final DriverSupport support = DriverSupport.builder()
             .id(DIALECTS_INE)
             .rank(NATIVE_DRIVER_RANK)
             .connector(new IneConnectionFactory())
-            .source(WebSource
-                    .builder()
+            .source(WebSource.builder()
                     .id("INE")
                     .name("en", "National Statistics Institute of Spain")
                     .name("es", "Instituto Nacional de Estadística")
@@ -103,19 +101,20 @@ public final class IneDialectDriver implements Driver {
         }
 
         @Override
-        public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) {
+        public @NonNull Connection connect(
+                @NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) {
             IneClient client = new DefaultIneClient(
                     HasMarker.of(source),
                     source.getEndpoint(),
                     Converter.toLangCode(languages),
-                    httpFactory.createHttpClient(source, context)
-            );
+                    httpFactory.createHttpClient(source, context));
 
             IneClient cachedClient = CachedIneClient.of(
                     client,
-                    context.getDriverCache(source), CACHE_TTL_PROPERTY.get(source.getProperties()),
-                    source, languages
-            );
+                    context.getDriverCache(source),
+                    CACHE_TTL_PROPERTY.get(source.getProperties()),
+                    source,
+                    languages);
 
             return new IneConnection(cachedClient);
         }
@@ -124,8 +123,7 @@ public final class IneDialectDriver implements Driver {
     @lombok.AllArgsConstructor
     private static final class IneConnection implements Connection {
 
-        @lombok.NonNull
-        private final IneClient client;
+        @lombok.NonNull private final IneClient client;
 
         @Override
         public @NonNull Collection<Database> getDatabases() throws IOException {
@@ -141,7 +139,8 @@ public final class IneDialectDriver implements Driver {
         }
 
         @Override
-        public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
+        public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef)
+                throws IOException, IllegalArgumentException {
             Flow flow = ConnectionSupport.getFlowFromFlows(database, flowRef, this, client);
             String tableId = Converter.flowRefToTableId(flowRef);
             Structure structure = client.getTable(tableId).getStructures().get(0);
@@ -149,19 +148,23 @@ public final class IneDialectDriver implements Driver {
         }
 
         @Override
-        public @NonNull DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
+        public @NonNull DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query)
+                throws IOException {
             String tableId = Converter.flowRefToTableId(flowRef);
             return client.getTable(tableId).getDataSets().get(0).getData(query);
         }
 
         @Override
-        public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
+        public @NonNull Stream<Series> getDataStream(
+                @NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
             String tableId = Converter.flowRefToTableId(flowRef);
             return client.getTable(tableId).getDataSets().get(0).getData(query).stream();
         }
 
         @Override
-        public @NonNull Collection<String> getAvailableDimensionCodes(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, int dimensionIndex) throws IOException, IllegalArgumentException {
+        public @NonNull Collection<String> getAvailableDimensionCodes(
+                @NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, int dimensionIndex)
+                throws IOException, IllegalArgumentException {
             return ConnectionSupport.getAvailableDimensionCodes(this, database, flowRef, constraints, dimensionIndex);
         }
 
@@ -176,27 +179,22 @@ public final class IneDialectDriver implements Driver {
         }
 
         @Override
-        public void close() {
-        }
+        public void close() {}
     }
 
     @VisibleForTesting
     interface IneClient extends HasMarker {
 
-        @NonNull
-        List<Database> getOperations() throws IOException;
+        @NonNull List<Database> getOperations() throws IOException;
 
-        @NonNull
-        List<Flow> getTables(@NonNull String opCode) throws IOException;
+        @NonNull List<Flow> getTables(@NonNull String opCode) throws IOException;
 
         // Structure and data are built from ONE response so that getMeta and getData can never disagree
         // on the dimension set/order. This matters because INE may return different variable labels for
         // the same table between two calls (e.g. nult=1 vs full, or different backend nodes).
-        @NonNull
-        DataRepository getTable(@NonNull String tableId) throws IOException;
+        @NonNull DataRepository getTable(@NonNull String tableId) throws IOException;
 
-        @NonNull
-        URI ping() throws IOException;
+        @NonNull URI ping() throws IOException;
     }
 
     @VisibleForTesting
@@ -205,6 +203,7 @@ public final class IneDialectDriver implements Driver {
 
         @lombok.Getter
         private final Marker marker;
+
         private final URI endpoint;
         private final String lang;
         private final HttpClient client;
@@ -232,7 +231,8 @@ public final class IneDialectDriver implements Driver {
                     }
                 }
                 reader.close();
-                throw new IOException("INE did not return a JSON array (service busy or table unavailable): " + snippet);
+                throw new IOException(
+                        "INE did not return a JSON array (service busy or table unavailable): " + snippet);
             }
             reader.unread(c);
             return reader;
@@ -240,10 +240,8 @@ public final class IneDialectDriver implements Driver {
 
         @Override
         public @NonNull List<Database> getOperations() throws IOException {
-            HttpRequest request = HttpRequest
-                    .builder()
-                    .query(UriQueryBuilder
-                            .of(endpoint)
+            HttpRequest request = HttpRequest.builder()
+                    .query(UriQueryBuilder.of(endpoint)
                             .path(lang)
                             .path("OPERACIONES_DISPONIBLES")
                             .build())
@@ -259,10 +257,8 @@ public final class IneDialectDriver implements Driver {
 
         @Override
         public @NonNull List<Flow> getTables(@NonNull String opCode) throws IOException {
-            HttpRequest request = HttpRequest
-                    .builder()
-                    .query(UriQueryBuilder
-                            .of(endpoint)
+            HttpRequest request = HttpRequest.builder()
+                    .query(UriQueryBuilder.of(endpoint)
                             .path(lang)
                             .path("TABLAS_OPERACION")
                             .path(opCode)
@@ -284,10 +280,8 @@ public final class IneDialectDriver implements Driver {
             // (T3_Variable / value Id) is what allows the series key to be reconstructed. The full
             // response (no nult) is used for BOTH the structure and the data so that they are always
             // consistent, since INE may otherwise return different variable labels between calls.
-            HttpRequest request = HttpRequest
-                    .builder()
-                    .query(UriQueryBuilder
-                            .of(endpoint)
+            HttpRequest request = HttpRequest.builder()
+                    .query(UriQueryBuilder.of(endpoint)
                             .path(lang)
                             .path("DATOS_TABLA")
                             .path(tableId)
@@ -300,18 +294,19 @@ public final class IneDialectDriver implements Driver {
             try (HttpResponse response = client.send(request)) {
                 try (Reader reader = openArrayReader(response)) {
                     SeriesEntry[] series = SeriesEntry.parseAll(reader);
-                    return DataRepository
-                            .builder()
+                    return DataRepository.builder()
                             .structure(Converter.toStructure(series, tableId))
                             .dataSet(Converter.buildDataSet(flowRef, series))
                             .build();
                 }
             } catch (ThrowingStatusException ex) {
                 if (ex.getResponseCode() == HttpURLConnection.HTTP_INTERNAL_ERROR) {
-                    return DataRepository
-                            .builder()
+                    return DataRepository.builder()
                             .structure(Converter.toStructure(new SeriesEntry[0], tableId))
-                            .dataSet(DataSet.builder().ref(flowRef).query(Query.ALL).build())
+                            .dataSet(DataSet.builder()
+                                    .ref(flowRef)
+                                    .query(Query.ALL)
+                                    .build())
                             .build();
                 }
                 throw ex;
@@ -320,10 +315,8 @@ public final class IneDialectDriver implements Driver {
 
         @Override
         public @NonNull URI ping() throws IOException {
-            HttpRequest request = HttpRequest
-                    .builder()
-                    .query(UriQueryBuilder
-                            .of(endpoint)
+            HttpRequest request = HttpRequest.builder()
+                    .query(UriQueryBuilder.of(endpoint)
                             .path(lang)
                             .path("OPERACIONES_DISPONIBLES")
                             .build())
@@ -332,6 +325,8 @@ public final class IneDialectDriver implements Driver {
 
             try (HttpResponse ignore = client.send(request)) {
                 return request.getQuery();
+            } catch (ThrowingStatusException ex) {
+                throw new HttpStatusException(ex.getResponseCode(), request.getQuery(), ex);
             }
         }
     }
@@ -341,26 +336,26 @@ public final class IneDialectDriver implements Driver {
     static class CachedIneClient implements IneClient {
 
         static @NonNull CachedIneClient of(
-                @NonNull IneClient client, @NonNull Cache<DataRepository> cache, long ttlInMillis,
-                @NonNull WebSource source, @NonNull Languages languages) {
-            return new CachedIneClient(client, cache, getBase(source, languages), java.time.Duration.ofMillis(ttlInMillis));
+                @NonNull IneClient client,
+                @NonNull Cache<DataRepository> cache,
+                long ttlInMillis,
+                @NonNull WebSource source,
+                @NonNull Languages languages) {
+            return new CachedIneClient(
+                    client, cache, getBase(source, languages), java.time.Duration.ofMillis(ttlInMillis));
         }
 
         private static URI getBase(WebSource source, Languages languages) {
             return TypedId.resolveURI(URI.create("cache:ine"), TypedId.getUniqueID(source), languages.toString());
         }
 
-        @lombok.NonNull
-        private final IneClient delegate;
+        @lombok.NonNull private final IneClient delegate;
 
-        @lombok.NonNull
-        private final Cache<DataRepository> cache;
+        @lombok.NonNull private final Cache<DataRepository> cache;
 
-        @lombok.NonNull
-        private final URI base;
+        @lombok.NonNull private final URI base;
 
-        @lombok.NonNull
-        private final java.time.Duration ttl;
+        @lombok.NonNull private final java.time.Duration ttl;
 
         @lombok.Getter(lazy = true)
         private final TypedId<List<Database>> idOfOperations = initIdOfOperations(base);
@@ -372,17 +367,21 @@ public final class IneDialectDriver implements Driver {
         private final TypedId<DataRepository> idOfTable = initIdOfTable(base);
 
         private static TypedId<List<Database>> initIdOfOperations(URI base) {
-            return TypedId.of(base,
-                    DataRepository::getDatabases,
-                    databases -> DataRepository.builder().databases(databases).build()
-            ).with("operations");
+            return TypedId.of(
+                            base,
+                            DataRepository::getDatabases,
+                            databases -> DataRepository.builder()
+                                    .databases(databases)
+                                    .build())
+                    .with("operations");
         }
 
         private static TypedId<List<Flow>> initIdOfTables(URI base) {
-            return TypedId.of(base,
-                    DataRepository::getFlows,
-                    flows -> DataRepository.builder().flows(flows).build()
-            ).with("tables");
+            return TypedId.of(
+                            base,
+                            DataRepository::getFlows,
+                            flows -> DataRepository.builder().flows(flows).build())
+                    .with("tables");
         }
 
         private static TypedId<DataRepository> initIdOfTable(URI base) {
@@ -440,8 +439,7 @@ public final class IneDialectDriver implements Driver {
                     x.get("Id").getAsInt(),
                     x.get("Cod_IOE").getAsString(),
                     x.get("Codigo").getAsString(),
-                    x.get("Nombre").getAsString()
-            );
+                    x.get("Nombre").getAsString());
         }
     }
 
@@ -455,11 +453,17 @@ public final class IneDialectDriver implements Driver {
         // tables), so these are needed to tell them apart (frequency, base-year/classification
         // variant, publication, covered period). They may be absent in older responses.
         @org.jspecify.annotations.Nullable String codigo;
+
         @org.jspecify.annotations.Nullable String periodicidad;
+
         @org.jspecify.annotations.Nullable String publicacion;
+
         @org.jspecify.annotations.Nullable String periodoIni;
+
         @org.jspecify.annotations.Nullable String anyoIni;
+
         @org.jspecify.annotations.Nullable String periodoFin;
+
         @org.jspecify.annotations.Nullable String anyoFin;
 
         static @NonNull Table[] parseAll(@NonNull Reader reader) {
@@ -481,12 +485,10 @@ public final class IneDialectDriver implements Driver {
                     stringOrNull(x, "T3_Periodo_ini"),
                     stringOrNull(x, "Anyo_Periodo_ini"),
                     stringOrNull(x, "T3_Periodo_fin"),
-                    stringOrNull(x, "Anyo_Periodo_fin")
-            );
+                    stringOrNull(x, "Anyo_Periodo_fin"));
         }
 
-        @org.jspecify.annotations.Nullable
-        private static String stringOrNull(JsonObject x, String field) {
+        @org.jspecify.annotations.Nullable private static String stringOrNull(JsonObject x, String field) {
             JsonElement elem = x.get(field);
             if (elem == null || elem.isJsonNull()) {
                 return null;
@@ -503,6 +505,7 @@ public final class IneDialectDriver implements Driver {
         int id;
         String variable;
         String nombre;
+
         @org.jspecify.annotations.Nullable String codigo;
     }
 
@@ -511,8 +514,11 @@ public final class IneDialectDriver implements Driver {
     static class ObsData {
 
         String fecha;
+
         @org.jspecify.annotations.Nullable Double valor;
+
         @org.jspecify.annotations.Nullable String periodo;
+
         @org.jspecify.annotations.Nullable String tipoDato;
     }
 
@@ -556,8 +562,7 @@ public final class IneDialectDriver implements Driver {
                     stringOrEmpty(x, "COD"),
                     stringOrEmpty(x, "Nombre"),
                     Collections.unmodifiableList(metaData),
-                    Collections.unmodifiableList(data)
-            );
+                    Collections.unmodifiableList(data));
         }
 
         // DATOS_TABLA (tip=AM) metadata entry: the variable is exposed as the string
@@ -567,23 +572,17 @@ public final class IneDialectDriver implements Driver {
                     x.get("Id").getAsInt(),
                     stringOrEmpty(x, "T3_Variable"),
                     stringOrEmpty(x, "Nombre"),
-                    stringOrNull(x, "Codigo")
-            );
+                    stringOrNull(x, "Codigo"));
         }
 
         private static ObsData parseObsData(JsonObject x) {
             JsonElement valorElem = x.get("Valor");
             Double valor = (valorElem == null || valorElem.isJsonNull()) ? null : valorElem.getAsDouble();
             return new ObsData(
-                    stringOrNull(x, "Fecha"),
-                    valor,
-                    stringOrNull(x, "T3_Periodo"),
-                    stringOrNull(x, "T3_TipoDato")
-            );
+                    stringOrNull(x, "Fecha"), valor, stringOrNull(x, "T3_Periodo"), stringOrNull(x, "T3_TipoDato"));
         }
 
-        @org.jspecify.annotations.Nullable
-        private static String stringOrNull(JsonObject x, String field) {
+        @org.jspecify.annotations.Nullable private static String stringOrNull(JsonObject x, String field) {
             JsonElement elem = x.get(field);
             return (elem == null || elem.isJsonNull()) ? null : elem.getAsString();
         }
@@ -606,9 +605,7 @@ public final class IneDialectDriver implements Driver {
         }
 
         static @NonNull List<Database> toOperationList(@NonNull Operation[] operations) {
-            return Arrays.stream(operations)
-                    .map(Converter::toDatabase)
-                    .collect(Collectors.toList());
+            return Arrays.stream(operations).map(Converter::toDatabase).collect(Collectors.toList());
         }
 
         static @NonNull Database toDatabase(@NonNull Operation op) {
@@ -616,9 +613,7 @@ public final class IneDialectDriver implements Driver {
         }
 
         static @NonNull List<Flow> toTableList(@NonNull Table[] tables, @NonNull String opCode) {
-            return Arrays.stream(tables)
-                    .map(table -> toFlow(table, opCode))
-                    .collect(Collectors.toList());
+            return Arrays.stream(tables).map(table -> toFlow(table, opCode)).collect(Collectors.toList());
         }
 
         @SuppressWarnings("unused")
@@ -626,10 +621,8 @@ public final class IneDialectDriver implements Driver {
             String tableId = String.valueOf(table.getId());
             FlowRef flowRef = FlowRef.of(AGENCY, tableId, VERSION);
             StructureRef structRef = toStructureRef(tableId);
-            Flow.Builder builder = Flow.builder()
-                    .ref(flowRef)
-                    .structureRef(structRef)
-                    .name(table.getNombre());
+            Flow.Builder builder =
+                    Flow.builder().ref(flowRef).structureRef(structRef).name(table.getNombre());
             String description = toFlowDescription(table);
             if (description != null) {
                 builder.description(description);
@@ -642,8 +635,7 @@ public final class IneDialectDriver implements Driver {
         // distinguishing metadata (frequency, variant code, covered period) in the description.
         // Note: a few tables remain indistinguishable even here (same name, code and period);
         // only the FlowRef id and their actual content separate those.
-        @org.jspecify.annotations.Nullable
-        static String toFlowDescription(@NonNull Table table) {
+        @org.jspecify.annotations.Nullable static String toFlowDescription(@NonNull Table table) {
             List<String> parts = new ArrayList<>();
             if (table.getPeriodicidad() != null) {
                 parts.add(table.getPeriodicidad());
@@ -661,8 +653,7 @@ public final class IneDialectDriver implements Driver {
             return parts.isEmpty() ? null : String.join(" \u00b7 ", parts);
         }
 
-        @org.jspecify.annotations.Nullable
-        private static String toPeriodRange(@NonNull Table table) {
+        @org.jspecify.annotations.Nullable private static String toPeriodRange(@NonNull Table table) {
             String start = joinPeriod(table.getPeriodoIni(), table.getAnyoIni());
             String end = joinPeriod(table.getPeriodoFin(), table.getAnyoFin());
             if (start == null && end == null) {
@@ -677,8 +668,8 @@ public final class IneDialectDriver implements Driver {
             return start + "\u2013" + end;
         }
 
-        @org.jspecify.annotations.Nullable
-        private static String joinPeriod(@org.jspecify.annotations.Nullable String period, @org.jspecify.annotations.Nullable String year) {
+        @org.jspecify.annotations.Nullable private static String joinPeriod(
+                @org.jspecify.annotations.Nullable String period, @org.jspecify.annotations.Nullable String year) {
             if (year == null) {
                 return period;
             }
@@ -782,7 +773,10 @@ public final class IneDialectDriver implements Driver {
                 boolean[] present = new boolean[groupCount];
                 for (int k = 0; k < items.size(); k++) {
                     int gi = itemToGroup.get(items.get(k));
-                    codes.get(gi).put(String.valueOf(meta.get(k).getId()), meta.get(k).getNombre());
+                    codes.get(gi)
+                            .put(
+                                    String.valueOf(meta.get(k).getId()),
+                                    meta.get(k).getNombre());
                     present[gi] = true;
                 }
                 for (int i = 0; i < groupCount; i++) {
@@ -818,7 +812,11 @@ public final class IneDialectDriver implements Driver {
         }
 
         private static String groupDisplayName(Set<String> items) {
-            return items.stream().map(Converter::itemDisplayName).distinct().sorted().collect(Collectors.joining(" / "));
+            return items.stream()
+                    .map(Converter::itemDisplayName)
+                    .distinct()
+                    .sorted()
+                    .collect(Collectors.joining(" / "));
         }
 
         private static Map<String, Integer> variableToGroupIndex(List<VarGroup> groups) {
@@ -897,8 +895,7 @@ public final class IneDialectDriver implements Driver {
             return Key.of(components);
         }
 
-        @org.jspecify.annotations.Nullable
-        private static Obs toObs(ObsData obs) {
+        @org.jspecify.annotations.Nullable private static Obs toObs(ObsData obs) {
             if (obs.getFecha() == null) {
                 return null;
             }
@@ -915,10 +912,10 @@ public final class IneDialectDriver implements Driver {
             return builder.build();
         }
 
-        @org.jspecify.annotations.Nullable
-        private static LocalDateTime parseFecha(String fecha) {
+        @org.jspecify.annotations.Nullable private static LocalDateTime parseFecha(String fecha) {
             try {
-                return OffsetDateTime.parse(fecha, DateTimeFormatter.ISO_OFFSET_DATE_TIME).toLocalDateTime();
+                return OffsetDateTime.parse(fecha, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+                        .toLocalDateTime();
             } catch (Exception ex) {
                 return null;
             }
@@ -964,5 +961,6 @@ public final class IneDialectDriver implements Driver {
     static final sdmxdl.Duration MONTHLY_DURATION = sdmxdl.Duration.parse("P1M");
     static final sdmxdl.Duration WEEKLY_DURATION = sdmxdl.Duration.parse("P7D");
     static final sdmxdl.Duration DAILY_DURATION = sdmxdl.Duration.parse("P1D");
-    static final MediaType JSON_TYPE = MediaType.builder().type("application").subtype("json").build();
+    static final MediaType JSON_TYPE =
+            MediaType.builder().type("application").subtype("json").build();
 }

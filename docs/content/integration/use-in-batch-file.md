@@ -61,7 +61,7 @@ sdmx-dl script data ECB EXR M.CHF.EUR.SP00.A --last-n 12 -t batch/cli
 - A batch file is just automation around the CLI: each line runs a normal `sdmx-dl` command, so you can mix discovery (`list ...`), retrieval (`fetch ...`), and checks (`check ...`) in the same script.
 - Use `-o` when a command already supports writing to a file; use `>`/`>>` when you want standard output redirection instead.
 - Inside a `.bat` file, loop variables use doubled percent signs (`%%C`). If you type the same loop directly in `cmd.exe`, use a single percent sign instead (`%C`).
-- Some commands already support batching by themselves, such as `sdmx-dl check status ECB IMF`, so prefer a single CLI call when it already matches your workflow.
+- Some commands already support batching by themselves, such as `sdmx-dl check health ECB IMF`, so prefer a single CLI call when it already matches your workflow.
 - For more advanced control flow, error handling, or CSV post-processing, [PowerShell]({{< relref "/integration/use-in-powershell" >}}) may be more convenient, but `.bat` files remain a simple zero-dependency option.
 
 ## Related features
