@@ -51,7 +51,7 @@ Common General-purpose options used by various commands." />
 <meta property="article:section" content="CLI" />
     <meta
       property="article:modified_time"
-      content="2026-10-06T12:45:49+02:00"
+      content="2026-10-06T16:25:15+02:00"
     />
 
 
@@ -72,7 +72,7 @@ Common General-purpose options used by various commands." />
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/cli/options/",
       "headline": "Options",
       "description": "An option has the following caracteristics:\nit has a name prefixed by two hyphens (e.g. --version). it may have a shortcut prefixed by one hyphen (e.g. -h is a shortcut of --help). it is case-sensitive Shortcuts can be grouped behind one hyphen (e.g. -vh is equivalent to -v -h).\nThe options default values are system-independent.\nCommon General-purpose options used by various commands.",
-      "wordCount": "593",
+      "wordCount": "632",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -83,7 +83,7 @@ Common General-purpose options used by various commands." />
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-06T12:45:49.00Z",
+      "dateModified": "2026-10-06T16:25:15.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1934,6 +1934,40 @@ so the result is always consistent (but the download is not necessarily smaller)
 </table> </div>
 <p>When <code>--first-n</code> and <code>--last-n</code> are combined, the result is the union of the first N and the last N
 observations of each series (computed independently after any period filtering).</p>
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="health"
+    >
+        Health
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/options/#health" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Health" aria-label="Anchor to: Health" href="#health">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>Options used by the <code>check health</code> command.</p>
+<div class="table-wrap"> <table>
+	<thead>
+			<tr>
+					<th>Name</th>
+					<th>Shortcut</th>
+					<th>Parameter</th>
+					<th>Description</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td><a id="checks" href="#checks"><code>--checks</code></a></td>
+					<td><code>-c</code></td>
+					<td><code>&lt;checks&gt;</code></td>
+					<td>Comma-separated checks: <code>MONITOR</code> (third-party monitor, default) and/or <code>ACCESS</code> (live request).</td>
+			</tr>
+			<tr>
+					<td><a id="fail-on-issue" href="#fail-on-issue"><code>--fail-on-issue</code></a></td>
+					<td>-</td>
+					<td>-</td>
+					<td>Exit with a non-zero code if any verdict is not <code>OK</code>.</td>
+			</tr>
+	</tbody>
+</table> </div>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="script"
     >

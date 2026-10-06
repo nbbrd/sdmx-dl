@@ -51,7 +51,7 @@ With launcher If sdmx-dl.bat is already on your PATH, a batch file can call it d
 <meta property="article:section" content="Integration" />
     <meta
       property="article:modified_time"
-      content="2026-10-06T12:45:49+02:00"
+      content="2026-10-06T16:25:15+02:00"
     />
 
 
@@ -83,7 +83,7 @@ With launcher If sdmx-dl.bat is already on your PATH, a batch file can call it d
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-06T12:45:49.00Z",
+      "dateModified": "2026-10-06T16:25:15.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1772,7 +1772,7 @@ This is a good fit for scheduled jobs, repeatable downloads, and small automatio
 <li>A batch file is just automation around the CLI: each line runs a normal <code>sdmx-dl</code> command, so you can mix discovery (<code>list ...</code>), retrieval (<code>fetch ...</code>), and checks (<code>check ...</code>) in the same script.</li>
 <li>Use <code>-o</code> when a command already supports writing to a file; use <code>&gt;</code>/<code>&gt;&gt;</code> when you want standard output redirection instead.</li>
 <li>Inside a <code>.bat</code> file, loop variables use doubled percent signs (<code>%%C</code>). If you type the same loop directly in <code>cmd.exe</code>, use a single percent sign instead (<code>%C</code>).</li>
-<li>Some commands already support batching by themselves, such as <code>sdmx-dl check status ECB IMF</code>, so prefer a single CLI call when it already matches your workflow.</li>
+<li>Some commands already support batching by themselves, such as <code>sdmx-dl check health ECB IMF</code>, so prefer a single CLI call when it already matches your workflow.</li>
 <li>For more advanced control flow, error handling, or CSV post-processing, <a
   class="gdoc-markdown__link"
   href="/sdmx-dl/docs/develop/integration/use-in-powershell/"

@@ -50,7 +50,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
 <meta property="article:section" content="Ws" />
     <meta
       property="article:modified_time"
-      content="2026-10-06T12:45:49+02:00"
+      content="2026-10-06T16:25:15+02:00"
     />
 
 
@@ -71,7 +71,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/ws/",
       "headline": "Web service",
       "description": "\nsdmx-dl WS is a web service that serves as a bridge to any application or language.\nThis service has three endpoints:\na gRPC endpoint which has the best performances but a limited set of clients a REST endpoint which has a wider range of clients but is less efficient an MCP endpoint which lets AI assistants and agents browse and fetch data These endpoints also provides specifications (.proto files and OpenAPI respectively) that can be used to generate client code. They are designed to operate locally as well as on remote machines.",
-      "wordCount": "1131",
+      "wordCount": "1140",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -82,7 +82,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-06T12:45:49.00Z",
+      "dateModified": "2026-10-06T16:25:15.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1877,9 +1877,9 @@ Its default port is <code>4559</code>, under the <code>/sdmx-dl/v2</code> path p
 					<td>Same as <code>GetData</code>, streamed observation by observation.</td>
 			</tr>
 			<tr>
-					<td><code>ListStatuses</code></td>
-					<td><code>GET /statuses</code></td>
-					<td>Check the health of one, several, or all sources.</td>
+					<td><code>CheckHealth</code></td>
+					<td><code>GET /health</code>, <code>GET /{source}/health</code></td>
+					<td>Check the health (monitor and/or live access) of one, several, or all sources.</td>
 			</tr>
 			<tr>
 					<td><code>ListScriptTargets</code></td>
@@ -2019,8 +2019,8 @@ Each series has a <code>key</code>, optional series-level <code>meta</code>, and
 					<td>Fetch data series for a flow, optionally filtered by key/period.</td>
 			</tr>
 			<tr>
-					<td><code>status</code></td>
-					<td>Get the monitor status of a single source.</td>
+					<td><code>checkHealth</code></td>
+					<td>Diagnose the health of a single source (monitor and/or live access).</td>
 			</tr>
 			<tr>
 					<td><code>listScriptTargets</code></td>

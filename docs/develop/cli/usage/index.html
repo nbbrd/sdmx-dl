@@ -53,7 +53,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
 <meta property="article:section" content="CLI" />
     <meta
       property="article:modified_time"
-      content="2026-10-06T12:45:49+02:00"
+      content="2026-10-06T16:25:15+02:00"
     />
 
 
@@ -75,7 +75,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/cli/usage/",
       "headline": "Usage",
       "description": "By default, all commands print the result on the standard output.\nMost commands produce RFC4180 compliant CSV content.\nCommand arguments are composed of options and positional parameters. Options have a name, positional parameters are usually the values that follow the options, but they may be mixed. The general pattern is:\nsdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters options All commands share the following options:\n-h, --help - Show an help message and exit. -v, --verbose - Enable verbose mode. Commands summary The commands follow a verb\u002bnoun hierarchy.",
-      "wordCount": "1979",
+      "wordCount": "1952",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -86,7 +86,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-06T12:45:49.00Z",
+      "dateModified": "2026-10-06T16:25:15.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1747,7 +1747,7 @@ flowchart TB
     r{{sdmx-dl}}
     r --- f([fetch]) --- data &amp; meta &amp; keys
     r --- l([list]) --- sources &amp; databases &amp; flows &amp; dimensions &amp; attributes &amp; codes &amp; availability &amp; features &amp; plugins
-    r --- c([check]) --- status &amp; access &amp; config &amp; xsources[sources]
+    r --- c([check]) --- health &amp; config &amp; xsources[sources]
     r --- s([setup]) --- completion &amp; launcher
     r --- x([script]) --- xdata[data] &amp; xflows[flows] &amp; targets
 
@@ -1775,10 +1775,9 @@ flowchart TB
     click plugins &#34;#list-plugins&#34; &#34;list plugins command&#34;
 
     classDef cx fill:#268bd2
-    class c,status,access,config,xsources cx;
+    class c,health,config,xsources cx;
     click c &#34;#check&#34; &#34;check command&#34;
-    click status &#34;#check-status&#34; &#34;check status command&#34;
-    click access &#34;#check-access&#34; &#34;check access command&#34;
+    click health &#34;#check-health&#34; &#34;check health command&#34;
     click config &#34;#check-config&#34; &#34;check config command&#34;
     click xsources &#34;#check-sources&#34; &#34;check sources command&#34;
     
@@ -1890,12 +1889,8 @@ flowchart TB
 <p>Subcommands:
 <a
   class="gdoc-markdown__link"
-  href="#check-status"
->status</a>,
-<a
-  class="gdoc-markdown__link"
-  href="#check-access"
->access</a>,
+  href="#check-health"
+>health</a>,
 <a
   class="gdoc-markdown__link"
   href="#check-config"
@@ -3762,11 +3757,11 @@ empty; ranked by relevance (typo-tolerant) otherwise.</p>
 
 
 
-<a id="check-status" href="#check-status"><img src="https://img.shields.io/badge/check-status-268bd2?style=flat-square"/></a>
+<a id="check-health" href="#check-health"><img src="https://img.shields.io/badge/check-health-268bd2?style=flat-square"/></a>
 
 
-<p>Check service availability.</p>
-<p>Example: <code>sdmx-dl <font color="#268bd2">check status</font> <abbr title="source">ECB</abbr></code></p>
+<p>Check service health using its monitor and/or a live access check.</p>
+<p>Example: <code>sdmx-dl <font color="#268bd2">check health</font> <abbr title="source">ECB</abbr> &ndash;checks monitor,access</code></p>
 
 
 
@@ -3774,10 +3769,10 @@ empty; ranked by relevance (typo-tolerant) otherwise.</p>
     <input
       type="radio"
       class="gdoc-tabs__control hidden"
-      name="tabs-check-status"
-      id="tabs-check-status-0"
+      name="tabs-check-health"
+      id="tabs-check-health-0"
       checked="checked"/>
-    <label for="tabs-check-status-0" class="gdoc-tabs__label">
+    <label for="tabs-check-health-0" class="gdoc-tabs__label">
       Parameters
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
@@ -3785,16 +3780,16 @@ empty; ranked by relevance (typo-tolerant) otherwise.</p>
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#list"
-><code>sources</code></a> - Data source names.</li>
+><code>sources</code></a> - Data source names, or <code>all</code>.</li>
 </ol>
 </div>
     <input
       type="radio"
       class="gdoc-tabs__control hidden"
-      name="tabs-check-status"
-      id="tabs-check-status-1"
+      name="tabs-check-health"
+      id="tabs-check-health-1"
       />
-    <label for="tabs-check-status-1" class="gdoc-tabs__label">
+    <label for="tabs-check-health-1" class="gdoc-tabs__label">
       Options
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
@@ -3802,16 +3797,16 @@ empty; ranked by relevance (typo-tolerant) otherwise.</p>
 <ul>
 <li><a
   class="gdoc-markdown__link--code"
+  href="../options#checks"
+><code>-c, --checks&lt;checks&gt;</code></a> - Checks to perform: <code>MONITOR</code> (default) and/or <code>ACCESS</code>.</li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../options#fail-on-issue"
+><code>--fail-on-issue</code></a> - Exit with a non-zero code if any verdict is not <code>OK</code>.</li>
+<li><a
+  class="gdoc-markdown__link--code"
   href="../options#sources"
 ><code>-s, --sources&lt;file&gt;</code></a> - File that provides data source definitions.</li>
-<li><a
-  class="gdoc-markdown__link--code"
-  href="../options#database"
-><code>-d, --database&lt;database&gt;</code></a> - Database reference.</li>
-<li><a
-  class="gdoc-markdown__link--code"
-  href="../options#languages"
-><code>-l, --languages&lt;langs&gt;</code></a> - Language priority list.</li>
 <li><a
   class="gdoc-markdown__link--code"
   href="../options#no-parallel"
@@ -3834,10 +3829,10 @@ empty; ranked by relevance (typo-tolerant) otherwise.</p>
     <input
       type="radio"
       class="gdoc-tabs__control hidden"
-      name="tabs-check-status"
-      id="tabs-check-status-2"
+      name="tabs-check-health"
+      id="tabs-check-health-2"
       />
-    <label for="tabs-check-status-2" class="gdoc-tabs__label">
+    <label for="tabs-check-health-2" class="gdoc-tabs__label">
       Output
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
@@ -3847,6 +3842,13 @@ empty; ranked by relevance (typo-tolerant) otherwise.</p>
   class="gdoc-markdown__link--code"
   href="../datatypes#source"
 ><code>Source:source</code></a></li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#enum"
+><code>Verdict:enum</code></a></li>
+</ol>
+<p>With the <code>MONITOR</code> check:</p>
+<ol start="3">
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#enum"
@@ -3862,182 +3864,80 @@ empty; ranked by relevance (typo-tolerant) otherwise.</p>
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#string"
-><code>ErrorMessage:string</code></a></li>
-</ol></div>
-</div>
-
-
-<div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="81c545a5-46">
-    <span>Output sample</span>
-    <span>↕</span>
-  </label>
-  <input id="81c545a5-46" type="checkbox" class="gdoc-expand__control hidden" />
-  <div class="gdoc-markdown--nested gdoc-expand__content">
-    <small>
-<div class="gdoc-include"><div class="table-wrap"> <table>
-	<thead>
-			<tr>
-					<th>Source</th>
-					<th>Status</th>
-					<th>UptimeRatio</th>
-					<th>AverageResponseTime</th>
-					<th>ErrorMessage</th>
-			</tr>
-	</thead>
-	<tbody>
-			<tr>
-					<td>ECB</td>
-					<td>UP</td>
-					<td>99.691</td>
-					<td></td>
-					<td></td>
-			</tr>
-	</tbody>
-</table> </div>
-</div>
-</small>
-
-  </div>
-</div>
-
-
-
-
-
-
-<a id="check-access" href="#check-access"><img src="https://img.shields.io/badge/check-access-268bd2?style=flat-square"/></a>
-
-
-<p>Check service accessibility.</p>
-<p>Example: <code>sdmx-dl <font color="#268bd2">check access</font> <abbr title="source">ECB</abbr></code></p>
-
-
-
-<div class="gdoc-tabs">
-    <input
-      type="radio"
-      class="gdoc-tabs__control hidden"
-      name="tabs-check-access"
-      id="tabs-check-access-0"
-      checked="checked"/>
-    <label for="tabs-check-access-0" class="gdoc-tabs__label">
-      Parameters
-    </label>
-    <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <ol>
-<li><a
-  class="gdoc-markdown__link--code"
-  href="../datatypes#list"
-><code>sources</code></a> - Data source names.</li>
+><code>MonitorError:string</code></a></li>
 </ol>
-</div>
-    <input
-      type="radio"
-      class="gdoc-tabs__control hidden"
-      name="tabs-check-access"
-      id="tabs-check-access-1"
-      />
-    <label for="tabs-check-access-1" class="gdoc-tabs__label">
-      Options
-    </label>
-    <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <p>Main options:</p>
-<ul>
+<p>With the <code>ACCESS</code> check:</p>
+<ol start="7">
 <li><a
   class="gdoc-markdown__link--code"
-  href="../options#sources"
-><code>-s, --sources&lt;file&gt;</code></a> - File that provides data source definitions.</li>
-<li><a
-  class="gdoc-markdown__link--code"
-  href="../options#database"
-><code>-d, --database&lt;database&gt;</code></a> - Database reference.</li>
-<li><a
-  class="gdoc-markdown__link--code"
-  href="../options#languages"
-><code>-l, --languages&lt;langs&gt;</code></a> - Language priority list.</li>
-<li><a
-  class="gdoc-markdown__link--code"
-  href="../options#no-parallel"
-><code>--no-parallel</code></a> - Disable parallel queries.</li>
-<li><a
-  class="gdoc-markdown__link--code"
-  href="../options#sort"
-><code>--sort</code></a> - Sort output.</li>
-</ul>
-<p>Other options:
-<a
-  class="gdoc-markdown__link--code"
-  href="../options#csv"
-><code>CSV</code></a>,
-<a
-  class="gdoc-markdown__link--code"
-  href="../options#network"
-><code>Network</code></a></p>
-</div>
-    <input
-      type="radio"
-      class="gdoc-tabs__control hidden"
-      name="tabs-check-access"
-      id="tabs-check-access-2"
-      />
-    <label for="tabs-check-access-2" class="gdoc-tabs__label">
-      Output
-    </label>
-    <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <p>CSV columns:</p>
-<ol>
-<li><a
-  class="gdoc-markdown__link--code"
-  href="../datatypes#source"
-><code>Source:source</code></a></li>
+  href="../datatypes#enum"
+><code>Reachable:enum</code></a></li>
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#enum"
 ><code>Accessible:enum</code></a></li>
 <li><a
   class="gdoc-markdown__link--code"
-  href="../datatypes#uri"
-><code>URI:uri</code></a></li>
+  href="../datatypes#int"
+><code>StatusCode:int</code></a></li>
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#int"
 ><code>DurationInMillis:int</code></a></li>
 <li><a
   class="gdoc-markdown__link--code"
+  href="../datatypes#uri"
+><code>URI:uri</code></a></li>
+<li><a
+  class="gdoc-markdown__link--code"
   href="../datatypes#string"
-><code>ErrorMessage:string</code></a></li>
-</ol></div>
+><code>AccessError:string</code></a></li>
+</ol>
+</div>
 </div>
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="ffd4d3ad-49">
+  <label class="gdoc-expand__head flex justify-between" for="5b1199b2-46">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="ffd4d3ad-49" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="5b1199b2-46" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
 	<thead>
 			<tr>
 					<th>Source</th>
+					<th>Verdict</th>
+					<th>Status</th>
+					<th>UptimeRatio</th>
+					<th>AverageResponseTime</th>
+					<th>MonitorError</th>
+					<th>Reachable</th>
 					<th>Accessible</th>
-					<th>URI</th>
+					<th>StatusCode</th>
 					<th>DurationInMillis</th>
-					<th>ErrorMessage</th>
+					<th>URI</th>
+					<th>AccessError</th>
 			</tr>
 	</thead>
 	<tbody>
 			<tr>
 					<td>ECB</td>
+					<td>OK</td>
+					<td>UP</td>
+					<td>0.9754</td>
+					<td>1165</td>
+					<td></td>
 					<td>YES</td>
+					<td>YES</td>
+					<td></td>
+					<td>756</td>
 					<td><a
   class="gdoc-markdown__link"
   href="https://data-api.ecb.europa.eu/service/dataflow/all/all/latest"
 >https://data-api.ecb.europa.eu/service/dataflow/all/all/latest</a></td>
-					<td>726</td>
 					<td></td>
 			</tr>
 	</tbody>
@@ -4129,11 +4029,11 @@ empty; ranked by relevance (typo-tolerant) otherwise.</p>
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="6769b986-52">
+  <label class="gdoc-expand__head flex justify-between" for="6769b986-49">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="6769b986-52" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="6769b986-49" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -4273,11 +4173,11 @@ empty; ranked by relevance (typo-tolerant) otherwise.</p>
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="b88534a1-55">
+  <label class="gdoc-expand__head flex justify-between" for="b88534a1-52">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="b88534a1-55" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="b88534a1-52" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>

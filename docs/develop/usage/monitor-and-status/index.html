@@ -12,10 +12,9 @@
 <meta name="generator" content="Hugo 0.167.0">
 
 
-  <meta name="description" content="Check whether a source is up, and how it has been performing, before relying on it in an automated job.
-API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); IO.println(manager.getMonitorReport(&#34;ECB&#34;)); } CLI sdmx-dl check status ECB check status also accepts several sources at once, or the keyword all to check every configured source in parallel:
-sdmx-dl check status ECB IMF INSEE sdmx-dl check status all WS REST curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB&#34; ListStatuses also accepts several comma-separated sources, or all to check every configured source:
-curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB,IMF,INSEE&#34; curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=all&#34; gRPC grpcurl -d &#39;{&#34;sources&#34;:[&#34;ECB&#34;]}&#39; -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListStatuses " />
+  <meta name="description" content="Check whether a source is healthy before relying on it in an automated job, and diagnose why it fails.
+Two checks can be combined:
+MONITOR (default): asks the third-party monitor declared by the source (Upptime, UptimeRobot, …) for its status, uptime ratio and average response time. It is cheap and does not contact the source itself. ACCESS: sends a lightweight live request from your machine (or server) to the source and reports whether it can be reached, whether it answered successfully, how long it took and, on HTTP errors, the status code. Both results are merged into a verdict:" />
 
     <title>Monitor and status | sdmx-dl</title>
 
@@ -41,26 +40,24 @@ curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB,IMF,INSEE&#34; curl &#3
     content="Monitor and status"
   />
   <meta property="og:site_name" content="sdmx-dl" />
-  <meta property="og:description" content="Check whether a source is up, and how it has been performing, before relying on it in an automated job.
-API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); IO.println(manager.getMonitorReport(&#34;ECB&#34;)); } CLI sdmx-dl check status ECB check status also accepts several sources at once, or the keyword all to check every configured source in parallel:
-sdmx-dl check status ECB IMF INSEE sdmx-dl check status all WS REST curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB&#34; ListStatuses also accepts several comma-separated sources, or all to check every configured source:
-curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB,IMF,INSEE&#34; curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=all&#34; gRPC grpcurl -d &#39;{&#34;sources&#34;:[&#34;ECB&#34;]}&#39; -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListStatuses " />
+  <meta property="og:description" content="Check whether a source is healthy before relying on it in an automated job, and diagnose why it fails.
+Two checks can be combined:
+MONITOR (default): asks the third-party monitor declared by the source (Upptime, UptimeRobot, …) for its status, uptime ratio and average response time. It is cheap and does not contact the source itself. ACCESS: sends a lightweight live request from your machine (or server) to the source and reports whether it can be reached, whether it answered successfully, how long it took and, on HTTP errors, the status code. Both results are merged into a verdict:" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/monitor-and-status/" />
 
 <meta property="article:section" content="Usage" />
     <meta
       property="article:modified_time"
-      content="2026-10-06T12:45:49+02:00"
+      content="2026-10-06T16:25:15+02:00"
     />
 
 
   <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Monitor and status" />
-  <meta name="twitter:description" content="Check whether a source is up, and how it has been performing, before relying on it in an automated job.
-API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); IO.println(manager.getMonitorReport(&#34;ECB&#34;)); } CLI sdmx-dl check status ECB check status also accepts several sources at once, or the keyword all to check every configured source in parallel:
-sdmx-dl check status ECB IMF INSEE sdmx-dl check status all WS REST curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB&#34; ListStatuses also accepts several comma-separated sources, or all to check every configured source:
-curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB,IMF,INSEE&#34; curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=all&#34; gRPC grpcurl -d &#39;{&#34;sources&#34;:[&#34;ECB&#34;]}&#39; -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListStatuses " />
+  <meta name="twitter:description" content="Check whether a source is healthy before relying on it in an automated job, and diagnose why it fails.
+Two checks can be combined:
+MONITOR (default): asks the third-party monitor declared by the source (Upptime, UptimeRobot, …) for its status, uptime ratio and average response time. It is cheap and does not contact the source itself. ACCESS: sends a lightweight live request from your machine (or server) to the source and reports whether it can be reached, whether it answered successfully, how long it took and, on HTTP errors, the status code. Both results are merged into a verdict:" />
 
 
   <script type="application/ld+json">
@@ -71,8 +68,8 @@ curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB,IMF,INSEE&#34; curl &#3
       "name": "Monitor and status",
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/monitor-and-status/",
       "headline": "Monitor and status",
-      "description": "Check whether a source is up, and how it has been performing, before relying on it in an automated job.\nAPI \/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager manager = SdmxWebManager.ofServiceLoader(); IO.println(manager.getMonitorReport(\u0022ECB\u0022)); } CLI sdmx-dl check status ECB check status also accepts several sources at once, or the keyword all to check every configured source in parallel:\nsdmx-dl check status ECB IMF INSEE sdmx-dl check status all WS REST curl \u0022localhost:4559\/sdmx-dl\/v2\/statuses?sources=ECB\u0022 ListStatuses also accepts several comma-separated sources, or all to check every configured source:\ncurl \u0022localhost:4559\/sdmx-dl\/v2\/statuses?sources=ECB,IMF,INSEE\u0022 curl \u0022localhost:4559\/sdmx-dl\/v2\/statuses?sources=all\u0022 gRPC grpcurl -d \u0027{\u0022sources\u0022:[\u0022ECB\u0022]}\u0027 -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListStatuses ",
-      "wordCount": "183",
+      "description": "Check whether a source is healthy before relying on it in an automated job, and diagnose why it fails.\nTwo checks can be combined:\nMONITOR (default): asks the third-party monitor declared by the source (Upptime, UptimeRobot, …) for its status, uptime ratio and average response time. It is cheap and does not contact the source itself. ACCESS: sends a lightweight live request from your machine (or server) to the source and reports whether it can be reached, whether it answered successfully, how long it took and, on HTTP errors, the status code. Both results are merged into a verdict:",
+      "wordCount": "465",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -83,7 +80,7 @@ curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB,IMF,INSEE&#34; curl &#3
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-06T12:45:49.00Z",
+      "dateModified": "2026-10-06T16:25:15.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1694,7 +1691,47 @@ curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB,IMF,INSEE&#34; curl &#3
   >
     <h1>Monitor and status</h1>
     
-    <p>Check whether a source is up, and how it has been performing, before relying on it in an automated job.</p>
+    <p>Check whether a source is healthy before relying on it in an automated job, and diagnose why it fails.</p>
+<p>Two checks can be combined:</p>
+<ul>
+<li><strong><code>MONITOR</code></strong> (default): asks the third-party monitor declared by the source (Upptime, UptimeRobot, …) for its status, uptime ratio and average response time. It is cheap and does not contact the source itself.</li>
+<li><strong><code>ACCESS</code></strong>: sends a lightweight live request from your machine (or server) to the source and reports whether it can be reached, whether it answered successfully, how long it took and, on HTTP errors, the status code.</li>
+</ul>
+<p>Both results are merged into a <strong>verdict</strong>:</p>
+<div class="table-wrap"> <table>
+	<thead>
+			<tr>
+					<th>Verdict</th>
+					<th>Meaning</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td><code>OK</code></td>
+					<td>The source works.</td>
+			</tr>
+			<tr>
+					<td><code>DEGRADED</code></td>
+					<td>The source answers with errors, or the monitor and the live check disagree.</td>
+			</tr>
+			<tr>
+					<td><code>LOCAL_ISSUE</code></td>
+					<td>The monitor says up but the source cannot be reached from here: check proxy, firewall or SSL.</td>
+			</tr>
+			<tr>
+					<td><code>REMOTE_OUTAGE</code></td>
+					<td>The monitor says down.</td>
+			</tr>
+			<tr>
+					<td><code>UNREACHABLE</code></td>
+					<td>The source cannot be reached and there is no monitor to tell why.</td>
+			</tr>
+			<tr>
+					<td><code>UNKNOWN</code></td>
+					<td>Not enough information (no monitor defined and no live check requested, for example).</td>
+			</tr>
+	</tbody>
+</table> </div>
 
 
 
@@ -1711,13 +1748,22 @@ curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB,IMF,INSEE&#34; curl &#3
     <div class="gdoc-markdown--nested gdoc-tabs__content">
       <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.EnumSet</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.HealthCheck</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.SdmxWebManager</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.WebHealthRequest</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w"> </span><span class="n">manager</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SdmxWebManager</span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">();</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">manager</span><span class="p">.</span><span class="na">getMonitorReport</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">WebHealthRequest</span><span class="w"> </span><span class="n">request</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">WebHealthRequest</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">source</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">source</span><span class="p">(</span><span class="s">&#34;IMF&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">checks</span><span class="p">(</span><span class="n">EnumSet</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">HealthCheck</span><span class="p">.</span><span class="na">MONITOR</span><span class="p">,</span><span class="w"> </span><span class="n">HealthCheck</span><span class="p">.</span><span class="na">ACCESS</span><span class="p">))</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">build</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">manager</span><span class="p">.</span><span class="na">checkHealth</span><span class="p">(</span><span class="n">request</span><span class="p">).</span><span class="na">forEach</span><span class="p">(</span><span class="n">IO</span><span class="p">::</span><span class="n">println</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
-</span></span></span></code></pre></div></div>
+</span></span></span></code></pre></div><p>The building blocks are also available separately: <code>manager.usingName(&quot;ECB&quot;).checkAccess()</code> performs the live check only.</p></div>
     <input
       type="radio"
       class="gdoc-tabs__control hidden"
@@ -1728,11 +1774,10 @@ curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB,IMF,INSEE&#34; curl &#3
       CLI
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
-      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl check status ECB
-</span></span></code></pre></div><p><code>check status</code> also accepts several sources at once, or the keyword <code>all</code> to check every configured source in parallel:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl check status ECB IMF INSEE
-</span></span><span class="line"><span class="cl">sdmx-dl check status all
-</span></span></code></pre></div></div>
+      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl check health ECB
+</span></span><span class="line"><span class="cl">sdmx-dl check health ECB IMF INSEE --checks monitor,access
+</span></span><span class="line"><span class="cl">sdmx-dl check health all
+</span></span></code></pre></div><p>Add <code>--fail-on-issue</code> to exit with a non-zero code when any verdict is not <code>OK</code>, which is handy in scripts and CI jobs.</p></div>
     <input
       type="radio"
       class="gdoc-tabs__control hidden"
@@ -1752,10 +1797,9 @@ curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB,IMF,INSEE&#34; curl &#3
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB&#34;</span>
-</span></span></code></pre></div><p><code>ListStatuses</code> also accepts several comma-separated sources, or <code>all</code> to check every configured source:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB,IMF,INSEE&#34;</span>
-</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/statuses?sources=all&#34;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/ECB/health&#34;</span>
+</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/health?sources=ECB,IMF&amp;checks=monitor,access&#34;</span>
+</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;localhost:4559/sdmx-dl/v2/health?sources=all&#34;</span>
 </span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
     <h3 id="grpc"
     >
@@ -1765,22 +1809,59 @@ curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB,IMF,INSEE&#34; curl &#3
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;sources&#34;:[&#34;ECB&#34;]}&#39;</span> -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.ListStatuses
-</span></span></code></pre></div></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;sources&#34;:[&#34;ECB&#34;],&#34;checks&#34;:[&#34;MONITOR&#34;,&#34;ACCESS&#34;]}&#39;</span> -plaintext localhost:4557 sdmxdl.grpc.v2.SdmxWebManager.CheckHealth
+</span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
+    <h3 id="mcp"
+    >
+        MCP
+    </h3>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/monitor-and-status/#mcp" class="gdoc-page__anchor clip flex align-center" title="Anchor to: MCP" aria-label="Anchor to: MCP" href="#mcp">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>The <code>checkHealth</code> tool diagnoses a single source; AI assistants use it to explain why the other tools fail.</p></div>
 </div>
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="fc2d9292-1">
+  <label class="gdoc-expand__head flex justify-between" for="9f3450ea-1">
     <span>CLI output sample</span>
     <span>↕</span>
   </label>
-  <input id="fc2d9292-1" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="9f3450ea-1" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
-    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Source,Status,UptimeRatio,AverageResponseTime,ErrorMessage
-</span></span><span class="line"><span class="cl">ECB,UP,0.9753000000000001,1104,
-</span></span><span class="line"><span class="cl">IMF,UP,0.9166,754,
-</span></span><span class="line"><span class="cl">INSEE,UP,0.9832,1212,
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Source,Verdict,Status,UptimeRatio,AverageResponseTime,MonitorError,Reachable,Accessible,StatusCode,DurationInMillis,URI,AccessError
+</span></span><span class="line"><span class="cl">ECB,OK,UP,0.9754,1165,,YES,YES,,756,https://data-api.ecb.europa.eu/service/dataflow/all/all/latest,
+</span></span><span class="line"><span class="cl">IMF,OK,UP,0.9168999999999999,753,,YES,YES,,1585,https://api.imf.org/external/sdmx/2.1/dataflow/all/all/latest,
+</span></span><span class="line"><span class="cl">INSEE,OK,UP,0.9833,1213,,YES,YES,,862,https://bdm.insee.fr/series/sdmx/dataflow/all/all/latest,
+</span></span></code></pre></div>
+  </div>
+</div>
+
+
+<div class="gdoc-expand">
+  <label class="gdoc-expand__head flex justify-between" for="4cd02d90-2">
+    <span>REST output sample</span>
+    <span>↕</span>
+  </label>
+  <input id="4cd02d90-2" type="checkbox" class="gdoc-expand__control hidden" />
+  <div class="gdoc-markdown--nested gdoc-expand__content">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">[{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;source&#34;</span><span class="p">:</span> <span class="s2">&#34;ECB&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;verdict&#34;</span><span class="p">:</span> <span class="s2">&#34;OK&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;monitor&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;source&#34;</span><span class="p">:</span> <span class="s2">&#34;ECB&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;status&#34;</span><span class="p">:</span> <span class="s2">&#34;UP&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;uptimeRatio&#34;</span><span class="p">:</span> <span class="mf">0.9754</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;averageResponseTime&#34;</span><span class="p">:</span> <span class="s2">&#34;1165&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;access&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;reachable&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;accessible&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;uri&#34;</span><span class="p">:</span> <span class="s2">&#34;https://data-api.ecb.europa.eu/service/dataflow/all/all/latest&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;duration&#34;</span><span class="p">:</span> <span class="s2">&#34;645&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}]</span>
 </span></span></code></pre></div>
   </div>
 </div>
@@ -1795,9 +1876,11 @@ curl &#34;localhost:4559/sdmx-dl/v2/statuses?sources=ECB,IMF,INSEE&#34; curl &#3
     </a>
 </div>
 <ul>
-<li>A report includes a status (UP/DOWN/UNKNOWN), an uptime ratio, and an average response time (in milliseconds); the CLI table also has an error message column, filled when a check fails.</li>
-<li>Only sources that declare a monitor endpoint in their configuration can be checked; others report &ldquo;No monitor defined&rdquo;.</li>
-<li>WS&rsquo;s <code>ListStatuses</code> mirrors the CLI&rsquo;s ability to batch-check several sources (or <code>all</code>) in a single call, instead of one request per source.</li>
+<li>Only <code>MONITOR</code> is checked by default because it never contacts the source; request <code>ACCESS</code> explicitly when the monitor is missing or says up but your calls fail. This also keeps the web service from being used to probe sources on demand.</li>
+<li>Sources without a monitor endpoint report &ldquo;No monitor defined&rdquo; in the monitor error; combine with <code>ACCESS</code> to get a verdict anyway.</li>
+<li>An HTTP error (e.g. <code>503</code>) means the source is reachable but failing: the access report is reachable, not accessible, and carries the status code.</li>
+<li>Durations and average response times are in milliseconds; the uptime ratio is between 0 and 1.</li>
+<li>All flavors accept several sources (or <code>all</code>) in a single call, checked in parallel; an unknown source fails the whole request. MCP checks one source at a time.</li>
 </ul>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="related-features"
