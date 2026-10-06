@@ -365,8 +365,8 @@ Main options:
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`-q, --query<query>`](../options#query) - Free-text search query.
 - [`-m, --max-results<n>`](../options#max-results) - Maximum number of results.
-- [`--plain-description`](../options#plain-description) - Strip markup from descriptions.
-- [`--max-description-length<length>`](../options#max-description-length) - Maximum description length.
+- [`--plain-text`](../options#plain-text) - Strip markup from descriptions.
+- [`--truncate<length>`](../options#truncate) - Maximum description length.
 
 Other options: 
 [`CSV`](../options#csv),
@@ -851,8 +851,8 @@ Main options:
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`-q, --query<query>`](../options#query) - Free-text search query.
 - [`-m, --max-results<n>`](../options#max-results) - Maximum number of results.
-- [`--plain-description`](../options#plain-description) - Strip markup from descriptions.
-- [`--max-description-length<length>`](../options#max-description-length) - Maximum description length.
+- [`--plain-text`](../options#plain-text) - Strip markup from descriptions.
+- [`--truncate<length>`](../options#truncate) - Maximum description length.
 
 Other options:
 [`Script`](../options#script),

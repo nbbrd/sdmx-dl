@@ -11,15 +11,15 @@ import sdmxdl.HasDescription;
 public final class DescriptionOptions {
 
     @CommandLine.Option(
-            names = {"--plain-description"},
+            names = {"--plain-text"},
             defaultValue = "false",
-            descriptionKey = "cli.sdmx.plainDescription")
-    private boolean plainDescription;
+            descriptionKey = "cli.sdmx.plainText")
+    private boolean plainText;
 
     @CommandLine.Option(
-            names = {"--max-description-length"},
+            names = {"--truncate"},
             paramLabel = "<length>",
             defaultValue = "0",
-            descriptionKey = "cli.sdmx.maxDescriptionLength")
-    private int maxDescriptionLength = HasDescription.NO_DESCRIPTION_LIMIT;
+            descriptionKey = "cli.sdmx.truncate")
+    private int truncate = HasDescription.NO_DESCRIPTION_LIMIT;
 }

@@ -63,12 +63,11 @@ public final class RestCalls implements RequestVisitor<RestCall> {
         appendDatabase(result, request.getDatabase());
         appendLanguages(result, request.getLanguages());
         appendSearch(result, request);
-        if (request.isPlainDescription()) {
-            result.warning("Plain description is not supported by the web service; descriptions are kept as is");
+        if (request.isPlainText()) {
+            result.parameter("plainText", "true");
         }
-        if (request.getMaxDescriptionLength() != HasDescription.NO_DESCRIPTION_LIMIT) {
-            result.warning(
-                    "Max description length is not supported by the web service; descriptions are not truncated");
+        if (request.getTruncate() != HasDescription.NO_DESCRIPTION_LIMIT) {
+            result.parameter("truncate", request.getTruncate());
         }
         return result.field("Ref", "ref")
                 .field("Name", "name")

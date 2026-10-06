@@ -71,6 +71,34 @@ public class SdmxdlScriptService2Test {
     }
 
     @Test
+    public void grpcGenerateFlowsScriptWithDescriptionOptions() {
+        ScriptDto response = grpc.generateFlowsScript(WebFlowsScriptRequestDto.newBuilder()
+                        .setRequest(WebFlowsRequestDto.newBuilder()
+                                .setSource("ECB")
+                                .setPlainText(true)
+                                .setTruncate(80))
+                        .build())
+                .await()
+                .atMost(TIMEOUT);
+        assertThat(response.getWarningsList()).isEmpty();
+        assertThat(response.getContent())
+                .contains("[\"sdmx-dl\", \"list\", \"flows\", \"ECB\", \"--plain-text\", \"--truncate\", \"80\"]");
+    }
+
+    @Test
+    public void restGenerateFlowsScriptWithDescriptionOptions() {
+        given().urlEncodingEnabled(false)
+                .queryParam("target", "python/rest")
+                .queryParam("plainText", true)
+                .queryParam("truncate", 80)
+                .when()
+                .get("/sdmx-dl/v2/ECB/flows:script")
+                .then()
+                .statusCode(200)
+                .body("content", containsString("{\"plainText\": \"true\", \"truncate\": 80}"));
+    }
+
+    @Test
     public void grpcGenerateScriptWithUnknownTarget() {
         assertThatThrownBy(() -> grpc.generateFlowsScript(WebFlowsScriptRequestDto.newBuilder()
                                 .setRequest(WebFlowsRequestDto.newBuilder().setSource("ECB"))

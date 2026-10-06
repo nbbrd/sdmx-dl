@@ -98,8 +98,8 @@ public class PythonCliScriptGeneratorTest {
         FlowsRequest request = FlowsRequest.builder()
                 .query("exchange \"rates\"")
                 .maxResults(5)
-                .plainDescription(true)
-                .maxDescriptionLength(80)
+                .plainText(true)
+                .truncate(80)
                 .build();
 
         Script script = x.generateScript("ECB", request, ScriptOptions.DEFAULT);
@@ -107,7 +107,7 @@ public class PythonCliScriptGeneratorTest {
         assertThat(script.getWarnings()).isEmpty();
         assertThat(script.getContent())
                 .contains(
-                        "    [\"sdmx-dl\", \"list\", \"flows\", \"ECB\", \"-q\", \"exchange \\\"rates\\\"\", \"-m\", \"5\", \"--plain-description\", \"--max-description-length\", \"80\"],\n")
+                        "    [\"sdmx-dl\", \"list\", \"flows\", \"ECB\", \"-q\", \"exchange \\\"rates\\\"\", \"-m\", \"5\", \"--plain-text\", \"--truncate\", \"80\"],\n")
                 .contains("    writer.writerow([\"Ref\", \"Name\", \"Description\"])\n")
                 .contains("        writer.writerow([row[\"Ref\"], row[\"Name\"], row[\"Description\"]])\n");
     }

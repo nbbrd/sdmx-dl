@@ -26,14 +26,14 @@ public class FlowsRequest implements HasSearch, Request {
      * and whitespace collapsed before being returned.
      */
     @lombok.Builder.Default
-    boolean plainDescription = false;
+    boolean plainText = false;
 
     /**
-     * Maximum length of flow descriptions, or {@link HasDescription#NO_DESCRIPTION_LIMIT}
-     * for no truncation.
+     * Maximum length of flow descriptions (truncated with an ellipsis),
+     * or {@link HasDescription#NO_DESCRIPTION_LIMIT} for no truncation.
      */
     @lombok.Builder.Default
-    @NonNegative int maxDescriptionLength = HasDescription.NO_DESCRIPTION_LIMIT;
+    @NonNegative int truncate = HasDescription.NO_DESCRIPTION_LIMIT;
 
     @Override
     public <T> T accept(@NonNull RequestVisitor<T> visitor) {

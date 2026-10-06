@@ -1254,11 +1254,26 @@
             "default" : -1
           }
         }, {
+          "name" : "plainText",
+          "in" : "query",
+          "schema" : {
+            "type" : "boolean",
+            "default" : false
+          }
+        }, {
           "name" : "query",
           "in" : "query",
           "schema" : {
             "type" : "string",
             "default" : ""
+          }
+        }, {
+          "name" : "truncate",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
           }
         } ],
         "responses" : {
@@ -1333,6 +1348,13 @@
             "type" : "string"
           }
         }, {
+          "name" : "plainText",
+          "in" : "query",
+          "schema" : {
+            "type" : "boolean",
+            "default" : false
+          }
+        }, {
           "name" : "property",
           "in" : "query",
           "schema" : {
@@ -1360,6 +1382,14 @@
           "schema" : {
             "type" : "string",
             "default" : "python/cli"
+          }
+        }, {
+          "name" : "truncate",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
           }
         } ],
         "responses" : {

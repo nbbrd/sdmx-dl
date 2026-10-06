@@ -1,6 +1,7 @@
 package sdmxdl.grpc.v2;
 
 import static sdmxdl.DatabaseRef.NO_DATABASE_KEYWORD;
+import static sdmxdl.HasDescription.NO_DESCRIPTION_LIMIT;
 import static sdmxdl.HasSearch.AUTO_LIMIT;
 import static sdmxdl.HasSearch.NO_QUERY;
 import static sdmxdl.Languages.ANY_KEYWORD;
@@ -201,6 +202,8 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
                 .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
                 .query(request.hasQuery() ? request.getQuery() : NO_QUERY)
                 .maxResults(request.hasMaxResults() ? request.getMaxResults() : AUTO_LIMIT)
+                .plainText(request.hasPlainText() && request.getPlainText())
+                .truncate(request.hasTruncate() ? request.getTruncate() : NO_DESCRIPTION_LIMIT)
                 .build();
     }
 

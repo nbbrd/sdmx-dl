@@ -71,8 +71,8 @@ public final class ListFlowsCommand implements Callable<Void> {
                         .database(web.getDatabase())
                         .query(listSearch.getSearchQuery())
                         .maxResults(listSearch.getMaxResults())
-                        .plainDescription(description.isPlainDescription())
-                        .maxDescriptionLength(description.getMaxDescriptionLength())
+                        .plainText(description.isPlainText())
+                        .truncate(description.getTruncate())
                         .build());
     }
 }

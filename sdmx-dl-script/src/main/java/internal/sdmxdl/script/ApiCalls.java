@@ -68,11 +68,11 @@ public final class ApiCalls implements RequestVisitor<ApiCall> {
         if (request.getMaxResults() != HasSearch.AUTO_LIMIT) {
             result.argument(ApiCall.Argument.of("maxResults", request.getMaxResults()));
         }
-        if (request.isPlainDescription()) {
-            result.argument(ApiCall.Argument.of("plainDescription", true));
+        if (request.isPlainText()) {
+            result.argument(ApiCall.Argument.of("plainText", true));
         }
-        if (request.getMaxDescriptionLength() != HasDescription.NO_DESCRIPTION_LIMIT) {
-            result.argument(ApiCall.Argument.of("maxDescriptionLength", request.getMaxDescriptionLength()));
+        if (request.getTruncate() != HasDescription.NO_DESCRIPTION_LIMIT) {
+            result.argument(ApiCall.Argument.of("truncate", request.getTruncate()));
         }
         return result.getter("Ref", "getRef")
                 .getter("Name", "getName")

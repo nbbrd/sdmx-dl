@@ -64,6 +64,8 @@ message WebFlowsRequestDto {
   optional int32 max_results = 3; /* absent = all without query, 10 with query; 0 = no limit */
   optional string database = 4;
   optional string languages = 5;
+  optional bool plain_text = 6; /* strip markup (e.g. HTML tags) from descriptions; absent = false */
+  optional int32 truncate = 7; /* maximum length of descriptions, truncated with an ellipsis; absent or 0 = no limit */
 }
 
 message WebMetaRequestDto {

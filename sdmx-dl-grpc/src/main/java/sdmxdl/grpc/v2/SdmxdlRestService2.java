@@ -7,6 +7,7 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
 import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN;
 import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
 import static sdmxdl.DatabaseRef.NO_DATABASE_KEYWORD;
+import static sdmxdl.HasDescription.NO_DESCRIPTION_LIMIT;
 import static sdmxdl.HasSearch.AUTO_LIMIT;
 import static sdmxdl.HasSearch.NO_QUERY;
 import static sdmxdl.Languages.ANY_KEYWORD;
@@ -141,13 +142,17 @@ public class SdmxdlRestService2 {
             @QueryParam("database") @DefaultValue(NO_DATABASE_KEYWORD) String database,
             @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages,
             @QueryParam("query") @DefaultValue(NO_QUERY) String query,
-            @QueryParam("maxResults") @DefaultValue("" + AUTO_LIMIT) int maxResults) {
+            @QueryParam("maxResults") @DefaultValue("" + AUTO_LIMIT) int maxResults,
+            @QueryParam("plainText") @DefaultValue("false") boolean plainText,
+            @QueryParam("truncate") @DefaultValue("" + NO_DESCRIPTION_LIMIT) int truncate) {
         return multiOfIO(() -> manager.usingName(source)
                         .listFlows(FlowsRequest.builder()
                                 .databaseOf(database)
                                 .languagesOf(languages)
                                 .query(query)
                                 .maxResults(maxResults)
+                                .plainText(plainText)
+                                .truncate(truncate)
                                 .build()))
                 .map(ProtoApi::fromDataflow);
     }
@@ -407,6 +412,8 @@ public class SdmxdlRestService2 {
             @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages,
             @QueryParam("query") @DefaultValue(NO_QUERY) String query,
             @QueryParam("maxResults") @DefaultValue("" + AUTO_LIMIT) int maxResults,
+            @QueryParam("plainText") @DefaultValue("false") boolean plainText,
+            @QueryParam("truncate") @DefaultValue("" + NO_DESCRIPTION_LIMIT) int truncate,
             @QueryParam("target") @DefaultValue(ProtoScript.DEFAULT_TARGET) String target,
             @QueryParam("cliLauncher") List<String> cliLauncher,
             @QueryParam("restEndpoint") String restEndpoint,
@@ -422,6 +429,8 @@ public class SdmxdlRestService2 {
                         .languagesOf(languages)
                         .query(query)
                         .maxResults(maxResults)
+                        .plainText(plainText)
+                        .truncate(truncate)
                         .build(),
                 target,
                 cliLauncher,

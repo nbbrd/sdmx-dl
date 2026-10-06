@@ -114,8 +114,8 @@ public final class Provider<SOURCE extends Source> {
      * {@link sdmxdl.web.Search#ofFlows(java.util.Collection)} and returned best match first,
      * limited to {@link FlowsRequest#getEffectiveMaxResults()} results.
      *
-     * <p>When {@link FlowsRequest#isPlainDescription()} is {@code true} and/or
-     * {@link FlowsRequest#getMaxDescriptionLength()} is set, each flow's description is
+     * <p>When {@link FlowsRequest#isPlainText()} is {@code true} and/or
+     * {@link FlowsRequest#getTruncate()} is set, each flow's description is
      * cleaned (markup stripped) and/or truncated accordingly; see {@link HasDescription}.
      *
      * @param request database-level request parameters (non-null)
@@ -149,11 +149,10 @@ public final class Provider<SOURCE extends Source> {
      * @return a function transforming a flow's description according to the request
      */
     private static UnaryOperator<Flow> flowTransformer(FlowsRequest request) {
-        return !request.isPlainDescription() && request.getMaxDescriptionLength() == HasDescription.NO_DESCRIPTION_LIMIT
+        return !request.isPlainText() && request.getTruncate() == HasDescription.NO_DESCRIPTION_LIMIT
                 ? UnaryOperator.identity()
                 : flow -> flow.toBuilder()
-                        .description(
-                                flow.getDescription(request.isPlainDescription(), request.getMaxDescriptionLength()))
+                        .description(flow.getDescription(request.isPlainText(), request.getTruncate()))
                         .build();
     }
 

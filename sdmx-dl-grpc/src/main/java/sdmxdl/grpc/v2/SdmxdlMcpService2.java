@@ -67,6 +67,14 @@ public class SdmxdlMcpService2 {
             "Keep only the N most recent observations of each series (default 0 = no limit, i.e. full history). Applied after the period filters.";
     private static final String SCRIPT_MAX_RESULTS_ARG =
             "Maximum number of entries to return: 0 for no limit, -1 (default) for no limit without query and 10 with a query.";
+    private static final String PLAIN_TEXT_ARG =
+            "Strip markup (e.g. HTML tags) and collapse whitespace in flow descriptions (default true).";
+    private static final String TRUNCATE_ARG =
+            "Maximum length of flow descriptions, truncated with an ellipsis (default 200; use 0 for no limit).";
+    private static final String SCRIPT_PLAIN_TEXT_ARG =
+            "Strip markup (e.g. HTML tags) and collapse whitespace in flow descriptions (default false).";
+    private static final String SCRIPT_TRUNCATE_ARG =
+            "Maximum length of flow descriptions, truncated with an ellipsis (default 0 = no limit).";
     private static final String TARGET_ARG =
             "Script target as '<language>/<transport>', exactly as returned by listScriptTargets (default 'python/cli'). The 'cli' transport calls the sdmx-dl command-line tool; the 'rest' transport calls the sdmx-dl REST server.";
     private static final String CLI_LAUNCHER_ARG =
@@ -78,7 +86,10 @@ public class SdmxdlMcpService2 {
     private static final String PROPERTIES_ARG =
             "Target-specific properties as a list of '<name>=<value>', where names are taken from the 'properties' returned by listScriptTargets. Omit when not needed.";
 
-    private static final int MAX_DESCRIPTION_LENGTH = 200;
+    private static final String DEFAULT_PLAIN_TEXT = "true";
+    private static final String DEFAULT_TRUNCATE = "200";
+    private static final String DEFAULT_SCRIPT_PLAIN_TEXT = "false";
+    private static final String DEFAULT_SCRIPT_TRUNCATE = "" + HasDescription.NO_DESCRIPTION_LIMIT;
     private static final String DEFAULT_LAST_N = "20";
     private static final String DEFAULT_SCRIPT_LAST_N = "0";
     private static final String DEFAULT_FIRST_N = "0";
@@ -155,22 +166,25 @@ public class SdmxdlMcpService2 {
 
     @Tool(
             description =
-                    "List or search the data flows (datasets) of a source; this is how you find the dataset that holds a given indicator. A source can expose thousands of flows, so pass a topic as 'query' (e.g. 'exchange rates', 'unemployment') to rank them by relevance instead of listing them all. Empty 'query' returns flows sorted by ref. Each entry gives the flow ref (to use as 'flow'), its structure ref, a name and a plain-text description truncated to about 200 characters. Next step: call getMeta or listDimensions on the chosen flow.")
+                    "List or search the data flows (datasets) of a source; this is how you find the dataset that holds a given indicator. A source can expose thousands of flows, so pass a topic as 'query' (e.g. 'exchange rates', 'unemployment') to rank them by relevance instead of listing them all. Empty 'query' returns flows sorted by ref.                     Each entry gives the flow ref (to use as 'flow'), its structure ref, a name and a description (plain text truncated to 200 characters by default). Next step: call getMeta or listDimensions on the chosen flow.")
     public List<FlowDto> listFlows(
             @ToolArg(description = SOURCE_ARG) String source,
             @ToolArg(description = QUERY_ARG, required = false, defaultValue = DEFAULT_QUERY) String query,
             @ToolArg(description = DATABASE_ARG, required = false, defaultValue = NO_DATABASE_KEYWORD) String database,
             @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages,
             @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = DEFAULT_MAX_RESULTS)
-                    int maxResults)
+                    int maxResults,
+            @ToolArg(description = PLAIN_TEXT_ARG, required = false, defaultValue = DEFAULT_PLAIN_TEXT)
+                    boolean plainText,
+            @ToolArg(description = TRUNCATE_ARG, required = false, defaultValue = DEFAULT_TRUNCATE) int truncate)
             throws IOException {
         FlowsRequest request = FlowsRequest.builder()
                 .databaseOf(database)
                 .languagesOf(languages)
                 .query(query)
                 .maxResults(maxResults)
-                .plainDescription(true)
-                .maxDescriptionLength(MAX_DESCRIPTION_LENGTH)
+                .plainText(plainText)
+                .truncate(truncate)
                 .build();
         return manager.using(getPublicSourceForMcp(source)).listFlows(request).stream()
                 .map(ProtoApi::fromDataflow)
@@ -375,6 +389,10 @@ public class SdmxdlMcpService2 {
             @ToolArg(description = SCRIPT_LANGUAGES_ARG, required = false, defaultValue = ANY_KEYWORD) String languages,
             @ToolArg(description = SCRIPT_MAX_RESULTS_ARG, required = false, defaultValue = "" + AUTO_LIMIT)
                     int maxResults,
+            @ToolArg(description = SCRIPT_PLAIN_TEXT_ARG, required = false, defaultValue = DEFAULT_SCRIPT_PLAIN_TEXT)
+                    boolean plainText,
+            @ToolArg(description = SCRIPT_TRUNCATE_ARG, required = false, defaultValue = DEFAULT_SCRIPT_TRUNCATE)
+                    int truncate,
             @ToolArg(description = TARGET_ARG, required = false, defaultValue = ProtoScript.DEFAULT_TARGET)
                     String target,
             @ToolArg(description = CLI_LAUNCHER_ARG, required = false) List<String> cliLauncher,
@@ -387,6 +405,8 @@ public class SdmxdlMcpService2 {
                 .languagesOf(languages)
                 .query(query)
                 .maxResults(maxResults)
+                .plainText(plainText)
+                .truncate(truncate)
                 .build();
         return generateScript(source, request, target, cliLauncher, restEndpoint, outputFile, properties);
     }

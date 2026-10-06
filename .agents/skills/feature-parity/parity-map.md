@@ -76,6 +76,8 @@ Rule of thumb: only mark something n/a or waived when it is a deliberate design 
 | restEndpoint       |              |                          |                        |             |             |         |
 | outputFile         |              |                          | output                 |             |             |         |
 | properties         |              |                          | property               |             | property    |         |
+| plainText          |              |                          |                        |             |             |         |
+| truncate           |              |                          |                        |             |             |         |
 
 ## Waivers
 
@@ -92,6 +94,8 @@ Rule of thumb: only mark something n/a or waived when it is a deliberate design 
 | checkAccess   | languages | *   | n/a     | access check has no localized labels               |
 | listStatuses  | languages | *   | n/a     | statuses have no localized labels                  |
 | fetchKeys | detail     | cli    | n/a     | `fetch keys` is the SERIES_KEYS_ONLY detail itself |
+| listFlows | plainText  | mcp    | default | plain text keeps LLM responses small               |
+| listFlows | truncate   | mcp    | default | truncated descriptions keep LLM responses small    |
 
 ## Ignore
 

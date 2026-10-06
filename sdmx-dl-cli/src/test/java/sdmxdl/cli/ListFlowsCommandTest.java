@@ -61,8 +61,8 @@ public class ListFlowsCommandTest {
                         src.getPath(),
                         "-o",
                         out.getPath(),
-                        "--plain-description",
-                        "--max-description-length",
+                        "--plain-text",
+                        "--truncate",
                         "10"))
                 .isEqualTo(CommandLine.ExitCode.OK);
         assertThat(watcher.getOut()).isEmpty();

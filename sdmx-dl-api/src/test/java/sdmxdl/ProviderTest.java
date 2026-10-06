@@ -162,7 +162,7 @@ public class ProviderTest {
     }
 
     @Test
-    public void testListFlowsWithPlainDescription() throws IOException {
+    public void testListFlowsWithPlainText() throws IOException {
         Flow cpi = Flow.builder()
                 .ref(FlowRef.of("NBB", "CPI", "v1.0"))
                 .structureRef(STRUCT_REF)
@@ -171,14 +171,13 @@ public class ProviderTest {
                 .build();
         Provider<WebSource> provider = providerOfFlows(Collections.singletonList(cpi));
 
-        assertThat(provider.listFlows(
-                        FlowsRequest.builder().plainDescription(true).build()))
+        assertThat(provider.listFlows(FlowsRequest.builder().plainText(true).build()))
                 .extracting(Flow::getDescription)
                 .containsExactly("Monthly index");
     }
 
     @Test
-    public void testListFlowsWithMaxDescriptionLength() throws IOException {
+    public void testListFlowsWithTruncate() throws IOException {
         Flow cpi = Flow.builder()
                 .ref(FlowRef.of("NBB", "CPI", "v1.0"))
                 .structureRef(STRUCT_REF)
@@ -187,8 +186,7 @@ public class ProviderTest {
                 .build();
         Provider<WebSource> provider = providerOfFlows(Collections.singletonList(cpi));
 
-        assertThat(provider.listFlows(
-                        FlowsRequest.builder().maxDescriptionLength(5).build()))
+        assertThat(provider.listFlows(FlowsRequest.builder().truncate(5).build()))
                 .extracting(Flow::getDescription)
                 .containsExactly("hell…");
     }

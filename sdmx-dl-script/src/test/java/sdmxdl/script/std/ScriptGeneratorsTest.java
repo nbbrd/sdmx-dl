@@ -98,8 +98,8 @@ public class ScriptGeneratorsTest {
                         FlowsRequest.builder()
                                 .query("it's \"exchange\" 100% $rates #(lf)")
                                 .maxResults(5)
-                                .plainDescription(true)
-                                .maxDescriptionLength(80)
+                                .plainText(true)
+                                .truncate(80)
                                 .build())
                 .collect(Collectors.toList());
     }

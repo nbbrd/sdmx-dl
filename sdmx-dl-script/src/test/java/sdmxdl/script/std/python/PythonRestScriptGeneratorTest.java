@@ -82,32 +82,21 @@ public class PythonRestScriptGeneratorTest {
 
     @Test
     public void testFlows() {
-        FlowsRequest request = FlowsRequest.builder()
-                .plainDescription(true)
-                .maxDescriptionLength(80)
-                .build();
+        FlowsRequest request =
+                FlowsRequest.builder().plainText(true).truncate(80).build();
 
         Script script = x.generateScript(
                 "ECB", request, ScriptOptions.builder().outputFile("flows.csv").build());
 
-        assertThat(script.getWarnings()).hasSize(2);
+        assertThat(script.getWarnings()).isEmpty();
         assertThat(script.getContent())
-                .isEqualTo(
-                        "# Warning: Plain description is not supported by the web service; descriptions are kept as is\n"
-                                + "# Warning: Max description length is not supported by the web service; descriptions are not truncated\n"
-                                + "\n"
-                                + "import csv\n"
-                                + "import json\n"
-                                + "import urllib.request\n"
-                                + "\n"
-                                + "with urllib.request.urlopen(\"http://localhost:4559/sdmx-dl/v2/ECB/flows\") as response:\n"
-                                + "    payload = json.load(response)\n"
-                                + "\n"
-                                + "with open(\"flows.csv\", \"w\", newline=\"\", encoding=\"utf-8\") as output:\n"
-                                + "    writer = csv.writer(output)\n"
-                                + "    writer.writerow([\"Ref\", \"Name\", \"Description\"])\n"
-                                + "    for item in payload:\n"
-                                + "        writer.writerow([item.get(\"ref\", \"\"), item.get(\"name\", \"\"), item.get(\"description\", \"\")])\n");
+                .contains("params = urllib.parse.urlencode({\"plainText\": \"true\", \"truncate\": 80})\n")
+                .contains(
+                        "with urllib.request.urlopen(f\"http://localhost:4559/sdmx-dl/v2/ECB/flows?{params}\") as response:\n")
+                .contains("with open(\"flows.csv\", \"w\", newline=\"\", encoding=\"utf-8\") as output:\n")
+                .contains("    writer.writerow([\"Ref\", \"Name\", \"Description\"])\n")
+                .contains(
+                        "        writer.writerow([item.get(\"ref\", \"\"), item.get(\"name\", \"\"), item.get(\"description\", \"\")])\n");
     }
 
     @Test

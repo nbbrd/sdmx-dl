@@ -15,8 +15,8 @@ public class FlowsRequestTest {
 
         assertThat(request.getDatabase()).isEqualTo(DatabaseRef.NO_DATABASE);
         assertThat(request.getLanguages()).isEqualTo(Languages.ANY);
-        assertThat(request.isPlainDescription()).isFalse();
-        assertThat(request.getMaxDescriptionLength()).isEqualTo(HasDescription.NO_DESCRIPTION_LIMIT);
+        assertThat(request.isPlainText()).isFalse();
+        assertThat(request.getTruncate()).isEqualTo(HasDescription.NO_DESCRIPTION_LIMIT);
     }
 
     @Test
@@ -30,12 +30,10 @@ public class FlowsRequestTest {
 
     @Test
     public void testDescriptionOptions() {
-        FlowsRequest request = FlowsRequest.builder()
-                .plainDescription(true)
-                .maxDescriptionLength(42)
-                .build();
+        FlowsRequest request =
+                FlowsRequest.builder().plainText(true).truncate(42).build();
 
-        assertThat(request.isPlainDescription()).isTrue();
-        assertThat(request.getMaxDescriptionLength()).isEqualTo(42);
+        assertThat(request.isPlainText()).isTrue();
+        assertThat(request.getTruncate()).isEqualTo(42);
     }
 }

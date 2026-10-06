@@ -51,8 +51,8 @@ Options used by `list flows` and `search flows` to clean up the flow `Descriptio
 
 | Name                                                                       | Shortcut | Parameter | Description                                                       |
 |-----------------------------------------------------------------------------|----------|-----------|----------------------------------------------------------------------|
-| <a id="plain-description" href="#plain-description">`--plain-description`</a> | -      | -         | Strip markup (e.g. HTML tags) and collapse whitespace in descriptions. |
-| <a id="max-description-length" href="#max-description-length">`--max-description-length`</a> | -      | `<length>` | Maximum length of descriptions, truncated with an ellipsis (default: `0`, meaning no limit). |
+| <a id="plain-text" href="#plain-text">`--plain-text`</a>                  | -        | -          | Strip markup (e.g. HTML tags) and collapse whitespace in descriptions. |
+| <a id="truncate" href="#truncate">`--truncate`</a>                        | -        | `<length>` | Maximum length of descriptions, truncated with an ellipsis (default: `0`, meaning no limit). |
 
 ## Data filtering
 

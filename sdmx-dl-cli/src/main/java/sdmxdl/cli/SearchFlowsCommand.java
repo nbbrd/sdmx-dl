@@ -61,8 +61,8 @@ public final class SearchFlowsCommand implements Callable<Void> {
                         .query(query)
                         .maxResults(maxResults)
                         .database(web.getDatabase())
-                        .plainDescription(description.isPlainDescription())
-                        .maxDescriptionLength(description.getMaxDescriptionLength())
+                        .plainText(description.isPlainText())
+                        .truncate(description.getTruncate())
                         .build());
     }
 }

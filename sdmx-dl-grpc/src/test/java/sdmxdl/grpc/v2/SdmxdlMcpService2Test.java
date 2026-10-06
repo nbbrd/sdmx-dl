@@ -108,6 +108,20 @@ public class SdmxdlMcpService2Test {
     }
 
     @Test
+    public void flowsTruncatesDescriptions() {
+        try (McpAssured.McpStreamableTestClient client = McpAssured.newConnectedStreamableClient()) {
+            client.when()
+                    .toolsCall("listFlows", Map.of("source", "BBK", "truncate", 10), r -> {
+                        assertThat(r).returns(false, ToolResponse::isError);
+                        assertThat(fromJsonArray(firstText(r)))
+                                .extracting(flow -> flow.get("description").asText())
+                                .containsExactly("Exchange…");
+                    })
+                    .thenAssertResults();
+        }
+    }
+
+    @Test
     public void flowsReturnsErrorForInvalidSource() {
         try (McpAssured.McpStreamableTestClient client = McpAssured.newConnectedStreamableClient()) {
             client.when()
@@ -577,6 +591,21 @@ public class SdmxdlMcpService2Test {
                                                 "[\"java\", \"-jar\", \"sdmx-dl-cli-bin.jar\", \"list\", \"flows\", \"ECB\", \"-q\", \"exchange\"]")
                                         .contains("flows.csv");
                             })
+                    .thenAssertResults();
+        }
+    }
+
+    @Test
+    public void flowsScriptUsesDescriptionOptions() {
+        try (McpAssured.McpStreamableTestClient client = McpAssured.newConnectedStreamableClient()) {
+            client.when()
+                    .toolsCall("generateFlowsScript", Map.of("source", "ECB", "plainText", true, "truncate", 80), r -> {
+                        assertThat(r).returns(false, ToolResponse::isError);
+                        ScriptDto script = fromJson(ScriptDto.class, firstText(r));
+                        assertThat(script.getContent())
+                                .contains(
+                                        "[\"sdmx-dl\", \"list\", \"flows\", \"ECB\", \"--plain-text\", \"--truncate\", \"80\"]");
+                    })
                     .thenAssertResults();
         }
     }

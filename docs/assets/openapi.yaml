@@ -863,11 +863,22 @@ paths:
           type: integer
           format: int32
           default: -1
+      - name: plainText
+        in: query
+        schema:
+          type: boolean
+          default: false
       - name: query
         in: query
         schema:
           type: string
           default: ""
+      - name: truncate
+        in: query
+        schema:
+          type: integer
+          format: int32
+          default: 0
       responses:
         "200":
           description: OK
@@ -918,6 +929,11 @@ paths:
         in: query
         schema:
           type: string
+      - name: plainText
+        in: query
+        schema:
+          type: boolean
+          default: false
       - name: property
         in: query
         schema:
@@ -938,6 +954,12 @@ paths:
         schema:
           type: string
           default: python/cli
+      - name: truncate
+        in: query
+        schema:
+          type: integer
+          format: int32
+          default: 0
       responses:
         "200":
           description: "The generated script, as a JSON object by default or as a\

@@ -234,6 +234,7 @@ ECB:SEE(1.0),Securities exchange - Trading Statistics,
 
 - Search is scoped to a single source; [discover sources](#sources) first if you don't know which source to search within.
 - Some sources expose several databases; pass a `database` to scope the listing (defaults to the source's single/default database otherwise) — see [Databases](#databases).
+- Descriptions may contain markup (e.g. HTML tags) and be quite long; pass `plainText` to strip markup and `truncate` to limit their length (CLI: `--plain-text` and `--truncate`; gRPC: `plain_text` and `truncate`). The MCP tools return plain descriptions truncated to 200 characters by default.
 
 ## Next step
 

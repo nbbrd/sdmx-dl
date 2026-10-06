@@ -60,11 +60,11 @@ public final class CliCalls implements RequestVisitor<CliCall> {
         appendDatabase(result, request.getDatabase());
         appendLanguages(result, request.getLanguages());
         appendSearch(result, request);
-        if (request.isPlainDescription()) {
-            result.argument("--plain-description");
+        if (request.isPlainText()) {
+            result.argument("--plain-text");
         }
-        if (request.getMaxDescriptionLength() != HasDescription.NO_DESCRIPTION_LIMIT) {
-            result.argument("--max-description-length").argument(String.valueOf(request.getMaxDescriptionLength()));
+        if (request.getTruncate() != HasDescription.NO_DESCRIPTION_LIMIT) {
+            result.argument("--truncate").argument(String.valueOf(request.getTruncate()));
         }
         return result.column("Ref").column("Name").column("Description").build();
     }
