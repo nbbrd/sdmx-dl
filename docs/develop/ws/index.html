@@ -14,7 +14,7 @@
 
   <meta name="description" content="sdmx-dl WS is a web service that serves as a bridge to any application or language.
 This service has three endpoints:
-a gRPC endpoint which has the best performances but a limited set of clients a REST endpoint which has a wider range of clients but is less efficient an MCP endpoint which lets AI assistants and agents browse and fetch data These endpoints also provides specifications (.proto files and OpenAPI respectively) that can be used to generate client code. They are designed to operate locally as well as on remote machines." />
+a gRPC endpoint which has the best performances but a limited set of clients a REST endpoint which has a wider range of clients but is less efficient an MCP endpoint which lets AI assistants and agents browse and fetch data It also serves a web UI to browse sources and fetch data from a browser, on top of the REST endpoint." />
 
     <title>Web service | sdmx-dl</title>
 
@@ -43,14 +43,14 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
   <meta property="og:description" content="
 sdmx-dl WS is a web service that serves as a bridge to any application or language.
 This service has three endpoints:
-a gRPC endpoint which has the best performances but a limited set of clients a REST endpoint which has a wider range of clients but is less efficient an MCP endpoint which lets AI assistants and agents browse and fetch data These endpoints also provides specifications (.proto files and OpenAPI respectively) that can be used to generate client code. They are designed to operate locally as well as on remote machines." />
+a gRPC endpoint which has the best performances but a limited set of clients a REST endpoint which has a wider range of clients but is less efficient an MCP endpoint which lets AI assistants and agents browse and fetch data It also serves a web UI to browse sources and fetch data from a browser, on top of the REST endpoint." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/ws/" />
 
 <meta property="article:section" content="Ws" />
     <meta
       property="article:modified_time"
-      content="2026-10-12T08:57:12+02:00"
+      content="2026-10-12T12:00:56+02:00"
     />
 
 
@@ -59,7 +59,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
   <meta name="twitter:description" content="
 sdmx-dl WS is a web service that serves as a bridge to any application or language.
 This service has three endpoints:
-a gRPC endpoint which has the best performances but a limited set of clients a REST endpoint which has a wider range of clients but is less efficient an MCP endpoint which lets AI assistants and agents browse and fetch data These endpoints also provides specifications (.proto files and OpenAPI respectively) that can be used to generate client code. They are designed to operate locally as well as on remote machines." />
+a gRPC endpoint which has the best performances but a limited set of clients a REST endpoint which has a wider range of clients but is less efficient an MCP endpoint which lets AI assistants and agents browse and fetch data It also serves a web UI to browse sources and fetch data from a browser, on top of the REST endpoint." />
 
 
   <script type="application/ld+json">
@@ -70,8 +70,8 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
       "name": "Web service",
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/ws/",
       "headline": "Web service",
-      "description": "\nsdmx-dl WS is a web service that serves as a bridge to any application or language.\nThis service has three endpoints:\na gRPC endpoint which has the best performances but a limited set of clients a REST endpoint which has a wider range of clients but is less efficient an MCP endpoint which lets AI assistants and agents browse and fetch data These endpoints also provides specifications (.proto files and OpenAPI respectively) that can be used to generate client code. They are designed to operate locally as well as on remote machines.",
-      "wordCount": "1140",
+      "description": "\nsdmx-dl WS is a web service that serves as a bridge to any application or language.\nThis service has three endpoints:\na gRPC endpoint which has the best performances but a limited set of clients a REST endpoint which has a wider range of clients but is less efficient an MCP endpoint which lets AI assistants and agents browse and fetch data It also serves a web UI to browse sources and fetch data from a browser, on top of the REST endpoint.",
+      "wordCount": "1161",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -82,7 +82,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-12T08:57:12.00Z",
+      "dateModified": "2026-10-12T12:00:56.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1471,6 +1471,60 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
             </label>
 
             
+              
+  
+
+
+  <ul class="gdoc-nav__list">
+    
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/ws/web-ui/"
+                    class="gdoc-nav__entry"
+                  >
+                    Web UI
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+  </ul>
+
+            
           </li>
         
       
@@ -1706,6 +1760,10 @@ This service has three endpoints:</p>
   href="#mcp-endpoint"
 >MCP endpoint</a> which lets <strong>AI assistants and agents</strong> browse and fetch data</li>
 </ul>
+<p>It also serves a <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/ws/web-ui/"
+>web UI</a> to browse sources and fetch data from a browser, on top of the REST endpoint.</p>
 <p>These endpoints also provides specifications (<a
   class="gdoc-markdown__link"
   href="https://grpc.io/docs/what-is-grpc/introduction/#working-with-protocol-buffers"
@@ -2914,9 +2972,11 @@ Each series has a <code>key</code>, optional series-level <code>meta</code>, and
 
         
         
-      
-    
+          
+  
+  
 
+  
   
     
 
@@ -2942,6 +3002,45 @@ Each series has a <code>key</code>, optional series-level <code>meta</code>, and
             
             
           
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
+
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
         
 
         
@@ -3042,10 +3141,10 @@ Each series has a <code>key</code>, optional series-level <code>meta</code>, and
   
     <a
       class="gdoc-page__nav--next flex align-center"
-      href="/sdmx-dl/docs/develop/auth/"
-      title="Authentication"
+      href="/sdmx-dl/docs/develop/ws/web-ui/"
+      title="Web UI"
     >
-      Authentication
+      Web UI
       <i class="gdoc-icon">gdoc_arrow_right_alt</i>
     </a>
   

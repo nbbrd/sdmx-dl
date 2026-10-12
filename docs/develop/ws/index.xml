@@ -11,5 +11,12 @@
 		
 		
 			<atom:link href="https://nbbrd.github.io/sdmx-dl/docs/develop/ws/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Web UI</title>
+				<link>https://nbbrd.github.io/sdmx-dl/docs/develop/ws/web-ui/</link>
+				<pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+				<guid>https://nbbrd.github.io/sdmx-dl/docs/develop/ws/web-ui/</guid>
+				<description>&lt;p&gt;The &lt;a&#xA;  class=&#34;gdoc-markdown__link&#34;&#xA;  href=&#34;https://nbbrd.github.io/sdmx-dl/docs/develop/ws/&#34;&#xA;&gt;web service&lt;/a&gt; ships with &lt;strong&gt;SDMX-DL API Explorer&lt;/strong&gt;, a web page to browse sources and fetch data from a browser, without writing any code.&lt;br&gt;&#xA;Once the service is running, open &lt;a&#xA;  class=&#34;gdoc-markdown__link&#34;&#xA;  href=&#34;http://localhost:4559/&#34;&#xA;&gt;http://localhost:4559/&lt;/a&gt; (adjust the port if you changed &lt;code&gt;quarkus.http.port&lt;/code&gt;).&lt;/p&gt;&#xA;&lt;p&gt;The page uses the &lt;a&#xA;  class=&#34;gdoc-markdown__link&#34;&#xA;  href=&#34;https://nbbrd.github.io/sdmx-dl/docs/develop/ws/#rest-endpoint&#34;&#xA;&gt;REST endpoint&lt;/a&gt; of the same server, so everything you do in it can be reproduced with an HTTP client.&lt;br&gt;&#xA;It also links to the &lt;a&#xA;  class=&#34;gdoc-markdown__link&#34;&#xA;  href=&#34;http://localhost:4559/q/swagger-ui&#34;&#xA;&gt;OpenAPI UI&lt;/a&gt; and to the &lt;a&#xA;  class=&#34;gdoc-markdown__link&#34;&#xA;  href=&#34;http://localhost:4559/q/openapi&#34;&#xA;&gt;OpenAPI specification&lt;/a&gt;.&lt;/p&gt;</description>
+			</item>
 	</channel>
 </rss>
