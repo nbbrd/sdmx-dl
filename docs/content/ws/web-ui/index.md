@@ -44,8 +44,8 @@ The Key Builder loads the dimensions of a flow and their codes, and offers three
 
 In every mode, `+` (or an empty part) means all the codes of a dimension.
 
-Check **Only show codes with available data** to restrict the codes to those that actually have data, given the codes already selected in the other dimensions (see [Availability]({{< relref "/usage/browse#availability" >}})).
-This is useful for large code lists, but it sends one request per dimension to the source; if the source doesn't support it, the full code lists are kept.
+**Only show codes with available data** is checked by default: it restricts the codes to those that actually have data, given the codes already selected in the other dimensions (see [Availability]({{< relref "/usage/browse#availability" >}})).
+This helps with large code lists, but it sends one request per dimension to the source; uncheck it to see the full code lists. If the source doesn't support it, the full code lists are kept.
 
 ![Key Builder with available codes](keybuilder.png)
 
