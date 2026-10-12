@@ -16,12 +16,21 @@
  */
 package sdmxdl.provider.connectors.drivers;
 
+import static sdmxdl.Confidentiality.PUBLIC;
+import static sdmxdl.format.time.TimeFormats.IGNORE_ERROR;
+import static sdmxdl.provider.SdmxFix.Category.CONTENT;
+
 import it.bancaditalia.oss.sdmx.api.Codelist;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.api.SDMXReference;
-import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
+import it.bancaditalia.oss.sdmx.client.Provider;
+import it.bancaditalia.oss.sdmx.client.RestSdmx21Client;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
+import java.net.URI;
+import java.util.Map;
+import java.util.function.Supplier;
+import java.util.logging.Level;
 import nbbrd.design.DirectImpl;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
@@ -35,15 +44,6 @@ import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 
-import java.net.URI;
-import java.util.Map;
-import java.util.function.Supplier;
-import java.util.logging.Level;
-
-import static sdmxdl.Confidentiality.PUBLIC;
-import static sdmxdl.format.time.TimeFormats.IGNORE_ERROR;
-import static sdmxdl.provider.SdmxFix.Category.CONTENT;
-
 /**
  * @author Philippe Charles
  */
@@ -54,17 +54,14 @@ public final class InseeDriver implements Driver {
     private static final String CONNECTORS_INSEE = "CONNECTORS_INSEE";
 
     @lombok.experimental.Delegate
-    private final DriverSupport support = DriverSupport
-            .builder()
+    private final DriverSupport support = DriverSupport.builder()
             .id(CONNECTORS_INSEE)
             .rank(WRAPPED_DRIVER_RANK)
-            .connectorOf(GenericRestClientFactory
-                    .builder()
+            .connectorOf(GenericRestClientFactory.builder()
                     .supplier(InseeClient::new)
                     .obsFactory(OBS_FACTORY)
                     .build())
-            .source(WebSource
-                    .builder()
+            .source(WebSource.builder()
                     .id("INSEE")
                     .name("fr", "Institut national de la statistique et des études économiques")
                     .driver(CONNECTORS_INSEE)
@@ -76,10 +73,10 @@ public final class InseeDriver implements Driver {
                     .build())
             .build();
 
-    private final static class InseeClient extends RestSdmxClient implements HasDetailSupported {
+    private static final class InseeClient extends RestSdmx21Client implements HasDetailSupported {
 
-        private InseeClient(URI endpoint, Map<?, ?> properties) {
-            super("", endpoint, false, false, true);
+        private InseeClient(URI endpoint, Map<?, ?> properties) throws SdmxException {
+            super(ConnectorsRestClient.newProvider(endpoint, Provider.AuthenticationMethods.NONE, false, true));
         }
 
         @Override
@@ -99,7 +96,7 @@ public final class InseeDriver implements Driver {
         private void fixIds(DataFlowStructure dsd) {
             for (Dimension d : dsd.getDimensions()) {
                 if (d.getId().endsWith("6")) {
-//                    d.setId(getValidId(d.getId()));
+                    //                    d.setId(getValidId(d.getId()));
                 }
             }
         }
@@ -108,38 +105,41 @@ public final class InseeDriver implements Driver {
             return id.substring(0, id.length() - 1);
         }
 
-        @SdmxFix(id = 4, category = CONTENT, cause = "Some codes are missing in dsd even when requested with 'references=children'")
+        @SdmxFix(
+                id = 4,
+                category = CONTENT,
+                cause = "Some codes are missing in dsd even when requested with 'references=children'")
         private void fixMissingCodes(DataFlowStructure dsd) throws SdmxException {
             for (Dimension d : dsd.getDimensions()) {
                 SDMXReference codelist = d.getCodeList();
-//                if (codelist.isEmpty()) {
-//                    loadMissingCodes(codelist);
-//                }
+                //                if (codelist.isEmpty()) {
+                //                    loadMissingCodes(codelist);
+                //                }
             }
         }
 
         private void loadMissingCodes(Codelist codelist) throws SdmxException {
-//            try {
-//                codelist.setCodes(super.getCodes(codelist.getId(), codelist.getAgency(), codelist.getVersion()));
-//            } catch (SdmxException ex) {
-//                if (!Connectors.isNoResultMatchingQuery(ex)) {
-//                    throw ex;
-//                }
+            //            try {
+            //                codelist.setCodes(super.getCodes(codelist.getId(), codelist.getAgency(),
+            // codelist.getVersion()));
+            //            } catch (SdmxException ex) {
+            //                if (!Connectors.isNoResultMatchingQuery(ex)) {
+            //                    throw ex;
+            //                }
             LOGGER.log(Level.WARNING, "Cannot retrieve codes for ''{0}''", codelist.getFullIdentifier());
-//            }
+            //            }
         }
     }
 
-    private static final StandardReportingFormat REPORTING_TWO_MONTH = StandardReportingFormat
-            .builder()
+    private static final StandardReportingFormat REPORTING_TWO_MONTH = StandardReportingFormat.builder()
             .indicator('B')
             .duration(Duration.parse("P2M"))
             .limitPerYear(6)
             .build();
 
-    private static final Parser<ObservationalTimePeriod> EXTENDED_TIME_PARSER =
-            TimeFormats.getObservationalTimePeriod(IGNORE_ERROR)
-                    .orElse(TimeFormats.onReportingFormat(REPORTING_TWO_MONTH, IGNORE_ERROR));
+    private static final Parser<ObservationalTimePeriod> EXTENDED_TIME_PARSER = TimeFormats.getObservationalTimePeriod(
+                    IGNORE_ERROR)
+            .orElse(TimeFormats.onReportingFormat(REPORTING_TWO_MONTH, IGNORE_ERROR));
 
     private static final Supplier<ObsParser> OBS_FACTORY = () -> new ObsParser(EXTENDED_TIME_PARSER, Parser.onDouble());
 }

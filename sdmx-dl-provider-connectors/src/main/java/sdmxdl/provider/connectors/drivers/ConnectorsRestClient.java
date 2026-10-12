@@ -16,38 +16,28 @@
  */
 package sdmxdl.provider.connectors.drivers;
 
-import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
-import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
-import it.bancaditalia.oss.sdmx.event.OpenEvent;
-import it.bancaditalia.oss.sdmx.event.RedirectionEvent;
-import it.bancaditalia.oss.sdmx.event.RestSdmxEvent;
-import it.bancaditalia.oss.sdmx.event.RestSdmxEventListener;
-import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
-import lombok.NonNull;
-import nbbrd.io.text.BaseProperty;
-import org.jspecify.annotations.Nullable;
-import sdmxdl.*;
-import sdmxdl.EventListener;
-import sdmxdl.format.ObsParser;
-import sdmxdl.provider.DataRef;
-import sdmxdl.provider.Marker;
-import sdmxdl.provider.web.RestClient;
-import sdmxdl.provider.web.WebEvents;
-import sdmxdl.web.WebSource;
-import sdmxdl.web.spi.Network;
-import sdmxdl.web.spi.SSLFactory;
-import sdmxdl.web.spi.WebContext;
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static sdmxdl.provider.web.DriverProperties.*;
 
+import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
+import it.bancaditalia.oss.sdmx.api.SDMXVersion;
+import it.bancaditalia.oss.sdmx.client.AbstractRestSdmxClient;
+import it.bancaditalia.oss.sdmx.client.Provider;
+import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static sdmxdl.provider.web.DriverProperties.*;
+import lombok.NonNull;
+import nbbrd.io.text.BaseProperty;
+import sdmxdl.*;
+import sdmxdl.format.ObsParser;
+import sdmxdl.provider.DataRef;
+import sdmxdl.provider.Marker;
+import sdmxdl.provider.web.RestClient;
 
 /**
  * @author Philippe Charles
@@ -55,14 +45,11 @@ import static sdmxdl.provider.web.DriverProperties.*;
 @lombok.AllArgsConstructor
 final class ConnectorsRestClient implements RestClient {
 
-    @lombok.NonNull
-    private final Marker marker;
+    @lombok.NonNull private final Marker marker;
 
-    @lombok.NonNull
-    private final RestSdmxClient connector;
+    @lombok.NonNull private final AbstractRestSdmxClient<?> connector;
 
-    @lombok.NonNull
-    private final Supplier<ObsParser> dataFactory;
+    @lombok.NonNull private final Supplier<ObsParser> dataFactory;
 
     @Override
     public @NonNull Marker getMarker() {
@@ -72,10 +59,7 @@ final class ConnectorsRestClient implements RestClient {
     @Override
     public @NonNull List<Flow> getFlows() throws IOException {
         try {
-            return connector
-                    .getDataflows()
-                    .values()
-                    .stream()
+            return connector.getDataflows().values().stream()
                     .map(Connectors::toFlow)
                     .collect(Collectors.toList());
         } catch (SdmxException ex) {
@@ -108,8 +92,7 @@ final class ConnectorsRestClient implements RestClient {
     @Override
     public @NonNull Codelist getCodelist(@NonNull CodelistRef ref) throws IOException {
         try {
-            return Codelist
-                    .builder()
+            return Codelist.builder()
                     .ref(ref)
                     .codes(connector.getCodes(ref.getId(), ref.getAgency(), ref.getVersion()))
                     .build();
@@ -120,14 +103,12 @@ final class ConnectorsRestClient implements RestClient {
 
     @Override
     public @NonNull Set<Feature> getSupportedFeatures() {
-        return connector instanceof HasDetailSupported
-                && ((HasDetailSupported) connector).isDetailSupported()
+        return connector instanceof HasDetailSupported && ((HasDetailSupported) connector).isDetailSupported()
                 ? EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD, Feature.DATA_QUERY_DETAIL)
                 : EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD);
     }
 
-    @NonNull
-    @Override
+    @NonNull @Override
     public Optional<URI> testClient() throws IOException {
         try {
             connector.getDataflows();
@@ -137,61 +118,40 @@ final class ConnectorsRestClient implements RestClient {
         return Optional.empty();
     }
 
-    public static final List<BaseProperty> CONNECTORS_CONNECTION_PROPERTIES = unmodifiableList(asList(
-            CONNECT_TIMEOUT_PROPERTY,
-            READ_TIMEOUT_PROPERTY,
-            MAX_REDIRECTS_PROPERTY
-    ));
+    public static final List<BaseProperty> CONNECTORS_CONNECTION_PROPERTIES =
+            unmodifiableList(asList(CONNECT_TIMEOUT_PROPERTY, READ_TIMEOUT_PROPERTY, MAX_REDIRECTS_PROPERTY));
 
-    private static List<PortableTimeSeries<Double>> getData(RestSdmxClient connector, DataRef ref, Structure dsd) throws SdmxException {
+    private static List<PortableTimeSeries<Double>> getData(
+            AbstractRestSdmxClient<?> connector, DataRef ref, Structure dsd) throws SdmxException {
         return connector.getTimeSeries(
                 Connectors.fromFlowQuery(ref.getFlowRef(), dsd.getRef()),
-                Connectors.fromStructure(dsd), ref.getQuery().getKey().toString(),
-                null, null,
+                Connectors.fromStructure(dsd),
+                ref.getQuery().getKey().toString(),
+                null,
+                null,
                 ref.getQuery().getDetail().equals(Detail.SERIES_KEYS_ONLY),
-                null, false);
+                null,
+                false);
     }
 
     private static IOException wrap(SdmxException ex, String format, Object... args) {
         return new IOException(String.format(Locale.ROOT, format, args), ex);
     }
 
-    static void configure(RestSdmxClient client, WebSource source, WebContext context) {
-//        client.setLanguages(Connectors.fromLanguages(context.getLanguages()));
-        client.setConnectTimeout(CONNECT_TIMEOUT_PROPERTY.get(source.getProperties()));
-        client.setReadTimeout(READ_TIMEOUT_PROPERTY.get(source.getProperties()));
-        Network network = context.getNetwork(source);
-        client.setProxySelector(network.getProxySelector());
-        SSLFactory sslFactory = network.getSSLFactory();
-        client.setSslSocketFactory(sslFactory.getSSLSocketFactory());
-        client.setHostnameVerifier(sslFactory.getHostnameVerifier());
-        client.setMaxRedirects(MAX_REDIRECTS_PROPERTY.get(source.getProperties()));
-        EventListener contextOnEvent = context.getEventListener(source);
-        RestSdmxEventListener eventListener = new DefaultRestSdmxEventListener(contextOnEvent, client.getName());
-        client.setRedirectionEventListener(eventListener);
-        client.setOpenEventListener(eventListener);
+    static Provider newProvider(
+            URI endpoint, Provider.AuthenticationMethods auth, boolean needsUrlEncoding, boolean supportsCompression)
+            throws SdmxException {
+        return newProvider(endpoint, auth, needsUrlEncoding, supportsCompression, SDMXVersion.V2);
     }
 
-    @lombok.AllArgsConstructor
-    private static final class DefaultRestSdmxEventListener implements RestSdmxEventListener {
-
-        private final @Nullable EventListener listener;
-
-        @NonNull
-        private final String marker;
-
-        @Override
-        public void onSdmxEvent(RestSdmxEvent event) {
-            if (listener != null) {
-                if (event instanceof RedirectionEvent) {
-                    RedirectionEvent redirectionEvent = (RedirectionEvent) event;
-                    listener.accept(marker, WebEvents.onRedirection(redirectionEvent.getUrl(), redirectionEvent.getRedirection()));
-                } else if (event instanceof OpenEvent) {
-                    OpenEvent openEvent = (OpenEvent) event;
-                    listener.accept(marker, WebEvents.onQuery(openEvent.getUrl(), openEvent.getProxy()));
-                }
-            }
-        }
+    static Provider newProvider(
+            URI endpoint,
+            Provider.AuthenticationMethods auth,
+            boolean needsUrlEncoding,
+            boolean supportsCompression,
+            SDMXVersion version)
+            throws SdmxException {
+        return new Provider("", endpoint, auth, needsUrlEncoding, supportsCompression, false, "", version);
     }
 
     static {

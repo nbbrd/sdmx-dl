@@ -16,22 +16,21 @@
  */
 package sdmxdl.provider.connectors.drivers;
 
+import static sdmxdl.web.spi.Driver.DRIVER_PROPERTY_PREFIX;
+
 import it.bancaditalia.oss.sdmx.api.*;
 import it.bancaditalia.oss.sdmx.api.Codelist;
 import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxResponseException;
 import it.bancaditalia.oss.sdmx.util.LocalizedText;
-import nbbrd.io.text.BooleanProperty;
-import sdmxdl.*;
-import sdmxdl.format.design.PropertyDefinition;
-
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static sdmxdl.web.spi.Driver.DRIVER_PROPERTY_PREFIX;
+import nbbrd.io.text.BooleanProperty;
+import sdmxdl.*;
+import sdmxdl.format.design.PropertyDefinition;
 
 /**
  * @author Philippe Charles
@@ -40,8 +39,7 @@ import static sdmxdl.web.spi.Driver.DRIVER_PROPERTY_PREFIX;
 public class Connectors {
 
     public Flow toFlow(Dataflow o) {
-        return Flow
-                .builder()
+        return Flow.builder()
                 .ref(FlowRef.parse(o.getFullIdentifier()))
                 .structureRef(toStructureRef(o.getDsdIdentifier()))
                 .name(o.getDescription())
@@ -49,11 +47,7 @@ public class Connectors {
     }
 
     public StructureRef toStructureRef(SDMXReference o) {
-        return StructureRef.of(
-                o.getAgency(),
-                o.getId(),
-                o.getVersion()
-        );
+        return StructureRef.of(o.getAgency(), o.getId(), o.getVersion());
     }
 
     public sdmxdl.Dimension toDimension(Dimension o) {
@@ -65,14 +59,15 @@ public class Connectors {
     }
 
     private <T extends Component.Builder<T>> T toComponent(T result, SdmxMetaElement o) {
-        return result
-                .id(o.getId())
-                .codelist(toCodelist(o.getCodeList()))
-                .name(toLabel(o));
+        return result.id(o.getId()).codelist(toCodelist(o.getCodeList())).name(toLabel(o));
     }
 
     private sdmxdl.Codelist toCodelist(SDMXReference o) {
-        return o != null ? sdmxdl.Codelist.builder().ref(CodelistRef.of(o.getAgency(), o.getId(), o.getVersion())).build() : null;
+        return o != null
+                ? sdmxdl.Codelist.builder()
+                        .ref(CodelistRef.of(o.getAgency(), o.getId(), o.getVersion()))
+                        .build()
+                : null;
     }
 
     private String toLabel(SdmxMetaElement o) {
@@ -86,17 +81,18 @@ public class Connectors {
                 .name(dsd.getName())
                 .timeDimensionId(dsd.getTimeDimension())
                 .primaryMeasureId(dsd.getMeasure())
-                .dimensions(dsd.getDimensions().stream().map(Connectors::toDimension).collect(Collectors.toList()))
-                .attributes(dsd.getAttributes().stream().map(Connectors::toAttribute).collect(Collectors.toSet()))
+                .dimensions(dsd.getDimensions().stream()
+                        .map(Connectors::toDimension)
+                        .collect(Collectors.toList()))
+                .attributes(dsd.getAttributes().stream()
+                        .map(Connectors::toAttribute)
+                        .collect(Collectors.toSet()))
                 .build();
     }
 
     public Dataflow fromFlowQuery(FlowRef flowRef, StructureRef structRef) {
-        Dataflow result = new Dataflow(
-                flowRef.getId(),
-                flowRef.getAgency(),
-                flowRef.getVersion(),
-                new LocalizedText("name"));
+        Dataflow result =
+                new Dataflow(flowRef.getId(), flowRef.getAgency(), flowRef.getVersion(), new LocalizedText("name"));
         result.setDsdIdentifier(fromStructureRef(structRef));
         return result;
     }
@@ -116,23 +112,11 @@ public class Connectors {
     }
 
     public Dimension fromDimension(sdmxdl.Dimension o, int position) {
-        Dimension result = new Dimension(o.getId(), position);
-        fromComponent(result, o);
-        return result;
+        return new Dimension(o.getId(), o.getName(), fromCodelist(o.getCodelist()), position);
     }
 
     public SdmxAttribute fromAttribute(Attribute o) {
-        SdmxAttribute result = new SdmxAttribute(o.getId());
-        fromComponent(result, o);
-        return result;
-    }
-
-    private void fromComponent(SdmxMetaElement result, Component o) {
-        result.setName(o.getName());
-        Codelist codeList = fromCodelist(o.getCodelist());
-        if (codeList != null) {
-            result.setCodeList(codeList);
-        }
+        return new SdmxAttribute(o.getId(), o.getName(), fromCodelist(o.getCodelist()));
     }
 
     private Codelist fromCodelist(sdmxdl.Codelist o) {
@@ -140,24 +124,21 @@ public class Connectors {
             return null;
         }
         Codelist result = new Codelist(
-                o.getRef().getId(),
-                o.getRef().getAgency(),
-                o.getRef().getVersion());
+                o.getRef().getId(), o.getRef().getAgency(), o.getRef().getVersion());
         result.putAll(o.getCodes());
         return result;
     }
 
     public DataFlowStructure fromStructure(Structure dsd) {
         DataFlowStructure result = new DataFlowStructure(
-                dsd.getRef().getId(),
-                dsd.getRef().getAgency(),
-                dsd.getRef().getVersion());
+                dsd.getRef().getId(), dsd.getRef().getAgency(), dsd.getRef().getVersion());
         result.setName(dsd.getName());
         result.setTimeDimension(dsd.getTimeDimensionId());
         result.setMeasure(dsd.getPrimaryMeasureId());
         List<sdmxdl.Dimension> dimensions = dsd.getDimensions();
-        IntStream.range(0, dimensions.size()).forEach(i -> result.setDimension(fromDimension(dimensions.get(i), i + 1)));
-        dsd.getAttributes().forEach(o -> result.setAttribute(fromAttribute(o)));
+        IntStream.range(0, dimensions.size())
+                .forEach(i -> result.addDimension(fromDimension(dimensions.get(i), i + 1)));
+        dsd.getAttributes().forEach(o -> result.addAttribute(fromAttribute(o)));
         return result;
     }
 
@@ -166,12 +147,13 @@ public class Connectors {
     }
 
     public boolean isNoResultMatchingQuery(SdmxException ex) {
-        return ex instanceof SdmxResponseException && ((SdmxResponseException) ex).getResponseCode() == SdmxResponseException.SDMX_NO_RESULTS_FOUND;
+        return ex instanceof SdmxResponseException
+                && ((SdmxResponseException) ex).getResponseCode() == SdmxResponseException.SDMX_NO_RESULTS_FOUND;
     }
 
     @PropertyDefinition
     public static final BooleanProperty SUPPORTS_COMPRESSION_PROPERTY =
-            BooleanProperty.of(DRIVER_PROPERTY_PREFIX + ".supportsCompression", false);
+            BooleanProperty.of(DRIVER_PROPERTY_PREFIX + ".supportsCompression", true);
 
     @PropertyDefinition
     public static final BooleanProperty NEEDS_CREDENTIALS_PROPERTY =
