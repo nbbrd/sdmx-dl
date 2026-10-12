@@ -5,6 +5,8 @@ weight: 1
 # beta and intentionally not documented here yet; revisit once it stabilizes.
 # The MCP server (sdmx-dl-grpc) has a short overview in /ws under "MCP endpoint" rather than
 # per-feature examples, since its tools map 1-to-1 onto the WS operations described here.
+# The web UI (index.html served by sdmx-dl-grpc) has its own page in /ws/web-ui rather than
+# per-feature examples, since it is a front-end of the REST endpoint.
 ---
 
 **sdmx-dl** features are available in all flavors. Pick the flavor that best fits your workflow:

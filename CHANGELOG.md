@@ -15,6 +15,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![API] Generate ready-to-use scripts from sdmx-dl requests [#1350](https://github.com/nbbrd/sdmx-dl/issues/1350)
 - ![API] Add source health check merging monitor report and live access check [#1357](https://github.com/nbbrd/sdmx-dl/issues/1357)
 - ![PROVIDER] Add a credible but obviously-fake data source for demos and testing [#1310](https://github.com/nbbrd/sdmx-dl/issues/1310)
+- ![GRPC] Add health check, availability filtering, data query options and script generation to the web UI
 
 ### Changed
 
@@ -23,6 +24,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![CLI] Hide `check status` and `check access` commands in favor of `check health`
 - ![API] Unify the dimension parameter of availability queries (id, zero-based index or first wildcard dimension) and report the selected dimension
 - ![GRPC] Serve gRPC on the HTTP port using the unified Quarkus HTTP server [#1356](https://github.com/nbbrd/sdmx-dl/issues/1356)
+- ![GRPC] Migrate the web UI to the REST v2 endpoint
 
 ### Fixed
 

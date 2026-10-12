@@ -94,6 +94,12 @@
             margin-bottom: 20px;
         }
 
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            column-gap: 15px;
+        }
+
         label {
             display: block;
             margin-bottom: 8px;
@@ -204,6 +210,40 @@
         .dropdown-content a.active {
             background-color: #003D6D;
             color: white;
+        }
+
+        .dropdown-section {
+            border-top: 2px solid #e0e0e0;
+            max-height: 260px;
+            overflow-y: auto;
+        }
+
+        .dropdown-section-title {
+            padding: 8px 15px 4px;
+            font-size: 0.75em;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .dropdown-content a.script-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .script-download {
+            margin-left: auto;
+            padding: 2px;
+            border-radius: 3px;
+            color: #666;
+        }
+
+        .script-download:hover {
+            background: #e0e0e0;
+            color: #003D6D;
         }
 
         button {
@@ -427,6 +467,13 @@
             text-align: left;
             font-weight: 600;
             border-bottom: 2px solid #e0e0e0;
+        }
+
+        .data-table th .series-title {
+            font-weight: normal;
+            font-size: 0.85em;
+            opacity: 0.85;
+            margin-top: 4px;
         }
 
         .data-table td {
@@ -1168,6 +1215,22 @@
         .source-title {
             flex: 1;
         }
+
+        .health-badge {
+            flex-shrink: 0;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            color: white;
+            background: #9e9e9e;
+            cursor: help;
+        }
+
+        .health-badge.health-ok { background: #2e7d32; }
+        .health-badge.health-warn { background: #ef6c00; }
+        .health-badge.health-error { background: #c62828; }
+        .health-badge.health-pending { background: #90a4ae; }
 
         .source-id {
             font-size: 18px;
@@ -2265,6 +2328,9 @@
                     <p style="margin-bottom: 15px; color: #666;">Browse available SDMX data sources</p>
                     <div class="button-group">
                         <button onclick="getSources()">Get Sources</button>
+                        <button onclick="checkAllSourcesHealth()" id="sources-health-btn" title="Check the health of all sources using their third-party monitor">
+                            <span class="material-symbols-outlined">monitor_heart</span> Check Health
+                        </button>
                         <div class="dropdown" id="sources-copy-dropdown" style="display: none;">
                             <button class="dropdown-button" onclick="toggleSourcesCopyDropdown()">
                                 <span class="material-symbols-outlined">content_copy</span> Copy <span class="dropdown-arrow">▼</span>
@@ -2335,6 +2401,7 @@
                                 <a href="#" onclick="copyFlowsCurlBash()"><span class="material-symbols-outlined">terminal</span> Copy as cURL (bash)</a>
                                 <a href="#" onclick="copyFlowsCurlCmd()"><span class="material-symbols-outlined">terminal</span> Copy as cURL (cmd)</a>
                                 <a href="#" onclick="copyFlowsCurlPowerShell()"><span class="material-symbols-outlined">terminal</span> Copy as PowerShell</a>
+                                <div class="dropdown-section" id="flows-script-items" style="display: none;"></div>
                             </div>
                         </div>
                     </div>
@@ -2533,6 +2600,11 @@
                         <button onclick="switchKeyInputMode('hierarchy')"><span class="material-symbols-outlined">device_hub</span> Hierarchy View</button>
                     </div>
 
+                    <label id="kb-availability-option" style="display: none; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 15px;" title="Ask the source which codes have data, given the codes already selected in the other dimensions">
+                        <input type="checkbox" id="kb-use-availability" style="width: auto; margin: 0;" onchange="setUseAvailability(this.checked)">
+                        Only show codes with available data
+                    </label>
+
                     <div id="quick-key-container" style="display: none;">
                         <div class="quick-key-input-container">
                             <h3>Quick Key Input</h3>
@@ -2599,6 +2671,33 @@
                         <label for="data-database">Database (optional):</label>
                         <input type="text" id="data-database" list="databases-list-data" placeholder="Leave empty for default">
                     </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="data-start">Start period (optional):</label>
+                            <input type="text" id="data-start" placeholder="e.g., 2020 or 2020-01">
+                        </div>
+                        <div class="form-group">
+                            <label for="data-end">End period (optional):</label>
+                            <input type="text" id="data-end" placeholder="e.g., 2024-12">
+                        </div>
+                        <div class="form-group">
+                            <label for="data-firstn">First N obs (optional):</label>
+                            <input type="number" id="data-firstn" min="1" placeholder="e.g., 10">
+                        </div>
+                        <div class="form-group">
+                            <label for="data-lastn">Last N obs (optional):</label>
+                            <input type="number" id="data-lastn" min="1" placeholder="e.g., 12">
+                        </div>
+                        <div class="form-group">
+                            <label for="data-detail">Detail:</label>
+                            <select id="data-detail">
+                                <option value="">FULL (default)</option>
+                                <option value="DATA_ONLY">DATA_ONLY</option>
+                                <option value="SERIES_KEYS_ONLY">SERIES_KEYS_ONLY</option>
+                                <option value="NO_DATA">NO_DATA</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="button-group">
                         <button onclick="getData()">Get Data</button>
                         <div class="dropdown" id="data-copy-dropdown" style="display: none;">
@@ -2610,6 +2709,7 @@
                                 <a href="#" onclick="copyDataCurlBash()"><span class="material-symbols-outlined">terminal</span> Copy as cURL (bash)</a>
                                 <a href="#" onclick="copyDataCurlCmd()"><span class="material-symbols-outlined">terminal</span> Copy as cURL (cmd)</a>
                                 <a href="#" onclick="copyDataCurlPowerShell()"><span class="material-symbols-outlined">terminal</span> Copy as PowerShell</a>
+                                <div class="dropdown-section" id="data-script-items" style="display: none;"></div>
                             </div>
                         </div>
                     </div>
@@ -2786,6 +2886,26 @@
                             <td class="param-desc">Pre-fill SDMX key</td>
                             <td class="param-example">?key=M.USD.EUR.SP00.A</td>
                         </tr>
+                        <tr>
+                            <td class="param-name">start, end</td>
+                            <td class="param-desc">Pre-fill data time range (data tab)</td>
+                            <td class="param-example">?start=2020-01&end=2024-12</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">firstN, lastN</td>
+                            <td class="param-desc">Pre-fill observations limit (data tab)</td>
+                            <td class="param-example">?lastN=12</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">detail</td>
+                            <td class="param-desc">Pre-fill data detail (data tab)</td>
+                            <td class="param-example">?detail=SERIES_KEYS_ONLY</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">label</td>
+                            <td class="param-desc">Pre-fill series label (compare tab)</td>
+                            <td class="param-example">?label=USD</td>
+                        </tr>
                     </table>
                     <p class="help-note">Parameters are applied to the selected tab. Use with <code>tab</code> parameter for best results.</p>
                 </div>
@@ -2810,22 +2930,35 @@
     </div>
 
     <script>
-        const API_BASE = '/sdmx-dl';
+        const API_BASE = '/sdmx-dl/v2';
 
         // ========================================================================
         // UTILITY FUNCTIONS
         // ========================================================================
 
         /**
-         * Escape HTML special characters to prevent XSS
+         * Escape HTML special characters to prevent XSS, in both text and attribute values
          * @param {string} text - Text to escape
          * @returns {string} - Escaped text
          */
         function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
+            if (text === undefined || text === null) return '';
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        /**
+         * Encode a value as a JavaScript string literal usable in an inline event handler attribute,
+         * e.g. onclick="doSomething(${jsArg(value)})"
+         * @param {string} value - Value to encode
+         * @returns {string} - Escaped string literal
+         */
+        function jsArg(value) {
+            return escapeHtml(JSON.stringify(value === undefined || value === null ? '' : String(value)));
         }
 
         // ========================================================================
@@ -3009,17 +3142,32 @@
         }
 
         /**
-         * Fetch API helper with error handling
-         * @param {string} endpoint - API endpoint
-         * @param {Object} body - Request body
+         * Build an absolute REST v2 URL from path segments and query parameters
+         * @param {Array<string>} segments - Path segments (encoded individually)
+         * @param {Object} params - Query parameters; empty values are skipped, arrays are repeated
+         * @param {string} suffix - Optional raw suffix appended to the last segment (e.g. ':script')
+         * @returns {string} - Absolute URL
+         */
+        function apiUrl(segments, params = {}, suffix = '') {
+            const path = segments.map(segment => encodeURIComponent(segment)).join('/');
+            const url = new URL(`${API_BASE}/${path}${suffix}`, window.location.origin);
+            Object.entries(params).forEach(([name, value]) => {
+                (Array.isArray(value) ? value : [value]).forEach(item => {
+                    if (item !== undefined && item !== null && String(item).trim() !== '') {
+                        url.searchParams.append(name, String(item).trim());
+                    }
+                });
+            });
+            return url.href;
+        }
+
+        /**
+         * GET a REST v2 URL and parse its JSON response, turning errors into exceptions
+         * @param {string} url - Absolute URL built with apiUrl
          * @returns {Promise<Object>} - Response JSON
          */
-        async function fetchAPI(endpoint, body) {
-            const response = await fetch(API_BASE + endpoint, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
-            });
+        async function getJSON(url) {
+            const response = await fetch(url, { headers: { 'Accept': 'application/json' } });
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
@@ -3030,36 +3178,139 @@
         }
 
         /**
-         * Display error in response container
-         * @param {string} containerId - ID of the container element
-         * @param {string} contentId - ID of the content element
-         * @param {string} message - Error message
+         * Copy a shell command that performs the given GET request
+         * @param {string} dropdownId - ID of the copy dropdown (closed and used for feedback)
+         * @param {string} url - Absolute URL of the request
+         * @param {string} shell - 'bash', 'cmd' or 'powershell'
          */
-        function displayError(containerId, contentId, message) {
-            const container = document.getElementById(containerId);
-            const content = document.getElementById(contentId);
-            if (container && content) {
-                container.style.display = 'block';
-                container.classList.remove('success');
-                container.classList.add('error');
-                content.textContent = `Error: ${message}`;
+        function copyRequestCommand(dropdownId, url, shell) {
+            document.getElementById(dropdownId).classList.remove('open');
+
+            if (!url) {
+                alert('No request data available.');
+                return;
+            }
+
+            let command;
+            let message;
+            switch (shell) {
+                case 'bash':
+                    command = `curl '${url.replace(/'/g, "'\\''")}'`;
+                    message = 'cURL (bash) copied!';
+                    break;
+                case 'cmd':
+                    command = `curl "${url}"`;
+                    message = 'cURL (cmd) copied!';
+                    break;
+                default:
+                    command = `Invoke-RestMethod -Uri '${url.replace(/'/g, "''")}'`;
+                    message = 'PowerShell copied!';
+            }
+
+            navigator.clipboard.writeText(command).then(() => {
+                showCopyFeedback(dropdownId, message);
+            }).catch(err => {
+                alert('Failed to copy: ' + err);
+            });
+        }
+
+        // ========================================================================
+        // SCRIPT GENERATION
+        // ========================================================================
+
+        /**
+         * Build the URL of a script generation request for the last Data or Flows request
+         * @param {string} kind - 'data' or 'flows'
+         * @param {string} target - Script target (e.g. 'python/cli')
+         * @param {Object} extra - Additional query parameters (e.g. format)
+         * @returns {string|null} - Absolute URL, or null if no request was made yet
+         */
+        function scriptUrl(kind, target, extra = {}) {
+            if (kind === 'data') {
+                const params = window.dataRequestParams;
+                if (!params) return null;
+                const { source, flow, ...query } = params;
+                return apiUrl([source, flow], { ...query, target, ...extra }, '/data:script');
+            }
+            const params = window.flowsRequestParams;
+            if (!params) return null;
+            return apiUrl([params.source], { database: params.database, target, ...extra }, '/flows:script');
+        }
+
+        /**
+         * Generate a script for the last request and copy it to the clipboard
+         * @param {string} kind - 'data' or 'flows'
+         * @param {string} target - Script target
+         */
+        async function copyScript(kind, target) {
+            const dropdownId = `${kind}-copy-dropdown`;
+            document.getElementById(dropdownId).classList.remove('open');
+
+            const url = scriptUrl(kind, target);
+            if (!url) {
+                alert('No request data available.');
+                return;
+            }
+
+            try {
+                const script = await getJSON(url);
+                await navigator.clipboard.writeText(script.content);
+                const warnings = script.warnings || [];
+                warnings.forEach(warning => console.warn(`Script ${target}: ${warning}`));
+                showCopyFeedback(dropdownId, warnings.length > 0
+                    ? `${target} copied (${warnings.length} warning${warnings.length > 1 ? 's' : ''}, see console)`
+                    : `${target} copied!`);
+            } catch (error) {
+                alert('Failed to generate script: ' + error.message);
             }
         }
 
         /**
-         * Display success in response container
-         * @param {string} containerId - ID of the container element
-         * @param {string} contentId - ID of the content element
-         * @param {Object} data - Response data
+         * Generate a script for the last request and download it as a file
+         * @param {string} kind - 'data' or 'flows'
+         * @param {string} target - Script target
          */
-        function displaySuccess(containerId, contentId, data) {
-            const container = document.getElementById(containerId);
-            const content = document.getElementById(contentId);
-            if (container && content) {
-                container.style.display = 'block';
-                container.classList.remove('error');
-                container.classList.add('success');
-                content.textContent = JSON.stringify(data, null, 2);
+        function downloadScript(kind, target) {
+            document.getElementById(`${kind}-copy-dropdown`).classList.remove('open');
+
+            const url = scriptUrl(kind, target, { format: 'raw' });
+            if (!url) {
+                alert('No request data available.');
+                return;
+            }
+
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = '';
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        }
+
+        /**
+         * Load the available script targets and add them to the Data and Flows copy menus
+         */
+        async function loadScriptTargets() {
+            try {
+                const targets = await getJSON(apiUrl(['script', 'targets']));
+                ['data', 'flows'].forEach(kind => {
+                    const container = document.getElementById(`${kind}-script-items`);
+                    const supported = targets.filter(t => (t.commands || []).includes(kind));
+                    if (!container || supported.length === 0) return;
+
+                    let html = '<div class="dropdown-section-title">Copy as script</div>';
+                    supported.forEach(t => {
+                        const target = escapeHtml(t.target);
+                        html += `<a href="#" class="script-item" onclick="event.preventDefault(); copyScript(${jsArg(kind)}, ${jsArg(t.target)})" title="Copy a ${target} script">`;
+                        html += `<span class="material-symbols-outlined">description</span> ${target}`;
+                        html += `<span class="material-symbols-outlined script-download" onclick="event.preventDefault(); event.stopPropagation(); downloadScript(${jsArg(kind)}, ${jsArg(t.target)})" title="Download as file">download</span>`;
+                        html += '</a>';
+                    });
+                    container.innerHTML = html;
+                    container.style.display = 'block';
+                });
+            } catch (error) {
+                console.error('Failed to load script targets:', error);
             }
         }
 
@@ -3390,7 +3641,12 @@
                     { fieldId: 'data-source', paramName: 'source' },
                     { fieldId: 'data-flow', paramName: 'flow' },
                     { fieldId: 'data-key', paramName: 'key' },
-                    { fieldId: 'data-database', paramName: 'database' }
+                    { fieldId: 'data-database', paramName: 'database' },
+                    { fieldId: 'data-start', paramName: 'start' },
+                    { fieldId: 'data-end', paramName: 'end' },
+                    { fieldId: 'data-firstn', paramName: 'firstN' },
+                    { fieldId: 'data-lastn', paramName: 'lastN' },
+                    { fieldId: 'data-detail', paramName: 'detail' }
                 ],
                 'compare': [
                     { fieldId: 'compare-source', paramName: 'source' },
@@ -3474,6 +3730,7 @@
                 'meta-source', 'meta-flow', 'meta-database',
                 'kb-source', 'kb-flow', 'kb-database',
                 'data-source', 'data-flow', 'data-key', 'data-database',
+                'data-start', 'data-end', 'data-firstn', 'data-lastn', 'data-detail',
                 'compare-source', 'compare-flow', 'compare-key', 'compare-database', 'compare-label'
             ];
 
@@ -3496,29 +3753,6 @@
         // API FUNCTIONS
         // ========================================================================
 
-        /**
-         * Generic API call handler with UI updates
-         * @param {string} endpoint - API endpoint
-         * @param {Object} body - Request body
-         * @param {string} responseElementId - ID of response container
-         * @param {string} contentElementId - ID of content element
-         */
-        async function apiCall(endpoint, body, responseElementId, contentElementId) {
-            const responseEl = document.getElementById(responseElementId);
-            const contentEl = document.getElementById(contentElementId);
-
-            responseEl.style.display = 'block';
-            responseEl.classList.remove('error', 'success');
-            contentEl.textContent = 'Loading...';
-
-            try {
-                const data = await fetchAPI(endpoint, body);
-                displaySuccess(responseElementId, contentElementId, data);
-            } catch (error) {
-                displayError(responseElementId, contentElementId, error.message);
-            }
-        }
-
         function getAbout() {
             const prettyView = document.getElementById('about-pretty-view');
             const copyDropdown = document.getElementById('about-copy-dropdown');
@@ -3532,17 +3766,13 @@
             prettyView.style.display = 'block';
             copyDropdown.style.display = 'none';
 
-            fetch(API_BASE + '/about', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({})
-            })
-            .then(response => response.json())
+            const url = apiUrl(['about']);
+
+            getJSON(url)
             .then(data => {
-                // Store response data for copying
+                // Store response data and request URL for copying
                 window.aboutResponseData = data;
+                window.aboutRequestUrl = url;
 
                 // Show copy dropdown
                 copyDropdown.style.display = 'inline-block';
@@ -3642,19 +3872,15 @@
             prettyView.style.display = 'block';
             copyDropdown.style.display = 'none';
 
-            fetch(API_BASE + '/sources', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({})
-            })
-            .then(response => response.json())
+            const url = apiUrl(['sources']);
+
+            getJSON(url)
             .then(data => {
                 copyDropdown.style.display = 'inline-block';
 
-                // Store response data for copying
+                // Store response data and request URL for copying
                 window.sourcesResponseData = data;
+                window.sourcesRequestUrl = url;
 
                 // Render pretty view
                 renderPrettySources(data);
@@ -3712,50 +3938,15 @@
         }
 
         function copySourcesCurlBash() {
-            const dropdown = document.getElementById('sources-copy-dropdown');
-            dropdown.classList.remove('open');
-
-            const curlCommand = `curl -X POST '${window.location.origin}${API_BASE}/sources' \\
-  -H 'Content-Type: application/json' \\
-  -d '{}'`;
-
-            navigator.clipboard.writeText(curlCommand).then(() => {
-                showCopyFeedback('sources-copy-dropdown', 'cURL (bash) copied!');
-            }).catch(err => {
-                alert('Failed to copy: ' + err);
-            });
+            copyRequestCommand('sources-copy-dropdown', window.sourcesRequestUrl, 'bash');
         }
 
         function copySourcesCurlCmd() {
-            const dropdown = document.getElementById('sources-copy-dropdown');
-            dropdown.classList.remove('open');
-
-            const curlCommand = `curl -X POST "${window.location.origin}${API_BASE}/sources" ^
-  -H "Content-Type: application/json" ^
-  -d "{}"`;
-
-            navigator.clipboard.writeText(curlCommand).then(() => {
-                showCopyFeedback('sources-copy-dropdown', 'cURL (cmd) copied!');
-            }).catch(err => {
-                alert('Failed to copy: ' + err);
-            });
+            copyRequestCommand('sources-copy-dropdown', window.sourcesRequestUrl, 'cmd');
         }
 
         function copySourcesCurlPowerShell() {
-            const dropdown = document.getElementById('sources-copy-dropdown');
-            dropdown.classList.remove('open');
-
-            const psCommand = `Invoke-RestMethod \`
-  -Uri '${window.location.origin}${API_BASE}/sources' \`
-  -Method Post \`
-  -ContentType 'application/json' \`
-  -Body '{}'`;
-
-            navigator.clipboard.writeText(psCommand).then(() => {
-                showCopyFeedback('sources-copy-dropdown', 'PowerShell copied!');
-            }).catch(err => {
-                alert('Failed to copy: ' + err);
-            });
+            copyRequestCommand('sources-copy-dropdown', window.sourcesRequestUrl, 'powershell');
         }
 
         function showCopyFeedback(dropdownId, message) {
@@ -3763,7 +3954,7 @@
             const button = dropdown.querySelector('.dropdown-button');
             const originalHTML = button.innerHTML;
 
-            button.innerHTML = `<span class="material-symbols-outlined">check</span> ${message}`;
+            button.innerHTML = `<span class="material-symbols-outlined">check</span> ${escapeHtml(message)}`;
             button.style.background = '#4caf50';
             button.style.borderColor = '#4caf50';
 
@@ -3800,50 +3991,15 @@
         }
 
         function copyAboutCurlBash() {
-            const dropdown = document.getElementById('about-copy-dropdown');
-            dropdown.classList.remove('open');
-
-            const curlCommand = `curl -X POST '${window.location.origin}${API_BASE}/about' \\
-  -H 'Content-Type: application/json' \\
-  -d '{}'`;
-
-            navigator.clipboard.writeText(curlCommand).then(() => {
-                showCopyFeedback('about-copy-dropdown', 'cURL (bash) copied!');
-            }).catch(err => {
-                alert('Failed to copy: ' + err);
-            });
+            copyRequestCommand('about-copy-dropdown', window.aboutRequestUrl, 'bash');
         }
 
         function copyAboutCurlCmd() {
-            const dropdown = document.getElementById('about-copy-dropdown');
-            dropdown.classList.remove('open');
-
-            const curlCommand = `curl -X POST "${window.location.origin}${API_BASE}/about" ^
-  -H "Content-Type: application/json" ^
-  -d "{}"`;
-
-            navigator.clipboard.writeText(curlCommand).then(() => {
-                showCopyFeedback('about-copy-dropdown', 'cURL (cmd) copied!');
-            }).catch(err => {
-                alert('Failed to copy: ' + err);
-            });
+            copyRequestCommand('about-copy-dropdown', window.aboutRequestUrl, 'cmd');
         }
 
         function copyAboutCurlPowerShell() {
-            const dropdown = document.getElementById('about-copy-dropdown');
-            dropdown.classList.remove('open');
-
-            const psCommand = `Invoke-RestMethod \`
-  -Uri '${window.location.origin}${API_BASE}/about' \`
-  -Method Post \`
-  -ContentType 'application/json' \`
-  -Body '{}'`;
-
-            navigator.clipboard.writeText(psCommand).then(() => {
-                showCopyFeedback('about-copy-dropdown', 'PowerShell copied!');
-            }).catch(err => {
-                alert('Failed to copy: ' + err);
-            });
+            copyRequestCommand('about-copy-dropdown', window.aboutRequestUrl, 'powershell');
         }
 
         // ========================================================================
@@ -3872,68 +4028,15 @@
         }
 
         function copyDatabasesCurlBash() {
-            const dropdown = document.getElementById('databases-copy-dropdown');
-            dropdown.classList.remove('open');
-
-            if (!window.databasesRequestParams) {
-                alert('No request data available.');
-                return;
-            }
-
-            const body = JSON.stringify(window.databasesRequestParams);
-            const curlCommand = `curl -X POST '${window.location.origin}${API_BASE}/databases' \\
-  -H 'Content-Type: application/json' \\
-  -d '${body}'`;
-
-            navigator.clipboard.writeText(curlCommand).then(() => {
-                showCopyFeedback('databases-copy-dropdown', 'cURL (bash) copied!');
-            }).catch(err => {
-                alert('Failed to copy: ' + err);
-            });
+            copyRequestCommand('databases-copy-dropdown', window.databasesRequestUrl, 'bash');
         }
 
         function copyDatabasesCurlCmd() {
-            const dropdown = document.getElementById('databases-copy-dropdown');
-            dropdown.classList.remove('open');
-
-            if (!window.databasesRequestParams) {
-                alert('No request data available.');
-                return;
-            }
-
-            const body = JSON.stringify(window.databasesRequestParams).replace(/"/g, '\\"');
-            const curlCommand = `curl -X POST "${window.location.origin}${API_BASE}/databases" ^
-  -H "Content-Type: application/json" ^
-  -d "${body}"`;
-
-            navigator.clipboard.writeText(curlCommand).then(() => {
-                showCopyFeedback('databases-copy-dropdown', 'cURL (cmd) copied!');
-            }).catch(err => {
-                alert('Failed to copy: ' + err);
-            });
+            copyRequestCommand('databases-copy-dropdown', window.databasesRequestUrl, 'cmd');
         }
 
         function copyDatabasesCurlPowerShell() {
-            const dropdown = document.getElementById('databases-copy-dropdown');
-            dropdown.classList.remove('open');
-
-            if (!window.databasesRequestParams) {
-                alert('No request data available.');
-                return;
-            }
-
-            const body = JSON.stringify(window.databasesRequestParams).replace(/'/g, "''");
-            const psCommand = `Invoke-RestMethod \`
-  -Uri '${window.location.origin}${API_BASE}/databases' \`
-  -Method Post \`
-  -ContentType 'application/json' \`
-  -Body '${body}'`;
-
-            navigator.clipboard.writeText(psCommand).then(() => {
-                showCopyFeedback('databases-copy-dropdown', 'PowerShell copied!');
-            }).catch(err => {
-                alert('Failed to copy: ' + err);
-            });
+            copyRequestCommand('databases-copy-dropdown', window.databasesRequestUrl, 'powershell');
         }
 
         // ========================================================================
@@ -3962,68 +4065,15 @@
         }
 
         function copyFlowsCurlBash() {
-            const dropdown = document.getElementById('flows-copy-dropdown');
-            dropdown.classList.remove('open');
-
-            if (!window.flowsRequestParams) {
-                alert('No request data available.');
-                return;
-            }
-
-            const body = JSON.stringify(window.flowsRequestParams);
-            const curlCommand = `curl -X POST '${window.location.origin}${API_BASE}/flows' \\
-  -H 'Content-Type: application/json' \\
-  -d '${body}'`;
-
-            navigator.clipboard.writeText(curlCommand).then(() => {
-                showCopyFeedback('flows-copy-dropdown', 'cURL (bash) copied!');
-            }).catch(err => {
-                alert('Failed to copy: ' + err);
-            });
+            copyRequestCommand('flows-copy-dropdown', window.flowsRequestUrl, 'bash');
         }
 
         function copyFlowsCurlCmd() {
-            const dropdown = document.getElementById('flows-copy-dropdown');
-            dropdown.classList.remove('open');
-
-            if (!window.flowsRequestParams) {
-                alert('No request data available.');
-                return;
-            }
-
-            const body = JSON.stringify(window.flowsRequestParams).replace(/"/g, '\\"');
-            const curlCommand = `curl -X POST "${window.location.origin}${API_BASE}/flows" ^
-  -H "Content-Type: application/json" ^
-  -d "${body}"`;
-
-            navigator.clipboard.writeText(curlCommand).then(() => {
-                showCopyFeedback('flows-copy-dropdown', 'cURL (cmd) copied!');
-            }).catch(err => {
-                alert('Failed to copy: ' + err);
-            });
+            copyRequestCommand('flows-copy-dropdown', window.flowsRequestUrl, 'cmd');
         }
 
         function copyFlowsCurlPowerShell() {
-            const dropdown = document.getElementById('flows-copy-dropdown');
-            dropdown.classList.remove('open');
-
-            if (!window.flowsRequestParams) {
-                alert('No request data available.');
-                return;
-            }
-
-            const body = JSON.stringify(window.flowsRequestParams).replace(/'/g, "''");
-            const psCommand = `Invoke-RestMethod \`
-  -Uri '${window.location.origin}${API_BASE}/flows' \`
-  -Method Post \`
-  -ContentType 'application/json' \`
-  -Body '${body}'`;
-
-            navigator.clipboard.writeText(psCommand).then(() => {
-                showCopyFeedback('flows-copy-dropdown', 'PowerShell copied!');
-            }).catch(err => {
-                alert('Failed to copy: ' + err);
-            });
+            copyRequestCommand('flows-copy-dropdown', window.flowsRequestUrl, 'powershell');
         }
 
         // ========================================================================
@@ -4052,68 +4102,15 @@
         }
 
         function copyMetaCurlBash() {
-            const dropdown = document.getElementById('meta-copy-dropdown');
-            dropdown.classList.remove('open');
-
-            if (!window.metaRequestParams) {
-                alert('No request data available.');
-                return;
-            }
-
-            const body = JSON.stringify(window.metaRequestParams);
-            const curlCommand = `curl -X POST '${window.location.origin}${API_BASE}/meta' \\
-  -H 'Content-Type: application/json' \\
-  -d '${body}'`;
-
-            navigator.clipboard.writeText(curlCommand).then(() => {
-                showCopyFeedback('meta-copy-dropdown', 'cURL (bash) copied!');
-            }).catch(err => {
-                alert('Failed to copy: ' + err);
-            });
+            copyRequestCommand('meta-copy-dropdown', window.metaRequestUrl, 'bash');
         }
 
         function copyMetaCurlCmd() {
-            const dropdown = document.getElementById('meta-copy-dropdown');
-            dropdown.classList.remove('open');
-
-            if (!window.metaRequestParams) {
-                alert('No request data available.');
-                return;
-            }
-
-            const body = JSON.stringify(window.metaRequestParams).replace(/"/g, '\\"');
-            const curlCommand = `curl -X POST "${window.location.origin}${API_BASE}/meta" ^
-  -H "Content-Type: application/json" ^
-  -d "${body}"`;
-
-            navigator.clipboard.writeText(curlCommand).then(() => {
-                showCopyFeedback('meta-copy-dropdown', 'cURL (cmd) copied!');
-            }).catch(err => {
-                alert('Failed to copy: ' + err);
-            });
+            copyRequestCommand('meta-copy-dropdown', window.metaRequestUrl, 'cmd');
         }
 
         function copyMetaCurlPowerShell() {
-            const dropdown = document.getElementById('meta-copy-dropdown');
-            dropdown.classList.remove('open');
-
-            if (!window.metaRequestParams) {
-                alert('No request data available.');
-                return;
-            }
-
-            const body = JSON.stringify(window.metaRequestParams).replace(/'/g, "''");
-            const psCommand = `Invoke-RestMethod \`
-  -Uri '${window.location.origin}${API_BASE}/meta' \`
-  -Method Post \`
-  -ContentType 'application/json' \`
-  -Body '${body}'`;
-
-            navigator.clipboard.writeText(psCommand).then(() => {
-                showCopyFeedback('meta-copy-dropdown', 'PowerShell copied!');
-            }).catch(err => {
-                alert('Failed to copy: ' + err);
-            });
+            copyRequestCommand('meta-copy-dropdown', window.metaRequestUrl, 'powershell');
         }
 
         // ========================================================================
@@ -4142,68 +4139,15 @@
         }
 
         function copyDataCurlBash() {
-            const dropdown = document.getElementById('data-copy-dropdown');
-            dropdown.classList.remove('open');
-
-            if (!window.dataRequestParams) {
-                alert('No request data available.');
-                return;
-            }
-
-            const body = JSON.stringify(window.dataRequestParams);
-            const curlCommand = `curl -X POST '${window.location.origin}${API_BASE}/data' \\
-  -H 'Content-Type: application/json' \\
-  -d '${body}'`;
-
-            navigator.clipboard.writeText(curlCommand).then(() => {
-                showCopyFeedback('data-copy-dropdown', 'cURL (bash) copied!');
-            }).catch(err => {
-                alert('Failed to copy: ' + err);
-            });
+            copyRequestCommand('data-copy-dropdown', window.dataRequestUrl, 'bash');
         }
 
         function copyDataCurlCmd() {
-            const dropdown = document.getElementById('data-copy-dropdown');
-            dropdown.classList.remove('open');
-
-            if (!window.dataRequestParams) {
-                alert('No request data available.');
-                return;
-            }
-
-            const body = JSON.stringify(window.dataRequestParams).replace(/"/g, '\\"');
-            const curlCommand = `curl -X POST "${window.location.origin}${API_BASE}/data" ^
-  -H "Content-Type: application/json" ^
-  -d "${body}"`;
-
-            navigator.clipboard.writeText(curlCommand).then(() => {
-                showCopyFeedback('data-copy-dropdown', 'cURL (cmd) copied!');
-            }).catch(err => {
-                alert('Failed to copy: ' + err);
-            });
+            copyRequestCommand('data-copy-dropdown', window.dataRequestUrl, 'cmd');
         }
 
         function copyDataCurlPowerShell() {
-            const dropdown = document.getElementById('data-copy-dropdown');
-            dropdown.classList.remove('open');
-
-            if (!window.dataRequestParams) {
-                alert('No request data available.');
-                return;
-            }
-
-            const body = JSON.stringify(window.dataRequestParams).replace(/'/g, "''");
-            const psCommand = `Invoke-RestMethod \`
-  -Uri '${window.location.origin}${API_BASE}/data' \`
-  -Method Post \`
-  -ContentType 'application/json' \`
-  -Body '${body}'`;
-
-            navigator.clipboard.writeText(psCommand).then(() => {
-                showCopyFeedback('data-copy-dropdown', 'PowerShell copied!');
-            }).catch(err => {
-                alert('Failed to copy: ' + err);
-            });
+            copyRequestCommand('data-copy-dropdown', window.dataRequestUrl, 'powershell');
         }
 
         // Close dropdown when clicking outside
@@ -4333,6 +4277,7 @@
                 }
 
                 html += '</div>';
+                html += `<span class="health-badge" data-source="${escapeHtml(source.id)}" style="display: none;"></span>`;
                 html += '</div>';
 
                 // Source details
@@ -4422,12 +4367,13 @@
                 html += '<div class="source-actions">';
                 html += '<div class="source-actions-title">Use in Other Tabs</div>';
                 html += '<div class="source-action-buttons">';
-                html += `<button class="source-action-btn" onclick="event.stopPropagation(); useSourceInTab('${escapeHtml(source.id)}', 'databases')" title="Get databases for this source"><span class="material-symbols-outlined">folder</span> Databases</button>`;
-                html += `<button class="source-action-btn" onclick="event.stopPropagation(); useSourceInTab('${escapeHtml(source.id)}', 'flows')" title="Get flows for this source"><span class="material-symbols-outlined">query_stats</span> Flows</button>`;
-                html += `<button class="source-action-btn" onclick="event.stopPropagation(); useSourceInTab('${escapeHtml(source.id)}', 'meta')" title="Get meta for this source"><span class="material-symbols-outlined">info</span> Meta</button>`;
-                html += `<button class="source-action-btn" onclick="event.stopPropagation(); useSourceInTab('${escapeHtml(source.id)}', 'keybuilder')" title="Use in key builder"><span class="material-symbols-outlined">vpn_key</span> Key Builder</button>`;
-                html += `<button class="source-action-btn" onclick="event.stopPropagation(); useSourceInTab('${escapeHtml(source.id)}', 'data')" title="Use in data tab"><span class="material-symbols-outlined">analytics</span> Data</button>`;
-                html += `<button class="source-action-btn" onclick="event.stopPropagation(); useSourceInTab('${escapeHtml(source.id)}', 'compare')" title="Use in compare tab"><span class="material-symbols-outlined">compare_arrows</span> Compare</button>`;
+                html += `<button class="source-action-btn" onclick="event.stopPropagation(); useSourceInTab(${jsArg(source.id)}, 'databases')" title="Get databases for this source"><span class="material-symbols-outlined">folder</span> Databases</button>`;
+                html += `<button class="source-action-btn" onclick="event.stopPropagation(); useSourceInTab(${jsArg(source.id)}, 'flows')" title="Get flows for this source"><span class="material-symbols-outlined">query_stats</span> Flows</button>`;
+                html += `<button class="source-action-btn" onclick="event.stopPropagation(); useSourceInTab(${jsArg(source.id)}, 'meta')" title="Get meta for this source"><span class="material-symbols-outlined">info</span> Meta</button>`;
+                html += `<button class="source-action-btn" onclick="event.stopPropagation(); useSourceInTab(${jsArg(source.id)}, 'keybuilder')" title="Use in key builder"><span class="material-symbols-outlined">vpn_key</span> Key Builder</button>`;
+                html += `<button class="source-action-btn" onclick="event.stopPropagation(); useSourceInTab(${jsArg(source.id)}, 'data')" title="Use in data tab"><span class="material-symbols-outlined">analytics</span> Data</button>`;
+                html += `<button class="source-action-btn" onclick="event.stopPropagation(); useSourceInTab(${jsArg(source.id)}, 'compare')" title="Use in compare tab"><span class="material-symbols-outlined">compare_arrows</span> Compare</button>`;
+                html += `<button class="source-action-btn" onclick="event.stopPropagation(); checkSourceHealth(${jsArg(source.id)}, this)" title="Check monitor status and live access"><span class="material-symbols-outlined">monitor_heart</span> Health</button>`;
                 html += '</div>';
                 html += '</div>';
 
@@ -4437,6 +4383,128 @@
             html += '</div>'; // Close sources-grid
 
             container.innerHTML = html;
+            healthReports.forEach(showHealthReport);
+        }
+
+        // ========================================================================
+        // SOURCE HEALTH
+        // ========================================================================
+
+        const healthReports = new Map(); // source id -> last health report, kept across re-renders
+
+        const HEALTH_CLASSES = {
+            OK: 'health-ok',
+            DEGRADED: 'health-warn',
+            LOCAL_ISSUE: 'health-warn',
+            REMOTE_OUTAGE: 'health-error',
+            UNREACHABLE: 'health-error'
+        };
+
+        /**
+         * Describe a health report as plain text, for tooltips
+         * @param {Object} report - HealthReportDto
+         * @returns {string} - Multi-line description
+         */
+        function describeHealthReport(report) {
+            const lines = [`Verdict: ${report.verdict || 'UNKNOWN'}`];
+            if (report.monitor) {
+                let line = `Monitor: ${report.monitor.status || 'UNKNOWN'}`;
+                if (report.monitor.uptimeRatio !== undefined) {
+                    line += `, uptime ${(report.monitor.uptimeRatio * 100).toFixed(2)}%`;
+                }
+                if (report.monitor.averageResponseTime !== undefined) {
+                    line += `, avg ${report.monitor.averageResponseTime} ms`;
+                }
+                lines.push(line);
+            }
+            if (report.monitorError) {
+                lines.push(`Monitor error: ${report.monitorError}`);
+            }
+            if (report.access) {
+                let line = `Access: ${report.access.accessible ? 'accessible' : (report.access.reachable ? 'reachable but failing' : 'unreachable')}`;
+                if (report.access.duration !== undefined) {
+                    line += ` in ${report.access.duration} ms`;
+                }
+                if (report.access.statusCode !== undefined) {
+                    line += `, HTTP ${report.access.statusCode}`;
+                }
+                lines.push(line);
+                if (report.access.errorMessage) {
+                    lines.push(`Access error: ${report.access.errorMessage}`);
+                }
+            }
+            return lines.join('\n');
+        }
+
+        /**
+         * Update the health badge of a source card
+         * @param {string} sourceId - Source ID
+         * @param {string} text - Badge text
+         * @param {string} cssClass - Badge CSS class
+         * @param {string} tooltip - Badge tooltip
+         */
+        function setHealthBadge(sourceId, text, cssClass, tooltip) {
+            document.querySelectorAll(`.health-badge[data-source="${CSS.escape(sourceId)}"]`).forEach(badge => {
+                badge.textContent = text;
+                badge.className = `health-badge ${cssClass || ''}`;
+                badge.title = tooltip || '';
+                badge.style.display = 'inline-block';
+            });
+        }
+
+        /**
+         * Display a health report on its source card
+         * @param {Object} report - HealthReportDto
+         */
+        function showHealthReport(report) {
+            healthReports.set(report.source, report);
+            const verdict = report.verdict || 'UNKNOWN';
+            setHealthBadge(report.source, verdict.replace('_', ' '), HEALTH_CLASSES[verdict], describeHealthReport(report));
+        }
+
+        /**
+         * Check the health of all sources using their third-party monitor
+         */
+        async function checkAllSourcesHealth() {
+            const btn = document.getElementById('sources-health-btn');
+            const originalHTML = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-symbols-outlined">hourglass_empty</span> Checking...';
+
+            document.querySelectorAll('.health-badge').forEach(badge => {
+                setHealthBadge(badge.dataset.source, '...', 'health-pending', 'Checking...');
+            });
+
+            try {
+                const reports = await getJSON(apiUrl(['health'], { sources: 'all', checks: 'monitor' }));
+                reports.forEach(showHealthReport);
+            } catch (error) {
+                alert('Failed to check health: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+            }
+        }
+
+        /**
+         * Check the health of a single source using its monitor and a live request
+         * @param {string} sourceId - Source ID
+         * @param {HTMLElement} btn - Button that triggered the check
+         */
+        async function checkSourceHealth(sourceId, btn) {
+            const originalHTML = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-symbols-outlined">hourglass_empty</span> Checking...';
+            setHealthBadge(sourceId, '...', 'health-pending', 'Checking...');
+
+            try {
+                showHealthReport(await getJSON(apiUrl([sourceId, 'health'], { checks: 'monitor,access' })));
+            } catch (error) {
+                setHealthBadge(sourceId, 'ERROR', 'health-error', error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+            }
         }
 
         function toggleSourceActions(cardElement) {
@@ -4682,11 +4750,6 @@
                 return;
             }
 
-            const body = { source };
-            if (database) {
-                body.database = database;
-            }
-
             const copyDropdown = document.getElementById('flows-copy-dropdown');
             const prettyView = document.getElementById('flows-pretty-view');
 
@@ -4694,20 +4757,16 @@
             prettyView.style.display = 'block';
             copyDropdown.style.display = 'none';
 
-            fetch(API_BASE + '/flows', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(body)
-            })
-            .then(response => response.json())
+            const url = apiUrl([source, 'flows'], { database });
+
+            getJSON(url)
             .then(data => {
                 copyDropdown.style.display = 'inline-block';
 
                 // Store response data and request params for copying
                 window.flowsResponseData = data;
-                window.flowsRequestParams = body;
+                window.flowsRequestUrl = url;
+                window.flowsRequestParams = { source, database };
 
                 // Render pretty view
                 renderPrettyFlows(data);
@@ -4869,10 +4928,10 @@
                 html += '<div class="flow-actions">';
                 html += '<div class="flow-actions-title">Use in Other Tabs</div>';
                 html += '<div class="flow-action-buttons">';
-                html += `<button class="flow-action-btn" onclick="event.stopPropagation(); useFlowInTab('${escapeHtml(flow.ref || flow.id || '')}', 'meta')" title="Get meta for this flow"><span class="material-symbols-outlined">info</span> Meta</button>`;
-                html += `<button class="flow-action-btn" onclick="event.stopPropagation(); useFlowInTab('${escapeHtml(flow.ref || flow.id || '')}', 'keybuilder')" title="Use in key builder"><span class="material-symbols-outlined">vpn_key</span> Key Builder</button>`;
-                html += `<button class="flow-action-btn" onclick="event.stopPropagation(); useFlowInTab('${escapeHtml(flow.ref || flow.id || '')}', 'data')" title="Use in data tab"><span class="material-symbols-outlined">analytics</span> Data</button>`;
-                html += `<button class="flow-action-btn" onclick="event.stopPropagation(); useFlowInTab('${escapeHtml(flow.ref || flow.id || '')}', 'compare')" title="Use in compare tab"><span class="material-symbols-outlined">compare_arrows</span> Compare</button>`;
+                html += `<button class="flow-action-btn" onclick="event.stopPropagation(); useFlowInTab(${jsArg(flow.ref || flow.id || '')}, 'meta')" title="Get meta for this flow"><span class="material-symbols-outlined">info</span> Meta</button>`;
+                html += `<button class="flow-action-btn" onclick="event.stopPropagation(); useFlowInTab(${jsArg(flow.ref || flow.id || '')}, 'keybuilder')" title="Use in key builder"><span class="material-symbols-outlined">vpn_key</span> Key Builder</button>`;
+                html += `<button class="flow-action-btn" onclick="event.stopPropagation(); useFlowInTab(${jsArg(flow.ref || flow.id || '')}, 'data')" title="Use in data tab"><span class="material-symbols-outlined">analytics</span> Data</button>`;
+                html += `<button class="flow-action-btn" onclick="event.stopPropagation(); useFlowInTab(${jsArg(flow.ref || flow.id || '')}, 'compare')" title="Use in compare tab"><span class="material-symbols-outlined">compare_arrows</span> Compare</button>`;
                 html += '</div>';
                 html += '</div>';
 
@@ -4991,22 +5050,15 @@
             prettyView.style.display = 'block';
             copyDropdown.style.display = 'none';
 
-            const body = { source };
+            const url = apiUrl([source, 'databases']);
 
-            fetch(API_BASE + '/databases', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(body)
-            })
-            .then(response => response.json())
+            getJSON(url)
             .then(data => {
                 copyDropdown.style.display = 'inline-block';
 
-                // Store response data and request params for copying
+                // Store response data and request URL for copying
                 window.databasesResponseData = data;
-                window.databasesRequestParams = body;
+                window.databasesRequestUrl = url;
 
                 // Render pretty view
                 renderPrettyDatabases(data);
@@ -5068,11 +5120,6 @@
                 return;
             }
 
-            const body = { source, flow };
-            if (database) {
-                body.database = database;
-            }
-
             // Show loading and reset views
             const prettyView = document.getElementById('meta-pretty-view');
             const copyDropdown = document.getElementById('meta-copy-dropdown');
@@ -5081,27 +5128,15 @@
             prettyView.style.display = 'block';
             copyDropdown.style.display = 'none';
 
-            fetch(API_BASE + '/meta', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(body)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(data => {
-                        throw new Error(data.message || `HTTP ${response.status}: ${response.statusText}`);
-                    });
-                }
-                return response.json();
-            })
+            const url = apiUrl([source, flow, 'meta'], { database });
+
+            getJSON(url)
             .then(data => {
                 copyDropdown.style.display = 'inline-block';
 
-                // Store response data and request params for copying
+                // Store response data and request URL for copying
                 window.metaResponseData = data;
-                window.metaRequestParams = body;
+                window.metaRequestUrl = url;
 
                 // Render pretty view
                 renderPrettyMeta(data);
@@ -5125,28 +5160,28 @@
                 if (data.flow.ref) {
                     html += '<div class="meta-info-item">';
                     html += '<div class="meta-info-label">Flow Reference</div>';
-                    html += `<div class="meta-info-value"><code>${data.flow.ref}</code></div>`;
+                    html += `<div class="meta-info-value"><code>${escapeHtml(data.flow.ref)}</code></div>`;
                     html += '</div>';
                 }
 
                 if (data.flow.name) {
                     html += '<div class="meta-info-item">';
                     html += '<div class="meta-info-label">Name</div>';
-                    html += `<div class="meta-info-value">${data.flow.name}</div>`;
+                    html += `<div class="meta-info-value">${escapeHtml(data.flow.name)}</div>`;
                     html += '</div>';
                 }
 
                 if (data.flow.structureRef) {
                     html += '<div class="meta-info-item">';
                     html += '<div class="meta-info-label">Structure Reference</div>';
-                    html += `<div class="meta-info-value"><code>${data.flow.structureRef}</code></div>`;
+                    html += `<div class="meta-info-value"><code>${escapeHtml(data.flow.structureRef)}</code></div>`;
                     html += '</div>';
                 }
 
                 if (data.flow.description) {
                     html += '<div class="meta-info-item" style="grid-column: 1 / -1;">';
                     html += '<div class="meta-info-label">Description</div>';
-                    html += `<div class="meta-info-value">${data.flow.description}</div>`;
+                    html += `<div class="meta-info-value">${escapeHtml(data.flow.description)}</div>`;
                     html += '</div>';
                 }
 
@@ -5163,28 +5198,28 @@
                 if (data.structure.ref) {
                     html += '<div class="meta-info-item">';
                     html += '<div class="meta-info-label">Structure Reference</div>';
-                    html += `<div class="meta-info-value"><code>${data.structure.ref}</code></div>`;
+                    html += `<div class="meta-info-value"><code>${escapeHtml(data.structure.ref)}</code></div>`;
                     html += '</div>';
                 }
 
                 if (data.structure.name) {
                     html += '<div class="meta-info-item">';
                     html += '<div class="meta-info-label">Structure Name</div>';
-                    html += `<div class="meta-info-value">${data.structure.name}</div>`;
+                    html += `<div class="meta-info-value">${escapeHtml(data.structure.name)}</div>`;
                     html += '</div>';
                 }
 
                 if (data.structure.timeDimensionId) {
                     html += '<div class="meta-info-item">';
                     html += '<div class="meta-info-label">Time Dimension ID</div>';
-                    html += `<div class="meta-info-value"><code>${data.structure.timeDimensionId}</code></div>`;
+                    html += `<div class="meta-info-value"><code>${escapeHtml(data.structure.timeDimensionId)}</code></div>`;
                     html += '</div>';
                 }
 
                 if (data.structure.primaryMeasureId) {
                     html += '<div class="meta-info-item">';
                     html += '<div class="meta-info-label">Primary Measure ID</div>';
-                    html += `<div class="meta-info-value"><code>${data.structure.primaryMeasureId}</code></div>`;
+                    html += `<div class="meta-info-value"><code>${escapeHtml(data.structure.primaryMeasureId)}</code></div>`;
                     html += '</div>';
                 }
 
@@ -5205,8 +5240,8 @@
                     data.structure.dimensions.forEach((dim, index) => {
                         html += '<tr>';
                         html += `<td class="dimension-position">${index}</td>`;
-                        html += `<td><code>${dim.id || 'N/A'}</code></td>`;
-                        html += `<td>${dim.name || 'N/A'}</td>`;
+                        html += `<td><code>${escapeHtml(dim.id || 'N/A')}</code></td>`;
+                        html += `<td>${escapeHtml(dim.name || 'N/A')}</td>`;
                         html += '<td>';
 
                         if (dim.codelist && dim.codelist.codes) {
@@ -5218,7 +5253,7 @@
                             if (codes.length > 0) {
                                 html += '<div class="codelist-preview">';
                                 codes.forEach(([key, value]) => {
-                                    html += `<div class="code-item"><span class="code-key">${key}</span>: ${value}</div>`;
+                                    html += `<div class="code-item"><span class="code-key">${escapeHtml(key)}</span>: ${escapeHtml(value)}</div>`;
                                 });
                                 if (codesCount > 5) {
                                     html += `<div class="code-item" style="color: #999; font-style: italic;">... and ${codesCount - 5} more</div>`;
@@ -5243,8 +5278,8 @@
 
                     data.structure.attributes.forEach(attr => {
                         html += '<div class="attribute-item">';
-                        html += `<span class="attribute-name">${attr.name || attr.id}</span>`;
-                        html += `<span class="attribute-id">${attr.id}</span>`;
+                        html += `<span class="attribute-name">${escapeHtml(attr.name || attr.id)}</span>`;
+                        html += `<span class="attribute-id">${escapeHtml(attr.id)}</span>`;
                         html += '</div>';
                     });
 
@@ -5270,6 +5305,21 @@
         // ========================================================================
 
         /**
+         * Read the optional data request parameters of the Data tab
+         * @returns {Object} - REST v2 query parameters (start, end, firstN, lastN, detail)
+         */
+        function getDataOptions() {
+            const value = id => document.getElementById(id).value.trim();
+            return {
+                start: value('data-start'),
+                end: value('data-end'),
+                firstN: value('data-firstn'),
+                lastN: value('data-lastn'),
+                detail: value('data-detail')
+            };
+        }
+
+        /**
          * Fetch and display data series
          */
         function getData() {
@@ -5283,10 +5333,7 @@
                 return;
             }
 
-            const body = { source, flow, key };
-            if (database) {
-                body.database = database;
-            }
+            const options = getDataOptions();
 
             // Show loading and reset views
             const prettyView = document.getElementById('data-pretty-view');
@@ -5295,27 +5342,16 @@
             prettyView.style.display = 'block';
             copyDropdown.style.display = 'none';
 
-            fetch(API_BASE + '/data', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(body)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(data => {
-                        throw new Error(data.message || `HTTP ${response.status}: ${response.statusText}`);
-                    });
-                }
-                return response.json();
-            })
+            const url = apiUrl([source, flow, 'data'], { key, database, ...options });
+
+            getJSON(url)
             .then(data => {
                 copyDropdown.style.display = 'inline-block';
 
                 // Store response data and request params for copying
                 window.dataResponseData = data;
-                window.dataRequestParams = body;
+                window.dataRequestUrl = url;
+                window.dataRequestParams = { source, flow, key, database, ...options };
 
                 // Render chart and table
                 renderDataChart(data);
@@ -5345,6 +5381,79 @@
 
             // Otherwise return as-is
             return period;
+        }
+
+        /**
+         * Format an ISO period "start/duration" according to its frequency
+         * Examples: "2023-01-01T00:00:00/P1Y" -> "2023", "2023-04-01T00:00:00/P3M" -> "2023-Q2",
+         * "2023-07-01T00:00:00/P6M" -> "2023-S2", "2023-01-01T00:00:00/P1M" -> "2023-01", "2023-01-02T00:00:00/P1D" -> "2023-01-02"
+         * @param {string} period - ISO period
+         * @returns {string} - Human-readable period
+         */
+        function formatPeriod(period) {
+            if (!period || typeof period !== 'string') return period;
+            const [start, duration] = period.split('/');
+            const match = start.match(/^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2})(?::(\d{2}))?)?/);
+            if (!match) return start;
+            const [, year, month, day, hours = '00', minutes = '00', seconds = '00'] = match;
+            if (hours !== '00' || minutes !== '00' || seconds !== '00') {
+                return start.replace('T', ' ');
+            }
+            const monthIndex = parseInt(month, 10) - 1;
+            if (day === '01') {
+                if (duration === 'P1Y' && monthIndex === 0) return year;
+                if (duration === 'P6M' && monthIndex % 6 === 0) return `${year}-S${monthIndex / 6 + 1}`;
+                if (duration === 'P3M' && monthIndex % 3 === 0) return `${year}-Q${monthIndex / 3 + 1}`;
+                if (duration === 'P1M') return `${year}-${month}`;
+            }
+            return `${year}-${month}-${day}`;
+        }
+
+        /**
+         * Get the Plotly date format that matches the frequency of a set of ISO periods
+         * @param {string[]} periods - ISO periods
+         * @returns {string} - d3 date format
+         */
+        function getDateFormat(periods) {
+            const durations = new Set(periods.map(p => (typeof p === 'string' && p.includes('/')) ? p.split('/')[1] : ''));
+            if (durations.size === 1 && durations.has('P1Y')) return '%Y';
+            if ([...durations].every(d => d === 'P1M' || d === 'P3M' || d === 'P6M')) return '%Y-%m';
+            return '%Y-%m-%d';
+        }
+
+        /**
+         * Get a display name for each series: its title when available and unique, its key otherwise
+         * @param {Object[]} seriesList - Series with key and meta
+         * @returns {string[]} - Display names, in the same order
+         */
+        function getSeriesDisplayNames(seriesList) {
+            const titles = seriesList.map(series => (series.meta && series.meta.TITLE) || '');
+            const counts = new Map();
+            titles.forEach(title => counts.set(title, (counts.get(title) || 0) + 1));
+            return seriesList.map((series, index) => {
+                const key = series.key || `Series ${index + 1}`;
+                const title = titles[index];
+                return title && counts.get(title) === 1 ? title : key;
+            });
+        }
+
+        /**
+         * Shorten a text for chart legends
+         * @param {string} text - Text to shorten
+         * @param {number} maxLength - Maximum length
+         * @returns {string} - Shortened text
+         */
+        function shortenLabel(text, maxLength = 60) {
+            return text.length > maxLength ? text.substring(0, maxLength - 1) + '…' : text;
+        }
+
+        /**
+         * Escape a text for use in a Plotly hover template
+         * @param {string} text - Text to escape
+         * @returns {string} - Escaped text
+         */
+        function escapePlotlyTemplate(text) {
+            return escapeHtml(text).replace(/%\{/g, '%&#123;');
         }
 
         /**
@@ -5406,6 +5515,9 @@
 
             if (data.data && Array.isArray(data.data)) {
                 const seriesDataMaps = [];
+                const periodLabels = new Map();
+                const allIsoPeriods = [];
+                const displayNames = getSeriesDisplayNames(data.data);
                 data.data.forEach((series, index) => {
                     if (series.obs && Array.isArray(series.obs)) {
                         const dataMap = new Map();
@@ -5413,7 +5525,9 @@
                             // Extract start from ISO period format (start/duration)
                             let period = obs.period;
                             if (period) {
+                                allIsoPeriods.push(period);
                                 period = extractPeriodStart(period);
+                                periodLabels.set(period, formatPeriod(obs.period));
 
                                 // Parse to date and store mapping
                                 const dateObj = parseToDate(period);
@@ -5428,7 +5542,7 @@
                             }
                         });
                         if (dataMap.size > 0) {
-                            seriesDataMaps.push({ key: series.key || `Series ${index + 1}`, dataMap });
+                            seriesDataMaps.push({ key: series.key || `Series ${index + 1}`, name: displayNames[index], dataMap });
                         }
                     }
                 });
@@ -5458,12 +5572,11 @@
                     traces.push({
                         x: xValues,
                         y: yValues,
+                        customdata: sortedLabels.map(label => periodLabels.get(label) || label),
                         mode: 'lines+markers',
-                        name: seriesInfo.key,
+                        name: escapeHtml(shortenLabel(seriesInfo.name)),
                         connectgaps: true,
-                        hovertemplate: allParsed
-                            ? '%{x|%Y-%m-%d}<br>%{y}<extra>' + seriesInfo.key + '</extra>'
-                            : '%{x}<br>%{y}<extra>' + seriesInfo.key + '</extra>'
+                        hovertemplate: '%{customdata}: %{y}<extra>' + escapePlotlyTemplate(seriesInfo.key) + '</extra>'
                     });
                 });
 
@@ -5472,6 +5585,7 @@
 
                 // Store whether using dates
                 chartDiv.dataset.useDateAxis = allParsed ? 'true' : 'false';
+                chartDiv.dataset.dateFormat = getDateFormat(allIsoPeriods);
             }
 
             if (!fullDatasets || fullDatasets.length === 0 || !allPeriodLabels || allPeriodLabels.length === 0) {
@@ -5499,7 +5613,7 @@
 
             const layout = {
                 title: {
-                    text: `${data.ref || 'Data'} - ${(data.query && data.query.key) ? data.query.key : ''}`,
+                    text: escapeHtml(`${data.ref || 'Data'} - ${(data.query && data.query.key) ? data.query.key : ''}`),
                     font: { size: 16, color: '#003D6D' }
                 },
                 xaxis: {
@@ -5557,8 +5671,9 @@
 
             // Add date-specific formatting
             if (useDateAxis) {
-                layout.xaxis.tickformat = '%Y-%m-%d';
-                layout.xaxis.hoverformat = '%Y-%m-%d';
+                const dateFormat = chartDiv.dataset.dateFormat || '%Y-%m-%d';
+                layout.xaxis.tickformat = dateFormat;
+                layout.xaxis.hoverformat = dateFormat;
             }
 
             const config = { responsive: true, displayModeBar: true };
@@ -5578,7 +5693,7 @@
                 // Setup resize observer for future size changes
                 setupChartResizeObserver();
             } catch (error) {
-                chartDiv.innerHTML = '<div style="color:#cc0000; text-align:center; padding-top: 40px;">Error rendering chart: ' + error.message + '</div>';
+                chartDiv.innerHTML = '<div style="color:#cc0000; text-align:center; padding-top: 40px;">Error rendering chart: ' + escapeHtml(error.message) + '</div>';
                 console.error('Plotly rendering error:', error);
             }
         }
@@ -5632,22 +5747,23 @@
                 return;
             }
 
-            // Collect all unique periods across all series
-            const allPeriods = new Set();
-            data.data.forEach(series => {
+            // Collect all unique periods across all series, and index observations by period start
+            const periodLabels = new Map();
+            const obsByPeriod = data.data.map(series => {
+                const map = new Map();
                 if (series.obs && Array.isArray(series.obs)) {
                     series.obs.forEach(obs => {
-                        // Extract start from ISO period format (start/duration)
-                        let period = obs.period;
-                        if (period) {
-                            period = extractPeriodStart(period);
-                            allPeriods.add(period);
+                        if (obs.period) {
+                            const period = extractPeriodStart(obs.period);
+                            periodLabels.set(period, formatPeriod(obs.period));
+                            map.set(period, obs);
                         }
                     });
                 }
+                return map;
             });
 
-            const sortedPeriods = Array.from(allPeriods).sort();
+            const sortedPeriods = Array.from(periodLabels.keys()).sort();
 
             // Create table structure
             let tableHTML = '<table class="data-table"><thead><tr>';
@@ -5656,30 +5772,32 @@
             // Add column for each series
             data.data.forEach((series, index) => {
                 const seriesKey = series.key || `Series ${index + 1}`;
-                tableHTML += `<th>${seriesKey}</th>`;
+                const seriesTitle = (series.meta && series.meta.TITLE) || '';
+                tableHTML += `<th title="${escapeHtml(seriesTitle)}">${escapeHtml(seriesKey)}`;
+                if (seriesTitle) {
+                    tableHTML += `<div class="series-title">${escapeHtml(seriesTitle)}</div>`;
+                }
+                tableHTML += '</th>';
             });
 
             tableHTML += '</tr></thead><tbody>';
 
             // Create rows for each period
             sortedPeriods.forEach(period => {
-                tableHTML += `<tr><td><strong>${period}</strong></td>`;
+                tableHTML += `<tr><td title="${escapeHtml(period)}"><strong>${escapeHtml(periodLabels.get(period))}</strong></td>`;
 
                 // Add value for each series
-                data.data.forEach(series => {
+                obsByPeriod.forEach(seriesObs => {
                     let value = '-';
-                    if (series.obs && Array.isArray(series.obs)) {
-                        // Find observation by comparing extracted start
-                        const obs = series.obs.find(o => extractPeriodStart(o.period) === period);
-                        if (obs && obs.value !== undefined && obs.value !== null) {
-                            // Format number with appropriate decimals
-                            const numValue = parseFloat(obs.value);
-                            if (!isNaN(numValue)) {
-                                value = numValue.toLocaleString(undefined, {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 6
-                                });
-                            }
+                    const obs = seriesObs.get(period);
+                    if (obs && obs.value !== undefined && obs.value !== null) {
+                        // Format number with appropriate decimals
+                        const numValue = parseFloat(obs.value);
+                        if (!isNaN(numValue)) {
+                            value = numValue.toLocaleString(undefined, {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 6
+                            });
                         }
                     }
                     tableHTML += `<td>${value}</td>`;
@@ -5713,6 +5831,125 @@
         let currentStructure = null;
         let dimensionValues = {};
         let keyBuilderCallbackUrl = null; // Callback URL for sending key data
+
+        // Availability state
+        let keyBuilderContext = null; // { source, flow, database } of the loaded structure
+        const availabilityCache = new Map(); // availability URL -> Promise of codes map (or null on error)
+        let useAvailability = false;
+        let guidedAvailabilityGeneration = 0;
+
+        /**
+         * Get the codes of a dimension that have data, given the codes selected in the other dimensions
+         * @param {number} dimIndex - Index of the dimension
+         * @param {string[]} keyParts - Current key parts (empty or '+' means wildcard)
+         * @returns {Promise<Object|null>} - Map of available codes to labels, or null if not available
+         */
+        function getAvailableCodes(dimIndex, keyParts) {
+            if (!useAvailability || !keyBuilderContext || !currentStructure) {
+                return Promise.resolve(null);
+            }
+            const dimensions = currentStructure.dimensions;
+            const key = dimensions
+                .map((dim, i) => (i === dimIndex || !keyParts[i] || keyParts[i] === '+') ? '' : keyParts[i])
+                .join('.');
+            const { source, flow, database } = keyBuilderContext;
+            const url = apiUrl([source, flow, 'availability'], { key, dimension: dimensions[dimIndex].id, database });
+            if (!availabilityCache.has(url)) {
+                availabilityCache.set(url, getJSON(url)
+                    .then(result => result.codes || {})
+                    .catch(error => {
+                        console.warn('Availability not supported or failed:', error.message);
+                        return null;
+                    }));
+            }
+            return availabilityCache.get(url);
+        }
+
+        /**
+         * Enable or disable the filtering of codes by data availability
+         * @param {boolean} enabled - Whether to filter codes
+         */
+        function setUseAvailability(enabled) {
+            useAvailability = enabled;
+            refreshGuidedAvailability();
+            if (document.getElementById('hierarchy-key-container').style.display !== 'none') {
+                renderHierarchyBuilder();
+            }
+        }
+
+        /**
+         * Rebuild the options of the guided mode selects according to data availability
+         */
+        async function refreshGuidedAvailability() {
+            if (!currentStructure || !currentStructure.dimensions) return;
+
+            const generation = ++guidedAvailabilityGeneration;
+            const dimensions = currentStructure.dimensions;
+            const keyParts = dimensions.map(dim => document.getElementById(`dim-${dim.id}`)?.value || '');
+
+            const results = await Promise.all(dimensions.map((dim, index) =>
+                dim.codelist && dim.codelist.codes ? getAvailableCodes(index, keyParts) : Promise.resolve(null)));
+
+            if (generation !== guidedAvailabilityGeneration) return;
+
+            dimensions.forEach((dim, index) => {
+                const select = document.getElementById(`dim-${dim.id}`);
+                if (!select || select.tagName !== 'SELECT') return;
+
+                const fullCodes = JSON.parse(select.dataset.fullCodelist);
+                const available = results[index];
+                const selected = select.value;
+                const codes = Object.keys(fullCodes).sort()
+                    .filter(code => !available || code in available || code === selected);
+
+                while (select.options.length > 2) {
+                    select.remove(2);
+                }
+                codes.forEach(code => {
+                    const option = document.createElement('option');
+                    option.value = code;
+                    option.textContent = `${code} - ${fullCodes[code]}`;
+                    if (available && !(code in available)) {
+                        option.textContent += ' (no data)';
+                    }
+                    select.appendChild(option);
+                });
+                select.value = selected;
+
+                const helpText = document.getElementById(`help-${dim.id}`);
+                const total = Object.keys(fullCodes).length;
+                helpText.textContent = available
+                    ? `${Object.keys(available).filter(code => code in fullCodes).length} of ${total} codes available`
+                    : `${total} available codes`;
+            });
+        }
+
+        /**
+         * Hide the hierarchy nodes that have no data at the current level
+         * @param {number} level - Current dimension level
+         */
+        async function filterHierarchyByAvailability(level) {
+            const keyParts = currentStructure.dimensions.map(dim => hierarchySelections[dim.id] || '');
+            const available = await getAvailableCodes(level, keyParts);
+            if (!available || getHierarchyPath().length !== level) return;
+
+            const tree = document.getElementById('hierarchy-tree-root');
+            if (!tree) return;
+
+            let count = 0;
+            tree.querySelectorAll('.hierarchy-node[data-code]').forEach(node => {
+                const code = node.dataset.code;
+                if (code === '+' || code in available) {
+                    if (code !== '+') count++;
+                } else {
+                    node.remove();
+                }
+            });
+            const stats = document.getElementById('hierarchy-stats');
+            if (stats) {
+                stats.textContent = `📊 ${count} codes with available data`;
+            }
+        }
 
         // Quick key input state
         let currentDimensionIndex = 0;
@@ -5796,8 +6033,8 @@
                 html += '<div class="hierarchy-breadcrumb">';
                 selectedPath.forEach((item, index) => {
                     const dim = currentStructure.dimensions[index];
-                    html += `<div class="hierarchy-breadcrumb-item" onclick="navigateToLevel(${index})" title="${dim.name || dim.id}">`;
-                    html += `<strong>${dim.id}:</strong> ${escapeHtml(item.label)}`;
+                    html += `<div class="hierarchy-breadcrumb-item" onclick="navigateToLevel(${index})" title="${escapeHtml(dim.name || dim.id)}">`;
+                    html += `<strong>${escapeHtml(dim.id)}:</strong> ${escapeHtml(item.label)}`;
                     html += '</div>';
                     if (index < selectedPath.length - 1) {
                         html += '<span class="hierarchy-breadcrumb-separator">→</span>';
@@ -5813,8 +6050,8 @@
                 html += '<div class="hierarchy-dimension">';
                 html += '<div class="hierarchy-dimension-header">';
                 html += '<div class="hierarchy-dimension-info">';
-                html += `<h4>Select ${currentDimension.name || currentDimension.id}</h4>`;
-                html += `<div class="hierarchy-dimension-id">Dimension ${currentLevel + 1} of ${totalLevels}: ${currentDimension.id}</div>`;
+                html += `<h4>Select ${escapeHtml(currentDimension.name || currentDimension.id)}</h4>`;
+                html += `<div class="hierarchy-dimension-id">Dimension ${currentLevel + 1} of ${totalLevels}: ${escapeHtml(currentDimension.id)}</div>`;
                 html += '</div>';
                 html += '</div>';
 
@@ -5827,7 +6064,7 @@
                     const codes = currentDimension.codelist.codes;
                     const codeEntries = Object.entries(codes);
 
-                    html += `<div class="hierarchy-stats">📊 ${codeEntries.length} available codes</div>`;
+                    html += `<div class="hierarchy-stats" id="hierarchy-stats">📊 ${codeEntries.length} available codes</div>`;
 
                     // Render tree of available codes
                     html += '<div class="hierarchy-tree" id="hierarchy-tree-root">';
@@ -5871,6 +6108,10 @@
 
             container.innerHTML = html;
             updateGeneratedKey();
+
+            if (currentDimension && currentDimension.codelist && currentDimension.codelist.codes) {
+                filterHierarchyByAvailability(currentLevel);
+            }
         }
 
         /**
@@ -5879,7 +6120,7 @@
         function renderHierarchyTreeNode(level, code, label, isWildcard) {
             const cssClass = isWildcard ? 'hierarchy-node-wildcard' : 'hierarchy-node-code';
 
-            let html = `<div class="hierarchy-node ${cssClass}" onclick="selectHierarchyValue('${escapeHtml(code)}')">`;
+            let html = `<div class="hierarchy-node ${cssClass}" data-code="${escapeHtml(code)}" onclick="selectHierarchyValue(${jsArg(code)})">`;
             html += '<div class="hierarchy-node-content">';
 
             if (isWildcard) {
@@ -5996,6 +6237,22 @@
             });
         }
 
+        // Loads the dimensions skeleton and their codes, avoiding the full structure (attributes included)
+        async function fetchKeyBuilderDimensions(source, flow, database) {
+            const dimensions = await getJSON(apiUrl([source, flow, 'dimensions'], { database }));
+            if (!Array.isArray(dimensions)) {
+                return [];
+            }
+            dimensions.sort((a, b) => (a.index || 0) - (b.index || 0));
+            await Promise.all(dimensions
+                .filter(dim => dim.codelist)
+                .map(async dim => {
+                    const result = await getJSON(apiUrl([source, flow, 'codes', dim.id], { database }));
+                    dim.codelist.codes = (result && result.codes) || {};
+                }));
+            return dimensions;
+        }
+
         function loadKeyBuilderStructure() {
             const source = document.getElementById('kb-source').value;
             const flow = document.getElementById('kb-flow').value;
@@ -6006,42 +6263,29 @@
                 return;
             }
 
-            const body = { source, flow };
-            if (database) {
-                body.database = database;
-            }
-
             // Show loading
             const dimensionsContainer = document.getElementById('dimensions-container');
             const dimensionsList = document.getElementById('dimensions-list');
             dimensionsList.innerHTML = '<p style="color: #666;">Loading structure...</p>';
             dimensionsContainer.style.display = 'block';
 
-            fetch(API_BASE + '/meta', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(body)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(data => {
-                        throw new Error(data.message || `HTTP ${response.status}: ${response.statusText}`);
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.structure && data.structure.dimensions) {
-                    currentStructure = data.structure;
+            fetchKeyBuilderDimensions(source, flow, database)
+            .then(dimensions => {
+                if (dimensions.length > 0) {
+                    currentStructure = { dimensions };
+                    keyBuilderContext = { source, flow, database };
+                    availabilityCache.clear();
                     dimensionValues = {};
                     hierarchySelections = {}; // Reset hierarchy selections
                     hierarchyExpanded = {}; // Reset hierarchy expanded state
-                    renderDimensionInputs(data.structure.dimensions);
+                    renderDimensionInputs(dimensions);
+                    if (useAvailability) {
+                        refreshGuidedAvailability();
+                    }
 
                     // Show mode toggle and setup quick input
                     document.getElementById('key-input-mode-toggle').style.display = 'flex';
+                    document.getElementById('kb-availability-option').style.display = 'flex';
                     setupQuickKeyInput();
 
                     // Show Generated SDMX Key section and render action buttons
@@ -6055,7 +6299,7 @@
                 }
             })
             .catch(error => {
-                dimensionsList.innerHTML = `<p style="color: #c33;">Error: ${error.message}</p>`;
+                dimensionsList.innerHTML = `<p style="color: #c33;">Error: ${escapeHtml(error.message)}</p>`;
             });
         }
 
@@ -6071,8 +6315,8 @@
                 const label = document.createElement('div');
                 label.className = 'dimension-label';
                 label.innerHTML = `
-                    <div>${dimension.name || dimension.id}</div>
-                    <span class="dim-id">${dimension.id}</span>
+                    <div>${escapeHtml(dimension.name || dimension.id)}</div>
+                    <span class="dim-id">${escapeHtml(dimension.id)}</span>
                 `;
 
                 // Dimension input
@@ -6111,6 +6355,9 @@
 
                     select.addEventListener('change', async () => {
                         updateGeneratedKey();
+                        if (useAvailability) {
+                            refreshGuidedAvailability();
+                        }
                     });
                     inputDiv.appendChild(select);
 
@@ -6307,6 +6554,9 @@
             }
 
             updateGeneratedKey();
+            if (useAvailability) {
+                refreshGuidedAvailability();
+            }
         }
 
         function renderKeyActions() {
@@ -6443,8 +6693,11 @@
             });
         }
 
+        let quickAutocompleteGeneration = 0;
+
         async function loadQuickKeyAutocomplete(parts, currentPart) {
             const dropdown = document.getElementById('autocomplete-dropdown');
+            const generation = ++quickAutocompleteGeneration;
 
             if (!currentStructure || !currentStructure.dimensions) {
                 dropdown.classList.remove('show');
@@ -6459,12 +6712,16 @@
 
             const dimension = currentStructure.dimensions[dimIndex];
 
-            // Get codes for this dimension from structure only (no availability filtering)
+            // Get codes for this dimension from structure, restricted to available data if requested
             let codes = {};
             if (dimension.codelist && dimension.codelist.codes) {
                 codes = dimension.codelist.codes;
+                const available = await getAvailableCodes(dimIndex, parts);
+                if (generation !== quickAutocompleteGeneration) return;
+                if (available) {
+                    codes = Object.fromEntries(Object.entries(codes).filter(([code]) => code in available));
+                }
             }
-
 
             // Filter codes based on current input
             const matchingCodes = Object.keys(codes).filter(code =>
@@ -6494,7 +6751,7 @@
             matchingCodes.sort().forEach(code => {
                 const item = document.createElement('div');
                 item.className = 'autocomplete-item';
-                item.innerHTML = `<span class="code">${code}</span><span class="description">${codes[code]}</span>`;
+                item.innerHTML = `<span class="code">${escapeHtml(code)}</span><span class="description">${escapeHtml(codes[code])}</span>`;
                 item.dataset.code = code;
                 item.addEventListener('click', () => selectAutocompleteItem(item));
                 dropdown.appendChild(item);
@@ -6596,19 +6853,9 @@
 
         async function loadSources() {
             try {
-                const response = await fetch(API_BASE + '/sources', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({})
-                });
-
-                if (response.ok) {
-                    const sources = await response.json();
-                    const sourceOptions = sources.map(s => createOption(s));
-                    updateDatalist('sources-list', sourceOptions);
-                }
+                const sources = await getJSON(apiUrl(['sources']));
+                const sourceOptions = sources.map(s => createOption(s));
+                updateDatalist('sources-list', sourceOptions);
             } catch (error) {
                 console.error('Failed to load sources:', error);
             }
@@ -6618,19 +6865,9 @@
             if (!sourceId) return;
 
             try {
-                const response = await fetch(API_BASE + '/databases', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ source: sourceId })
-                });
-
-                if (response.ok) {
-                    const databases = await response.json();
-                    const databaseOptions = databases.map(d => createOption(d));
-                    updateDatalist(datalistId, databaseOptions);
-                }
+                const databases = await getJSON(apiUrl([sourceId, 'databases']));
+                const databaseOptions = databases.map(d => createOption(d));
+                updateDatalist(datalistId, databaseOptions);
             } catch (error) {
                 console.error('Failed to load databases:', error);
             }
@@ -6640,24 +6877,9 @@
             if (!sourceId) return;
 
             try {
-                const body = { source: sourceId };
-                if (database) {
-                    body.database = database;
-                }
-
-                const response = await fetch(API_BASE + '/flows', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(body)
-                });
-
-                if (response.ok) {
-                    const flows = await response.json();
-                    const flowOptions = flows.map(f => createOption(f));
-                    updateDatalist(datalistId, flowOptions);
-                }
+                const flows = await getJSON(apiUrl([sourceId, 'flows'], { database }));
+                const flowOptions = flows.map(f => createOption(f));
+                updateDatalist(datalistId, flowOptions);
             } catch (error) {
                 console.error('Failed to load flows:', error);
             }
@@ -6817,12 +7039,12 @@
                 html += `
                     <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
                         <div style="flex: 1;">
-                            <div style="font-weight: 600; color: #003D6D; margin-bottom: 4px;">${series.label}</div>
+                            <div style="font-weight: 600; color: #003D6D; margin-bottom: 4px;">${escapeHtml(series.label)}</div>
                             <div style="font-size: 0.85em; color: #666;">
-                                <span class="material-symbols-outlined" style="font-size: 14px;">source</span> ${series.source} &nbsp;
-                                <span class="material-symbols-outlined" style="font-size: 14px;">data_object</span> ${series.flow} &nbsp;
-                                <span class="material-symbols-outlined" style="font-size: 14px;">key</span> ${series.key}
-                                ${series.database ? ` &nbsp;<span class="material-symbols-outlined" style="font-size: 14px;">database</span> ${series.database}` : ''}
+                                <span class="material-symbols-outlined" style="font-size: 14px;">source</span> ${escapeHtml(series.source)} &nbsp;
+                                <span class="material-symbols-outlined" style="font-size: 14px;">data_object</span> ${escapeHtml(series.flow)} &nbsp;
+                                <span class="material-symbols-outlined" style="font-size: 14px;">key</span> ${escapeHtml(series.key)}
+                                ${series.database ? ` &nbsp;<span class="material-symbols-outlined" style="font-size: 14px;">database</span> ${escapeHtml(series.database)}` : ''}
                             </div>
                         </div>
                         <button onclick="removeSeriesFromComparison(${series.id})" style="background: #dc3545; border-color: #dc3545; padding: 8px 16px; min-width: auto;">
@@ -6885,11 +7107,14 @@
                 const allTraces = [];
                 const allLabelsSet = new Set();
                 const periodToDateMap = new Map();
+                const periodLabels = new Map();
+                const allIsoPeriods = [];
 
                 results.forEach((data, index) => {
                     const seriesLabel = comparisonSeries[index].label;
 
                     if (data && data.data && Array.isArray(data.data)) {
+                        const displayNames = getSeriesDisplayNames(data.data);
                         data.data.forEach((series, seriesIndex) => {
                             if (series.obs && Array.isArray(series.obs)) {
                                 const dataMap = new Map();
@@ -6898,7 +7123,9 @@
                                     // Extract start from ISO period format (start/duration)
                                     let period = obs.period;
                                     if (period) {
+                                        allIsoPeriods.push(period);
                                         period = extractPeriodStart(period);
+                                        periodLabels.set(period, formatPeriod(obs.period));
                                         const dateObj = parseToDate(period);
                                         if (dateObj) {
                                             periodToDateMap.set(period, dateObj);
@@ -6914,7 +7141,7 @@
                                 if (dataMap.size > 0) {
                                     // Use custom label plus series key
                                     const traceName = data.data.length > 1
-                                        ? `${seriesLabel} - ${series.key || 'Series ' + (seriesIndex + 1)}`
+                                        ? `${seriesLabel} - ${displayNames[seriesIndex]}`
                                         : seriesLabel;
 
                                     // Sort labels by date
@@ -6938,12 +7165,11 @@
                                     allTraces.push({
                                         x: xValues,
                                         y: yValues,
+                                        customdata: sortedLabels.map(label => periodLabels.get(label) || label),
                                         mode: 'lines+markers',
-                                        name: traceName,
+                                        name: escapeHtml(shortenLabel(traceName)),
                                         connectgaps: true,
-                                        hovertemplate: allParsed
-                                            ? '%{x|%Y-%m-%d}<br>%{y}<extra>' + traceName + '</extra>'
-                                            : '%{x}<br>%{y}<extra>' + traceName + '</extra>'
+                                        hovertemplate: '%{customdata}: %{y}<extra>' + escapePlotlyTemplate(series.key || traceName) + '</extra>'
                                     });
                                 }
                             }
@@ -6957,7 +7183,7 @@
                 }
 
                 // Render comparison chart
-                renderComparisonChart(allTraces, periodToDateMap);
+                renderComparisonChart(allTraces, getDateFormat(allIsoPeriods));
                 chartWrapper.style.display = 'block';
 
             } catch (error) {
@@ -6973,31 +7199,13 @@
          * Fetch data for a single series
          */
         async function fetchSeriesData(source, flow, key, database) {
-            const body = { source, flow, key };
-            if (database) {
-                body.database = database;
-            }
-
-            const response = await fetch(API_BASE + '/data', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(body)
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
-            }
-
-            return response.json();
+            return getJSON(apiUrl([source, flow, 'data'], { key, database }));
         }
 
         /**
          * Render the comparison chart using Plotly
          */
-        function renderComparisonChart(traces, periodToDateMap) {
+        function renderComparisonChart(traces, dateFormat) {
             const chartDiv = document.getElementById('compare-chart');
 
             if (typeof Plotly === 'undefined') {
@@ -7080,8 +7288,8 @@
             };
 
             if (useDateAxis) {
-                layout.xaxis.tickformat = '%Y-%m-%d';
-                layout.xaxis.hoverformat = '%Y-%m-%d';
+                layout.xaxis.tickformat = dateFormat;
+                layout.xaxis.hoverformat = dateFormat;
             }
 
             const config = { responsive: true, displayModeBar: true };
@@ -7101,7 +7309,7 @@
                 // Setup resize observer
                 setupCompareChartResizeObserver();
             } catch (error) {
-                chartDiv.innerHTML = '<div style="color:#cc0000; text-align:center; padding-top: 40px;">Error rendering chart: ' + error.message + '</div>';
+                chartDiv.innerHTML = '<div style="color:#cc0000; text-align:center; padding-top: 40px;">Error rendering chart: ' + escapeHtml(error.message) + '</div>';
                 console.error('Plotly rendering error:', error);
             }
         }
@@ -7292,11 +7500,7 @@
                 progressBar.style.width = '10%';
                 progressText.textContent = '10% - Fetching sources...';
 
-                const sourcesResponse = await fetch(API_BASE + '/sources', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({})
-                });
+                const sourcesResponse = await fetch(apiUrl(['sources']));
 
                 if (!sourcesResponse.ok) {
                     throw new Error('Failed to fetch sources');
@@ -7314,11 +7518,7 @@
 
                 const flowPromises = sources.map(async (source) => {
                     try {
-                        const response = await fetch(API_BASE + '/flows', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ source: source.id })
-                        });
+                        const response = await fetch(apiUrl([source.id, 'flows']));
 
                         if (response.ok) {
                             const flows = await response.json();
@@ -7375,7 +7575,7 @@
                 updateIndexStatus();
 
             } catch (error) {
-                statusEl.innerHTML = `<span class="material-symbols-outlined" style="color: #dc3545;">error</span> Error: ${error.message}`;
+                statusEl.innerHTML = `<span class="material-symbols-outlined" style="color: #dc3545;">error</span> Error: ${escapeHtml(error.message)}`;
                 progressContainer.style.display = 'none';
                 console.error('Indexing error:', error);
             } finally {
@@ -7601,7 +7801,7 @@
 
             recentSearches.forEach(search => {
                 html += `<button
-                    onclick="runRecentSearch('${escapeHtml(search).replace(/'/g, "\\'")}')"
+                    onclick="runRecentSearch(${jsArg(search)})"
                     style="padding: 4px 12px; background: #f1f3f4; border: 1px solid #dadce0; border-radius: 16px; color: #3c4043; font-size: 13px; cursor: pointer; transition: all 0.2s;"
                     onmouseover="this.style.background='#e8eaed';"
                     onmouseout="this.style.background='#f1f3f4';">${escapeHtml(search)}</button>`;
@@ -7710,7 +7910,7 @@
             if (!text || !query) return escapeHtml(text || '');
 
             const escapedText = escapeHtml(text);
-            const searchTerm = query.trim();
+            const searchTerm = escapeHtml(query.trim());
 
             if (!searchTerm) return escapedText;
 
@@ -7753,7 +7953,7 @@
                     <div style="margin-bottom: 20px;">
                         <h3 style="color: #003D6D; font-size: 1.1em; margin-bottom: 10px; padding: 10px; background: #f8f9fa; border-left: 4px solid #0066cc; display: flex; align-items: center; gap: 8px;">
                             <span class="material-symbols-outlined">source</span>
-                            ${sourceLabel} (${sourceName})
+                            ${escapeHtml(sourceLabel)} (${escapeHtml(sourceName)})
                             <span style="margin-left: auto; font-size: 0.9em; font-weight: normal; color: #666;">${sourceFlows.length} flow${sourceFlows.length !== 1 ? 's' : ''}</span>
                         </h3>
                         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 15px;">
@@ -7777,10 +7977,10 @@
                             <div class="flow-actions">
                                 <div class="flow-actions-title">Use in Other Tabs</div>
                                 <div class="flow-action-buttons">
-                                    <button class="flow-action-btn" onclick="event.stopPropagation(); useFlowSearchInTab('${escapeHtml(flow.source)}', '${escapeHtml(flow.ref)}', '', 'meta')" title="Get meta for this flow"><span class="material-symbols-outlined">info</span> Meta</button>
-                                    <button class="flow-action-btn" onclick="event.stopPropagation(); useFlowSearchInTab('${escapeHtml(flow.source)}', '${escapeHtml(flow.ref)}', '', 'keybuilder')" title="Use in key builder"><span class="material-symbols-outlined">vpn_key</span> Key Builder</button>
-                                    <button class="flow-action-btn" onclick="event.stopPropagation(); useFlowSearchInTab('${escapeHtml(flow.source)}', '${escapeHtml(flow.ref)}', '', 'data')" title="Use in data tab"><span class="material-symbols-outlined">analytics</span> Data</button>
-                                    <button class="flow-action-btn" onclick="event.stopPropagation(); useFlowSearchInTab('${escapeHtml(flow.source)}', '${escapeHtml(flow.ref)}', '', 'compare')" title="Use in compare tab"><span class="material-symbols-outlined">compare_arrows</span> Compare</button>
+                                    <button class="flow-action-btn" onclick="event.stopPropagation(); useFlowSearchInTab(${jsArg(flow.source)}, ${jsArg(flow.ref)}, '', 'meta')" title="Get meta for this flow"><span class="material-symbols-outlined">info</span> Meta</button>
+                                    <button class="flow-action-btn" onclick="event.stopPropagation(); useFlowSearchInTab(${jsArg(flow.source)}, ${jsArg(flow.ref)}, '', 'keybuilder')" title="Use in key builder"><span class="material-symbols-outlined">vpn_key</span> Key Builder</button>
+                                    <button class="flow-action-btn" onclick="event.stopPropagation(); useFlowSearchInTab(${jsArg(flow.source)}, ${jsArg(flow.ref)}, '', 'data')" title="Use in data tab"><span class="material-symbols-outlined">analytics</span> Data</button>
+                                    <button class="flow-action-btn" onclick="event.stopPropagation(); useFlowSearchInTab(${jsArg(flow.source)}, ${jsArg(flow.ref)}, '', 'compare')" title="Use in compare tab"><span class="material-symbols-outlined">compare_arrows</span> Compare</button>
                                 </div>
                             </div>
                         </div>
@@ -7879,6 +8079,7 @@
             // Now set up the rest of the application
             getAbout();
             loadSources();
+            loadScriptTargets();
             setupAutocomplete();
 
             // Auto-load sources on page load (loads in background for all tabs)

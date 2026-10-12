@@ -12,6 +12,8 @@ This service has three endpoints:
 - a [REST endpoint](#rest-endpoint) which has a **wider range of clients** but is less efficient
 - an [MCP endpoint](#mcp-endpoint) which lets **AI assistants and agents** browse and fetch data
 
+It also serves a [web UI]({{< relref "/ws/web-ui" >}}) to browse sources and fetch data from a browser, on top of the REST endpoint.
+
 These endpoints also provides specifications ([.proto files](https://grpc.io/docs/what-is-grpc/introduction/#working-with-protocol-buffers) and [OpenAPI](https://en.wikipedia.org/wiki/OpenAPI_Specification) respectively) that can be used to generate client code.
 They are designed to operate locally as well as on remote machines.
 
