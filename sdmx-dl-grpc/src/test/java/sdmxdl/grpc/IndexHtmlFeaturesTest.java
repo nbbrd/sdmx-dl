@@ -18,6 +18,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -209,6 +210,24 @@ class IndexHtmlFeaturesTest {
     // ========================================================================
 
     @Test
+    @DisplayName("Tabs are grouped by workflow step and mirrored by a select for small screens")
+    void testTabGroups() {
+        open("?tab=meta");
+        assertThat(eval("[...document.querySelectorAll('.tabs .tab-group-start')].map(e => e.dataset.group)"))
+                .asList()
+                .containsExactly("Discover", "Browse", "Retrieve");
+        assertThat(eval("document.getElementById('tab-select').value")).isEqualTo("meta");
+
+        js.executeScript("const select = document.getElementById('tab-select');"
+                + "select.value = 'data'; select.dispatchEvent(new Event('change'));");
+        assertThat(eval("document.getElementById('data-tab').classList.contains('active')"))
+                .isEqualTo(true);
+        assertThat(eval("document.querySelector('.tab[data-tab=data]').classList.contains('active')"))
+                .isEqualTo(true);
+        assertThat(eval("new URL(location).searchParams.get('tab')")).isEqualTo("data");
+    }
+
+    @Test
     @DisplayName("Data tab shows titles, period labels and applies data options")
     void testDataTab() {
         open("?tab=data&source=ECB&flow=EXR&key=M..EUR.SP00.A");
@@ -256,12 +275,173 @@ class IndexHtmlFeaturesTest {
         assertThat(eval("document.getElementById('help-CURRENCY').textContent")).isEqualTo("2 of 12 codes available");
         assertThat(eval("document.getElementById('help-CURRENCY_DENOM').textContent"))
                 .isEqualTo("1 of 12 codes available");
+        assertThat(eval("Object.keys(document.getElementById('dim-CURRENCY').tomselect.options).length"))
+                .as("Dropdown should only offer the available codes")
+                .isEqualTo(4L);
 
         driver.findElement(By.id("kb-use-availability")).click();
         waitFor("document.getElementById('help-CURRENCY').textContent === '12 available codes'");
 
         assertThat(eval("document.getElementById('dim-CURRENCY').options.length"))
                 .isEqualTo(14L);
+        assertThat(eval("Object.keys(document.getElementById('dim-CURRENCY').tomselect.options).length"))
+                .isEqualTo(14L);
+    }
+
+    @Test
+    @DisplayName("Key fields of the Data and Compare tabs autocomplete available codes")
+    void testDataKeyAutocomplete() {
+        open("?tab=data&source=ECB&flow=EXR");
+        driver.findElement(By.id("data-key")).sendKeys("M.");
+        waitFor("document.querySelectorAll('#data-key ~ .autocomplete-dropdown.show .autocomplete-item').length > 1");
+
+        assertThat(eval("[...document.querySelectorAll('#data-key ~ .autocomplete-dropdown .autocomplete-item')]"
+                        + ".map(item => item.dataset.code)"))
+                .asList()
+                .hasSize(3)
+                .first()
+                .isEqualTo("+");
+
+        driver.findElement(By.id("data-key")).sendKeys(Keys.ARROW_DOWN, Keys.ARROW_DOWN, Keys.ENTER);
+        assertThat((String) eval("document.getElementById('data-key').value")).matches("M\\.[A-Z]{3}\\.");
+
+        open("?tab=compare&source=ECB&flow=EXR");
+        driver.findElement(By.id("compare-key")).click();
+        waitFor(
+                "document.querySelectorAll('#compare-key ~ .autocomplete-dropdown.show .autocomplete-item').length > 1");
+    }
+
+    @Test
+    @DisplayName("Source and flow fields show suggestions from their datalist")
+    void testListSuggestions() {
+        open("?tab=data");
+        waitFor("document.getElementById('sources-list').children.length > 0");
+
+        assertThat(eval("document.getElementById('data-source').hasAttribute('list')"))
+                .as("Native datalist popup should be replaced")
+                .isEqualTo(false);
+
+        driver.findElement(By.id("data-source")).sendKeys("EC");
+        waitFor("document.querySelector('#data-source ~ .autocomplete-dropdown.show .autocomplete-item')");
+        assertThat(
+                        eval(
+                                "document.querySelector('#data-source ~ .autocomplete-dropdown .autocomplete-item').dataset.code"))
+                .isEqualTo("ECB");
+
+        driver.findElement(By.id("data-source")).sendKeys(Keys.ARROW_DOWN, Keys.ENTER);
+        assertThat(eval("document.getElementById('data-source').value")).isEqualTo("ECB");
+        assertThat(eval("document.querySelector('#data-source ~ .autocomplete-dropdown').classList.contains('show')"))
+                .isEqualTo(false);
+
+        waitFor("document.getElementById('flows-list-data').children.length > 0");
+        driver.findElement(By.id("data-flow")).click();
+        waitFor("document.querySelector('#data-flow ~ .autocomplete-dropdown.show .autocomplete-item')");
+        assertThat(eval("[...document.querySelectorAll('#data-flow ~ .autocomplete-dropdown .autocomplete-item')]"
+                        + ".map(item => item.dataset.code)"))
+                .asList()
+                .contains("ECB,EXR,1.0");
+    }
+
+    @Test
+    @DisplayName("Data chart toolbar switches to percent changes and log scale, and exports CSV")
+    void testDataChartToolbar() {
+        open("?tab=data&source=ECB&flow=EXR&key=M..EUR.SP00.A");
+        js.executeScript("document.getElementById('data-lastn').value = '3'; getData();");
+        waitFor("document.getElementById('data-chart').data && !document.getElementById('data-chart-toolbar').hidden");
+
+        assertThat(eval("document.getElementById('data-series-visibility').hidden"))
+                .isEqualTo(true);
+
+        js.executeScript("document.getElementById('data-transform-change').click()");
+        waitFor("document.getElementById('data-chart').layout.yaxis.title.text === '% change'");
+        assertThat(eval("document.getElementById('data-chart').data[0].y[0]")).isNull();
+        assertThat(eval("document.getElementById('data-chart').data[0].y[1]")).isNotNull();
+
+        js.executeScript("document.getElementById('data-log-scale').click()");
+        waitFor("document.getElementById('data-chart').layout.yaxis.type === 'log'");
+
+        List<?> lines = (List<?>) eval("buildDataCsv(window.dataResponseData).split('\\r\\n')");
+        assertThat(lines).hasSize(5);
+        assertThat((String) lines.get(0)).startsWith("Period,").contains("CHF", "USD");
+        assertThat((String) lines.get(1)).startsWith("2024-10,");
+    }
+
+    @Test
+    @DisplayName("Data chart helpers compute percent changes and limit visible series")
+    void testDataChartHelpers() {
+        open("?tab=about");
+        assertThat(eval("JSON.stringify(toPercentChanges([100, null, 110, 99, 0, 5]))"))
+                .isEqualTo("[null,null,10,-10,-100,null]");
+        assertThat(eval("getDisplayedTraces(Array.from({length: 12}, () => ({y: [1], hovertemplate: '%{y}'})), true)"
+                        + ".filter(t => t.visible === 'legendonly').length"))
+                .isEqualTo(2L);
+        assertThat(eval(
+                        "JSON.stringify(buildDataCsv({data: [{key: 'A', obs: [{period: '2024-01-01T00:00:00/P1M', value: 1.5}]},"
+                                + " {key: 'B,C', obs: []}]}))"))
+                .isEqualTo("\"Period,A,\\\"B,C\\\"\\r\\n2024-01,1.5,\\r\\n\"");
+    }
+
+    @Test
+    @DisplayName("Compare series are kept in the local storage and in the URL")
+    void testComparePersistence() {
+        open("?tab=compare");
+        assertThat(eval("document.getElementById('compare-btn').disabled")).isEqualTo(true);
+        js.executeScript("document.getElementById('compare-source').value = 'ECB';"
+                + "document.getElementById('compare-flow').value = 'EXR';"
+                + "document.getElementById('compare-key').value = 'M.USD.EUR.SP00.A';"
+                + "document.getElementById('compare-label').value = 'Dollar 50/50';"
+                + "addSeriesToComparison();");
+
+        assertThat(eval("new URL(location).searchParams.getAll('series')"))
+                .asList()
+                .containsExactly("ECB/EXR/M.USD.EUR.SP00.A//Dollar 50%2F50");
+
+        open("?tab=compare");
+        assertThat(eval("[...document.querySelectorAll('.compare-series-label')].map(e => e.textContent)"))
+                .as("Series should be restored from the local storage")
+                .asList()
+                .containsExactly("Dollar 50/50");
+        assertThat(eval("document.getElementById('compare-btn').disabled")).isEqualTo(false);
+
+        open("?tab=compare&series=BBK/BBEX3/D.USD&series=ECB/EXR/M.CHF.EUR.SP00.A//Franc");
+        assertThat(eval("[...document.querySelectorAll('.compare-series-label')].map(e => e.textContent)"))
+                .as("Series from the URL should replace the stored ones")
+                .asList()
+                .containsExactly("BBK/BBEX3/D.USD", "Franc");
+
+        js.executeScript("removeSeriesFromComparison(comparisonSeries[0].id)");
+        assertThat(eval("new URL(location).searchParams.getAll('series')"))
+                .asList()
+                .containsExactly("ECB/EXR/M.CHF.EUR.SP00.A//Franc");
+    }
+
+    @Test
+    @DisplayName("Dark mode applies to the page and to the charts")
+    void testDarkMode() {
+        open("?tab=about");
+        js.executeScript("localStorage.setItem('sdmxdl-theme', 'dark')");
+        open("?tab=data&source=ECB&flow=EXR&key=M..EUR.SP00.A");
+
+        assertThat(eval("document.documentElement.dataset.bsTheme")).isEqualTo("dark");
+        assertThat(eval("getComputedStyle(document.body).backgroundColor")).isNotEqualTo("rgb(255, 255, 255)");
+
+        js.executeScript("getData()");
+        waitFor("document.getElementById('data-chart').data");
+        String darkText =
+                (String) eval("getComputedStyle(document.documentElement).getPropertyValue('--bs-body-color').trim()");
+        assertThat(eval("document.getElementById('data-chart').layout.font.color"))
+                .isEqualTo(darkText);
+
+        js.executeScript("toggleTheme()");
+        assertThat(eval("document.documentElement.dataset.bsTheme")).isEqualTo("light");
+        waitFor("document.getElementById('data-chart').layout.font.color !== '" + darkText + "'");
+
+        List<String> errors = driver.manage().logs().get(LogType.BROWSER).getAll().stream()
+                .filter(entry -> entry.getLevel().intValue() >= Level.SEVERE.intValue())
+                .map(LogEntry::getMessage)
+                .filter(message -> !message.contains("favicon") && !message.contains("icons.duckduckgo.com"))
+                .collect(Collectors.toList());
+        assertThat(errors).isEmpty();
     }
 
     @Test

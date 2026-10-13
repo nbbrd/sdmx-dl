@@ -138,6 +138,7 @@ function updateDatalist(datalistId, options) {
         }
         datalist.appendChild(optionElement);
     });
+    datalist.dispatchEvent(new Event('datalistupdate'));
 }
 
 // Helper to create searchable option with ID, name, and description

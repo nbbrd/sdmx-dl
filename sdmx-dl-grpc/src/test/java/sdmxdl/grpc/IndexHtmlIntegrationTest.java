@@ -1,8 +1,15 @@
 package sdmxdl.grpc;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.github.bonigarcia.wdm.WebDriverManager;
 import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.time.Duration;
+import java.util.List;
 import org.junit.jupiter.api.*;
 import org.junitpioneer.jupiter.RetryingTest;
 import org.openqa.selenium.*;
@@ -10,15 +17,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.net.URL;
-import java.net.URLEncoder;
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Integration tests for index.html SDMX-DL API Explorer
@@ -29,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class IndexHtmlIntegrationTest {
 
     @TestHTTPResource("/")
-    URL testUrl;  // Quarkus automatically injects the correct URL with dynamic test port
+    URL testUrl; // Quarkus automatically injects the correct URL with dynamic test port
 
     private static WebDriver driver;
     private static WebDriverWait wait;
@@ -80,16 +78,12 @@ class IndexHtmlIntegrationTest {
         driver.get(testUrl.toString() + "index.html");
 
         // Verify page title
-        assertThat(driver.getTitle())
-            .contains("SDMX-DL");
+        assertThat(driver.getTitle()).contains("SDMX-DL");
 
         // Verify header is present
         WebElement header = driver.findElement(By.tagName("header"));
-        assertThat(header.isDisplayed())
-            .as("Header should be visible")
-            .isTrue();
-        assertThat(header.getText())
-            .contains("SDMX-DL API Explorer");
+        assertThat(header.isDisplayed()).as("Header should be visible").isTrue();
+        assertThat(header.getText()).contains("SDMX-DL API Explorer");
     }
 
     @Test
@@ -99,21 +93,19 @@ class IndexHtmlIntegrationTest {
         driver.get(testUrl.toString() + "index.html?tab=sources");
 
         // Wait for sources to load automatically
-        wait.until(ExpectedConditions.presenceOfElementLocated(
-            By.cssSelector("#sources-pretty-content .source-card")));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#sources-pretty-content .source-card")));
 
         // Verify at least one source card is displayed
-        List<WebElement> sourceCards = driver.findElements(
-            By.cssSelector("#sources-pretty-content .source-card"));
+        List<WebElement> sourceCards = driver.findElements(By.cssSelector("#sources-pretty-content .source-card"));
         assertThat(sourceCards)
-            .as("Sources should auto-load and display at least one source")
-            .isNotEmpty();
+                .as("Sources should auto-load and display at least one source")
+                .isNotEmpty();
 
         // Verify first source has required elements
         WebElement firstCard = sourceCards.get(0);
         assertThat(firstCard.findElement(By.className("source-name")).isDisplayed())
-            .as("Source card should have a name")
-            .isTrue();
+                .as("Source card should have a name")
+                .isTrue();
     }
 
     @Test
@@ -144,8 +136,8 @@ class IndexHtmlIntegrationTest {
         // Verify callback parameter still exists in URL
         String currentUrl = driver.getCurrentUrl();
         assertThat(currentUrl)
-            .as("Callback parameter should be preserved after source field change")
-            .contains("callback=" + URLEncoder.encode(callbackUrl, UTF_8));
+                .as("Callback parameter should be preserved after source field change")
+                .contains("callback=" + URLEncoder.encode(callbackUrl, UTF_8));
 
         // Change flow field
         WebElement flowField = driver.findElement(By.id("kb-flow"));
@@ -163,8 +155,8 @@ class IndexHtmlIntegrationTest {
         // Verify callback parameter still exists after flow change
         currentUrl = driver.getCurrentUrl();
         assertThat(currentUrl)
-            .as("Callback parameter should be preserved after flow field change")
-            .contains("callback=" + URLEncoder.encode(callbackUrl, UTF_8));
+                .as("Callback parameter should be preserved after flow field change")
+                .contains("callback=" + URLEncoder.encode(callbackUrl, UTF_8));
     }
 
     @Test
@@ -178,13 +170,12 @@ class IndexHtmlIntegrationTest {
             driver.get(testUrl.toString() + "index.html?tab=" + tab);
 
             // Wait for tab to be active
-            wait.until(ExpectedConditions.attributeContains(
-                By.id(tab + "-tab"), "class", "active"));
+            wait.until(ExpectedConditions.attributeContains(By.id(tab + "-tab"), "class", "active"));
 
             WebElement tabContent = driver.findElement(By.id(tab + "-tab"));
             assertThat(tabContent.isDisplayed())
-                .as("Tab '%s' should be visible when selected via URL", tab)
-                .isTrue();
+                    .as("Tab '%s' should be visible when selected via URL", tab)
+                    .isTrue();
         }
     }
 
@@ -200,13 +191,13 @@ class IndexHtmlIntegrationTest {
         // Verify form fields are populated
         WebElement sourceField = driver.findElement(By.id("kb-source"));
         assertThat(sourceField.getAttribute("value"))
-            .as("Source field should be populated from URL parameter")
-            .isEqualTo("ECB");
+                .as("Source field should be populated from URL parameter")
+                .isEqualTo("ECB");
 
         WebElement flowField = driver.findElement(By.id("kb-flow"));
         assertThat(flowField.getAttribute("value"))
-            .as("Flow field should be populated from URL parameter")
-            .isEqualTo("EXR");
+                .as("Flow field should be populated from URL parameter")
+                .isEqualTo("EXR");
     }
 
     // ========================================================================
@@ -220,20 +211,15 @@ class IndexHtmlIntegrationTest {
         driver.get(testUrl.toString() + "index.html?tab=sources");
 
         // Wait for sources to load and be rendered
-        wait.until(ExpectedConditions.presenceOfElementLocated(
-            By.cssSelector("#sources-pretty-content .source-card")));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#sources-pretty-content .source-card")));
 
         // Wait for filter input to be available (it's rendered with the pretty view)
-        wait.until(ExpectedConditions.presenceOfElementLocated(
-            By.id("sources-filter-input")));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("sources-filter-input")));
 
         // Get initial count of visible cards
-        List<WebElement> allCards = driver.findElements(
-            By.cssSelector("#sources-pretty-content .source-card"));
+        List<WebElement> allCards = driver.findElements(By.cssSelector("#sources-pretty-content .source-card"));
         int initialCount = allCards.size();
-        assertThat(initialCount)
-            .as("Should have sources loaded")
-            .isPositive();
+        assertThat(initialCount).as("Should have sources loaded").isPositive();
 
         // Enter filter text
         WebElement filterInput = driver.findElement(By.id("sources-filter-input"));
@@ -250,16 +236,15 @@ class IndexHtmlIntegrationTest {
         // Use JavaScript to count visible cards by checking for 'filtered-hidden' class
         // The filter adds this CSS class to hide cards, not style.display
         JavascriptExecutor js = (JavascriptExecutor) driver;
-        Long visibleCount = (Long) js.executeScript(
-            "return Array.from(document.querySelectorAll('#sources-pretty-content .source-card'))" +
-            ".filter(card => !card.classList.contains('filtered-hidden')).length;");
+        Long visibleCount = (Long)
+                js.executeScript("return Array.from(document.querySelectorAll('#sources-pretty-content .source-card'))"
+                        + ".filter(card => !card.classList.contains('filtered-hidden')).length;");
 
-        assertThat(visibleCount)
-            .as("Visible count should not be null")
-            .isNotNull();
+        assertThat(visibleCount).as("Visible count should not be null").isNotNull();
         assertThat(visibleCount.intValue())
-            .as("Filter should reduce the number of visible sources (filtering 'ECB' from " + initialCount + " sources)")
-            .isLessThan(initialCount);
+                .as("Filter should reduce the number of visible sources (filtering 'ECB' from " + initialCount
+                        + " sources)")
+                .isLessThan(initialCount);
     }
 
     @Test
@@ -281,9 +266,7 @@ class IndexHtmlIntegrationTest {
 
         // Verify class changed (indicating toggle state change)
         String afterClass = matchCaseButton.getAttribute("class");
-        assertThat(afterClass)
-            .as("Match case button should toggle its state")
-            .isNotEqualTo(initialClass);
+        assertThat(afterClass).as("Match case button should toggle its state").isNotEqualTo(initialClass);
     }
 
     @RetryingTest(value = 5, suspendForMs = 1000)
@@ -293,25 +276,22 @@ class IndexHtmlIntegrationTest {
         driver.get(testUrl.toString() + "index.html?tab=sources");
 
         // Wait for sources to load
-        wait.until(ExpectedConditions.presenceOfElementLocated(
-            By.cssSelector("#sources-pretty-content .source-card")));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#sources-pretty-content .source-card")));
 
         // Find first source card
-        WebElement firstCard = driver.findElement(
-            By.cssSelector("#sources-pretty-content .source-card"));
+        WebElement firstCard = driver.findElement(By.cssSelector("#sources-pretty-content .source-card"));
 
         // Click on card
         firstCard.click();
 
         // Wait for action buttons to appear
-        wait.until(ExpectedConditions.presenceOfElementLocated(
-            By.cssSelector(".source-actions")));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".source-actions")));
 
         // Verify action buttons are visible
         WebElement actions = firstCard.findElement(By.cssSelector(".source-actions"));
         assertThat(actions.isDisplayed())
-            .as("Action buttons should appear after clicking source card")
-            .isTrue();
+                .as("Action buttons should appear after clicking source card")
+                .isTrue();
     }
 
     @Test
@@ -329,9 +309,7 @@ class IndexHtmlIntegrationTest {
 
         // Check if datalist exists
         WebElement datalist = driver.findElement(By.id("flows-list-kb"));
-        assertThat(datalist)
-            .as("Flow autocomplete datalist should exist")
-            .isNotNull();
+        assertThat(datalist).as("Flow autocomplete datalist should exist").isNotNull();
     }
 
     @Test
@@ -344,26 +322,23 @@ class IndexHtmlIntegrationTest {
         driver.findElement(By.xpath("//button[contains(text(),'Get Sources')]")).click();
 
         // Wait for copy dropdown to appear
-        wait.until(ExpectedConditions.visibilityOfElementLocated(
-            By.id("sources-copy-dropdown")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("sources-copy-dropdown")));
 
         // Click dropdown button
-        WebElement dropdownButton = driver.findElement(
-            By.cssSelector("#sources-copy-dropdown .dropdown-button"));
+        WebElement dropdownButton = driver.findElement(By.cssSelector("#sources-copy-dropdown .dropdown-button"));
         dropdownButton.click();
 
         // Verify dropdown content is visible
-        WebElement dropdownContent = driver.findElement(
-            By.id("sources-copy-dropdown-content"));
+        WebElement dropdownContent = driver.findElement(By.id("sources-copy-dropdown-content"));
         assertThat(dropdownContent.isDisplayed())
-            .as("Dropdown content should be visible after clicking button")
-            .isTrue();
+                .as("Dropdown content should be visible after clicking button")
+                .isTrue();
 
         // Verify dropdown has copy options
         List<WebElement> options = dropdownContent.findElements(By.tagName("a"));
         assertThat(options)
-            .as("Should have at least 4 copy options (JSON, cURL bash, cmd, PowerShell)")
-            .hasSizeGreaterThanOrEqualTo(4);
+                .as("Should have at least 4 copy options (JSON, cURL bash, cmd, PowerShell)")
+                .hasSizeGreaterThanOrEqualTo(4);
     }
 
     // ========================================================================
@@ -381,8 +356,8 @@ class IndexHtmlIntegrationTest {
         // Verify tabs container has hide-others class
         WebElement tabsContainer = driver.findElement(By.className("tabs"));
         assertThat(tabsContainer.getAttribute("class"))
-            .as("Tabs container should have 'hide-others' class when parameter is set")
-            .contains("hide-others");
+                .as("Tabs container should have 'hide-others' class when parameter is set")
+                .contains("hide-others");
     }
 
     @Test
@@ -396,8 +371,8 @@ class IndexHtmlIntegrationTest {
         // Verify container has hide-header class
         WebElement container = driver.findElement(By.className("container"));
         assertThat(container.getAttribute("class"))
-            .as("Container should have 'hide-header' class when parameter is set")
-            .contains("hide-header");
+                .as("Container should have 'hide-header' class when parameter is set")
+                .contains("hide-header");
     }
 
     @Test
@@ -406,19 +381,18 @@ class IndexHtmlIntegrationTest {
     void testToggleButtons() {
         driver.get(testUrl.toString() + "index.html");
 
-        wait.until(ExpectedConditions.presenceOfElementLocated(
-            By.id("view-menu-btn")));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("view-menu-btn")));
 
         // Find toggle button
         WebElement toggleButton = driver.findElement(By.id("view-menu-btn"));
 
         // Verify button exists and is clickable
         assertThat(toggleButton.isDisplayed())
-            .as("Toggle button should be visible")
-            .isTrue();
+                .as("Toggle button should be visible")
+                .isTrue();
         assertThat(toggleButton.isEnabled())
-            .as("Toggle button should be enabled")
-            .isTrue();
+                .as("Toggle button should be enabled")
+                .isTrue();
     }
 
     @Test
@@ -431,42 +405,35 @@ class IndexHtmlIntegrationTest {
         driver.findElement(By.xpath("//button[contains(text(),'Get Flows')]")).click();
 
         // Wait for flows to load
-        wait.until(ExpectedConditions.presenceOfElementLocated(
-            By.cssSelector("#flows-pretty-content .flow-card")));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#flows-pretty-content .flow-card")));
 
         // Find first flow card
-        WebElement flowCard = driver.findElement(
-            By.cssSelector("#flows-pretty-content .flow-card"));
+        WebElement flowCard = driver.findElement(By.cssSelector("#flows-pretty-content .flow-card"));
 
         // Verify icon exists
         WebElement icon = flowCard.findElement(By.className("flow-icon"));
-        assertThat(icon.isDisplayed())
-            .as("Flow icon should be displayed")
-            .isTrue();
+        assertThat(icon.isDisplayed()).as("Flow icon should be displayed").isTrue();
     }
 
     @Test
     @Order(24)
-    @DisplayName("Material Icons load correctly")
-    void testMaterialIconsLoad() {
+    @DisplayName("Bootstrap Icons load correctly")
+    void testBootstrapIconsLoad() {
         driver.get(testUrl.toString() + "index.html");
 
         // Wait for page load
         wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("header")));
 
-        // Find Material Icon elements
-        List<WebElement> icons = driver.findElements(
-            By.className("material-symbols-outlined"));
+        // Find Bootstrap Icon elements
+        List<WebElement> icons = driver.findElements(By.className("bi"));
 
-        assertThat(icons)
-            .as("Page should contain Material Icons")
-            .isNotEmpty();
+        assertThat(icons).as("Page should contain Bootstrap Icons").isNotEmpty();
 
         // Verify icon is visible
         WebElement firstIcon = icons.get(0);
         assertThat(firstIcon.isDisplayed())
-            .as("Material Icon should be visible")
-            .isTrue();
+                .as("Bootstrap Icon should be visible")
+                .isTrue();
     }
 
     // ========================================================================
@@ -481,8 +448,7 @@ class IndexHtmlIntegrationTest {
 
         try {
             // Wait for Data tab to be active
-            wait.until(ExpectedConditions.attributeContains(
-                By.id("data-tab"), "class", "active"));
+            wait.until(ExpectedConditions.attributeContains(By.id("data-tab"), "class", "active"));
 
             // Wait for form fields to be populated from URL parameters
             wait.until(ExpectedConditions.presenceOfElementLocated(By.id("data-source")));
@@ -490,34 +456,33 @@ class IndexHtmlIntegrationTest {
             // Verify fields are populated
             WebElement sourceField = driver.findElement(By.id("data-source"));
             assertThat(sourceField.getAttribute("value"))
-                .as("Source field should be populated from URL")
-                .isEqualTo("ECB");
+                    .as("Source field should be populated from URL")
+                    .isEqualTo("ECB");
 
             // Wait for Get Data button to be clickable
-            WebElement getDataButton = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//button[contains(text(),'Get Data')]")));
+            WebElement getDataButton = wait.until(
+                    ExpectedConditions.elementToBeClickable(By.xpath("//button[contains(text(),'Get Data')]")));
 
             // Click Get Data button
             getDataButton.click();
 
             // Wait for Plotly chart to render (with longer timeout)
-            wait.until(ExpectedConditions.presenceOfElementLocated(
-                By.className("plotly")));
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.className("plotly")));
 
             // Verify chart container exists
             WebElement chartContainer = driver.findElement(By.id("data-chart"));
             assertThat(chartContainer.isDisplayed())
-                .as("Chart container should be visible")
-                .isTrue();
+                    .as("Chart container should be visible")
+                    .isTrue();
 
             // Verify Plotly initialized the chart
             JavascriptExecutor js = (JavascriptExecutor) driver;
-            Object plotlyExists = js.executeScript(
-                "return document.getElementById('data-chart')._fullLayout !== undefined;");
+            Object plotlyExists =
+                    js.executeScript("return document.getElementById('data-chart')._fullLayout !== undefined;");
             assertThat(plotlyExists)
-                .as("Plotly should have initialized the chart")
-                .isNotNull()
-                .isEqualTo(true);
+                    .as("Plotly should have initialized the chart")
+                    .isNotNull()
+                    .isEqualTo(true);
 
         } catch (TimeoutException e) {
             // Chart might not render if API call fails (e.g., network issues)
@@ -535,14 +500,15 @@ class IndexHtmlIntegrationTest {
         // Wait for page load
         wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")));
 
-        // Check if Plotly is defined
+        // Plotly is lazy-loaded on first chart: trigger loading and check it is defined
         JavascriptExecutor js = (JavascriptExecutor) driver;
-        Object plotlyDefined = js.executeScript("return typeof Plotly !== 'undefined';");
+        Object plotlyDefined = js.executeAsyncScript("const done = arguments[arguments.length - 1];"
+                + "loadPlotly().then(() => done(typeof Plotly !== 'undefined'), () => done(false));");
 
         assertThat(plotlyDefined)
-            .as("Plotly library should be loaded and defined")
-            .isNotNull()
-            .isEqualTo(true);
+                .as("Plotly library should be loaded and defined")
+                .isNotNull()
+                .isEqualTo(true);
     }
 
     // ========================================================================
@@ -556,13 +522,11 @@ class IndexHtmlIntegrationTest {
         driver.get(testUrl.toString() + "index.html");
 
         // Step 1: Sources tab (auto-loaded)
-        wait.until(ExpectedConditions.presenceOfElementLocated(
-            By.cssSelector("#sources-pretty-content .source-card")));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#sources-pretty-content .source-card")));
 
         // Click on ECB source (if available)
         try {
-            List<WebElement> sourceCards = driver.findElements(
-                By.cssSelector("#sources-pretty-content .source-card"));
+            List<WebElement> sourceCards = driver.findElements(By.cssSelector("#sources-pretty-content .source-card"));
             boolean ecbFound = false;
 
             for (WebElement card : sourceCards) {
@@ -571,12 +535,10 @@ class IndexHtmlIntegrationTest {
                     ecbFound = true;
 
                     // Wait for action buttons
-                    wait.until(ExpectedConditions.presenceOfElementLocated(
-                        By.cssSelector(".source-actions")));
+                    wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".source-actions")));
 
                     // Click "Use in Flows" button
-                    WebElement useInFlowsBtn = card.findElement(
-                        By.xpath(".//button[contains(text(),'Flows')]"));
+                    WebElement useInFlowsBtn = card.findElement(By.xpath(".//button[contains(text(),'Flows')]"));
                     useInFlowsBtn.click();
                     break;
                 }
@@ -584,14 +546,13 @@ class IndexHtmlIntegrationTest {
 
             if (ecbFound) {
                 // Step 2: Verify switched to Flows tab
-                wait.until(ExpectedConditions.attributeContains(
-                    By.id("flows-tab"), "class", "active"));
+                wait.until(ExpectedConditions.attributeContains(By.id("flows-tab"), "class", "active"));
 
                 // Verify source field is populated
                 WebElement flowsSource = driver.findElement(By.id("flows-source"));
                 assertThat(flowsSource.getAttribute("value"))
-                    .as("Source should be populated in Flows tab")
-                    .isEqualTo("ECB");
+                        .as("Source should be populated in Flows tab")
+                        .isEqualTo("ECB");
             }
 
         } catch (Exception e) {
@@ -621,8 +582,7 @@ class IndexHtmlIntegrationTest {
 
             // Switch to Quick Input mode if not already active
             try {
-                WebElement quickModeBtn = driver.findElement(
-                    By.xpath("//button[contains(text(),'Quick Input')]"));
+                WebElement quickModeBtn = driver.findElement(By.xpath("//button[contains(text(),'Quick Input')]"));
                 String className = quickModeBtn.getAttribute("class");
                 if (className != null && !className.contains("active")) {
                     quickModeBtn.click();
@@ -650,22 +610,22 @@ class IndexHtmlIntegrationTest {
             Thread.sleep(500);
 
             // Find and click "Use in Data" button
-            WebElement useInDataBtn = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//button[contains(text(),'Use in Data')]")));
+            WebElement useInDataBtn = wait.until(
+                    ExpectedConditions.elementToBeClickable(By.xpath("//button[contains(text(),'Use in Data')]")));
             useInDataBtn.click();
 
             // Verify switched to Data tab
-            wait.until(ExpectedConditions.attributeContains(
-                By.id("data-tab"), "class", "active"));
+            wait.until(ExpectedConditions.attributeContains(By.id("data-tab"), "class", "active"));
 
             // Verify fields are populated
             WebElement dataSource = driver.findElement(By.id("data-source"));
             assertThat(dataSource.getAttribute("value"))
-                .as("Source should be populated in Data tab")
-                .isEqualTo("ECB");
+                    .as("Source should be populated in Data tab")
+                    .isEqualTo("ECB");
 
         } catch (NoSuchElementException e) {
-            System.out.println("Warning: Could not complete key builder test. Structure may not be available for ECB/EXR.");
+            System.out.println(
+                    "Warning: Could not complete key builder test. Structure may not be available for ECB/EXR.");
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -687,7 +647,8 @@ class IndexHtmlIntegrationTest {
         sourceField.sendKeys("INVALID_SOURCE_12345");
 
         // Click Get Databases
-        driver.findElement(By.xpath("//button[contains(text(),'Get Databases')]")).click();
+        driver.findElement(By.xpath("//button[contains(text(),'Get Databases')]"))
+                .click();
 
         // Wait for response (error message should appear)
         // Note: Actual error handling verification depends on implementation
@@ -698,9 +659,7 @@ class IndexHtmlIntegrationTest {
         }
 
         // Test passes if no exception thrown (graceful error handling)
-        assertThat(true)
-            .as("Should handle invalid source gracefully")
-            .isTrue();
+        assertThat(true).as("Should handle invalid source gracefully").isTrue();
     }
 
     // ========================================================================
@@ -722,60 +681,44 @@ class IndexHtmlIntegrationTest {
 
         // Verify parameters still in URL
         String currentUrl = driver.getCurrentUrl();
-        assertThat(currentUrl)
-            .as("Tab parameter should persist")
-            .contains("tab=keybuilder");
-        assertThat(currentUrl)
-            .as("Source parameter should persist")
-            .contains("source=ECB");
-        assertThat(currentUrl)
-            .as("Flow parameter should persist")
-            .contains("flow=EXR");
+        assertThat(currentUrl).as("Tab parameter should persist").contains("tab=keybuilder");
+        assertThat(currentUrl).as("Source parameter should persist").contains("source=ECB");
+        assertThat(currentUrl).as("Flow parameter should persist").contains("flow=EXR");
 
         // Verify fields still populated
         WebElement sourceField = driver.findElement(By.id("kb-source"));
         assertThat(sourceField.getAttribute("value"))
-            .as("Source field should be populated after reload")
-            .isEqualTo("ECB");
+                .as("Source field should be populated after reload")
+                .isEqualTo("ECB");
     }
 
     @Test
     @Order(61)
     @DisplayName("REGRESSION: Multiple URL parameters work together")
     void testMultipleUrlParametersCombination() {
-        String url = testUrl.toString() + "index.html?tab=keybuilder&source=ECB&flow=EXR&hideOtherTabs=true&hideHeader=true";
+        String url =
+                testUrl.toString() + "index.html?tab=keybuilder&source=ECB&flow=EXR&hideOtherTabs=true&hideHeader=true";
         driver.get(url);
 
         wait.until(ExpectedConditions.presenceOfElementLocated(By.id("kb-source")));
 
         // Verify all parameters applied
         String currentUrl = driver.getCurrentUrl();
-        assertThat(currentUrl)
-            .as("Should have tab parameter")
-            .contains("tab=keybuilder");
-        assertThat(currentUrl)
-            .as("Should have source parameter")
-            .contains("source=ECB");
-        assertThat(currentUrl)
-            .as("Should have flow parameter")
-            .contains("flow=EXR");
-        assertThat(currentUrl)
-            .as("Should have hideOtherTabs parameter")
-            .contains("hideOtherTabs=true");
-        assertThat(currentUrl)
-            .as("Should have hideHeader parameter")
-            .contains("hideHeader=true");
+        assertThat(currentUrl).as("Should have tab parameter").contains("tab=keybuilder");
+        assertThat(currentUrl).as("Should have source parameter").contains("source=ECB");
+        assertThat(currentUrl).as("Should have flow parameter").contains("flow=EXR");
+        assertThat(currentUrl).as("Should have hideOtherTabs parameter").contains("hideOtherTabs=true");
+        assertThat(currentUrl).as("Should have hideHeader parameter").contains("hideHeader=true");
 
         // Verify UI state
         WebElement container = driver.findElement(By.className("container"));
         assertThat(container.getAttribute("class"))
-            .as("Header should be hidden")
-            .contains("hide-header");
+                .as("Header should be hidden")
+                .contains("hide-header");
 
         WebElement tabsContainer = driver.findElement(By.className("tabs"));
         assertThat(tabsContainer.getAttribute("class"))
-            .as("Other tabs should be hidden")
-            .contains("hide-others");
+                .as("Other tabs should be hidden")
+                .contains("hide-others");
     }
 }
-

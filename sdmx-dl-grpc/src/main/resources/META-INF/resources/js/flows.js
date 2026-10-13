@@ -10,7 +10,7 @@ function getFlows() {
     const database = document.getElementById('flows-database').value;
 
     if (!source) {
-        alert('Please enter a source ID');
+        notify('Please enter a source ID', 'warning');
         return;
     }
 
@@ -20,6 +20,7 @@ function getFlows() {
     // Show pretty view initially
     prettyView.style.display = 'block';
     copyDropdown.style.display = 'none';
+    document.getElementById('flows-pretty-content').innerHTML = loadingMessage();
 
     const url = apiUrl([source, 'flows'], { database });
 
@@ -40,7 +41,7 @@ function getFlows() {
     })
     .catch(error => {
         prettyView.style.display = 'none';
-        alert(`Error fetching flows: ${error.message}`);
+        notify(`Error fetching flows: ${error.message}`, 'danger');
     });
 }
 
@@ -89,7 +90,7 @@ function getFlowIcon(flow) {
     let svg = `<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">`;
 
     // Background
-    svg += `<rect width="32" height="32" fill="#f6f8fa"/>`;
+    svg += `<rect width="32" height="32" fill="rgba(128,128,128,0.08)"/>`;
 
     // Generate pattern - only need to generate left half + middle, mirror to right
     for (let row = 0; row < gridSize; row++) {
@@ -126,13 +127,13 @@ function renderPrettyFlows(flows) {
     html += '<div class="filter-box">';
     html += '<div class="filter-input-row">';
     html += '<div class="filter-input-container">';
-    html += '<input type="text" id="flows-filter-input" placeholder="Filter flows by ID, name, or description..." />';
+    html += '<input type="text" class="form-control" id="flows-filter-input" placeholder="Filter flows by ID, name, or description..." />';
     html += '<div class="filter-inline-buttons">';
-    html += '<button class="filter-clear-btn" id="flows-clear-filter" title="Clear Filter">✕</button>';
-    html += '<button class="filter-inline-btn" id="flows-match-case" title="Match Case">Cc</button>';
-    html += '<button class="filter-inline-btn" id="flows-whole-words" title="Whole Words">W</button>';
-    html += '<button class="filter-inline-btn" id="flows-regex" title="Regex">.*</button>';
-    html += '<button class="filter-inline-btn" id="flows-fuzzy" title="Fuzzy Search">≈</button>';
+    html += '<button type="button" class="filter-clear-btn" id="flows-clear-filter" title="Clear Filter">✕</button>';
+    html += '<button type="button" class="filter-inline-btn" id="flows-match-case" title="Match Case">Cc</button>';
+    html += '<button type="button" class="filter-inline-btn" id="flows-whole-words" title="Whole Words">W</button>';
+    html += '<button type="button" class="filter-inline-btn" id="flows-regex" title="Regex">.*</button>';
+    html += '<button type="button" class="filter-inline-btn" id="flows-fuzzy" title="Fuzzy Search">≈</button>';
     html += '</div>';
     html += '</div>';
     html += '<div class="filter-actions">';
@@ -177,7 +178,7 @@ function renderPrettyFlows(flows) {
 
         if (flow.structureRef) {
             html += '<div class="flow-meta-item">';
-            html += '📋 Structure: ';
+            html += `<span class="text-body-secondary">${icon('diagram-2')} Structure:</span> `;
             html += `<code>${escapeHtml(flow.structureRef)}</code>`;
             html += '</div>';
         }
@@ -191,10 +192,10 @@ function renderPrettyFlows(flows) {
         html += '<div class="flow-actions">';
         html += '<div class="flow-actions-title">Use in Other Tabs</div>';
         html += '<div class="flow-action-buttons">';
-        html += `<button class="flow-action-btn" onclick="event.stopPropagation(); useFlowInTab(${jsArg(flow.ref || flow.id || '')}, 'meta')" title="Get meta for this flow"><span class="material-symbols-outlined">info</span> Meta</button>`;
-        html += `<button class="flow-action-btn" onclick="event.stopPropagation(); useFlowInTab(${jsArg(flow.ref || flow.id || '')}, 'keybuilder')" title="Use in key builder"><span class="material-symbols-outlined">vpn_key</span> Key Builder</button>`;
-        html += `<button class="flow-action-btn" onclick="event.stopPropagation(); useFlowInTab(${jsArg(flow.ref || flow.id || '')}, 'data')" title="Use in data tab"><span class="material-symbols-outlined">analytics</span> Data</button>`;
-        html += `<button class="flow-action-btn" onclick="event.stopPropagation(); useFlowInTab(${jsArg(flow.ref || flow.id || '')}, 'compare')" title="Use in compare tab"><span class="material-symbols-outlined">compare_arrows</span> Compare</button>`;
+        html += `<button class="btn btn-sm btn-outline-primary flow-action-btn" type="button" onclick="event.stopPropagation(); useFlowInTab(${jsArg(flow.ref || flow.id || '')}, 'meta')" title="Get meta for this flow"><i class="bi bi-info-circle"></i> Meta</button>`;
+        html += `<button class="btn btn-sm btn-outline-primary flow-action-btn" type="button" onclick="event.stopPropagation(); useFlowInTab(${jsArg(flow.ref || flow.id || '')}, 'keybuilder')" title="Use in key builder"><i class="bi bi-key"></i> Key Builder</button>`;
+        html += `<button class="btn btn-sm btn-outline-primary flow-action-btn" type="button" onclick="event.stopPropagation(); useFlowInTab(${jsArg(flow.ref || flow.id || '')}, 'data')" title="Use in data tab"><i class="bi bi-bar-chart-line"></i> Data</button>`;
+        html += `<button class="btn btn-sm btn-outline-primary flow-action-btn" type="button" onclick="event.stopPropagation(); useFlowInTab(${jsArg(flow.ref || flow.id || '')}, 'compare')" title="Use in compare tab"><i class="bi bi-arrow-left-right"></i> Compare</button>`;
         html += '</div>';
         html += '</div>';
 
@@ -357,19 +358,5 @@ function useFlowInTab(flowId, tabName) {
             break;
     }
 
-    // Show a brief visual feedback
-    const targetTab = Array.from(document.querySelectorAll('.tab')).find(tab =>
-        tab.textContent.toLowerCase().includes(tabName.toLowerCase()) ||
-        (tabName === 'keybuilder' && tab.textContent.includes('Key Builder')) ||
-        (tabName === 'meta' && tab.textContent.includes('Meta'))
-    );
-
-    if (targetTab) {
-        targetTab.style.background = '#00cc00';
-        targetTab.style.color = 'white';
-        setTimeout(() => {
-            targetTab.style.background = '';
-            targetTab.style.color = '';
-        }, 1000);
-    }
+    flashTab(tabName);
 }

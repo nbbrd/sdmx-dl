@@ -27,7 +27,7 @@ function getData() {
     const database = document.getElementById('data-database').value;
 
     if (!source || !flow || !key) {
-        alert('Please enter source ID, flow ID, and key');
+        notify('Please enter source ID, flow ID, and key', 'warning');
         return;
     }
 
@@ -39,6 +39,11 @@ function getData() {
 
     prettyView.style.display = 'block';
     copyDropdown.style.display = 'none';
+    const chartDiv = document.getElementById('data-chart');
+    if (typeof Plotly !== 'undefined') Plotly.purge(chartDiv);
+    chartDiv.innerHTML = loadingMessage('Loading data...');
+    document.getElementById('data-chart-toolbar').hidden = true;
+    document.getElementById('table-content').innerHTML = '';
 
     const url = apiUrl([source, flow, 'data'], { key, database, ...options });
 
@@ -57,13 +62,16 @@ function getData() {
     })
     .catch(error => {
         prettyView.style.display = 'none';
-        alert(`Error fetching data: ${error.message}`);
+        notify(`Error fetching data: ${error.message}`, 'danger');
     });
 }
 
 // Variables for chart data
 let fullDatasets = null;
 let allPeriodLabels = null;
+
+// Number of series initially visible in the chart, the others are only listed in the legend
+const MAX_VISIBLE_SERIES = 10;
 
 /**
  * Extract start component from ISO period format "start/duration"
@@ -287,84 +295,75 @@ function renderDataChart(data) {
     }
 
     if (!fullDatasets || fullDatasets.length === 0 || !allPeriodLabels || allPeriodLabels.length === 0) {
-        chartDiv.innerHTML = '<div style="color:#666; text-align:center; padding-top: 40px;">No data available to display</div>';
+        chartDiv.innerHTML = placeholderMessage('No data available to display');
         return;
     }
 
+    updateDataChartToolbar(fullDatasets.length);
 
     // Create Plotly chart with rangeslider
     createPlotlyChart(data, allPeriodLabels, fullDatasets);
 }
 
-function createPlotlyChart(data, labels, traces) {
+async function createPlotlyChart(data, labels, traces) {
     const chartDiv = document.getElementById('data-chart');
 
-    // Check if Plotly is loaded
-    if (typeof Plotly === 'undefined') {
-        chartDiv.innerHTML = '<div style="color:#cc0000; text-align:center; padding-top: 40px;">Error: Plotly library failed to load. Please refresh the page.</div>';
-        console.error('Plotly is not defined. Make sure the Plotly script is loaded before calling this function.');
+    try {
+        await loadPlotly();
+    } catch (error) {
+        chartDiv.innerHTML = errorMessage(error.message);
+        console.error('Plotly could not be loaded:', error);
         return;
     }
 
     // Check if using date axis
     const useDateAxis = chartDiv.dataset.useDateAxis === 'true';
+    const theme = plotlyTheme();
+    const { change, logScale } = getDataChartOptions();
 
     const layout = {
+        ...theme.layout,
         title: {
             text: escapeHtml(`${data.ref || 'Data'} - ${(data.query && data.query.key) ? data.query.key : ''}`),
-            font: { size: 16, color: '#003D6D' }
+            font: { size: 16 }
         },
         xaxis: {
-            title: {
-                text: 'Time Period',
-                font: { size: 14, color: '#003D6D' }
-            },
+            ...theme.layout.xaxis,
+            title: { text: 'Time Period', font: { size: 14 } },
             type: useDateAxis ? 'date' : 'category',
             tickangle: useDateAxis ? 0 : -45,
             tickfont: { size: 11 },
             showgrid: true,
-            gridcolor: '#e0e0e0',
-            gridwidth: 1,
             showline: true,
-            linecolor: '#003D6D',
-            linewidth: 2,
             rangeslider: {
                 visible: true,
-                bgcolor: '#f8f9fa',
-                bordercolor: '#003D6D',
+                bgcolor: 'rgba(128,128,128,0.08)',
+                bordercolor: theme.layout.xaxis.linecolor,
                 borderwidth: 1,
                 thickness: 0.1
             },
             automargin: true
         },
         yaxis: {
-            title: {
-                text: 'Value',
-                font: { size: 14, color: '#003D6D' }
-            },
+            ...theme.layout.yaxis,
+            title: { text: change ? '% change' : 'Value', font: { size: 14 } },
+            type: logScale ? 'log' : 'linear',
             showgrid: true,
-            gridcolor: '#e0e0e0',
-            gridwidth: 1,
             showline: true,
-            linecolor: '#003D6D',
-            linewidth: 2,
             zeroline: true,
-            zerolinecolor: '#999',
-            zerolinewidth: 1
+            uirevision: `${change}|${logScale}`
         },
         margin: { l: 60, r: 30, t: 60, b: useDateAxis ? 80 : 100 },
         legend: {
             orientation: 'h',
             x: 0.5,
             xanchor: 'center',
-            y: -0.2,
-            bgcolor: 'rgba(255,255,255,0.8)',
-            bordercolor: '#e0e0e0',
-            borderwidth: 1
+            y: 1,
+            yanchor: 'bottom',
+            bgcolor: 'rgba(0,0,0,0)'
         },
         hovermode: 'x unified',
-        plot_bgcolor: '#ffffff',
-        paper_bgcolor: '#f8f9fa'
+        uirevision: window.dataRequestUrl || 'data'
     };
 
     // Add date-specific formatting
@@ -374,10 +373,9 @@ function createPlotlyChart(data, labels, traces) {
         layout.xaxis.hoverformat = dateFormat;
     }
 
-    const config = { responsive: true, displayModeBar: true };
-
     try {
-        Plotly.react(chartDiv, traces, layout, config);
+        if (!chartDiv.data) chartDiv.innerHTML = '';
+        await Plotly.react(chartDiv, getDisplayedTraces(traces, change), layout, { ...theme.config, displayModeBar: true });
 
         // Force immediate resize to ensure correct initial size
         setTimeout(() => {
@@ -391,9 +389,90 @@ function createPlotlyChart(data, labels, traces) {
         // Setup resize observer for future size changes
         setupChartResizeObserver();
     } catch (error) {
-        chartDiv.innerHTML = '<div style="color:#cc0000; text-align:center; padding-top: 40px;">Error rendering chart: ' + escapeHtml(error.message) + '</div>';
+        chartDiv.innerHTML = errorMessage('Chart rendering failed: ' + error.message);
         console.error('Plotly rendering error:', error);
     }
+}
+/**
+ * Read the display options of the data chart
+ * @returns {{change: boolean, logScale: boolean}} - Whether to show percent changes and to use a log scale
+ */
+function getDataChartOptions() {
+    return {
+        change: document.getElementById('data-transform-change').checked,
+        logScale: document.getElementById('data-log-scale').checked
+    };
+}
+
+/**
+ * Get the traces to display: percent changes if requested, and only the first series visible
+ * @param {Object[]} traces - Traces with the observed values
+ * @param {boolean} change - Whether to show the percent change from the previous observation
+ * @returns {Object[]} - Traces to display
+ */
+function getDisplayedTraces(traces, change) {
+    return traces.map((trace, index) => ({
+        ...trace,
+        y: change ? toPercentChanges(trace.y) : trace.y,
+        hovertemplate: change ? trace.hovertemplate.replace('%{y}', '%{y:.2f}%') : trace.hovertemplate,
+        visible: index < MAX_VISIBLE_SERIES ? true : 'legendonly'
+    }));
+}
+
+/**
+ * Compute the percent change of each value from the previous non-missing value
+ * @param {(number|null)[]} values - Values, null when missing
+ * @returns {(number|null)[]} - Percent changes, null when missing or not computable
+ */
+function toPercentChanges(values) {
+    let previous = null;
+    return values.map(value => {
+        if (value === null || value === undefined) return null;
+        const result = previous !== null && previous !== 0 ? (value - previous) / Math.abs(previous) * 100 : null;
+        previous = value;
+        return result;
+    });
+}
+
+/**
+ * Show the chart toolbar, with the series visibility buttons when some series are hidden
+ * @param {number} seriesCount - Number of series in the chart
+ */
+function updateDataChartToolbar(seriesCount) {
+    const many = seriesCount > MAX_VISIBLE_SERIES;
+    document.getElementById('data-series-visibility').hidden = !many;
+    document.getElementById('data-series-hint').textContent = many
+        ? `${seriesCount} series: the first ${MAX_VISIBLE_SERIES} are shown, click the legend to show the others`
+        : '';
+    document.getElementById('data-chart-toolbar').hidden = false;
+}
+
+/**
+ * Redraw the data chart with the current display options
+ */
+function refreshDataChart() {
+    if (window.dataResponseData && fullDatasets && fullDatasets.length > 0) {
+        createPlotlyChart(window.dataResponseData, allPeriodLabels, fullDatasets);
+    }
+}
+
+/**
+ * Show or hide all the series of the data chart
+ * @param {boolean} visible - Whether to show the series
+ */
+function setAllDataSeriesVisible(visible) {
+    const chartDiv = document.getElementById('data-chart');
+    if (typeof Plotly !== 'undefined' && chartDiv.data) {
+        Plotly.restyle(chartDiv, { visible: visible ? true : 'legendonly' });
+    }
+}
+
+/**
+ * Setup the listeners of the data chart toolbar
+ */
+function setupDataChartToolbar() {
+    ['data-transform-level', 'data-transform-change', 'data-log-scale'].forEach(id =>
+        document.getElementById(id).addEventListener('change', refreshDataChart));
 }
 
 function setupChartResizeObserver() {
@@ -437,15 +516,13 @@ function setupChartResizeObserver() {
 
 
 
-function renderDataTable(data) {
-    const tableContent = document.getElementById('table-content');
-
-    if (!data.data || !Array.isArray(data.data) || data.data.length === 0) {
-        tableContent.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No data available to display</p>';
-        return;
-    }
-
-    // Collect all unique periods across all series, and index observations by period start
+/**
+ * Index the observations of each series by period start
+ * @param {Object} data - Data response
+ * @returns {{periodLabels: Map, obsByPeriod: Map[], sortedPeriods: string[]}} - Period labels by period start,
+ *          observations by period start for each series, and sorted period starts
+ */
+function indexObsByPeriod(data) {
     const periodLabels = new Map();
     const obsByPeriod = data.data.map(series => {
         const map = new Map();
@@ -460,11 +537,59 @@ function renderDataTable(data) {
         }
         return map;
     });
+    return { periodLabels, obsByPeriod, sortedPeriods: Array.from(periodLabels.keys()).sort() };
+}
 
-    const sortedPeriods = Array.from(periodLabels.keys()).sort();
+/**
+ * Convert a data response to CSV: one row per period, one column per series, with the raw observed values
+ * @param {Object} data - Data response
+ * @returns {string} - CSV text
+ */
+function buildDataCsv(data) {
+    const series = (data && Array.isArray(data.data)) ? data.data : [];
+    const { periodLabels, obsByPeriod, sortedPeriods } = indexObsByPeriod({ data: series });
+    const field = value => {
+        const text = value === undefined || value === null ? '' : String(value);
+        return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+    };
+    const rows = [['Period', ...series.map((s, index) => s.key || `Series ${index + 1}`)]];
+    sortedPeriods.forEach(period => rows.push([
+        periodLabels.get(period),
+        ...obsByPeriod.map(seriesObs => seriesObs.get(period)?.value)
+    ]));
+    return rows.map(row => row.map(field).join(',')).join('\r\n') + '\r\n';
+}
+
+/**
+ * Download the current data response as a CSV file
+ */
+function downloadDataCsv() {
+    const data = window.dataResponseData;
+    if (!data) return;
+    const params = window.dataRequestParams || {};
+    const name = [params.source, params.flow, params.key].filter(Boolean).join('_').replace(/[^\w.+-]+/g, '_') || 'data';
+    const url = URL.createObjectURL(new Blob([buildDataCsv(data)], { type: 'text/csv;charset=utf-8' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${name}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 0);
+}
+
+function renderDataTable(data) {
+    const tableContent = document.getElementById('table-content');
+
+    if (!data.data || !Array.isArray(data.data) || data.data.length === 0) {
+        tableContent.innerHTML = placeholderMessage('No data available to display');
+        return;
+    }
+
+    const { periodLabels, obsByPeriod, sortedPeriods } = indexObsByPeriod(data);
 
     // Create table structure
-    let tableHTML = '<table class="data-table"><thead><tr>';
+    let tableHTML = '<table class="table table-sm table-striped table-hover data-table"><thead><tr>';
     tableHTML += '<th>Period</th>';
 
     // Add column for each series

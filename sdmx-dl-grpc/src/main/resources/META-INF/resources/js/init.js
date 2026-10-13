@@ -13,6 +13,8 @@ window.addEventListener('DOMContentLoaded', () => {
         keyBuilderCallbackUrl = callbackParam;
     }
 
+    initCopyMenus();
+
     // Load form values from URL parameters FIRST (before setting up listeners)
     // This prevents change events from firing during URL parameter loading
     loadFormFromUrl();
@@ -25,12 +27,15 @@ window.addEventListener('DOMContentLoaded', () => {
     loadSources();
     loadScriptTargets();
     setupAutocomplete();
+    setupListSuggestions();
+    setupKeyAutocomplete();
+    setupDataChartToolbar();
 
     // Auto-load sources on page load (loads in background for all tabs)
     getSources();
 
     // Initialize compare tab
-    renderComparisonSeriesList();
+    initComparisonSeries();
 
     // Initialize flow search tab - just check cache status
     updateIndexStatus();
@@ -38,44 +43,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Setup URL synchronization with forms (after URL loading is complete)
     setupFormUrlSync();
-
-    // Close view menu when clicking outside
-    document.addEventListener('click', (e) => {
-        const viewMenu = document.getElementById('view-menu');
-        const viewMenuBtn = document.getElementById('view-menu-btn');
-
-        if (viewMenu && viewMenuBtn) {
-            if (!viewMenuBtn.contains(e.target) && !viewMenu.contains(e.target)) {
-                viewMenu.style.display = 'none';
-            }
-        }
-    });
-
-    // Close help modal when clicking outside or pressing Escape
-    const modal = document.getElementById('url-params-modal');
-    if (modal) {
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                closeUrlParamsHelp();
-            }
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && modal.style.display === 'flex') {
-                closeUrlParamsHelp();
-            }
-        });
-    }
 });
 
 /**
  * Handle browser back/forward buttons
  */
 window.addEventListener('popstate', (event) => {
-    if (event.state?.tab) {
-        switchTab(event.state.tab, true);
-    } else {
-        // Reload from URL if no state
-        loadFormFromUrl();
+    // Restore the tab and the form values from the URL
+    if (!loadFormFromUrl()) {
+        switchTab('about', true);
     }
 });

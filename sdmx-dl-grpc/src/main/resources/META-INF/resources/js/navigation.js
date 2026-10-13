@@ -12,10 +12,6 @@ function switchTab(tabName, fromUrl = false) {
     document.querySelectorAll('.tab-content').forEach(tab => {
         tab.classList.remove('active');
     });
-    document.querySelectorAll('.tab').forEach(tab => {
-        tab.classList.remove('active');
-    });
-
     // Show selected tab
     const tabContent = document.getElementById(tabName + '-tab');
     if (tabContent) {
@@ -23,13 +19,13 @@ function switchTab(tabName, fromUrl = false) {
     }
 
     // Activate the corresponding tab button
-    const tabButtons = document.querySelectorAll('.tab');
-    tabButtons.forEach(btn => {
-        const btnOnClick = btn.getAttribute('onclick');
-        if (btnOnClick && btnOnClick.includes(`'${tabName}'`)) {
-            btn.classList.add('active');
-        }
+    document.querySelectorAll('.tab').forEach(btn => {
+        const selected = btn.dataset.tab === tabName;
+        btn.classList.toggle('active', selected);
+        btn.setAttribute('aria-selected', String(selected));
     });
+    const tabSelect = document.getElementById('tab-select');
+    if (tabSelect) tabSelect.value = tabName;
 
     // Check if we should hide other tabs
     const urlParams = new URLSearchParams(window.location.search);
@@ -63,8 +59,9 @@ function switchTab(tabName, fromUrl = false) {
 /**
  * Update URL query parameters based on current tab's form values
  * @param {string} tabName - Current active tab name
+ * @param {boolean} replace - True to replace the current history entry instead of adding a new one
  */
-function updateUrlFromForm(tabName) {
+function updateUrlFromForm(tabName, replace = false) {
     const url = new URL(window.location);
 
     // Preserve hideOtherTabs, hideHeader and callback parameters if they exist
@@ -101,9 +98,16 @@ function updateUrlFromForm(tabName) {
             url.searchParams.set(mapping.paramName, element.value.trim());
         }
     });
+    if (tabName === 'compare') {
+        getComparisonSeriesParams().forEach(value => url.searchParams.append('series', value));
+    }
 
-    // Update URL without page reload
-    window.history.pushState({ tab: tabName }, '', url);
+    // Update URL without page reload, avoiding duplicate history entries
+    if (replace || url.href === window.location.href) {
+        window.history.replaceState({ tab: tabName }, '', url);
+    } else {
+        window.history.pushState({ tab: tabName }, '', url);
+    }
 }
 
 /**
@@ -155,6 +159,7 @@ function getFormFieldsForTab(tabName) {
 
 /**
  * Load form values from URL parameters
+ * @returns {boolean} - True if a valid tab was selected from the URL
  */
 function loadFormFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -184,14 +189,14 @@ function loadFormFromUrl() {
 
     // If no tab parameter, don't do anything more (use default tab)
     if (!tab) {
-        return;
+        return false;
     }
 
     // Validate tab exists
     const tabContent = document.getElementById(tab + '-tab');
     if (!tabContent) {
         console.warn(`Tab '${tab}' not found, ignoring URL parameters`);
-        return;
+        return false;
     }
 
     // Get form field mappings for this tab
@@ -208,8 +213,13 @@ function loadFormFromUrl() {
         }
     });
 
+    if (tab === 'compare') {
+        loadComparisonSeriesFromUrl(urlParams);
+    }
+
     // Switch to the tab (without updating URL to avoid circular update)
     switchTab(tab, true);
+    return true;
 }
 
 /**
@@ -235,7 +245,7 @@ function setupFormUrlSync() {
                 const activeTab = document.querySelector('.tab-content.active');
                 if (activeTab) {
                     const tabName = activeTab.id.replace('-tab', '');
-                    updateUrlFromForm(tabName);
+                    updateUrlFromForm(tabName, true);
                 }
             });
         }

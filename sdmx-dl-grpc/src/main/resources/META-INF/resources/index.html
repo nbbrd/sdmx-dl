@@ -4,53 +4,68 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SDMX-DL API Explorer</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-    <!-- Plotly.js v3.3.1 - Latest stable version -->
-    <script src="https://cdn.plot.ly/plotly-3.3.1.min.js" charset="utf-8"></script>
+    <script src="js/theme.js"></script>
+    <link rel="stylesheet" href="/_static/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/_static/bootstrap-icons/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/_static/tom-select/dist/css/tom-select.bootstrap5.min.css">
+    <link rel="stylesheet" href="css/theme.css">
     <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1><span class="material-symbols-outlined">query_stats</span> SDMX-DL API Explorer</h1>
-            <p>Easily download official statistics via REST API</p>
-            <div class="quick-links">
-                <a href="/q/swagger-ui" target="_blank">Swagger UI</a>
-                <a href="/q/openapi" target="_blank">OpenAPI Spec</a>
+    <div class="container app-shell">
+        <header class="app-header">
+            <div class="d-flex flex-wrap align-items-center gap-3">
+                <div class="me-auto">
+                    <h1><i class="bi bi-graph-up"></i> SDMX-DL API Explorer</h1>
+                    <p class="mb-0">Easily download official statistics via REST API</p>
+                </div>
+                <div class="quick-links d-flex flex-wrap gap-2">
+                    <a class="btn btn-sm btn-outline-light" href="/q/swagger-ui" target="_blank"><i class="bi bi-braces"></i> Swagger UI</a>
+                    <a class="btn btn-sm btn-outline-light" href="/q/openapi" target="_blank"><i class="bi bi-file-earmark-code"></i> OpenAPI Spec</a>
+                </div>
             </div>
         </header>
 
         <div class="content">
 
-            <div class="tabs">
-                <button class="tab active" onclick="switchTab('about')">About</button>
-                <button class="tab" onclick="switchTab('sources')">Sources</button>
-                <button class="tab" onclick="switchTab('databases')">Databases</button>
-                <button class="tab" onclick="switchTab('flows')">Flows</button>
-                <button class="tab" onclick="switchTab('flowsearch')">Flow Search</button>
-                <button class="tab" onclick="switchTab('meta')">Meta</button>
-                <button class="tab" onclick="switchTab('keybuilder')">Key Builder</button>
-                <button class="tab" onclick="switchTab('data')">Data</button>
-                <button class="tab" onclick="switchTab('compare')">Compare</button>
-            </div>
+            <nav class="tabs" aria-label="Tabs">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item tab-group-start" data-group="Discover" role="presentation"><button class="nav-link tab" type="button" role="tab" data-tab="sources" onclick="switchTab('sources')"><i class="bi bi-hdd-stack"></i> Sources</button></li>
+                    <li class="nav-item" role="presentation"><button class="nav-link tab" type="button" role="tab" data-tab="databases" onclick="switchTab('databases')"><i class="bi bi-database"></i> Databases</button></li>
+                    <li class="nav-item" role="presentation"><button class="nav-link tab" type="button" role="tab" data-tab="flows" onclick="switchTab('flows')"><i class="bi bi-collection"></i> Flows</button></li>
+                    <li class="nav-item" role="presentation"><button class="nav-link tab" type="button" role="tab" data-tab="flowsearch" onclick="switchTab('flowsearch')"><i class="bi bi-globe-americas"></i> Flow Search</button></li>
+                    <li class="nav-item tab-group-start" data-group="Browse" role="presentation"><button class="nav-link tab" type="button" role="tab" data-tab="meta" onclick="switchTab('meta')"><i class="bi bi-diagram-2"></i> Meta</button></li>
+                    <li class="nav-item" role="presentation"><button class="nav-link tab" type="button" role="tab" data-tab="keybuilder" onclick="switchTab('keybuilder')"><i class="bi bi-key"></i> Key Builder</button></li>
+                    <li class="nav-item tab-group-start" data-group="Retrieve" role="presentation"><button class="nav-link tab" type="button" role="tab" data-tab="data" onclick="switchTab('data')"><i class="bi bi-bar-chart-line"></i> Data</button></li>
+                    <li class="nav-item" role="presentation"><button class="nav-link tab" type="button" role="tab" data-tab="compare" onclick="switchTab('compare')"><i class="bi bi-arrow-left-right"></i> Compare</button></li>
+                    <li class="nav-item ms-auto" role="presentation"><button class="nav-link tab active" type="button" role="tab" data-tab="about" onclick="switchTab('about')"><i class="bi bi-info-circle"></i> About</button></li>
+                </ul>
+                <select class="form-select tab-select" id="tab-select" aria-label="Tab" onchange="switchTab(this.value)">
+                    <optgroup label="Discover">
+                        <option value="sources">Sources</option>
+                        <option value="databases">Databases</option>
+                        <option value="flows">Flows</option>
+                        <option value="flowsearch">Flow Search</option>
+                    </optgroup>
+                    <optgroup label="Browse">
+                        <option value="meta">Meta</option>
+                        <option value="keybuilder">Key Builder</option>
+                    </optgroup>
+                    <optgroup label="Retrieve">
+                        <option value="data">Data</option>
+                        <option value="compare">Compare</option>
+                    </optgroup>
+                    <option value="about" selected>About</option>
+                </select>
+            </nav>
 
             <!-- About Tab -->
-            <div id="about-tab" class="tab-content active">
+            <div id="about-tab" class="tab-content active" role="tabpanel">
                 <div class="section">
-                    <h2>About SDMX-DL</h2>
+                    <h2><i class="bi bi-info-circle"></i> About SDMX-DL</h2>
                     <div class="button-group">
-                        <button onclick="getAbout()">Get Information</button>
-                        <div class="dropdown" id="about-copy-dropdown" style="display: none;">
-                            <button class="dropdown-button" onclick="toggleAboutCopyDropdown()">
-                                <span class="material-symbols-outlined">content_copy</span> Copy <span class="dropdown-arrow">▼</span>
-                            </button>
-                            <div class="dropdown-content" id="about-copy-dropdown-content">
-                                <a href="#" onclick="copyAboutJSON()"><span class="material-symbols-outlined">code</span> Copy JSON</a>
-                                <a href="#" onclick="copyAboutCurlBash()"><span class="material-symbols-outlined">terminal</span> Copy as cURL (bash)</a>
-                                <a href="#" onclick="copyAboutCurlCmd()"><span class="material-symbols-outlined">terminal</span> Copy as cURL (cmd)</a>
-                                <a href="#" onclick="copyAboutCurlPowerShell()"><span class="material-symbols-outlined">terminal</span> Copy as PowerShell</a>
-                            </div>
-                        </div>
+                        <button class="btn btn-primary" type="button" onclick="getAbout()">Get Information</button>
+                        <div class="dropdown copy-dropdown" id="about-copy-dropdown" data-copy="about" style="display: none;"></div>
                     </div>
                     <div id="about-pretty-view" class="chart-wrapper active" style="display: none;">
                         <div class="about-pretty-container" id="about-pretty-content"></div>
@@ -59,26 +74,14 @@
             </div>
 
             <!-- Sources Tab -->
-            <div id="sources-tab" class="tab-content">
+            <div id="sources-tab" class="tab-content" role="tabpanel">
                 <div class="section">
-                    <h2>List SDMX Sources</h2>
-                    <p style="margin-bottom: 15px; color: #666;">Browse available SDMX data sources</p>
+                    <h2><i class="bi bi-hdd-stack"></i> List SDMX Sources</h2>
+                    <p class="section-intro">Browse available SDMX data sources</p>
                     <div class="button-group">
-                        <button onclick="getSources()">Get Sources</button>
-                        <button onclick="checkAllSourcesHealth()" id="sources-health-btn" title="Check the health of all sources using their third-party monitor">
-                            <span class="material-symbols-outlined">monitor_heart</span> Check Health
-                        </button>
-                        <div class="dropdown" id="sources-copy-dropdown" style="display: none;">
-                            <button class="dropdown-button" onclick="toggleSourcesCopyDropdown()">
-                                <span class="material-symbols-outlined">content_copy</span> Copy <span class="dropdown-arrow">▼</span>
-                            </button>
-                            <div class="dropdown-content" id="sources-copy-dropdown-content">
-                                <a href="#" onclick="copySourcesJSON()"><span class="material-symbols-outlined">code</span> Copy JSON</a>
-                                <a href="#" onclick="copySourcesCurlBash()"><span class="material-symbols-outlined">terminal</span> Copy as cURL (bash)</a>
-                                <a href="#" onclick="copySourcesCurlCmd()"><span class="material-symbols-outlined">terminal</span> Copy as cURL (cmd)</a>
-                                <a href="#" onclick="copySourcesCurlPowerShell()"><span class="material-symbols-outlined">terminal</span> Copy as PowerShell</a>
-                            </div>
-                        </div>
+                        <button class="btn btn-primary" type="button" onclick="getSources()">Get Sources</button>
+                        <button class="btn btn-outline-primary" type="button" onclick="checkAllSourcesHealth()" id="sources-health-btn" title="Check the health of all sources using their third-party monitor"><i class="bi bi-heart-pulse"></i> Check Health</button>
+                        <div class="dropdown copy-dropdown" id="sources-copy-dropdown" data-copy="sources" style="display: none;"></div>
                     </div>
 
                     <div id="sources-pretty-view" class="chart-wrapper active" style="display: none;">
@@ -88,26 +91,18 @@
             </div>
 
             <!-- Databases Tab -->
-            <div id="databases-tab" class="tab-content">
+            <div id="databases-tab" class="tab-content" role="tabpanel">
                 <div class="section">
-                    <h2>List Databases</h2>
-                    <div class="form-group">
-                        <label for="db-source">Source ID:</label>
-                        <input type="text" id="db-source" list="sources-list" placeholder="e.g., ECB">
+                    <h2><i class="bi bi-database"></i> List Databases</h2>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6 form-group">
+                            <label class="form-label" for="db-source">Source ID</label>
+                            <input class="form-control" type="text" id="db-source" list="sources-list" placeholder="e.g., ECB">
+                        </div>
                     </div>
                     <div class="button-group">
-                        <button onclick="getDatabases()">Get Databases</button>
-                        <div class="dropdown" id="databases-copy-dropdown" style="display: none;">
-                            <button class="dropdown-button" onclick="toggleDatabasesCopyDropdown()">
-                                <span class="material-symbols-outlined">content_copy</span> Copy <span class="dropdown-arrow">▼</span>
-                            </button>
-                            <div class="dropdown-content" id="databases-copy-dropdown-content">
-                                <a href="#" onclick="copyDatabasesJSON()"><span class="material-symbols-outlined">code</span> Copy JSON</a>
-                                <a href="#" onclick="copyDatabasesCurlBash()"><span class="material-symbols-outlined">terminal</span> Copy as cURL (bash)</a>
-                                <a href="#" onclick="copyDatabasesCurlCmd()"><span class="material-symbols-outlined">terminal</span> Copy as cURL (cmd)</a>
-                                <a href="#" onclick="copyDatabasesCurlPowerShell()"><span class="material-symbols-outlined">terminal</span> Copy as PowerShell</a>
-                            </div>
-                        </div>
+                        <button class="btn btn-primary" type="button" onclick="getDatabases()">Get Databases</button>
+                        <div class="dropdown copy-dropdown" id="databases-copy-dropdown" data-copy="databases" style="display: none;"></div>
                     </div>
                     <div id="databases-pretty-view" class="chart-wrapper active" style="display: none;">
                         <div class="databases-pretty-container" id="databases-pretty-content"></div>
@@ -116,31 +111,22 @@
             </div>
 
             <!-- Flows Tab -->
-            <div id="flows-tab" class="tab-content">
+            <div id="flows-tab" class="tab-content" role="tabpanel">
                 <div class="section">
-                    <h2>List Data Flows</h2>
-                    <div class="form-group">
-                        <label for="flows-source">Source ID:</label>
-                        <input type="text" id="flows-source" list="sources-list" placeholder="e.g., ECB">
-                    </div>
-                    <div class="form-group">
-                        <label for="flows-database">Database (optional):</label>
-                        <input type="text" id="flows-database" list="databases-list-flows" placeholder="Leave empty for default">
+                    <h2><i class="bi bi-collection"></i> List Data Flows</h2>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6 form-group">
+                            <label class="form-label" for="flows-source">Source ID</label>
+                            <input class="form-control" type="text" id="flows-source" list="sources-list" placeholder="e.g., ECB">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label class="form-label" for="flows-database">Database <span class="optional">(optional)</span></label>
+                            <input class="form-control" type="text" id="flows-database" list="databases-list-flows" placeholder="Leave empty for default">
+                        </div>
                     </div>
                     <div class="button-group">
-                        <button onclick="getFlows()">Get Flows</button>
-                        <div class="dropdown" id="flows-copy-dropdown" style="display: none;">
-                            <button class="dropdown-button" onclick="toggleFlowsCopyDropdown()">
-                                <span class="material-symbols-outlined">content_copy</span> Copy <span class="dropdown-arrow">▼</span>
-                            </button>
-                            <div class="dropdown-content" id="flows-copy-dropdown-content">
-                                <a href="#" onclick="copyFlowsJSON()"><span class="material-symbols-outlined">code</span> Copy JSON</a>
-                                <a href="#" onclick="copyFlowsCurlBash()"><span class="material-symbols-outlined">terminal</span> Copy as cURL (bash)</a>
-                                <a href="#" onclick="copyFlowsCurlCmd()"><span class="material-symbols-outlined">terminal</span> Copy as cURL (cmd)</a>
-                                <a href="#" onclick="copyFlowsCurlPowerShell()"><span class="material-symbols-outlined">terminal</span> Copy as PowerShell</a>
-                                <div class="dropdown-section" id="flows-script-items" style="display: none;"></div>
-                            </div>
-                        </div>
+                        <button class="btn btn-primary" type="button" onclick="getFlows()">Get Flows</button>
+                        <div class="dropdown copy-dropdown" id="flows-copy-dropdown" data-copy="flows" data-copy-scripts="true" style="display: none;"></div>
                     </div>
 
                     <div id="flows-pretty-view" class="chart-wrapper active" style="display: none;">
@@ -150,124 +136,89 @@
             </div>
 
             <!-- Flow Search Tab -->
-            <div id="flowsearch-tab" class="tab-content">
+            <div id="flowsearch-tab" class="tab-content" role="tabpanel">
                 <div class="section">
-                    <h2><span class="material-symbols-outlined">travel_explore</span> Search Flows Across All Sources</h2>
+                    <h2><i class="bi bi-globe-americas"></i> Search Flows Across All Sources</h2>
 
-                    <!-- Google-like search interface -->
-                    <div style="max-width: 800px; margin: 40px auto; text-align: center;">
-                        <!-- Search Box -->
-                        <div style="position: relative; margin-bottom: 30px;">
-                            <div style="display: flex; align-items: center; border: 1px solid #dfe1e5; border-radius: 24px; padding: 10px 20px; box-shadow: 0 1px 6px rgba(32,33,36,.28); transition: box-shadow 0.2s;">
-                                <span class="material-symbols-outlined" style="color: #9aa0a6; margin-right: 12px;">search</span>
-                                <input
-                                    type="text"
-                                    id="flowsearch-input"
-                                    placeholder="Search for flows..."
-                                    style="flex: 1; border: none; outline: none; font-size: 16px; padding: 5px 0;"
-                                    onkeypress="if(event.key === 'Enter') performFlowSearch()"
-                                    oninput="debouncedFlowSearch()"
-                                >
-                                <button
-                                    id="flowsearch-clear-btn"
-                                    onclick="clearFlowSearch()"
-                                    style="display: none; background: none; border: none; padding: 0; margin-left: 8px; cursor: pointer; color: #9aa0a6;"
-                                    title="Clear">
-                                    <span class="material-symbols-outlined">close</span>
-                                </button>
-                            </div>
-
-                            <!-- Search Options -->
-                            <div style="margin-top: 15px; display: flex; justify-content: center; align-items: center; gap: 10px; font-size: 13px; color: #666;">
-                                <label style="display: flex; align-items: center; cursor: pointer;">
-                                    <input type="checkbox" id="flowsearch-case-check" style="margin-right: 5px;">
-                                    Match case
-                                </label>
-                                <label style="display: flex; align-items: center; cursor: pointer;">
-                                    <input type="checkbox" id="flowsearch-words-check" style="margin-right: 5px;">
-                                    Whole words
-                                </label>
-                                <label style="display: flex; align-items: center; cursor: pointer;">
-                                    <input type="checkbox" id="flowsearch-regex-check" style="margin-right: 5px;">
-                                    Use regex
-                                </label>
-                                <label style="display: flex; align-items: center; cursor: pointer;">
-                                    <input type="checkbox" id="flowsearch-fuzzy-check" style="margin-right: 5px;">
-                                    Fuzzy search
-                                </label>
-                            </div>
-
-                            <!-- Recent Searches -->
-                            <div id="recent-searches-container" style="display: none;"></div>
+                    <div class="flowsearch-panel">
+                        <div class="flowsearch-box">
+                            <i class="bi bi-search text-body-secondary"></i>
+                            <input
+                                type="text"
+                                id="flowsearch-input"
+                                placeholder="Search for flows..."
+                                aria-label="Search for flows"
+                                onkeypress="if(event.key === 'Enter') performFlowSearch()"
+                                oninput="debouncedFlowSearch()"
+                            >
+                            <button
+                                id="flowsearch-clear-btn"
+                                class="btn btn-link btn-sm text-body-secondary p-0"
+                                type="button"
+                                onclick="clearFlowSearch()"
+                                style="display: none;"
+                                title="Clear">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
                         </div>
 
-
-                        <!-- Index Status & Actions -->
-                        <div id="index-status-container" style="margin-bottom: 20px;">
-                            <div id="index-status-text" style="color: #666; margin-bottom: 10px;"></div>
-                            <!-- Progress bar -->
-                            <div id="index-progress-container" style="display: none; margin-bottom: 15px;">
-                                <div style="background: #e0e0e0; height: 6px; border-radius: 3px; overflow: hidden;">
-                                    <div id="index-progress-bar" style="background: linear-gradient(90deg, #1a73e8 0%, #4285f4 100%); height: 100%; width: 0%; transition: width 0.3s ease;"></div>
-                                </div>
-                                <div id="index-progress-text" style="font-size: 12px; color: #666; margin-top: 5px; text-align: center;"></div>
+                        <div class="d-flex justify-content-center flex-wrap gap-3 mt-3 small text-body-secondary">
+                            <div class="form-check form-check-inline m-0">
+                                <input class="form-check-input" type="checkbox" id="flowsearch-case-check">
+                                <label class="form-check-label" for="flowsearch-case-check">Match case</label>
                             </div>
-                            <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
-                                <button
-                                    onclick="indexAllFlows()"
-                                    id="index-flows-btn"
-                                    style="padding: 8px 16px; background: #1a73e8; border: 1px solid #1a73e8; border-radius: 4px; color: white; font-size: 13px; cursor: pointer; transition: all 0.2s;"
-                                    onmouseover="this.style.background='#1557b0';"
-                                    onmouseout="this.style.background='#1a73e8';">
-                                    <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle; margin-right: 4px;">cloud_download</span>
-                                    Index All Flows
-                                </button>
-                                <button
-                                    onclick="clearFlowsCache()"
-                                    style="padding: 8px 16px; background: #f8f9fa; border: 1px solid #dadce0; border-radius: 4px; color: #3c4043; font-size: 13px; cursor: pointer; transition: all 0.2s;"
-                                    onmouseover="this.style.background='#e8eaed';"
-                                    onmouseout="this.style.background='#f8f9fa';">
-                                    <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle; margin-right: 4px;">delete_sweep</span>
-                                    Clear Cache
-                                </button>
+                            <div class="form-check form-check-inline m-0">
+                                <input class="form-check-input" type="checkbox" id="flowsearch-words-check">
+                                <label class="form-check-label" for="flowsearch-words-check">Whole words</label>
+                            </div>
+                            <div class="form-check form-check-inline m-0">
+                                <input class="form-check-input" type="checkbox" id="flowsearch-regex-check">
+                                <label class="form-check-label" for="flowsearch-regex-check">Use regex</label>
+                            </div>
+                            <div class="form-check form-check-inline m-0">
+                                <input class="form-check-input" type="checkbox" id="flowsearch-fuzzy-check">
+                                <label class="form-check-label" for="flowsearch-fuzzy-check">Fuzzy search</label>
+                            </div>
+                        </div>
+
+                        <div id="recent-searches-container" style="display: none;"></div>
+
+                        <div id="index-status-container" class="mt-4">
+                            <div id="index-status-text" class="text-body-secondary mb-2"></div>
+                            <div id="index-progress-container" class="mb-3" style="display: none;">
+                                <div class="progress" role="progressbar" aria-label="Indexing progress" style="height: 6px;">
+                                    <div id="index-progress-bar" class="progress-bar" style="width: 0%;"></div>
+                                </div>
+                                <div id="index-progress-text" class="small text-body-secondary mt-1"></div>
+                            </div>
+                            <div class="d-flex justify-content-center gap-2 flex-wrap">
+                                <button class="btn btn-primary btn-sm" type="button" onclick="indexAllFlows()" id="index-flows-btn"><i class="bi bi-cloud-download"></i> Index All Flows</button>
+                                <button class="btn btn-outline-secondary btn-sm" type="button" onclick="clearFlowsCache()"><i class="bi bi-trash3"></i> Clear Cache</button>
                             </div>
                         </div>
                     </div>
 
                     <!-- Search Results -->
                     <div id="flowsearch-results-container" style="display: none;">
-                        <!-- Results info -->
-                        <div style="padding: 10px 20px; border-bottom: 1px solid #e0e0e0; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
-                            <div id="flowsearch-results-info" style="color: #70757a; font-size: 14px;">
-                                <!-- Will show "About X results (Y seconds)" -->
-                            </div>
-                            <button
-                                onclick="exportFlowSearchResults()"
-                                style="padding: 6px 12px; background: #f8f9fa; border: 1px solid #dadce0; border-radius: 4px; color: #3c4043; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 4px;"
-                                title="Export results">
-                                <span class="material-symbols-outlined" style="font-size: 18px;">download</span>
-                                Export
-                            </button>
+                        <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-3">
+                            <div id="flowsearch-results-info" class="small text-body-secondary"></div>
+                            <button class="btn btn-outline-secondary btn-sm" type="button" onclick="exportFlowSearchResults()" title="Export results"><i class="bi bi-download"></i> Export</button>
                         </div>
-
-                        <!-- Results list -->
-                        <div id="flowsearch-results" class="flows-pretty-container">
-                            <!-- Search results will be displayed here -->
-                        </div>
+                        <div id="flowsearch-results" class="flows-pretty-container"></div>
                     </div>
 
                     <!-- Empty state / No results -->
-                    <div id="flowsearch-empty-state" style="display: none; text-align: center; padding: 60px 20px; color: #666; max-width: 600px; margin: 0 auto;">
-                        <span class="material-symbols-outlined" style="font-size: 64px; color: #dadce0; margin-bottom: 20px;">search_off</span>
-                        <h3 style="color: #3c4043; margin-bottom: 10px;">No flows found</h3>
-                        <p style="margin-bottom: 20px;">Your search didn't match any flows. Try:</p>
-                        <ul style="text-align: left; display: inline-block; margin: 0 auto 20px; color: #5f6368;">
-                            <li style="margin-bottom: 8px;">Using different keywords</li>
-                            <li style="margin-bottom: 8px;">Checking your spelling</li>
-                            <li style="margin-bottom: 8px;">Disabling search options (fuzzy, regex, etc.)</li>
-                            <li style="margin-bottom: 8px;">Searching for flow IDs or source names</li>
+                    <div id="flowsearch-empty-state" class="empty-state" style="display: none;">
+                        <i class="bi bi-search empty-state-icon"></i>
+                        <h3 class="h5">No flows found</h3>
+                        <p>Your search didn't match any flows. Try:</p>
+                        <ul class="text-start d-inline-block">
+                            <li>Using different keywords</li>
+                            <li>Checking your spelling</li>
+                            <li>Disabling search options (fuzzy, regex, etc.)</li>
+                            <li>Searching for flow IDs or source names</li>
                         </ul>
-                        <p style="font-size: 13px; color: #80868b;">
+                        <p class="small">
                             <strong>Tip:</strong> Search for "exchange rate", "GDP", or a source like "ECB" to find flows
                         </p>
                     </div>
@@ -275,34 +226,26 @@
             </div>
 
             <!-- Meta Tab -->
-            <div id="meta-tab" class="tab-content">
+            <div id="meta-tab" class="tab-content" role="tabpanel">
                 <div class="section">
-                    <h2>Get Meta</h2>
-                    <div class="form-group">
-                        <label for="meta-source">Source ID:</label>
-                        <input type="text" id="meta-source" list="sources-list" placeholder="e.g., ECB">
-                    </div>
-                    <div class="form-group">
-                        <label for="meta-flow">Flow ID:</label>
-                        <input type="text" id="meta-flow" list="flows-list-meta" placeholder="e.g., EXR">
-                    </div>
-                    <div class="form-group">
-                        <label for="meta-database">Database (optional):</label>
-                        <input type="text" id="meta-database" list="databases-list-meta" placeholder="Leave empty for default">
+                    <h2><i class="bi bi-diagram-2"></i> Get Meta</h2>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4 form-group">
+                            <label class="form-label" for="meta-source">Source ID</label>
+                            <input class="form-control" type="text" id="meta-source" list="sources-list" placeholder="e.g., ECB">
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <label class="form-label" for="meta-flow">Flow ID</label>
+                            <input class="form-control" type="text" id="meta-flow" list="flows-list-meta" placeholder="e.g., EXR">
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <label class="form-label" for="meta-database">Database <span class="optional">(optional)</span></label>
+                            <input class="form-control" type="text" id="meta-database" list="databases-list-meta" placeholder="Leave empty for default">
+                        </div>
                     </div>
                     <div class="button-group">
-                        <button onclick="getMeta()">Get Meta</button>
-                        <div class="dropdown" id="meta-copy-dropdown" style="display: none;">
-                            <button class="dropdown-button" onclick="toggleMetaCopyDropdown()">
-                                <span class="material-symbols-outlined">content_copy</span> Copy <span class="dropdown-arrow">▼</span>
-                            </button>
-                            <div class="dropdown-content" id="meta-copy-dropdown-content">
-                                <a href="#" onclick="copyMetaJSON()"><span class="material-symbols-outlined">code</span> Copy JSON</a>
-                                <a href="#" onclick="copyMetaCurlBash()"><span class="material-symbols-outlined">terminal</span> Copy as cURL (bash)</a>
-                                <a href="#" onclick="copyMetaCurlCmd()"><span class="material-symbols-outlined">terminal</span> Copy as cURL (cmd)</a>
-                                <a href="#" onclick="copyMetaCurlPowerShell()"><span class="material-symbols-outlined">terminal</span> Copy as PowerShell</a>
-                            </div>
-                        </div>
+                        <button class="btn btn-primary" type="button" onclick="getMeta()">Get Meta</button>
+                        <div class="dropdown copy-dropdown" id="meta-copy-dropdown" data-copy="meta" style="display: none;"></div>
                     </div>
 
                     <div id="meta-pretty-view" class="chart-wrapper active" style="display: none;">
@@ -312,122 +255,123 @@
             </div>
 
             <!-- Key Builder Tab -->
-            <div id="keybuilder-tab" class="tab-content">
+            <div id="keybuilder-tab" class="tab-content" role="tabpanel">
                 <div class="section">
-                    <h2><span class="material-symbols-outlined">vpn_key</span> SDMX Key Builder</h2>
-                    <p style="margin-bottom: 15px; color: #666;">Build a valid SDMX key by selecting values for each dimension</p>
+                    <h2><i class="bi bi-key"></i> SDMX Key Builder</h2>
+                    <p class="section-intro">Build a valid SDMX key by selecting values for each dimension</p>
 
-                    <div class="form-group">
-                        <label for="kb-source">Source ID:</label>
-                        <input type="text" id="kb-source" list="sources-list" placeholder="e.g., ECB">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4 form-group">
+                            <label class="form-label" for="kb-source">Source ID</label>
+                            <input class="form-control" type="text" id="kb-source" list="sources-list" placeholder="e.g., ECB">
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <label class="form-label" for="kb-flow">Flow ID</label>
+                            <input class="form-control" type="text" id="kb-flow" list="flows-list-kb" placeholder="e.g., EXR">
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <label class="form-label" for="kb-database">Database <span class="optional">(optional)</span></label>
+                            <input class="form-control" type="text" id="kb-database" list="databases-list-kb" placeholder="Leave empty for default">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="kb-flow">Flow ID:</label>
-                        <input type="text" id="kb-flow" list="flows-list-kb" placeholder="e.g., EXR">
-                    </div>
-                    <div class="form-group">
-                        <label for="kb-database">Database (optional):</label>
-                        <input type="text" id="kb-database" list="databases-list-kb" placeholder="Leave empty for default">
-                    </div>
-                    <button onclick="loadKeyBuilderStructure()">Load Structure</button>
+                    <button class="btn btn-primary" type="button" onclick="loadKeyBuilderStructure()">Load Structure</button>
 
-                    <div class="key-input-mode-toggle" id="key-input-mode-toggle" style="display: none;">
-                        <button class="active" onclick="switchKeyInputMode('guided')"><span class="material-symbols-outlined">track_changes</span> Guided Mode</button>
-                        <button onclick="switchKeyInputMode('quick')"><span class="material-symbols-outlined">bolt</span> Quick Input</button>
-                        <button onclick="switchKeyInputMode('hierarchy')"><span class="material-symbols-outlined">device_hub</span> Hierarchy View</button>
+                    <div class="btn-group key-input-mode-toggle" id="key-input-mode-toggle" role="group" aria-label="Key input mode" style="display: none;">
+                        <button class="btn btn-outline-primary active" type="button" onclick="switchKeyInputMode('guided')"><i class="bi bi-bullseye"></i> Guided Mode</button>
+                        <button class="btn btn-outline-primary" type="button" onclick="switchKeyInputMode('quick')"><i class="bi bi-lightning-charge"></i> Quick Input</button>
+                        <button class="btn btn-outline-primary" type="button" onclick="switchKeyInputMode('hierarchy')"><i class="bi bi-diagram-3"></i> Hierarchy View</button>
                     </div>
 
-                    <label id="kb-availability-option" style="display: none; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 15px;" title="Ask the source which codes have data, given the codes already selected in the other dimensions">
-                        <input type="checkbox" id="kb-use-availability" style="width: auto; margin: 0;" checked onchange="setUseAvailability(this.checked)">
-                        Only show codes with available data
-                    </label>
+                    <div id="kb-availability-option" class="form-check form-switch mb-3" style="display: none;" title="Ask the source which codes have data, given the codes already selected in the other dimensions">
+                        <input class="form-check-input" type="checkbox" role="switch" id="kb-use-availability" checked onchange="setUseAvailability(this.checked)">
+                        <label class="form-check-label" for="kb-use-availability">Only show codes with available data</label>
+                    </div>
 
                     <div id="quick-key-container" style="display: none;">
-                        <div class="quick-key-input-container">
+                        <div class="panel quick-key-input-container">
                             <h3>Quick Key Input</h3>
                             <div class="quick-key-wrapper">
                                 <input
                                     type="text"
                                     id="quick-key-input"
-                                    class="quick-key-input"
+                                    class="form-control form-control-lg quick-key-input"
                                     placeholder="Type key with dots (e.g., M.USD.EUR.SP00.A)"
                                     autocomplete="off"
                                 />
                                 <div id="autocomplete-dropdown" class="autocomplete-dropdown"></div>
                             </div>
-                            <div class="quick-key-hint">
-                                <span class="material-symbols-outlined">lightbulb</span> <strong>Tip:</strong> Type your key using dots as separators. Autocomplete will suggest available codes as you type.
+                            <div class="alert alert-info small mt-2 mb-0 quick-key-hint">
+                                <i class="bi bi-lightbulb"></i> <strong>Tip:</strong> Type your key using dots as separators. Autocomplete will suggest available codes as you type.
                                 Use arrow keys to navigate and Enter to select. Press Tab or Dot to move to the next dimension.
                             </div>
                         </div>
                     </div>
 
-
                     <div id="hierarchy-key-container" style="display: none;">
-                        <div class="hierarchy-key-builder-container">
-                            <h3><span class="material-symbols-outlined">device_hub</span> Hierarchical Tree View</h3>
-                            <p style="color: #666; font-size: 14px; margin-bottom: 15px;">Explore code hierarchies and drill down to select specific values</p>
+                        <div class="panel hierarchy-key-builder-container">
+                            <h3><i class="bi bi-diagram-3"></i> Hierarchical Tree View</h3>
+                            <p class="small text-body-secondary">Explore code hierarchies and drill down to select specific values</p>
                             <div id="hierarchy-builder-content" class="hierarchy-builder-content"></div>
                         </div>
                     </div>
 
                     <div id="dimensions-container" style="display: none;">
-                        <div class="key-builder-container">
+                        <div class="panel panel-muted key-builder-container">
                             <h3>Select Dimension Values</h3>
                             <div id="dimensions-list"></div>
                         </div>
                     </div>
 
-                    <div class="built-key-container" id="built-key-container" style="display: none;">
+                    <div class="panel built-key-container" id="built-key-container" style="display: none;">
                         <h3>Generated SDMX Key</h3>
                         <div class="built-key" id="generated-key">-</div>
-                        <div class="key-actions" id="key-actions">
-                            <!-- Buttons will be dynamically rendered based on callback URL presence -->
-                        </div>
+                        <div class="key-actions" id="key-actions"></div>
                     </div>
                 </div>
             </div>
 
             <!-- Data Tab -->
-            <div id="data-tab" class="tab-content">
+            <div id="data-tab" class="tab-content" role="tabpanel">
                 <div class="section">
-                    <h2>Get Data</h2>
-                    <div class="form-group">
-                        <label for="data-source">Source ID:</label>
-                        <input type="text" id="data-source" list="sources-list" placeholder="e.g., ECB">
-                    </div>
-                    <div class="form-group">
-                        <label for="data-flow">Flow ID:</label>
-                        <input type="text" id="data-flow" list="flows-list-data" placeholder="e.g., EXR">
-                    </div>
-                    <div class="form-group">
-                        <label for="data-key">Key:</label>
-                        <input type="text" id="data-key" placeholder="e.g., M.USD+CHF.EUR.SP00.A">
-                    </div>
-                    <div class="form-group">
-                        <label for="data-database">Database (optional):</label>
-                        <input type="text" id="data-database" list="databases-list-data" placeholder="Leave empty for default">
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="data-start">Start period (optional):</label>
-                            <input type="text" id="data-start" placeholder="e.g., 2020 or 2020-01">
+                    <h2><i class="bi bi-bar-chart-line"></i> Get Data</h2>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4 form-group">
+                            <label class="form-label" for="data-source">Source ID</label>
+                            <input class="form-control" type="text" id="data-source" list="sources-list" placeholder="e.g., ECB">
                         </div>
-                        <div class="form-group">
-                            <label for="data-end">End period (optional):</label>
-                            <input type="text" id="data-end" placeholder="e.g., 2024-12">
+                        <div class="col-md-4 form-group">
+                            <label class="form-label" for="data-flow">Flow ID</label>
+                            <input class="form-control" type="text" id="data-flow" list="flows-list-data" placeholder="e.g., EXR">
                         </div>
-                        <div class="form-group">
-                            <label for="data-firstn">First N obs (optional):</label>
-                            <input type="number" id="data-firstn" min="1" placeholder="e.g., 10">
+                        <div class="col-md-4 form-group">
+                            <label class="form-label" for="data-database">Database <span class="optional">(optional)</span></label>
+                            <input class="form-control" type="text" id="data-database" list="databases-list-data" placeholder="Leave empty for default">
                         </div>
-                        <div class="form-group">
-                            <label for="data-lastn">Last N obs (optional):</label>
-                            <input type="number" id="data-lastn" min="1" placeholder="e.g., 12">
+                        <div class="col-12 form-group">
+                            <label class="form-label" for="data-key">Key</label>
+                            <input class="form-control font-monospace" type="text" id="data-key" placeholder="e.g., M.USD+CHF.EUR.SP00.A">
                         </div>
-                        <div class="form-group">
-                            <label for="data-detail">Detail:</label>
-                            <select id="data-detail">
+                    </div>
+                    <div class="row g-3 mb-3 form-row">
+                        <div class="col-6 col-md form-group">
+                            <label class="form-label" for="data-start">Start period <span class="optional">(optional)</span></label>
+                            <input class="form-control" type="text" id="data-start" placeholder="e.g., 2020 or 2020-01">
+                        </div>
+                        <div class="col-6 col-md form-group">
+                            <label class="form-label" for="data-end">End period <span class="optional">(optional)</span></label>
+                            <input class="form-control" type="text" id="data-end" placeholder="e.g., 2024-12">
+                        </div>
+                        <div class="col-6 col-md form-group">
+                            <label class="form-label" for="data-firstn">First N obs <span class="optional">(optional)</span></label>
+                            <input class="form-control" type="number" id="data-firstn" min="1" placeholder="e.g., 10">
+                        </div>
+                        <div class="col-6 col-md form-group">
+                            <label class="form-label" for="data-lastn">Last N obs <span class="optional">(optional)</span></label>
+                            <input class="form-control" type="number" id="data-lastn" min="1" placeholder="e.g., 12">
+                        </div>
+                        <div class="col-12 col-md form-group">
+                            <label class="form-label" for="data-detail">Detail</label>
+                            <select class="form-select" id="data-detail">
                                 <option value="">FULL (default)</option>
                                 <option value="DATA_ONLY">DATA_ONLY</option>
                                 <option value="SERIES_KEYS_ONLY">SERIES_KEYS_ONLY</option>
@@ -436,26 +380,33 @@
                         </div>
                     </div>
                     <div class="button-group">
-                        <button onclick="getData()">Get Data</button>
-                        <div class="dropdown" id="data-copy-dropdown" style="display: none;">
-                            <button class="dropdown-button" onclick="toggleDataCopyDropdown()">
-                                <span class="material-symbols-outlined">content_copy</span> Copy <span class="dropdown-arrow">▼</span>
-                            </button>
-                            <div class="dropdown-content" id="data-copy-dropdown-content">
-                                <a href="#" onclick="copyDataJSON()"><span class="material-symbols-outlined">code</span> Copy JSON</a>
-                                <a href="#" onclick="copyDataCurlBash()"><span class="material-symbols-outlined">terminal</span> Copy as cURL (bash)</a>
-                                <a href="#" onclick="copyDataCurlCmd()"><span class="material-symbols-outlined">terminal</span> Copy as cURL (cmd)</a>
-                                <a href="#" onclick="copyDataCurlPowerShell()"><span class="material-symbols-outlined">terminal</span> Copy as PowerShell</a>
-                                <div class="dropdown-section" id="data-script-items" style="display: none;"></div>
-                            </div>
-                        </div>
+                        <button class="btn btn-primary" type="button" onclick="getData()">Get Data</button>
+                        <div class="dropdown copy-dropdown" id="data-copy-dropdown" data-copy="data" data-copy-scripts="true" style="display: none;"></div>
                     </div>
 
                     <div id="data-pretty-view" class="chart-wrapper active" style="display: none;">
+                        <div id="data-chart-toolbar" class="chart-toolbar" hidden>
+                            <div class="btn-group btn-group-sm" role="group" aria-label="Values">
+                                <input type="radio" class="btn-check" name="data-transform" id="data-transform-level" value="level" checked>
+                                <label class="btn btn-outline-primary" for="data-transform-level">Level</label>
+                                <input type="radio" class="btn-check" name="data-transform" id="data-transform-change" value="change">
+                                <label class="btn btn-outline-primary" for="data-transform-change" title="Change from the previous observation">% change</label>
+                            </div>
+                            <div class="form-check form-switch mb-0">
+                                <input class="form-check-input" type="checkbox" role="switch" id="data-log-scale">
+                                <label class="form-check-label" for="data-log-scale">Log scale</label>
+                            </div>
+                            <div id="data-series-visibility" class="btn-group btn-group-sm" role="group" aria-label="Series" hidden>
+                                <button class="btn btn-outline-secondary" type="button" onclick="setAllDataSeriesVisible(true)" title="Show all series"><i class="bi bi-eye"></i> All</button>
+                                <button class="btn btn-outline-secondary" type="button" onclick="setAllDataSeriesVisible(false)" title="Hide all series"><i class="bi bi-eye-slash"></i> None</button>
+                            </div>
+                            <span id="data-series-hint" class="small text-body-secondary"></span>
+                            <button class="btn btn-sm btn-outline-secondary ms-auto" type="button" id="data-download-csv" onclick="downloadDataCsv()" title="Download the observations as CSV"><i class="bi bi-download"></i> CSV</button>
+                        </div>
                         <div class="chart-container">
                             <div id="data-chart"></div>
                         </div>
-                        <div class="table-container" style="margin-top: 30px;">
+                        <div class="table-container">
                             <div id="table-content"></div>
                         </div>
                     </div>
@@ -463,49 +414,43 @@
             </div>
 
             <!-- Compare Tab -->
-            <div id="compare-tab" class="tab-content">
+            <div id="compare-tab" class="tab-content" role="tabpanel">
                 <div class="section">
-                    <h2><span class="material-symbols-outlined">compare_arrows</span> Compare Time Series</h2>
-                    <p style="margin-bottom: 20px; color: #666;">Add multiple data series to compare them visually on the same chart</p>
+                    <h2><i class="bi bi-arrow-left-right"></i> Compare Time Series</h2>
+                    <p class="section-intro">Add multiple data series to compare them visually on the same chart</p>
 
-                    <div id="compare-series-list" style="margin-bottom: 20px;">
-                        <!-- Series items will be added here dynamically -->
+                    <div id="compare-series-list" class="mb-3"></div>
+
+                    <div class="panel panel-muted mb-3">
+                        <h3>Add New Series</h3>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4 form-group">
+                                <label class="form-label" for="compare-source">Source ID</label>
+                                <input class="form-control" type="text" id="compare-source" list="sources-list" placeholder="e.g., ECB">
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label class="form-label" for="compare-flow">Flow ID</label>
+                                <input class="form-control" type="text" id="compare-flow" list="flows-list-compare" placeholder="e.g., EXR">
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label class="form-label" for="compare-database">Database <span class="optional">(optional)</span></label>
+                                <input class="form-control" type="text" id="compare-database" list="databases-list-compare" placeholder="Leave empty for default">
+                            </div>
+                            <div class="col-md-8 form-group">
+                                <label class="form-label" for="compare-key">Key</label>
+                                <input class="form-control font-monospace" type="text" id="compare-key" placeholder="e.g., M.USD.EUR.SP00.A">
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label class="form-label" for="compare-label">Series Label <span class="optional">(optional)</span></label>
+                                <input class="form-control" type="text" id="compare-label" placeholder="Custom label for this series">
+                            </div>
+                        </div>
+                        <button class="btn btn-outline-primary w-100" type="button" onclick="addSeriesToComparison()"><i class="bi bi-plus-lg"></i> Add Series</button>
                     </div>
 
-                    <div style="background: #f8f9fa; border: 2px solid #e0e0e0; border-radius: 6px; padding: 20px; margin-bottom: 20px;">
-                        <h3 style="margin: 0 0 15px 0; color: #003D6D; font-size: 1.1em;">Add New Series</h3>
-                        <div class="form-group">
-                            <label for="compare-source">Source ID:</label>
-                            <input type="text" id="compare-source" list="sources-list" placeholder="e.g., ECB">
-                        </div>
-                        <div class="form-group">
-                            <label for="compare-flow">Flow ID:</label>
-                            <input type="text" id="compare-flow" list="flows-list-compare" placeholder="e.g., EXR">
-                        </div>
-                        <div class="form-group">
-                            <label for="compare-key">Key:</label>
-                            <input type="text" id="compare-key" placeholder="e.g., M.USD.EUR.SP00.A">
-                        </div>
-                        <div class="form-group">
-                            <label for="compare-database">Database (optional):</label>
-                            <input type="text" id="compare-database" list="databases-list-compare" placeholder="Leave empty for default">
-                        </div>
-                        <div class="form-group">
-                            <label for="compare-label">Series Label (optional):</label>
-                            <input type="text" id="compare-label" placeholder="Custom label for this series">
-                        </div>
-                        <button onclick="addSeriesToComparison()" style="width: 100%;">
-                            <span class="material-symbols-outlined">add</span> Add Series
-                        </button>
-                    </div>
-
-                    <div class="button-group" style="margin-bottom: 20px;">
-                        <button onclick="compareAllSeries()" id="compare-btn" disabled>
-                            <span class="material-symbols-outlined">show_chart</span> Compare Series
-                        </button>
-                        <button onclick="clearAllSeries()" style="background: #dc3545; border-color: #dc3545;">
-                            <span class="material-symbols-outlined">delete</span> Clear All
-                        </button>
+                    <div class="button-group mb-3">
+                        <button class="btn btn-primary" type="button" onclick="compareAllSeries()" id="compare-btn" disabled><i class="bi bi-graph-up"></i> Compare Series</button>
+                        <button class="btn btn-outline-danger" type="button" onclick="clearAllSeries()"><i class="bi bi-trash"></i> Clear All</button>
                     </div>
 
                     <div id="compare-chart-wrapper" style="display: none;">
@@ -532,140 +477,149 @@
 
     <!-- View Control Buttons -->
     <div class="view-controls">
-        <button class="view-toggle-btn" id="help-btn" onclick="showUrlParamsHelp()" title="URL Parameters Help">
-            <span class="material-symbols-outlined">help</span>
+        <button class="view-toggle-btn" type="button" id="theme-toggle-btn" onclick="toggleTheme()" title="Toggle dark mode" aria-label="Toggle dark mode">
+            <i class="bi bi-moon-stars"></i>
         </button>
-        <button class="view-toggle-btn" id="view-menu-btn" onclick="toggleViewMenu()" title="View Options">
-            <span class="material-symbols-outlined">visibility</span>
+        <button class="view-toggle-btn" type="button" id="help-btn" onclick="showUrlParamsHelp()" title="URL Parameters Help" aria-label="URL Parameters Help">
+            <i class="bi bi-question-lg"></i>
         </button>
-        <div class="view-menu" id="view-menu" style="display: none;">
-            <button class="view-menu-item" id="toggle-header-btn" onclick="toggleHeader(); event.stopPropagation();">
-                <span class="material-symbols-outlined">view_headline</span>
-                <span>Toggle Header</span>
+        <div class="dropup">
+            <button class="view-toggle-btn" type="button" id="view-menu-btn" data-bs-toggle="dropdown" aria-expanded="false" title="View Options" aria-label="View Options">
+                <i class="bi bi-eye"></i>
             </button>
-            <button class="view-menu-item" id="toggle-tabs-btn" onclick="toggleOtherTabs(); event.stopPropagation();">
-                <span class="material-symbols-outlined">tab</span>
-                <span>Toggle Other Tabs</span>
-            </button>
+            <div class="dropdown-menu dropdown-menu-end" id="view-menu">
+                <button class="dropdown-item view-menu-item" type="button" id="toggle-header-btn" onclick="toggleHeader()"><i class="bi bi-window"></i> Toggle Header</button>
+                <button class="dropdown-item view-menu-item" type="button" id="toggle-tabs-btn" onclick="toggleOtherTabs()"><i class="bi bi-window-stack"></i> Toggle Other Tabs</button>
+            </div>
         </div>
     </div>
+
+    <!-- Notifications -->
+    <div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3" id="toast-container"></div>
 
     <!-- URL Parameters Help Modal -->
-    <div id="url-params-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2><span class="material-symbols-outlined">help</span> URL Parameters Documentation</h2>
-                <button class="modal-close" onclick="closeUrlParamsHelp()">
-                    <span class="material-symbols-outlined">close</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="help-section">
-                    <h3>Tab Selection</h3>
-                    <table class="help-table">
-                        <tr>
-                            <td class="param-name">tab</td>
-                            <td class="param-desc">Select active tab</td>
-                            <td class="param-example">?tab=keybuilder</td>
-                        </tr>
-                    </table>
-                    <p class="help-note">Values: sources, databases, flows, flowsearch, meta, keybuilder, data, compare</p>
+    <div id="url-params-modal" class="modal fade" tabindex="-1" aria-labelledby="url-params-modal-title" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title h5" id="url-params-modal-title"><i class="bi bi-question-circle"></i> URL Parameters Documentation</h2>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-
-                <div class="help-section">
-                    <h3>View Controls</h3>
-                    <table class="help-table">
-                        <tr>
-                            <td class="param-name">hideHeader</td>
-                            <td class="param-desc">Hide the header section</td>
-                            <td class="param-example">?hideHeader=true</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">hideOtherTabs</td>
-                            <td class="param-desc">Hide non-selected tabs</td>
-                            <td class="param-example">?hideOtherTabs=true</td>
-                        </tr>
-                    </table>
-                </div>
-
-                <div class="help-section">
-                    <h3>Key Builder Integration</h3>
-                    <table class="help-table">
-                        <tr>
-                            <td class="param-name">callback</td>
-                            <td class="param-desc">URL to send key data via POST</td>
-                            <td class="param-example">?callback=http://example.com/api/keys</td>
-                        </tr>
-                    </table>
-                    <p class="help-note">When callback is set, Key Builder shows a "Send" button instead of regular buttons. Sends JSON: <code>{ source, flow, database, key }</code></p>
-                </div>
-
-                <div class="help-section">
-                    <h3>Form Pre-filling</h3>
-                    <table class="help-table">
-                        <tr>
-                            <td class="param-name">source</td>
-                            <td class="param-desc">Pre-fill source ID</td>
-                            <td class="param-example">?source=ECB</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">flow</td>
-                            <td class="param-desc">Pre-fill flow ID</td>
-                            <td class="param-example">?flow=EXR</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">database</td>
-                            <td class="param-desc">Pre-fill database</td>
-                            <td class="param-example">?database=mydb</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">key</td>
-                            <td class="param-desc">Pre-fill SDMX key</td>
-                            <td class="param-example">?key=M.USD.EUR.SP00.A</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">start, end</td>
-                            <td class="param-desc">Pre-fill data time range (data tab)</td>
-                            <td class="param-example">?start=2020-01&end=2024-12</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">firstN, lastN</td>
-                            <td class="param-desc">Pre-fill observations limit (data tab)</td>
-                            <td class="param-example">?lastN=12</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">detail</td>
-                            <td class="param-desc">Pre-fill data detail (data tab)</td>
-                            <td class="param-example">?detail=SERIES_KEYS_ONLY</td>
-                        </tr>
-                        <tr>
-                            <td class="param-name">label</td>
-                            <td class="param-desc">Pre-fill series label (compare tab)</td>
-                            <td class="param-example">?label=USD</td>
-                        </tr>
-                    </table>
-                    <p class="help-note">Parameters are applied to the selected tab. Use with <code>tab</code> parameter for best results.</p>
-                </div>
-
-                <div class="help-section">
-                    <h3>Complete Examples</h3>
-                    <div class="help-example">
-                        <strong>Open Key Builder with callback:</strong>
-                        <code>?tab=keybuilder&callback=http://myapp.com/api&source=ECB&flow=EXR</code>
+                <div class="modal-body">
+                    <div class="help-section">
+                        <h3>Tab Selection</h3>
+                        <table class="table table-sm help-table">
+                            <tr>
+                                <td class="param-name">tab</td>
+                                <td class="param-desc">Select active tab</td>
+                                <td><code class="param-example">?tab=keybuilder</code></td>
+                            </tr>
+                        </table>
+                        <p class="help-note">Values: sources, databases, flows, flowsearch, meta, keybuilder, data, compare</p>
                     </div>
-                    <div class="help-example">
-                        <strong>Open Data tab with pre-filled values:</strong>
-                        <code>?tab=data&source=ECB&flow=EXR&key=M.USD.EUR.SP00.A</code>
+
+                    <div class="help-section">
+                        <h3>View Controls</h3>
+                        <table class="table table-sm help-table">
+                            <tr>
+                                <td class="param-name">hideHeader</td>
+                                <td class="param-desc">Hide the header section</td>
+                                <td><code class="param-example">?hideHeader=true</code></td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">hideOtherTabs</td>
+                                <td class="param-desc">Hide non-selected tabs</td>
+                                <td><code class="param-example">?hideOtherTabs=true</code></td>
+                            </tr>
+                        </table>
                     </div>
-                    <div class="help-example">
-                        <strong>Minimal UI for embedding:</strong>
-                        <code>?tab=keybuilder&hideHeader=true&hideOtherTabs=true</code>
+
+                    <div class="help-section">
+                        <h3>Key Builder Integration</h3>
+                        <table class="table table-sm help-table">
+                            <tr>
+                                <td class="param-name">callback</td>
+                                <td class="param-desc">URL to send key data via POST</td>
+                                <td><code class="param-example">?callback=http://example.com/api/keys</code></td>
+                            </tr>
+                        </table>
+                        <p class="help-note">When callback is set, Key Builder shows a "Send" button instead of regular buttons. Sends JSON: <code>{ source, flow, database, key }</code></p>
+                    </div>
+
+                    <div class="help-section">
+                        <h3>Form Pre-filling</h3>
+                        <table class="table table-sm help-table">
+                            <tr>
+                                <td class="param-name">source</td>
+                                <td class="param-desc">Pre-fill source ID</td>
+                                <td><code class="param-example">?source=ECB</code></td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">flow</td>
+                                <td class="param-desc">Pre-fill flow ID</td>
+                                <td><code class="param-example">?flow=EXR</code></td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">database</td>
+                                <td class="param-desc">Pre-fill database</td>
+                                <td><code class="param-example">?database=mydb</code></td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">key</td>
+                                <td class="param-desc">Pre-fill SDMX key</td>
+                                <td><code class="param-example">?key=M.USD.EUR.SP00.A</code></td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">start, end</td>
+                                <td class="param-desc">Pre-fill data time range (data tab)</td>
+                                <td><code class="param-example">?start=2020-01&amp;end=2024-12</code></td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">firstN, lastN</td>
+                                <td class="param-desc">Pre-fill observations limit (data tab)</td>
+                                <td><code class="param-example">?lastN=12</code></td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">detail</td>
+                                <td class="param-desc">Pre-fill data detail (data tab)</td>
+                                <td><code class="param-example">?detail=SERIES_KEYS_ONLY</code></td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">label</td>
+                                <td class="param-desc">Pre-fill series label (compare tab)</td>
+                                <td><code class="param-example">?label=USD</code></td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">series</td>
+                                <td class="param-desc">Series to compare, as <code>source/flow/key[/database[/label]]</code>; repeat for several series (compare tab)</td>
+                                <td><code class="param-example">?series=ECB/EXR/M.USD.EUR.SP00.A</code></td>
+                            </tr>
+                        </table>
+                        <p class="help-note">Parameters are applied to the selected tab. Use with <code>tab</code> parameter for best results.</p>
+                    </div>
+
+                    <div class="help-section">
+                        <h3>Complete Examples</h3>
+                        <div class="help-example">
+                            <strong>Open Key Builder with callback:</strong>
+                            <code>?tab=keybuilder&amp;callback=http://myapp.com/api&amp;source=ECB&amp;flow=EXR</code>
+                        </div>
+                        <div class="help-example">
+                            <strong>Open Data tab with pre-filled values:</strong>
+                            <code>?tab=data&amp;source=ECB&amp;flow=EXR&amp;key=M.USD.EUR.SP00.A</code>
+                        </div>
+                        <div class="help-example">
+                            <strong>Minimal UI for embedding:</strong>
+                            <code>?tab=keybuilder&amp;hideHeader=true&amp;hideOtherTabs=true</code>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <script src="/_static/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/_static/tom-select/dist/js/tom-select.complete.min.js"></script>
     <script src="js/common.js"></script>
     <script src="js/scripts.js"></script>
     <script src="js/filter.js"></script>
@@ -677,7 +631,9 @@
     <script src="js/databases.js"></script>
     <script src="js/meta.js"></script>
     <script src="js/data.js"></script>
+    <script src="js/suggestions.js"></script>
     <script src="js/keybuilder.js"></script>
+    <script src="js/key-autocomplete.js"></script>
     <script src="js/autocomplete.js"></script>
     <script src="js/compare.js"></script>
     <script src="js/flow-search.js"></script>

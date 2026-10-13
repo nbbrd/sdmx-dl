@@ -13,12 +13,12 @@ It also links to the [OpenAPI UI](http://localhost:4559/q/swagger-ui) and to the
 
 ## Tabs
 
-Each tab covers one step of the usual [discover → browse → retrieve]({{< relref "/usage" >}}) workflow.
+The tabs are grouped by step of the usual [discover → browse → retrieve]({{< relref "/usage" >}}) workflow.
+The tab bar stays visible when scrolling, and becomes a drop-down list on small screens.
 Cards and results have shortcuts to send the current source, flow or key to the next tab.
 
 | Tab         | Description                                                                                                                                       | REST operation                                  |
 |-------------|---------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------|
-| About       | Name and version of sdmx-dl.                                                                                                                      | `GET /about`                                    |
 | Sources     | Source cards with driver, endpoint, website, monitor, languages and properties. **Check Health** gives a verdict for all sources; the **Health** action of a card also performs a live request. | `GET /sources`, `GET /health`, `GET /{source}/health` |
 | Databases   | Databases of a source.                                                                                                                            | `GET /{source}/databases`                       |
 | Flows       | Flows of a source, optionally in a database.                                                                                                      | `GET /{source}/flows`                           |
@@ -26,11 +26,13 @@ Cards and results have shortcuts to send the current source, flow or key to the 
 | Meta        | Structure of a flow: dimensions with a preview of their codes, and attributes.                                                                    | `GET /{source}/{flow}/meta`                     |
 | Key Builder | Builds a [key]({{< relref "/usage/browse#keys" >}}) from the dimensions of a flow (see [below](#key-builder)).                                   | `GET /{source}/{flow}/meta`, `GET /{source}/{flow}/availability` |
 | Data        | Fetches series as a chart and a table, optionally narrowed by period, observation count or detail (see [below](#data)).                          | `GET /{source}/{flow}/data`                     |
-| Compare     | Plots several series, possibly from different sources, on the same chart.                                                                         | `GET /{source}/{flow}/data`                     |
+| Compare     | Plots several series, possibly from different sources, on the same chart. The list of series is remembered by the browser and kept in the URL.     | `GET /{source}/{flow}/data`                     |
+| About       | Name and version of sdmx-dl.                                                                                                                      | `GET /about`                                    |
 
 All paths above are relative to `/sdmx-dl/v2`.
 
 Lists of sources, flows and search results can be filtered as you type, with options for match case, whole words, regular expressions and fuzzy matching.
+Source, flow and database fields suggest the known values as you type (by identifier or name); use the arrow keys and **Enter**, or click a suggestion, to pick it.
 
 The health verdict of a source is one of `OK`, `DEGRADED`, `LOCAL_ISSUE`, `REMOTE_OUTAGE`, `UNREACHABLE` or `UNKNOWN`; hover the badge for the details (see [Monitor and status]({{< relref "/usage/monitor-and-status" >}})).
 
@@ -54,6 +56,7 @@ The generated key can then be copied, or used in the Data and Compare tabs.
 ### Data
 
 The Data tab fetches the series of a key and shows them as an interactive chart and a table.
+As in the Quick input of the Key Builder, the key field suggests the codes of the dimension being typed (only those with available data); this also works in the Compare tab, and after a `+` to add more codes to a dimension.
 Periods are labelled according to their frequency (e.g. `2024`, `2024-Q1`, `2024-01`), and series are named by their title when the source provides one, otherwise by their key.
 Optional fields narrow the query, like the parameters of the [REST endpoint]({{< relref "/ws#response-format" >}}):
 
@@ -67,6 +70,9 @@ Optional fields narrow the query, like the parameters of the [REST endpoint]({{<
 
 See [Retrieve]({{< relref "/usage/retrieve" >}}) for their meaning.
 
+The toolbar above the chart switches between the observed values (**Level**) and the **% change** from the previous observation, toggles a **Log scale**, and downloads the observations as **CSV** (one row per period, one column per series).
+When there are more than 10 series, only the first 10 are drawn: click the legend, or the **All** and **None** buttons, to show the others.
+
 ![Data tab](data.png)
 
 ## Copy and scripts
@@ -79,9 +85,16 @@ Once a tab has loaded, its **Copy** menu offers:
 
 ![Copy menu of the Data tab](data-copy.png)
 
+## Display
+
+The buttons in the bottom-right corner switch between light and dark themes (the browser preference is used by default and the choice is remembered), open the help on URL parameters, and hide the header or the other tabs.
+
+All the resources of the page (styles, icons, charting library) are served by the web service itself, so the page also works without internet access to third-party sites.
+
 ## URL parameters
 
 The address of the page reflects the current tab and form fields, so you can bookmark or share it.
+Switching tabs adds an entry to the browser history, so the back and forward buttons move between tabs.
 The same parameters can be used to open the page in a given state:
 
 | Parameter                 | Description                                                                                         | Example                                  |
@@ -93,6 +106,7 @@ The same parameters can be used to open the page in a given state:
 | `firstN`, `lastN`         | Pre-fill the observation count (Data tab)                                                           | `?lastN=12`                              |
 | `detail`                  | Pre-fill the detail (Data tab)                                                                      | `?detail=SERIES_KEYS_ONLY`               |
 | `label`                   | Pre-fill the series label (Compare tab)                                                             | `?label=USD`                             |
+| `series`                  | Series to compare, as `source/flow/key[/database[/label]]`; repeat it for several series (Compare tab) | `?series=ECB/EXR/M.USD.EUR.SP00.A`    |
 | `hideHeader`              | Hide the header                                                                                     | `?hideHeader=true`                       |
 | `hideOtherTabs`           | Hide all tabs except the selected one                                                               | `?hideOtherTabs=true`                    |
 | `callback`                | URL that receives the key built in the Key Builder (see [below](#embedding))                        | `?callback=http://localhost:8080/keys`   |

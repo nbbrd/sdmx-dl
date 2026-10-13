@@ -5,6 +5,121 @@
 // Store series to compare
 let comparisonSeries = [];
 
+const COMPARE_STORAGE_KEY = 'sdmxdl-compare-series';
+const COMPARE_SERIES_FIELDS = ['source', 'flow', 'key', 'database', 'label'];
+
+/**
+ * Get the default label of a series
+ * @param {Object} series - Series with source, flow and key
+ * @returns {string} - Default label
+ */
+function getDefaultSeriesLabel(series) {
+    return `${series.source}/${series.flow}/${series.key}`;
+}
+
+/**
+ * Replace the series to compare
+ * @param {Object[]} list - Series with source, flow, key and optional database and label
+ */
+function setComparisonSeries(list) {
+    const now = Date.now();
+    comparisonSeries = list
+        .filter(series => series && series.source && series.flow && series.key)
+        .map((series, index) => ({
+            id: now + index,
+            source: series.source,
+            flow: series.flow,
+            key: series.key,
+            database: series.database || '',
+            label: series.label || getDefaultSeriesLabel(series)
+        }));
+}
+
+/**
+ * Encode a series as a 'series' URL parameter value: source/flow/key[/database[/label]]
+ * @param {Object} series - Series to encode
+ * @returns {string} - Parameter value
+ */
+function encodeComparisonSeries(series) {
+    const parts = COMPARE_SERIES_FIELDS.map(field =>
+        field === 'label' && series.label === getDefaultSeriesLabel(series) ? '' : (series[field] || ''));
+    while (parts.length > 3 && !parts[parts.length - 1]) parts.pop();
+    return parts.map(part => part.replace(/%/g, '%25').replace(/\//g, '%2F')).join('/');
+}
+
+/**
+ * Decode a 'series' URL parameter value
+ * @param {string} value - Parameter value
+ * @returns {Object|null} - Series, or null if invalid
+ */
+function decodeComparisonSeries(value) {
+    try {
+        const parts = value.split('/').map(decodeURIComponent);
+        return Object.fromEntries(COMPARE_SERIES_FIELDS.map((field, index) => [field, parts[index] || '']));
+    } catch (error) {
+        console.warn('Invalid series parameter:', value);
+        return null;
+    }
+}
+
+/**
+ * Get the 'series' URL parameter values of the series to compare
+ * @returns {string[]} - Parameter values
+ */
+function getComparisonSeriesParams() {
+    return comparisonSeries.map(encodeComparisonSeries);
+}
+
+/**
+ * Replace the series to compare by the ones of the 'series' URL parameters, if any
+ * @param {URLSearchParams} urlParams - URL parameters
+ */
+function loadComparisonSeriesFromUrl(urlParams) {
+    const values = urlParams.getAll('series');
+    if (values.length === 0) return;
+    setComparisonSeries(values.map(decodeComparisonSeries));
+    saveComparisonSeries();
+    renderComparisonSeriesList();
+}
+
+/**
+ * Save the series to compare in the local storage
+ */
+function saveComparisonSeries() {
+    try {
+        localStorage.setItem(COMPARE_STORAGE_KEY, JSON.stringify(
+            comparisonSeries.map(series => Object.fromEntries(COMPARE_SERIES_FIELDS.map(field => [field, series[field]])))));
+    } catch (error) {
+        console.warn('Could not save the series to compare:', error);
+    }
+}
+
+/**
+ * Restore the series to compare from the local storage, unless already set (e.g. from the URL), and render them
+ */
+function initComparisonSeries() {
+    if (comparisonSeries.length === 0) {
+        try {
+            const stored = JSON.parse(localStorage.getItem(COMPARE_STORAGE_KEY) || '[]');
+            if (Array.isArray(stored)) setComparisonSeries(stored);
+        } catch (error) {
+            console.warn('Could not restore the series to compare:', error);
+        }
+    }
+    renderComparisonSeriesList();
+}
+
+/**
+ * Save and render the series to compare after a change, and update the URL of the Compare tab
+ */
+function onComparisonSeriesChanged() {
+    saveComparisonSeries();
+    renderComparisonSeriesList();
+    if (document.getElementById('compare-tab')?.classList.contains('active')) {
+        updateUrlFromForm('compare', true);
+    }
+}
+
 /**
  * Add a series to the comparison list
  */
@@ -16,7 +131,7 @@ function addSeriesToComparison() {
     const label = document.getElementById('compare-label').value.trim();
 
     if (!source || !flow || !key) {
-        alert('Please enter source ID, flow ID, and key');
+        notify('Please enter source ID, flow ID, and key', 'warning');
         return;
     }
 
@@ -26,11 +141,10 @@ function addSeriesToComparison() {
         flow,
         key,
         database: database || '',
-        label: label || `${source}/${flow}/${key}`
+        label: label || getDefaultSeriesLabel({ source, flow, key })
     };
 
     comparisonSeries.push(series);
-    renderComparisonSeriesList();
 
     // Clear the form
     document.getElementById('compare-source').value = '';
@@ -38,6 +152,8 @@ function addSeriesToComparison() {
     document.getElementById('compare-key').value = '';
     document.getElementById('compare-database').value = '';
     document.getElementById('compare-label').value = '';
+
+    onComparisonSeriesChanged();
 
     // Enable compare button
     document.getElementById('compare-btn').disabled = false;
@@ -50,43 +166,44 @@ function renderComparisonSeriesList() {
     const listEl = document.getElementById('compare-series-list');
 
     if (comparisonSeries.length === 0) {
-        listEl.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No series added yet. Add series using the form below.</p>';
+        listEl.innerHTML = placeholderMessage('No series added yet. Add series using the form below.');
         document.getElementById('compare-btn').disabled = true;
         return;
     }
 
-    let html = '<div style="background: white; border: 2px solid #e0e0e0; border-radius: 6px; padding: 15px;">';
-    html += '<h3 style="margin: 0 0 15px 0; color: #003D6D; font-size: 1.1em;">Series to Compare (' + comparisonSeries.length + ')</h3>';
+    let html = '<div class="panel compare-series-panel">';
+    html += `<h3>Series to Compare <span class="badge rounded-pill text-bg-primary">${comparisonSeries.length}</span></h3>`;
+    html += '<ul class="list-group">';
 
-    comparisonSeries.forEach((series, index) => {
+    comparisonSeries.forEach(series => {
         html += `
-            <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
-                <div style="flex: 1;">
-                    <div style="font-weight: 600; color: #003D6D; margin-bottom: 4px;">${escapeHtml(series.label)}</div>
-                    <div style="font-size: 0.85em; color: #666;">
-                        <span class="material-symbols-outlined" style="font-size: 14px;">source</span> ${escapeHtml(series.source)} &nbsp;
-                        <span class="material-symbols-outlined" style="font-size: 14px;">data_object</span> ${escapeHtml(series.flow)} &nbsp;
-                        <span class="material-symbols-outlined" style="font-size: 14px;">key</span> ${escapeHtml(series.key)}
-                        ${series.database ? ` &nbsp;<span class="material-symbols-outlined" style="font-size: 14px;">database</span> ${escapeHtml(series.database)}` : ''}
+            <li class="list-group-item d-flex justify-content-between align-items-center gap-2">
+                <div class="flex-grow-1 text-break">
+                    <div class="fw-semibold compare-series-label">${escapeHtml(series.label)}</div>
+                    <div class="small text-body-secondary d-flex flex-wrap column-gap-3">
+                        <span title="Source">${icon('hdd-stack')} ${escapeHtml(series.source)}</span>
+                        <span title="Flow">${icon('collection')} ${escapeHtml(series.flow)}</span>
+                        <span title="Key">${icon('key')} ${escapeHtml(series.key)}</span>
+                        ${series.database ? `<span title="Database">${icon('database')} ${escapeHtml(series.database)}</span>` : ''}
                     </div>
                 </div>
-                <button onclick="removeSeriesFromComparison(${series.id})" style="background: #dc3545; border-color: #dc3545; padding: 8px 16px; min-width: auto;">
-                    <span class="material-symbols-outlined">delete</span>
+                <button class="btn btn-sm btn-outline-danger" type="button" onclick="removeSeriesFromComparison(${series.id})" title="Remove series" aria-label="Remove series">
+                    ${icon('trash')}
                 </button>
-            </div>
+            </li>
         `;
     });
 
-    html += '</div>';
+    html += '</ul></div>';
     listEl.innerHTML = html;
+    document.getElementById('compare-btn').disabled = false;
 }
-
 /**
  * Remove a series from comparison
  */
 function removeSeriesFromComparison(seriesId) {
     comparisonSeries = comparisonSeries.filter(s => s.id !== seriesId);
-    renderComparisonSeriesList();
+    onComparisonSeriesChanged();
 }
 
 /**
@@ -97,7 +214,7 @@ function clearAllSeries() {
         return;
     }
     comparisonSeries = [];
-    renderComparisonSeriesList();
+    onComparisonSeriesChanged();
     document.getElementById('compare-chart-wrapper').style.display = 'none';
 }
 
@@ -106,14 +223,14 @@ function clearAllSeries() {
  */
 async function compareAllSeries() {
     if (comparisonSeries.length === 0) {
-        alert('Please add at least one series to compare');
+        notify('Please add at least one series to compare', 'warning');
         return;
     }
 
     const compareBtn = document.getElementById('compare-btn');
     const originalBtnText = compareBtn.innerHTML;
     compareBtn.disabled = true;
-    compareBtn.innerHTML = '<span class="material-symbols-outlined">hourglass_empty</span> Loading...';
+    compareBtn.innerHTML = '<span class="spinner-border spinner-border-sm" aria-hidden="true"></span> Loading...';
 
     const chartWrapper = document.getElementById('compare-chart-wrapper');
     chartWrapper.style.display = 'none';
@@ -201,16 +318,16 @@ async function compareAllSeries() {
         });
 
         if (allTraces.length === 0) {
-            alert('No data available from any series');
+            notify('No data available from any series', 'warning');
             return;
         }
 
         // Render comparison chart
-        renderComparisonChart(allTraces, getDateFormat(allIsoPeriods));
+        await renderComparisonChart(allTraces, getDateFormat(allIsoPeriods));
         chartWrapper.style.display = 'block';
 
     } catch (error) {
-        alert('Error fetching data: ' + error.message);
+        notify('Error fetching data: ' + error.message, 'danger');
         console.error('Comparison error:', error);
     } finally {
         compareBtn.disabled = false;
@@ -228,71 +345,49 @@ async function fetchSeriesData(source, flow, key, database) {
 /**
  * Render the comparison chart using Plotly
  */
-function renderComparisonChart(traces, dateFormat) {
+async function renderComparisonChart(traces, dateFormat) {
     const chartDiv = document.getElementById('compare-chart');
 
-    if (typeof Plotly === 'undefined') {
-        chartDiv.innerHTML = '<div style="color:#cc0000; text-align:center; padding-top: 40px;">Error: Plotly library failed to load. Please refresh the page.</div>';
-        console.error('Plotly is not defined');
+    try {
+        await loadPlotly();
+    } catch (error) {
+        chartDiv.innerHTML = errorMessage(error.message);
+        console.error('Plotly could not be loaded:', error);
         return;
     }
 
-    // Check if using date axis
-    const allLabels = new Set();
-    traces.forEach(trace => {
-        trace.x.forEach(x => {
-            if (x instanceof Date) {
-                allLabels.add(x.toISOString());
-            } else {
-                allLabels.add(x);
-            }
-        });
-    });
-
     const useDateAxis = traces[0]?.x[0] instanceof Date;
+    const theme = plotlyTheme();
 
     const layout = {
+        ...theme.layout,
         title: {
             text: 'Time Series Comparison',
-            font: { size: 16, color: '#003D6D' }
+            font: { size: 16 }
         },
         xaxis: {
-            title: {
-                text: 'Time Period',
-                font: { size: 14, color: '#003D6D' }
-            },
+            ...theme.layout.xaxis,
+            title: { text: 'Time Period', font: { size: 14 } },
             type: useDateAxis ? 'date' : 'category',
             tickangle: useDateAxis ? 0 : -45,
             tickfont: { size: 11 },
             showgrid: true,
-            gridcolor: '#e0e0e0',
-            gridwidth: 1,
             showline: true,
-            linecolor: '#003D6D',
-            linewidth: 2,
             rangeslider: {
                 visible: true,
-                bgcolor: '#f8f9fa',
-                bordercolor: '#003D6D',
+                bgcolor: 'rgba(128,128,128,0.08)',
+                bordercolor: theme.layout.xaxis.linecolor,
                 borderwidth: 1,
                 thickness: 0.1
             },
             automargin: true
         },
         yaxis: {
-            title: {
-                text: 'Value',
-                font: { size: 14, color: '#003D6D' }
-            },
+            ...theme.layout.yaxis,
+            title: { text: 'Value', font: { size: 14 } },
             showgrid: true,
-            gridcolor: '#e0e0e0',
-            gridwidth: 1,
             showline: true,
-            linecolor: '#003D6D',
-            linewidth: 2,
-            zeroline: true,
-            zerolinecolor: '#999',
-            zerolinewidth: 1
+            zeroline: true
         },
         margin: { l: 60, r: 30, t: 60, b: useDateAxis ? 80 : 100 },
         legend: {
@@ -301,13 +396,9 @@ function renderComparisonChart(traces, dateFormat) {
             xanchor: 'left',
             y: 1,
             yanchor: 'top',
-            bgcolor: 'rgba(255,255,255,0.9)',
-            bordercolor: '#e0e0e0',
-            borderwidth: 1
+            bgcolor: 'rgba(0,0,0,0)'
         },
-        hovermode: 'x unified',
-        plot_bgcolor: '#ffffff',
-        paper_bgcolor: '#f8f9fa'
+        hovermode: 'x unified'
     };
 
     if (useDateAxis) {
@@ -315,10 +406,8 @@ function renderComparisonChart(traces, dateFormat) {
         layout.xaxis.hoverformat = dateFormat;
     }
 
-    const config = { responsive: true, displayModeBar: true };
-
     try {
-        Plotly.react(chartDiv, traces, layout, config);
+        Plotly.react(chartDiv, traces, layout, { ...theme.config, displayModeBar: true });
 
         // Force resize
         setTimeout(() => {
@@ -332,11 +421,10 @@ function renderComparisonChart(traces, dateFormat) {
         // Setup resize observer
         setupCompareChartResizeObserver();
     } catch (error) {
-        chartDiv.innerHTML = '<div style="color:#cc0000; text-align:center; padding-top: 40px;">Error rendering chart: ' + escapeHtml(error.message) + '</div>';
+        chartDiv.innerHTML = errorMessage('Chart rendering failed: ' + error.message);
         console.error('Plotly rendering error:', error);
     }
 }
-
 /**
  * Setup resize observer for comparison chart
  */

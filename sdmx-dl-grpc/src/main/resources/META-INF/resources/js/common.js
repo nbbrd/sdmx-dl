@@ -30,35 +30,189 @@ function jsArg(value) {
 }
 
 // ========================================================================
-// VIEW CONTROL FUNCTIONS
+// UI HELPERS
 // ========================================================================
 
 /**
- * Toggle view menu visibility
+ * Build the HTML of a Bootstrap icon
+ * @param {string} name - Icon name without the 'bi-' prefix (e.g. 'search')
+ * @param {string} extraClass - Optional additional CSS classes
+ * @returns {string} - HTML of the icon
  */
-function toggleViewMenu() {
-    const menu = document.getElementById('view-menu');
-    const isVisible = menu.style.display !== 'none';
+function icon(name, extraClass = '') {
+    return `<i class="bi bi-${escapeHtml(name)}${extraClass ? ' ' + escapeHtml(extraClass) : ''}" aria-hidden="true"></i>`;
+}
 
-    if (isVisible) {
-        menu.style.display = 'none';
-    } else {
-        menu.style.display = 'block';
+/**
+ * Build the HTML of an error message
+ * @param {string} message - Error message (escaped)
+ * @returns {string} - HTML of the message
+ */
+function errorMessage(message) {
+    return `<div class="alert alert-danger my-3" role="alert">${icon('exclamation-circle')} Error: ${escapeHtml(message)}</div>`;
+}
+
+/**
+ * Build the HTML of a neutral placeholder message (no data, loading, ...)
+ * @param {string} message - Message (escaped)
+ * @returns {string} - HTML of the message
+ */
+function placeholderMessage(message) {
+    return `<div class="placeholder-message">${escapeHtml(message)}</div>`;
+}
+
+/**
+ * Build the HTML of a loading indicator
+ * @param {string} message - Message (escaped)
+ * @returns {string} - HTML of the indicator
+ */
+function loadingMessage(message = 'Loading...') {
+    return `<div class="placeholder-message"><span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span><span role="status">${escapeHtml(message)}</span></div>`;
+}
+
+/**
+ * Show a short notification at the bottom of the page
+ * @param {string} message - Message to display
+ * @param {string} variant - 'success', 'danger', 'warning' or 'info'
+ */
+function notify(message, variant = 'success') {
+    const container = document.getElementById('toast-container');
+    if (!container || typeof bootstrap === 'undefined') {
+        console.log(message);
+        return;
+    }
+    const icons = { success: 'check-circle', danger: 'exclamation-circle', warning: 'exclamation-triangle', info: 'info-circle' };
+    const toast = document.createElement('div');
+    toast.className = `toast align-items-center text-bg-${variant} border-0`;
+    toast.setAttribute('role', variant === 'danger' ? 'alert' : 'status');
+    toast.setAttribute('aria-live', 'polite');
+    toast.innerHTML = `<div class="d-flex"><div class="toast-body">${icon(icons[variant] || 'info-circle')} ${escapeHtml(message)}</div>`
+        + `<button type="button" class="btn-close${variant === 'warning' ? '' : ' btn-close-white'} me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button></div>`;
+    container.appendChild(toast);
+    toast.addEventListener('hidden.bs.toast', () => toast.remove());
+    bootstrap.Toast.getOrCreateInstance(toast, { delay: variant === 'danger' ? 6000 : 2500 }).show();
+}
+
+/**
+ * Briefly highlight a tab button, e.g. after sending it some values
+ * @param {string} tabName - Name of the tab
+ */
+function flashTab(tabName) {
+    const tab = document.querySelector(`.tab[data-tab="${tabName}"]`);
+    if (!tab) return;
+    tab.classList.remove('tab-flash');
+    void tab.offsetWidth;
+    tab.classList.add('tab-flash');
+    setTimeout(() => tab.classList.remove('tab-flash'), 1000);
+}
+
+/**
+ * Close the Bootstrap dropdown containing the given element, if any
+ * @param {Element|string} elementOrId - Element (or its id) inside or wrapping the dropdown
+ */
+function closeDropdown(elementOrId) {
+    const element = typeof elementOrId === 'string' ? document.getElementById(elementOrId) : elementOrId;
+    if (!element || typeof bootstrap === 'undefined') return;
+    const toggle = element.querySelector('[data-bs-toggle="dropdown"]')
+        || element.closest('.dropdown, .dropup')?.querySelector('[data-bs-toggle="dropdown"]');
+    if (toggle) {
+        bootstrap.Dropdown.getOrCreateInstance(toggle).hide();
     }
 }
+
+let plotlyPromise = null;
+
+/**
+ * Load the bundled Plotly library on first use
+ * @returns {Promise<Object>} - The Plotly global object
+ */
+function loadPlotly() {
+    if (typeof Plotly !== 'undefined') {
+        return Promise.resolve(Plotly);
+    }
+    if (!plotlyPromise) {
+        plotlyPromise = new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = '/webjars/plotly.js-dist-min/plotly.min.js';
+            script.onload = () => resolve(Plotly);
+            script.onerror = () => {
+                plotlyPromise = null;
+                reject(new Error('Failed to load the charting library'));
+            };
+            document.head.appendChild(script);
+        });
+    }
+    return plotlyPromise;
+}
+
+/**
+ * Plotly layout and config matching the current color theme
+ * @returns {Object} - { layout, config } to merge into chart options
+ */
+function plotlyTheme() {
+    const style = getComputedStyle(document.documentElement);
+    const text = style.getPropertyValue('--bs-body-color').trim() || '#1a1a1a';
+    const grid = style.getPropertyValue('--bs-border-color').trim() || '#dee2e6';
+    const muted = style.getPropertyValue('--bs-secondary-color').trim() || '#6c757d';
+    const primary = style.getPropertyValue('--bs-primary').trim() || '#004495';
+    const dark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+    const colorway = dark
+        ? ['#5b9bd5', '#ec5f95', '#a3c76a', '#f2cd5c', '#62bdf3', '#a8c7e8', '#b39ddb', '#f4a26b']
+        : ['#004495', '#db2269', '#89af44', '#ecbd29', '#29a3ee', '#002d5a', '#7b5ea7', '#e8743b'];
+    return {
+        layout: {
+            colorway,
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            font: { family: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif', color: text },
+            xaxis: { gridcolor: grid, linecolor: grid, zerolinecolor: grid },
+            yaxis: { gridcolor: grid, linecolor: grid, zerolinecolor: grid },
+            modebar: { bgcolor: 'rgba(0,0,0,0)', color: muted, activecolor: primary }
+        },
+        config: {
+            responsive: true,
+            displaylogo: false,
+            showSendToCloud: false
+        }
+    };
+}
+
+/**
+ * Apply the current color theme to all rendered Plotly charts
+ */
+function restylePlotlyCharts() {
+    if (typeof Plotly === 'undefined') return;
+    const { layout } = plotlyTheme();
+    document.querySelectorAll('.js-plotly-plot').forEach(chart => {
+        Plotly.relayout(chart, {
+            colorway: layout.colorway,
+            'font.color': layout.font.color,
+            'xaxis.gridcolor': layout.xaxis.gridcolor,
+            'xaxis.linecolor': layout.xaxis.linecolor,
+            'xaxis.zerolinecolor': layout.xaxis.zerolinecolor,
+            'yaxis.gridcolor': layout.yaxis.gridcolor,
+            'yaxis.linecolor': layout.yaxis.linecolor,
+            'yaxis.zerolinecolor': layout.yaxis.zerolinecolor,
+            'modebar.color': layout.modebar.color,
+            'modebar.activecolor': layout.modebar.activecolor
+        });
+    });
+}
+
+document.addEventListener('themechange', restylePlotlyCharts);
+
+// ========================================================================
+// VIEW CONTROL FUNCTIONS
+// ========================================================================
 
 /**
  * Show URL parameters help modal
  */
 function showUrlParamsHelp() {
     const modal = document.getElementById('url-params-modal');
-    if (modal) {
-        modal.style.display = 'flex';
-        // Close view menu if open
-        const viewMenu = document.getElementById('view-menu');
-        if (viewMenu) {
-            viewMenu.style.display = 'none';
-        }
+    if (modal && typeof bootstrap !== 'undefined') {
+        closeDropdown('view-menu');
+        bootstrap.Modal.getOrCreateInstance(modal).show();
     }
 }
 
@@ -67,8 +221,8 @@ function showUrlParamsHelp() {
  */
 function closeUrlParamsHelp() {
     const modal = document.getElementById('url-params-modal');
-    if (modal) {
-        modal.style.display = 'none';
+    if (modal && typeof bootstrap !== 'undefined') {
+        bootstrap.Modal.getOrCreateInstance(modal).hide();
     }
 }
 
@@ -141,75 +295,6 @@ function initializeViewControls() {
 }
 
 /**
- * Generic dropdown toggle utility
- * @param {string} dropdownId - ID of the dropdown element
- */
-function toggleDropdown(dropdownId) {
-    const dropdown = document.getElementById(dropdownId);
-    if (dropdown) {
-        dropdown.classList.toggle('open');
-    }
-}
-
-/**
- * Generic view switcher utility
- * @param {string} prefix - Prefix for view IDs (e.g., 'sources', 'flows')
- * @param {string} view - View name (e.g., 'json', 'pretty', 'chart')
- * @param {Array<string>} viewNames - Array of all possible view names
- */
-function switchView(prefix, view, viewNames) {
-    // Hide all views
-    viewNames.forEach(viewName => {
-        const element = document.getElementById(`${prefix}-${viewName}`);
-        if (element) {
-            element.style.display = 'none';
-        }
-    });
-
-    // Show selected view
-    const selectedView = document.getElementById(`${prefix}-${view}`);
-    if (selectedView) {
-        selectedView.style.display = 'block';
-    }
-
-    // Close dropdown if exists
-    const dropdown = document.getElementById(`${prefix}-view-dropdown`);
-    if (dropdown) {
-        dropdown.classList.remove('open');
-    }
-}
-
-/**
- * Update dropdown button text and active state
- * @param {string} dropdownId - ID of the dropdown
- * @param {string} view - Current view name
- * @param {Object} viewConfig - Configuration object mapping view names to display text and icons
- */
-function updateDropdownActive(dropdownId, view, viewConfig) {
-    const dropdownButton = document.querySelector(`#${dropdownId} .dropdown-button`);
-    // Handle both patterns: "xxx-view-dropdown" -> "xxx-dropdown-content" or direct ID mapping
-    const contentId = dropdownId.replace('-view-dropdown', '-dropdown-content');
-    const dropdownItems = document.querySelectorAll(`#${contentId} a`);
-
-    if (dropdownButton && viewConfig[view]) {
-        const config = viewConfig[view];
-        dropdownButton.innerHTML = `<span class="material-symbols-outlined">${config.icon}</span> ${config.label} <span class="dropdown-arrow">▼</span>`;
-    }
-
-    // Update active states
-    dropdownItems.forEach(item => {
-        item.classList.remove('active');
-        Object.keys(viewConfig).forEach(viewName => {
-            if (item.onclick && item.onclick.toString().includes(`'${viewName}'`)) {
-                if (viewName === view) {
-                    item.classList.add('active');
-                }
-            }
-        });
-    });
-}
-
-/**
  * Build an absolute REST v2 URL from path segments and query parameters
  * @param {Array<string>} segments - Path segments (encoded individually)
  * @param {Object} params - Query parameters; empty values are skipped, arrays are repeated
@@ -252,10 +337,10 @@ async function getJSON(url) {
  * @param {string} shell - 'bash', 'cmd' or 'powershell'
  */
 function copyRequestCommand(dropdownId, url, shell) {
-    document.getElementById(dropdownId).classList.remove('open');
+    closeDropdown(dropdownId);
 
     if (!url) {
-        alert('No request data available.');
+        notify('No request data available.', 'warning');
         return;
     }
 
@@ -278,26 +363,6 @@ function copyRequestCommand(dropdownId, url, shell) {
     navigator.clipboard.writeText(command).then(() => {
         showCopyFeedback(dropdownId, message);
     }).catch(err => {
-        alert('Failed to copy: ' + err);
+        notify('Failed to copy: ' + err, 'danger');
     });
 }
-
-// Button ripple micro-interaction
-(function attachRipple(){
-    const buttons = document.querySelectorAll('button, .source-action-btn, .flow-action-btn');
-    buttons.forEach(btn => {
-        btn.addEventListener('click', function(e){
-            const rect = this.getBoundingClientRect();
-            const ripple = document.createElement('span');
-            ripple.className = 'ripple';
-            const size = Math.max(rect.width, rect.height);
-            const x = e.clientX - rect.left - size/2;
-            const y = e.clientY - rect.top - size/2;
-            ripple.style.width = ripple.style.height = size + 'px';
-            ripple.style.left = x + 'px';
-            ripple.style.top = y + 'px';
-            this.appendChild(ripple);
-            ripple.addEventListener('animationend', () => ripple.remove());
-        });
-    });
-})();

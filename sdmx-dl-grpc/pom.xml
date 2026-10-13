@@ -115,6 +115,50 @@
             <version>${quarkus.mcp.version}</version>
         </dependency>
 
+        <!-- web ui -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-web-dependency-locator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mvnpm</groupId>
+            <artifactId>bootstrap</artifactId>
+            <version>5.3.8</version>
+            <scope>runtime</scope>
+            <exclusions>
+                <!-- bundled in bootstrap.bundle.min.js -->
+                <exclusion>
+                    <groupId>org.mvnpm.at.popperjs</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.mvnpm</groupId>
+            <artifactId>bootstrap-icons</artifactId>
+            <version>1.13.2</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mvnpm</groupId>
+            <artifactId>tom-select</artifactId>
+            <version>2.6.2</version>
+            <scope>runtime</scope>
+            <exclusions>
+                <!-- bundled in tom-select.complete.min.js -->
+                <exclusion>
+                    <groupId>org.mvnpm.at.orchidjs</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>plotly.js-dist-min</artifactId>
+            <version>4.1.0</version>
+            <scope>runtime</scope>
+        </dependency>
+
         <!-- test only -->
         <dependency>
             <groupId>${project.groupId}</groupId>

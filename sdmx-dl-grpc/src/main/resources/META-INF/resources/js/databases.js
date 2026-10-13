@@ -5,7 +5,7 @@
 function getDatabases() {
     const source = document.getElementById('db-source').value;
     if (!source) {
-        alert('Please enter a source ID');
+        notify('Please enter a source ID', 'warning');
         return;
     }
 
@@ -15,6 +15,7 @@ function getDatabases() {
     // Show pretty view initially
     prettyView.style.display = 'block';
     copyDropdown.style.display = 'none';
+    document.getElementById('databases-pretty-content').innerHTML = loadingMessage();
 
     const url = apiUrl([source, 'databases']);
 
@@ -31,7 +32,7 @@ function getDatabases() {
     })
     .catch(error => {
         prettyView.style.display = 'none';
-        alert(`Error fetching databases: ${error.message}`);
+        notify(`Error fetching databases: ${error.message}`, 'danger');
     });
 }
 
@@ -41,7 +42,7 @@ function renderPrettyDatabases(databases) {
 
     if (!databases || databases.length === 0) {
         html += '<div class="no-results">';
-        html += '<div class="no-results-icon">📁</div>';
+        html += `<div class="no-results-icon">${icon('folder')}</div>`;
         html += '<p>No databases available</p>';
         html += '</div>';
         container.innerHTML = html;
@@ -54,8 +55,8 @@ function renderPrettyDatabases(databases) {
     databases.forEach(db => {
         html += '<div class="source-card">';
         html += '<div class="source-header">';
-        html += '<div class="source-icon" style="background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); border-color: #1b5e20;">';
-        html += '<span class="material-symbols-outlined" style="color: white;">folder</span>';
+        html += '<div class="source-icon database-icon">';
+        html += icon('database');
         html += '</div>';
         html += '<div class="source-title">';
         html += `<div class="source-id">${escapeHtml(db.ref || db.id || 'N/A')}</div>`;

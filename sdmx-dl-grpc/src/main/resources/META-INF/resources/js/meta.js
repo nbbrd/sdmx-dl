@@ -11,7 +11,7 @@ function getMeta() {
     const database = document.getElementById('meta-database').value;
 
     if (!source || !flow) {
-        alert('Please enter both source ID and flow ID');
+        notify('Please enter both source ID and flow ID', 'warning');
         return;
     }
 
@@ -22,6 +22,7 @@ function getMeta() {
     // Show pretty view initially
     prettyView.style.display = 'block';
     copyDropdown.style.display = 'none';
+    document.getElementById('meta-pretty-content').innerHTML = loadingMessage();
 
     const url = apiUrl([source, flow, 'meta'], { database });
 
@@ -38,7 +39,7 @@ function getMeta() {
     })
     .catch(error => {
         prettyView.style.display = 'none';
-        alert(`Error fetching metadata: ${error.message}`);
+        notify(`Error fetching metadata: ${error.message}`, 'danger');
     });
 }
 
@@ -74,7 +75,7 @@ function renderPrettyMeta(data) {
         }
 
         if (data.flow.description) {
-            html += '<div class="meta-info-item" style="grid-column: 1 / -1;">';
+            html += '<div class="meta-info-item meta-info-wide">';
             html += '<div class="meta-info-label">Description</div>';
             html += `<div class="meta-info-value">${escapeHtml(data.flow.description)}</div>`;
             html += '</div>';
@@ -122,10 +123,10 @@ function renderPrettyMeta(data) {
 
         // Dimensions Table
         if (data.structure.dimensions && data.structure.dimensions.length > 0) {
-            html += '<h4 style="margin: 20px 0 10px 0; color: #333;">Dimensions</h4>';
-            html += '<table class="dimensions-table">';
+            html += '<h4 class="meta-subtitle">Dimensions</h4>';
+            html += '<div class="table-responsive"><table class="table table-hover align-middle dimensions-table">';
             html += '<thead><tr>';
-            html += '<th style="width: 60px;">#</th>';
+            html += '<th class="dimension-position-header">#</th>';
             html += '<th>ID</th>';
             html += '<th>Name</th>';
             html += '<th>Codelist</th>';
@@ -151,24 +152,24 @@ function renderPrettyMeta(data) {
                             html += `<div class="code-item"><span class="code-key">${escapeHtml(key)}</span>: ${escapeHtml(value)}</div>`;
                         });
                         if (codesCount > 5) {
-                            html += `<div class="code-item" style="color: #999; font-style: italic;">... and ${codesCount - 5} more</div>`;
+                            html += `<div class="code-item fst-italic text-body-tertiary">... and ${codesCount - 5} more</div>`;
                         }
                         html += '</div>';
                     }
                 } else {
-                    html += '<span style="color: #999;">No codelist</span>';
+                    html += '<span class="text-body-tertiary">No codelist</span>';
                 }
 
                 html += '</td>';
                 html += '</tr>';
             });
 
-            html += '</tbody></table>';
+            html += '</tbody></table></div>';
         }
 
         // Attributes Section
         if (data.structure.attributes && data.structure.attributes.length > 0) {
-            html += '<h4 style="margin: 20px 0 10px 0; color: #333;">Attributes</h4>';
+            html += '<h4 class="meta-subtitle">Attributes</h4>';
             html += '<div class="attributes-list">';
 
             data.structure.attributes.forEach(attr => {
@@ -187,7 +188,7 @@ function renderPrettyMeta(data) {
     // If no data
     if (!data.flow && !data.structure) {
         html += '<div class="no-results">';
-        html += '<div class="no-results-icon">📋</div>';
+        html += `<div class="no-results-icon">${icon('clipboard')}</div>`;
         html += '<p>No metadata available</p>';
         html += '</div>';
     }

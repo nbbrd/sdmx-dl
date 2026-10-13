@@ -9,7 +9,6 @@ let keyBuilderCallbackUrl = null; // Callback URL for sending key data
 
 // Availability state
 let keyBuilderContext = null; // { source, flow, database } of the loaded structure
-const availabilityCache = new Map(); // availability URL -> Promise of codes map (or null on error)
 let useAvailability = true;
 let guidedAvailabilityGeneration = 0;
 
@@ -23,21 +22,7 @@ function getAvailableCodes(dimIndex, keyParts) {
     if (!useAvailability || !keyBuilderContext || !currentStructure) {
         return Promise.resolve(null);
     }
-    const dimensions = currentStructure.dimensions;
-    const key = dimensions
-        .map((dim, i) => (i === dimIndex || !keyParts[i] || keyParts[i] === '+') ? '' : keyParts[i])
-        .join('.');
-    const { source, flow, database } = keyBuilderContext;
-    const url = apiUrl([source, flow, 'availability'], { key, dimension: dimensions[dimIndex].id, database });
-    if (!availabilityCache.has(url)) {
-        availabilityCache.set(url, getJSON(url)
-            .then(result => result.codes || {})
-            .catch(error => {
-                console.warn('Availability not supported or failed:', error.message);
-                return null;
-            }));
-    }
-    return availabilityCache.get(url);
+    return fetchAvailableCodes(keyBuilderContext, currentStructure.dimensions, dimIndex, keyParts);
 }
 
 /**
@@ -90,6 +75,11 @@ async function refreshGuidedAvailability() {
             select.appendChild(option);
         });
         select.value = selected;
+        if (select.tomselect) {
+            // sync() only adds options, so drop all the previous ones first (keeps native order)
+            select.tomselect.clearOptions(() => false);
+            select.tomselect.sync();
+        }
 
         const helpText = document.getElementById(`help-${dim.id}`);
         const total = Object.keys(fullCodes).length;
@@ -122,13 +112,10 @@ async function filterHierarchyByAvailability(level) {
     });
     const stats = document.getElementById('hierarchy-stats');
     if (stats) {
-        stats.textContent = `📊 ${count} codes with available data`;
+        stats.textContent = `${count} codes with available data`;
     }
 }
 
-// Quick key input state
-let currentDimensionIndex = 0;
-let selectedAutocompleteIndex = -1;
 
 
 function switchKeyInputMode(mode) {
@@ -233,13 +220,13 @@ function renderHierarchyBuilder() {
         // Search box
         if (currentDimension.codelist && currentDimension.codelist.codes) {
             html += '<div class="hierarchy-search">';
-            html += `<input type="text" id="hierarchy-search-input" placeholder="Search codes..." onkeyup="filterHierarchyTree(this.value)" />`;
+            html += `<input type="text" class="form-control" id="hierarchy-search-input" placeholder="Search codes..." onkeyup="filterHierarchyTree(this.value)" />`;
             html += '</div>';
 
             const codes = currentDimension.codelist.codes;
             const codeEntries = Object.entries(codes);
 
-            html += `<div class="hierarchy-stats" id="hierarchy-stats">📊 ${codeEntries.length} available codes</div>`;
+            html += `<div class="hierarchy-stats" id="hierarchy-stats">${codeEntries.length} available codes</div>`;
 
             // Render tree of available codes
             html += '<div class="hierarchy-tree" id="hierarchy-tree-root">';
@@ -255,11 +242,11 @@ function renderHierarchyBuilder() {
             html += '</div>';
         } else {
             // No codelist - text input
-            html += '<div style="padding: 15px; background: white; border-radius: 6px;">';
-            html += `<input type="text" id="hierarchy-manual-input" placeholder="Enter value or use + for wildcard" style="width: 100%; padding: 12px; border: 1px solid #003D6D; border-radius: 4px; font-size: 14px;" />`;
-            html += '<div style="margin-top: 10px; display: flex; gap: 10px;">';
-            html += '<button onclick="selectManualValue()" style="flex: 1;">Confirm Value</button>';
-            html += '<button onclick="selectHierarchyValue(\'+\')" style="flex: 1; background: #ff9800; border-color: #ff9800;">Use Wildcard (+)</button>';
+            html += '<div class="p-3">';
+            html += `<input type="text" class="form-control" id="hierarchy-manual-input" placeholder="Enter value or use + for wildcard" />`;
+            html += '<div class="d-flex gap-2 mt-2">';
+            html += '<button class="btn btn-primary flex-fill" type="button" onclick="selectManualValue()">Confirm Value</button>';
+            html += '<button class="btn btn-warning flex-fill" type="button" onclick="selectHierarchyValue(\'+\')">Use Wildcard (+)</button>';
             html += '</div>';
             html += '</div>';
         }
@@ -267,16 +254,16 @@ function renderHierarchyBuilder() {
         html += '</div>';
     } else {
         // All dimensions selected - show completion
-        html += '<div class="hierarchy-dimension" style="background: #e8f5e9; border-color: #4caf50;">';
+        html += '<div class="hierarchy-dimension hierarchy-complete">';
         html += '<div class="hierarchy-dimension-header">';
         html += '<div class="hierarchy-dimension-info">';
-        html += '<h4><span class="material-symbols-outlined" style="color: #4caf50;">check_circle</span> Key Complete!</h4>';
+        html += `<h4>${icon('check-circle', 'text-success')} Key Complete!</h4>`;
         html += '<div class="hierarchy-dimension-id">All dimensions have been selected</div>';
         html += '</div>';
         html += '</div>';
-        html += '<div style="padding: 20px; text-align: center;">';
-        html += '<p style="color: #4caf50; font-size: 16px; margin-bottom: 15px;">Your SDMX key has been successfully built.</p>';
-        html += '<button onclick="navigateToLevel(0)" style="background: #003D6D; border-color: #003D6D;"><span class="material-symbols-outlined">restart_alt</span> Start Over</button>';
+        html += '<div class="p-3 text-center">';
+        html += '<p class="text-success-emphasis mb-3">Your SDMX key has been successfully built.</p>';
+        html += `<button class="btn btn-primary" type="button" onclick="navigateToLevel(0)">${icon('arrow-counterclockwise')} Start Over</button>`;
         html += '</div>';
         html += '</div>';
     }
@@ -299,7 +286,7 @@ function renderHierarchyTreeNode(level, code, label, isWildcard) {
     html += '<div class="hierarchy-node-content">';
 
     if (isWildcard) {
-        html += '<span class="material-symbols-outlined" style="color: #ff9800; margin-right: 12px;">all_inclusive</span>';
+        html += icon('asterisk', 'hierarchy-wildcard-icon');
     }
 
     html += '<div class="hierarchy-node-label">';
@@ -310,9 +297,9 @@ function renderHierarchyTreeNode(level, code, label, isWildcard) {
     // Show arrow indicating there are more levels
     const currentPath = getHierarchyPath();
     if (currentPath.length < currentStructure.dimensions.length - 1) {
-        html += '<span class="material-symbols-outlined" style="margin-left: auto; color: #666;">arrow_forward</span>';
+        html += icon('chevron-right', 'hierarchy-node-indicator text-body-secondary');
     } else {
-        html += '<span class="material-symbols-outlined" style="margin-left: auto; color: #4caf50;">check</span>';
+        html += icon('check-lg', 'hierarchy-node-indicator text-success');
     }
 
     html += '</div>';
@@ -434,14 +421,14 @@ function loadKeyBuilderStructure() {
     const database = document.getElementById('kb-database').value;
 
     if (!source || !flow) {
-        alert('Please enter both source ID and flow ID');
+        notify('Please enter both source ID and flow ID', 'warning');
         return;
     }
 
     // Show loading
     const dimensionsContainer = document.getElementById('dimensions-container');
     const dimensionsList = document.getElementById('dimensions-list');
-    dimensionsList.innerHTML = '<p style="color: #666;">Loading structure...</p>';
+    dimensionsList.innerHTML = loadingMessage('Loading structure...');
     dimensionsContainer.style.display = 'block';
 
     fetchKeyBuilderDimensions(source, flow, database)
@@ -462,7 +449,7 @@ function loadKeyBuilderStructure() {
 
             // Show mode toggle and setup quick input
             document.getElementById('key-input-mode-toggle').style.display = 'flex';
-            document.getElementById('kb-availability-option').style.display = 'flex';
+            document.getElementById('kb-availability-option').style.display = 'block';
             setupQuickKeyInput();
 
             // Show Generated SDMX Key section and render action buttons
@@ -476,7 +463,7 @@ function loadKeyBuilderStructure() {
         }
     })
     .catch(error => {
-        dimensionsList.innerHTML = `<p style="color: #c33;">Error: ${escapeHtml(error.message)}</p>`;
+        dimensionsList.innerHTML = errorMessage(error.message);
     });
 }
 
@@ -503,6 +490,7 @@ function renderDimensionInputs(dimensions) {
         if (dimension.codelist && dimension.codelist.codes) {
             // Create select dropdown with codes
             const select = document.createElement('select');
+            select.className = 'form-select';
             select.id = `dim-${dimension.id}`;
             select.dataset.dimensionIndex = index;
 
@@ -548,11 +536,11 @@ function renderDimensionInputs(dimensions) {
         } else {
             // Create text input with wildcard button
             const inputWrapper = document.createElement('div');
-            inputWrapper.style.display = 'flex';
-            inputWrapper.style.gap = '10px';
+            inputWrapper.className = 'input-group';
 
             const input = document.createElement('input');
             input.type = 'text';
+            input.className = 'form-control';
             input.id = `dim-${dimension.id}`;
             input.dataset.dimensionIndex = index;
             input.placeholder = 'Enter value or leave empty';
@@ -561,7 +549,8 @@ function renderDimensionInputs(dimensions) {
             });
 
             const wildcardBtn = document.createElement('button');
-            wildcardBtn.className = 'wildcard-btn';
+            wildcardBtn.className = 'btn btn-outline-secondary wildcard-btn';
+            wildcardBtn.type = 'button';
             wildcardBtn.textContent = 'Use +';
             wildcardBtn.onclick = async (e) => {
                 e.preventDefault();
@@ -585,7 +574,22 @@ function renderDimensionInputs(dimensions) {
         dimensionsList.appendChild(dimRow);
     });
 
+    dimensionsList.querySelectorAll('select').forEach(enhanceDimensionSelect);
     updateGeneratedKey();
+}
+
+/**
+ * Turn a dimension select into a searchable dropdown
+ * @param {HTMLSelectElement} select - Native select, kept in sync and still holding the value
+ */
+function enhanceDimensionSelect(select) {
+    if (typeof TomSelect === 'undefined') return;
+    new TomSelect(select, {
+        allowEmptyOption: true,
+        maxOptions: null,
+        sortField: [{ field: '$score' }, { field: '$order' }],
+        create: false
+    });
 }
 
 function updateGeneratedKey() {
@@ -624,28 +628,21 @@ function updateGeneratedKey() {
 function copyKeyToClipboard(btn) {
     const keyText = document.getElementById('generated-key').textContent;
     if (keyText === '-') {
-        alert('Please build a key first');
+        notify('Please build a key first', 'warning');
         return;
     }
 
     navigator.clipboard.writeText(keyText).then(() => {
-        // Show temporary success message
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<span class="material-symbols-outlined">check</span> Copied!';
-        btn.style.background = '#4caf50';
-        setTimeout(() => {
-            btn.innerHTML = originalText;
-            btn.style.background = '';
-        }, 2000);
+        notify('Key copied!', 'success');
     }).catch(err => {
-        alert('Failed to copy: ' + err);
+        notify('Failed to copy: ' + err, 'danger');
     });
 }
 
 function useKeyInDataTab() {
     const keyText = document.getElementById('generated-key').textContent;
     if (keyText === '-') {
-        alert('Please build a key first');
+        notify('Please build a key first', 'warning');
         return;
     }
 
@@ -658,24 +655,13 @@ function useKeyInDataTab() {
     // Switch to data tab
     switchTab('data');
 
-    // Highlight the data tab briefly
-    const dataTab = Array.from(document.querySelectorAll('.tab')).find(tab =>
-        tab.textContent === 'Data'
-    );
-    if (dataTab) {
-        dataTab.style.background = '#00cc00';
-        dataTab.style.color = 'white';
-        setTimeout(() => {
-            dataTab.style.background = '';
-            dataTab.style.color = '';
-        }, 1000);
-    }
+    flashTab('data');
 }
 
 function useKeyInCompareTab() {
     const keyText = document.getElementById('generated-key').textContent;
     if (keyText === '-') {
-        alert('Please build a key first');
+        notify('Please build a key first', 'warning');
         return;
     }
 
@@ -688,18 +674,7 @@ function useKeyInCompareTab() {
     // Switch to compare tab
     switchTab('compare');
 
-    // Highlight the compare tab briefly
-    const compareTab = Array.from(document.querySelectorAll('.tab')).find(tab =>
-        tab.textContent === 'Compare'
-    );
-    if (compareTab) {
-        compareTab.style.background = '#00cc00';
-        compareTab.style.color = 'white';
-        setTimeout(() => {
-            compareTab.style.background = '';
-            compareTab.style.color = '';
-        }, 1000);
-    }
+    flashTab('compare');
 }
 
 function resetKeyBuilder() {
@@ -710,7 +685,9 @@ function resetKeyBuilder() {
     // Reset guided mode inputs
     currentStructure.dimensions.forEach(dimension => {
         const input = document.getElementById(`dim-${dimension.id}`);
-        if (input) {
+        if (input?.tomselect) {
+            input.tomselect.clear(true);
+        } else if (input) {
             input.value = '';
         }
     });
@@ -743,16 +720,16 @@ function renderKeyActions() {
     if (keyBuilderCallbackUrl) {
         // Render Send button for callback mode
         keyActionsDiv.innerHTML = `
-            <button onclick="sendKeyToCallback()"><span class="material-symbols-outlined">send</span> Send</button>
-            <button onclick="resetKeyBuilder()"><span class="material-symbols-outlined">refresh</span> Reset</button>
+            <button class="btn btn-primary" type="button" onclick="sendKeyToCallback()">${icon('send')} Send</button>
+            <button class="btn btn-outline-secondary" type="button" onclick="resetKeyBuilder()">${icon('arrow-clockwise')} Reset</button>
         `;
     } else {
         // Render regular buttons
         keyActionsDiv.innerHTML = `
-            <button onclick="copyKeyToClipboard(this)"><span class="material-symbols-outlined">content_copy</span> Copy Key</button>
-            <button onclick="useKeyInDataTab()"><span class="material-symbols-outlined">arrow_forward</span> Use in Data Tab</button>
-            <button onclick="useKeyInCompareTab()"><span class="material-symbols-outlined">compare_arrows</span> Use in Compare Tab</button>
-            <button onclick="resetKeyBuilder()"><span class="material-symbols-outlined">refresh</span> Reset</button>
+            <button class="btn btn-outline-primary" type="button" onclick="copyKeyToClipboard(this)">${icon('copy')} Copy Key</button>
+            <button class="btn btn-primary" type="button" onclick="useKeyInDataTab()">${icon('arrow-right')} Use in Data Tab</button>
+            <button class="btn btn-outline-primary" type="button" onclick="useKeyInCompareTab()">${icon('arrow-left-right')} Use in Compare Tab</button>
+            <button class="btn btn-outline-secondary" type="button" onclick="resetKeyBuilder()">${icon('arrow-clockwise')} Reset</button>
         `;
     }
 }
@@ -760,12 +737,12 @@ function renderKeyActions() {
 async function sendKeyToCallback() {
     const keyText = document.getElementById('generated-key').textContent;
     if (keyText === '-') {
-        alert('Please build a key first');
+        notify('Please build a key first', 'warning');
         return;
     }
 
     if (!keyBuilderCallbackUrl) {
-        alert('No callback URL configured');
+        notify('No callback URL configured', 'warning');
         return;
     }
 
@@ -790,189 +767,27 @@ async function sendKeyToCallback() {
         }
 
         // Show success message
-        alert('Key data sent successfully!');
+        notify('Key data sent successfully!', 'success');
 
         // Optionally close window if opened as popup
         if (window.opener) {
             window.close();
         }
     } catch (error) {
-        alert('Failed to send data: ' + error.message);
+        notify('Failed to send data: ' + error.message, 'danger');
         console.error('Error sending to callback:', error);
     }
 }
 
 function setupQuickKeyInput() {
     const quickInput = document.getElementById('quick-key-input');
-    const dropdown = document.getElementById('autocomplete-dropdown');
-
-    if (!quickInput || !dropdown) return;
-
-    quickInput.addEventListener('input', async function(e) {
-        const value = this.value;
-        const parts = value.split('.');
-        currentDimensionIndex = parts.length - 1;
-
-        const currentPart = parts[currentDimensionIndex] || '';
-
-        // Load autocomplete for current dimension
-        await loadQuickKeyAutocomplete(parts, currentPart);
-    });
-
-    quickInput.addEventListener('keydown', function(e) {
-        const dropdown = document.getElementById('autocomplete-dropdown');
-        if (!dropdown.classList.contains('show')) {
-            if (e.key === 'Tab' || e.key === '.') {
-                // Move to next dimension
-                if (e.key === 'Tab') {
-                    e.preventDefault();
-                    if (!this.value.endsWith('.')) {
-                        this.value += '.';
-                        this.dispatchEvent(new Event('input'));
-                    }
-                }
-            }
-            return;
-        }
-
-        const items = dropdown.querySelectorAll('.autocomplete-item');
-
-        if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            selectedAutocompleteIndex = Math.min(selectedAutocompleteIndex + 1, items.length - 1);
-            updateAutocompleteSelection(items);
-        } else if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            selectedAutocompleteIndex = Math.max(selectedAutocompleteIndex - 1, -1);
-            updateAutocompleteSelection(items);
-        } else if (e.key === 'Enter') {
-            e.preventDefault();
-            if (selectedAutocompleteIndex >= 0 && items[selectedAutocompleteIndex]) {
-                selectAutocompleteItem(items[selectedAutocompleteIndex]);
-            }
-        } else if (e.key === 'Escape') {
-            dropdown.classList.remove('show');
-            selectedAutocompleteIndex = -1;
-        } else if (e.key === 'Tab' || e.key === '.') {
-            if (selectedAutocompleteIndex >= 0 && items[selectedAutocompleteIndex]) {
-                e.preventDefault();
-                selectAutocompleteItem(items[selectedAutocompleteIndex]);
-            }
-        }
-    });
-
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!quickInput.contains(e.target) && !dropdown.contains(e.target)) {
-            dropdown.classList.remove('show');
-            selectedAutocompleteIndex = -1;
-        }
-    });
-}
-
-let quickAutocompleteGeneration = 0;
-
-async function loadQuickKeyAutocomplete(parts, currentPart) {
-    const dropdown = document.getElementById('autocomplete-dropdown');
-    const generation = ++quickAutocompleteGeneration;
-
-    if (!currentStructure || !currentStructure.dimensions) {
-        dropdown.classList.remove('show');
-        return;
+    attachKeyAutocomplete(quickInput, () => keyBuilderContext && currentStructure
+        ? { ...keyBuilderContext, dimensions: currentStructure.dimensions, useAvailability }
+        : null);
+    if (quickInput && !quickInput.dataset.generatedKeySync) {
+        quickInput.dataset.generatedKeySync = 'true';
+        quickInput.addEventListener('input', () => {
+            document.getElementById('generated-key').textContent = quickInput.value || '-';
+        });
     }
-
-    const dimIndex = parts.length - 1;
-    if (dimIndex < 0 || dimIndex >= currentStructure.dimensions.length) {
-        dropdown.classList.remove('show');
-        return;
-    }
-
-    const dimension = currentStructure.dimensions[dimIndex];
-
-    // Get codes for this dimension from structure, restricted to available data if requested
-    let codes = {};
-    if (dimension.codelist && dimension.codelist.codes) {
-        codes = dimension.codelist.codes;
-        const available = await getAvailableCodes(dimIndex, parts);
-        if (generation !== quickAutocompleteGeneration) return;
-        if (available) {
-            codes = Object.fromEntries(Object.entries(codes).filter(([code]) => code in available));
-        }
-    }
-
-    // Filter codes based on current input
-    const matchingCodes = Object.keys(codes).filter(code =>
-        code.toLowerCase().startsWith(currentPart.toLowerCase()) ||
-        codes[code].toLowerCase().includes(currentPart.toLowerCase())
-    );
-
-    if (matchingCodes.length === 0) {
-        dropdown.classList.remove('show');
-        return;
-    }
-
-    // Render dropdown
-    dropdown.innerHTML = '';
-
-    // Add wildcard option
-    if ('+'.startsWith(currentPart.toLowerCase()) || currentPart === '') {
-        const item = document.createElement('div');
-        item.className = 'autocomplete-item';
-        item.innerHTML = `<span class="code">+</span><span class="description">All values</span>`;
-        item.dataset.code = '+';
-        item.addEventListener('click', () => selectAutocompleteItem(item));
-        dropdown.appendChild(item);
-    }
-
-    // Add matching codes
-    matchingCodes.sort().forEach(code => {
-        const item = document.createElement('div');
-        item.className = 'autocomplete-item';
-        item.innerHTML = `<span class="code">${escapeHtml(code)}</span><span class="description">${escapeHtml(codes[code])}</span>`;
-        item.dataset.code = code;
-        item.addEventListener('click', () => selectAutocompleteItem(item));
-        dropdown.appendChild(item);
-    });
-
-    selectedAutocompleteIndex = -1;
-    dropdown.classList.add('show');
-}
-
-function updateAutocompleteSelection(items) {
-    items.forEach((item, index) => {
-        if (index === selectedAutocompleteIndex) {
-            item.classList.add('selected');
-            item.scrollIntoView({ block: 'nearest' });
-        } else {
-            item.classList.remove('selected');
-        }
-    });
-}
-
-function selectAutocompleteItem(item) {
-    const code = item.dataset.code;
-    const quickInput = document.getElementById('quick-key-input');
-    const parts = quickInput.value.split('.');
-
-    // Replace the current part being typed
-    parts[parts.length - 1] = code;
-
-    // Add a dot if not at the last dimension
-    if (parts.length < currentStructure.dimensions.length) {
-        quickInput.value = parts.join('.') + '.';
-    } else {
-        quickInput.value = parts.join('.');
-    }
-
-    // Hide dropdown
-    const dropdown = document.getElementById('autocomplete-dropdown');
-    dropdown.classList.remove('show');
-    selectedAutocompleteIndex = -1;
-
-    // Update generated key display
-    document.getElementById('generated-key').textContent = quickInput.value || '-';
-
-    // Trigger input event to load next dimension's autocomplete
-    quickInput.dispatchEvent(new Event('input'));
-    quickInput.focus();
 }

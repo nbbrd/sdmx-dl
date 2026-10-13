@@ -9,6 +9,7 @@ function getSources() {
     // Show pretty view initially
     prettyView.style.display = 'block';
     copyDropdown.style.display = 'none';
+    document.getElementById('sources-pretty-content').innerHTML = loadingMessage();
 
     const url = apiUrl(['sources']);
 
@@ -28,7 +29,7 @@ function getSources() {
     })
     .catch(error => {
         prettyView.style.display = 'none';
-        alert(`Error fetching sources: ${error.message}`);
+        notify(`Error fetching sources: ${error.message}`, 'danger');
     });
 }
 
@@ -41,13 +42,13 @@ function renderPrettySources(sources) {
     html += '<div class="filter-box">';
     html += '<div class="filter-input-row">';
     html += '<div class="filter-input-container">';
-    html += '<input type="text" id="sources-filter-input" placeholder="Filter sources by name, ID, endpoint, or driver..." />';
+    html += '<input type="text" class="form-control" id="sources-filter-input" placeholder="Filter sources by name, ID, endpoint, or driver..." />';
     html += '<div class="filter-inline-buttons">';
-    html += '<button class="filter-clear-btn" id="sources-clear-filter" title="Clear Filter">✕</button>';
-    html += '<button class="filter-inline-btn" id="sources-match-case" title="Match Case">Cc</button>';
-    html += '<button class="filter-inline-btn" id="sources-whole-words" title="Whole Words">W</button>';
-    html += '<button class="filter-inline-btn" id="sources-regex" title="Regex">.*</button>';
-    html += '<button class="filter-inline-btn" id="sources-fuzzy" title="Fuzzy Search">≈</button>';
+    html += '<button type="button" class="filter-clear-btn" id="sources-clear-filter" title="Clear Filter">✕</button>';
+    html += '<button type="button" class="filter-inline-btn" id="sources-match-case" title="Match Case">Cc</button>';
+    html += '<button type="button" class="filter-inline-btn" id="sources-whole-words" title="Whole Words">W</button>';
+    html += '<button type="button" class="filter-inline-btn" id="sources-regex" title="Regex">.*</button>';
+    html += '<button type="button" class="filter-inline-btn" id="sources-fuzzy" title="Fuzzy Search">≈</button>';
     html += '</div>';
     html += '</div>';
     html += '<div class="filter-actions">';
@@ -77,14 +78,14 @@ function renderPrettySources(sources) {
 
         // Extract domain from website and use DuckDuckGo favicon
         // Only show favicon if confidentiality is PUBLIC or null/undefined
-        let faviconHtml = '<span class="material-symbols-outlined" style="font-size: 32px;">public</span>'; // Default icon fallback
+        let faviconHtml = icon('globe'); // Default icon fallback
         const isPublicOrNull = !source.confidentiality || source.confidentiality === 'PUBLIC';
         if (source.website && isPublicOrNull) {
             try {
                 const url = new URL(source.website);
                 const domain = url.hostname;
                 const faviconUrl = `https://icons.duckduckgo.com/ip3/${domain}.ico`;
-                faviconHtml = `<img src="${faviconUrl}" alt="${escapeHtml(source.id)}" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\\'material-symbols-outlined\\' style=\\'font-size:32px\\'>public</span>';" style="width: 32px; height: 32px;">`;
+                faviconHtml = `<img src="${faviconUrl}" alt="${escapeHtml(source.id)}" onerror="this.parentElement.innerHTML='<i class=\\'bi bi-globe\\'></i>';" width="32" height="32">`;
             } catch (e) {
                 // Keep default icon if URL parsing fails
             }
@@ -119,7 +120,7 @@ function renderPrettySources(sources) {
         if (source.endpoint) {
             html += '<div class="source-detail-item">';
             html += '<span class="source-detail-label">Endpoint:</span>';
-            html += `<span class="source-detail-value" style="word-break: break-all; font-size: 11px;">${escapeHtml(source.endpoint)}</span>`;
+            html += `<span class="source-detail-value source-endpoint">${escapeHtml(source.endpoint)}</span>`;
             html += '</div>';
         }
 
@@ -127,8 +128,8 @@ function renderPrettySources(sources) {
         if (source.confidentiality) {
             html += '<div class="source-detail-item">';
             html += '<span class="source-detail-label">Access:</span>';
-            const confidentialityColor = source.confidentiality === 'PUBLIC' ? '#00cc00' : '#ff9900';
-            html += `<span class="source-detail-value" style="color: ${confidentialityColor}; font-weight: 600;">${escapeHtml(source.confidentiality)}</span>`;
+            const confidentialityClass = source.confidentiality === 'PUBLIC' ? 'text-success' : 'text-warning-emphasis';
+            html += `<span class="source-detail-value fw-semibold ${confidentialityClass}">${escapeHtml(source.confidentiality)}</span>`;
             html += '</div>';
         }
 
@@ -136,7 +137,7 @@ function renderPrettySources(sources) {
         if (source.website) {
             html += '<div class="source-detail-item">';
             html += '<span class="source-detail-label">Website:</span>';
-            html += `<span class="source-detail-value"><a href="${escapeHtml(source.website)}" target="_blank" style="color: #003D6D;"><span class="material-symbols-outlined" style="font-size: 18px;">link</span> Visit</a></span>`;
+            html += `<span class="source-detail-value"><a href="${escapeHtml(source.website)}" target="_blank" rel="noopener">${icon('link-45deg')} Visit</a></span>`;
             html += '</div>';
         }
 
@@ -144,7 +145,7 @@ function renderPrettySources(sources) {
         if (source.monitorWebsite) {
             html += '<div class="source-detail-item">';
             html += '<span class="source-detail-label">Monitor:</span>';
-            html += `<span class="source-detail-value"><a href="${escapeHtml(source.monitorWebsite)}" target="_blank" style="color: #003D6D;"><span class="material-symbols-outlined" style="font-size: 18px;">link</span> Status</a></span>`;
+            html += `<span class="source-detail-value"><a href="${escapeHtml(source.monitorWebsite)}" target="_blank" rel="noopener">${icon('link-45deg')} Status</a></span>`;
             html += '</div>';
         }
 
@@ -161,7 +162,7 @@ function renderPrettySources(sources) {
             html += '<div class="source-detail-item">';
             html += '<span class="source-detail-label">Languages:</span>';
             html += '<span class="source-detail-value">';
-            const languages = Object.keys(source.names).map(lang => `<code style="background: #e8f4f8; padding: 2px 6px; border-radius: 3px; font-size: 11px; margin-right: 4px;">${escapeHtml(lang)}</code>`).join(' ');
+            const languages = Object.keys(source.names).map(lang => `<code class="lang-badge">${escapeHtml(lang)}</code>`).join(' ');
             html += languages;
             html += '</span>';
             html += '</div>';
@@ -191,13 +192,13 @@ function renderPrettySources(sources) {
         html += '<div class="source-actions">';
         html += '<div class="source-actions-title">Use in Other Tabs</div>';
         html += '<div class="source-action-buttons">';
-        html += `<button class="source-action-btn" onclick="event.stopPropagation(); useSourceInTab(${jsArg(source.id)}, 'databases')" title="Get databases for this source"><span class="material-symbols-outlined">folder</span> Databases</button>`;
-        html += `<button class="source-action-btn" onclick="event.stopPropagation(); useSourceInTab(${jsArg(source.id)}, 'flows')" title="Get flows for this source"><span class="material-symbols-outlined">query_stats</span> Flows</button>`;
-        html += `<button class="source-action-btn" onclick="event.stopPropagation(); useSourceInTab(${jsArg(source.id)}, 'meta')" title="Get meta for this source"><span class="material-symbols-outlined">info</span> Meta</button>`;
-        html += `<button class="source-action-btn" onclick="event.stopPropagation(); useSourceInTab(${jsArg(source.id)}, 'keybuilder')" title="Use in key builder"><span class="material-symbols-outlined">vpn_key</span> Key Builder</button>`;
-        html += `<button class="source-action-btn" onclick="event.stopPropagation(); useSourceInTab(${jsArg(source.id)}, 'data')" title="Use in data tab"><span class="material-symbols-outlined">analytics</span> Data</button>`;
-        html += `<button class="source-action-btn" onclick="event.stopPropagation(); useSourceInTab(${jsArg(source.id)}, 'compare')" title="Use in compare tab"><span class="material-symbols-outlined">compare_arrows</span> Compare</button>`;
-        html += `<button class="source-action-btn" onclick="event.stopPropagation(); checkSourceHealth(${jsArg(source.id)}, this)" title="Check monitor status and live access"><span class="material-symbols-outlined">monitor_heart</span> Health</button>`;
+        html += `<button class="btn btn-sm btn-outline-primary source-action-btn" type="button" onclick="event.stopPropagation(); useSourceInTab(${jsArg(source.id)}, 'databases')" title="Get databases for this source"><i class="bi bi-folder"></i> Databases</button>`;
+        html += `<button class="btn btn-sm btn-outline-primary source-action-btn" type="button" onclick="event.stopPropagation(); useSourceInTab(${jsArg(source.id)}, 'flows')" title="Get flows for this source"><i class="bi bi-graph-up"></i> Flows</button>`;
+        html += `<button class="btn btn-sm btn-outline-primary source-action-btn" type="button" onclick="event.stopPropagation(); useSourceInTab(${jsArg(source.id)}, 'meta')" title="Get meta for this source"><i class="bi bi-info-circle"></i> Meta</button>`;
+        html += `<button class="btn btn-sm btn-outline-primary source-action-btn" type="button" onclick="event.stopPropagation(); useSourceInTab(${jsArg(source.id)}, 'keybuilder')" title="Use in key builder"><i class="bi bi-key"></i> Key Builder</button>`;
+        html += `<button class="btn btn-sm btn-outline-primary source-action-btn" type="button" onclick="event.stopPropagation(); useSourceInTab(${jsArg(source.id)}, 'data')" title="Use in data tab"><i class="bi bi-bar-chart-line"></i> Data</button>`;
+        html += `<button class="btn btn-sm btn-outline-primary source-action-btn" type="button" onclick="event.stopPropagation(); useSourceInTab(${jsArg(source.id)}, 'compare')" title="Use in compare tab"><i class="bi bi-arrow-left-right"></i> Compare</button>`;
+        html += `<button class="btn btn-sm btn-outline-primary source-action-btn" type="button" onclick="event.stopPropagation(); checkSourceHealth(${jsArg(source.id)}, this)" title="Check monitor status and live access"><i class="bi bi-heart-pulse"></i> Health</button>`;
         html += '</div>';
         html += '</div>';
 
@@ -293,7 +294,7 @@ async function checkAllSourcesHealth() {
     const btn = document.getElementById('sources-health-btn');
     const originalHTML = btn.innerHTML;
     btn.disabled = true;
-    btn.innerHTML = '<span class="material-symbols-outlined">hourglass_empty</span> Checking...';
+    btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Checking...';
 
     document.querySelectorAll('.health-badge').forEach(badge => {
         setHealthBadge(badge.dataset.source, '...', 'health-pending', 'Checking...');
@@ -303,7 +304,7 @@ async function checkAllSourcesHealth() {
         const reports = await getJSON(apiUrl(['health'], { sources: 'all', checks: 'monitor' }));
         reports.forEach(showHealthReport);
     } catch (error) {
-        alert('Failed to check health: ' + error.message);
+        notify('Failed to check health: ' + error.message, 'danger');
     } finally {
         btn.disabled = false;
         btn.innerHTML = originalHTML;
@@ -318,7 +319,7 @@ async function checkAllSourcesHealth() {
 async function checkSourceHealth(sourceId, btn) {
     const originalHTML = btn.innerHTML;
     btn.disabled = true;
-    btn.innerHTML = '<span class="material-symbols-outlined">hourglass_empty</span> Checking...';
+    btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Checking...';
     setHealthBadge(sourceId, '...', 'health-pending', 'Checking...');
 
     try {
@@ -373,21 +374,7 @@ function useSourceInTab(sourceId, tabName) {
             break;
     }
 
-    // Show a brief visual feedback
-    const targetTab = Array.from(document.querySelectorAll('.tab')).find(tab =>
-        tab.textContent.toLowerCase().includes(tabName.toLowerCase()) ||
-        (tabName === 'keybuilder' && tab.textContent.includes('Key Builder')) ||
-        (tabName === 'meta' && tab.textContent.includes('Meta'))
-    );
-
-    if (targetTab) {
-        targetTab.style.background = '#00cc00';
-        targetTab.style.color = 'white';
-        setTimeout(() => {
-            targetTab.style.background = '';
-            targetTab.style.color = '';
-        }, 1000);
-    }
+    flashTab(tabName);
 }
 
 function setupSourcesFilter() {

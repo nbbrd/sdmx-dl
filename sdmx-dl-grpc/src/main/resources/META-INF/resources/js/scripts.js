@@ -28,11 +28,11 @@ function scriptUrl(kind, target, extra = {}) {
  */
 async function copyScript(kind, target) {
     const dropdownId = `${kind}-copy-dropdown`;
-    document.getElementById(dropdownId).classList.remove('open');
+    closeDropdown(dropdownId);
 
     const url = scriptUrl(kind, target);
     if (!url) {
-        alert('No request data available.');
+        notify('No request data available.', 'warning');
         return;
     }
 
@@ -45,7 +45,7 @@ async function copyScript(kind, target) {
             ? `${target} copied (${warnings.length} warning${warnings.length > 1 ? 's' : ''}, see console)`
             : `${target} copied!`);
     } catch (error) {
-        alert('Failed to generate script: ' + error.message);
+        notify('Failed to generate script: ' + error.message, 'danger');
     }
 }
 
@@ -55,11 +55,11 @@ async function copyScript(kind, target) {
  * @param {string} target - Script target
  */
 function downloadScript(kind, target) {
-    document.getElementById(`${kind}-copy-dropdown`).classList.remove('open');
+    closeDropdown(`${kind}-copy-dropdown`);
 
     const url = scriptUrl(kind, target, { format: 'raw' });
     if (!url) {
-        alert('No request data available.');
+        notify('No request data available.', 'warning');
         return;
     }
 
@@ -82,12 +82,12 @@ async function loadScriptTargets() {
             const supported = targets.filter(t => (t.commands || []).includes(kind));
             if (!container || supported.length === 0) return;
 
-            let html = '<div class="dropdown-section-title">Copy as script</div>';
+            let html = '<div class="dropdown-divider"></div><h6 class="dropdown-header">Copy as script</h6>';
             supported.forEach(t => {
                 const target = escapeHtml(t.target);
-                html += `<a href="#" class="script-item" onclick="event.preventDefault(); copyScript(${jsArg(kind)}, ${jsArg(t.target)})" title="Copy a ${target} script">`;
-                html += `<span class="material-symbols-outlined">description</span> ${target}`;
-                html += `<span class="material-symbols-outlined script-download" onclick="event.preventDefault(); event.stopPropagation(); downloadScript(${jsArg(kind)}, ${jsArg(t.target)})" title="Download as file">download</span>`;
+                html += `<a href="#" class="dropdown-item script-item" onclick="event.preventDefault(); copyScript(${jsArg(kind)}, ${jsArg(t.target)})" title="Copy a ${target} script">`;
+                html += `<span class="script-label">${icon('file-earmark-code')} ${target}</span>`;
+                html += `<span class="script-download" role="button" onclick="event.preventDefault(); event.stopPropagation(); downloadScript(${jsArg(kind)}, ${jsArg(t.target)})" title="Download as file">${icon('download')}</span>`;
                 html += '</a>';
             });
             container.innerHTML = html;

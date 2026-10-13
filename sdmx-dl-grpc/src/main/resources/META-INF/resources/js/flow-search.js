@@ -118,9 +118,9 @@ async function updateIndexStatus() {
 
     if (stats.totalFlows > 0) {
         const date = stats.lastUpdated ? new Date(stats.lastUpdated).toLocaleString() : 'Unknown';
-        statusEl.innerHTML = `<span class="material-symbols-outlined" style="color: #28a745;">check_circle</span> ${stats.totalFlows} flows from ${stats.totalSources} sources (cached: ${date})`;
+        statusEl.innerHTML = `${icon('check-circle', 'text-success')} ${stats.totalFlows} flows from ${stats.totalSources} sources (cached: ${date})`;
     } else {
-        statusEl.innerHTML = `<span class="material-symbols-outlined" style="color: #ffc107;">info</span> No flows indexed yet`;
+        statusEl.innerHTML = `${icon('info-circle', 'text-warning')} No flows indexed yet`;
     }
 }
 
@@ -136,14 +136,14 @@ async function indexAllFlows() {
     const originalBtnText = btn.innerHTML;
 
     btn.disabled = true;
-    btn.innerHTML = '<span class="material-symbols-outlined">hourglass_empty</span> Indexing...';
-    statusEl.innerHTML = '<span class="material-symbols-outlined">sync</span> Starting indexing process...';
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm" aria-hidden="true"></span> Indexing...';
+    statusEl.innerHTML = `${icon('arrow-repeat', 'spin')} Starting indexing process...`;
     progressContainer.style.display = 'block';
     progressBar.style.width = '0%';
 
     try {
         // Step 1: Get all sources
-        statusEl.innerHTML = '<span class="material-symbols-outlined">sync</span> Fetching sources...';
+        statusEl.innerHTML = `${icon('arrow-repeat', 'spin')} Fetching sources...`;
         progressBar.style.width = '10%';
         progressText.textContent = '10% - Fetching sources...';
 
@@ -154,7 +154,7 @@ async function indexAllFlows() {
         }
 
         const sources = await sourcesResponse.json();
-        statusEl.innerHTML = `<span class="material-symbols-outlined">sync</span> Found ${sources.length} sources. Fetching flows...`;
+        statusEl.innerHTML = `${icon('arrow-repeat', 'spin')} Found ${sources.length} sources. Fetching flows...`;
         progressBar.style.width = '20%';
         progressText.textContent = '20% - Found ' + sources.length + ' sources';
 
@@ -192,7 +192,7 @@ async function indexAllFlows() {
                 const fetchProgress = 20 + Math.round((processedSources / sources.length) * 60);
                 progressBar.style.width = fetchProgress + '%';
                 progressText.textContent = `${fetchProgress}% - Processing sources: ${processedSources}/${sources.length}`;
-                statusEl.innerHTML = `<span class="material-symbols-outlined">sync</span> Processing sources: ${processedSources}/${sources.length}`;
+                statusEl.innerHTML = `${icon('arrow-repeat', 'spin')} Processing sources: ${processedSources}/${sources.length}`;
             } catch (error) {
                 console.warn(`Failed to fetch flows for source ${source.id}:`, error);
                 processedSources++;
@@ -202,7 +202,7 @@ async function indexAllFlows() {
         await Promise.all(flowPromises);
 
         // Step 3: Save to IndexedDB
-        statusEl.innerHTML = `<span class="material-symbols-outlined">sync</span> Saving ${allFlows.length} flows to cache...`;
+        statusEl.innerHTML = `${icon('arrow-repeat', 'spin')} Saving ${allFlows.length} flows to cache...`;
         progressBar.style.width = '90%';
         progressText.textContent = '90% - Saving to cache...';
 
@@ -212,7 +212,7 @@ async function indexAllFlows() {
         // Step 4: Update status
         progressBar.style.width = '100%';
         progressText.textContent = '100% - Complete!';
-        statusEl.innerHTML = `<span class="material-symbols-outlined" style="color: #28a745;">check_circle</span> Successfully indexed ${allFlows.length} flows from ${sources.length} sources!`;
+        statusEl.innerHTML = `${icon('check-circle', 'text-success')} Successfully indexed ${allFlows.length} flows from ${sources.length} sources!`;
 
         // Hide progress bar after 2 seconds
         setTimeout(() => {
@@ -222,7 +222,7 @@ async function indexAllFlows() {
         updateIndexStatus();
 
     } catch (error) {
-        statusEl.innerHTML = `<span class="material-symbols-outlined" style="color: #dc3545;">error</span> Error: ${escapeHtml(error.message)}`;
+        statusEl.innerHTML = `${icon('exclamation-circle', 'text-danger')} Error: ${escapeHtml(error.message)}`;
         progressContainer.style.display = 'none';
         console.error('Indexing error:', error);
     } finally {
@@ -241,7 +241,7 @@ async function clearFlowsCache() {
 
     try {
         await clearFlowsFromDB();
-        document.getElementById('index-status-text').innerHTML = '<span class="material-symbols-outlined" style="color: #ffc107;">info</span> Cache cleared';
+        document.getElementById('index-status-text').innerHTML = `${icon('info-circle', 'text-warning')} Cache cleared`;
 
         // Reset search UI
         document.getElementById('flowsearch-input').value = '';
@@ -249,7 +249,7 @@ async function clearFlowsCache() {
         document.getElementById('flowsearch-results-container').style.display = 'none';
         document.getElementById('flowsearch-empty-state').style.display = 'none';
     } catch (error) {
-        alert('Error clearing cache: ' + error.message);
+        notify('Error clearing cache: ' + error.message, 'danger');
         console.error('Cache clear error:', error);
     }
 }
@@ -302,7 +302,7 @@ async function performFlowSearch() {
         const allFlows = await getAllFlowsFromDB();
 
         if (allFlows.length === 0) {
-            alert('No flows indexed yet. Please click "Index All Flows" first.');
+            notify('No flows indexed yet. Please click "Index All Flows" first.', 'warning');
             return;
         }
 
@@ -333,7 +333,7 @@ async function performFlowSearch() {
                     regex.test(flow.description)
                 );
             } catch (e) {
-                alert('Invalid regular expression: ' + e.message);
+                notify('Invalid regular expression: ' + e.message, 'danger');
                 return;
             }
         } else {
@@ -388,7 +388,7 @@ async function performFlowSearch() {
         }
 
     } catch (error) {
-        alert('Search error: ' + error.message);
+        notify('Search error: ' + error.message, 'danger');
         console.error('Search error:', error);
     }
 }
@@ -443,23 +443,15 @@ function displayRecentSearches() {
         return;
     }
 
-    let html = '<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 10px;">';
-    html += '<span style="font-size: 12px; color: #666;">Recent:</span>';
+    let html = '<div class="recent-searches">';
+    html += '<span class="small text-body-secondary">Recent:</span>';
 
     recentSearches.forEach(search => {
-        html += `<button
-            onclick="runRecentSearch(${jsArg(search)})"
-            style="padding: 4px 12px; background: #f1f3f4; border: 1px solid #dadce0; border-radius: 16px; color: #3c4043; font-size: 13px; cursor: pointer; transition: all 0.2s;"
-            onmouseover="this.style.background='#e8eaed';"
-            onmouseout="this.style.background='#f1f3f4';">${escapeHtml(search)}</button>`;
+        html += `<button class="btn btn-sm btn-light rounded-pill recent-search-chip" type="button" onclick="runRecentSearch(${jsArg(search)})">${escapeHtml(search)}</button>`;
     });
 
-    html += `<button
-        onclick="clearRecentSearches()"
-        style="padding: 4px 8px; background: transparent; border: none; color: #5f6368; font-size: 12px; cursor: pointer;"
-        title="Clear history">✕</button>`;
+    html += `<button class="btn btn-sm btn-link text-body-secondary p-0" type="button" onclick="clearRecentSearches()" title="Clear history" aria-label="Clear history">${icon('x-lg')}</button>`;
     html += '</div>';
-
     container.innerHTML = html;
     container.style.display = 'block';
 }
@@ -477,7 +469,7 @@ function runRecentSearch(query) {
  */
 function exportFlowSearchResults() {
     if (currentSearchResults.length === 0) {
-        alert('No results to export');
+        notify('No results to export', 'warning');
         return;
     }
 
@@ -563,7 +555,7 @@ function highlightMatches(text, query) {
 
     // Simple case-insensitive highlighting
     const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-    return escapedText.replace(regex, '<mark style="background: #fff59d; padding: 0 2px; border-radius: 2px; font-weight: 500;">$1</mark>');
+    return escapedText.replace(regex, '<mark>$1</mark>');
 }
 
 /**
@@ -573,7 +565,7 @@ function displayFlowSearchResults(flows) {
     const resultsEl = document.getElementById('flowsearch-results');
 
     if (flows.length === 0) {
-        resultsEl.innerHTML = '<div style="color: #666; padding: 40px; text-align: center;">No flows found</div>';
+        resultsEl.innerHTML = placeholderMessage('No flows found');
         return;
     }
 
@@ -597,13 +589,13 @@ function displayFlowSearchResults(flows) {
         const sourceLabel = sourceFlows[0].sourceLabel;
 
         html += `
-            <div style="margin-bottom: 20px;">
-                <h3 style="color: #003D6D; font-size: 1.1em; margin-bottom: 10px; padding: 10px; background: #f8f9fa; border-left: 4px solid #0066cc; display: flex; align-items: center; gap: 8px;">
-                    <span class="material-symbols-outlined">source</span>
+            <div class="flowsearch-group">
+                <h3 class="flowsearch-group-title">
+                    ${icon('hdd-stack')}
                     ${escapeHtml(sourceLabel)} (${escapeHtml(sourceName)})
-                    <span style="margin-left: auto; font-size: 0.9em; font-weight: normal; color: #666;">${sourceFlows.length} flow${sourceFlows.length !== 1 ? 's' : ''}</span>
+                    <span class="badge rounded-pill text-bg-light ms-auto">${sourceFlows.length} flow${sourceFlows.length !== 1 ? 's' : ''}</span>
                 </h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 15px;">
+                <div class="flows-grid">
         `;
 
         sourceFlows.forEach(flow => {
@@ -624,10 +616,10 @@ function displayFlowSearchResults(flows) {
                     <div class="flow-actions">
                         <div class="flow-actions-title">Use in Other Tabs</div>
                         <div class="flow-action-buttons">
-                            <button class="flow-action-btn" onclick="event.stopPropagation(); useFlowSearchInTab(${jsArg(flow.source)}, ${jsArg(flow.ref)}, '', 'meta')" title="Get meta for this flow"><span class="material-symbols-outlined">info</span> Meta</button>
-                            <button class="flow-action-btn" onclick="event.stopPropagation(); useFlowSearchInTab(${jsArg(flow.source)}, ${jsArg(flow.ref)}, '', 'keybuilder')" title="Use in key builder"><span class="material-symbols-outlined">vpn_key</span> Key Builder</button>
-                            <button class="flow-action-btn" onclick="event.stopPropagation(); useFlowSearchInTab(${jsArg(flow.source)}, ${jsArg(flow.ref)}, '', 'data')" title="Use in data tab"><span class="material-symbols-outlined">analytics</span> Data</button>
-                            <button class="flow-action-btn" onclick="event.stopPropagation(); useFlowSearchInTab(${jsArg(flow.source)}, ${jsArg(flow.ref)}, '', 'compare')" title="Use in compare tab"><span class="material-symbols-outlined">compare_arrows</span> Compare</button>
+                            <button class="btn btn-sm btn-outline-primary flow-action-btn" type="button" onclick="event.stopPropagation(); useFlowSearchInTab(${jsArg(flow.source)}, ${jsArg(flow.ref)}, '', 'meta')" title="Get meta for this flow"><i class="bi bi-info-circle"></i> Meta</button>
+                            <button class="btn btn-sm btn-outline-primary flow-action-btn" type="button" onclick="event.stopPropagation(); useFlowSearchInTab(${jsArg(flow.source)}, ${jsArg(flow.ref)}, '', 'keybuilder')" title="Use in key builder"><i class="bi bi-key"></i> Key Builder</button>
+                            <button class="btn btn-sm btn-outline-primary flow-action-btn" type="button" onclick="event.stopPropagation(); useFlowSearchInTab(${jsArg(flow.source)}, ${jsArg(flow.ref)}, '', 'data')" title="Use in data tab"><i class="bi bi-bar-chart-line"></i> Data</button>
+                            <button class="btn btn-sm btn-outline-primary flow-action-btn" type="button" onclick="event.stopPropagation(); useFlowSearchInTab(${jsArg(flow.source)}, ${jsArg(flow.ref)}, '', 'compare')" title="Use in compare tab"><i class="bi bi-arrow-left-right"></i> Compare</button>
                         </div>
                     </div>
                 </div>
@@ -699,4 +691,6 @@ function useFlowSearchInTab(source, flowId, database, tabName) {
             switchTab('compare');
             break;
     }
+
+    flashTab(tabName);
 }

@@ -1,0 +1,173 @@
+/*
+ * NBB theme on top of Bootstrap 5.3, using CSS variables only (no build step).
+ * Bootstrap compiles some component colors, so they are overridden explicitly below.
+ */
+
+:root,
+[data-bs-theme=light] {
+    --nbb-blue: #004495;
+    --nbb-blue-rgb: 0, 68, 149;
+    --nbb-navy: #002d5a;
+    --nbb-light: #ddebf0;
+    --nbb-magenta: #db2269;
+    --nbb-sky: #29a3ee;
+    --nbb-green: #89af44;
+    --nbb-yellow: #ecbd29;
+
+    --bs-primary: var(--nbb-blue);
+    --bs-primary-rgb: var(--nbb-blue-rgb);
+    --bs-primary-text-emphasis: #002b5e;
+    --bs-primary-bg-subtle: #e6eef7;
+    --bs-primary-border-subtle: #99b4d5;
+    --bs-info: var(--nbb-sky);
+    --bs-info-rgb: 41, 163, 238;
+    --bs-danger: var(--nbb-magenta);
+    --bs-danger-rgb: 219, 34, 105;
+    --bs-success-text-emphasis: #4a6324;
+    --bs-warning: var(--nbb-yellow);
+    --bs-warning-rgb: 236, 189, 41;
+
+    --bs-body-color: #1a1a1a;
+    --bs-body-color-rgb: 26, 26, 26;
+    --bs-body-bg: #ffffff;
+    --bs-tertiary-bg: #f6f7fa;
+    --bs-tertiary-bg-rgb: 246, 247, 250;
+    --bs-link-color: var(--nbb-blue);
+    --bs-link-color-rgb: var(--nbb-blue-rgb);
+    --bs-link-hover-color: var(--nbb-navy);
+    --bs-link-hover-color-rgb: 0, 45, 90;
+    --bs-focus-ring-color: rgba(var(--nbb-blue-rgb), .25);
+
+    --app-bg: #eef4f6;
+    --app-header-bg: var(--nbb-navy);
+    --app-header-accent: var(--nbb-sky);
+    --app-accent: var(--nbb-blue);
+    --app-accent-contrast: #ffffff;
+    --app-surface: var(--bs-body-bg);
+    --app-surface-alt: var(--bs-tertiary-bg);
+    --app-highlight: #fff3b0;
+    --app-shadow: 0 2px 6px rgba(0, 0, 0, .08);
+    --app-shadow-hover: 0 6px 16px rgba(var(--nbb-blue-rgb), .18);
+}
+
+[data-bs-theme=dark] {
+    --nbb-blue: #4d9be6;
+    --nbb-blue-rgb: 77, 155, 230;
+
+    --bs-primary: var(--nbb-blue);
+    --bs-primary-rgb: var(--nbb-blue-rgb);
+    --bs-primary-text-emphasis: #a6cdf3;
+    --bs-primary-bg-subtle: #0d2440;
+    --bs-primary-border-subtle: #1f4f86;
+    --bs-info: var(--nbb-sky);
+    --bs-info-rgb: 41, 163, 238;
+    --bs-danger: #ec5d93;
+    --bs-danger-rgb: 236, 93, 147;
+    --bs-success-text-emphasis: #b5d27f;
+    --bs-warning: var(--nbb-yellow);
+    --bs-warning-rgb: 236, 189, 41;
+
+    --bs-body-color: #dee2e6;
+    --bs-body-color-rgb: 222, 226, 230;
+    --bs-body-bg: #121a24;
+    --bs-body-bg-rgb: 18, 26, 36;
+    --bs-tertiary-bg: #1a2431;
+    --bs-tertiary-bg-rgb: 26, 36, 49;
+    --bs-link-color: #79b6ef;
+    --bs-link-color-rgb: 121, 182, 239;
+    --bs-link-hover-color: #a6cdf3;
+    --bs-link-hover-color-rgb: 166, 205, 243;
+    --bs-focus-ring-color: rgba(var(--nbb-blue-rgb), .35);
+
+    --app-bg: #0b1119;
+    --app-header-bg: #0a1e36;
+    --app-accent: #1f6fc2;
+    --app-accent-contrast: #ffffff;
+    --app-highlight: #6b5a12;
+    --app-shadow: 0 2px 6px rgba(0, 0, 0, .4);
+    --app-shadow-hover: 0 6px 16px rgba(0, 0, 0, .55);
+}
+
+.btn-primary {
+    --bs-btn-bg: var(--app-accent);
+    --bs-btn-border-color: var(--app-accent);
+    --bs-btn-color: var(--app-accent-contrast);
+    --bs-btn-hover-bg: var(--nbb-navy);
+    --bs-btn-hover-border-color: var(--nbb-navy);
+    --bs-btn-hover-color: #ffffff;
+    --bs-btn-active-bg: var(--nbb-navy);
+    --bs-btn-active-border-color: var(--nbb-navy);
+    --bs-btn-disabled-bg: var(--app-accent);
+    --bs-btn-disabled-border-color: var(--app-accent);
+    --bs-btn-focus-shadow-rgb: var(--nbb-blue-rgb);
+}
+
+[data-bs-theme=dark] .btn-primary {
+    --bs-btn-hover-bg: #2b80d6;
+    --bs-btn-hover-border-color: #2b80d6;
+    --bs-btn-active-bg: #2b80d6;
+    --bs-btn-active-border-color: #2b80d6;
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--bs-primary);
+    --bs-btn-border-color: var(--bs-primary);
+    --bs-btn-hover-bg: var(--app-accent);
+    --bs-btn-hover-border-color: var(--app-accent);
+    --bs-btn-hover-color: var(--app-accent-contrast);
+    --bs-btn-active-bg: var(--app-accent);
+    --bs-btn-active-border-color: var(--app-accent);
+    --bs-btn-active-color: var(--app-accent-contrast);
+    --bs-btn-disabled-color: var(--bs-primary);
+    --bs-btn-disabled-border-color: var(--bs-primary);
+    --bs-btn-focus-shadow-rgb: var(--nbb-blue-rgb);
+}
+
+.btn-danger {
+    --bs-btn-bg: var(--bs-danger);
+    --bs-btn-border-color: var(--bs-danger);
+    --bs-btn-hover-bg: #b81b57;
+    --bs-btn-hover-border-color: #b81b57;
+    --bs-btn-active-bg: #b81b57;
+    --bs-btn-active-border-color: #b81b57;
+}
+
+.btn-outline-danger {
+    --bs-btn-color: var(--bs-danger);
+    --bs-btn-border-color: var(--bs-danger);
+    --bs-btn-hover-bg: var(--bs-danger);
+    --bs-btn-hover-border-color: var(--bs-danger);
+    --bs-btn-active-bg: var(--bs-danger);
+    --bs-btn-active-border-color: var(--bs-danger);
+}
+
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+    border-color: rgba(var(--nbb-blue-rgb), .6);
+    box-shadow: 0 0 0 .25rem var(--bs-focus-ring-color);
+}
+
+.form-check-input:checked {
+    background-color: var(--app-accent);
+    border-color: var(--app-accent);
+}
+
+.dropdown-menu {
+    --bs-dropdown-link-active-bg: var(--app-accent);
+}
+
+.nav-tabs {
+    --bs-nav-tabs-link-active-color: var(--bs-primary);
+    --bs-nav-link-color: var(--bs-secondary-color);
+    --bs-nav-link-hover-color: var(--bs-primary);
+}
+
+.progress {
+    --bs-progress-bar-bg: var(--app-accent);
+}
+
+.ts-wrapper.focus .ts-control {
+    border-color: rgba(var(--nbb-blue-rgb), .6);
+    box-shadow: 0 0 0 .25rem var(--bs-focus-ring-color);
+}

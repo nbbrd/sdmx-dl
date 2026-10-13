@@ -32,7 +32,7 @@ function getAbout() {
     .catch(error => {
         const container = document.getElementById('about-pretty-content');
         if (container) {
-            container.innerHTML = `<div style="text-align: center; padding: 40px; color: #cc0000;">Error: ${escapeHtml(error.message)}</div>`;
+            container.innerHTML = errorMessage(error.message);
         }
     });
 }
@@ -40,71 +40,47 @@ function getAbout() {
 
 function renderPrettyAbout(data) {
     const container = document.getElementById('about-pretty-content');
-    let html = '';
+    let html = '<div class="about-grid">';
 
-    html += '<div style="max-width: 800px; margin: 0 auto;">';
-
-
-    // Main info grid
-    html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">';
-
-    // Version
     if (data.version) {
-        html += '<div style="background: white; padding: 20px; border-radius: 8px; border: 2px solid #e0e0e0;">';
-        html += '<div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">';
-        html += '<span class="material-symbols-outlined" style="color: #003D6D; font-size: 32px;">info</span>';
-        html += '<h3 style="margin: 0; color: #003D6D;">Version</h3>';
-        html += '</div>';
-        html += `<p style="font-size: 24px; font-weight: bold; color: #333; margin: 0;">${escapeHtml(data.version)}</p>`;
-        html += '</div>';
+        html += '<div class="card about-card"><div class="card-body">';
+        html += `<h3 class="about-card-title">${icon('info-circle')} Version</h3>`;
+        html += `<p class="about-card-value fs-4 fw-bold">${escapeHtml(data.version)}</p>`;
+        html += '</div></div>';
     }
 
-    // Name
     if (data.name) {
-        html += '<div style="background: white; padding: 20px; border-radius: 8px; border: 2px solid #e0e0e0;">';
-        html += '<div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">';
-        html += '<span class="material-symbols-outlined" style="color: #003D6D; font-size: 32px;">sdk</span>';
-        html += '<h3 style="margin: 0; color: #003D6D;">Library</h3>';
-        html += '</div>';
-        html += `<p style="font-size: 18px; color: #333; margin: 0;">${escapeHtml(data.name)}</p>`;
-        html += '</div>';
+        html += '<div class="card about-card"><div class="card-body">';
+        html += `<h3 class="about-card-title">${icon('box-seam')} Library</h3>`;
+        html += `<p class="about-card-value fs-5">${escapeHtml(data.name)}</p>`;
+        html += '</div></div>';
     }
 
     html += '</div>';
 
-    // Description
     if (data.description) {
-        html += '<div style="background: white; padding: 25px; border-radius: 8px; border: 2px solid #e0e0e0; margin-bottom: 20px;">';
-        html += '<h3 style="color: #003D6D; margin: 0 0 15px 0;">About</h3>';
-        html += `<p style="color: #666; line-height: 1.6; margin: 0;">${escapeHtml(data.description)}</p>`;
-        html += '</div>';
+        html += '<div class="card about-card mb-3"><div class="card-body">';
+        html += '<h3 class="about-card-title">About</h3>';
+        html += `<p class="text-body-secondary mb-0">${escapeHtml(data.description)}</p>`;
+        html += '</div></div>';
     }
 
-    // Features/Capabilities
-    html += '<div style="background: white; padding: 25px; border-radius: 8px; border: 2px solid #e0e0e0;">';
-    html += '<h3 style="color: #003D6D; margin: 0 0 20px 0;">Features</h3>';
-    html += '<div style="display: grid; gap: 15px;">';
-
     const features = [
-        { icon: 'cloud_download', label: 'Download SDMX data from multiple sources' },
-        { icon: 'api', label: 'RESTful API with gRPC support' },
-        { icon: 'security', label: 'Secure authentication and authorization' },
-        { icon: 'speed', label: 'High-performance data retrieval' },
-        { icon: 'format_list_bulleted', label: 'Support for multiple SDMX formats' },
+        { icon: 'cloud-download', label: 'Download SDMX data from multiple sources' },
+        { icon: 'plug', label: 'RESTful API with gRPC support' },
+        { icon: 'shield-lock', label: 'Secure authentication and authorization' },
+        { icon: 'speedometer2', label: 'High-performance data retrieval' },
+        { icon: 'list-ul', label: 'Support for multiple SDMX formats' },
         { icon: 'database', label: 'Access to multiple statistical databases' }
     ];
 
+    html += '<div class="card about-card"><div class="card-body">';
+    html += '<h3 class="about-card-title">Features</h3>';
+    html += '<ul class="list-unstyled about-features mb-0">';
     features.forEach(feature => {
-        html += '<div style="display: flex; align-items: center; gap: 12px;">';
-        html += `<span class="material-symbols-outlined" style="color: #4caf50; font-size: 24px;">${feature.icon}</span>`;
-        html += `<span style="color: #333;">${feature.label}</span>`;
-        html += '</div>';
+        html += `<li>${icon(feature.icon, 'text-success')} ${feature.label}</li>`;
     });
-
-    html += '</div>';
-    html += '</div>';
-
-    html += '</div>';
+    html += '</ul></div></div>';
 
     container.innerHTML = html;
 }
