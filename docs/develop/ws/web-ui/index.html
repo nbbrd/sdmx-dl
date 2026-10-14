@@ -9,7 +9,7 @@
 <meta name="referrer" content="no-referrer" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="color-scheme" content="light dark" />
-<meta name="generator" content="Hugo 0.167.0">
+<meta name="generator" content="Hugo 0.168.0">
 
 
   <meta name="description" content="The web service ships with SDMX-DL API Explorer, a web page to browse sources and fetch data from a browser, without writing any code.
@@ -51,7 +51,7 @@ It also links to the OpenAPI UI and to the OpenAPI specification." />
 <meta property="article:section" content="Ws" />
     <meta
       property="article:modified_time"
-      content="2026-10-12T14:56:58+02:00"
+      content="2026-10-13T15:27:34+02:00"
     />
 
 
@@ -72,7 +72,7 @@ It also links to the OpenAPI UI and to the OpenAPI specification." />
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/ws/web-ui/",
       "headline": "Web UI",
       "description": "The web service ships with SDMX-DL API Explorer, a web page to browse sources and fetch data from a browser, without writing any code.\nOnce the service is running, open http:\/\/localhost:4559\/ (adjust the port if you changed quarkus.http.port).\nThe page uses the REST endpoint of the same server, so everything you do in it can be reproduced with an HTTP client.\nIt also links to the OpenAPI UI and to the OpenAPI specification.",
-      "wordCount": "948",
+      "wordCount": "1212",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -83,7 +83,7 @@ It also links to the OpenAPI UI and to the OpenAPI specification." />
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-12T14:56:58.00Z",
+      "dateModified": "2026-10-13T15:27:34.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1781,10 +1781,11 @@ It also links to the <a
         <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
     </a>
 </div>
-<p>Each tab covers one step of the usual <a
+<p>The tabs are grouped by step of the usual <a
   class="gdoc-markdown__link"
   href="/sdmx-dl/docs/develop/usage/"
 >discover → browse → retrieve</a> workflow.
+The tab bar stays visible when scrolling, and becomes a drop-down list on small screens.
 Cards and results have shortcuts to send the current source, flow or key to the next tab.</p>
 <div class="table-wrap"> <table>
 	<thead>
@@ -1795,11 +1796,6 @@ Cards and results have shortcuts to send the current source, flow or key to the 
 			</tr>
 	</thead>
 	<tbody>
-			<tr>
-					<td>About</td>
-					<td>Name and version of sdmx-dl.</td>
-					<td><code>GET /about</code></td>
-			</tr>
 			<tr>
 					<td>Sources</td>
 					<td>Source cards with driver, endpoint, website, monitor, languages and properties. <strong>Check Health</strong> gives a verdict for all sources; the <strong>Health</strong> action of a card also performs a live request.</td>
@@ -1846,13 +1842,19 @@ Cards and results have shortcuts to send the current source, flow or key to the 
 			</tr>
 			<tr>
 					<td>Compare</td>
-					<td>Plots several series, possibly from different sources, on the same chart.</td>
+					<td>Plots several series, possibly from different sources, on the same chart. The list of series is remembered by the browser and kept in the URL.</td>
 					<td><code>GET /{source}/{flow}/data</code></td>
+			</tr>
+			<tr>
+					<td>About</td>
+					<td>Name and version of sdmx-dl.</td>
+					<td><code>GET /about</code></td>
 			</tr>
 	</tbody>
 </table> </div>
 <p>All paths above are relative to <code>/sdmx-dl/v2</code>.</p>
-<p>Lists of sources, flows and search results can be filtered as you type, with options for match case, whole words, regular expressions and fuzzy matching.</p>
+<p>Lists of sources, flows and search results can be filtered as you type, with options for match case, whole words, regular expressions and fuzzy matching.
+Source, flow and database fields suggest the known values as you type (by identifier or name); use the arrow keys and <strong>Enter</strong>, or click a suggestion, to pick it.</p>
 <p>The health verdict of a source is one of <code>OK</code>, <code>DEGRADED</code>, <code>LOCAL_ISSUE</code>, <code>REMOTE_OUTAGE</code>, <code>UNREACHABLE</code> or <code>UNKNOWN</code>; hover the badge for the details (see <a
   class="gdoc-markdown__link"
   href="/sdmx-dl/docs/develop/usage/monitor-and-status/"
@@ -1894,6 +1896,7 @@ This helps with large code lists, but it sends one request per dimension to the 
     </a>
 </div>
 <p>The Data tab fetches the series of a key and shows them as an interactive chart and a table.
+As in the Quick input of the Key Builder, the key field suggests the codes of the dimension being typed (only those with available data); this also works in the Compare tab, and after a <code>+</code> to add more codes to a dimension.
 Periods are labelled according to their frequency (e.g. <code>2024</code>, <code>2024-Q1</code>, <code>2024-01</code>), and series are named by their title when the source provides one, otherwise by their key.
 Optional fields narrow the query, like the parameters of the <a
   class="gdoc-markdown__link"
@@ -1939,6 +1942,8 @@ Optional fields narrow the query, like the parameters of the <a
   class="gdoc-markdown__link"
   href="/sdmx-dl/docs/develop/usage/retrieve/"
 >Retrieve</a> for their meaning.</p>
+<p>The toolbar above the chart switches between the observed values (<strong>Level</strong>) and the <strong>% change</strong> from the previous observation, toggles a <strong>Log scale</strong>, and downloads the observations as <strong>CSV</strong> (one row per period, one column per series).
+When there are more than 10 series, only the first 10 are drawn: click the legend, or the <strong>All</strong> and <strong>None</strong> buttons, to show the others.</p>
 <p><img
   src="data.png"
   alt="Data tab"
@@ -1968,6 +1973,17 @@ Optional fields narrow the query, like the parameters of the <a
   
 /></p>
 <div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="display"
+    >
+        Display
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/ws/web-ui/#display" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Display" aria-label="Anchor to: Display" href="#display">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>The buttons in the bottom-right corner switch between light and dark themes (the browser preference is used by default and the choice is remembered), open the help on URL parameters, and hide the header or the other tabs.</p>
+<p>All the resources of the page (styles, icons, charting library) are served by the web service itself, so the page also works without internet access to third-party sites.</p>
+<div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="url-parameters"
     >
         URL parameters
@@ -1977,6 +1993,7 @@ Optional fields narrow the query, like the parameters of the <a
     </a>
 </div>
 <p>The address of the page reflects the current tab and form fields, so you can bookmark or share it.
+Switching tabs adds an entry to the browser history, so the back and forward buttons move between tabs.
 The same parameters can be used to open the page in a given state:</p>
 <div class="table-wrap"> <table>
 	<thead>
@@ -2021,6 +2038,11 @@ The same parameters can be used to open the page in a given state:</p>
 					<td><code>label</code></td>
 					<td>Pre-fill the series label (Compare tab)</td>
 					<td><code>?label=USD</code></td>
+			</tr>
+			<tr>
+					<td><code>series</code></td>
+					<td>Series to compare, as <code>source/flow/key[/database[/label]]</code>; repeat it for several series (Compare tab)</td>
+					<td><code>?series=ECB/EXR/M.USD.EUR.SP00.A</code></td>
 			</tr>
 			<tr>
 					<td><code>hideHeader</code></td>
