@@ -153,7 +153,7 @@ async function indexAllFlows() {
             throw new Error('Failed to fetch sources');
         }
 
-        const sources = await sourcesResponse.json();
+        const sources = itemsOf(await sourcesResponse.json());
         statusEl.innerHTML = `${icon('arrow-repeat', 'spin')} Found ${sources.length} sources. Fetching flows...`;
         progressBar.style.width = '20%';
         progressText.textContent = '20% - Found ' + sources.length + ' sources';
@@ -168,7 +168,7 @@ async function indexAllFlows() {
                 const response = await fetch(apiUrl([source.id, 'flows']));
 
                 if (response.ok) {
-                    const flows = await response.json();
+                    const flows = itemsOf(await response.json());
                     // Get first available name from names object, or use id as fallback
                     const sourceLabel = (source.names && Object.keys(source.names).length > 0)
                         ? Object.values(source.names)[0]

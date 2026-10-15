@@ -66,7 +66,7 @@ import requests
 import pandas as pd
 
 sources = requests.get("http://localhost:4559/sdmx-dl/v2/sources").json()
-df = pd.DataFrame(sources)
+df = pd.DataFrame(sources.get("items", []))
 df.head()
 ```
 {{< /tab >}}

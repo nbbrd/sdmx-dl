@@ -4,9 +4,12 @@ import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 import io.quarkiverse.mcp.server.ToolResponse;
 import io.quarkiverse.mcp.server.test.McpAssured;
 import io.quarkus.grpc.GrpcClient;
@@ -16,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
-import sdmxdl.format.protobuf.AvailabilityDto;
+import sdmxdl.format.protobuf.CodeDto;
 
 /**
  * Checks that the availability dimension can be referenced by id, by zero-based index or left
@@ -51,8 +54,16 @@ public class ListAvailabilityTest {
 
     @Test
     public void grpcInvalidDimension() {
-        assertThatThrownBy(() -> grpcAvailability("M.CHF", "CURRENCY")).hasMessageContaining("wildcard");
-        assertThatThrownBy(() -> grpcAvailability("M", "UNKNOWN")).hasMessageContaining("Cannot find dimension");
+        assertThatThrownBy(() -> grpcAvailability("M.CHF", "CURRENCY"))
+                .isInstanceOfSatisfying(
+                        StatusRuntimeException.class,
+                        ex -> assertThat(ex.getStatus().getCode()).isEqualTo(Status.Code.INVALID_ARGUMENT))
+                .hasMessageContaining("wildcard");
+        assertThatThrownBy(() -> grpcAvailability("M", "UNKNOWN"))
+                .isInstanceOfSatisfying(
+                        StatusRuntimeException.class,
+                        ex -> assertThat(ex.getStatus().getCode()).isEqualTo(Status.Code.NOT_FOUND))
+                .hasMessageContaining("Cannot find dimension");
     }
 
     // --- REST ---
@@ -81,7 +92,21 @@ public class ListAvailabilityTest {
                 .get("/sdmx-dl/v2/ECB/EXR/availability")
                 .then()
                 .statusCode(400)
-                .body("message", containsString("wildcard"));
+                .contentType("application/problem+json")
+                .body("status", equalTo(400))
+                .body("reason", equalTo("INVALID_ARGUMENT"))
+                .body("source", equalTo("ECB"))
+                .body("detail", containsString("wildcard"));
+
+        given().queryParam("key", "M")
+                .queryParam("dimension", "UNKNOWN")
+                .when()
+                .get("/sdmx-dl/v2/ECB/EXR/availability")
+                .then()
+                .statusCode(404)
+                .contentType("application/problem+json")
+                .body("reason", equalTo("RESOURCE_NOT_FOUND"))
+                .body("detail", containsString("Cannot find dimension"));
     }
 
     // --- MCP ---
@@ -116,23 +141,24 @@ public class ListAvailabilityTest {
 
     // --- Helpers ---
 
-    private static Consumer<AvailabilityDto> isCurrency() {
+    private static Consumer<ListAvailabilityResponseDto> isCurrency() {
         return dto -> {
             assertThat(dto.getDimension()).isEqualTo("CURRENCY");
-            assertThat(dto.getCodesMap()).containsOnlyKeys("CHF", "USD");
-            assertThat(dto.getCodeCount()).isEqualTo(2);
+            assertThat(dto.getItemsList()).extracting(CodeDto::getId).containsExactly("CHF", "USD");
+            assertThat(dto.getItemsList()).extracting(CodeDto::getName).containsExactly("Swiss franc", "US dollar");
+            assertThat(dto.getTotal()).isEqualTo(2);
         };
     }
 
-    private static Consumer<AvailabilityDto> isCurrencyDenom() {
+    private static Consumer<ListAvailabilityResponseDto> isCurrencyDenom() {
         return dto -> {
             assertThat(dto.getDimension()).isEqualTo("CURRENCY_DENOM");
-            assertThat(dto.getCodesMap()).containsOnlyKeys("EUR");
-            assertThat(dto.getCodeCount()).isEqualTo(1);
+            assertThat(dto.getItemsList()).extracting(CodeDto::getId).containsExactly("EUR");
+            assertThat(dto.getTotal()).isEqualTo(1);
         };
     }
 
-    private AvailabilityDto grpcAvailability(String key, String dimension) {
+    private ListAvailabilityResponseDto grpcAvailability(String key, String dimension) {
         return grpc.listAvailability(WebAvailabilityRequestDto.newBuilder()
                         .setSource("ECB")
                         .setFlow("EXR")
@@ -143,7 +169,7 @@ public class ListAvailabilityTest {
                 .atMost(TIMEOUT);
     }
 
-    private static AvailabilityDto restAvailability(String key, String dimension) {
+    private static ListAvailabilityResponseDto restAvailability(String key, String dimension) {
         var request = given().queryParam("key", key);
         if (dimension != null) {
             request = request.queryParam("dimension", dimension);
@@ -168,14 +194,14 @@ public class ListAvailabilityTest {
         return result;
     }
 
-    private static AvailabilityDto mcpResult(ToolResponse response) {
+    private static ListAvailabilityResponseDto mcpResult(ToolResponse response) {
         assertThat(response).returns(false, ToolResponse::isError);
         return fromJson(response.content().get(0).asText().text());
     }
 
-    private static AvailabilityDto fromJson(String json) {
+    private static ListAvailabilityResponseDto fromJson(String json) {
         try {
-            AvailabilityDto.Builder builder = AvailabilityDto.newBuilder();
+            ListAvailabilityResponseDto.Builder builder = ListAvailabilityResponseDto.newBuilder();
             JsonFormat.parser().merge(json, builder);
             return builder.build();
         } catch (InvalidProtocolBufferException ex) {

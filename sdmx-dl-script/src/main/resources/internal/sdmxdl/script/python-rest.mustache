@@ -36,6 +36,6 @@ with {{output}} as output:
 {{/dataSet}}
 {{#list}}
     writer.writerow({{header}})
-    for item in payload:
+    for item in payload.get("items", []):
         writer.writerow({{row}})
 {{/list}}

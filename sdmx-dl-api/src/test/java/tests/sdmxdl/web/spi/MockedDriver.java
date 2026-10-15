@@ -1,18 +1,17 @@
 package tests.sdmxdl.web.spi;
 
+import static java.util.stream.Collectors.toList;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.*;
+import java.util.stream.Stream;
 import lombok.NonNull;
 import nbbrd.design.NonNegative;
 import sdmxdl.*;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.*;
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
 
 @lombok.Builder(toBuilder = true)
 public final class MockedDriver implements Driver {
@@ -51,13 +50,13 @@ public final class MockedDriver implements Driver {
     }
 
     @Override
-    public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
+    public @NonNull Connection connect(
+            @NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
         checkSource(source);
 
-        return repos
-                .entrySet()
-                .stream()
-                .filter(entry -> entry.getKey().getName().equals(source.getEndpoint().toString()))
+        return repos.entrySet().stream()
+                .filter(entry ->
+                        entry.getKey().getName().equals(source.getEndpoint().toString()))
                 .map(entry -> new MockedConnection(entry.getKey(), entry.getValue()))
                 .findFirst()
                 .orElseThrow(() -> missingSource(source.toString(), WebSource.class));
@@ -80,15 +79,11 @@ public final class MockedDriver implements Driver {
     }
 
     private Stream<WebSource> generateSources() {
-        return repos
-                .keySet()
-                .stream()
-                .map(repo -> sourceOf(repo.getName(), getDriverId(), repo));
+        return repos.keySet().stream().map(repo -> sourceOf(repo.getName(), getDriverId(), repo));
     }
 
     public static WebSource sourceOf(String name, String driverId, DataRepository repo) {
-        return WebSource
-                .builder()
+        return WebSource.builder()
                 .id(name)
                 .driver(driverId)
                 .endpointOf(repo.getName())
@@ -98,8 +93,7 @@ public final class MockedDriver implements Driver {
     @lombok.RequiredArgsConstructor
     private static final class MockedConnection implements Connection {
 
-        @lombok.NonNull
-        private final DataRepository repo;
+        @lombok.NonNull private final DataRepository repo;
 
         @lombok.Singular
         private final Set<Feature> supportedFeatures;
@@ -124,57 +118,56 @@ public final class MockedDriver implements Driver {
         }
 
         @Override
-        public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
+        public @NonNull MetaSet getMeta(@NonNull DatabaseRef database, @NonNull FlowRef flowRef)
+                throws IOException, IllegalArgumentException {
             checkState();
             checkDataflowRef(flowRef);
 
-            Flow flow = repo
-                    .getFlow(flowRef)
-                    .orElseThrow(() -> missingFlow(repo.getName(), flowRef));
+            Flow flow = repo.getFlow(flowRef).orElseThrow(() -> missingFlow(repo.getName(), flowRef));
 
             StructureRef structRef = flow.getStructureRef();
 
-            Structure structure = repo
-                    .getStructure(structRef)
-                    .orElseThrow(() -> missingStructure(repo.getName(), structRef));
+            Structure structure =
+                    repo.getStructure(structRef).orElseThrow(() -> missingStructure(repo.getName(), structRef));
 
-            return MetaSet
-                    .builder()
-                    .flow(flow)
-                    .structure(structure)
-                    .build();
+            return MetaSet.builder().flow(flow).structure(structure).build();
         }
 
         @Override
-        public @NonNull DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
+        public @NonNull DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query)
+                throws IOException {
             checkState();
             checkDataflowRef(flowRef);
             checkKey(query.getKey(), getMeta(database, flowRef).getStructure());
-            return repo
-                    .getDataSet(flowRef)
+            return repo.getDataSet(flowRef)
                     .map(dataSet -> dataSet.getData(query))
                     .orElseThrow(() -> missingData(repo.getName(), flowRef));
         }
 
         @Override
-        public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
+        public @NonNull Stream<Series> getDataStream(
+                @NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
             checkState();
             checkDataflowRef(flowRef);
             checkKey(query.getKey(), getMeta(database, flowRef).getStructure());
-            return repo
-                    .getDataSet(flowRef)
+            return repo.getDataSet(flowRef)
                     .map(dataSet -> dataSet.getDataStream(query))
                     .orElseThrow(() -> missingData(repo.getName(), flowRef));
         }
 
         @Override
-        public @NonNull Collection<String> getAvailableDimensionCodes(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, @NonNegative int dimensionIndex) throws IOException, IllegalArgumentException {
+        public @NonNull Collection<String> getAvailableDimensionCodes(
+                @NonNull DatabaseRef database,
+                @NonNull FlowRef flowRef,
+                @NonNull Key constraints,
+                @NonNegative int dimensionIndex)
+                throws IOException, IllegalArgumentException {
             checkState();
             checkDataflowRef(flowRef);
             if (supportedFeatures.contains(Feature.DATA_QUERY_DETAIL)) {
-                return repo
-                        .getDataSet(flowRef)
-                        .map(dataSet -> dataSet.getDataStream(Query.builder().key(constraints).build()))
+                return repo.getDataSet(flowRef)
+                        .map(dataSet -> dataSet.getDataStream(
+                                Query.builder().key(constraints).build()))
                         .orElseThrow(() -> missingData(repo.getName(), flowRef))
                         .map(series -> series.getKey().get(dimensionIndex))
                         .distinct()
@@ -206,9 +199,9 @@ public final class MockedDriver implements Driver {
         }
 
         private void checkDataflowRef(FlowRef ref) throws IllegalArgumentException {
-//            if (!repo.getFlow(ref).isPresent()) {
-//                throw new IllegalArgumentException(ref.toString());
-//            }
+            //            if (!repo.getFlow(ref).isPresent()) {
+            //                throw new IllegalArgumentException(ref.toString());
+            //            }
         }
 
         private void checkKey(Key key, Structure dsd) throws IllegalArgumentException {
@@ -223,11 +216,11 @@ public final class MockedDriver implements Driver {
         }
 
         public static @NonNull IOException missingFlow(@NonNull String source, @NonNull FlowRef ref) {
-            return new IOException("Missing flow '" + ref + "'");
+            return new ResourceNotFoundException("Missing flow '" + ref + "'");
         }
 
         public static @NonNull IOException missingStructure(@NonNull String source, @NonNull StructureRef ref) {
-            return new IOException("Missing structure '" + ref + "'");
+            return new ResourceNotFoundException("Missing structure '" + ref + "'");
         }
 
         public static @NonNull IOException missingData(@NonNull String source, @NonNull FlowRef ref) {

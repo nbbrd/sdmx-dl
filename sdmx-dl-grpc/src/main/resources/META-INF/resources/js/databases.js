@@ -28,7 +28,7 @@ function getDatabases() {
         window.databasesRequestUrl = url;
 
         // Render pretty view
-        renderPrettyDatabases(data);
+        renderPrettyDatabases(itemsOf(data));
     })
     .catch(error => {
         prettyView.style.display = 'none';

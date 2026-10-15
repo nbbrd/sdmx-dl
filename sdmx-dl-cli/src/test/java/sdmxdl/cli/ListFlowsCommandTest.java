@@ -73,4 +73,21 @@ public class ListFlowsCommandTest {
                 .contains("all:data&struct(latest),data,", atIndex(1))
                 .hasSize(2);
     }
+
+    @SetSystemProperty(key = "enableFileDriver", value = "true")
+    @Test
+    public void testContentWithOffset(@TempDir Path temp) throws IOException {
+        CommandLine cmd = new CommandLine(new ListFlowsCommand());
+        CommandWatcher watcher = CommandWatcher.on(cmd);
+
+        File src = FileSample.create(temp);
+        File out = temp.resolve("out.csv").toFile();
+
+        assertThat(cmd.execute("sample", "--no-log", "-s", src.getPath(), "-o", out.getPath(), "--offset", "1"))
+                .isEqualTo(CommandLine.ExitCode.OK);
+        assertThat(watcher.getOut()).isEmpty();
+        assertThat(watcher.getErr()).isEmpty();
+
+        assertThat(FileSample.readAll(out)).containsExactly("Ref,Name,Description");
+    }
 }

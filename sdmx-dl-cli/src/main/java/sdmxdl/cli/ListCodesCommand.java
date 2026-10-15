@@ -22,10 +22,10 @@ import internal.sdmxdl.cli.WebConceptOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import java.io.IOException;
-import java.util.Map;
-import java.util.Set;
+import java.util.List;
 import java.util.concurrent.Callable;
 import picocli.CommandLine;
+import sdmxdl.Code;
 import sdmxdl.CodesRequest;
 
 /**
@@ -52,14 +52,14 @@ public final class ListCodesCommand implements Callable<Void> {
         return null;
     }
 
-    private CsvTable<Map.Entry<String, String>> getTable() {
-        return CsvTable.<Map.Entry<String, String>>builder()
-                .columnOf("Code", Map.Entry::getKey)
-                .columnOf("Label", Map.Entry::getValue)
+    private CsvTable<Code> getTable() {
+        return CsvTable.<Code>builder()
+                .columnOf("Code", Code::getId)
+                .columnOf("Label", Code::getName)
                 .build();
     }
 
-    private Set<Map.Entry<String, String>> getRows() throws IOException {
+    private List<Code> getRows() throws IOException {
         return web.loadManager()
                 .usingName(web.getSource())
                 .listCodes(CodesRequest.builder()
@@ -69,7 +69,8 @@ public final class ListCodesCommand implements Callable<Void> {
                         .concept(web.getConcept())
                         .query(listSearch.getSearchQuery())
                         .maxResults(listSearch.getMaxResults())
+                        .offset(listSearch.getOffset())
                         .build())
-                .entrySet();
+                .getItems();
     }
 }

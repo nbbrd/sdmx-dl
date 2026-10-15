@@ -68,7 +68,7 @@ public class BashScripts {
                         "filter",
                         quote(call.getFields().values().stream()
                                 .map(field -> "." + field + " // \"\"")
-                                .collect(Collectors.joining(", ", ".[] | [", "] | @csv"))));
+                                .collect(Collectors.joining(", ", "(.items // [])[] | [", "] | @csv"))));
                 break;
         }
         result.content(ScriptTemplates.render(REST_TEMPLATE, scope)).warnings(call.getWarnings());

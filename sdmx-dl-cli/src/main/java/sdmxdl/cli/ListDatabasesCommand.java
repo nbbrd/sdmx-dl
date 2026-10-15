@@ -68,6 +68,8 @@ public final class ListDatabasesCommand implements Callable<Void> {
                         .languages(web.getLangs())
                         .query(listSearch.getSearchQuery())
                         .maxResults(listSearch.getMaxResults())
-                        .build());
+                        .offset(listSearch.getOffset())
+                        .build())
+                .getItems();
     }
 }

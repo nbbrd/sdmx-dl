@@ -21,6 +21,9 @@ public class WebSourcesRequest implements HasSearch {
     int maxResults = AUTO_LIMIT;
 
     @lombok.Builder.Default
+    int offset = NO_OFFSET;
+
+    @lombok.Builder.Default
     @NonNull Confidentiality confidentialityThreshold = Confidentiality.SECRET;
 
     public static final class Builder {

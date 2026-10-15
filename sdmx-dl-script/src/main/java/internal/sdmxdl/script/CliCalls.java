@@ -118,6 +118,9 @@ public final class CliCalls implements RequestVisitor<CliCall> {
         if (search.getMaxResults() != HasSearch.AUTO_LIMIT) {
             result.argument("-m").argument(String.valueOf(search.getMaxResults()));
         }
+        if (search.getOffset() != HasSearch.NO_OFFSET) {
+            result.argument("--offset").argument(String.valueOf(search.getOffset()));
+        }
     }
 
     static IllegalArgumentException unsupported(Request request) {

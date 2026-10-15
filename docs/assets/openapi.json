@@ -66,21 +66,32 @@
         "type" : "string",
         "enum" : [ "UNKNOWN", "DATAFLOW", "GROUP", "SERIES", "OBSERVATION", "UNRECOGNIZED" ]
       },
-      "AvailabilityDto" : {
+      "CheckHealthResponseDto" : {
         "type" : "object",
         "properties" : {
-          "dimension" : {
-            "type" : "string"
+          "descriptorForType" : {
+            "type" : "object"
           },
-          "codes" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          },
-          "codeCount" : {
+          "total" : {
             "type" : "integer",
             "format" : "int32"
+          },
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/HealthReportDto"
+            }
+          }
+        }
+      },
+      "CodeDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
           }
         }
       },
@@ -314,6 +325,153 @@
           "lastNObservations" : {
             "type" : "integer",
             "format" : "int32"
+          }
+        }
+      },
+      "ListAttributesResponseDto" : {
+        "type" : "object",
+        "properties" : {
+          "descriptorForType" : {
+            "type" : "object"
+          },
+          "total" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/AttributeDto"
+            }
+          }
+        }
+      },
+      "ListAvailabilityResponseDto" : {
+        "type" : "object",
+        "properties" : {
+          "descriptorForType" : {
+            "type" : "object"
+          },
+          "dimension" : {
+            "type" : "string"
+          },
+          "total" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/CodeDto"
+            }
+          }
+        }
+      },
+      "ListCodesResponseDto" : {
+        "type" : "object",
+        "properties" : {
+          "descriptorForType" : {
+            "type" : "object"
+          },
+          "total" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/CodeDto"
+            }
+          }
+        }
+      },
+      "ListDatabasesResponseDto" : {
+        "type" : "object",
+        "properties" : {
+          "descriptorForType" : {
+            "type" : "object"
+          },
+          "total" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/DatabaseDto"
+            }
+          }
+        }
+      },
+      "ListDimensionsResponseDto" : {
+        "type" : "object",
+        "properties" : {
+          "descriptorForType" : {
+            "type" : "object"
+          },
+          "total" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/DimensionDto"
+            }
+          }
+        }
+      },
+      "ListFlowsResponseDto" : {
+        "type" : "object",
+        "properties" : {
+          "descriptorForType" : {
+            "type" : "object"
+          },
+          "total" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/FlowDto"
+            }
+          }
+        }
+      },
+      "ListScriptTargetsResponseDto" : {
+        "type" : "object",
+        "properties" : {
+          "descriptorForType" : {
+            "type" : "object"
+          },
+          "total" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ScriptTargetDto"
+            }
+          }
+        }
+      },
+      "ListSourcesResponseDto" : {
+        "type" : "object",
+        "properties" : {
+          "descriptorForType" : {
+            "type" : "object"
+          },
+          "total" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/WebSourceDto"
+            }
           }
         }
       },
@@ -1143,10 +1301,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/HealthReportDto"
-                  }
+                  "$ref" : "#/components/schemas/CheckHealthResponseDto"
                 }
               }
             }
@@ -1164,10 +1319,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/ScriptTargetDto"
-                  }
+                  "$ref" : "#/components/schemas/ListScriptTargetsResponseDto"
                 }
               }
             }
@@ -1202,6 +1354,15 @@
             "default" : -1
           }
         }, {
+          "description" : "Number of matching items to skip before returning 'maxResults' items (default 0)",
+          "name" : "offset",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
+          }
+        }, {
           "name" : "query",
           "in" : "query",
           "schema" : {
@@ -1215,10 +1376,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/WebSourceDto"
-                  }
+                  "$ref" : "#/components/schemas/ListSourcesResponseDto"
                 }
               }
             }
@@ -1253,6 +1411,15 @@
             "default" : -1
           }
         }, {
+          "description" : "Number of matching items to skip before returning 'maxResults' items (default 0)",
+          "name" : "offset",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
+          }
+        }, {
           "name" : "query",
           "in" : "query",
           "schema" : {
@@ -1266,10 +1433,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/DatabaseDto"
-                  }
+                  "$ref" : "#/components/schemas/ListDatabasesResponseDto"
                 }
               }
             }
@@ -1311,6 +1475,15 @@
             "default" : -1
           }
         }, {
+          "description" : "Number of matching items to skip before returning 'maxResults' items (default 0)",
+          "name" : "offset",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
+          }
+        }, {
           "name" : "plainText",
           "in" : "query",
           "schema" : {
@@ -1339,10 +1512,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/FlowDto"
-                  }
+                  "$ref" : "#/components/schemas/ListFlowsResponseDto"
                 }
               }
             }
@@ -1397,6 +1567,15 @@
             "type" : "integer",
             "format" : "int32",
             "default" : -1
+          }
+        }, {
+          "description" : "Number of matching items to skip before returning 'maxResults' items (default 0)",
+          "name" : "offset",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
           }
         }, {
           "name" : "outputFile",
@@ -1548,6 +1727,15 @@
             "default" : -1
           }
         }, {
+          "description" : "Number of matching items to skip before returning 'maxResults' items (default 0)",
+          "name" : "offset",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
+          }
+        }, {
           "name" : "query",
           "in" : "query",
           "schema" : {
@@ -1561,10 +1749,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/AttributeDto"
-                  }
+                  "$ref" : "#/components/schemas/ListAttributesResponseDto"
                 }
               }
             }
@@ -1625,7 +1810,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/AvailabilityDto"
+                  "$ref" : "#/components/schemas/ListAvailabilityResponseDto"
                 }
               }
             }
@@ -1681,6 +1866,15 @@
             "default" : -1
           }
         }, {
+          "description" : "Number of matching items to skip before returning 'maxResults' items (default 0)",
+          "name" : "offset",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
+          }
+        }, {
           "name" : "query",
           "in" : "query",
           "schema" : {
@@ -1694,7 +1888,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/CodelistDto"
+                  "$ref" : "#/components/schemas/ListCodesResponseDto"
                 }
               }
             }
@@ -2069,6 +2263,15 @@
             "default" : -1
           }
         }, {
+          "description" : "Number of matching items to skip before returning 'maxResults' items (default 0)",
+          "name" : "offset",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
+          }
+        }, {
           "name" : "query",
           "in" : "query",
           "schema" : {
@@ -2082,10 +2285,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/DimensionDto"
-                  }
+                  "$ref" : "#/components/schemas/ListDimensionsResponseDto"
                 }
               }
             }

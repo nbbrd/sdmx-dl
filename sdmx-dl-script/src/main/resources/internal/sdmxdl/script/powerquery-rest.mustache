@@ -27,7 +27,7 @@ in
     TrimmedPeriod
 <%/dataSet%>
 <%#list%>
-    ItemsTable = Table.FromRecords(Source, <%fieldNames%>, MissingField.UseNull),
+    ItemsTable = Table.FromRecords(Record.FieldOrDefault(Source, "items", {}), <%fieldNames%>, MissingField.UseNull),
     RenamedColumns = Table.RenameColumns(ItemsTable, <%renames%>)
 in
     RenamedColumns

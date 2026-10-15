@@ -29,7 +29,7 @@ for series in payload.get("data", []):
 df = pd.DataFrame(records, columns=["Series", "ObsPeriod", "ObsValue"])
 {{/dataSet}}
 {{#list}}
-df = pd.DataFrame([{{row}} for item in payload], columns={{header}})
+df = pd.DataFrame([{{row}} for item in payload.get("items", [])], columns={{header}})
 {{/list}}
 {{#hasOutputFile}}
 df.to_csv({{outputFile}}, index=False)

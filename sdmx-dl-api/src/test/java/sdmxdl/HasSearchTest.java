@@ -28,6 +28,15 @@ public class HasSearchTest {
                 .isThrownBy(() -> request(NO_QUERY, -2).getEffectiveMaxResults());
     }
 
+    @Test
+    public void testGetEffectiveOffset() {
+        assertThat(FlowsRequest.DEFAULT.getEffectiveOffset()).isEqualTo(NO_OFFSET);
+        assertThat(FlowsRequest.builder().offset(3).build().getEffectiveOffset())
+                .isEqualTo(3);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> FlowsRequest.builder().offset(-1).build().getEffectiveOffset());
+    }
+
     private static FlowsRequest request(String query, int maxResults) {
         return FlowsRequest.builder().query(query).maxResults(maxResults).build();
     }

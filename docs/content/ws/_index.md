@@ -103,10 +103,11 @@ Each series has a `key`, optional series-level `meta`, and an `obs` array; each 
 - `period` is an ISO-8601 interval (`start/duration`); keep the part before `/` if you only need the start date.
 - The `detail` parameter controls which parts are filled: `FULL` (default), `DATA_ONLY` (no `meta`), `NO_DATA` (no `obs`), or `SERIES_KEYS_ONLY` (keys only).
 - `GetDataStream` (`GET /{source}/{flow}/data:stream`) returns the same series objects as a plain JSON array, without the `ref`/`query` wrapper.
-- Listing operations (`/sources`, `/{source}/flows`, `/{source}/{flow}/dimensions`, …) return a JSON array of objects that can be turned into a table directly.
-- `ListCodes` returns a `codes` object mapping each code to its label, e.g. `{"codes": {"A": "Annual", "Q": "Quarterly"}}`.
-- `ListAvailability` also returns the id of the selected dimension, e.g. `{"dimension": "FREQ", "codes": {"A": "Annual", "Q": "Quarterly"}, "codeCount": 2}`. Its `dimension` parameter takes a dimension id, a zero-based index, or nothing for the first wildcard dimension of the `key` (see [Availability]({{< relref "/usage/browse#availability" >}})).
+- Listing operations (`/sources`, `/{source}/flows`, `/{source}/{flow}/dimensions`, `/{source}/{flow}/codes/{concept}`, …) return an object with the matching entries in `items` and their number before paging in `total`, e.g. `{"items": [{"id": "A", "name": "Annual"}, {"id": "Q", "name": "Quarterly"}], "total": 2}`. Use `offset` with `maxResults` to page through them.
+- Empty fields are omitted from JSON responses: an empty list has no `items` and a `total` of `0` is omitted, so default them (e.g. `payload.get("items", [])`).
+- `ListAvailability` also returns the id of the selected dimension, e.g. `{"dimension": "FREQ", "items": [{"id": "A", "name": "Annual"}], "total": 1}`. Its `dimension` parameter takes a dimension id, a zero-based index, or nothing for the first wildcard dimension of the `key` (see [Availability]({{< relref "/usage/browse#availability" >}})).
 - Script operations return the generated script, without executing it: `{"target": "r/rest", "fileExtension": "R", "mediaType": "text/x-r", "content": "...", "warnings": []}`. With `format=raw`, or an `Accept` header that prefers `text/plain` or `application/octet-stream`, they return the script itself as a file to download. See [Generate scripts]({{< relref "/integration/generate-scripts" >}}) for their options (`cliLauncher`, `restEndpoint`, `outputFile`, `property`, `format`).
+- Errors are returned as [problem details](https://www.rfc-editor.org/rfc/rfc9457) (`application/problem+json`) with an extra `reason` (`INVALID_ARGUMENT`, `RESOURCE_NOT_FOUND`, `UPSTREAM_HTTP_ERROR`, `UPSTREAM_TIMEOUT`, `UPSTREAM_UNREACHABLE`, `UPSTREAM_ERROR`, `INTERNAL_ERROR`), the `source` when known and the `upstreamStatus` of an upstream HTTP error, e.g. `{"type": "about:blank", "title": "Not Found", "status": 404, "detail": "Missing source 'XYZ'", "reason": "RESOURCE_NOT_FOUND", "source": "XYZ"}`. The gRPC endpoint returns the same information as a status code with an `ErrorInfo` detail (domain `sdmx-dl`).
 
 ## MCP endpoint
 
@@ -119,7 +120,7 @@ A few things to keep in mind:
 - Only sources marked as **public** are exposed; restricted/private sources are hidden.
 - It is **read-only**: there is no way to modify configuration or state through it.
 - Some fields are truncated or simplified to save tokens (for example, flow descriptions are capped in length, and metadata is returned as a skeleton without the codes of coded dimensions).
-- List and search are unified: every listing tool accepts an optional `query`. When `query` is empty, entries are returned in their natural order (sorted or as defined) and truncated to `maxResults`. When `query` is non-empty, entries are ranked by relevance (hybrid BM25 + trigram search) and limited to `maxResults`. By default, `maxResults` returns everything without query and the 10 best matches with a query; `0` means no limit. The MCP tools always default to 10.
+- List and search are unified: every listing tool accepts an optional `query`. When `query` is empty, entries are returned in their natural order (sorted or as defined) and truncated to `maxResults`. When `query` is non-empty, entries are ranked by relevance (hybrid BM25 + trigram search) and limited to `maxResults`. By default, `maxResults` returns everything without query and the 10 best matches with a query; `0` means no limit. The MCP tools always default to 10. The result gives the number of matches in `total` and an `offset` skips the first entries, to page through them.
 
 Available tools:
 

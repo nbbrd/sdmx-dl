@@ -76,7 +76,7 @@ function downloadScript(kind, target) {
  */
 async function loadScriptTargets() {
     try {
-        const targets = await getJSON(apiUrl(['script', 'targets']));
+        const targets = itemsOf(await getJSON(apiUrl(['script', 'targets'])));
         ['data', 'flows'].forEach(kind => {
             const container = document.getElementById(`${kind}-script-items`);
             const supported = targets.filter(t => (t.commands || []).includes(kind));

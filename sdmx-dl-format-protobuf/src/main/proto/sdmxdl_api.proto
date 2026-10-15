@@ -29,10 +29,9 @@ message CodelistDto {
   int32 code_count = 3; /* Total number of codes; may be greater than the size of 'codes' when the list is filtered or omitted */
 }
 
-message AvailabilityDto {
-  string dimension = 1; /* Id of the resolved dimension */
-  map<string, string> codes = 2; /* Available code id to label (empty label when the code has no label) */
-  int32 code_count = 3; /* Number of available codes */
+message CodeDto {
+  string id = 1;
+  optional string name = 2; /* absent when the code has no label */
 }
 
 enum ConfidentialityDto {

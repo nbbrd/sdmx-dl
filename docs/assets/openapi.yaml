@@ -51,18 +51,25 @@ components:
       - SERIES
       - OBSERVATION
       - UNRECOGNIZED
-    AvailabilityDto:
+    CheckHealthResponseDto:
       type: object
       properties:
-        dimension:
-          type: string
-        codes:
+        descriptorForType:
           type: object
-          additionalProperties:
-            type: string
-        codeCount:
+        total:
           type: integer
           format: int32
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/HealthReportDto"
+    CodeDto:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
     CodelistDto:
       type: object
       properties:
@@ -232,6 +239,104 @@ components:
         lastNObservations:
           type: integer
           format: int32
+    ListAttributesResponseDto:
+      type: object
+      properties:
+        descriptorForType:
+          type: object
+        total:
+          type: integer
+          format: int32
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/AttributeDto"
+    ListAvailabilityResponseDto:
+      type: object
+      properties:
+        descriptorForType:
+          type: object
+        dimension:
+          type: string
+        total:
+          type: integer
+          format: int32
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/CodeDto"
+    ListCodesResponseDto:
+      type: object
+      properties:
+        descriptorForType:
+          type: object
+        total:
+          type: integer
+          format: int32
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/CodeDto"
+    ListDatabasesResponseDto:
+      type: object
+      properties:
+        descriptorForType:
+          type: object
+        total:
+          type: integer
+          format: int32
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/DatabaseDto"
+    ListDimensionsResponseDto:
+      type: object
+      properties:
+        descriptorForType:
+          type: object
+        total:
+          type: integer
+          format: int32
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/DimensionDto"
+    ListFlowsResponseDto:
+      type: object
+      properties:
+        descriptorForType:
+          type: object
+        total:
+          type: integer
+          format: int32
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/FlowDto"
+    ListScriptTargetsResponseDto:
+      type: object
+      properties:
+        descriptorForType:
+          type: object
+        total:
+          type: integer
+          format: int32
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ScriptTargetDto"
+    ListSourcesResponseDto:
+      type: object
+      properties:
+        descriptorForType:
+          type: object
+        total:
+          type: integer
+          format: int32
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/WebSourceDto"
     MetaSetDto:
       type: object
       properties:
@@ -794,9 +899,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/HealthReportDto"
+                $ref: "#/components/schemas/CheckHealthResponseDto"
       summary: Check Health
   /sdmx-dl/v2/script/targets:
     get:
@@ -808,9 +911,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/ScriptTargetDto"
+                $ref: "#/components/schemas/ListScriptTargetsResponseDto"
       summary: List Script Targets
   /sdmx-dl/v2/sources:
     get:
@@ -833,6 +934,14 @@ paths:
           type: integer
           format: int32
           default: -1
+      - description: Number of matching items to skip before returning 'maxResults'
+          items (default 0)
+        name: offset
+        in: query
+        schema:
+          type: integer
+          format: int32
+          default: 0
       - name: query
         in: query
         schema:
@@ -844,9 +953,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/WebSourceDto"
+                $ref: "#/components/schemas/ListSourcesResponseDto"
       summary: List Sources
   /sdmx-dl/v2/{source}/databases:
     get:
@@ -869,6 +976,14 @@ paths:
           type: integer
           format: int32
           default: -1
+      - description: Number of matching items to skip before returning 'maxResults'
+          items (default 0)
+        name: offset
+        in: query
+        schema:
+          type: integer
+          format: int32
+          default: 0
       - name: query
         in: query
         schema:
@@ -880,9 +995,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/DatabaseDto"
+                $ref: "#/components/schemas/ListDatabasesResponseDto"
       summary: List Databases
   /sdmx-dl/v2/{source}/flows:
     get:
@@ -910,6 +1023,14 @@ paths:
           type: integer
           format: int32
           default: -1
+      - description: Number of matching items to skip before returning 'maxResults'
+          items (default 0)
+        name: offset
+        in: query
+        schema:
+          type: integer
+          format: int32
+          default: 0
       - name: plainText
         in: query
         schema:
@@ -932,9 +1053,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/FlowDto"
+                $ref: "#/components/schemas/ListFlowsResponseDto"
       summary: List Flows
   /sdmx-dl/v2/{source}/flows:script:
     get:
@@ -972,6 +1091,14 @@ paths:
           type: integer
           format: int32
           default: -1
+      - description: Number of matching items to skip before returning 'maxResults'
+          items (default 0)
+        name: offset
+        in: query
+        schema:
+          type: integer
+          format: int32
+          default: 0
       - name: outputFile
         in: query
         schema:
@@ -1079,6 +1206,14 @@ paths:
           type: integer
           format: int32
           default: -1
+      - description: Number of matching items to skip before returning 'maxResults'
+          items (default 0)
+        name: offset
+        in: query
+        schema:
+          type: integer
+          format: int32
+          default: 0
       - name: query
         in: query
         schema:
@@ -1090,9 +1225,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/AttributeDto"
+                $ref: "#/components/schemas/ListAttributesResponseDto"
       summary: List Attributes
   /sdmx-dl/v2/{source}/{flow}/availability:
     get:
@@ -1135,7 +1268,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AvailabilityDto"
+                $ref: "#/components/schemas/ListAvailabilityResponseDto"
       summary: Get Availability
   /sdmx-dl/v2/{source}/{flow}/codes/{concept}:
     get:
@@ -1173,6 +1306,14 @@ paths:
           type: integer
           format: int32
           default: -1
+      - description: Number of matching items to skip before returning 'maxResults'
+          items (default 0)
+        name: offset
+        in: query
+        schema:
+          type: integer
+          format: int32
+          default: 0
       - name: query
         in: query
         schema:
@@ -1184,7 +1325,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CodelistDto"
+                $ref: "#/components/schemas/ListCodesResponseDto"
       summary: Get Codes
   /sdmx-dl/v2/{source}/{flow}/data:
     get:
@@ -1442,6 +1583,14 @@ paths:
           type: integer
           format: int32
           default: -1
+      - description: Number of matching items to skip before returning 'maxResults'
+          items (default 0)
+        name: offset
+        in: query
+        schema:
+          type: integer
+          format: int32
+          default: 0
       - name: query
         in: query
         schema:
@@ -1453,9 +1602,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/DimensionDto"
+                $ref: "#/components/schemas/ListDimensionsResponseDto"
       summary: List Dimensions
   /sdmx-dl/v2/{source}/{flow}/meta:
     get:

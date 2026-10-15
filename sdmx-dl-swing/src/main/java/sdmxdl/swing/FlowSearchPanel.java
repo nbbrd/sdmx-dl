@@ -408,7 +408,8 @@ public final class FlowSearchPanel extends JComponent {
         try {
             List<Database> databases = manager.using(source)
                     .listDatabases(
-                            DatabasesRequest.builder().languages(languages).build());
+                            DatabasesRequest.builder().languages(languages).build())
+                    .getItems();
 
             Set<DatabaseRef> dbRefs = new LinkedHashSet<>();
             for (Database db : databases) {
@@ -424,7 +425,8 @@ public final class FlowSearchPanel extends JComponent {
                             .listFlows(FlowsRequest.builder()
                                     .database(db)
                                     .languages(languages)
-                                    .build());
+                                    .build())
+                            .getItems();
                     for (Flow flow : flows) {
                         entries.add(new FlowEntry(source, db, flow));
                     }

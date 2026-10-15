@@ -10,29 +10,29 @@ service SdmxWebManager {
 
   rpc GetAbout(EmptyDto) returns (sdmxdl.format.protobuf.AboutDto);
 
-  rpc ListSources(WebSourcesRequestDto) returns (stream sdmxdl.format.protobuf.web.WebSourceDto);
+  rpc ListSources(WebSourcesRequestDto) returns (ListSourcesResponseDto);
 
-  rpc ListDatabases(WebDatabasesRequestDto) returns (stream sdmxdl.format.protobuf.DatabaseDto);
+  rpc ListDatabases(WebDatabasesRequestDto) returns (ListDatabasesResponseDto);
 
-  rpc ListFlows(WebFlowsRequestDto) returns (stream sdmxdl.format.protobuf.FlowDto);
+  rpc ListFlows(WebFlowsRequestDto) returns (ListFlowsResponseDto);
 
   rpc GetMeta(WebMetaRequestDto) returns (sdmxdl.format.protobuf.MetaSetDto);
 
-  rpc ListDimensions(WebDimensionsRequestDto) returns (stream sdmxdl.format.protobuf.DimensionDto);
+  rpc ListDimensions(WebDimensionsRequestDto) returns (ListDimensionsResponseDto);
 
-  rpc ListAttributes(WebAttributesRequestDto) returns (stream sdmxdl.format.protobuf.AttributeDto);
+  rpc ListAttributes(WebAttributesRequestDto) returns (ListAttributesResponseDto);
 
   rpc GetData(WebDataRequestDto) returns (sdmxdl.format.protobuf.DataSetDto);
 
   rpc GetDataStream(WebDataRequestDto) returns (stream sdmxdl.format.protobuf.SeriesDto);
 
-  rpc ListCodes(WebCodesRequestDto) returns (sdmxdl.format.protobuf.CodelistDto);
+  rpc ListCodes(WebCodesRequestDto) returns (ListCodesResponseDto);
 
-  rpc ListAvailability(WebAvailabilityRequestDto) returns (sdmxdl.format.protobuf.AvailabilityDto);
+  rpc ListAvailability(WebAvailabilityRequestDto) returns (ListAvailabilityResponseDto);
 
-  rpc CheckHealth(WebHealthRequestDto) returns (stream sdmxdl.format.protobuf.web.HealthReportDto);
+  rpc CheckHealth(WebHealthRequestDto) returns (CheckHealthResponseDto);
 
-  rpc ListScriptTargets(EmptyDto) returns (stream ScriptTargetDto);
+  rpc ListScriptTargets(EmptyDto) returns (ListScriptTargetsResponseDto);
 
   rpc GenerateDataScript(WebDataScriptRequestDto) returns (ScriptDto);
 
@@ -43,12 +43,18 @@ message EmptyDto {
 }
 
 // Field order convention: what is addressed (source, flow, key, ...), then filters, then context (database, languages).
+// Naming convention: 'max_results' and 'offset' page the items of a list ('max_results' keeps its top-N meaning
+// when searching), 'first_n' and 'last_n' select observations of each series; 'series_offset' and 'series_limit'
+// are kept for a future paging of the series of a data request.
+// List responses carry the requested 'items' and the 'total' number of matching items before paging.
+// NB: like any proto3 JSON output, empty lists and zero values are omitted.
 
 message WebSourcesRequestDto {
   optional string query = 1;
   optional int32 max_results = 2; /* absent = all without query, 10 with query; 0 = no limit */
   optional sdmxdl.format.protobuf.ConfidentialityDto max_confidentiality = 3; /* absent = every source */
   optional string languages = 4;
+  optional int32 offset = 5; /* number of matching items to skip before returning 'max_results' items; absent = 0 */
 }
 
 message WebDatabasesRequestDto {
@@ -56,6 +62,7 @@ message WebDatabasesRequestDto {
   optional string query = 2;
   optional int32 max_results = 3; /* absent = all without query, 10 with query; 0 = no limit */
   optional string languages = 4;
+  optional int32 offset = 5; /* number of matching items to skip before returning 'max_results' items; absent = 0 */
 }
 
 message WebFlowsRequestDto {
@@ -66,6 +73,7 @@ message WebFlowsRequestDto {
   optional string languages = 5;
   optional bool plain_text = 6; /* strip markup (e.g. HTML tags) from descriptions; absent = false */
   optional int32 truncate = 7; /* maximum length of descriptions, truncated with an ellipsis; absent or 0 = no limit */
+  optional int32 offset = 8; /* number of matching items to skip before returning 'max_results' items; absent = 0 */
 }
 
 message WebMetaRequestDto {
@@ -82,6 +90,7 @@ message WebDimensionsRequestDto {
   optional int32 max_results = 4; /* absent = all without query, 10 with query; 0 = no limit */
   optional string database = 5;
   optional string languages = 6;
+  optional int32 offset = 7; /* number of matching items to skip before returning 'max_results' items; absent = 0 */
 }
 
 message WebAttributesRequestDto {
@@ -91,6 +100,7 @@ message WebAttributesRequestDto {
   optional int32 max_results = 4; /* absent = all without query, 10 with query; 0 = no limit */
   optional string database = 5;
   optional string languages = 6;
+  optional int32 offset = 7; /* number of matching items to skip before returning 'max_results' items; absent = 0 */
 }
 
 message WebDataRequestDto {
@@ -114,6 +124,7 @@ message WebCodesRequestDto {
   optional int32 max_results = 5; /* absent = all without query, 10 with query; 0 = no limit */
   optional string database = 6;
   optional string languages = 7;
+  optional int32 offset = 8; /* number of matching items to skip before returning 'max_results' items; absent = 0 */
 }
 
 message WebAvailabilityRequestDto {
@@ -162,4 +173,50 @@ message ScriptDto {
   string content = 3;
   repeated string warnings = 4; /* request parameters that the target cannot honor */
   string media_type = 5; /* e.g. "text/x-python" */
+}
+
+message ListSourcesResponseDto {
+  repeated sdmxdl.format.protobuf.web.WebSourceDto items = 1;
+  int32 total = 2;
+}
+
+message ListDatabasesResponseDto {
+  repeated sdmxdl.format.protobuf.DatabaseDto items = 1;
+  int32 total = 2;
+}
+
+message ListFlowsResponseDto {
+  repeated sdmxdl.format.protobuf.FlowDto items = 1;
+  int32 total = 2;
+}
+
+message ListDimensionsResponseDto {
+  repeated sdmxdl.format.protobuf.DimensionDto items = 1;
+  int32 total = 2;
+}
+
+message ListAttributesResponseDto {
+  repeated sdmxdl.format.protobuf.AttributeDto items = 1;
+  int32 total = 2;
+}
+
+message ListCodesResponseDto {
+  repeated sdmxdl.format.protobuf.CodeDto items = 1;
+  int32 total = 2;
+}
+
+message ListAvailabilityResponseDto {
+  string dimension = 1; /* id of the resolved dimension */
+  repeated sdmxdl.format.protobuf.CodeDto items = 2; /* available codes, sorted by id */
+  int32 total = 3;
+}
+
+message CheckHealthResponseDto {
+  repeated sdmxdl.format.protobuf.web.HealthReportDto items = 1;
+  int32 total = 2;
+}
+
+message ListScriptTargetsResponseDto {
+  repeated ScriptTargetDto items = 1;
+  int32 total = 2;
 }

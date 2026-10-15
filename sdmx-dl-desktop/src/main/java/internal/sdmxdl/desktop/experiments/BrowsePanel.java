@@ -497,7 +497,8 @@ public final class BrowsePanel extends JComponent {
                 return manager.using(source)
                         .listDatabases(DatabasesRequest.builder()
                                 .languages(Languages.ANY)
-                                .build());
+                                .build())
+                        .getItems();
             }
 
             @Override
@@ -544,7 +545,8 @@ public final class BrowsePanel extends JComponent {
                         .listFlows(FlowsRequest.builder()
                                 .database(db)
                                 .languages(Languages.ANY)
-                                .build()));
+                                .build())
+                        .getItems());
             }
 
             @Override

@@ -1,7 +1,9 @@
 package sdmxdl;
 
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIOException;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.entry;
 import static org.assertj.core.api.InstanceOfAssertFactories.MAP;
@@ -16,6 +18,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -124,7 +128,7 @@ public class ProviderTest {
 
     @Test
     public void testListDatabases() throws IOException {
-        assertThat(validProvider().listDatabases(DatabasesRequest.DEFAULT))
+        assertThat(validProvider().listDatabases(DatabasesRequest.DEFAULT).getItems())
                 .isSortedAccordingTo(Comparator.comparing(o -> o.getRef().toString()))
                 .containsExactlyInAnyOrderElementsOf(REPO.getDatabases());
     }
@@ -136,7 +140,8 @@ public class ProviderTest {
         Provider<WebSource> provider = providerOfDatabases(Arrays.asList(ecb, iif));
 
         assertThat(provider.listDatabases(
-                        DatabasesRequest.builder().maxResults(1).build()))
+                                DatabasesRequest.builder().maxResults(1).build())
+                        .getItems())
                 .containsExactly(ecb);
     }
 
@@ -147,17 +152,19 @@ public class ProviderTest {
         Provider<WebSource> provider = providerOfDatabases(Arrays.asList(ecb, iif));
 
         assertThat(provider.listDatabases(
-                        DatabasesRequest.builder().query("Finland").build()))
+                                DatabasesRequest.builder().query("Finland").build())
+                        .getItems())
                 .containsExactly(iif);
 
         assertThat(provider.listDatabases(
-                        DatabasesRequest.builder().query("zzzyyyxxxwww").build()))
+                                DatabasesRequest.builder().query("zzzyyyxxxwww").build())
+                        .getItems())
                 .isEmpty();
     }
 
     @Test
     public void testListFlows() throws IOException {
-        assertThat(validProvider().listFlows(FlowsRequest.DEFAULT))
+        assertThat(validProvider().listFlows(FlowsRequest.DEFAULT).getItems())
                 .isSortedAccordingTo(Comparator.comparing(o -> o.getRef().toString()))
                 .containsExactlyInAnyOrderElementsOf(REPO.getFlows());
     }
@@ -176,8 +183,41 @@ public class ProviderTest {
                 .build();
         Provider<WebSource> provider = providerOfFlows(Arrays.asList(gdp, cpi));
 
-        assertThat(provider.listFlows(FlowsRequest.builder().maxResults(1).build()))
+        assertThat(provider.listFlows(FlowsRequest.builder().maxResults(1).build())
+                        .getItems())
                 .containsExactly(cpi);
+    }
+
+    @Test
+    public void testListFlowsWithOffset() throws IOException {
+        Flow cpi = Flow.builder()
+                .ref(FlowRef.of("NBB", "CPI", "v1.0"))
+                .structureRef(STRUCT_REF)
+                .name("Consumer Price Index")
+                .build();
+        Flow gdp = Flow.builder()
+                .ref(FlowRef.of("NBB", "GDP", "v1.0"))
+                .structureRef(STRUCT_REF)
+                .name("Gross Domestic Product")
+                .build();
+        Provider<WebSource> provider = providerOfFlows(Arrays.asList(gdp, cpi));
+
+        assertThat(provider.listFlows(FlowsRequest.builder().offset(1).build()))
+                .returns(Collections.singletonList(gdp), SearchResult::getItems)
+                .returns(2, SearchResult::getTotal);
+
+        assertThat(provider.listFlows(FlowsRequest.builder().offset(5).build()))
+                .returns(Collections.emptyList(), SearchResult::getItems)
+                .returns(2, SearchResult::getTotal);
+
+        assertThat(provider.listFlows(
+                        FlowsRequest.builder().query("Product").maxResults(1).build()))
+                .returns(Collections.singletonList(gdp), SearchResult::getItems)
+                .returns(2, SearchResult::getTotal);
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() ->
+                        provider.listFlows(FlowsRequest.builder().offset(-1).build()));
     }
 
     @Test
@@ -194,11 +234,13 @@ public class ProviderTest {
                 .build();
         Provider<WebSource> provider = providerOfFlows(Arrays.asList(gdp, cpi));
 
-        assertThat(provider.listFlows(FlowsRequest.builder().query("Consumer").build()))
+        assertThat(provider.listFlows(FlowsRequest.builder().query("Consumer").build())
+                        .getItems())
                 .containsExactly(cpi);
 
         assertThat(provider.listFlows(
-                        FlowsRequest.builder().query("zzzyyyxxxwww").build()))
+                                FlowsRequest.builder().query("zzzyyyxxxwww").build())
+                        .getItems())
                 .isEmpty();
     }
 
@@ -212,7 +254,8 @@ public class ProviderTest {
                 .build();
         Provider<WebSource> provider = providerOfFlows(Collections.singletonList(cpi));
 
-        assertThat(provider.listFlows(FlowsRequest.builder().plainText(true).build()))
+        assertThat(provider.listFlows(FlowsRequest.builder().plainText(true).build())
+                        .getItems())
                 .extracting(Flow::getDescription)
                 .containsExactly("Monthly index");
     }
@@ -227,7 +270,8 @@ public class ProviderTest {
                 .build();
         Provider<WebSource> provider = providerOfFlows(Collections.singletonList(cpi));
 
-        assertThat(provider.listFlows(FlowsRequest.builder().truncate(5).build()))
+        assertThat(provider.listFlows(FlowsRequest.builder().truncate(5).build())
+                        .getItems())
                 .extracting(Flow::getDescription)
                 .containsExactly("hell…");
     }
@@ -242,7 +286,7 @@ public class ProviderTest {
                 .build();
         Provider<WebSource> provider = providerOfFlows(Collections.singletonList(cpi));
 
-        assertThat(provider.listFlows(FlowsRequest.DEFAULT))
+        assertThat(provider.listFlows(FlowsRequest.DEFAULT).getItems())
                 .extracting(Flow::getDescription)
                 .containsExactly("<b>hello</b> world");
     }
@@ -251,7 +295,8 @@ public class ProviderTest {
     public void testListDimensions() throws IOException {
         assertThat(validProvider()
                         .listDimensions(
-                                DimensionsRequest.builder().flow(FLOW_REF).build()))
+                                DimensionsRequest.builder().flow(FLOW_REF).build())
+                        .getItems())
                 .isSortedAccordingTo(Comparator.comparing(Component::getId))
                 .containsExactlyInAnyOrderElementsOf(
                         STRUCT.getDimensions().stream().map(Provider::removeCodes)::iterator);
@@ -269,8 +314,11 @@ public class ProviderTest {
                 .name("structName")
                 .build());
 
-        assertThat(provider.listDimensions(
-                        DimensionsRequest.builder().flow(FLOW_REF).maxResults(1).build()))
+        assertThat(provider.listDimensions(DimensionsRequest.builder()
+                                .flow(FLOW_REF)
+                                .maxResults(1)
+                                .build())
+                        .getItems())
                 .containsExactly(region);
     }
 
@@ -287,15 +335,17 @@ public class ProviderTest {
                 .build());
 
         assertThat(provider.listDimensions(DimensionsRequest.builder()
-                        .flow(FLOW_REF)
-                        .query("Frequency")
-                        .build()))
+                                .flow(FLOW_REF)
+                                .query("Frequency")
+                                .build())
+                        .getItems())
                 .containsExactly(freq);
 
         assertThat(provider.listDimensions(DimensionsRequest.builder()
-                        .flow(FLOW_REF)
-                        .query("zzzyyyxxxwww")
-                        .build()))
+                                .flow(FLOW_REF)
+                                .query("zzzyyyxxxwww")
+                                .build())
+                        .getItems())
                 .isEmpty();
     }
 
@@ -303,7 +353,8 @@ public class ProviderTest {
     public void testListAttributes() throws IOException {
         assertThat(validProvider()
                         .listAttributes(
-                                AttributesRequest.builder().flow(FLOW_REF).build()))
+                                AttributesRequest.builder().flow(FLOW_REF).build())
+                        .getItems())
                 .isSortedAccordingTo(Comparator.comparing(Component::getId))
                 .containsExactlyInAnyOrderElementsOf(
                         STRUCT.getAttributes().stream().map(Provider::removeCodes)::iterator);
@@ -322,8 +373,11 @@ public class ProviderTest {
                 .name("structName")
                 .build());
 
-        assertThat(provider.listAttributes(
-                        AttributesRequest.builder().flow(FLOW_REF).maxResults(1).build()))
+        assertThat(provider.listAttributes(AttributesRequest.builder()
+                                .flow(FLOW_REF)
+                                .maxResults(1)
+                                .build())
+                        .getItems())
                 .containsExactly(obsStatus);
     }
 
@@ -341,15 +395,17 @@ public class ProviderTest {
                 .build());
 
         assertThat(provider.listAttributes(AttributesRequest.builder()
-                        .flow(FLOW_REF)
-                        .query("Title")
-                        .build()))
+                                .flow(FLOW_REF)
+                                .query("Title")
+                                .build())
+                        .getItems())
                 .containsExactly(title);
 
         assertThat(provider.listAttributes(AttributesRequest.builder()
-                        .flow(FLOW_REF)
-                        .query("zzzyyyxxxwww")
-                        .build()))
+                                .flow(FLOW_REF)
+                                .query("zzzyyyxxxwww")
+                                .build())
+                        .getItems())
                 .isEmpty();
     }
 
@@ -359,13 +415,14 @@ public class ProviderTest {
                         .listCodes(CodesRequest.builder()
                                 .flow(FLOW_REF)
                                 .concept("FREQ")
-                                .build()))
-                .containsExactlyEntriesOf(CL1.getCodes());
+                                .build())
+                        .getItems())
+                .containsExactlyElementsOf(codesOf(CL1.getCodes()));
     }
 
     @Test
     public void testListCodesWithUnknownConcept() throws IOException {
-        assertThatIOException()
+        assertThatExceptionOfType(ResourceNotFoundException.class)
                 .isThrownBy(() -> validProvider()
                         .listCodes(CodesRequest.builder()
                                 .flow(FLOW_REF)
@@ -380,8 +437,9 @@ public class ProviderTest {
                         .listCodes(CodesRequest.builder()
                                 .flow(FLOW_REF)
                                 .concept(CODED_ATTRIBUTE.getId())
-                                .build()))
-                .containsExactlyEntriesOf(CL4.getCodes());
+                                .build())
+                        .getItems())
+                .containsExactlyElementsOf(codesOf(CL4.getCodes()));
     }
 
     @Test
@@ -391,7 +449,8 @@ public class ProviderTest {
                                 .flow(FLOW_REF)
                                 .concept("REGION")
                                 .maxResults(1)
-                                .build()))
+                                .build())
+                        .getItems())
                 .hasSize(1);
     }
 
@@ -402,15 +461,17 @@ public class ProviderTest {
                                 .flow(FLOW_REF)
                                 .concept("REGION")
                                 .query("Belgium")
-                                .build()))
-                .containsExactlyEntriesOf(Collections.singletonMap("BE", "Belgium"));
+                                .build())
+                        .getItems())
+                .containsExactly(Code.of("BE", "Belgium"));
 
         assertThat(validProvider()
                         .listCodes(CodesRequest.builder()
                                 .flow(FLOW_REF)
                                 .concept("REGION")
                                 .query("zzzyyyxxxwww")
-                                .build()))
+                                .build())
+                        .getItems())
                 .isEmpty();
     }
 
@@ -480,33 +541,33 @@ public class ProviderTest {
 
     @Test
     public void testListAvailabilityWithoutWildcardDimension() {
-        assertThatIOException()
+        assertThatIllegalArgumentException()
                 .isThrownBy(() -> validProvider().listAvailability(availabilityOf(Key.parse("M.FR.INDUSTRY"), "")))
                 .withMessageContaining("Cannot find a wildcard dimension in key 'M.FR.INDUSTRY'");
     }
 
     @Test
     public void testListAvailabilityWithNonWildcardDimension() {
-        assertThatIOException()
+        assertThatIllegalArgumentException()
                 .isThrownBy(() -> validProvider().listAvailability(availabilityOf(Key.parse("M.FR"), "REGION")))
                 .withMessageContaining("Expecting dimension 'REGION' to be a wildcard in key 'M.FR.'");
 
-        assertThatIOException()
+        assertThatIllegalArgumentException()
                 .isThrownBy(() -> validProvider().listAvailability(availabilityOf(Key.parse("M.FR"), "1")))
                 .withMessageContaining("Expecting dimension 'REGION' to be a wildcard in key 'M.FR.'");
     }
 
     @Test
     public void testListAvailabilityWithUnknownDimension() {
-        assertThatIOException()
+        assertThatExceptionOfType(ResourceNotFoundException.class)
                 .isThrownBy(() -> validProvider().listAvailability(availabilityOf(Key.ALL, "zzzyyyxxxwww")))
                 .withMessageContaining("Cannot find dimension 'zzzyyyxxxwww'");
 
-        assertThatIOException()
+        assertThatExceptionOfType(ResourceNotFoundException.class)
                 .isThrownBy(() -> validProvider().listAvailability(availabilityOf(Key.ALL, "3")))
                 .withMessageContaining("Cannot find dimension '3'");
 
-        assertThatIOException()
+        assertThatExceptionOfType(ResourceNotFoundException.class)
                 .isThrownBy(() -> validProvider().listAvailability(availabilityOf(Key.ALL, "-1")))
                 .withMessageContaining("Cannot find dimension '-1'");
     }
@@ -588,6 +649,12 @@ public class ProviderTest {
                 return databases;
             }
         });
+    }
+
+    private static List<Code> codesOf(Map<String, String> codes) {
+        return codes.entrySet().stream()
+                .map(entry -> Code.of(entry.getKey(), entry.getValue()))
+                .collect(toList());
     }
 
     private static Provider<WebSource> providerOfFlows(Collection<Flow> flows) {

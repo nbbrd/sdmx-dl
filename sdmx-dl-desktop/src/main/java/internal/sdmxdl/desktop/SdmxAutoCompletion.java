@@ -128,8 +128,11 @@ public abstract class SdmxAutoCompletion {
         }
 
         private List<WebSource> load(String term) {
-            return manager.listSources(
-                    WebSourcesRequest.builder().languages(languages).query(term).build());
+            return manager.listSources(WebSourcesRequest.builder()
+                            .languages(languages)
+                            .query(term)
+                            .build())
+                    .getItems();
         }
     }
 
@@ -168,7 +171,7 @@ public abstract class SdmxAutoCompletion {
                     .languages(languages)
                     .query(term != null ? term : HasSearch.NO_QUERY)
                     .build();
-            return manager.using(source.get()).listDatabases(request);
+            return manager.using(source.get()).listDatabases(request).getItems();
         }
 
         private String getCacheKey(String term) {
@@ -211,7 +214,7 @@ public abstract class SdmxAutoCompletion {
                     .database(database.get())
                     .query(term != null ? term : HasSearch.NO_QUERY)
                     .build();
-            return manager.using(source.get()).listFlows(request);
+            return manager.using(source.get()).listFlows(request).getItems();
         }
 
         private AutoCompletionSource.Behavior getBehavior(String term) {

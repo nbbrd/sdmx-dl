@@ -62,7 +62,7 @@ The same pattern also works for discovery endpoints such as `sources`, `flows`, 
 library(jsonlite)
 
 sources <- fromJSON("http://localhost:4559/sdmx-dl/v2/sources")
-head(sources)
+head(sources$items)
 ```
 {{< /tab >}}
 

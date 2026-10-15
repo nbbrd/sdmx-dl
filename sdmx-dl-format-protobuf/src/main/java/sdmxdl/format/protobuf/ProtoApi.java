@@ -3,6 +3,10 @@ package sdmxdl.format.protobuf;
 import static sdmxdl.format.protobuf.WellKnownTypes.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.*;
 
 @lombok.experimental.UtilityClass
@@ -105,18 +109,16 @@ public class ProtoApi {
                 .build();
     }
 
-    public static AvailabilityDto fromAvailability(Availability value) {
-        AvailabilityDto.Builder result = AvailabilityDto.newBuilder().setDimension(value.getDimension());
-        // NB: protobuf maps reject null values, so a code without label is mapped to an empty label
-        value.getCodes().forEach((code, label) -> result.putCodes(code, label != null ? label : ""));
-        return result.setCodeCount(value.getCodes().size()).build();
+    public static CodeDto fromCode(String id, @Nullable String name) {
+        CodeDto.Builder result = CodeDto.newBuilder().setId(id);
+        if (name != null) result.setName(name);
+        return result.build();
     }
 
-    public static Availability toAvailability(AvailabilityDto value) {
-        return Availability.builder()
-                .dimension(value.getDimension())
-                .codes(value.getCodesMap())
-                .build();
+    public static List<CodeDto> fromCodes(Map<String, ? extends @Nullable String> codes) {
+        List<CodeDto> result = new ArrayList<>(codes.size());
+        codes.forEach((id, name) -> result.add(fromCode(id, name)));
+        return result;
     }
 
     public static AttributeDto fromAttribute(Attribute value) {

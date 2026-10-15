@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
-import sdmxdl.format.protobuf.CodelistDto;
+import sdmxdl.format.protobuf.CodeDto;
 import sdmxdl.format.protobuf.ConfidentialityDto;
 import sdmxdl.format.protobuf.DataSetDto;
 import sdmxdl.format.protobuf.MetaSetDto;
@@ -361,10 +361,12 @@ public class SdmxdlMcpService2Test {
                             Map.of("source", "ECB", "flow", "EXR", "concept", "CURRENCY", "query", "CHF"),
                             r -> {
                                 assertThat(r).returns(false, ToolResponse::isError);
-                                CodelistDto codes = fromJson(CodelistDto.class, firstText(r));
-                                assertThat(codes.getCodesMap()).containsKey("CHF");
-                                // total code count exceeds the filtered subset
-                                assertThat(codes.getCodeCount()).isGreaterThanOrEqualTo(codes.getCodesCount());
+                                ListCodesResponseDto codes = fromJson(ListCodesResponseDto.class, firstText(r));
+                                assertThat(codes.getItemsList())
+                                        .extracting(CodeDto::getId)
+                                        .contains("CHF");
+                                // total counts every match, not only the returned page
+                                assertThat(codes.getTotal()).isGreaterThanOrEqualTo(codes.getItemsCount());
                             })
                     .thenAssertResults();
         }
@@ -387,9 +389,39 @@ public class SdmxdlMcpService2Test {
             client.when()
                     .toolsCall("listCodes", Map.of("source", "ECB", "flow", "EXR", "concept", "CURRENCY"), r -> {
                         assertThat(r).returns(false, ToolResponse::isError);
-                        CodelistDto codes = fromJson(CodelistDto.class, firstText(r));
-                        assertThat(codes.getCodesCount()).isLessThanOrEqualTo(10);
+                        ListCodesResponseDto codes = fromJson(ListCodesResponseDto.class, firstText(r));
+                        assertThat(codes.getItemsCount()).isLessThanOrEqualTo(10);
+                        assertThat(codes.getTotal()).isEqualTo(12);
                     })
+                    .thenAssertResults();
+        }
+    }
+
+    @Test
+    public void codesCanBePaged() {
+        try (McpAssured.McpStreamableTestClient client = McpAssured.newConnectedStreamableClient()) {
+            client.when()
+                    .toolsCall(
+                            "listCodes",
+                            Map.of(
+                                    "source",
+                                    "ECB",
+                                    "flow",
+                                    "EXR",
+                                    "concept",
+                                    "CURRENCY",
+                                    "maxResults",
+                                    5,
+                                    "offset",
+                                    10),
+                            r -> {
+                                assertThat(r).returns(false, ToolResponse::isError);
+                                ListCodesResponseDto codes = fromJson(ListCodesResponseDto.class, firstText(r));
+                                assertThat(codes.getItemsList())
+                                        .extracting(CodeDto::getId)
+                                        .containsExactly("USD", "ZAR");
+                                assertThat(codes.getTotal()).isEqualTo(12);
+                            })
                     .thenAssertResults();
         }
     }
@@ -671,7 +703,7 @@ public class SdmxdlMcpService2Test {
     private static List<JsonNode> fromJsonArray(String jsonArray) {
         try {
             List<JsonNode> result = new ArrayList<>();
-            new ObjectMapper().readTree(jsonArray).forEach(result::add);
+            new ObjectMapper().readTree(jsonArray).path("items").forEach(result::add);
             return result;
         } catch (IOException e) {
             throw new RuntimeException(e);

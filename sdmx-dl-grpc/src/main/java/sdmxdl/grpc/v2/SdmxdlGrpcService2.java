@@ -3,6 +3,7 @@ package sdmxdl.grpc.v2;
 import static sdmxdl.DatabaseRef.NO_DATABASE_KEYWORD;
 import static sdmxdl.HasDescription.NO_DESCRIPTION_LIMIT;
 import static sdmxdl.HasSearch.AUTO_LIMIT;
+import static sdmxdl.HasSearch.NO_OFFSET;
 import static sdmxdl.HasSearch.NO_QUERY;
 import static sdmxdl.Languages.ANY_KEYWORD;
 
@@ -18,12 +19,9 @@ import java.util.List;
 import nbbrd.io.function.IOSupplier;
 import sdmxdl.*;
 import sdmxdl.format.protobuf.*;
-import sdmxdl.format.protobuf.web.HealthReportDto;
-import sdmxdl.format.protobuf.web.WebSourceDto;
 import sdmxdl.script.ScriptManager;
 import sdmxdl.web.HealthCheck;
 import sdmxdl.web.WebHealthRequest;
-import sdmxdl.web.WebSource;
 import sdmxdl.web.WebSourcesRequest;
 
 @GrpcService
@@ -45,150 +43,226 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
     }
 
     @Override
-    public Multi<WebSourceDto> listSources(WebSourcesRequestDto request) {
-        List<WebSource> result = manager.listSources(WebSourcesRequest.builder()
-                .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
-                .query(request.hasQuery() ? request.getQuery() : NO_QUERY)
-                .maxResults(request.hasMaxResults() ? request.getMaxResults() : AUTO_LIMIT)
-                .confidentialityThreshold(
-                        request.hasMaxConfidentiality()
-                                ? ProtoApi.toConfidentiality(request.getMaxConfidentiality())
-                                : Confidentiality.SECRET)
-                .build());
-
-        return Multi.createFrom().iterable(result).map(ProtoWeb::fromWebSource);
+    public Uni<ListSourcesResponseDto> listSources(WebSourcesRequestDto request) {
+        return uniOfIO(null, () -> {
+            var result = manager.listSources(WebSourcesRequest.builder()
+                    .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
+                    .query(request.hasQuery() ? request.getQuery() : NO_QUERY)
+                    .maxResults(request.hasMaxResults() ? request.getMaxResults() : AUTO_LIMIT)
+                    .offset(request.hasOffset() ? request.getOffset() : NO_OFFSET)
+                    .confidentialityThreshold(
+                            request.hasMaxConfidentiality()
+                                    ? ProtoApi.toConfidentiality(request.getMaxConfidentiality())
+                                    : Confidentiality.SECRET)
+                    .build());
+            return ListSourcesResponseDto.newBuilder()
+                    .addAllItems(result.getItems().stream()
+                            .map(ProtoWeb::fromWebSource)
+                            .toList())
+                    .setTotal(result.getTotal())
+                    .build();
+        });
     }
 
     @Override
-    public Multi<DatabaseDto> listDatabases(WebDatabasesRequestDto request) {
-        return multiOfIO(() -> manager.usingName(request.getSource())
-                        .listDatabases(DatabasesRequest.builder()
-                                .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
-                                .query(request.hasQuery() ? request.getQuery() : NO_QUERY)
-                                .maxResults(request.hasMaxResults() ? request.getMaxResults() : AUTO_LIMIT)
-                                .build()))
-                .map(ProtoApi::fromDatabase);
+    public Uni<ListDatabasesResponseDto> listDatabases(WebDatabasesRequestDto request) {
+        return uniOfIO(request.getSource(), () -> {
+            var result = manager.usingName(request.getSource())
+                    .listDatabases(DatabasesRequest.builder()
+                            .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
+                            .query(request.hasQuery() ? request.getQuery() : NO_QUERY)
+                            .maxResults(request.hasMaxResults() ? request.getMaxResults() : AUTO_LIMIT)
+                            .offset(request.hasOffset() ? request.getOffset() : NO_OFFSET)
+                            .build());
+            return ListDatabasesResponseDto.newBuilder()
+                    .addAllItems(result.getItems().stream()
+                            .map(ProtoApi::fromDatabase)
+                            .toList())
+                    .setTotal(result.getTotal())
+                    .build();
+        });
     }
 
     @Override
-    public Multi<FlowDto> listFlows(WebFlowsRequestDto request) {
-        return multiOfIO(() -> manager.usingName(request.getSource()).listFlows(toFlowsRequest(request)))
-                .map(ProtoApi::fromDataflow);
+    public Uni<ListFlowsResponseDto> listFlows(WebFlowsRequestDto request) {
+        return uniOfIO(request.getSource(), () -> {
+            var result = manager.usingName(request.getSource()).listFlows(toFlowsRequest(request));
+            return ListFlowsResponseDto.newBuilder()
+                    .addAllItems(result.getItems().stream()
+                            .map(ProtoApi::fromDataflow)
+                            .toList())
+                    .setTotal(result.getTotal())
+                    .build();
+        });
     }
 
     @Override
     public Uni<MetaSetDto> getMeta(WebMetaRequestDto request) {
-        return uniOfIO(() -> manager.usingName(request.getSource())
+        return uniOfIO(
+                request.getSource(),
+                () -> ProtoApi.fromMetaSet(manager.usingName(request.getSource())
                         .getMeta(MetaRequest.builder()
                                 .flowOf(request.getFlow())
                                 .databaseOf(request.hasDatabase() ? request.getDatabase() : NO_DATABASE_KEYWORD)
                                 .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
-                                .build()))
-                .map(ProtoApi::fromMetaSet);
+                                .build())));
     }
 
     @Override
-    public Multi<DimensionDto> listDimensions(WebDimensionsRequestDto request) {
-        return multiOfIO(() -> manager.usingName(request.getSource())
-                        .listDimensions(DimensionsRequest.builder()
-                                .flowOf(request.getFlow())
-                                .databaseOf(request.hasDatabase() ? request.getDatabase() : NO_DATABASE_KEYWORD)
-                                .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
-                                .query(request.hasQuery() ? request.getQuery() : NO_QUERY)
-                                .maxResults(request.hasMaxResults() ? request.getMaxResults() : AUTO_LIMIT)
-                                .build()))
-                .map(ProtoApi::fromDimension);
+    public Uni<ListDimensionsResponseDto> listDimensions(WebDimensionsRequestDto request) {
+        return uniOfIO(request.getSource(), () -> {
+            var result = manager.usingName(request.getSource())
+                    .listDimensions(DimensionsRequest.builder()
+                            .flowOf(request.getFlow())
+                            .databaseOf(request.hasDatabase() ? request.getDatabase() : NO_DATABASE_KEYWORD)
+                            .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
+                            .query(request.hasQuery() ? request.getQuery() : NO_QUERY)
+                            .maxResults(request.hasMaxResults() ? request.getMaxResults() : AUTO_LIMIT)
+                            .offset(request.hasOffset() ? request.getOffset() : NO_OFFSET)
+                            .build());
+            return ListDimensionsResponseDto.newBuilder()
+                    .addAllItems(result.getItems().stream()
+                            .map(ProtoApi::fromDimension)
+                            .toList())
+                    .setTotal(result.getTotal())
+                    .build();
+        });
     }
 
     @Override
-    public Multi<AttributeDto> listAttributes(WebAttributesRequestDto request) {
-        return multiOfIO(() -> manager.usingName(request.getSource())
-                        .listAttributes(AttributesRequest.builder()
-                                .flowOf(request.getFlow())
-                                .databaseOf(request.hasDatabase() ? request.getDatabase() : NO_DATABASE_KEYWORD)
-                                .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
-                                .query(request.hasQuery() ? request.getQuery() : NO_QUERY)
-                                .maxResults(request.hasMaxResults() ? request.getMaxResults() : AUTO_LIMIT)
-                                .build()))
-                .map(ProtoApi::fromAttribute);
+    public Uni<ListAttributesResponseDto> listAttributes(WebAttributesRequestDto request) {
+        return uniOfIO(request.getSource(), () -> {
+            var result = manager.usingName(request.getSource())
+                    .listAttributes(AttributesRequest.builder()
+                            .flowOf(request.getFlow())
+                            .databaseOf(request.hasDatabase() ? request.getDatabase() : NO_DATABASE_KEYWORD)
+                            .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
+                            .query(request.hasQuery() ? request.getQuery() : NO_QUERY)
+                            .maxResults(request.hasMaxResults() ? request.getMaxResults() : AUTO_LIMIT)
+                            .offset(request.hasOffset() ? request.getOffset() : NO_OFFSET)
+                            .build());
+            return ListAttributesResponseDto.newBuilder()
+                    .addAllItems(result.getItems().stream()
+                            .map(ProtoApi::fromAttribute)
+                            .toList())
+                    .setTotal(result.getTotal())
+                    .build();
+        });
     }
 
     @Override
     public Uni<DataSetDto> getData(WebDataRequestDto request) {
-        return uniOfIO(() -> manager.usingName(request.getSource()).getData(toDataRequest(request)))
-                .map(ProtoApi::fromDataSet);
+        return uniOfIO(
+                request.getSource(),
+                () -> ProtoApi.fromDataSet(
+                        manager.usingName(request.getSource()).getData(toDataRequest(request))));
     }
 
     @Override
     public Multi<SeriesDto> getDataStream(WebDataRequestDto request) {
-        return multiOfIO(() -> manager.usingName(request.getSource()).getData(toDataRequest(request)))
+        return multiOfIO(
+                        request.getSource(),
+                        () -> manager.usingName(request.getSource()).getData(toDataRequest(request)))
                 .map(ProtoApi::fromSeries);
     }
 
     @Override
-    public Uni<CodelistDto> listCodes(WebCodesRequestDto request) {
-        return uniOfIO(() -> manager.usingName(request.getSource())
-                        .listCodes(CodesRequest.builder()
-                                .flowOf(request.getFlow())
-                                .concept(request.getConcept())
-                                .databaseOf(request.hasDatabase() ? request.getDatabase() : NO_DATABASE_KEYWORD)
-                                .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
-                                .query(request.hasQuery() ? request.getQuery() : NO_QUERY)
-                                .maxResults(request.hasMaxResults() ? request.getMaxResults() : AUTO_LIMIT)
-                                .build()))
-                .map(codes -> CodelistDto.newBuilder()
-                        .setRef("")
-                        .setCodeCount(codes.size())
-                        .putAllCodes(codes)
-                        .build());
+    public Uni<ListCodesResponseDto> listCodes(WebCodesRequestDto request) {
+        return uniOfIO(request.getSource(), () -> {
+            var result = manager.usingName(request.getSource())
+                    .listCodes(CodesRequest.builder()
+                            .flowOf(request.getFlow())
+                            .concept(request.getConcept())
+                            .databaseOf(request.hasDatabase() ? request.getDatabase() : NO_DATABASE_KEYWORD)
+                            .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
+                            .query(request.hasQuery() ? request.getQuery() : NO_QUERY)
+                            .maxResults(request.hasMaxResults() ? request.getMaxResults() : AUTO_LIMIT)
+                            .offset(request.hasOffset() ? request.getOffset() : NO_OFFSET)
+                            .build());
+            return toCodesResponse(result);
+        });
     }
 
     @Override
-    public Uni<AvailabilityDto> listAvailability(WebAvailabilityRequestDto request) {
-        return uniOfIO(() -> manager.usingName(request.getSource())
+    public Uni<ListAvailabilityResponseDto> listAvailability(WebAvailabilityRequestDto request) {
+        return uniOfIO(
+                request.getSource(),
+                () -> toAvailabilityResponse(manager.usingName(request.getSource())
                         .listAvailability(AvailabilityRequest.builder()
                                 .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
                                 .databaseOf(request.hasDatabase() ? request.getDatabase() : NO_DATABASE_KEYWORD)
                                 .flowOf(request.getFlow())
                                 .keyOf(request.getKey())
                                 .dimension(request.getDimension())
-                                .build()))
-                .map(ProtoApi::fromAvailability);
+                                .build())));
     }
 
     @Override
-    public Multi<HealthReportDto> checkHealth(WebHealthRequestDto request) {
-        return multiOfIO(() -> manager.checkHealth(toHealthRequest(
-                        request.getSourcesList(),
-                        request.getChecksList().stream()
-                                .map(ProtoWeb::toHealthCheck)
-                                .toList())))
-                .map(ProtoWeb::fromHealthReport);
+    public Uni<CheckHealthResponseDto> checkHealth(WebHealthRequestDto request) {
+        return uniOfIO(null, () -> {
+            var result = manager.checkHealth(toHealthRequest(
+                    request.getSourcesList(),
+                    request.getChecksList().stream()
+                            .map(ProtoWeb::toHealthCheck)
+                            .toList()));
+            return CheckHealthResponseDto.newBuilder()
+                    .addAllItems(result.stream().map(ProtoWeb::fromHealthReport).toList())
+                    .setTotal(result.size())
+                    .build();
+        });
     }
 
     @Override
-    public Multi<ScriptTargetDto> listScriptTargets(EmptyDto request) {
-        return Multi.createFrom()
-                .iterable(scripts.getTargets())
-                .map(target -> ProtoScript.fromScriptTarget(scripts, target));
+    public Uni<ListScriptTargetsResponseDto> listScriptTargets(EmptyDto request) {
+        return Uni.createFrom().item(() -> toScriptTargetsResponse(scripts));
     }
 
     @Override
     public Uni<ScriptDto> generateDataScript(WebDataScriptRequestDto request) {
         return generateScript(
-                request.getRequest().getSource(), toDataRequest(request.getRequest()), request.getOptions());
+                request.getRequest().getSource(), () -> toDataRequest(request.getRequest()), request.getOptions());
     }
 
     @Override
     public Uni<ScriptDto> generateFlowsScript(WebFlowsScriptRequestDto request) {
-        return generateScript(
-                request.getRequest().getSource(), toFlowsRequest(request.getRequest()), request.getOptions());
+        WebFlowsRequestDto flows = request.getRequest();
+        return generateScript(flows.getSource(), () -> toFlowsRequest(flows), request.getOptions());
     }
 
-    private Uni<ScriptDto> generateScript(String source, Request request, ScriptOptionsDto options) {
-        return Uni.createFrom()
-                .item(() -> ProtoScript.fromScript(scripts.generate(
-                        ProtoScript.toScriptTarget(options), source, request, ProtoScript.toScriptOptions(options))));
+    private Uni<ScriptDto> generateScript(String source, IOSupplier<Request> request, ScriptOptionsDto options) {
+        return uniOfIO(
+                source,
+                () -> ProtoScript.fromScript(scripts.generate(
+                        ProtoScript.toScriptTarget(options),
+                        source,
+                        request.getWithIO(),
+                        ProtoScript.toScriptOptions(options))));
+    }
+
+    static ListCodesResponseDto toCodesResponse(SearchResult<Code> codes) {
+        return ListCodesResponseDto.newBuilder()
+                .addAllItems(codes.getItems().stream()
+                        .map(code -> ProtoApi.fromCode(code.getId(), code.getName()))
+                        .toList())
+                .setTotal(codes.getTotal())
+                .build();
+    }
+
+    static ListAvailabilityResponseDto toAvailabilityResponse(Availability availability) {
+        return ListAvailabilityResponseDto.newBuilder()
+                .setDimension(availability.getDimension())
+                .addAllItems(ProtoApi.fromCodes(availability.getCodes()))
+                .setTotal(availability.getCodes().size())
+                .build();
+    }
+
+    static ListScriptTargetsResponseDto toScriptTargetsResponse(ScriptManager scripts) {
+        return ListScriptTargetsResponseDto.newBuilder()
+                .addAllItems(scripts.getTargets().stream()
+                        .map(target -> ProtoScript.fromScriptTarget(scripts, target))
+                        .toList())
+                .setTotal(scripts.getTargets().size())
+                .build();
     }
 
     private static FlowsRequest toFlowsRequest(WebFlowsRequestDto request) {
@@ -197,6 +271,7 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
                 .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
                 .query(request.hasQuery() ? request.getQuery() : NO_QUERY)
                 .maxResults(request.hasMaxResults() ? request.getMaxResults() : AUTO_LIMIT)
+                .offset(request.hasOffset() ? request.getOffset() : NO_OFFSET)
                 .plainText(request.hasPlainText() && request.getPlainText())
                 .truncate(request.hasTruncate() ? request.getTruncate() : NO_DESCRIPTION_LIMIT)
                 .build();
@@ -231,19 +306,23 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
         return result.build();
     }
 
-    private static <T> Uni<T> uniOfIO(IOSupplier<T> supplier) {
+    private static <T> Uni<T> uniOfIO(String source, IOSupplier<T> supplier) {
+        Uni<T> result;
         try {
-            return Uni.createFrom().item(supplier.getWithIO());
-        } catch (IOException ex) {
-            return Uni.createFrom().failure(ex);
+            result = Uni.createFrom().item(supplier.getWithIO());
+        } catch (IOException | RuntimeException ex) {
+            result = Uni.createFrom().failure(ex);
         }
+        return result.onFailure().transform(ex -> ApiError.of(ex).toGrpc(source));
     }
 
-    private static <T> Multi<T> multiOfIO(IOSupplier<? extends Iterable<T>> supplier) {
+    private static <T> Multi<T> multiOfIO(String source, IOSupplier<? extends Iterable<T>> supplier) {
+        Multi<T> result;
         try {
-            return Multi.createFrom().iterable(supplier.getWithIO());
-        } catch (IOException ex) {
-            return Multi.createFrom().failure(ex);
+            result = Multi.createFrom().iterable(supplier.getWithIO());
+        } catch (IOException | RuntimeException ex) {
+            result = Multi.createFrom().failure(ex);
         }
+        return result.onFailure().transform(ex -> ApiError.of(ex).toGrpc(source));
     }
 }

@@ -25,5 +25,5 @@ $response.data | ForEach-Object {
 } | {{sink}}
 {{/dataSet}}
 {{#list}}
-$response | Select-Object {{fields}} | {{sink}}
+$response.items | Select-Object {{fields}} | {{sink}}
 {{/list}}

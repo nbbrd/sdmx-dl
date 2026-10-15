@@ -82,7 +82,9 @@ public final class ListSourcesCommand implements Callable<Void> {
                 .listSources(WebSourcesRequest.builder()
                         .query(listSearch.getSearchQuery())
                         .maxResults(listSearch.getMaxResults())
+                        .offset(listSearch.getOffset())
                         .confidentialityThreshold(confidentialityThreshold)
-                        .build());
+                        .build())
+                .getItems();
     }
 }

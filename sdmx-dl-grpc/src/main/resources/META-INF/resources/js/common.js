@@ -323,11 +323,30 @@ async function getJSON(url) {
     const response = await fetch(url, { headers: { 'Accept': 'application/json' } });
 
     if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+        // errors are problem details (RFC 9457)
+        const problem = await response.json().catch(() => ({}));
+        throw new Error(problem.detail || problem.title || `HTTP ${response.status}: ${response.statusText}`);
     }
 
     return response.json();
+}
+
+/**
+ * Get the items of a REST v2 list response; empty lists are omitted from the JSON
+ * @param {Object} result - List response with 'items' and 'total'
+ * @returns {Array} - Items, possibly empty
+ */
+function itemsOf(result) {
+    return (result && result.items) || [];
+}
+
+/**
+ * Convert the code items of a REST v2 codes or availability response to a map
+ * @param {Object} result - Response with 'items' made of 'id' and optional 'name'
+ * @returns {Object} - Map of code id to name (empty name when the code has no label)
+ */
+function codesOf(result) {
+    return Object.fromEntries(itemsOf(result).map(code => [code.id, code.name || '']));
 }
 
 /**

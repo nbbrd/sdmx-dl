@@ -54,6 +54,7 @@ public final class SearchSourcesCommand implements Callable<Void> {
                 .listSources(WebSourcesRequest.builder()
                         .query(query)
                         .maxResults(maxResults)
-                        .build());
+                        .build())
+                .getItems();
     }
 }

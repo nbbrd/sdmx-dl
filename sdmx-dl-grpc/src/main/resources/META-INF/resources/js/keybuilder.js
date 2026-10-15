@@ -401,16 +401,13 @@ function filterHierarchyTree(searchText) {
 
 // Loads the dimensions skeleton and their codes, avoiding the full structure (attributes included)
 async function fetchKeyBuilderDimensions(source, flow, database) {
-    const dimensions = await getJSON(apiUrl([source, flow, 'dimensions'], { database }));
-    if (!Array.isArray(dimensions)) {
-        return [];
-    }
+    const dimensions = itemsOf(await getJSON(apiUrl([source, flow, 'dimensions'], { database })));
     dimensions.sort((a, b) => (a.index || 0) - (b.index || 0));
     await Promise.all(dimensions
         .filter(dim => dim.codelist)
         .map(async dim => {
             const result = await getJSON(apiUrl([source, flow, 'codes', dim.id], { database }));
-            dim.codelist.codes = (result && result.codes) || {};
+            dim.codelist.codes = codesOf(result);
         }));
     return dimensions;
 }

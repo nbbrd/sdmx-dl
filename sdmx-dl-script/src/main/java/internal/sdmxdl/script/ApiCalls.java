@@ -68,6 +68,9 @@ public final class ApiCalls implements RequestVisitor<ApiCall> {
         if (request.getMaxResults() != HasSearch.AUTO_LIMIT) {
             result.argument(ApiCall.Argument.of("maxResults", request.getMaxResults()));
         }
+        if (request.getOffset() != HasSearch.NO_OFFSET) {
+            result.argument(ApiCall.Argument.of("offset", request.getOffset()));
+        }
         if (request.isPlainText()) {
             result.argument(ApiCall.Argument.of("plainText", true));
         }

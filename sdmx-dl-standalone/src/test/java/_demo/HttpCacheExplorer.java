@@ -27,7 +27,7 @@ public class HttpCacheExplorer {
         for (WebSource source : manager.getDefaultSources()) {
             Provider<WebSource> provider = manager.using(source);
             try {
-                DatabaseRef db = provider.listDatabases(DatabasesRequest.DEFAULT).stream()
+                DatabaseRef db = provider.listDatabases(DatabasesRequest.DEFAULT).getItems().stream()
                         .map(Database::getRef)
                         .findFirst()
                         .orElse(DatabaseRef.NO_DATABASE);
@@ -45,7 +45,7 @@ public class HttpCacheExplorer {
             throws IOException {
         long start = System.currentTimeMillis();
         System.out.println(source.getId() + x);
-        provider.listFlows(request);
+        provider.listFlows(request).getItems();
         System.out.println("  -> " + (System.currentTimeMillis() - start) + " ms");
     }
 }

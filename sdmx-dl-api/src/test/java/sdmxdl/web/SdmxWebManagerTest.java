@@ -191,29 +191,45 @@ public class SdmxWebManagerTest {
 
         assertThatNullPointerException().isThrownBy(() -> manager.listSources(null));
 
-        assertThat(manager.listSources(WebSourcesRequest.DEFAULT))
+        assertThat(manager.listSources(WebSourcesRequest.DEFAULT).getItems())
                 .describedAs("no query nor threshold restriction sorts all non-alias sources by id")
                 .extracting(WebSource::getId)
                 .containsExactly("abs", "ecb", "nbb");
 
-        assertThat(manager.listSources(WebSourcesRequest.builder().maxResults(2).build()))
+        assertThat(manager.listSources(WebSourcesRequest.builder().maxResults(2).build())
+                        .getItems())
                 .describedAs("no query respects maxResults")
                 .extracting(WebSource::getId)
                 .containsExactly("abs", "ecb");
 
         assertThat(manager.listSources(WebSourcesRequest.builder()
-                        .confidentialityThreshold(Confidentiality.PUBLIC)
-                        .build()))
+                                .confidentialityThreshold(Confidentiality.PUBLIC)
+                                .build())
+                        .getItems())
                 .describedAs("threshold filters out sources with a higher confidentiality")
                 .extracting(WebSource::getId)
                 .containsExactly("ecb", "nbb");
 
-        assertThat(manager.listSources(WebSourcesRequest.builder().query("ecb").build()))
+        assertThat(manager.listSources(WebSourcesRequest.builder().query("ecb").build())
+                        .getItems())
                 .describedAs("query ranks by relevance instead of sorting by id")
                 .extracting(WebSource::getId)
                 .containsExactly("ecb");
 
-        List<WebSource> allSources = manager.listSources(WebSourcesRequest.DEFAULT);
+        assertThat(manager.listSources(
+                        WebSourcesRequest.builder().maxResults(1).offset(1).build()))
+                .describedAs("offset skips the first matches and total counts all matches")
+                .satisfies(result -> {
+                    assertThat(result.getItems()).extracting(WebSource::getId).containsExactly("ecb");
+                    assertThat(result.getTotal()).isEqualTo(3);
+                });
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> manager.listSources(
+                        WebSourcesRequest.builder().offset(-1).build()));
+
+        List<WebSource> allSources =
+                manager.listSources(WebSourcesRequest.DEFAULT).getItems();
         assertThat(allSources)
                 .describedAs("aliases are never returned as standalone entries")
                 .extracting(WebSource::getId)

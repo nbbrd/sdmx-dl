@@ -373,7 +373,8 @@ public final class FlowBrowserPanel extends JComponent {
             protected java.util.List<Database> doInBackground() throws IOException {
                 return manager.using(source)
                         .listDatabases(
-                                DatabasesRequest.builder().languages(languages).build());
+                                DatabasesRequest.builder().languages(languages).build())
+                        .getItems();
             }
 
             @Override
@@ -416,7 +417,8 @@ public final class FlowBrowserPanel extends JComponent {
                         .listFlows(FlowsRequest.builder()
                                 .database(db)
                                 .languages(languages)
-                                .build()));
+                                .build())
+                        .getItems());
             }
 
             @Override

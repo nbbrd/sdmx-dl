@@ -22,7 +22,7 @@ dat <- do.call(rbind, lapply(payload$data, function(series) {
 }))
 {{/dataSet}}
 {{#list}}
-dat <- do.call(rbind, lapply(payload, function(item) {
+dat <- do.call(rbind, lapply(payload$items, function(item) {
   data.frame(
 {{#fields}}
     {{column}} = or_else(item${{field}}, ""){{^last}},{{/last}}

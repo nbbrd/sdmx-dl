@@ -124,5 +124,8 @@ public final class RestCalls implements RequestVisitor<RestCall> {
         if (search.getMaxResults() != HasSearch.AUTO_LIMIT) {
             result.parameter("maxResults", search.getMaxResults());
         }
+        if (search.getOffset() != HasSearch.NO_OFFSET) {
+            result.parameter("offset", search.getOffset());
+        }
     }
 }

@@ -30,7 +30,7 @@ void main() throws Exception {
 {{/dataSet}}
 {{#list}}
         out.println({{header}});
-        result.forEach(item -> out.println({{row}}));
+        result.getItems().forEach(item -> out.println({{row}}));
 {{/list}}
     }
 }

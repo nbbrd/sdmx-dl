@@ -17,6 +17,9 @@ public class DatabasesRequest implements HasSearch, Request {
     @lombok.Builder.Default
     int maxResults = AUTO_LIMIT;
 
+    @lombok.Builder.Default
+    int offset = NO_OFFSET;
+
     @Override
     public <T> T accept(@NonNull RequestVisitor<T> visitor) {
         return visitor.visitDatabases(this);

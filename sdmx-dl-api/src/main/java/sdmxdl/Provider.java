@@ -1,9 +1,8 @@
 package sdmxdl;
 
 import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 
+import internal.sdmxdl.SearchSupport;
 import java.io.IOException;
 import java.net.URI;
 import java.time.Duration;
@@ -106,62 +105,60 @@ public final class Provider<SOURCE extends Source> {
     /**
      * Lists databases available for the given source request.
      *
-     * <p>When {@link DatabasesRequest#getQuery()} is empty, entries are returned sorted by
-     * database reference string value and truncated to {@link DatabasesRequest#getEffectiveMaxResults()}.
+     * <p>When {@link DatabasesRequest#getQuery()} is empty, all entries match and are sorted by
+     * database reference string value.
      *
      * <p>When a non-empty query is provided, entries are ranked by relevance using
-     * {@link sdmxdl.web.Search#ofDatabases(java.util.Collection)} and returned best match
-     * first, limited to {@link DatabasesRequest#getEffectiveMaxResults()} results.
+     * {@link sdmxdl.web.Search#ofDatabases(java.util.Collection)}, best match first.
+     *
+     * <p>Matches are then paged according to {@link DatabasesRequest#getOffset()} and
+     * {@link DatabasesRequest#getEffectiveMaxResults()}.
      *
      * @param request source-level request parameters (non-null)
-     * @return non-null list of databases (possibly empty), sorted or ranked depending on the query
+     * @return non-null page of databases with the total number of matches
+     * @throws IllegalArgumentException if the paging parameters are invalid
      * @throws IOException if database discovery fails due to I/O issues
      */
-    public @NonNull List<Database> listDatabases(@NonNull DatabasesRequest request) throws IOException {
+    public @NonNull SearchResult<Database> listDatabases(@NonNull DatabasesRequest request) throws IOException {
         try (Connection connection = manager.getConnection(source, request.getLanguages())) {
-            Collection<Database> result = connection.getDatabases();
-            return request.getQuery().isEmpty()
-                    ? result.stream()
-                            .sorted(comparing(HasReference::getRef))
-                            .limit(request.getEffectiveMaxResults())
-                            .collect(toList())
-                    : Search.ofDatabases(result).search(request.getQuery(), request.getEffectiveMaxResults()).stream()
-                            .map(Search.Result::getItem)
-                            .collect(toList());
+            return SearchSupport.search(
+                    connection.getDatabases(),
+                    request,
+                    comparing(HasReference::getRef),
+                    Search::ofDatabases,
+                    UnaryOperator.identity());
         }
     }
 
     /**
      * Lists flows available in the requested database context.
      *
-     * <p>When {@link FlowsRequest#getQuery()} is empty, entries are returned sorted by
-     * flow reference string value and truncated to {@link FlowsRequest#getEffectiveMaxResults()}.
+     * <p>When {@link FlowsRequest#getQuery()} is empty, all entries match and are sorted by
+     * flow reference string value.
      *
      * <p>When a non-empty query is provided, entries are ranked by relevance using
-     * {@link sdmxdl.web.Search#ofFlows(java.util.Collection)} and returned best match first,
-     * limited to {@link FlowsRequest#getEffectiveMaxResults()} results.
+     * {@link sdmxdl.web.Search#ofFlows(java.util.Collection)}, best match first.
+     *
+     * <p>Matches are then paged according to {@link FlowsRequest#getOffset()} and
+     * {@link FlowsRequest#getEffectiveMaxResults()}.
      *
      * <p>When {@link FlowsRequest#isPlainText()} is {@code true} and/or
      * {@link FlowsRequest#getTruncate()} is set, each flow's description is
      * cleaned (markup stripped) and/or truncated accordingly; see {@link HasDescription}.
      *
      * @param request database-level request parameters (non-null)
-     * @return non-null list of flows (possibly empty), sorted or ranked depending on the query
+     * @return non-null page of flows with the total number of matches
+     * @throws IllegalArgumentException if the paging parameters are invalid
      * @throws IOException if flow discovery fails due to I/O issues
      */
-    public @NonNull List<Flow> listFlows(@NonNull FlowsRequest request) throws IOException {
+    public @NonNull SearchResult<Flow> listFlows(@NonNull FlowsRequest request) throws IOException {
         try (Connection connection = manager.getConnection(source, request.getLanguages())) {
-            Collection<Flow> result = connection.getFlows(request.getDatabase());
-            return request.getQuery().isEmpty()
-                    ? result.stream()
-                            .sorted(comparing(HasReference::getRef))
-                            .limit(request.getEffectiveMaxResults())
-                            .map(flowTransformer(request))
-                            .collect(toList())
-                    : Search.ofFlows(result).search(request.getQuery(), request.getEffectiveMaxResults()).stream()
-                            .map(Search.Result::getItem)
-                            .map(flowTransformer(request))
-                            .collect(toList());
+            return SearchSupport.search(
+                    connection.getFlows(request.getDatabase()),
+                    request,
+                    comparing(HasReference::getRef),
+                    Search::ofFlows,
+                    flowTransformer(request));
         }
     }
 
@@ -186,65 +183,62 @@ public final class Provider<SOURCE extends Source> {
     /**
      * Lists dimensions of the structure associated with the requested flow.
      *
-     * <p>When {@link DimensionsRequest#getQuery()} is empty, entries are returned sorted by
-     * index and truncated to {@link DimensionsRequest#getEffectiveMaxResults()}.
+     * <p>When {@link DimensionsRequest#getQuery()} is empty, all entries match and are sorted by
+     * index.
      *
      * <p>When a non-empty query is provided, entries are ranked by relevance using
-     * {@link sdmxdl.web.Search#ofDimensions(java.util.Collection)} and returned best match
-     * first, limited to {@link DimensionsRequest#getEffectiveMaxResults()} results.
+     * {@link sdmxdl.web.Search#ofDimensions(java.util.Collection)}, best match first.
+     *
+     * <p>Matches are then paged according to {@link DimensionsRequest#getOffset()} and
+     * {@link DimensionsRequest#getEffectiveMaxResults()}.
      *
      * @param request component-level request parameters (non-null)
-     * @return non-null list of dimensions (possibly empty), sorted or ranked depending on the query
+     * @return non-null page of dimensions (without codes) with the total number of matches
+     * @throws IllegalArgumentException if the paging parameters are invalid
      * @throws IOException if structure retrieval fails due to I/O issues
      */
-    public @NonNull List<Dimension> listDimensions(@NonNull DimensionsRequest request) throws IOException {
+    public @NonNull SearchResult<Dimension> listDimensions(@NonNull DimensionsRequest request) throws IOException {
         try (Connection connection = manager.getConnection(source, request.getLanguages())) {
-            List<Dimension> result = connection
-                    .getMeta(request.getDatabase(), request.getFlow())
-                    .getStructure()
-                    .getDimensions();
-            return request.getQuery().isEmpty()
-                    ? result.stream()
-                            .limit(request.getEffectiveMaxResults())
-                            .map(Provider::removeCodes)
-                            .collect(toList())
-                    : Search.ofDimensions(result).search(request.getQuery(), request.getEffectiveMaxResults()).stream()
-                            .map(Search.Result::getItem)
-                            .map(Provider::removeCodes)
-                            .collect(toList());
+            return SearchSupport.search(
+                    connection
+                            .getMeta(request.getDatabase(), request.getFlow())
+                            .getStructure()
+                            .getDimensions(),
+                    request,
+                    null,
+                    Search::ofDimensions,
+                    Provider::removeCodes);
         }
     }
 
     /**
      * Lists attributes of the structure associated with the requested flow.
      *
-     * <p>When {@link AttributesRequest#getQuery()} is empty, entries are returned sorted by
-     * component id and truncated to {@link AttributesRequest#getEffectiveMaxResults()}.
+     * <p>When {@link AttributesRequest#getQuery()} is empty, all entries match and are sorted by
+     * component id.
      *
      * <p>When a non-empty query is provided, entries are ranked by relevance using
-     * {@link sdmxdl.web.Search#ofAttributes(java.util.Collection)} and returned best match
-     * first, limited to {@link AttributesRequest#getEffectiveMaxResults()} results.
+     * {@link sdmxdl.web.Search#ofAttributes(java.util.Collection)}, best match first.
+     *
+     * <p>Matches are then paged according to {@link AttributesRequest#getOffset()} and
+     * {@link AttributesRequest#getEffectiveMaxResults()}.
      *
      * @param request component-level request parameters (non-null)
-     * @return non-null list of attributes (possibly empty), sorted or ranked depending on the query
+     * @return non-null page of attributes (without codes) with the total number of matches
+     * @throws IllegalArgumentException if the paging parameters are invalid
      * @throws IOException if structure retrieval fails due to I/O issues
      */
-    public @NonNull List<Attribute> listAttributes(@NonNull AttributesRequest request) throws IOException {
+    public @NonNull SearchResult<Attribute> listAttributes(@NonNull AttributesRequest request) throws IOException {
         try (Connection connection = manager.getConnection(source, request.getLanguages())) {
-            Set<Attribute> result = connection
-                    .getMeta(request.getDatabase(), request.getFlow())
-                    .getStructure()
-                    .getAttributes();
-            return request.getQuery().isEmpty()
-                    ? result.stream()
-                            .sorted(comparing(Component::getId))
-                            .limit(request.getEffectiveMaxResults())
-                            .map(Provider::removeCodes)
-                            .collect(toList())
-                    : Search.ofAttributes(result).search(request.getQuery(), request.getEffectiveMaxResults()).stream()
-                            .map(Search.Result::getItem)
-                            .map(Provider::removeCodes)
-                            .collect(toList());
+            return SearchSupport.search(
+                    connection
+                            .getMeta(request.getDatabase(), request.getFlow())
+                            .getStructure()
+                            .getAttributes(),
+                    request,
+                    comparing(Component::getId),
+                    Search::ofAttributes,
+                    Provider::removeCodes);
         }
     }
 
@@ -252,30 +246,32 @@ public final class Provider<SOURCE extends Source> {
      * Lists codes of the codelist associated with the requested concept (a dimension or
      * attribute id) within the structure of the requested flow.
      *
-     * <p>When no dimension or attribute matches {@link CodesRequest#getConcept()}, or when
-     * the matching component is not coded, an empty map is returned.
+     * <p>When the matching component is not coded, an empty result is returned.
      *
-     * <p>When {@link CodesRequest#getQuery()} is empty, entries are returned in codelist
-     * order and truncated to {@link CodesRequest#getEffectiveMaxResults()}.
+     * <p>When {@link CodesRequest#getQuery()} is empty, all entries match and keep the codelist
+     * order.
      *
      * <p>When a non-empty query is provided, entries are ranked by relevance using
-     * {@link sdmxdl.web.Search#ofCodes(java.util.Map)} and returned best match first, limited
-     * to {@link CodesRequest#getEffectiveMaxResults()} results.
+     * {@link sdmxdl.web.Search#ofCodes(java.util.Map)}, best match first.
+     *
+     * <p>Matches are then paged according to {@link CodesRequest#getOffset()} and
+     * {@link CodesRequest#getEffectiveMaxResults()}.
      *
      * @param request concept-level request parameters (non-null)
-     * @return non-null map of code id to code label (possibly empty), ordered or ranked depending on the query
+     * @return non-null page of codes with the total number of matches
+     * @throws ResourceNotFoundException if no dimension or attribute matches {@link CodesRequest#getConcept()}
+     * @throws IllegalArgumentException if the paging parameters are invalid
      * @throws IOException if structure retrieval fails due to I/O issues
      */
-    public @NonNull Map<String, String> listCodes(@NonNull CodesRequest request) throws IOException {
+    public @NonNull SearchResult<Code> listCodes(@NonNull CodesRequest request) throws IOException {
         try (Connection connection = manager.getConnection(source, request.getLanguages())) {
             Map<String, String> result = loadComponent(connection, request);
-            return request.getQuery().isEmpty()
-                    ? result.entrySet().stream()
-                            .limit(request.getEffectiveMaxResults())
-                            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, LinkedHashMap::new))
-                    : Search.ofCodes(result).search(request.getQuery(), request.getEffectiveMaxResults()).stream()
-                            .map(Search.Result::getItem)
-                            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, LinkedHashMap::new));
+            return SearchSupport.search(
+                    result.entrySet(),
+                    request,
+                    null,
+                    ignore -> Search.ofCodes(result),
+                    entry -> Code.of(entry.getKey(), entry.getValue()));
         }
     }
 
@@ -295,8 +291,9 @@ public final class Provider<SOURCE extends Source> {
      *
      * @param request dimension/key-level request parameters (non-null)
      * @return non-null availability of the resolved dimension (possibly without codes)
-     * @throws IOException if the requested dimension cannot be resolved or is not a wildcard
-     *                      in the key, or if metadata/data retrieval fails due to I/O issues
+     * @throws ResourceNotFoundException if the requested dimension cannot be resolved
+     * @throws IllegalArgumentException if the requested dimension is not a wildcard in the key
+     * @throws IOException if metadata/data retrieval fails due to I/O issues
      */
     public @NonNull Availability listAvailability(@NonNull AvailabilityRequest request) throws IOException {
         try (Connection connection = manager.getConnection(source, request.getLanguages())) {
@@ -361,8 +358,8 @@ public final class Provider<SOURCE extends Source> {
      * @param connection the connection used to retrieve the flow's structure
      * @param request the concept-level request identifying the target component
      * @return non-null map of code id to code label for the matching component
-     * @throws IOException if no dimension or attribute matches the requested concept, or if
-     *                      structure retrieval fails due to I/O issues
+     * @throws ResourceNotFoundException if no dimension or attribute matches the requested concept
+     * @throws IOException if structure retrieval fails due to I/O issues
      */
     private static Map<String, String> loadComponent(Connection connection, CodesRequest request) throws IOException {
         Structure dsd =
@@ -371,7 +368,7 @@ public final class Provider<SOURCE extends Source> {
                 .filter(component -> component.getId().equals(request.getConcept()))
                 .map(Component::getCodes)
                 .findFirst()
-                .orElseThrow(() -> new IOException("Cannot find concept '" + request.getConcept() + "'"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cannot find concept '" + request.getConcept() + "'"));
     }
 
     /**
@@ -382,9 +379,11 @@ public final class Provider<SOURCE extends Source> {
      * @param key the normalized key constraint
      * @param dimension a dimension id, a zero-based index or an empty value for the first wildcard
      * @return the zero-based position of the resolved dimension
-     * @throws IOException if the dimension cannot be resolved or is not a wildcard in the key
+     * @throws ResourceNotFoundException if the dimension cannot be resolved
+     * @throws IllegalArgumentException if the dimension is not a wildcard in the key
      */
-    private static int resolveDimensionIndex(Structure structure, Key key, String dimension) throws IOException {
+    private static int resolveDimensionIndex(Structure structure, Key key, String dimension)
+            throws ResourceNotFoundException, IllegalArgumentException {
         List<Dimension> dimensions = structure.getDimensions();
         if (dimension.equals(AvailabilityRequest.FIRST_WILDCARD_DIMENSION)) {
             for (int i = 0; i < dimensions.size(); i++) {
@@ -392,14 +391,14 @@ public final class Provider<SOURCE extends Source> {
                     return i;
                 }
             }
-            throw new IOException("Cannot find a wildcard dimension in key '" + key + "'");
+            throw new IllegalArgumentException("Cannot find a wildcard dimension in key '" + key + "'");
         }
         int result = indexOfDimension(dimensions, dimension);
         if (result == -1) {
-            throw new IOException("Cannot find dimension '" + dimension + "'");
+            throw new ResourceNotFoundException("Cannot find dimension '" + dimension + "'");
         }
         if (!isWildcard(key, result)) {
-            throw new IOException("Expecting dimension '"
+            throw new IllegalArgumentException("Expecting dimension '"
                     + dimensions.get(result).getId() + "' to be a wildcard in key '" + key + "'");
         }
         return result;

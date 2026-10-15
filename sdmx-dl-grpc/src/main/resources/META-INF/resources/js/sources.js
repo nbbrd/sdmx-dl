@@ -22,7 +22,7 @@ function getSources() {
         window.sourcesRequestUrl = url;
 
         // Render pretty view
-        renderPrettySources(data);
+        renderPrettySources(itemsOf(data));
 
         // Setup filter functionality
         setupSourcesFilter();
@@ -302,7 +302,7 @@ async function checkAllSourcesHealth() {
 
     try {
         const reports = await getJSON(apiUrl(['health'], { sources: 'all', checks: 'monitor' }));
-        reports.forEach(showHealthReport);
+        itemsOf(reports).forEach(showHealthReport);
     } catch (error) {
         notify('Failed to check health: ' + error.message, 'danger');
     } finally {

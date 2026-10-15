@@ -59,12 +59,13 @@ public class DocumentationExamplesTest {
     @Test
     public void testBashRestFlows() {
         assertThat(generate("bash/rest", FlowsRequest.DEFAULT))
-                .isEqualTo("#!/usr/bin/env bash\n"
-                        + "set -euo pipefail\n"
-                        + "\n"
-                        + "echo Ref,Name,Description\n"
-                        + "curl -fsS -G http://localhost:4559/sdmx-dl/v2/ECB/flows \\\n"
-                        + "  | jq -r '.[] | [.ref // \"\", .name // \"\", .description // \"\"] | @csv'\n");
+                .isEqualTo(
+                        "#!/usr/bin/env bash\n"
+                                + "set -euo pipefail\n"
+                                + "\n"
+                                + "echo Ref,Name,Description\n"
+                                + "curl -fsS -G http://localhost:4559/sdmx-dl/v2/ECB/flows \\\n"
+                                + "  | jq -r '(.items // [])[] | [.ref // \"\", .name // \"\", .description // \"\"] | @csv'\n");
     }
 
     @Test
@@ -145,7 +146,7 @@ public class DocumentationExamplesTest {
                         + "\n"
                         + "    try (var out = new PrintWriter(System.out)) {\n"
                         + "        out.println(\"Ref,Name,Description\");\n"
-                        + "        result.forEach(item -> out.println(csv(item.getRef()) + \",\" + csv(item.getName()) + \",\" + csv(item.getDescription())));\n"
+                        + "        result.getItems().forEach(item -> out.println(csv(item.getRef()) + \",\" + csv(item.getName()) + \",\" + csv(item.getDescription())));\n"
                         + "    }\n"
                         + "}\n"
                         + "\n"
@@ -228,7 +229,7 @@ public class DocumentationExamplesTest {
                         + "response.raise_for_status()\n"
                         + "payload = response.json()\n"
                         + "\n"
-                        + "df = pd.DataFrame([[item.get(\"ref\", \"\"), item.get(\"name\", \"\"), item.get(\"description\", \"\")] for item in payload], columns=[\"Ref\", \"Name\", \"Description\"])\n"
+                        + "df = pd.DataFrame([[item.get(\"ref\", \"\"), item.get(\"name\", \"\"), item.get(\"description\", \"\")] for item in payload.get(\"items\", [])], columns=[\"Ref\", \"Name\", \"Description\"])\n"
                         + "df\n");
     }
 
@@ -267,7 +268,7 @@ public class DocumentationExamplesTest {
                         + "            ]\n"
                         + "        )\n"
                         + "    ),\n"
-                        + "    ItemsTable = Table.FromRecords(Source, {\"ref\", \"name\", \"description\"}, MissingField.UseNull),\n"
+                        + "    ItemsTable = Table.FromRecords(Record.FieldOrDefault(Source, \"items\", {}), {\"ref\", \"name\", \"description\"}, MissingField.UseNull),\n"
                         + "    RenamedColumns = Table.RenameColumns(ItemsTable, {{\"ref\", \"Ref\"}, {\"name\", \"Name\"}, {\"description\", \"Description\"}})\n"
                         + "in\n"
                         + "    RenamedColumns\n");
@@ -315,7 +316,7 @@ public class DocumentationExamplesTest {
                 .isEqualTo(
                         "$response = Invoke-RestMethod -Uri 'http://localhost:4559/sdmx-dl/v2/ECB/flows'\n"
                                 + "\n"
-                                + "$response | Select-Object @{ Name = 'Ref'; Expression = { $_.ref } }, @{ Name = 'Name'; Expression = { $_.name } }, @{ Name = 'Description'; Expression = { $_.description } } | ConvertTo-Csv -NoTypeInformation\n");
+                                + "$response.items | Select-Object @{ Name = 'Ref'; Expression = { $_.ref } }, @{ Name = 'Name'; Expression = { $_.name } }, @{ Name = 'Description'; Expression = { $_.description } } | ConvertTo-Csv -NoTypeInformation\n");
     }
 
     @Test
@@ -383,7 +384,7 @@ public class DocumentationExamplesTest {
                         + "\n"
                         + "payload <- fromJSON(\"http://localhost:4559/sdmx-dl/v2/ECB/flows\", simplifyDataFrame = FALSE)\n"
                         + "\n"
-                        + "dat <- do.call(rbind, lapply(payload, function(item) {\n"
+                        + "dat <- do.call(rbind, lapply(payload$items, function(item) {\n"
                         + "  data.frame(\n"
                         + "    Ref = or_else(item$ref, \"\"),\n"
                         + "    Name = or_else(item$name, \"\"),\n"

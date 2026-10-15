@@ -20,6 +20,7 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
+import internal.sdmxdl.SearchSupport;
 import internal.sdmxdl.ext.PersistenceLoader;
 import internal.sdmxdl.web.spi.*;
 import java.io.IOException;
@@ -29,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -245,32 +247,29 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
      * Sources are first restricted to non-alias sources whose confidentiality is allowed
      * by {@link WebSourcesRequest#getConfidentialityThreshold()}. Then:
      * <ul>
-     *     <li>if the request has no query ({@link HasSearch#NO_QUERY}), the remaining
-     *     sources are sorted by {@linkplain WebSource#getId() id} and truncated to
-     *     {@link WebSourcesRequest#getEffectiveMaxResults()}</li>
+     *     <li>if the request has no query ({@link HasSearch#NO_QUERY}), all the remaining
+     *     sources match and are sorted by {@linkplain WebSource#getId() id}</li>
      *     <li>otherwise, the remaining sources are ranked by relevance to
-     *     {@link WebSourcesRequest#getQuery()} using {@link Search#ofSources(Collection, Languages)}
-     *     and limited to {@link WebSourcesRequest#getEffectiveMaxResults()}</li>
+     *     {@link WebSourcesRequest#getQuery()} using {@link Search#ofSources(Collection, Languages)}</li>
      * </ul>
+     * Matches are then paged according to {@link WebSourcesRequest#getOffset()} and
+     * {@link WebSourcesRequest#getEffectiveMaxResults()}.
      *
-     * @param request the non-null request describing the query, threshold and limit to apply
-     * @return a non-null, possibly empty, list of matching web sources
+     * @param request the non-null request describing the query, threshold and paging to apply
+     * @return a non-null page of matching web sources with the total number of matches
+     * @throws IllegalArgumentException if the paging parameters are invalid
      */
-    public @NonNull List<WebSource> listSources(@NonNull WebSourcesRequest request) {
+    public @NonNull SearchResult<WebSource> listSources(@NonNull WebSourcesRequest request) {
         Collection<WebSource> result = getSources().values().stream()
                 .filter(source -> !source.isAlias())
                 .filter(request.getConfidentialityThreshold()::isAllowedIn)
                 .collect(toList());
-        return request.getQuery().isEmpty()
-                ? result.stream()
-                        .sorted(comparing(WebSource::getId))
-                        .limit(request.getEffectiveMaxResults())
-                        .collect(toList())
-                : Search.ofSources(result, request.getLanguages())
-                        .search(request.getQuery(), request.getEffectiveMaxResults())
-                        .stream()
-                        .map(Search.Result::getItem)
-                        .collect(toList());
+        return SearchSupport.search(
+                result,
+                request,
+                comparing(WebSource::getId),
+                items -> Search.ofSources(items, request.getLanguages()),
+                UnaryOperator.identity());
     }
 
     public @NonNull Provider<WebSource> usingName(@NonNull String name) throws IOException {
@@ -331,7 +330,7 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
     }
 
     private static IOException newMissingSource(String name) {
-        return new IOException("Missing source '" + name + "'");
+        return new ResourceNotFoundException("Missing source '" + name + "'");
     }
 
     private static <T> Collector<T, ?, T> reducingByFirst() {

@@ -30,7 +30,8 @@ public class WebDemo3 {
         IntStream.range(0, 10).parallel().forEach(index -> {
             long start = System.currentTimeMillis();
             try {
-                System.out.println(salsa.listFlows(FlowsRequest.DEFAULT).size());
+                System.out.println(
+                        salsa.listFlows(FlowsRequest.DEFAULT).getItems().size());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

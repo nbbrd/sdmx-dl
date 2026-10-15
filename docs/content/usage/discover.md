@@ -9,7 +9,7 @@ aliases:
 
 Find the source, database, and flow you want to query.
 
-Discovery and search are the same call at every level: pass a `query` to search, or omit it to list everything. By default, a search returns the 10 best matches; set `maxResults` to change it (`0` = no limit).
+Discovery and search are the same call at every level: pass a `query` to search, or omit it to list everything. By default, a search returns the 10 best matches; set `maxResults` to change it (`0` = no limit). Results also give the `total` number of matches, and `offset` skips the first ones to page through them.
 Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so partial or approximate queries still surface the right result.
 When `query` is empty, results fall back to being sorted by id instead of ranked by relevance.
 
@@ -31,6 +31,7 @@ void main() throws Exception {
 
     // List every source
     manager.listSources(WebSourcesRequest.DEFAULT)
+            .getItems()
             .forEach(source -> IO.println(source.getId()));
 
     // Search by name or topic
@@ -38,6 +39,7 @@ void main() throws Exception {
                     .query("european central")
                     .maxResults(5)
                     .build())
+            .getItems()
             .forEach(source -> IO.println(source.getId()));
 }
 ```
@@ -108,6 +110,7 @@ void main() throws Exception {
 
     // List every database
     ecb.listDatabases(DatabasesRequest.DEFAULT)
+            .getItems()
             .forEach(database -> IO.println(database.getRef()));
 
     // Search by name
@@ -115,6 +118,7 @@ void main() throws Exception {
                     .query("central")
                     .maxResults(5)
                     .build())
+            .getItems()
             .forEach(database -> IO.println(database.getRef()));
 }
 ```
@@ -179,6 +183,7 @@ void main() throws Exception {
 
     // List every flow
     ecb.listFlows(FlowsRequest.DEFAULT)
+            .getItems()
             .forEach(flow -> IO.println(flow.getRef()));
 
     // Search by topic
@@ -186,6 +191,7 @@ void main() throws Exception {
                     .query("exchange rates")
                     .maxResults(5)
                     .build())
+            .getItems()
             .forEach(flow -> IO.println(flow.getRef()));
 }
 ```

@@ -39,6 +39,7 @@ public final class ScriptFlowsCommand implements Callable<Void> {
                 .languages(web.getLangs())
                 .query(listSearch.getSearchQuery())
                 .maxResults(listSearch.getMaxResults())
+                .offset(listSearch.getOffset())
                 .plainText(description.isPlainText())
                 .truncate(description.getTruncate())
                 .build();

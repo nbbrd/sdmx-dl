@@ -54,6 +54,7 @@ public final class SearchDatabasesCommand implements Callable<Void> {
                         .languages(web.getLangs())
                         .query(query)
                         .maxResults(maxResults)
-                        .build());
+                        .build())
+                .getItems();
     }
 }

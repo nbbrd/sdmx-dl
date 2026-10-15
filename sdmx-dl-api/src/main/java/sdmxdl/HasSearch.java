@@ -4,7 +4,8 @@ import lombok.NonNull;
 import nbbrd.design.NonNegative;
 
 /**
- * Exposes a free-text search query and a maximum number of items to return.
+ * Exposes a free-text search query, a maximum number of items to return and a number of
+ * items to skip, used to page through the results.
  */
 public interface HasSearch {
 
@@ -42,6 +43,27 @@ public interface HasSearch {
     }
 
     /**
+     * Gets the number of matching items to skip before returning results.
+     *
+     * @return {@link #NO_OFFSET} or a positive offset
+     */
+    int getOffset();
+
+    /**
+     * Gets the effective number of matching items to skip before returning results.
+     *
+     * @return a non-negative offset
+     * @throws IllegalArgumentException if the offset is negative
+     */
+    default @NonNegative int getEffectiveOffset() throws IllegalArgumentException {
+        int offset = getOffset();
+        if (offset < 0) {
+            throw new IllegalArgumentException("Invalid offset: " + offset);
+        }
+        return offset;
+    }
+
+    /**
      * Default query that means "no filtering".
      */
     String NO_QUERY = "";
@@ -60,4 +82,9 @@ public interface HasSearch {
      * Limit applied by {@link #AUTO_LIMIT} when a query is set.
      */
     int DEFAULT_SEARCH_LIMIT = 10;
+
+    /**
+     * Offset that means "skip nothing".
+     */
+    int NO_OFFSET = 0;
 }

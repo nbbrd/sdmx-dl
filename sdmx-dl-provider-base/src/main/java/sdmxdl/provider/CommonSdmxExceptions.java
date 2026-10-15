@@ -16,13 +16,13 @@
  */
 package sdmxdl.provider;
 
-import lombok.NonNull;
-import sdmxdl.CodelistRef;
-import sdmxdl.StructureRef;
-import sdmxdl.FlowRef;
-
 import java.io.IOException;
 import java.util.Locale;
+import lombok.NonNull;
+import sdmxdl.CodelistRef;
+import sdmxdl.FlowRef;
+import sdmxdl.ResourceNotFoundException;
+import sdmxdl.StructureRef;
 
 /**
  * @author Philippe Charles
@@ -34,14 +34,17 @@ public final class CommonSdmxExceptions {
     }
 
     public static @NonNull IOException missingFlow(@NonNull HasMarker source, @NonNull FlowRef ref) {
-        return new IOException(String.format(Locale.ROOT, "Missing flow '%s' from '%s'", ref, source.getMarker()));
+        return new ResourceNotFoundException(
+                String.format(Locale.ROOT, "Missing flow '%s' from '%s'", ref, source.getMarker()));
     }
 
     public static @NonNull IOException missingStructure(@NonNull HasMarker source, @NonNull StructureRef ref) {
-        return new IOException(String.format(Locale.ROOT, "Missing structure '%s' from '%s'", ref, source.getMarker()));
+        return new ResourceNotFoundException(
+                String.format(Locale.ROOT, "Missing structure '%s' from '%s'", ref, source.getMarker()));
     }
 
     public static @NonNull IOException missingCodelist(@NonNull HasMarker source, @NonNull CodelistRef ref) {
-        return new IOException(String.format(Locale.ROOT, "Missing codelist '%s' from '%s'", ref, source.getMarker()));
+        return new ResourceNotFoundException(
+                String.format(Locale.ROOT, "Missing codelist '%s' from '%s'", ref, source.getMarker()));
     }
 }

@@ -23,4 +23,11 @@ public final class ListSearchOptions {
             defaultValue = "" + HasSearch.AUTO_LIMIT,
             descriptionKey = "cli.sdmx.listMaxResults")
     private int maxResults;
+
+    @CommandLine.Option(
+            names = {"--offset"},
+            paramLabel = "<offset>",
+            defaultValue = "" + HasSearch.NO_OFFSET,
+            descriptionKey = "cli.sdmx.listOffset")
+    private int offset;
 }

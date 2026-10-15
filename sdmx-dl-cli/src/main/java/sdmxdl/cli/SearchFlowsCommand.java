@@ -63,6 +63,7 @@ public final class SearchFlowsCommand implements Callable<Void> {
                         .database(web.getDatabase())
                         .plainText(description.isPlainText())
                         .truncate(description.getTruncate())
-                        .build());
+                        .build())
+                .getItems();
     }
 }

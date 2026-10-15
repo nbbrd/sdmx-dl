@@ -44,6 +44,7 @@ When `--query` is empty (the default), results are returned sorted/unranked inst
 |----------------------------------------------------------------|----------|-----------|--------------------------------------------------------------------------|
 | <a id="query" href="#query">`--query`</a>                    | `-q`     | `<query>` | Free-text search query, with typo-tolerant ranking.                    |
 | <a id="max-results" href="#max-results">`--max-results`</a>  | `-m`     | `<n>`     | Maximum number of results to return: `0` for no limit; by default, all results without query and the 10 best matches with a query.  |
+| <a id="offset" href="#offset">`--offset`</a>                 |          | `<n>`     | Number of matching results to skip before returning results (default: `0`).                                                        |
 
 ## Description
 

@@ -34,7 +34,7 @@ function getFlows() {
         window.flowsRequestParams = { source, database };
 
         // Render pretty view
-        renderPrettyFlows(data);
+        renderPrettyFlows(itemsOf(data));
 
         // Setup filter functionality
         setupFlowsFilter();

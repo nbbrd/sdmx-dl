@@ -21,7 +21,7 @@ function fetchAvailableCodes(context, dimensions, dimIndex, keyParts) {
     const url = apiUrl([source, flow, 'availability'], { key, dimension: dimensions[dimIndex].id, database });
     if (!availabilityCache.has(url)) {
         availabilityCache.set(url, getJSON(url)
-            .then(result => result.codes || {})
+            .then(codesOf)
             .catch(error => {
                 console.warn('Availability not supported or failed:', error.message);
                 return null;
@@ -39,9 +39,7 @@ function getKeyDimensions(context) {
     const id = JSON.stringify([context.source, context.flow, context.database || '']);
     if (!keyDimensionsCache.has(id)) {
         keyDimensionsCache.set(id, getJSON(apiUrl([context.source, context.flow, 'dimensions'], { database: context.database }))
-            .then(dimensions => Array.isArray(dimensions)
-                ? dimensions.sort((a, b) => (a.index || 0) - (b.index || 0))
-                : null)
+            .then(result => itemsOf(result).sort((a, b) => (a.index || 0) - (b.index || 0)))
             .catch(error => {
                 console.warn('Key autocomplete: dimensions not available:', error.message);
                 keyDimensionsCache.delete(id);
@@ -63,7 +61,7 @@ async function getKeyDimensionCodes(context, dimension) {
     }
     if (!dimension.codelist.codes) {
         dimension.codelist.codes = getJSON(apiUrl([context.source, context.flow, 'codes', dimension.id], { database: context.database }))
-            .then(result => (result && result.codes) || {})
+            .then(codesOf)
             .catch(error => {
                 console.warn('Key autocomplete: codes not available:', error.message);
                 delete dimension.codelist.codes;

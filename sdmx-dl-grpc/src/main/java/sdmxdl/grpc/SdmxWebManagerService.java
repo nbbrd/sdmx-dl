@@ -88,7 +88,9 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     public Multi<DatabaseDto> getDatabases(SourceRequestDto request) {
         try {
             return Multi.createFrom()
-                    .iterable(manager.usingName(request.getSource()).listDatabases(ProtoGrpc.toSourceRequest(request)))
+                    .iterable(manager.usingName(request.getSource())
+                            .listDatabases(ProtoGrpc.toSourceRequest(request))
+                            .getItems())
                     .map(ProtoApi::fromDatabase);
         } catch (IOException ex) {
             return Multi.createFrom().failure(ex);
@@ -162,7 +164,9 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     public Multi<FlowDto> getFlows(DatabaseRequestDto request) {
         try {
             return Multi.createFrom()
-                    .iterable(manager.usingName(request.getSource()).listFlows(ProtoGrpc.toDatabaseRequest(request)))
+                    .iterable(manager.usingName(request.getSource())
+                            .listFlows(ProtoGrpc.toDatabaseRequest(request))
+                            .getItems())
                     .map(ProtoApi::fromDataflow);
         } catch (IOException ex) {
             return Multi.createFrom().failure(ex);
@@ -238,7 +242,9 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
                 .maxResults(request.hasMaxResults() ? request.getMaxResults() : 20)
                 .query(request.getQuery())
                 .build();
-        return Multi.createFrom().iterable(manager.listSources(sourcesRequest)).map(ProtoWeb::fromWebSource);
+        return Multi.createFrom()
+                .iterable(manager.listSources(sourcesRequest).getItems())
+                .map(ProtoWeb::fromWebSource);
     }
 
     @POST
@@ -256,7 +262,9 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
                 .build();
         try {
             return Multi.createFrom()
-                    .iterable(manager.usingName(request.getSource()).listDatabases(databasesRequest))
+                    .iterable(manager.usingName(request.getSource())
+                            .listDatabases(databasesRequest)
+                            .getItems())
                     .map(ProtoApi::fromDatabase);
         } catch (IOException ex) {
             return Multi.createFrom().failure(ex);
@@ -286,7 +294,9 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
                 .build();
         try {
             return Multi.createFrom()
-                    .iterable(manager.usingName(request.getSource()).listFlows(flowsRequest))
+                    .iterable(manager.usingName(request.getSource())
+                            .listFlows(flowsRequest)
+                            .getItems())
                     .map(ProtoApi::fromDataflow);
         } catch (IOException ex) {
             return Multi.createFrom().failure(ex);

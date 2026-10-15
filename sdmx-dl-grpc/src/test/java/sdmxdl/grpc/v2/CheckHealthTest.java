@@ -78,8 +78,9 @@ public class CheckHealthTest {
                 .get("/sdmx-dl/v2/health")
                 .then()
                 .statusCode(200)
-                .body("source", contains("BBK", "ECB"))
-                .body("verdict", contains("OK", "OK"));
+                .body("items.source", contains("BBK", "ECB"))
+                .body("items.verdict", contains("OK", "OK"))
+                .body("total", equalTo(2));
     }
 
     @Test
@@ -99,6 +100,6 @@ public class CheckHealthTest {
     }
 
     private List<HealthReportDto> grpcHealth(WebHealthRequestDto.Builder request) {
-        return grpc.checkHealth(request.build()).collect().asList().await().atMost(TIMEOUT);
+        return grpc.checkHealth(request.build()).await().atMost(TIMEOUT).getItemsList();
     }
 }

@@ -71,6 +71,8 @@ public final class ListAttributesCommand implements Callable<Void> {
                         .flow(web.getFlow())
                         .query(listSearch.getSearchQuery())
                         .maxResults(listSearch.getMaxResults())
-                        .build());
+                        .offset(listSearch.getOffset())
+                        .build())
+                .getItems();
     }
 }

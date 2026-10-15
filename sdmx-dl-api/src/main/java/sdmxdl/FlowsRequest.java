@@ -21,6 +21,9 @@ public class FlowsRequest implements HasSearch, Request {
     @lombok.Builder.Default
     int maxResults = AUTO_LIMIT;
 
+    @lombok.Builder.Default
+    int offset = NO_OFFSET;
+
     /**
      * Whether flow descriptions should have markup (e.g. HTML tags) stripped
      * and whitespace collapsed before being returned.

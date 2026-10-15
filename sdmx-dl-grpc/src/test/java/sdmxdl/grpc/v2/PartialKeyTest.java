@@ -16,7 +16,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
-import sdmxdl.format.protobuf.AvailabilityDto;
+import sdmxdl.format.protobuf.CodeDto;
 import sdmxdl.format.protobuf.DataSetDto;
 import sdmxdl.format.protobuf.SeriesDto;
 
@@ -56,8 +56,8 @@ public class PartialKeyTest {
 
     @Test
     public void grpcListAvailability() {
-        assertThat(grpcAvailability("M", "CURRENCY")).containsOnlyKeys("CHF", "USD");
-        assertThat(grpcAvailability("M.CHF", "CURRENCY_DENOM")).containsOnlyKeys("EUR");
+        assertThat(grpcAvailability("M", "CURRENCY")).containsExactlyInAnyOrder("CHF", "USD");
+        assertThat(grpcAvailability("M.CHF", "CURRENCY_DENOM")).containsExactlyInAnyOrder("EUR");
     }
 
     @Test
@@ -103,8 +103,8 @@ public class PartialKeyTest {
 
     @Test
     public void restListAvailability() {
-        assertThat(restAvailability("M", "CURRENCY")).containsOnlyKeys("CHF", "USD");
-        assertThat(restAvailability("M.CHF", "CURRENCY_DENOM")).containsOnlyKeys("EUR");
+        assertThat(restAvailability("M", "CURRENCY")).containsExactlyInAnyOrder("CHF", "USD");
+        assertThat(restAvailability("M.CHF", "CURRENCY_DENOM")).containsExactlyInAnyOrder("EUR");
     }
 
     @Test
@@ -152,18 +152,20 @@ public class PartialKeyTest {
                             Map.of("source", "ECB", "flow", "EXR", "key", "M", "dimension", "CURRENCY"),
                             r -> {
                                 assertThat(r).returns(false, ToolResponse::isError);
-                                assertThat(fromJson(AvailabilityDto.getDefaultInstance(), firstText(r))
-                                                .getCodesMap())
-                                        .containsOnlyKeys("CHF", "USD");
+                                assertThat(fromJson(ListAvailabilityResponseDto.getDefaultInstance(), firstText(r))
+                                                .getItemsList())
+                                        .extracting(CodeDto::getId)
+                                        .containsExactlyInAnyOrder("CHF", "USD");
                             })
                     .toolsCall(
                             "listAvailability",
                             Map.of("source", "ECB", "flow", "EXR", "key", "M.CHF", "dimension", "CURRENCY_DENOM"),
                             r -> {
                                 assertThat(r).returns(false, ToolResponse::isError);
-                                assertThat(fromJson(AvailabilityDto.getDefaultInstance(), firstText(r))
-                                                .getCodesMap())
-                                        .containsOnlyKeys("EUR");
+                                assertThat(fromJson(ListAvailabilityResponseDto.getDefaultInstance(), firstText(r))
+                                                .getItemsList())
+                                        .extracting(CodeDto::getId)
+                                        .containsExactlyInAnyOrder("EUR");
                             })
                     .thenAssertResults();
         }
@@ -200,8 +202,9 @@ public class PartialKeyTest {
         return grpc.getData(dataRequest(key)).await().atMost(TIMEOUT).getDataList();
     }
 
-    private Map<String, String> grpcAvailability(String key, String dimension) {
-        return grpc.listAvailability(WebAvailabilityRequestDto.newBuilder()
+    private List<String> grpcAvailability(String key, String dimension) {
+        return grpc
+                .listAvailability(WebAvailabilityRequestDto.newBuilder()
                         .setSource("ECB")
                         .setFlow("EXR")
                         .setKey(key)
@@ -209,10 +212,13 @@ public class PartialKeyTest {
                         .build())
                 .await()
                 .atMost(TIMEOUT)
-                .getCodesMap();
+                .getItemsList()
+                .stream()
+                .map(CodeDto::getId)
+                .toList();
     }
 
-    private static Map<String, String> restAvailability(String key, String dimension) {
+    private static List<String> restAvailability(String key, String dimension) {
         String json = given().queryParam("key", key)
                 .queryParam("dimension", dimension)
                 .when()
@@ -221,7 +227,9 @@ public class PartialKeyTest {
                 .statusCode(200)
                 .extract()
                 .asString();
-        return fromJson(AvailabilityDto.getDefaultInstance(), json).getCodesMap();
+        return fromJson(ListAvailabilityResponseDto.getDefaultInstance(), json).getItemsList().stream()
+                .map(CodeDto::getId)
+                .toList();
     }
 
     @SuppressWarnings("unchecked")

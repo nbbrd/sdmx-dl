@@ -55,7 +55,7 @@ $response.data | ForEach-Object {
 The same pattern works for discovery endpoints such as `sources`, `flows`, or `dimensions`:
 
 ```powershell
-Invoke-RestMethod 'http://localhost:4559/sdmx-dl/v2/ECB/flows' | Select-Object -First 5
+(Invoke-RestMethod 'http://localhost:4559/sdmx-dl/v2/ECB/flows').items | Select-Object -First 5
 ```
 {{< /tab >}}
 

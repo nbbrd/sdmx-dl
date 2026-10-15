@@ -78,7 +78,8 @@ public final class DebugListCommand implements Callable<Void> {
                         .listFlows(FlowsRequest.builder()
                                 .languages(web.getLangs())
                                 .database(web.getDatabase())
-                                .build())));
+                                .build())
+                        .getItems()));
     }
 
     private static FlowsDto fromDataflows(Collection<Flow> value) {

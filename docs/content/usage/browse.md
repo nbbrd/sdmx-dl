@@ -51,9 +51,11 @@ void main() throws Exception {
     Provider<sdmxdl.web.WebSource> ecb = SdmxWebManager.ofServiceLoader().usingName("ECB");
 
     ecb.listDimensions(DimensionsRequest.builder().flowOf("EXR").build())
+            .getItems()
             .forEach(dimension -> IO.println(dimension.getId() + " = " + dimension.getName()));
 
     ecb.listAttributes(AttributesRequest.builder().flowOf("EXR").build())
+            .getItems()
             .forEach(attribute -> IO.println(attribute.getId() + " = " + attribute.getName()));
 }
 ```
@@ -132,7 +134,8 @@ void main() throws Exception {
                     .flowOf("EXR")
                     .concept("FREQ")
                     .build())
-            .forEach((code, label) -> IO.println(code + " = " + label));
+            .getItems()
+            .forEach(code -> IO.println(code.getId() + " = " + code.getName()));
 }
 ```
 {{< /tab >}}
@@ -203,7 +206,8 @@ void main() throws Exception {
                     .dimension("CURRENCY")
                     .build())
             .getCodes()
-            .forEach((code, label) -> IO.println(code + " = " + label));
+            .getItems()
+            .forEach(code -> IO.println(code.getId() + " = " + code.getName()));
 }
 ```
 {{< /tab >}}

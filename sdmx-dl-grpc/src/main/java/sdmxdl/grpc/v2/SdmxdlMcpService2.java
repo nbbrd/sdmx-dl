@@ -49,7 +49,9 @@ public class SdmxdlMcpService2 {
     private static final String QUERY_ARG =
             "Free-text search terms (words from ids or labels, e.g. 'unemployment rate'). Leave empty (default) to list everything instead of searching.";
     private static final String MAX_RESULTS_ARG =
-            "Maximum number of entries to return (default 10). Use 0 for no limit; raise it when results look truncated.";
+            "Maximum number of entries to return (default 10). Use 0 for no limit; raise it, or page with 'offset', when 'total' is greater than the number of returned 'items'.";
+    private static final String OFFSET_ARG =
+            "Number of matching entries to skip before returning 'maxResults' entries (default 0). Use it to get the next page of a list.";
     private static final String DIMENSION_ARG =
             "Dimension to inspect: its id exactly as returned by getMeta or listDimensions (e.g. 'CURRENCY'), or its zero-based position in the key (e.g. '1'). Leave empty (default) to inspect the first dimension left as a wildcard in 'key'. The dimension must be a wildcard in 'key'.";
     private static final String CONCEPT_ARG =
@@ -97,6 +99,7 @@ public class SdmxdlMcpService2 {
     private static final String DEFAULT_SCRIPT_LAST_N = "0";
     private static final String DEFAULT_FIRST_N = "0";
     private static final String DEFAULT_MAX_RESULTS = "10";
+    private static final String DEFAULT_OFFSET = "0";
     private static final String DEFAULT_QUERY = NO_QUERY;
     private static final String DEFAULT_DETAIL = "DATA_ONLY";
     private static final String DEFAULT_KEY = "all";
@@ -131,52 +134,64 @@ public class SdmxdlMcpService2 {
     @Tool(
             description =
                     "List or search the available SDMX data providers (sources) such as central banks and statistical institutes. Start here when you do not know which source id to use. Empty 'query' returns sources sorted by id, truncated to 'maxResults'; a non-empty 'query' ranks them by relevance (BM25 + trigram) against id and names. Returns id, names and website for each source. Next step: pass the chosen id as 'source' to listFlows.")
-    public List<WebSourceDto> listSources(
+    public ListSourcesResponseDto listSources(
             @ToolArg(description = QUERY_ARG, required = false, defaultValue = DEFAULT_QUERY) String query,
             @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages,
             @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = DEFAULT_MAX_RESULTS)
-                    int maxResults) {
+                    int maxResults,
+            @ToolArg(description = OFFSET_ARG, required = false, defaultValue = DEFAULT_OFFSET) int offset) {
         WebSourcesRequest request = WebSourcesRequest.builder()
                 .languagesOf(languages)
                 .query(query)
                 .maxResults(maxResults)
+                .offset(offset)
                 .confidentialityThreshold(THRESHOLD)
                 .build();
-        return manager.listSources(request).stream()
-                .map(SdmxdlMcpService2::compactSource)
-                .toList();
+        var result = manager.listSources(request);
+        return ListSourcesResponseDto.newBuilder()
+                .addAllItems(result.getItems().stream()
+                        .map(SdmxdlMcpService2::compactSource)
+                        .toList())
+                .setTotal(result.getTotal())
+                .build();
     }
 
     @Tool(
             description =
                     "List or search the databases (sub-catalogs) of a source. Most sources expose a single default database, so you usually do NOT need this tool: skip it and call listFlows directly. Use it only when a source is known to have several databases, or when listFlows returns nothing. Empty 'query' returns databases sorted by ref; a non-empty 'query' ranks them by relevance. Pass the returned ref as 'database' to the other tools.")
-    public List<DatabaseDto> listDatabases(
+    public ListDatabasesResponseDto listDatabases(
             @ToolArg(description = SOURCE_ARG) String source,
             @ToolArg(description = QUERY_ARG, required = false, defaultValue = DEFAULT_QUERY) String query,
             @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages,
             @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = DEFAULT_MAX_RESULTS)
-                    int maxResults)
+                    int maxResults,
+            @ToolArg(description = OFFSET_ARG, required = false, defaultValue = DEFAULT_OFFSET) int offset)
             throws IOException {
         DatabasesRequest request = DatabasesRequest.builder()
                 .languagesOf(languages)
                 .query(query)
                 .maxResults(maxResults)
+                .offset(offset)
                 .build();
-        return manager.using(getPublicSourceForMcp(source)).listDatabases(request).stream()
-                .map(ProtoApi::fromDatabase)
-                .toList();
+        var result = manager.using(getPublicSourceForMcp(source)).listDatabases(request);
+        return ListDatabasesResponseDto.newBuilder()
+                .addAllItems(
+                        result.getItems().stream().map(ProtoApi::fromDatabase).toList())
+                .setTotal(result.getTotal())
+                .build();
     }
 
     @Tool(
             description =
                     "List or search the data flows (datasets) of a source; this is how you find the dataset that holds a given indicator. A source can expose thousands of flows, so pass a topic as 'query' (e.g. 'exchange rates', 'unemployment') to rank them by relevance instead of listing them all. Empty 'query' returns flows sorted by ref.                     Each entry gives the flow ref (to use as 'flow'), its structure ref, a name and a description (plain text truncated to 200 characters by default). Next step: call getMeta or listDimensions on the chosen flow.")
-    public List<FlowDto> listFlows(
+    public ListFlowsResponseDto listFlows(
             @ToolArg(description = SOURCE_ARG) String source,
             @ToolArg(description = QUERY_ARG, required = false, defaultValue = DEFAULT_QUERY) String query,
             @ToolArg(description = DATABASE_ARG, required = false, defaultValue = NO_DATABASE_KEYWORD) String database,
             @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages,
             @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = DEFAULT_MAX_RESULTS)
                     int maxResults,
+            @ToolArg(description = OFFSET_ARG, required = false, defaultValue = DEFAULT_OFFSET) int offset,
             @ToolArg(description = PLAIN_TEXT_ARG, required = false, defaultValue = DEFAULT_PLAIN_TEXT)
                     boolean plainText,
             @ToolArg(description = TRUNCATE_ARG, required = false, defaultValue = DEFAULT_TRUNCATE) int truncate)
@@ -186,25 +201,30 @@ public class SdmxdlMcpService2 {
                 .languagesOf(languages)
                 .query(query)
                 .maxResults(maxResults)
+                .offset(offset)
                 .plainText(plainText)
                 .truncate(truncate)
                 .build();
-        return manager.using(getPublicSourceForMcp(source)).listFlows(request).stream()
-                .map(ProtoApi::fromDataflow)
-                .toList();
+        var result = manager.using(getPublicSourceForMcp(source)).listFlows(request);
+        return ListFlowsResponseDto.newBuilder()
+                .addAllItems(
+                        result.getItems().stream().map(ProtoApi::fromDataflow).toList())
+                .setTotal(result.getTotal())
+                .build();
     }
 
     @Tool(
             description =
                     "List or search the dimensions of a flow: the fields that identify a series (e.g. FREQ, CURRENCY, REF_AREA). Returns each dimension's id and name in structure order, WITHOUT its codes, which keeps the answer small. Empty 'query' keeps the structure order (the same order used by the positional 'key'); a non-empty 'query' ranks dimensions by relevance. Next step: call listCodes to resolve a dimension's codes, then getData.")
-    public List<DimensionDto> listDimensions(
+    public ListDimensionsResponseDto listDimensions(
             @ToolArg(description = SOURCE_ARG) String source,
             @ToolArg(description = FLOW_ARG) String flow,
             @ToolArg(description = QUERY_ARG, required = false, defaultValue = DEFAULT_QUERY) String query,
             @ToolArg(description = DATABASE_ARG, required = false, defaultValue = NO_DATABASE_KEYWORD) String database,
             @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages,
             @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = DEFAULT_MAX_RESULTS)
-                    int maxResults)
+                    int maxResults,
+            @ToolArg(description = OFFSET_ARG, required = false, defaultValue = DEFAULT_OFFSET) int offset)
             throws IOException {
         DimensionsRequest request = DimensionsRequest.builder()
                 .flowOf(flow)
@@ -212,23 +232,28 @@ public class SdmxdlMcpService2 {
                 .languagesOf(languages)
                 .query(query)
                 .maxResults(maxResults)
+                .offset(offset)
                 .build();
-        return manager.using(getPublicSourceForMcp(source)).listDimensions(request).stream()
-                .map(ProtoApi::fromDimension)
-                .toList();
+        var result = manager.using(getPublicSourceForMcp(source)).listDimensions(request);
+        return ListDimensionsResponseDto.newBuilder()
+                .addAllItems(
+                        result.getItems().stream().map(ProtoApi::fromDimension).toList())
+                .setTotal(result.getTotal())
+                .build();
     }
 
     @Tool(
             description =
                     "List or search the attributes of a flow: the extra properties attached to series or observations (e.g. UNIT_MEASURE, OBS_STATUS, DECIMALS). Attributes cannot be used to filter data; use dimensions for that. Returns each attribute's id, name and relationship, WITHOUT its codes. Empty 'query' sorts by id; a non-empty 'query' ranks by relevance. Use listCodes with an attribute id to see its possible values.")
-    public List<AttributeDto> listAttributes(
+    public ListAttributesResponseDto listAttributes(
             @ToolArg(description = SOURCE_ARG) String source,
             @ToolArg(description = FLOW_ARG) String flow,
             @ToolArg(description = QUERY_ARG, required = false, defaultValue = DEFAULT_QUERY) String query,
             @ToolArg(description = DATABASE_ARG, required = false, defaultValue = NO_DATABASE_KEYWORD) String database,
             @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages,
             @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = DEFAULT_MAX_RESULTS)
-                    int maxResults)
+                    int maxResults,
+            @ToolArg(description = OFFSET_ARG, required = false, defaultValue = DEFAULT_OFFSET) int offset)
             throws IOException {
         AttributesRequest request = AttributesRequest.builder()
                 .flowOf(flow)
@@ -236,10 +261,14 @@ public class SdmxdlMcpService2 {
                 .languagesOf(languages)
                 .query(query)
                 .maxResults(maxResults)
+                .offset(offset)
                 .build();
-        return manager.using(getPublicSourceForMcp(source)).listAttributes(request).stream()
-                .map(ProtoApi::fromAttribute)
-                .toList();
+        var result = manager.using(getPublicSourceForMcp(source)).listAttributes(request);
+        return ListAttributesResponseDto.newBuilder()
+                .addAllItems(
+                        result.getItems().stream().map(ProtoApi::fromAttribute).toList())
+                .setTotal(result.getTotal())
+                .build();
     }
 
     @Tool(
@@ -261,8 +290,8 @@ public class SdmxdlMcpService2 {
 
     @Tool(
             description =
-                    "List or search the codes of one dimension (or attribute) of a flow: this is how you turn a human label such as 'Switzerland' or 'Monthly' into the code required by getData. Empty 'query' returns codes in codelist order; a non-empty 'query' ranks them by relevance on id and label. Returns the matching codes as an id -> label map plus 'codeCount', the number of codes actually returned; if that number equals 'maxResults' the list is probably truncated, so refine 'query' or raise 'maxResults'. Codes returned here are valid for the flow but may have no data: use listAvailability to check. Next step: pass the chosen code to getData via the 'dimensions' map.")
-    public CodelistDto listCodes(
+                    "List or search the codes of one dimension (or attribute) of a flow: this is how you turn a human label such as 'Switzerland' or 'Monthly' into the code required by getData. Empty 'query' returns codes in codelist order; a non-empty 'query' ranks them by relevance on id and label. Returns the matching codes as 'items' (id and name, name absent when the code has no label) plus 'total', the number of matching codes; if 'total' is greater than the number of returned items, refine 'query', raise 'maxResults' or page with 'offset'. Codes returned here are valid for the flow but may have no data: use listAvailability to check. Next step: pass the chosen code to getData via the 'dimensions' map.")
+    public ListCodesResponseDto listCodes(
             @ToolArg(description = SOURCE_ARG) String source,
             @ToolArg(description = FLOW_ARG) String flow,
             @ToolArg(description = CONCEPT_ARG) String concept,
@@ -270,7 +299,8 @@ public class SdmxdlMcpService2 {
             @ToolArg(description = DATABASE_ARG, required = false, defaultValue = NO_DATABASE_KEYWORD) String database,
             @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages,
             @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = DEFAULT_MAX_RESULTS)
-                    int maxResults)
+                    int maxResults,
+            @ToolArg(description = OFFSET_ARG, required = false, defaultValue = DEFAULT_OFFSET) int offset)
             throws IOException {
 
         CodesRequest request = CodesRequest.builder()
@@ -279,22 +309,19 @@ public class SdmxdlMcpService2 {
                 .languagesOf(languages)
                 .query(query)
                 .maxResults(maxResults)
+                .offset(offset)
                 .concept(concept)
                 .build();
 
-        Map<String, String> codes = manager.using(getPublicSourceForMcp(source)).listCodes(request);
+        var codes = manager.using(getPublicSourceForMcp(source)).listCodes(request);
 
-        return CodelistDto.newBuilder()
-                .setRef("")
-                .setCodeCount(codes.size())
-                .putAllCodes(codes)
-                .build();
+        return SdmxdlGrpcService2.toCodesResponse(codes);
     }
 
     @Tool(
             description =
-                    "List the codes of one dimension that actually have data, given the other dimensions already fixed in 'key'. Unlike listCodes, which returns every code allowed by the codelist, this returns only the codes really present in the dataset for that key, sorted by code id and mapped to their label (label may be empty), together with the id of the inspected 'dimension'. Use it to narrow a key step by step and to avoid empty getData results, for example: fix FREQ in 'key', then ask which REF_AREA codes remain (or leave 'dimension' empty to inspect the next wildcard dimension). 'key' uses the same positional format as getData; use 'all' to apply no constraint. Fails when 'dimension' is unknown or is not a wildcard in 'key'.")
-    public AvailabilityDto listAvailability(
+                    "List the codes of one dimension that actually have data, given the other dimensions already fixed in 'key'. Unlike listCodes, which returns every code allowed by the codelist, this returns only the codes really present in the dataset for that key, sorted by code id, as 'items' (id and name, name absent when the code has no label) with their 'total' count, together with the id of the inspected 'dimension'. Use it to narrow a key step by step and to avoid empty getData results, for example: fix FREQ in 'key', then ask which REF_AREA codes remain (or leave 'dimension' empty to inspect the next wildcard dimension). 'key' uses the same positional format as getData; use 'all' to apply no constraint. Fails when 'dimension' is unknown or is not a wildcard in 'key'.")
+    public ListAvailabilityResponseDto listAvailability(
             @ToolArg(description = SOURCE_ARG) String source,
             @ToolArg(description = FLOW_ARG) String flow,
             @ToolArg(description = DIMENSION_ARG, required = false) String dimension,
@@ -311,7 +338,7 @@ public class SdmxdlMcpService2 {
                 .dimension(dimension != null ? dimension : AvailabilityRequest.FIRST_WILDCARD_DIMENSION)
                 .build();
 
-        return ProtoApi.fromAvailability(
+        return SdmxdlGrpcService2.toAvailabilityResponse(
                 manager.using(getPublicSourceForMcp(source)).listAvailability(request));
     }
 
@@ -345,10 +372,8 @@ public class SdmxdlMcpService2 {
     @Tool(
             description =
                     "List the available script targets as '<language>/<transport>' (e.g. 'python/cli', 'python/rest') with the commands each one supports (e.g. 'data', 'flows'). Use it before generateDataScript/generateFlowsScript to pick a valid 'target'.")
-    public List<ScriptTargetDto> listScriptTargets() {
-        return scripts.getTargets().stream()
-                .map(target -> ProtoScript.fromScriptTarget(scripts, target))
-                .toList();
+    public ListScriptTargetsResponseDto listScriptTargets() {
+        return SdmxdlGrpcService2.toScriptTargetsResponse(scripts);
     }
 
     @Tool(
@@ -392,6 +417,7 @@ public class SdmxdlMcpService2 {
             @ToolArg(description = SCRIPT_LANGUAGES_ARG, required = false, defaultValue = ANY_KEYWORD) String languages,
             @ToolArg(description = SCRIPT_MAX_RESULTS_ARG, required = false, defaultValue = "" + AUTO_LIMIT)
                     int maxResults,
+            @ToolArg(description = OFFSET_ARG, required = false, defaultValue = DEFAULT_OFFSET) int offset,
             @ToolArg(description = SCRIPT_PLAIN_TEXT_ARG, required = false, defaultValue = DEFAULT_SCRIPT_PLAIN_TEXT)
                     boolean plainText,
             @ToolArg(description = SCRIPT_TRUNCATE_ARG, required = false, defaultValue = DEFAULT_SCRIPT_TRUNCATE)
@@ -408,6 +434,7 @@ public class SdmxdlMcpService2 {
                 .languagesOf(languages)
                 .query(query)
                 .maxResults(maxResults)
+                .offset(offset)
                 .plainText(plainText)
                 .truncate(truncate)
                 .build();

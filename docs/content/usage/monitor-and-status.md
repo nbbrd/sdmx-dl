@@ -92,22 +92,25 @@ INSEE,OK,UP,0.9833,1213,,YES,YES,,862,https://bdm.insee.fr/series/sdmx/dataflow/
 
 {{< expand "REST output sample" >}}
 ```json
-[{
-  "source": "ECB",
-  "verdict": "OK",
-  "monitor": {
+{
+  "items": [{
     "source": "ECB",
-    "status": "UP",
-    "uptimeRatio": 0.9754,
-    "averageResponseTime": "1165"
-  },
-  "access": {
-    "reachable": true,
-    "accessible": true,
-    "uri": "https://data-api.ecb.europa.eu/service/dataflow/all/all/latest",
-    "duration": "645"
-  }
-}]
+    "verdict": "OK",
+    "monitor": {
+      "source": "ECB",
+      "status": "UP",
+      "uptimeRatio": 0.9754,
+      "averageResponseTime": "1165"
+    },
+    "access": {
+      "reachable": true,
+      "accessible": true,
+      "uri": "https://data-api.ecb.europa.eu/service/dataflow/all/all/latest",
+      "duration": "645"
+    }
+  }],
+  "total": 1
+}
 ```
 {{< /expand >}}
 

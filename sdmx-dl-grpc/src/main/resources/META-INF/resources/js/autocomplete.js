@@ -15,7 +15,7 @@ const AUTOCOMPLETE_FORMS = [
 
 async function loadSources() {
     try {
-        const sources = await getJSON(apiUrl(['sources']));
+        const sources = itemsOf(await getJSON(apiUrl(['sources'])));
         const sourceOptions = sources.map(s => createOption(s));
         updateDatalist('sources-list', sourceOptions);
     } catch (error) {
@@ -52,7 +52,7 @@ async function loadDatabases(sourceId, datalistId) {
 
     try {
         await fillDatalistOnce(datalistId, sourceId, async () => {
-            const databases = await getJSON(apiUrl([sourceId, 'databases']));
+            const databases = itemsOf(await getJSON(apiUrl([sourceId, 'databases'])));
             return databases.map(d => createOption(d));
         });
     } catch (error) {
@@ -65,7 +65,7 @@ async function loadFlows(sourceId, datalistId, database = '') {
 
     try {
         await fillDatalistOnce(datalistId, `${sourceId}|${database}`, async () => {
-            const flows = await getJSON(apiUrl([sourceId, 'flows'], { database }));
+            const flows = itemsOf(await getJSON(apiUrl([sourceId, 'flows'], { database })));
             return flows.map(f => createOption(f));
         });
     } catch (error) {

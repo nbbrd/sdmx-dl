@@ -26,10 +26,9 @@ public class SdmxdlScriptService2Test {
     @Test
     public void grpcListScriptTargets() {
         List<ScriptTargetDto> response = grpc.listScriptTargets(EmptyDto.getDefaultInstance())
-                .collect()
-                .asList()
                 .await()
-                .atMost(TIMEOUT);
+                .atMost(TIMEOUT)
+                .getItemsList();
         assertThat(response).extracting(ScriptTargetDto::getTarget).contains("python/cli", "python/rest");
         assertThat(response)
                 .filteredOn(ScriptTargetDto::getTarget, "python/cli")
@@ -115,7 +114,7 @@ public class SdmxdlScriptService2Test {
                 .get("/sdmx-dl/v2/script/targets")
                 .then()
                 .statusCode(200)
-                .body("target", hasItems("python/cli", "python/rest"));
+                .body("items.target", hasItems("python/cli", "python/rest"));
     }
 
     @Test
@@ -176,7 +175,7 @@ public class SdmxdlScriptService2Test {
                 .get("/sdmx-dl/v2/ECB/flows:script")
                 .then()
                 .statusCode(400)
-                .body("message", containsString("novalue"));
+                .body("detail", containsString("novalue"));
     }
 
     @Test
@@ -241,8 +240,8 @@ public class SdmxdlScriptService2Test {
                 .get("/sdmx-dl/v2/ECB/flows:script")
                 .then()
                 .statusCode(400)
-                .contentType(startsWith("application/json"))
-                .body("message", containsString("cobol/cli"));
+                .contentType(startsWith("application/problem+json"))
+                .body("detail", containsString("cobol/cli"));
     }
 
     @Test
@@ -253,6 +252,6 @@ public class SdmxdlScriptService2Test {
                 .get("/sdmx-dl/v2/ECB/flows:script")
                 .then()
                 .statusCode(400)
-                .body("message", containsString("cobol/cli"));
+                .body("detail", containsString("cobol/cli"));
     }
 }
