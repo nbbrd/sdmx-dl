@@ -50,7 +50,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
 <meta property="article:section" content="Ws" />
     <meta
       property="article:modified_time"
-      content="2026-10-13T15:27:34+02:00"
+      content="2026-10-15T11:57:25+02:00"
     />
 
 
@@ -71,7 +71,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/ws/",
       "headline": "Web service",
       "description": "\nsdmx-dl WS is a web service that serves as a bridge to any application or language.\nThis service has three endpoints:\na gRPC endpoint which has the best performances but a limited set of clients a REST endpoint which has a wider range of clients but is less efficient an MCP endpoint which lets AI assistants and agents browse and fetch data It also serves a web UI to browse sources and fetch data from a browser, on top of the REST endpoint.",
-      "wordCount": "1161",
+      "wordCount": "1276",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -82,7 +82,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-13T15:27:34.00Z",
+      "dateModified": "2026-10-15T11:57:25.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1992,9 +1992,9 @@ Each series has a <code>key</code>, optional series-level <code>meta</code>, and
 <li><code>period</code> is an ISO-8601 interval (<code>start/duration</code>); keep the part before <code>/</code> if you only need the start date.</li>
 <li>The <code>detail</code> parameter controls which parts are filled: <code>FULL</code> (default), <code>DATA_ONLY</code> (no <code>meta</code>), <code>NO_DATA</code> (no <code>obs</code>), or <code>SERIES_KEYS_ONLY</code> (keys only).</li>
 <li><code>GetDataStream</code> (<code>GET /{source}/{flow}/data:stream</code>) returns the same series objects as a plain JSON array, without the <code>ref</code>/<code>query</code> wrapper.</li>
-<li>Listing operations (<code>/sources</code>, <code>/{source}/flows</code>, <code>/{source}/{flow}/dimensions</code>, …) return a JSON array of objects that can be turned into a table directly.</li>
-<li><code>ListCodes</code> returns a <code>codes</code> object mapping each code to its label, e.g. <code>{&quot;codes&quot;: {&quot;A&quot;: &quot;Annual&quot;, &quot;Q&quot;: &quot;Quarterly&quot;}}</code>.</li>
-<li><code>ListAvailability</code> also returns the id of the selected dimension, e.g. <code>{&quot;dimension&quot;: &quot;FREQ&quot;, &quot;codes&quot;: {&quot;A&quot;: &quot;Annual&quot;, &quot;Q&quot;: &quot;Quarterly&quot;}, &quot;codeCount&quot;: 2}</code>. Its <code>dimension</code> parameter takes a dimension id, a zero-based index, or nothing for the first wildcard dimension of the <code>key</code> (see <a
+<li>Listing operations (<code>/sources</code>, <code>/{source}/flows</code>, <code>/{source}/{flow}/dimensions</code>, <code>/{source}/{flow}/codes/{concept}</code>, …) return an object with the matching entries in <code>items</code> and their number before paging in <code>total</code>, e.g. <code>{&quot;items&quot;: [{&quot;id&quot;: &quot;A&quot;, &quot;name&quot;: &quot;Annual&quot;}, {&quot;id&quot;: &quot;Q&quot;, &quot;name&quot;: &quot;Quarterly&quot;}], &quot;total&quot;: 2}</code>. Use <code>offset</code> with <code>maxResults</code> to page through them.</li>
+<li>Empty fields are omitted from JSON responses: an empty list has no <code>items</code> and a <code>total</code> of <code>0</code> is omitted, so default them (e.g. <code>payload.get(&quot;items&quot;, [])</code>).</li>
+<li><code>ListAvailability</code> also returns the id of the selected dimension, e.g. <code>{&quot;dimension&quot;: &quot;FREQ&quot;, &quot;items&quot;: [{&quot;id&quot;: &quot;A&quot;, &quot;name&quot;: &quot;Annual&quot;}], &quot;total&quot;: 1}</code>. Its <code>dimension</code> parameter takes a dimension id, a zero-based index, or nothing for the first wildcard dimension of the <code>key</code> (see <a
   class="gdoc-markdown__link"
   href="/sdmx-dl/docs/develop/usage/browse/#availability"
 >Availability</a>).</li>
@@ -2002,6 +2002,10 @@ Each series has a <code>key</code>, optional series-level <code>meta</code>, and
   class="gdoc-markdown__link"
   href="/sdmx-dl/docs/develop/integration/generate-scripts/"
 >Generate scripts</a> for their options (<code>cliLauncher</code>, <code>restEndpoint</code>, <code>outputFile</code>, <code>property</code>, <code>format</code>).</li>
+<li>Errors are returned as <a
+  class="gdoc-markdown__link"
+  href="https://www.rfc-editor.org/rfc/rfc9457"
+>problem details</a> (<code>application/problem+json</code>) with an extra <code>reason</code> (<code>INVALID_ARGUMENT</code>, <code>RESOURCE_NOT_FOUND</code>, <code>UPSTREAM_HTTP_ERROR</code>, <code>UPSTREAM_TIMEOUT</code>, <code>UPSTREAM_UNREACHABLE</code>, <code>UPSTREAM_ERROR</code>, <code>INTERNAL_ERROR</code>), the <code>source</code> when known and the <code>upstreamStatus</code> of an upstream HTTP error, e.g. <code>{&quot;type&quot;: &quot;about:blank&quot;, &quot;title&quot;: &quot;Not Found&quot;, &quot;status&quot;: 404, &quot;detail&quot;: &quot;Missing source 'XYZ'&quot;, &quot;reason&quot;: &quot;RESOURCE_NOT_FOUND&quot;, &quot;source&quot;: &quot;XYZ&quot;}</code>. The gRPC endpoint returns the same information as a status code with an <code>ErrorInfo</code> detail (domain <code>sdmx-dl</code>).</li>
 </ul>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="mcp-endpoint"
@@ -2025,7 +2029,7 @@ Each series has a <code>key</code>, optional series-level <code>meta</code>, and
 <li>Only sources marked as <strong>public</strong> are exposed; restricted/private sources are hidden.</li>
 <li>It is <strong>read-only</strong>: there is no way to modify configuration or state through it.</li>
 <li>Some fields are truncated or simplified to save tokens (for example, flow descriptions are capped in length, and metadata is returned as a skeleton without the codes of coded dimensions).</li>
-<li>List and search are unified: every listing tool accepts an optional <code>query</code>. When <code>query</code> is empty, entries are returned in their natural order (sorted or as defined) and truncated to <code>maxResults</code>. When <code>query</code> is non-empty, entries are ranked by relevance (hybrid BM25 + trigram search) and limited to <code>maxResults</code>. By default, <code>maxResults</code> returns everything without query and the 10 best matches with a query; <code>0</code> means no limit. The MCP tools always default to 10.</li>
+<li>List and search are unified: every listing tool accepts an optional <code>query</code>. When <code>query</code> is empty, entries are returned in their natural order (sorted or as defined) and truncated to <code>maxResults</code>. When <code>query</code> is non-empty, entries are ranked by relevance (hybrid BM25 + trigram search) and limited to <code>maxResults</code>. By default, <code>maxResults</code> returns everything without query and the 10 best matches with a query; <code>0</code> means no limit. The MCP tools always default to 10. The result gives the number of matches in <code>total</code> and an <code>offset</code> skips the first entries, to page through them.</li>
 </ul>
 <p>Available tools:</p>
 <div class="table-wrap"> <table>

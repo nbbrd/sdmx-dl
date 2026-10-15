@@ -49,7 +49,7 @@ MONITOR (default): asks the third-party monitor declared by the source (Upptime,
 <meta property="article:section" content="Usage" />
     <meta
       property="article:modified_time"
-      content="2026-10-13T15:27:34+02:00"
+      content="2026-10-15T11:57:25+02:00"
     />
 
 
@@ -69,7 +69,7 @@ MONITOR (default): asks the third-party monitor declared by the source (Upptime,
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/monitor-and-status/",
       "headline": "Monitor and status",
       "description": "Check whether a source is healthy before relying on it in an automated job, and diagnose why it fails.\nTwo checks can be combined:\nMONITOR (default): asks the third-party monitor declared by the source (Upptime, UptimeRobot, …) for its status, uptime ratio and average response time. It is cheap and does not contact the source itself. ACCESS: sends a lightweight live request from your machine (or server) to the source and reports whether it can be reached, whether it answered successfully, how long it took and, on HTTP errors, the status code. Both results are merged into a verdict:",
-      "wordCount": "465",
+      "wordCount": "470",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -80,7 +80,7 @@ MONITOR (default): asks the third-party monitor declared by the source (Upptime,
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-13T15:27:34.00Z",
+      "dateModified": "2026-10-15T11:57:25.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1894,28 +1894,31 @@ MONITOR (default): asks the third-party monitor declared by the source (Upptime,
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="4cd02d90-2">
+  <label class="gdoc-expand__head flex justify-between" for="08fe20c0-2">
     <span>REST output sample</span>
     <span>↕</span>
   </label>
-  <input id="4cd02d90-2" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="08fe20c0-2" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
-    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">[{</span>
-</span></span><span class="line"><span class="cl">  <span class="nt">&#34;source&#34;</span><span class="p">:</span> <span class="s2">&#34;ECB&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">  <span class="nt">&#34;verdict&#34;</span><span class="p">:</span> <span class="s2">&#34;OK&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">  <span class="nt">&#34;monitor&#34;</span><span class="p">:</span> <span class="p">{</span>
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;items&#34;</span><span class="p">:</span> <span class="p">[{</span>
 </span></span><span class="line"><span class="cl">    <span class="nt">&#34;source&#34;</span><span class="p">:</span> <span class="s2">&#34;ECB&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&#34;status&#34;</span><span class="p">:</span> <span class="s2">&#34;UP&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&#34;uptimeRatio&#34;</span><span class="p">:</span> <span class="mf">0.9754</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&#34;averageResponseTime&#34;</span><span class="p">:</span> <span class="s2">&#34;1165&#34;</span>
-</span></span><span class="line"><span class="cl">  <span class="p">},</span>
-</span></span><span class="line"><span class="cl">  <span class="nt">&#34;access&#34;</span><span class="p">:</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&#34;reachable&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&#34;accessible&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&#34;uri&#34;</span><span class="p">:</span> <span class="s2">&#34;https://data-api.ecb.europa.eu/service/dataflow/all/all/latest&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&#34;duration&#34;</span><span class="p">:</span> <span class="s2">&#34;645&#34;</span>
-</span></span><span class="line"><span class="cl">  <span class="p">}</span>
-</span></span><span class="line"><span class="cl"><span class="p">}]</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;verdict&#34;</span><span class="p">:</span> <span class="s2">&#34;OK&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;monitor&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;source&#34;</span><span class="p">:</span> <span class="s2">&#34;ECB&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;status&#34;</span><span class="p">:</span> <span class="s2">&#34;UP&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;uptimeRatio&#34;</span><span class="p">:</span> <span class="mf">0.9754</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;averageResponseTime&#34;</span><span class="p">:</span> <span class="s2">&#34;1165&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;access&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;reachable&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;accessible&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;uri&#34;</span><span class="p">:</span> <span class="s2">&#34;https://data-api.ecb.europa.eu/service/dataflow/all/all/latest&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;duration&#34;</span><span class="p">:</span> <span class="s2">&#34;645&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}],</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;total&#34;</span><span class="p">:</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div>
   </div>
 </div>

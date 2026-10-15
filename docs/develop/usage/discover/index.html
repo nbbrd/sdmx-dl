@@ -13,7 +13,7 @@
 
 
   <meta name="description" content="Find the source, database, and flow you want to query.
-Discovery and search are the same call at every level: pass a query to search, or omit it to list everything. By default, a search returns the 10 best matches; set maxResults to change it (0 = no limit). Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so partial or approximate queries still surface the right result. When query is empty, results fall back to being sorted by id instead of ranked by relevance." />
+Discovery and search are the same call at every level: pass a query to search, or omit it to list everything. By default, a search returns the 10 best matches; set maxResults to change it (0 = no limit). Results also give the total number of matches, and offset skips the first ones to page through them. Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so partial or approximate queries still surface the right result. When query is empty, results fall back to being sorted by id instead of ranked by relevance." />
 
     <title>Discover | sdmx-dl</title>
 
@@ -40,21 +40,21 @@ Discovery and search are the same call at every level: pass a query to search, o
   />
   <meta property="og:site_name" content="sdmx-dl" />
   <meta property="og:description" content="Find the source, database, and flow you want to query.
-Discovery and search are the same call at every level: pass a query to search, or omit it to list everything. By default, a search returns the 10 best matches; set maxResults to change it (0 = no limit). Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so partial or approximate queries still surface the right result. When query is empty, results fall back to being sorted by id instead of ranked by relevance." />
+Discovery and search are the same call at every level: pass a query to search, or omit it to list everything. By default, a search returns the 10 best matches; set maxResults to change it (0 = no limit). Results also give the total number of matches, and offset skips the first ones to page through them. Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so partial or approximate queries still surface the right result. When query is empty, results fall back to being sorted by id instead of ranked by relevance." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/discover/" />
 
 <meta property="article:section" content="Usage" />
     <meta
       property="article:modified_time"
-      content="2026-10-13T15:27:34+02:00"
+      content="2026-10-15T11:57:25+02:00"
     />
 
 
   <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Discover" />
   <meta name="twitter:description" content="Find the source, database, and flow you want to query.
-Discovery and search are the same call at every level: pass a query to search, or omit it to list everything. By default, a search returns the 10 best matches; set maxResults to change it (0 = no limit). Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so partial or approximate queries still surface the right result. When query is empty, results fall back to being sorted by id instead of ranked by relevance." />
+Discovery and search are the same call at every level: pass a query to search, or omit it to list everything. By default, a search returns the 10 best matches; set maxResults to change it (0 = no limit). Results also give the total number of matches, and offset skips the first ones to page through them. Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so partial or approximate queries still surface the right result. When query is empty, results fall back to being sorted by id instead of ranked by relevance." />
 
 
   <script type="application/ld+json">
@@ -65,8 +65,8 @@ Discovery and search are the same call at every level: pass a query to search, o
       "name": "Discover",
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/discover/",
       "headline": "Discover",
-      "description": "Find the source, database, and flow you want to query.\nDiscovery and search are the same call at every level: pass a query to search, or omit it to list everything. By default, a search returns the 10 best matches; set maxResults to change it (0 = no limit). Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so partial or approximate queries still surface the right result. When query is empty, results fall back to being sorted by id instead of ranked by relevance.",
-      "wordCount": "686",
+      "description": "Find the source, database, and flow you want to query.\nDiscovery and search are the same call at every level: pass a query to search, or omit it to list everything. By default, a search returns the 10 best matches; set maxResults to change it (0 = no limit). Results also give the total number of matches, and offset skips the first ones to page through them. Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so partial or approximate queries still surface the right result. When query is empty, results fall back to being sorted by id instead of ranked by relevance.",
+      "wordCount": "710",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -77,7 +77,7 @@ Discovery and search are the same call at every level: pass a query to search, o
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-10-13T15:27:34.00Z",
+      "dateModified": "2026-10-15T11:57:25.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1743,7 +1743,7 @@ Discovery and search are the same call at every level: pass a query to search, o
     <h1>Discover</h1>
     
     <p>Find the source, database, and flow you want to query.</p>
-<p>Discovery and search are the same call at every level: pass a <code>query</code> to search, or omit it to list everything. By default, a search returns the 10 best matches; set <code>maxResults</code> to change it (<code>0</code> = no limit).
+<p>Discovery and search are the same call at every level: pass a <code>query</code> to search, or omit it to list everything. By default, a search returns the 10 best matches; set <code>maxResults</code> to change it (<code>0</code> = no limit). Results also give the <code>total</code> number of matches, and <code>offset</code> skips the first ones to page through them.
 Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so partial or approximate queries still surface the right result.
 When <code>query</code> is empty, results fall back to being sorted by id instead of ranked by relevance.</p>
 <div class="flex align-center gdoc-page__anchorwrap">
@@ -1779,6 +1779,7 @@ When <code>query</code> is empty, results fall back to being sorted by id instea
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// List every source</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">manager</span><span class="p">.</span><span class="na">listSources</span><span class="p">(</span><span class="n">WebSourcesRequest</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">getItems</span><span class="p">()</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">source</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">source</span><span class="p">.</span><span class="na">getId</span><span class="p">()));</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// Search by name or topic</span><span class="w">
@@ -1786,6 +1787,7 @@ When <code>query</code> is empty, results fall back to being sorted by id instea
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">query</span><span class="p">(</span><span class="s">&#34;european central&#34;</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">maxResults</span><span class="p">(</span><span class="n">5</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">getItems</span><span class="p">()</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">source</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">source</span><span class="p">.</span><span class="na">getId</span><span class="p">()));</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></div></div>
@@ -1898,6 +1900,7 @@ When <code>query</code> is empty, results fall back to being sorted by id instea
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// List every database</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">ecb</span><span class="p">.</span><span class="na">listDatabases</span><span class="p">(</span><span class="n">DatabasesRequest</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">getItems</span><span class="p">()</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">database</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">database</span><span class="p">.</span><span class="na">getRef</span><span class="p">()));</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// Search by name</span><span class="w">
@@ -1905,6 +1908,7 @@ When <code>query</code> is empty, results fall back to being sorted by id instea
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">query</span><span class="p">(</span><span class="s">&#34;central&#34;</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">maxResults</span><span class="p">(</span><span class="n">5</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">getItems</span><span class="p">()</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">database</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">database</span><span class="p">.</span><span class="na">getRef</span><span class="p">()));</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></div></div>
@@ -2014,6 +2018,7 @@ When <code>query</code> is empty, results fall back to being sorted by id instea
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// List every flow</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">ecb</span><span class="p">.</span><span class="na">listFlows</span><span class="p">(</span><span class="n">FlowsRequest</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">getItems</span><span class="p">()</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">flow</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">flow</span><span class="p">.</span><span class="na">getRef</span><span class="p">()));</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// Search by topic</span><span class="w">
@@ -2021,6 +2026,7 @@ When <code>query</code> is empty, results fall back to being sorted by id instea
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">query</span><span class="p">(</span><span class="s">&#34;exchange rates&#34;</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">maxResults</span><span class="p">(</span><span class="n">5</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">getItems</span><span class="p">()</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">flow</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">flow</span><span class="p">.</span><span class="na">getRef</span><span class="p">()));</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></div></div>
