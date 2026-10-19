@@ -53,7 +53,12 @@ class IndexHtmlFeaturesTest {
         if ("true".equals(System.getProperty("headless", "true"))) {
             options.addArguments("--headless=new");
         }
-        options.addArguments("--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu", "--window-size=1920,1080");
+        options.addArguments(
+                "--no-sandbox",
+                "--disable-dev-shm-usage",
+                "--disable-gpu",
+                "--window-size=1920,1080",
+                "--force-prefers-reduced-motion");
         LoggingPreferences logs = new LoggingPreferences();
         logs.enable(LogType.BROWSER, Level.ALL);
         options.setCapability("goog:loggingPrefs", logs);

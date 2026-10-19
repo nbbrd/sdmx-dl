@@ -54,6 +54,8 @@ class IndexHtmlIntegrationTest {
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--disable-gpu");
         options.addArguments("--window-size=1920,1080");
+        // Disable CSS animations (e.g. tab fade-in from opacity 0) that make visibility checks flaky
+        options.addArguments("--force-prefers-reduced-motion");
 
         // Create new driver instance
         driver = new ChromeDriver(options);
@@ -172,7 +174,8 @@ class IndexHtmlIntegrationTest {
             // Wait for tab to be active
             wait.until(ExpectedConditions.attributeContains(By.id(tab + "-tab"), "class", "active"));
 
-            WebElement tabContent = driver.findElement(By.id(tab + "-tab"));
+            // The 'active' class triggers a fade-in animation starting at opacity 0
+            WebElement tabContent = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(tab + "-tab")));
             assertThat(tabContent.isDisplayed())
                     .as("Tab '%s' should be visible when selected via URL", tab)
                     .isTrue();

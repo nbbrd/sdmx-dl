@@ -213,6 +213,13 @@ body {
     }
 }
 
+@media (prefers-reduced-motion: reduce) {
+    .tab-content.active,
+    .tab-flash {
+        animation: none;
+    }
+}
+
 @keyframes slideDown {
     from {
         transform: translateY(-8px);
