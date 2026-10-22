@@ -1,0 +1,13 @@
+# Configuration of lychee link checker
+# https://lychee.cli.rs/guides/config/
+
+# Avoid rate limiting by checking one link at a time
+max_concurrency = 1
+
+# Cache results between runs (see .lycheecache in check-links workflow)
+cache = true
+
+no_progress = true
+
+# Skip private IP addresses, link-local addresses and loopback addresses
+exclude_all_private = true
