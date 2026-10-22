@@ -38,3 +38,4 @@ jobs:
         with:
           fail: true
           args: --max-concurrency 1 --cache --no-progress --exclude-all-private './**/*.md'
+          token: ${{ secrets.GITHUB_TOKEN }}
