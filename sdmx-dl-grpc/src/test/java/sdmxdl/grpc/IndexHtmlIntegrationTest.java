@@ -56,6 +56,8 @@ class IndexHtmlIntegrationTest {
         options.addArguments("--window-size=1920,1080");
         // Disable CSS animations (e.g. tab fade-in from opacity 0) that make visibility checks flaky
         options.addArguments("--force-prefers-reduced-motion");
+        // Keep the tests hermetic: external resources such as favicons fail fast instead of hanging
+        options.addArguments("--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE " + testUrl.getHost());
 
         // Create new driver instance
         driver = new ChromeDriver(options);
@@ -320,6 +322,9 @@ class IndexHtmlIntegrationTest {
     @DisplayName("Copy to clipboard dropdown works")
     void testCopyDropdownFunctionality() {
         driver.get(testUrl.toString() + "index.html?tab=sources");
+
+        // Wait for the automatic load on page load to complete, so that it doesn't interfere with the manual one
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#sources-pretty-content .source-card")));
 
         // Trigger sources load to show copy dropdown
         driver.findElement(By.xpath("//button[contains(text(),'Get Sources')]")).click();

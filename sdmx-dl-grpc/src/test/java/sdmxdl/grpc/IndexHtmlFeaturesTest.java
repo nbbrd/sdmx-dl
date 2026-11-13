@@ -58,7 +58,9 @@ class IndexHtmlFeaturesTest {
                 "--disable-dev-shm-usage",
                 "--disable-gpu",
                 "--window-size=1920,1080",
-                "--force-prefers-reduced-motion");
+                "--force-prefers-reduced-motion",
+                // Keeps the tests hermetic: external resources such as favicons fail fast instead of hanging
+                "--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE " + testUrl.getHost());
         LoggingPreferences logs = new LoggingPreferences();
         logs.enable(LogType.BROWSER, Level.ALL);
         options.setCapability("goog:loggingPrefs", logs);
@@ -77,6 +79,8 @@ class IndexHtmlFeaturesTest {
     private void open(String query) {
         driver.get(testUrl + "index.html" + query);
         wait.until(d -> Boolean.TRUE.equals(js.executeScript("return typeof loadFormFromUrl === 'function'")));
+        // Sources are loaded asynchronously on page load and would overwrite later changes to the sources tab
+        waitFor("document.querySelector('#sources-pretty-content .source-card')");
     }
 
     private Object eval(String expression) {
@@ -487,7 +491,8 @@ class IndexHtmlFeaturesTest {
         js.executeScript("window.__oldCard = document.querySelector('.source-card');");
         wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[contains(text(),'Get Sources')]")))
                 .click();
-        waitFor("document.querySelector('.source-card') !== window.__oldCard");
+        waitFor(
+                "document.querySelector('.source-card') && document.querySelector('.source-card') !== window.__oldCard");
 
         assertThat(eval("document.querySelector('.health-badge[data-source=\"ECB\"]').textContent"))
                 .isEqualTo("UNKNOWN");
