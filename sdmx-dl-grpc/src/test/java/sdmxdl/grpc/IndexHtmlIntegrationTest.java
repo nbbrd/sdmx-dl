@@ -56,6 +56,14 @@ class IndexHtmlIntegrationTest {
         options.addArguments("--window-size=1920,1080");
         // Disable CSS animations (e.g. tab fade-in from opacity 0) that make visibility checks flaky
         options.addArguments("--force-prefers-reduced-motion");
+        // Avoid hanging on the macOS Keychain (locked on CI) when Chrome initializes its encrypted storage
+        options.addArguments(
+                "--use-mock-keychain",
+                "--password-store=basic",
+                "--no-first-run",
+                "--disable-background-networking",
+                "--disable-component-update",
+                "--disable-sync");
         // Keep the tests hermetic: external resources such as favicons fail fast instead of hanging
         options.addArguments("--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE " + testUrl.getHost());
 

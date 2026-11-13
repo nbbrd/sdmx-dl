@@ -59,6 +59,13 @@ class IndexHtmlFeaturesTest {
                 "--disable-gpu",
                 "--window-size=1920,1080",
                 "--force-prefers-reduced-motion",
+                // Avoid hanging on the macOS Keychain (locked on CI) when Chrome initializes its encrypted storage
+                "--use-mock-keychain",
+                "--password-store=basic",
+                "--no-first-run",
+                "--disable-background-networking",
+                "--disable-component-update",
+                "--disable-sync",
                 // Keeps the tests hermetic: external resources such as favicons fail fast instead of hanging
                 "--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE " + testUrl.getHost());
         LoggingPreferences logs = new LoggingPreferences();
