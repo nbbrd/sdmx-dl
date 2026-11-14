@@ -142,7 +142,7 @@
         <dependency>
             <groupId>org.mvnpm</groupId>
             <artifactId>tom-select</artifactId>
-            <version>2.6.2</version>
+            <version>2.7.0</version>
             <scope>runtime</scope>
             <exclusions>
                 <!-- bundled in tom-select.complete.min.js -->
