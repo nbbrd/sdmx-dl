@@ -16,6 +16,8 @@ service SdmxWebManager {
 
   rpc ListFlows(WebFlowsRequestDto) returns (ListFlowsResponseDto);
 
+  rpc SearchFlows(WebSearchFlowsRequestDto) returns (SearchFlowsResponseDto);
+
   rpc GetMeta(WebMetaRequestDto) returns (sdmxdl.format.protobuf.MetaSetDto);
 
   rpc ListDimensions(WebDimensionsRequestDto) returns (ListDimensionsResponseDto);
@@ -74,6 +76,18 @@ message WebFlowsRequestDto {
   optional bool plain_text = 6; /* strip markup (e.g. HTML tags) from descriptions; absent = false */
   optional int32 truncate = 7; /* maximum length of descriptions, truncated with an ellipsis; absent or 0 = no limit */
   optional int32 offset = 8; /* number of matching items to skip before returning 'max_results' items; absent = 0 */
+}
+
+message WebSearchFlowsRequestDto {
+  repeated string sources = 1; /* empty, or a single "all" entry (case-insensitive), means every source allowed by 'max_confidentiality' */
+  optional string query = 2;
+  optional int32 max_results = 3; /* absent = all without query, 10 with query; 0 = no limit */
+  optional sdmxdl.format.protobuf.ConfidentialityDto max_confidentiality = 4; /* absent = every source */
+  optional string languages = 5;
+  optional bool plain_text = 6; /* strip markup (e.g. HTML tags) from descriptions; absent = false */
+  optional int32 truncate = 7; /* maximum length of descriptions, truncated with an ellipsis; absent or 0 = no limit */
+  optional int32 offset = 8; /* number of matching items to skip before returning 'max_results' items; absent = 0 */
+  optional int32 timeout = 9; /* maximum time to wait for the sources, in milliseconds; absent or 0 = no limit */
 }
 
 message WebMetaRequestDto {
@@ -188,6 +202,26 @@ message ListDatabasesResponseDto {
 message ListFlowsResponseDto {
   repeated sdmxdl.format.protobuf.FlowDto items = 1;
   int32 total = 2;
+}
+
+message FlowEntryDto {
+  string source = 1;
+  optional string database = 2; /* absent = default database */
+  sdmxdl.format.protobuf.FlowDto flow = 3;
+}
+
+message SourceFailureDto {
+  string source = 1;
+  optional string database = 2; /* absent = the whole source failed */
+  string reason = 3; /* stable error reason, same as the ErrorInfo reason of a failed call (e.g. UPSTREAM_TIMEOUT) */
+  string message = 4;
+  optional int32 upstream_status = 5; /* HTTP status code returned by the source, if any */
+}
+
+message SearchFlowsResponseDto {
+  repeated FlowEntryDto items = 1; /* matching flows of all the sources, best match first with a query */
+  int32 total = 2;
+  repeated SourceFailureDto failures = 3; /* sources (or databases) that could not be searched, sorted by source */
 }
 
 message ListDimensionsResponseDto {

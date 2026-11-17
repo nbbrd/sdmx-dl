@@ -25,6 +25,7 @@ import sdmxdl.script.ScriptManager;
 import sdmxdl.script.ScriptTarget;
 import sdmxdl.web.HealthCheck;
 import sdmxdl.web.SdmxWebManager;
+import sdmxdl.web.WebFlowsRequest;
 import sdmxdl.web.WebHealthRequest;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.WebSourcesRequest;
@@ -100,6 +101,7 @@ public class SdmxdlMcpService2 {
     private static final String DEFAULT_FIRST_N = "0";
     private static final String DEFAULT_MAX_RESULTS = "10";
     private static final String DEFAULT_OFFSET = "0";
+    private static final String DEFAULT_SEARCH_TIMEOUT = "30000";
     private static final String DEFAULT_QUERY = NO_QUERY;
     private static final String DEFAULT_DETAIL = "DATA_ONLY";
     private static final String DEFAULT_KEY = "all";
@@ -126,7 +128,7 @@ public class SdmxdlMcpService2 {
 
     @Tool(
             description =
-                    "Get the name and version of the SDMX-DL server. Also describes the standard workflow for every other tool here: (1) listSources to pick a data provider id, (2) listFlows (with a 'query') to pick a dataset, (3) listDimensions/listAttributes or getMeta to see how series are identified, (4) listCodes to turn a label into a dimension code and listAvailability to check which codes really exist, (5) getData with the 'dimensions' map to fetch observations. Never guess ids: always resolve them with the list* tools first.")
+                    "Get the name and version of the SDMX-DL server. Also describes the standard workflow for every other tool here: (1) listSources to pick a data provider id, (2) listFlows (with a 'query') to pick a dataset, or searchFlows when the source is unknown, (3) listDimensions/listAttributes or getMeta to see how series are identified, (4) listCodes to turn a label into a dimension code and listAvailability to check which codes really exist, (5) getData with the 'dimensions' map to fetch observations. Never guess ids: always resolve them with the list* tools first.")
     public AboutDto about() {
         return ProtoApi.fromAbout();
     }
@@ -211,6 +213,46 @@ public class SdmxdlMcpService2 {
                         result.getItems().stream().map(ProtoApi::fromDataflow).toList())
                 .setTotal(result.getTotal())
                 .build();
+    }
+
+    @Tool(
+            description =
+                    "Search the data flows (datasets) of ALL public sources at once; use it when you do not know which source holds an indicator. Pass a topic as 'query' (e.g. 'unemployment rate', 'inflation') to rank flows of every source by relevance. Each entry gives the source id (to use as 'source'), the database ref if any, the flow ref (to use as 'flow'), a name and a description (plain text truncated to 200 characters by default). 'failures' lists the sources that could not be searched (e.g. timeout); their flows are missing, not empty. Next step: call getMeta or listDimensions on the chosen source and flow.")
+    public SearchFlowsResponseDto searchFlows(
+            @ToolArg(description = QUERY_ARG, required = false, defaultValue = DEFAULT_QUERY) String query,
+            @ToolArg(
+                            description =
+                                    "Source ids to search, exactly as returned by listSources. Omit (default) to search every public source.",
+                            required = false)
+                    List<String> sources,
+            @ToolArg(description = LANGUAGES_ARG, required = false, defaultValue = DEFAULT_LANGUAGES) String languages,
+            @ToolArg(description = MAX_RESULTS_ARG, required = false, defaultValue = DEFAULT_MAX_RESULTS)
+                    int maxResults,
+            @ToolArg(description = OFFSET_ARG, required = false, defaultValue = DEFAULT_OFFSET) int offset,
+            @ToolArg(description = PLAIN_TEXT_ARG, required = false, defaultValue = DEFAULT_PLAIN_TEXT)
+                    boolean plainText,
+            @ToolArg(description = TRUNCATE_ARG, required = false, defaultValue = DEFAULT_TRUNCATE) int truncate,
+            @ToolArg(
+                            description =
+                                    "Maximum time to wait for the sources, in milliseconds (default 30000; use 0 for no limit). Sources that do not answer in time are reported in 'failures'.",
+                            required = false,
+                            defaultValue = DEFAULT_SEARCH_TIMEOUT)
+                    int timeout)
+            throws IOException {
+        List<String> ids = sources != null ? sources : List.of();
+        ids.forEach(this::getPublicSourceForMcp);
+        WebFlowsRequest request = WebFlowsRequest.builder()
+                .sources(ids)
+                .confidentialityThreshold(THRESHOLD)
+                .languagesOf(languages)
+                .query(query)
+                .maxResults(maxResults)
+                .offset(offset)
+                .plainText(plainText)
+                .truncate(truncate)
+                .timeout(SdmxdlGrpcService2.toTimeout(timeout))
+                .build();
+        return SdmxdlGrpcService2.toSearchFlowsResponse(manager.searchFlows(request));
     }
 
     @Tool(

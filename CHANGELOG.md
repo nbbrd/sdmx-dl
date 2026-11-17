@@ -16,6 +16,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![API] Add source health check merging monitor report and live access check [#1357](https://github.com/nbbrd/sdmx-dl/issues/1357)
 - ![PROVIDER] Add a credible but obviously-fake data source for demos and testing [#1310](https://github.com/nbbrd/sdmx-dl/issues/1310)
 - ![GRPC] Add health check, availability filtering, data query options and script generation to the web UI
+- ![API] Add flow search across sources with per-source failures and timeout [#1395](https://github.com/nbbrd/sdmx-dl/issues/1395)
 
 ### Changed
 

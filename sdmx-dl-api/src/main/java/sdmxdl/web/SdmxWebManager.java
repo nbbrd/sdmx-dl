@@ -24,10 +24,16 @@ import internal.sdmxdl.SearchSupport;
 import internal.sdmxdl.ext.PersistenceLoader;
 import internal.sdmxdl.web.spi.*;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
@@ -272,6 +278,144 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
                 UnaryOperator.identity());
     }
 
+    /**
+     * Searches the flows of several web sources at once, applying the filtering, ranking and
+     * paging options carried by the given request.
+     * <p>
+     * The {@linkplain WebFlowsRequest#getSources() requested sources} (or every non-alias source
+     * allowed by {@link WebFlowsRequest#getConfidentialityThreshold()} if none is requested) are
+     * loaded in parallel, including all their databases. Sources, or databases, that fail or do
+     * not answer before {@link WebFlowsRequest#getTimeout()} are reported as
+     * {@linkplain WebFlowsResult#getFailures() failures} instead of being thrown, and the flows
+     * already loaded are kept. Then:
+     * <ul>
+     *     <li>if the request has no query ({@link HasSearch#NO_QUERY}), all the flows match and
+     *     are sorted by source id, database and flow ref</li>
+     *     <li>otherwise, the flows are ranked by relevance to {@link WebFlowsRequest#getQuery()}
+     *     using {@link Search#ofFlowEntries(Collection, Languages)}</li>
+     * </ul>
+     * Matches are then paged according to {@link WebFlowsRequest#getOffset()} and
+     * {@link WebFlowsRequest#getEffectiveMaxResults()}.
+     *
+     * @param request the non-null request describing the sources, query and paging to apply
+     * @return a non-null page of matching flows with the total number of matches and the failures
+     * @throws IOException              if a requested source cannot be found or is not allowed
+     * @throws IllegalArgumentException if the paging parameters are invalid
+     */
+    public @NonNull WebFlowsResult searchFlows(@NonNull WebFlowsRequest request) throws IOException {
+        request.getEffectiveOffset();
+        request.getEffectiveMaxResults();
+
+        List<WebSource> sources = new ArrayList<>();
+        if (request.getSources().isEmpty()) {
+            getSources().values().stream()
+                    .filter(source -> !source.isAlias())
+                    .filter(request.getConfidentialityThreshold()::isAllowedIn)
+                    .forEach(sources::add);
+        } else {
+            for (String name : request.getSources()) {
+                sources.add(lookupSource(name)
+                        .filter(request.getConfidentialityThreshold()::isAllowedIn)
+                        .orElseThrow(() -> newMissingSource(name)));
+            }
+        }
+
+        List<FlowEntry> entries = new ArrayList<>();
+        List<SourceFailure> failures = new ArrayList<>();
+        if (!sources.isEmpty()) {
+            loadFlowEntries(sources, request, entries, failures);
+        }
+        failures.sort(comparing(SourceFailure::getSource));
+
+        SearchResult<FlowEntry> result = SearchSupport.search(
+                entries,
+                request,
+                comparing((FlowEntry entry) -> entry.getSource().getId())
+                        .thenComparing(entry -> entry.getDatabase().getId())
+                        .thenComparing(entry -> entry.getFlow().getRef()),
+                items -> Search.ofFlowEntries(items, request.getLanguages()),
+                flowEntryTransformer(request));
+        return WebFlowsResult.builder()
+                .items(result.getItems())
+                .total(result.getTotal())
+                .failures(failures)
+                .build();
+    }
+
+    // workers share no mutable state: only the calling thread fills the lists, so late answers are simply ignored
+    private void loadFlowEntries(
+            List<WebSource> sources, WebFlowsRequest request, List<FlowEntry> entries, List<SourceFailure> failures)
+            throws IOException {
+        long deadline = request.getTimeout() != null
+                ? System.nanoTime() + request.getTimeout().toNanos()
+                : 0;
+        ExecutorService executor = Executors.newFixedThreadPool(
+                Math.min(sources.size(), MAX_SEARCH_THREADS), SdmxWebManager::newDaemonThread);
+        try {
+            Map<WebSource, Future<SourceFlows>> futures = new LinkedHashMap<>();
+            for (WebSource source : sources) {
+                futures.put(source, executor.submit(() -> loadFlowEntries(source, request.getLanguages())));
+            }
+            for (Map.Entry<WebSource, Future<SourceFlows>> future : futures.entrySet()) {
+                String sourceId = future.getKey().getId();
+                try {
+                    SourceFlows flows = request.getTimeout() != null
+                            ? future.getValue().get(Math.max(0, deadline - System.nanoTime()), TimeUnit.NANOSECONDS)
+                            : future.getValue().get();
+                    entries.addAll(flows.getEntries());
+                    failures.addAll(flows.getFailures());
+                } catch (TimeoutException ex) {
+                    failures.add(new SourceFailure(
+                            sourceId,
+                            DatabaseRef.NO_DATABASE,
+                            new TimeoutException("No answer within " + request.getTimeout())));
+                } catch (ExecutionException ex) {
+                    Throwable cause = ex.getCause();
+                    failures.add(new SourceFailure(
+                            sourceId, DatabaseRef.NO_DATABASE, cause instanceof Exception ? (Exception) cause : ex));
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    throw new InterruptedIOException("Interrupted while searching flows");
+                }
+            }
+        } finally {
+            // late answers are not interrupted so that they can still fill the cache
+            executor.shutdown();
+        }
+    }
+
+    private SourceFlows loadFlowEntries(WebSource source, Languages languages) throws IOException {
+        List<FlowEntry> entries = new ArrayList<>();
+        List<SourceFailure> failures = new ArrayList<>();
+        try (Connection connection = getConnection(source, languages)) {
+            Set<DatabaseRef> databases = new LinkedHashSet<>();
+            connection.getDatabases().forEach(database -> databases.add(database.getRef()));
+            if (databases.isEmpty()) {
+                databases.add(DatabaseRef.NO_DATABASE);
+            }
+            for (DatabaseRef database : databases) {
+                try {
+                    connection.getFlows(database).forEach(flow -> entries.add(new FlowEntry(source, database, flow)));
+                } catch (IOException | RuntimeException ex) {
+                    failures.add(new SourceFailure(source.getId(), database, ex));
+                }
+            }
+        }
+        return new SourceFlows(entries, failures);
+    }
+
+    @lombok.Value
+    private static class SourceFlows {
+        List<FlowEntry> entries;
+        List<SourceFailure> failures;
+    }
+
+    private static UnaryOperator<FlowEntry> flowEntryTransformer(WebFlowsRequest request) {
+        UnaryOperator<Flow> flowTransformer =
+                SearchSupport.flowTransformer(request.isPlainText(), request.getTruncate());
+        return entry -> new FlowEntry(entry.getSource(), entry.getDatabase(), flowTransformer.apply(entry.getFlow()));
+    }
+
     public @NonNull Provider<WebSource> usingName(@NonNull String name) throws IOException {
         return using(lookupSource(name).orElseThrow(() -> newMissingSource(name)));
     }
@@ -331,6 +475,14 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
 
     private static IOException newMissingSource(String name) {
         return new ResourceNotFoundException("Missing source '" + name + "'");
+    }
+
+    private static final int MAX_SEARCH_THREADS = 32;
+
+    private static Thread newDaemonThread(Runnable runnable) {
+        Thread result = new Thread(runnable);
+        result.setDaemon(true);
+        return result;
     }
 
     private static <T> Collector<T, ?, T> reducingByFirst() {

@@ -238,9 +238,81 @@ ECB:SEE(1.0),Securities exchange - Trading Statistics,
 ```
 {{< /expand >}}
 
-- Search is scoped to a single source; [discover sources](#sources) first if you don't know which source to search within.
+- Search is scoped to a single source; [discover sources](#sources) first if you don't know which source to search within, or [search across sources](#flows-across-sources).
 - Some sources expose several databases; pass a `database` to scope the listing (defaults to the source's single/default database otherwise) — see [Databases](#databases).
 - Descriptions may contain markup (e.g. HTML tags) and be quite long; pass `plainText` to strip markup and `truncate` to limit their length (CLI: `--plain-text` and `--truncate`; gRPC: `plain_text` and `truncate`). The MCP tools return plain descriptions truncated to 200 characters by default.
+
+## Flows across sources
+
+Find a dataset by topic when you don't know which source publishes it: the flows of several sources (all by default) are searched at once and ranked together.
+
+{{< tabs "discover-flows-across-sources" >}}
+
+{{< tab "API" >}}
+
+```java
+//JAVA 25+
+//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:{{< sdmx-dl-version >}}
+import java.time.Duration;
+import sdmxdl.web.*;
+
+void main() throws Exception {
+    WebFlowsResult result = SdmxWebManager.ofServiceLoader()
+            .searchFlows(WebFlowsRequest.builder()
+                    .source("ECB").source("ESTAT").source("BIS").source("OECD")
+                    .query("gdp")
+                    .maxResults(4)
+                    .timeout(Duration.ofSeconds(8))
+                    .build());
+
+    result.getItems().forEach(entry -> IO.println(entry.getSource().getId() + " " + entry.getFlow().getRef()));
+    result.getFailures().forEach(failure -> IO.println(failure.getSource() + " failed: " + failure.getCause()));
+}
+```
+{{< /tab >}}
+
+{{< tab "CLI" >}}
+
+```shell
+sdmx-dl search flows "exchange rates"
+sdmx-dl search flows gdp --within ECB,ESTAT,BIS,OECD --timeout 8000 -m 4
+```
+{{< /tab >}}
+
+{{< tab "WS" >}}
+
+### REST
+
+```shell
+curl -G localhost:4559/sdmx-dl/v2/flows \
+  --data-urlencode "query=gdp" \
+  --data-urlencode "sources=ECB,ESTAT,BIS,OECD" \
+  --data-urlencode "timeout=8000" \
+  --data-urlencode "maxResults=4"
+```
+
+### gRPC
+```shell
+grpcurl -d '{"sources":["ECB","ESTAT","BIS","OECD"],"query":"gdp","timeout":8000,"maxResults":4}' -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.SearchFlows
+```
+{{< /tab >}}
+
+{{< /tabs >}}
+
+{{< expand "CLI output sample" >}}
+```plain
+Source,Database,Ref,Name,Description
+ESTAT,,ESTAT:PRC_REM_GDP(1.0),GDP weights used in the calculation of the global specific indicator,
+ESTAT,,ESTAT:NAIDA_10_GDP(1.0),GDP and main aggregates - international data cooperation - annual data,
+ESTAT,,ESTAT:NAIDQ_10_GDP(1.0),GDP and main aggregates - international data cooperation - quarterly data,
+OECD,,OECD.CFE.TOU:DSD_TOURISM_KEY@DF_KEY_IND_PC(1.0),Key tourism economic indicators,Tourism GDP corresponds to the part of GDP genera…
+```
+{{< /expand >}}
+
+- Sources are queried in parallel and every database of each source is searched; each result tells its `source` and `database`.
+- A source that fails or doesn't answer within `timeout` (milliseconds, `0` for no limit) doesn't fail the search: it is reported in `failures` (on stderr for the CLI), e.g. `Failed to search 'INSEE': No answer within PT1.5S`.
+- Without a query, results are sorted by source, database and flow; `total`, `maxResults` and `offset` work as for the other listings.
+- Searching all sources can be slow on a cold cache since every source's flows must be downloaded; restrict the sources and set a timeout for interactive use. The MCP `searchFlows` tool only searches public sources and waits 30 seconds by default.
 
 ## Next step
 

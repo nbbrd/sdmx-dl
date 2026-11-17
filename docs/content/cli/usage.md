@@ -26,6 +26,7 @@ flowchart TB
     r{{sdmx-dl}}
     r --- f([fetch]) --- data & meta & keys
     r --- l([list]) --- sources & databases & flows & dimensions & attributes & codes & availability & features & plugins
+    r --- q([search]) --- qflows[flows]
     r --- c([check]) --- health & config & xsources[sources]
     r --- s([setup]) --- completion & launcher
     r --- x([script]) --- xdata[data] & xflows[flows] & targets
@@ -52,6 +53,11 @@ flowchart TB
     click availability "#list-availability" "list availability command"
     click features "#list-features" "list features command"
     click plugins "#list-plugins" "list plugins command"
+
+    classDef qx fill:#2aa198
+    class q,qflows qx;
+    click q "#search" "search command"
+    click qflows "#search-flows" "search flows command"
 
     classDef cx fill:#268bd2
     class c,health,config,xsources cx;
@@ -103,6 +109,13 @@ Subcommands:
 [plugins](#list-plugins)
 
 [Examples]({{< relref "examples#list-examples" >}})
+
+{{< shields_io/badge label="search" color="2aa198" >}}
+
+Search resources across several sources at once (see [Discover]({{< relref "/usage/discover#flows-across-sources" >}})).
+
+Subcommands:
+[flows](#search-flows)
 
 {{< shields_io/badge label="check" color="268bd2" >}}
 
@@ -627,6 +640,57 @@ CSV columns:
 
 {{< expand "Output sample" >}}
 <small>{{< include file="/tmp/usage/list-plugins-sample.md" >}}</small>
+{{< /expand >}}
+
+{{< shields_io/badge label="search" message="flows" color="2aa198" >}}
+
+Search data flows of several sources (all by default) at once, ranked by relevance (typo-tolerant).
+Sources are queried in parallel; those that fail or don't answer within [`--timeout`](../options#timeout)
+are reported on stderr while the results of the others are still returned.
+
+Example: <code>sdmx-dl <font color="#2aa198">search flows</font> <abbr title="query">"exchange rates"</abbr></code>  
+Example: <code>sdmx-dl <font color="#2aa198">search flows</font> <abbr title="query">gdp</abbr> <abbr title="sources">--within ECB,ESTAT,BIS,OECD</abbr> <abbr title="timeout">--timeout 8000</abbr></code>  
+
+{{< tabs "search-flows" >}}
+{{< tab "Parameters" >}}
+
+1. `query` - Free-text search query.
+
+The legacy form <code>search flows <abbr title="source">ECB</abbr> <abbr title="query">"exchange rates"</abbr></code> still searches a single source.
+
+{{< /tab >}}
+{{< tab "Options" >}}
+
+Main options:
+- [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
+- [`-l, --languages<langs>`](../options#languages) - Language priority list.
+- [`-w, --within<source>,...`](../options#within) - Sources to search (default: all).
+- [`-c, --max-confidentiality<level>`](../options#max-confidentiality) - Maximum confidentiality level of the searched sources.
+- [`--timeout<millis>`](../options#timeout) - Maximum time to wait for the sources.
+- [`-m, --max-results<n>`](../options#max-results) - Maximum number of results.
+- [`--offset<n>`](../options#offset) - Number of results to skip.
+- [`--plain-text`](../options#plain-text) - Strip markup from descriptions.
+- [`--truncate<length>`](../options#truncate) - Maximum description length.
+
+Other options: 
+[`CSV`](../options#csv),
+[`Network`](../options#network)
+
+{{< /tab >}}
+{{< tab "Output" >}}
+
+CSV columns:
+1. [`Source:source`](../datatypes#source)
+2. [`Database:string`](../datatypes#string)
+3. [`Ref:flow`](../datatypes#flow)
+4. [`Name:string`](../datatypes#string)
+5. [`Description:string`](../datatypes#string)
+
+{{< /tab >}}
+{{< /tabs >}}
+
+{{< expand "Output sample" >}}
+<small>{{< include file="/tmp/usage/search-flows-sample.md" >}}</small>
 {{< /expand >}}
 
 {{< shields_io/badge label="check" message="health" color="268bd2" >}}

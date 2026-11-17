@@ -5,13 +5,10 @@ import picocli.CommandLine;
 
 /**
  * @author Philippe Charles
- * @deprecated use {@code list} commands with {@code --query} instead
  */
-@Deprecated
 @CommandLine.Command(
         name = "search",
-        subcommands = {SearchSourcesCommand.class, SearchDatabasesCommand.class, SearchFlowsCommand.class},
-        hidden = true)
+        subcommands = {SearchSourcesCommand.class, SearchDatabasesCommand.class, SearchFlowsCommand.class})
 public final class SearchCommand implements Callable<Void> {
 
     @CommandLine.Spec

@@ -63,6 +63,7 @@ curl "localhost:4559/sdmx-dl/v2/ECB/flows"
 | `ListSources`      | `GET /sources`                                   | List or search sources.                                         |
 | `ListDatabases`    | `GET /{source}/databases`                        | List or search a source's databases.                            |
 | `ListFlows`        | `GET /{source}/flows`                            | List or search a source's flows.                                |
+| `SearchFlows`      | `GET /flows`                                     | Search the flows of several sources (all by default) at once, with per-source `failures` and an optional `timeout`. |
 | `GetMeta`          | `GET /{source}/{flow}/meta`                      | Flow-level structure (dimensions, attributes).                  |
 | `ListDimensions`   | `GET /{source}/{flow}/dimensions`                | List or search a flow's dimensions.                              |
 | `ListAttributes`   | `GET /{source}/{flow}/attributes`                | List or search a flow's attributes.                              |
@@ -130,6 +131,7 @@ Available tools:
 | `listSources`      | List or search available sources.                                      |
 | `listDatabases`    | List or search the databases of a source.                              |
 | `listFlows`        | List or search the flows (datasets) of a source.                       |
+| `searchFlows`      | Search the flows (datasets) of several public sources at once.         |
 | `listDimensions`   | List or search the dimensions of a flow's structure.                   |
 | `listAttributes`   | List or search the attributes of a flow's structure.                   |
 | `getMeta`          | Get the structure (dimensions, attributes) skeleton of a flow.         |
@@ -141,7 +143,7 @@ Available tools:
 | `generateDataScript`  | Generate a ready-to-run script that fetches data (not executed).    |
 | `generateFlowsScript` | Generate a ready-to-run script that lists flows (not executed).     |
 
-The typical workflow is: find a source (`listSources`) → find a flow (`listFlows`) → inspect its dimensions/attributes (`getMeta` or `listDimensions`/`listAttributes`) → resolve dimension codes (`listCodes`) → fetch data (`getData`, preferring the structured `dimensions` map over a positional `key`).
+The typical workflow is: find a source (`listSources`) → find a flow (`listFlows`, or `searchFlows` when the source is unknown) → inspect its dimensions/attributes (`getMeta` or `listDimensions`/`listAttributes`) → resolve dimension codes (`listCodes`) → fetch data (`getData`, preferring the structured `dimensions` map over a positional `key`).
 
 Call example using [curl](https://curl.se/) against the streamable HTTP transport:
 ```shell

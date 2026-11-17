@@ -158,26 +158,8 @@ public final class Provider<SOURCE extends Source> {
                     request,
                     comparing(HasReference::getRef),
                     Search::ofFlows,
-                    flowTransformer(request));
+                    SearchSupport.flowTransformer(request.isPlainText(), request.getTruncate()));
         }
-    }
-
-    /**
-     * Builds a function that applies the description-related options of the given request
-     * (plain text conversion and/or truncation) to a flow.
-     *
-     * <p>Returns the identity function when neither option is active, to avoid rebuilding
-     * every flow unnecessarily.
-     *
-     * @param request the flow-level request carrying description options
-     * @return a function transforming a flow's description according to the request
-     */
-    private static UnaryOperator<Flow> flowTransformer(FlowsRequest request) {
-        return !request.isPlainText() && request.getTruncate() == HasDescription.NO_DESCRIPTION_LIMIT
-                ? UnaryOperator.identity()
-                : flow -> flow.toBuilder()
-                        .description(flow.getDescription(request.isPlainText(), request.getTruncate()))
-                        .build();
     }
 
     /**

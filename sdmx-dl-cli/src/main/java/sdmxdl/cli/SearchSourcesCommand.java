@@ -14,7 +14,7 @@ import sdmxdl.web.WebSourcesRequest;
  * @deprecated use {@code list sources --query} instead
  */
 @Deprecated
-@CommandLine.Command(name = "sources")
+@CommandLine.Command(name = "sources", hidden = true)
 public final class SearchSourcesCommand implements Callable<Void> {
 
     @CommandLine.Mixin

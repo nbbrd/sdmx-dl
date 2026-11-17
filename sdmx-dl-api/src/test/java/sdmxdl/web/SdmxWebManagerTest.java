@@ -17,22 +17,31 @@
 package sdmxdl.web;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.InstanceOfAssertFactories.list;
 import static sdmxdl.Languages.ANY;
 import static sdmxdl.web.spi.Driver.NATIVE_DRIVER_RANK;
 import static sdmxdl.web.spi.Driver.WRAPPED_DRIVER_RANK;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 import lombok.NonNull;
 import org.junit.jupiter.api.Test;
 import sdmxdl.Confidentiality;
 import sdmxdl.Connection;
 import sdmxdl.DataRepository;
+import sdmxdl.Database;
+import sdmxdl.DatabaseRef;
 import sdmxdl.Feature;
+import sdmxdl.Flow;
+import sdmxdl.FlowRef;
+import sdmxdl.Languages;
+import sdmxdl.StructureRef;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.Monitor;
 import sdmxdl.web.spi.Networking;
@@ -453,6 +462,157 @@ public class SdmxWebManagerTest {
                 .returns(HealthVerdict.UNREACHABLE, HealthReport::getVerdict)
                 .returns(null, HealthReport::getMonitor)
                 .returns(null, HealthReport::getMonitorError);
+    }
+
+    @Test
+    public void testSearchFlows() throws IOException {
+        Flow exr = Flow.builder()
+                .ref(FlowRef.parse("EXR"))
+                .structureRef(StructureRef.parse("EXR_DSD"))
+                .name("Exchange rates")
+                .description("<b>Daily</b> rates")
+                .build();
+        Flow gdp = Flow.builder()
+                .ref(FlowRef.parse("GDP"))
+                .structureRef(StructureRef.parse("GDP_DSD"))
+                .name("Gross domestic product")
+                .build();
+        DataRepository single =
+                DataRepository.builder().name("single").flow(exr).build();
+        DataRepository multi = DataRepository.builder()
+                .name("multi")
+                .database(new Database(DatabaseRef.parse("db1"), "First"))
+                .database(new Database(DatabaseRef.parse("db2"), "Second"))
+                .flow(gdp)
+                .build();
+        WebSource secret = MockedDriver.sourceOf("secret", "repoDriver", single).toBuilder()
+                .confidentiality(Confidentiality.CONFIDENTIAL)
+                .build();
+        WebSource broken = MockedDriver.sourceOf("broken", "repoDriver", single).toBuilder()
+                .endpointOf("missing")
+                .build();
+        WebSource slow = WebSource.builder()
+                .id("slow")
+                .driver("slowDriver")
+                .endpointOf("slow")
+                .build();
+
+        SdmxWebManager manager = SdmxWebManager.builder()
+                .driver(MockedDriver.builder()
+                        .id("repoDriver")
+                        .available(true)
+                        .repo(single, EnumSet.allOf(Feature.class))
+                        .repo(multi, EnumSet.allOf(Feature.class))
+                        .customSource(secret)
+                        .customSource(broken)
+                        .build())
+                .driver(new SlowDriver(slow))
+                .build();
+
+        assertThatNullPointerException().isThrownBy(() -> manager.searchFlows(null));
+
+        assertThatIOException()
+                .isThrownBy(() -> manager.searchFlows(
+                        WebFlowsRequest.builder().source("other").build()))
+                .withMessageContaining("other");
+
+        assertThatIOException()
+                .describedAs("source not allowed by the threshold")
+                .isThrownBy(() -> manager.searchFlows(WebFlowsRequest.builder()
+                        .source("secret")
+                        .confidentialityThreshold(Confidentiality.PUBLIC)
+                        .build()));
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> manager.searchFlows(
+                        WebFlowsRequest.builder().source("single").offset(-1).build()));
+
+        WebFlowsResult all = manager.searchFlows(WebFlowsRequest.builder()
+                .confidentialityThreshold(Confidentiality.RESTRICTED)
+                .timeout(Duration.ofMillis(200))
+                .build());
+        assertThat(all.getItems())
+                .describedAs("all databases of every allowed non-alias source, sorted without query")
+                .extracting(
+                        o -> o.getSource().getId(),
+                        o -> o.getDatabase().getId(),
+                        o -> o.getFlow().getRef().getId())
+                .containsExactly(
+                        tuple("multi", "db1", "GDP"), tuple("multi", "db2", "GDP"), tuple("single", "", "EXR"));
+        assertThat(all.getTotal()).isEqualTo(3);
+        assertThat(all.getFailures())
+                .describedAs("failing and slow sources are reported, not thrown")
+                .extracting(SourceFailure::getSource, o -> o.getCause().getClass())
+                .containsExactly(tuple("broken", IOException.class), tuple("slow", TimeoutException.class));
+
+        assertThat(manager.searchFlows(WebFlowsRequest.builder()
+                        .source("single")
+                        .source("multi")
+                        .query("exchange")
+                        .plainText(true)
+                        .build()))
+                .describedAs("ranked by relevance with transformed descriptions")
+                .returns(1, WebFlowsResult::getTotal)
+                .returns(Collections.emptyList(), WebFlowsResult::getFailures)
+                .extracting(WebFlowsResult::getItems, list(FlowEntry.class))
+                .singleElement()
+                .returns("single", o -> o.getSource().getId())
+                .returns("Daily rates", o -> o.getFlow().getDescription());
+
+        assertThat(manager.searchFlows(WebFlowsRequest.builder()
+                        .source("multi")
+                        .source("single")
+                        .offset(1)
+                        .maxResults(1)
+                        .build()))
+                .describedAs("paging")
+                .returns(3, WebFlowsResult::getTotal)
+                .extracting(WebFlowsResult::getItems, list(FlowEntry.class))
+                .extracting(o -> o.getDatabase().getId())
+                .containsExactly("db2");
+    }
+
+    @lombok.AllArgsConstructor
+    private static final class SlowDriver implements Driver {
+
+        private final WebSource source;
+
+        @Override
+        public @NonNull String getDriverId() {
+            return source.getDriver();
+        }
+
+        @Override
+        public int getDriverRank() {
+            return NATIVE_DRIVER_RANK;
+        }
+
+        @Override
+        public boolean isDriverAvailable() {
+            return true;
+        }
+
+        @Override
+        public @NonNull Connection connect(
+                @NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context)
+                throws IOException {
+            try {
+                Thread.sleep(10_000);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
+            throw new IOException("Too late");
+        }
+
+        @Override
+        public @NonNull Collection<WebSource> getDefaultSources() {
+            return Collections.singletonList(source);
+        }
+
+        @Override
+        public @NonNull Collection<String> getDriverPropertyNames() {
+            return Collections.emptyList();
+        }
     }
 
     private final DataRepository sample = DataRepository.builder().name("repo").build();

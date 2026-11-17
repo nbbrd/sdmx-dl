@@ -15,7 +15,7 @@ import sdmxdl.DatabasesRequest;
  * @deprecated use {@code list databases --query} instead
  */
 @Deprecated
-@CommandLine.Command(name = "databases")
+@CommandLine.Command(name = "databases", hidden = true)
 public final class SearchDatabasesCommand implements Callable<Void> {
 
     @CommandLine.Mixin

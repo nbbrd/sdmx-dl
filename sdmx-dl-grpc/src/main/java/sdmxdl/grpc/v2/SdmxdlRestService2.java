@@ -52,6 +52,7 @@ import sdmxdl.script.ScriptOptions;
 import sdmxdl.script.ScriptTarget;
 import sdmxdl.web.HealthCheck;
 import sdmxdl.web.SdmxWebManager;
+import sdmxdl.web.WebFlowsRequest;
 import sdmxdl.web.WebHealthRequest;
 import sdmxdl.web.WebSourcesRequest;
 
@@ -180,6 +181,32 @@ public class SdmxdlRestService2 {
                                 .toList())
                         .setTotal(result.getTotal())
                         .build());
+    }
+
+    @GET
+    @Path("/flows")
+    public Uni<SearchFlowsResponseDto> searchFlows(
+            @QueryParam("sources") @DefaultValue("all") @Parameter(description = SOURCES_DESCRIPTION) String sources,
+            @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages,
+            @QueryParam("query") @DefaultValue(NO_QUERY) String query,
+            @QueryParam("maxResults") @DefaultValue("" + AUTO_LIMIT) int maxResults,
+            @QueryParam("offset") @DefaultValue("0") @Parameter(description = OFFSET_DESCRIPTION) int offset,
+            @QueryParam("plainText") @DefaultValue("false") boolean plainText,
+            @QueryParam("truncate") @DefaultValue("" + NO_DESCRIPTION_LIMIT) int truncate,
+            @QueryParam("maxConfidentiality") @DefaultValue("SECRET") String maxConfidentiality,
+            @QueryParam("timeout") @DefaultValue("0") @Parameter(description = TIMEOUT_DESCRIPTION) int timeout) {
+        return uniOfIO(() -> manager.searchFlows(WebFlowsRequest.builder()
+                        .sources(SdmxdlGrpcService2.toSourceIds(splitList(sources)))
+                        .languagesOf(languages)
+                        .query(query)
+                        .maxResults(maxResults)
+                        .offset(offset)
+                        .plainText(plainText)
+                        .truncate(truncate)
+                        .confidentialityThreshold(Confidentiality.valueOf(maxConfidentiality))
+                        .timeout(SdmxdlGrpcService2.toTimeout(timeout))
+                        .build()))
+                .map(SdmxdlGrpcService2::toSearchFlowsResponse);
     }
 
     @GET
@@ -354,6 +381,12 @@ public class SdmxdlRestService2 {
 
     private static final String OFFSET_DESCRIPTION =
             "Number of matching items to skip before returning 'maxResults' items (default 0)";
+
+    private static final String SOURCES_DESCRIPTION =
+            "Comma-separated source ids, or 'all' (default) for every source allowed by 'maxConfidentiality'";
+
+    private static final String TIMEOUT_DESCRIPTION =
+            "Maximum time to wait for the sources, in milliseconds (default 0 = no limit); late sources are reported as failures";
 
     private static final String CHECKS_DESCRIPTION =
             "Comma-separated checks: 'monitor' (third-party monitor, default) and/or 'access' (live request against the source)";

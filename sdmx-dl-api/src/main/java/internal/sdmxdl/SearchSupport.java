@@ -7,8 +7,11 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import lombok.NonNull;
 import org.jspecify.annotations.Nullable;
+import sdmxdl.Flow;
+import sdmxdl.HasDescription;
 import sdmxdl.HasSearch;
 import sdmxdl.SearchResult;
 import sdmxdl.web.Search;
@@ -52,5 +55,24 @@ public class SearchSupport {
                         .collect(toList()))
                 .total(matches.size())
                 .build();
+    }
+
+    /**
+     * Builds a function that applies the description-related options of a request
+     * (plain text conversion and/or truncation) to a flow.
+     *
+     * <p>Returns the identity function when neither option is active, to avoid rebuilding
+     * every flow unnecessarily.
+     *
+     * @param plainText whether markup should be stripped from descriptions
+     * @param truncate  the maximum length of descriptions, or {@link HasDescription#NO_DESCRIPTION_LIMIT}
+     * @return a function transforming a flow's description accordingly
+     */
+    public static @NonNull UnaryOperator<Flow> flowTransformer(boolean plainText, int truncate) {
+        return !plainText && truncate == HasDescription.NO_DESCRIPTION_LIMIT
+                ? UnaryOperator.identity()
+                : flow -> flow.toBuilder()
+                        .description(flow.getDescription(plainText, truncate))
+                        .build();
     }
 }

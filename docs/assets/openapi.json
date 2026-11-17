@@ -224,6 +224,23 @@
           }
         }
       },
+      "FlowEntryDto" : {
+        "type" : "object",
+        "properties" : {
+          "descriptorForType" : {
+            "type" : "object"
+          },
+          "source" : {
+            "type" : "string"
+          },
+          "database" : {
+            "type" : "string"
+          },
+          "flow" : {
+            "$ref" : "#/components/schemas/FlowDto"
+          }
+        }
+      },
       "FlowRequestDto" : {
         "type" : "object",
         "properties" : {
@@ -647,6 +664,30 @@
           }
         }
       },
+      "SearchFlowsResponseDto" : {
+        "type" : "object",
+        "properties" : {
+          "descriptorForType" : {
+            "type" : "object"
+          },
+          "total" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/FlowEntryDto"
+            }
+          },
+          "failures" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SourceFailureDto"
+            }
+          }
+        }
+      },
       "SearchSourcesRequestDto" : {
         "type" : "object",
         "properties" : {
@@ -682,6 +723,30 @@
             "items" : {
               "$ref" : "#/components/schemas/ObsDto"
             }
+          }
+        }
+      },
+      "SourceFailureDto" : {
+        "type" : "object",
+        "properties" : {
+          "descriptorForType" : {
+            "type" : "object"
+          },
+          "source" : {
+            "type" : "string"
+          },
+          "database" : {
+            "type" : "string"
+          },
+          "reason" : {
+            "type" : "string"
+          },
+          "message" : {
+            "type" : "string"
+          },
+          "upstreamStatus" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         }
       },
@@ -1274,6 +1339,95 @@
           }
         },
         "summary" : "Get About"
+      }
+    },
+    "/sdmx-dl/v2/flows" : {
+      "get" : {
+        "tags" : [ "sdmx-dl v2" ],
+        "parameters" : [ {
+          "name" : "languages",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : "*"
+          }
+        }, {
+          "name" : "maxConfidentiality",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : "SECRET"
+          }
+        }, {
+          "name" : "maxResults",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : -1
+          }
+        }, {
+          "description" : "Number of matching items to skip before returning 'maxResults' items (default 0)",
+          "name" : "offset",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
+          }
+        }, {
+          "name" : "plainText",
+          "in" : "query",
+          "schema" : {
+            "type" : "boolean",
+            "default" : false
+          }
+        }, {
+          "name" : "query",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : ""
+          }
+        }, {
+          "description" : "Comma-separated source ids, or 'all' (default) for every source allowed by 'maxConfidentiality'",
+          "name" : "sources",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : "all"
+          }
+        }, {
+          "description" : "Maximum time to wait for the sources, in milliseconds (default 0 = no limit); late sources are reported as failures",
+          "name" : "timeout",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
+          }
+        }, {
+          "name" : "truncate",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SearchFlowsResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary" : "Search Flows"
       }
     },
     "/sdmx-dl/v2/health" : {

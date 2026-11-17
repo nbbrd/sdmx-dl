@@ -46,6 +46,16 @@ When `--query` is empty (the default), results are returned sorted/unranked inst
 | <a id="max-results" href="#max-results">`--max-results`</a>  | `-m`     | `<n>`     | Maximum number of results to return: `0` for no limit; by default, all results without query and the 10 best matches with a query.  |
 | <a id="offset" href="#offset">`--offset`</a>                 |          | `<n>`     | Number of matching results to skip before returning results (default: `0`).                                                        |
 
+## Search across sources
+
+Options used by the `search flows` command, which searches several sources at once.
+
+| Name                                                                                 | Shortcut | Parameter                                 | Description                                                                                                  |
+|--------------------------------------------------------------------------------------|----------|-------------------------------------------|--------------------------------------------------------------------------------------------------------------|
+| <a id="within" href="#within">`--within`</a>                                         | `-w`     | [`<source>,...`](../datatypes#source)     | Comma-separated sources to search (default: every source allowed by `--max-confidentiality`).                |
+| <a id="max-confidentiality" href="#max-confidentiality">`--max-confidentiality`</a>  | `-c`     | `<level>`                                 | Maximum confidentiality level of the searched sources: `PUBLIC`, `UNRESTRICTED`, `RESTRICTED`, `CONFIDENTIAL` or `SECRET` (default). |
+| <a id="timeout" href="#timeout">`--timeout`</a>                                      | -        | `<millis>`                                | Maximum time to wait for the sources (default: `0`, meaning no limit); late sources are reported as failures. |
+
 ## Description
 
 Options used by `list flows` and `search flows` to clean up the flow `Description` column.

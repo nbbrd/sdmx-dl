@@ -13,14 +13,20 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 import nbbrd.io.function.IOSupplier;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.*;
 import sdmxdl.format.protobuf.*;
 import sdmxdl.script.ScriptManager;
+import sdmxdl.web.FlowEntry;
 import sdmxdl.web.HealthCheck;
+import sdmxdl.web.SourceFailure;
+import sdmxdl.web.WebFlowsRequest;
+import sdmxdl.web.WebFlowsResult;
 import sdmxdl.web.WebHealthRequest;
 import sdmxdl.web.WebSourcesRequest;
 
@@ -94,6 +100,26 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
                     .setTotal(result.getTotal())
                     .build();
         });
+    }
+
+    @Override
+    public Uni<SearchFlowsResponseDto> searchFlows(WebSearchFlowsRequestDto request) {
+        return uniOfIO(
+                null,
+                () -> toSearchFlowsResponse(manager.searchFlows(WebFlowsRequest.builder()
+                        .sources(toSourceIds(request.getSourcesList()))
+                        .languagesOf(request.hasLanguages() ? request.getLanguages() : ANY_KEYWORD)
+                        .query(request.hasQuery() ? request.getQuery() : NO_QUERY)
+                        .maxResults(request.hasMaxResults() ? request.getMaxResults() : AUTO_LIMIT)
+                        .offset(request.hasOffset() ? request.getOffset() : NO_OFFSET)
+                        .plainText(request.hasPlainText() && request.getPlainText())
+                        .truncate(request.hasTruncate() ? request.getTruncate() : NO_DESCRIPTION_LIMIT)
+                        .confidentialityThreshold(
+                                request.hasMaxConfidentiality()
+                                        ? ProtoApi.toConfidentiality(request.getMaxConfidentiality())
+                                        : Confidentiality.SECRET)
+                        .timeout(toTimeout(request.hasTimeout() ? request.getTimeout() : 0))
+                        .build())));
     }
 
     @Override
@@ -265,6 +291,61 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
                 .build();
     }
 
+    static SearchFlowsResponseDto toSearchFlowsResponse(WebFlowsResult result) {
+        return SearchFlowsResponseDto.newBuilder()
+                .addAllItems(result.getItems().stream()
+                        .map(SdmxdlGrpcService2::fromFlowEntry)
+                        .toList())
+                .setTotal(result.getTotal())
+                .addAllFailures(result.getFailures().stream()
+                        .map(SdmxdlGrpcService2::fromSourceFailure)
+                        .toList())
+                .build();
+    }
+
+    private static FlowEntryDto fromFlowEntry(FlowEntry entry) {
+        FlowEntryDto.Builder result = FlowEntryDto.newBuilder()
+                .setSource(entry.getSource().getId())
+                .setFlow(ProtoApi.fromDataflow(entry.getFlow()));
+        if (!DatabaseRef.NO_DATABASE.equals(entry.getDatabase())) {
+            result.setDatabase(entry.getDatabase().getId());
+        }
+        return result.build();
+    }
+
+    private static SourceFailureDto fromSourceFailure(SourceFailure failure) {
+        ApiError error = ApiError.of(failure.getCause());
+        SourceFailureDto.Builder result = SourceFailureDto.newBuilder()
+                .setSource(failure.getSource())
+                .setReason(error.reason())
+                .setMessage(error.detail());
+        if (!DatabaseRef.NO_DATABASE.equals(failure.getDatabase())) {
+            result.setDatabase(failure.getDatabase().getId());
+        }
+        if (error.upstreamStatus() != null) {
+            result.setUpstreamStatus(error.upstreamStatus());
+        }
+        return result.build();
+    }
+
+    /**
+     * Converts a timeout in milliseconds; zero means no timeout.
+     */
+    static @Nullable Duration toTimeout(int millis) {
+        if (millis < 0) {
+            throw new IllegalArgumentException("Invalid timeout: " + millis);
+        }
+        return millis > 0 ? Duration.ofMillis(millis) : null;
+    }
+
+    /**
+     * Resolves requested source ids; a single "all" entry (case-insensitive) means every source,
+     * like an empty list.
+     */
+    static List<String> toSourceIds(List<String> sources) {
+        return sources.size() == 1 && "all".equalsIgnoreCase(sources.get(0)) ? List.of() : sources;
+    }
+
     private static FlowsRequest toFlowsRequest(WebFlowsRequestDto request) {
         return FlowsRequest.builder()
                 .databaseOf(request.hasDatabase() ? request.getDatabase() : NO_DATABASE_KEYWORD)
@@ -296,10 +377,7 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
      * source, and empty checks means the default (monitor only).
      */
     static WebHealthRequest toHealthRequest(List<String> sources, Collection<HealthCheck> checks) {
-        WebHealthRequest.Builder result = WebHealthRequest.builder();
-        if (!(sources.size() == 1 && "all".equalsIgnoreCase(sources.get(0)))) {
-            result.sources(sources);
-        }
+        WebHealthRequest.Builder result = WebHealthRequest.builder().sources(toSourceIds(sources));
         if (!checks.isEmpty()) {
             result.checks(EnumSet.copyOf(checks));
         }

@@ -13,6 +13,7 @@ import java.net.NoRouteToHostException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.net.http.HttpTimeoutException;
+import java.util.concurrent.TimeoutException;
 import javax.net.ssl.SSLException;
 import sdmxdl.ResourceNotFoundException;
 import sdmxdl.web.HttpStatusException;
@@ -54,7 +55,9 @@ record ApiError(Status.Code grpcCode, int httpStatus, String reason, String deta
         if (http != null) {
             return ofUpstreamStatus(http.getStatusCode(), detail);
         }
-        if (find(actual, SocketTimeoutException.class) != null || find(actual, HttpTimeoutException.class) != null) {
+        if (find(actual, SocketTimeoutException.class) != null
+                || find(actual, HttpTimeoutException.class) != null
+                || find(actual, TimeoutException.class) != null) {
             return new ApiError(Status.Code.DEADLINE_EXCEEDED, 504, UPSTREAM_TIMEOUT, detail, null);
         }
         if (find(actual, UnknownHostException.class) != null
