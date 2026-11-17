@@ -50,7 +50,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
 <meta property="article:section" content="Ws" />
     <meta
       property="article:modified_time"
-      content="2026-11-17T08:23:24+01:00"
+      content="2026-11-17T09:01:09+01:00"
     />
 
 
@@ -71,7 +71,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/ws/",
       "headline": "Web service",
       "description": "\nsdmx-dl WS is a web service that serves as a bridge to any application or language.\nThis service has three endpoints:\na gRPC endpoint which has the best performances but a limited set of clients a REST endpoint which has a wider range of clients but is less efficient an MCP endpoint which lets AI assistants and agents browse and fetch data It also serves a web UI to browse sources and fetch data from a browser, on top of the REST endpoint.",
-      "wordCount": "1315",
+      "wordCount": "1406",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -82,7 +82,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-11-17T08:23:24.00Z",
+      "dateModified": "2026-11-17T09:01:09.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1809,6 +1809,13 @@ They are designed to operate locally as well as on remote machines.</p>
   href="https://quarkus.io/guides/all-config#quarkus-vertx-http_quarkus-http-port"
 >The HTTP port</a>, shared by all endpoints</td>
 			</tr>
+			<tr>
+					<td><code>sdmxdl.tray.enabled</code></td>
+					<td>Show a system tray icon to open the <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/ws/web-ui/"
+>web UI</a> and quit the service (default: <code>true</code>)</td>
+			</tr>
 	</tbody>
 </table> </div>
 <p>All endpoints are served by a single HTTP server on port <code>4559</code> by default.<br>
@@ -1819,6 +1826,8 @@ More info at Quarkus <a
   class="gdoc-markdown__link"
   href="https://quarkus.io/guides/http-reference"
 >HTTP reference page</a>.</p>
+<p>The system tray icon is only shown when a desktop is available: it is skipped in headless mode (<code>-Djava.awt.headless=true</code>), in native executables and when the platform has no system tray.
+Its menu shows the version and address of the service, opens the web UI or the OpenAPI UI, copies the web UI URL or the MCP endpoint to the clipboard and quits the service. It follows the light or dark theme of the system.</p>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="grpc-endpoint"
     >
