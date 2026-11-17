@@ -159,6 +159,18 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- system tray -->
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf</artifactId>
+            <version>${flatlaf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf-extras</artifactId>
+            <version>${flatlaf.version}</version>
+        </dependency>
+
         <!-- test only -->
         <dependency>
             <groupId>${project.groupId}</groupId>

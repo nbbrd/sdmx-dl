@@ -26,12 +26,16 @@ To run it, just use the following command: `java -jar sdmx-dl-grpc-VERSION-runne
 
 Custom config:
 
-| Option              | Description                                                                                                  |
-|---------------------|--------------------------------------------------------------------------------------------------------------|
-| `quarkus.http.port` | [The HTTP port](https://quarkus.io/guides/all-config#quarkus-vertx-http_quarkus-http-port), shared by all endpoints |
+| Option                | Description                                                                                                  |
+|-----------------------|--------------------------------------------------------------------------------------------------------------|
+| `quarkus.http.port`   | [The HTTP port](https://quarkus.io/guides/all-config#quarkus-vertx-http_quarkus-http-port), shared by all endpoints |
+| `sdmxdl.tray.enabled` | Show a system tray icon to open the [web UI]({{< relref "/ws/web-ui" >}}) and quit the service (default: `true`) |
 
 All endpoints are served by a single HTTP server on port `4559` by default.  
 More info at Quarkus [all configuration options page](https://quarkus.io/guides/all-config) and [HTTP reference page](https://quarkus.io/guides/http-reference).
+
+The system tray icon is only shown when a desktop is available: it is skipped in headless mode (`-Djava.awt.headless=true`), in native executables and when the platform has no system tray.
+Its menu shows the version and address of the service, opens the web UI or the OpenAPI UI, copies the web UI URL or the MCP endpoint to the clipboard and quits the service. It follows the light or dark theme of the system.
 
 ## gRPC endpoint
 
