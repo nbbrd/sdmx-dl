@@ -341,7 +341,7 @@ function itemsOf(result) {
 }
 
 /**
- * Convert the code items of a REST v2 codes or availability response to a map
+ * Convert the code items of a REST v2 codes response to a map
  * @param {Object} result - Response with 'items' made of 'id' and optional 'name'
  * @returns {Object} - Map of code id to name (empty name when the code has no label)
  */

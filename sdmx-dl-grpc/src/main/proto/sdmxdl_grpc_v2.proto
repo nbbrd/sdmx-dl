@@ -146,7 +146,7 @@ message WebCodesRequestDto {
 message WebAvailabilityRequestDto {
   string source = 1;
   string flow = 2;
-  string dimension = 3; /* dimension id (as returned by ListDimensions), zero-based dimension index, or empty for the first wildcard dimension of the key */
+  string dimension = 3; /* dimension id (as returned by ListDimensions), zero-based dimension index, '*' for every dimension (each one ignoring its own code in the key), or empty for the first wildcard dimension of the key */
   string key = 4;
   optional string database = 5;
   optional string languages = 6;
@@ -249,9 +249,13 @@ message ListCodesResponseDto {
 }
 
 message ListAvailabilityResponseDto {
-  string dimension = 1; /* id of the resolved dimension */
-  repeated sdmxdl.format.protobuf.CodeDto items = 2; /* available codes, sorted by id */
-  int32 total = 3;
+  repeated AvailabilityDto items = 1; /* one item for the resolved dimension, or one per dimension in structure order for '*' */
+  int32 total = 2;
+}
+
+message AvailabilityDto {
+  string dimension = 1; /* id of the dimension */
+  repeated sdmxdl.format.protobuf.CodeDto codes = 2; /* available codes, sorted by id */
 }
 
 message CheckHealthResponseDto {

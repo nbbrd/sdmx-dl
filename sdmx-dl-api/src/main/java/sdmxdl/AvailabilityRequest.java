@@ -10,7 +10,9 @@ import lombok.NonNull;
  *     <li>an exact dimension id (e.g. {@code CURRENCY}) selects that dimension,</li>
  *     <li>otherwise, an integer (e.g. {@code 1}) selects the dimension at that zero-based index,</li>
  *     <li>an empty value ({@link #FIRST_WILDCARD_DIMENSION}, the default) selects the first wildcard
- *     dimension of the {@link #getKey() key}.</li>
+ *     dimension of the {@link #getKey() key},</li>
+ *     <li>{@code *} ({@link #ALL_DIMENSIONS}) selects every dimension, each one with its own code
+ *     removed from the key (faceted availability).</li>
  * </ul>
  */
 @lombok.Value
@@ -21,6 +23,11 @@ public class AvailabilityRequest implements Request {
      * Dimension value that selects the first wildcard dimension of the key.
      */
     public static final String FIRST_WILDCARD_DIMENSION = "";
+
+    /**
+     * Dimension value that selects every dimension of the structure.
+     */
+    public static final String ALL_DIMENSIONS = "*";
 
     @lombok.Builder.Default
     @NonNull DatabaseRef database = DatabaseRef.NO_DATABASE;

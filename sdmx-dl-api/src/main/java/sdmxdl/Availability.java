@@ -5,7 +5,7 @@ import lombok.NonNull;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Result of {@link Provider#listAvailability(AvailabilityRequest)}: the codes that actually
+ * Item of {@link Provider#listAvailability(AvailabilityRequest)}: the codes that actually
  * occur for a dimension under a key constraint.
  */
 @lombok.Value

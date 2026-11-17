@@ -53,6 +53,11 @@ public class ListAvailabilityTest {
     }
 
     @Test
+    public void grpcAllDimensions() {
+        assertThat(grpcAvailability("M.CHF", "*")).satisfies(isAllDimensions());
+    }
+
+    @Test
     public void grpcInvalidDimension() {
         assertThatThrownBy(() -> grpcAvailability("M.CHF", "CURRENCY"))
                 .isInstanceOfSatisfying(
@@ -82,6 +87,11 @@ public class ListAvailabilityTest {
     public void restFirstWildcardDimension() {
         assertThat(restAvailability("M", "")).satisfies(isCurrency());
         assertThat(restAvailability("M.CHF", null)).satisfies(isCurrencyDenom());
+    }
+
+    @Test
+    public void restAllDimensions() {
+        assertThat(restAvailability("M.CHF", "*")).satisfies(isAllDimensions());
     }
 
     @Test
@@ -133,6 +143,10 @@ public class ListAvailabilityTest {
                             r -> assertThat(mcpResult(r)).satisfies(isCurrencyDenom()))
                     .toolsCall(
                             "listAvailability",
+                            mcpArgs("M.CHF", "*"),
+                            r -> assertThat(mcpResult(r)).satisfies(isAllDimensions()))
+                    .toolsCall(
+                            "listAvailability",
                             mcpArgs("M.CHF", "CURRENCY"),
                             r -> assertThat(r).returns(true, ToolResponse::isError))
                     .thenAssertResults();
@@ -143,18 +157,37 @@ public class ListAvailabilityTest {
 
     private static Consumer<ListAvailabilityResponseDto> isCurrency() {
         return dto -> {
-            assertThat(dto.getDimension()).isEqualTo("CURRENCY");
-            assertThat(dto.getItemsList()).extracting(CodeDto::getId).containsExactly("CHF", "USD");
-            assertThat(dto.getItemsList()).extracting(CodeDto::getName).containsExactly("Swiss franc", "US dollar");
-            assertThat(dto.getTotal()).isEqualTo(2);
+            assertThat(dto.getTotal()).isEqualTo(1);
+            assertThat(dto.getItemsList()).singleElement().satisfies(isCurrencyItem());
+        };
+    }
+
+    private static Consumer<AvailabilityDto> isCurrencyItem() {
+        return item -> {
+            assertThat(item.getDimension()).isEqualTo("CURRENCY");
+            assertThat(item.getCodesList()).extracting(CodeDto::getId).containsExactly("CHF", "USD");
+            assertThat(item.getCodesList()).extracting(CodeDto::getName).containsExactly("Swiss franc", "US dollar");
         };
     }
 
     private static Consumer<ListAvailabilityResponseDto> isCurrencyDenom() {
         return dto -> {
-            assertThat(dto.getDimension()).isEqualTo("CURRENCY_DENOM");
-            assertThat(dto.getItemsList()).extracting(CodeDto::getId).containsExactly("EUR");
             assertThat(dto.getTotal()).isEqualTo(1);
+            assertThat(dto.getItemsList()).singleElement().satisfies(item -> {
+                assertThat(item.getDimension()).isEqualTo("CURRENCY_DENOM");
+                assertThat(item.getCodesList()).extracting(CodeDto::getId).containsExactly("EUR");
+            });
+        };
+    }
+
+    // Faceted: CURRENCY ignores its own code (CHF) in the key, so USD is still available
+    private static Consumer<ListAvailabilityResponseDto> isAllDimensions() {
+        return dto -> {
+            assertThat(dto.getItemsList())
+                    .extracting(AvailabilityDto::getDimension)
+                    .containsExactly("FREQ", "CURRENCY", "CURRENCY_DENOM", "EXR_TYPE", "EXR_SUFFIX");
+            assertThat(dto.getTotal()).isEqualTo(5);
+            assertThat(dto.getItems(1)).satisfies(isCurrencyItem());
         };
     }
 

@@ -94,6 +94,26 @@ public class ListAvailabilityCommandTest {
         assertThat(watcher.getOut()).isEmpty();
     }
 
+    @SetSystemProperty(key = "enableFileDriver", value = "true")
+    @Test
+    public void testAllDimensions(@TempDir Path temp) throws IOException {
+        File src = FileSample.create(temp);
+
+        List<String> all = list(temp, src, "A.DEU", "*");
+        assertThat(all).contains("Code,Label,Dimension", atIndex(0));
+        assertThat(all.stream()
+                        .skip(1)
+                        .map(row -> row.substring(row.lastIndexOf(',') + 1))
+                        .distinct())
+                .hasSize(7);
+
+        List<String> wildcard = list(temp, src, "A.DEU", "2");
+        assertThat(all).containsSubsequence(wildcard.subList(1, wildcard.size()));
+
+        List<String> relaxed = list(temp, src, ".DEU", "0");
+        assertThat(all).containsSubsequence(relaxed.subList(1, relaxed.size()));
+    }
+
     private static String dimensionOf(List<String> rows) {
         String row = rows.get(1);
         return row.substring(row.lastIndexOf(',') + 1);

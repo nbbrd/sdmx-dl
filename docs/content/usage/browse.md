@@ -205,9 +205,8 @@ void main() throws Exception {
                     .keyOf("M..EUR.SP00.A")
                     .dimension("CURRENCY")
                     .build())
-            .getCodes()
-            .getItems()
-            .forEach(code -> IO.println(code.getId() + " = " + code.getName()));
+            .forEach(availability -> availability.getCodes()
+                    .forEach((id, name) -> IO.println(id + " = " + name)));
 }
 ```
 {{< /tab >}}
@@ -255,8 +254,55 @@ CNY,Chinese yuan renminbi,CURRENCY
 - The dimension is referenced the same way in every flavor (API `AvailabilityRequest.dimension`, CLI `<dimension>` parameter, REST `dimension` query parameter, gRPC and MCP `dimension` field):
   - a dimension **id** (e.g. `CURRENCY`, as returned by [Dimensions and attributes](#dimensions-and-attributes)) is matched first;
   - otherwise, an integer is read as the zero-based **index** of the dimension in the key (e.g. `1` for the second component of `M..EUR.SP00.A`, which is `CURRENCY`);
-  - an **empty** value (the default) selects the first wildcard dimension of the key (e.g. `CURRENCY` for `M..EUR.SP00.A`), which makes it easy to narrow a key step by step.
-- The selected dimension must be a wildcard in the key. The response reports its id along with the codes (`Dimension` column in the CLI, `dimension` field in the WS).
+  - an **empty** value (the default) selects the first wildcard dimension of the key (e.g. `CURRENCY` for `M..EUR.SP00.A`), which makes it easy to narrow a key step by step;
+  - `*` selects **every dimension** (see [All dimensions](#all-dimensions) below).
+- Except with `*`, the selected dimension must be a wildcard in the key. The response is a list of items, one per selected dimension, each one reporting the dimension id along with its codes (`Dimension` column in the CLI, `dimension` and `codes` fields in the WS).
+
+### All dimensions
+
+The `*` dimension returns the availability of every dimension in one call, which is handy to display facets.
+Each dimension is computed with **its own code removed** from the key, so that the codes already selected stay in the list along with their alternatives.
+
+{{< tabs "browse-availability-all" >}}
+
+{{< tab "CLI" >}}
+
+```shell
+sdmx-dl list availability ECB EXR M.CHF.EUR.SP00.A "*"
+```
+{{< /tab >}}
+
+{{< tab "WS" >}}
+
+```shell
+curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/availability \
+  --data-urlencode "key=M.CHF.EUR.SP00.A" \
+  --data-urlencode "dimension=*"
+```
+{{< /tab >}}
+
+{{< /tabs >}}
+
+{{< expand "CLI output sample" >}}
+```plain
+Code,Label,Dimension
+A,Annual,FREQ
+D,Daily,FREQ
+H,Half-yearly,FREQ
+M,Monthly,FREQ
+Q,Quarterly,FREQ
+ARS,Argentine peso,CURRENCY
+AUD,Australian dollar,CURRENCY
+...
+EUR,Euro,CURRENCY_DENOM
+SP00,Spot,EXR_TYPE
+A,Average,EXR_SUFFIX
+E,End-of-period,EXR_SUFFIX
+```
+{{< /expand >}}
+
+- Quote the `*` in the shell to prevent its expansion into file names.
+- This may cost one request per dimension to the source.
 
 ## Next step
 

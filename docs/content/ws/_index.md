@@ -112,7 +112,7 @@ Each series has a `key`, optional series-level `meta`, and an `obs` array; each 
 - `GetDataStream` (`GET /{source}/{flow}/data:stream`) returns the same series objects as a plain JSON array, without the `ref`/`query` wrapper.
 - Listing operations (`/sources`, `/{source}/flows`, `/{source}/{flow}/dimensions`, `/{source}/{flow}/codes/{concept}`, …) return an object with the matching entries in `items` and their number before paging in `total`, e.g. `{"items": [{"id": "A", "name": "Annual"}, {"id": "Q", "name": "Quarterly"}], "total": 2}`. Use `offset` with `maxResults` to page through them. With a `query`, `scores` gives the relevance of each item, in the same order, from 1 (best) down to 0 (excluded).
 - Empty fields are omitted from JSON responses: an empty list has no `items` and a `total` of `0` is omitted, so default them (e.g. `payload.get("items", [])`).
-- `ListAvailability` also returns the id of the selected dimension, e.g. `{"dimension": "FREQ", "items": [{"id": "A", "name": "Annual"}], "total": 1}`. Its `dimension` parameter takes a dimension id, a zero-based index, or nothing for the first wildcard dimension of the `key` (see [Availability]({{< relref "/usage/browse#availability" >}})).
+- `ListAvailability` returns one item per selected dimension, with its id and codes, e.g. `{"items": [{"dimension": "FREQ", "codes": [{"id": "A", "name": "Annual"}]}], "total": 1}`. Its `dimension` parameter takes a dimension id, a zero-based index, nothing for the first wildcard dimension of the `key`, or `*` for every dimension (see [Availability]({{< relref "/usage/browse#availability" >}})).
 - Script operations return the generated script, without executing it: `{"target": "r/rest", "fileExtension": "R", "mediaType": "text/x-r", "content": "...", "warnings": []}`. With `format=raw`, or an `Accept` header that prefers `text/plain` or `application/octet-stream`, they return the script itself as a file to download. See [Generate scripts]({{< relref "/integration/generate-scripts" >}}) for their options (`cliLauncher`, `restEndpoint`, `outputFile`, `property`, `format`).
 - Errors are returned as [problem details](https://www.rfc-editor.org/rfc/rfc9457) (`application/problem+json`) with an extra `reason` (`INVALID_ARGUMENT`, `RESOURCE_NOT_FOUND`, `UPSTREAM_HTTP_ERROR`, `UPSTREAM_TIMEOUT`, `UPSTREAM_UNREACHABLE`, `UPSTREAM_ERROR`, `INTERNAL_ERROR`), the `source` when known and the `upstreamStatus` of an upstream HTTP error, e.g. `{"type": "about:blank", "title": "Not Found", "status": 404, "detail": "Missing source 'XYZ'", "reason": "RESOURCE_NOT_FOUND", "source": "XYZ"}`. The gRPC endpoint returns the same information as a status code with an `ErrorInfo` detail (domain `sdmx-dl`).
 
@@ -142,7 +142,7 @@ Available tools:
 | `listAttributes`   | List or search the attributes of a flow's structure.                   |
 | `getMeta`          | Get the structure (dimensions, attributes) skeleton of a flow.         |
 | `listCodes`        | List or search the codes of a dimension or attribute.                  |
-| `listAvailability` | Get the codes that actually occur for a dimension under a key.         |
+| `listAvailability` | Get the codes that actually occur for a dimension (or every one) under a key. |
 | `getData`          | Fetch data series for a flow, optionally filtered by key/period.       |
 | `checkHealth`      | Diagnose the health of a single source (monitor and/or live access).   |
 | `listScriptTargets`   | List the available script targets.                                  |

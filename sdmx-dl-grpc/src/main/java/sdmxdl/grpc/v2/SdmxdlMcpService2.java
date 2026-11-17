@@ -54,7 +54,7 @@ public class SdmxdlMcpService2 {
     private static final String OFFSET_ARG =
             "Number of matching entries to skip before returning 'maxResults' entries (default 0). Use it to get the next page of a list.";
     private static final String DIMENSION_ARG =
-            "Dimension to inspect: its id exactly as returned by getMeta or listDimensions (e.g. 'CURRENCY'), or its zero-based position in the key (e.g. '1'). Leave empty (default) to inspect the first dimension left as a wildcard in 'key'. The dimension must be a wildcard in 'key'.";
+            "Dimension to inspect: its id exactly as returned by getMeta or listDimensions (e.g. 'CURRENCY'), or its zero-based position in the key (e.g. '1'). Leave empty (default) to inspect the first dimension left as a wildcard in 'key'. The dimension must be a wildcard in 'key'. Use '*' to inspect every dimension at once (facets): each one is computed as if its own code were removed from 'key'.";
     private static final String CONCEPT_ARG =
             "Dimension or attribute id exactly as returned by getMeta, listDimensions or listAttributes (e.g. 'CURRENCY', 'OBS_STATUS').";
     private static final String DIMENSIONS_ARG =
@@ -373,7 +373,7 @@ public class SdmxdlMcpService2 {
 
     @Tool(
             description =
-                    "List the codes of one dimension that actually have data, given the other dimensions already fixed in 'key'. Unlike listCodes, which returns every code allowed by the codelist, this returns only the codes really present in the dataset for that key, sorted by code id, as 'items' (id and name, name absent when the code has no label) with their 'total' count, together with the id of the inspected 'dimension'. Use it to narrow a key step by step and to avoid empty getData results, for example: fix FREQ in 'key', then ask which REF_AREA codes remain (or leave 'dimension' empty to inspect the next wildcard dimension). 'key' uses the same positional format as getData; use 'all' to apply no constraint. Fails when 'dimension' is unknown or is not a wildcard in 'key'.")
+                    "List the codes of one dimension (or of every dimension with '*') that actually have data, given the other dimensions already fixed in 'key'. Unlike listCodes, which returns every code allowed by the codelist, this returns only the codes really present in the dataset for that key. The result has one item per inspected dimension in 'items', each with the id of the 'dimension' and its 'codes' sorted by id (id and name, name absent when the code has no label), plus 'total', the number of items. Use it to narrow a key step by step and to avoid empty getData results, for example: fix FREQ in 'key', then ask which REF_AREA codes remain (or leave 'dimension' empty to inspect the next wildcard dimension). 'key' uses the same positional format as getData; use 'all' to apply no constraint. Fails when 'dimension' is unknown or is not a wildcard in 'key'.")
     public ListAvailabilityResponseDto listAvailability(
             @ToolArg(description = SOURCE_ARG) String source,
             @ToolArg(description = FLOW_ARG) String flow,

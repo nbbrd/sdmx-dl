@@ -66,6 +66,23 @@
         "type" : "string",
         "enum" : [ "UNKNOWN", "DATAFLOW", "GROUP", "SERIES", "OBSERVATION", "UNRECOGNIZED" ]
       },
+      "AvailabilityDto" : {
+        "type" : "object",
+        "properties" : {
+          "descriptorForType" : {
+            "type" : "object"
+          },
+          "dimension" : {
+            "type" : "string"
+          },
+          "codes" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/CodeDto"
+            }
+          }
+        }
+      },
       "CheckHealthResponseDto" : {
         "type" : "object",
         "properties" : {
@@ -380,9 +397,6 @@
           "descriptorForType" : {
             "type" : "object"
           },
-          "dimension" : {
-            "type" : "string"
-          },
           "total" : {
             "type" : "integer",
             "format" : "int32"
@@ -390,7 +404,7 @@
           "items" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/CodeDto"
+              "$ref" : "#/components/schemas/AvailabilityDto"
             }
           }
         }

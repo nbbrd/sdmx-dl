@@ -23,6 +23,7 @@ import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.Callable;
+import org.jspecify.annotations.Nullable;
 import picocli.CommandLine;
 import sdmxdl.*;
 
@@ -51,20 +52,38 @@ public final class ListAvailabilityCommand implements Callable<Void> {
 
     @Override
     public Void call() throws Exception {
-        Availability availability = getAvailability();
-        getTable(availability.getDimension()).write(csv, availability.getCodes().entrySet());
+        getTable().write(csv, getRows(getAvailability()));
         return null;
     }
 
-    private CsvTable<Map.Entry<String, String>> getTable(String dimensionId) {
-        return CsvTable.<Map.Entry<String, String>>builder()
-                .columnOf("Code", Map.Entry::getKey)
-                .columnOf("Label", Map.Entry::getValue)
-                .columnOf("Dimension", ignore -> dimensionId)
+    private CsvTable<AvailableCode> getTable() {
+        return CsvTable.builderOf(AvailableCode.class)
+                .columnOf("Code", AvailableCode::getCode)
+                .columnOf("Label", AvailableCode::getLabel)
+                .columnOf("Dimension", AvailableCode::getDimension)
                 .build();
     }
 
-    private Availability getAvailability() throws IOException {
+    private static List<AvailableCode> getRows(List<Availability> availabilities) {
+        List<AvailableCode> result = new ArrayList<>();
+        for (Availability availability : availabilities) {
+            availability
+                    .getCodes()
+                    .forEach((code, label) -> result.add(new AvailableCode(code, label, availability.getDimension())));
+        }
+        return result;
+    }
+
+    @lombok.Value
+    private static class AvailableCode {
+        String code;
+
+        @Nullable String label;
+
+        String dimension;
+    }
+
+    private List<Availability> getAvailability() throws IOException {
         return web.loadManager()
                 .usingName(web.getSource())
                 .listAvailability(AvailabilityRequest.builder()

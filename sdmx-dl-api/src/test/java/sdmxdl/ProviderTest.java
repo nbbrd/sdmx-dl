@@ -1,11 +1,13 @@
 package sdmxdl;
 
+import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.entry;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.assertj.core.api.InstanceOfAssertFactories.MAP;
 import static tests.sdmxdl.api.RepoSamples.*;
 
@@ -18,6 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -486,6 +489,7 @@ public class ProviderTest {
     @Test
     public void testListAvailability() throws IOException {
         assertThat(validProvider().listAvailability(availabilityOf(Key.ALL, "REGION")))
+                .singleElement()
                 .returns("REGION", Availability::getDimension)
                 .extracting(Availability::getCodes, MAP)
                 .containsExactly(entry("BE", "Belgium"), entry("FR", "France"));
@@ -494,6 +498,7 @@ public class ProviderTest {
     @Test
     public void testListAvailabilityWithKey() throws IOException {
         assertThat(validProvider().listAvailability(availabilityOf(Key.parse("M..XXX"), "REGION")))
+                .singleElement()
                 .returns("REGION", Availability::getDimension)
                 .extracting(Availability::getCodes, MAP)
                 .containsExactly(entry("BE", "Belgium"));
@@ -502,11 +507,13 @@ public class ProviderTest {
     @Test
     public void testListAvailabilityWithPartialKey() throws IOException {
         assertThat(validProvider().listAvailability(availabilityOf(Key.parse("M.FR"), "SECTOR")))
+                .singleElement()
                 .returns("SECTOR", Availability::getDimension)
                 .extracting(Availability::getCodes, MAP)
                 .containsExactly(entry("INDUSTRY", "Industry"));
 
         assertThat(validProvider().listAvailability(availabilityOf(Key.parse("M"), "REGION")))
+                .singleElement()
                 .returns("REGION", Availability::getDimension)
                 .extracting(Availability::getCodes, MAP)
                 .containsExactly(entry("BE", "Belgium"), entry("FR", "France"));
@@ -515,11 +522,13 @@ public class ProviderTest {
     @Test
     public void testListAvailabilityWithDimensionIndex() throws IOException {
         assertThat(validProvider().listAvailability(availabilityOf(Key.ALL, "1")))
+                .singleElement()
                 .returns("REGION", Availability::getDimension)
                 .extracting(Availability::getCodes, MAP)
                 .containsExactly(entry("BE", "Belgium"), entry("FR", "France"));
 
         assertThat(validProvider().listAvailability(availabilityOf(Key.parse("M.FR"), "2")))
+                .singleElement()
                 .returns("SECTOR", Availability::getDimension)
                 .extracting(Availability::getCodes, MAP)
                 .containsExactly(entry("INDUSTRY", "Industry"));
@@ -532,16 +541,19 @@ public class ProviderTest {
                                 .flow(FLOW_REF)
                                 .key(Key.ALL)
                                 .build()))
+                .singleElement()
                 .returns("FREQ", Availability::getDimension)
                 .extracting(Availability::getCodes, MAP)
                 .containsExactly(entry("M", "Monthly"));
 
         assertThat(validProvider().listAvailability(availabilityOf(Key.parse("M..XXX"), "")))
+                .singleElement()
                 .returns("REGION", Availability::getDimension)
                 .extracting(Availability::getCodes, MAP)
                 .containsExactly(entry("BE", "Belgium"));
 
         assertThat(validProvider().listAvailability(availabilityOf(Key.parse("M.FR"), "")))
+                .singleElement()
                 .returns("SECTOR", Availability::getDimension)
                 .extracting(Availability::getCodes, MAP)
                 .containsExactly(entry("INDUSTRY", "Industry"));
@@ -581,6 +593,18 @@ public class ProviderTest {
     }
 
     @Test
+    public void testListAvailabilityWithAllDimensions() throws IOException {
+        assertThat(validProvider().listAvailability(availabilityOf(Key.parse("M.FR.INDUSTRY"), "*")))
+                .extracting(
+                        Availability::getDimension,
+                        availability -> availability.getCodes().keySet())
+                .containsExactly(
+                        tuple("FREQ", singleton("M")),
+                        tuple("REGION", new HashSet<>(Arrays.asList("BE", "FR"))),
+                        tuple("SECTOR", singleton("INDUSTRY")));
+    }
+
+    @Test
     public void testListAvailabilityWithUnmappedCode() throws IOException {
         Provider<WebSource> provider = providerOf(new ForwardingConnection() {
             @Override
@@ -594,6 +618,7 @@ public class ProviderTest {
         });
 
         assertThat(provider.listAvailability(availabilityOf(Key.ALL, "REGION")))
+                .singleElement()
                 .extracting(Availability::getCodes, MAP)
                 .containsExactly(entry("zzzyyyxxxwww", null));
     }

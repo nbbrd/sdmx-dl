@@ -266,6 +266,11 @@ public final class Provider<SOURCE extends Source> {
      * then by zero-based index, or as the first wildcard dimension of the key when empty. The
      * resolved dimension must be a wildcard in the key.
      *
+     * <p>When the requested dimension is {@link AvailabilityRequest#ALL_DIMENSIONS}, every
+     * dimension is returned in structure order, each one computed with its own code removed
+     * from the key (faceted availability): the codes of a dimension depend only on the codes
+     * selected in the other dimensions.
+     *
      * <p>Codes are returned sorted by id and mapped to their label as defined in the
      * dimension's codelist. When a code has no matching label, its value is {@code null}.
      *
@@ -273,27 +278,44 @@ public final class Provider<SOURCE extends Source> {
      * wildcards before being sent to the connection; see {@link Key#normalize(Structure)}.
      *
      * @param request dimension/key-level request parameters (non-null)
-     * @return non-null availability of the resolved dimension (possibly without codes)
+     * @return non-null availability of the resolved dimension (possibly without codes), or of
+     *     every dimension
      * @throws ResourceNotFoundException if the requested dimension cannot be resolved
      * @throws IllegalArgumentException if the requested dimension is not a wildcard in the key
      * @throws IOException if metadata/data retrieval fails due to I/O issues
      */
-    public @NonNull Availability listAvailability(@NonNull AvailabilityRequest request) throws IOException {
+    public @NonNull List<Availability> listAvailability(@NonNull AvailabilityRequest request) throws IOException {
         try (Connection connection = manager.getConnection(source, request.getLanguages())) {
             Structure structure =
                     connection.getMeta(request.getDatabase(), request.getFlow()).getStructure();
             Key key = request.getKey().normalize(structure);
-            int index = resolveDimensionIndex(structure, key, request.getDimension());
-            Dimension dimension = structure.getDimensions().get(index);
-
-            Map<String, String> labels = dimension.getCodes();
-            Availability.Builder result = Availability.builder().dimension(dimension.getId());
-            for (String code :
-                    connection.getAvailableDimensionCodes(request.getDatabase(), request.getFlow(), key, index)) {
-                result.code(code, labels.get(code));
+            if (request.getDimension().equals(AvailabilityRequest.ALL_DIMENSIONS)) {
+                List<Availability> result = new ArrayList<>();
+                for (int index = 0; index < structure.getDimensions().size(); index++) {
+                    result.add(getAvailability(connection, request, structure, relax(key, index), index));
+                }
+                return result;
             }
-            return result.build();
+            int index = resolveDimensionIndex(structure, key, request.getDimension());
+            return Collections.singletonList(getAvailability(connection, request, structure, key, index));
         }
+    }
+
+    private static Availability getAvailability(
+            Connection connection, AvailabilityRequest request, Structure structure, Key key, int index)
+            throws IOException {
+        Dimension dimension = structure.getDimensions().get(index);
+        Map<String, String> labels = dimension.getCodes();
+        Availability.Builder result = Availability.builder().dimension(dimension.getId());
+        for (String code :
+                connection.getAvailableDimensionCodes(request.getDatabase(), request.getFlow(), key, index)) {
+            result.code(code, labels.get(code));
+        }
+        return result.build();
+    }
+
+    private static Key relax(Key key, int index) {
+        return isWildcard(key, index) ? key : key.with("", index);
     }
 
     /**

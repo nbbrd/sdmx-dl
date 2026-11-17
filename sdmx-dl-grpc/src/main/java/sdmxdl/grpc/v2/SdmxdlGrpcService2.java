@@ -280,11 +280,15 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
                 .build();
     }
 
-    static ListAvailabilityResponseDto toAvailabilityResponse(Availability availability) {
+    static ListAvailabilityResponseDto toAvailabilityResponse(List<Availability> availabilities) {
         return ListAvailabilityResponseDto.newBuilder()
-                .setDimension(availability.getDimension())
-                .addAllItems(ProtoApi.fromCodes(availability.getCodes()))
-                .setTotal(availability.getCodes().size())
+                .addAllItems(availabilities.stream()
+                        .map(availability -> AvailabilityDto.newBuilder()
+                                .setDimension(availability.getDimension())
+                                .addAllCodes(ProtoApi.fromCodes(availability.getCodes()))
+                                .build())
+                        .toList())
+                .setTotal(availabilities.size())
                 .build();
     }
 

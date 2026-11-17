@@ -544,7 +544,7 @@ Example: <code>sdmx-dl <font color="#859900">list availability</font> <abbr titl
 1. [`source`](../datatypes#source) - Data source name.
 2. [`flow`](../datatypes#flow) - Data flow reference.
 3. [`key`](../datatypes#key) - Data key.
-4. [`dimension`](../datatypes#string) - Dimension id, zero-based index of key dimension, or nothing for the first wildcard dimension of the key (optional).
+4. [`dimension`](../datatypes#string) - Dimension id, zero-based index of key dimension, or nothing for the first wildcard dimension of the key, or `*` for every dimension (optional).
 
 {{< /tab >}}
 {{< tab "Options" >}}

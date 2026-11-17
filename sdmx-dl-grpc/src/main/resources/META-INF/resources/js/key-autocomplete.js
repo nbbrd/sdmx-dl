@@ -21,7 +21,7 @@ function fetchAvailableCodes(context, dimensions, dimIndex, keyParts) {
     const url = apiUrl([source, flow, 'availability'], { key, dimension: dimensions[dimIndex].id, database });
     if (!availabilityCache.has(url)) {
         availabilityCache.set(url, getJSON(url)
-            .then(codesOf)
+            .then(result => codesOf({ items: itemsOf(result).flatMap(item => item.codes || []) }))
             .catch(error => {
                 console.warn('Availability not supported or failed:', error.message);
                 return null;

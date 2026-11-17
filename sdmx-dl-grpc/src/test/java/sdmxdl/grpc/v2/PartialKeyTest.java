@@ -153,7 +153,8 @@ public class PartialKeyTest {
                             r -> {
                                 assertThat(r).returns(false, ToolResponse::isError);
                                 assertThat(fromJson(ListAvailabilityResponseDto.getDefaultInstance(), firstText(r))
-                                                .getItemsList())
+                                                .getItems(0)
+                                                .getCodesList())
                                         .extracting(CodeDto::getId)
                                         .containsExactlyInAnyOrder("CHF", "USD");
                             })
@@ -163,7 +164,8 @@ public class PartialKeyTest {
                             r -> {
                                 assertThat(r).returns(false, ToolResponse::isError);
                                 assertThat(fromJson(ListAvailabilityResponseDto.getDefaultInstance(), firstText(r))
-                                                .getItemsList())
+                                                .getItems(0)
+                                                .getCodesList())
                                         .extracting(CodeDto::getId)
                                         .containsExactlyInAnyOrder("EUR");
                             })
@@ -212,7 +214,8 @@ public class PartialKeyTest {
                         .build())
                 .await()
                 .atMost(TIMEOUT)
-                .getItemsList()
+                .getItems(0)
+                .getCodesList()
                 .stream()
                 .map(CodeDto::getId)
                 .toList();
@@ -227,7 +230,7 @@ public class PartialKeyTest {
                 .statusCode(200)
                 .extract()
                 .asString();
-        return fromJson(ListAvailabilityResponseDto.getDefaultInstance(), json).getItemsList().stream()
+        return fromJson(ListAvailabilityResponseDto.getDefaultInstance(), json).getItems(0).getCodesList().stream()
                 .map(CodeDto::getId)
                 .toList();
     }
