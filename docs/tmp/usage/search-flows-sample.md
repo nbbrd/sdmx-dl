@@ -1,6 +1,6 @@
-| Source | Database | Ref                                                | Name                                                                      | Description                                        |
-|--------|----------|----------------------------------------------------|---------------------------------------------------------------------------|----------------------------------------------------|
-| ESTAT  |          | ESTAT:PRC_REM_GDP(1.0)                             | GDP weights used in the calculation of the global specific indicator      |                                                    |
-| ESTAT  |          | ESTAT:NAIDA_10_GDP(1.0)                            | GDP and main aggregates - international data cooperation - annual data    |                                                    |
-| ESTAT  |          | ESTAT:NAIDQ_10_GDP(1.0)                            | GDP and main aggregates - international data cooperation - quarterly data |                                                    |
-| OECD   |          | OECD.CFE.TOU:DSD_TOURISM_KEY@DF_KEY_IND_PC(1.0)    | Key tourism economic indicators                                           | Tourism GDP corresponds to the part of GDP genera… |
+| Source | Database | Ref                                             | Name                                                                      | Description                                        | Score    |
+|--------|----------|-------------------------------------------------|---------------------------------------------------------------------------|----------------------------------------------------|----------|
+| ESTAT  |          | ESTAT:PRC_REM_GDP(1.0)                          | GDP weights used in the calculation of the global specific indicator      |                                                    | 0.976062 |
+| ESTAT  |          | ESTAT:NAIDA_10_GDP(1.0)                         | GDP and main aggregates - international data cooperation - annual data    |                                                    | 0.969231 |
+| ESTAT  |          | ESTAT:NAIDQ_10_GDP(1.0)                         | GDP and main aggregates - international data cooperation - quarterly data |                                                    | 0.968498 |
+| OECD   |          | OECD.CFE.TOU:DSD_TOURISM_KEY@DF_KEY_IND_PC(1.0) | Key tourism economic indicators                                           | Tourism GDP corresponds to the part of GDP genera… | 0.861891 |

@@ -1,11 +1,13 @@
 package sdmxdl.cli;
 
+import internal.sdmxdl.cli.ScoredItem;
 import internal.sdmxdl.cli.WebOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import java.util.List;
 import java.util.concurrent.Callable;
 import picocli.CommandLine;
+import sdmxdl.SearchResult;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.WebSourcesRequest;
 
@@ -38,23 +40,23 @@ public final class SearchSourcesCommand implements Callable<Void> {
         return null;
     }
 
-    private CsvTable<WebSource> getTable() {
-        return CsvTable.<WebSource>builder()
-                .columnOf("Id", WebSource::getId)
+    private CsvTable<ScoredItem<WebSource>> getTable() {
+        return CsvTable.<ScoredItem<WebSource>>builder()
+                .columnOf("Id", result -> result.getItem().getId())
                 .columnOf("Name", result -> {
-                    String name = result.getName(web.getLangs());
+                    String name = result.getItem().getName(web.getLangs());
                     return name != null ? name : "";
                 })
-                .columnOf("Score", result -> "0")
+                .columnOf("Score", ScoredItem::getScoreText)
                 .build();
     }
 
-    private List<WebSource> getRows() {
-        return web.loadManager()
+    private List<ScoredItem<WebSource>> getRows() {
+        SearchResult<WebSource> result = web.loadManager()
                 .listSources(WebSourcesRequest.builder()
                         .query(query)
                         .maxResults(maxResults)
-                        .build())
-                .getItems();
+                        .build());
+        return ScoredItem.of(result.getItems(), result.getScores());
     }
 }

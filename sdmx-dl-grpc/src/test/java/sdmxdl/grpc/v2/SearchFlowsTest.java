@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.tuple;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.nullValue;
 
 import io.grpc.Status;
@@ -40,15 +41,22 @@ public class SearchFlowsTest {
                 .containsExactly(tuple("ECB", "ECB,BSI,1.0", false), tuple("ECB", "ECB,EXR,1.0", false));
         assertThat(page.getTotal()).isEqualTo(7);
         assertThat(page.getFailuresList()).isEmpty();
+        assertThat(page.getScoresList()).describedAs("no score without query").isEmpty();
     }
 
     @Test
     public void grpcQueryAndSources() {
-        assertThat(grpcSearch(WebSearchFlowsRequestDto.newBuilder().setQuery("unemployment"))
-                        .getItemsList())
+        SearchFlowsResponseDto ranked =
+                grpcSearch(WebSearchFlowsRequestDto.newBuilder().setQuery("unemployment"));
+        assertThat(ranked.getItemsList())
                 .first()
                 .returns("ESTAT", FlowEntryDto::getSource)
                 .returns("ESTAT,UNE_RT_M,1.0", o -> o.getFlow().getRef());
+        assertThat(ranked.getScoresList())
+                .describedAs("one score per item, best match first")
+                .hasSameSizeAs(ranked.getItemsList())
+                .isSortedAccordingTo(java.util.Comparator.reverseOrder())
+                .allSatisfy(score -> assertThat(score).isGreaterThan(0).isLessThanOrEqualTo(1));
 
         assertThat(grpcSearch(WebSearchFlowsRequestDto.newBuilder()
                                 .addSources("BBK")
@@ -84,6 +92,7 @@ public class SearchFlowsTest {
                 .statusCode(200)
                 .body("items.source", containsInAnyOrder("BBK", "ECB"))
                 .body("items.flow.ref", containsInAnyOrder("BBK,BBEX3,1.0", "ECB,EXR,1.0"))
+                .body("scores", hasSize(2))
                 .body("failures", nullValue());
 
         given().queryParam("plainText", true)

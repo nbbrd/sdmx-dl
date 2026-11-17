@@ -338,6 +338,7 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
         return WebFlowsResult.builder()
                 .items(result.getItems())
                 .total(result.getTotal())
+                .scores(result.getScores())
                 .failures(failures)
                 .build();
     }

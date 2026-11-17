@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.rpc.ErrorInfo;
@@ -119,6 +120,23 @@ public class ListFlowsTest {
                 .statusCode(200)
                 .body("items.ref", contains("ECB,EXR,1.0", "ECB,ICP,1.0"))
                 .body("total", equalTo(4));
+    }
+
+    @Test
+    public void restScores() {
+        io.restassured.path.json.JsonPath ranked = given().queryParam("query", "exchange")
+                .when()
+                .get("/sdmx-dl/v2/ECB/flows")
+                .then()
+                .statusCode(200)
+                .extract()
+                .jsonPath();
+        assertThat(ranked.getList("scores", Double.class))
+                .describedAs("one score per item, the best match scoring 1")
+                .hasSameSizeAs(ranked.getList("items"))
+                .startsWith(1.0);
+
+        given().when().get("/sdmx-dl/v2/ECB/flows").then().statusCode(200).body("scores", nullValue());
     }
 
     @Test

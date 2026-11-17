@@ -25,4 +25,11 @@ public class SearchResult<T> {
      * Total number of matching items, before paging.
      */
     @NonNegative int total;
+
+    /**
+     * Relevance scores of the {@link #getItems() items}, in the same order, as defined by
+     * {@link sdmxdl.web.Search.Result#getScore()}; empty when the request has no query.
+     */
+    @lombok.Singular
+    @NonNull List<Double> scores;
 }

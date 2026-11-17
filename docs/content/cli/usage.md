@@ -685,6 +685,7 @@ CSV columns:
 3. [`Ref:flow`](../datatypes#flow)
 4. [`Name:string`](../datatypes#string)
 5. [`Description:string`](../datatypes#string)
+6. [`Score:number`](../datatypes#number) - Relevance, from 1 (best) down to 0 (excluded)
 
 {{< /tab >}}
 {{< /tabs >}}

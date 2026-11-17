@@ -66,6 +66,7 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
                             .map(ProtoWeb::fromWebSource)
                             .toList())
                     .setTotal(result.getTotal())
+                    .addAllScores(result.getScores())
                     .build();
         });
     }
@@ -85,6 +86,7 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
                             .map(ProtoApi::fromDatabase)
                             .toList())
                     .setTotal(result.getTotal())
+                    .addAllScores(result.getScores())
                     .build();
         });
     }
@@ -98,6 +100,7 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
                             .map(ProtoApi::fromDataflow)
                             .toList())
                     .setTotal(result.getTotal())
+                    .addAllScores(result.getScores())
                     .build();
         });
     }
@@ -151,6 +154,7 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
                             .map(ProtoApi::fromDimension)
                             .toList())
                     .setTotal(result.getTotal())
+                    .addAllScores(result.getScores())
                     .build();
         });
     }
@@ -172,6 +176,7 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
                             .map(ProtoApi::fromAttribute)
                             .toList())
                     .setTotal(result.getTotal())
+                    .addAllScores(result.getScores())
                     .build();
         });
     }
@@ -271,6 +276,7 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
                         .map(code -> ProtoApi.fromCode(code.getId(), code.getName()))
                         .toList())
                 .setTotal(codes.getTotal())
+                .addAllScores(codes.getScores())
                 .build();
     }
 
@@ -297,6 +303,7 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
                         .map(SdmxdlGrpcService2::fromFlowEntry)
                         .toList())
                 .setTotal(result.getTotal())
+                .addAllScores(result.getScores())
                 .addAllFailures(result.getFailures().stream()
                         .map(SdmxdlGrpcService2::fromSourceFailure)
                         .toList())

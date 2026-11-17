@@ -128,6 +128,7 @@ public class SdmxdlRestService2 {
                                 .map(ProtoWeb::fromWebSource)
                                 .toList())
                         .setTotal(result.getTotal())
+                        .addAllScores(result.getScores())
                         .build());
     }
 
@@ -151,6 +152,7 @@ public class SdmxdlRestService2 {
                                 .map(ProtoApi::fromDatabase)
                                 .toList())
                         .setTotal(result.getTotal())
+                        .addAllScores(result.getScores())
                         .build());
     }
 
@@ -180,6 +182,7 @@ public class SdmxdlRestService2 {
                                 .map(ProtoApi::fromDataflow)
                                 .toList())
                         .setTotal(result.getTotal())
+                        .addAllScores(result.getScores())
                         .build());
     }
 
@@ -249,6 +252,7 @@ public class SdmxdlRestService2 {
                                 .map(ProtoApi::fromDimension)
                                 .toList())
                         .setTotal(result.getTotal())
+                        .addAllScores(result.getScores())
                         .build());
     }
 
@@ -276,6 +280,7 @@ public class SdmxdlRestService2 {
                                 .map(ProtoApi::fromAttribute)
                                 .toList())
                         .setTotal(result.getTotal())
+                        .addAllScores(result.getScores())
                         .build());
     }
 

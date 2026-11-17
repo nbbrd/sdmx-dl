@@ -213,7 +213,15 @@ public class ProviderTest {
         assertThat(provider.listFlows(
                         FlowsRequest.builder().query("Product").maxResults(1).build()))
                 .returns(Collections.singletonList(gdp), SearchResult::getItems)
-                .returns(2, SearchResult::getTotal);
+                .returns(2, SearchResult::getTotal)
+                .satisfies(result -> assertThat(result.getScores())
+                        .describedAs("one score per item of the page")
+                        .singleElement()
+                        .satisfies(score -> assertThat(score).isGreaterThan(0).isLessThanOrEqualTo(1)));
+
+        assertThat(provider.listFlows(FlowsRequest.DEFAULT).getScores())
+                .describedAs("no score without query")
+                .isEmpty();
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() ->

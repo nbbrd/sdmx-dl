@@ -192,16 +192,19 @@ message ScriptDto {
 message ListSourcesResponseDto {
   repeated sdmxdl.format.protobuf.web.WebSourceDto items = 1;
   int32 total = 2;
+  repeated double scores = 3; /* relevance scores of the items, in the same order, between 0 (excluded) and 1; empty without query */
 }
 
 message ListDatabasesResponseDto {
   repeated sdmxdl.format.protobuf.DatabaseDto items = 1;
   int32 total = 2;
+  repeated double scores = 3; /* relevance scores of the items, in the same order, between 0 (excluded) and 1; empty without query */
 }
 
 message ListFlowsResponseDto {
   repeated sdmxdl.format.protobuf.FlowDto items = 1;
   int32 total = 2;
+  repeated double scores = 3; /* relevance scores of the items, in the same order, between 0 (excluded) and 1; empty without query */
 }
 
 message FlowEntryDto {
@@ -222,21 +225,25 @@ message SearchFlowsResponseDto {
   repeated FlowEntryDto items = 1; /* matching flows of all the sources, best match first with a query */
   int32 total = 2;
   repeated SourceFailureDto failures = 3; /* sources (or databases) that could not be searched, sorted by source */
+  repeated double scores = 4; /* relevance scores of the items, in the same order, between 0 (excluded) and 1; empty without query */
 }
 
 message ListDimensionsResponseDto {
   repeated sdmxdl.format.protobuf.DimensionDto items = 1;
   int32 total = 2;
+  repeated double scores = 3; /* relevance scores of the items, in the same order, between 0 (excluded) and 1; empty without query */
 }
 
 message ListAttributesResponseDto {
   repeated sdmxdl.format.protobuf.AttributeDto items = 1;
   int32 total = 2;
+  repeated double scores = 3; /* relevance scores of the items, in the same order, between 0 (excluded) and 1; empty without query */
 }
 
 message ListCodesResponseDto {
   repeated sdmxdl.format.protobuf.CodeDto items = 1;
   int32 total = 2;
+  repeated double scores = 3; /* relevance scores of the items, in the same order, between 0 (excluded) and 1; empty without query */
 }
 
 message ListAvailabilityResponseDto {

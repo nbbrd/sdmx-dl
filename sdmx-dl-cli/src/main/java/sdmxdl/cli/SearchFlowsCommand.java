@@ -1,6 +1,7 @@
 package sdmxdl.cli;
 
 import internal.sdmxdl.cli.DescriptionOptions;
+import internal.sdmxdl.cli.ScoredItem;
 import internal.sdmxdl.cli.WebNetOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
@@ -83,7 +84,7 @@ public final class SearchFlowsCommand implements Callable<Void> {
     @Override
     public Void call() throws Exception {
         WebFlowsResult result = getResult();
-        getTable().write(csv, result.getItems());
+        getTable().write(csv, ScoredItem.of(result.getItems(), result.getScores()));
         PrintWriter err = spec.commandLine().getErr();
         for (SourceFailure failure : result.getFailures()) {
             err.println(spec.commandLine().getColorScheme().errorText(formatFailure(failure)));
@@ -92,13 +93,14 @@ public final class SearchFlowsCommand implements Callable<Void> {
         return null;
     }
 
-    private CsvTable<FlowEntry> getTable() {
-        return CsvTable.builderOf(FlowEntry.class)
-                .columnOf("Source", entry -> entry.getSource().getId())
-                .columnOf("Database", entry -> entry.getDatabase().getId())
-                .columnOf("Ref", entry -> entry.getFlow().getRef(), SdmxCsvFields.getDataflowRefFormatter())
-                .columnOf("Name", entry -> entry.getFlow().getName())
-                .columnOf("Description", entry -> entry.getFlow().getDescription())
+    private CsvTable<ScoredItem<FlowEntry>> getTable() {
+        return CsvTable.<ScoredItem<FlowEntry>>builder()
+                .columnOf("Source", row -> row.getItem().getSource().getId())
+                .columnOf("Database", row -> row.getItem().getDatabase().getId())
+                .columnOf("Ref", row -> row.getItem().getFlow().getRef(), SdmxCsvFields.getDataflowRefFormatter())
+                .columnOf("Name", row -> row.getItem().getFlow().getName())
+                .columnOf("Description", row -> row.getItem().getFlow().getDescription())
+                .columnOf("Score", ScoredItem::getScoreText)
                 .build();
     }
 

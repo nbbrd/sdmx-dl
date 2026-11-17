@@ -360,6 +360,13 @@
             "items" : {
               "$ref" : "#/components/schemas/AttributeDto"
             }
+          },
+          "scores" : {
+            "type" : "array",
+            "items" : {
+              "type" : "number",
+              "format" : "double"
+            }
           }
         }
       },
@@ -399,6 +406,13 @@
             "items" : {
               "$ref" : "#/components/schemas/CodeDto"
             }
+          },
+          "scores" : {
+            "type" : "array",
+            "items" : {
+              "type" : "number",
+              "format" : "double"
+            }
           }
         }
       },
@@ -416,6 +430,13 @@
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/DatabaseDto"
+            }
+          },
+          "scores" : {
+            "type" : "array",
+            "items" : {
+              "type" : "number",
+              "format" : "double"
             }
           }
         }
@@ -435,6 +456,13 @@
             "items" : {
               "$ref" : "#/components/schemas/DimensionDto"
             }
+          },
+          "scores" : {
+            "type" : "array",
+            "items" : {
+              "type" : "number",
+              "format" : "double"
+            }
           }
         }
       },
@@ -452,6 +480,13 @@
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/FlowDto"
+            }
+          },
+          "scores" : {
+            "type" : "array",
+            "items" : {
+              "type" : "number",
+              "format" : "double"
             }
           }
         }
@@ -488,6 +523,13 @@
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/WebSourceDto"
+            }
+          },
+          "scores" : {
+            "type" : "array",
+            "items" : {
+              "type" : "number",
+              "format" : "double"
             }
           }
         }
@@ -684,6 +726,13 @@
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/SourceFailureDto"
+            }
+          },
+          "scores" : {
+            "type" : "array",
+            "items" : {
+              "type" : "number",
+              "format" : "double"
             }
           }
         }

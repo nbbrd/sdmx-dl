@@ -109,13 +109,14 @@ public final class HybridSearch<T> implements Search<T> {
 
         Arrays.sort(indices, (a, b) -> Double.compare(fusedScores[b], fusedScores[a]));
 
+        double maxScore = RankFusion.maxScore(scorers.size());
         int resultCount = Math.min(maxResults, items.size());
         List<Search.Result<T>> results = new ArrayList<>(resultCount);
         for (int i = 0; i < resultCount; i++) {
             int idx = indices[i];
             double score = fusedScores[idx];
             if (score <= 0) break;
-            results.add(new Search.Result<>(items.get(idx), score));
+            results.add(new Search.Result<>(items.get(idx), Math.min(1, score / maxScore)));
         }
 
         return results;

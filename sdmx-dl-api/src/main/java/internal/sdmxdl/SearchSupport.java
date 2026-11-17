@@ -23,7 +23,8 @@ public class SearchSupport {
      * Searches the given items and returns a page of the matches.
      *
      * <p>Without query, all items match and are sorted by the given order (or kept as is when
-     * the order is {@code null}). With a query, matches are ranked by relevance, best match first.
+     * the order is {@code null}). With a query, matches are ranked by relevance, best match first,
+     * and their scores are returned along with them.
      *
      * @param items   the items to search
      * @param request the query and paging parameters
@@ -42,17 +43,23 @@ public class SearchSupport {
             throws IllegalArgumentException {
         int offset = request.getEffectiveOffset();
         int maxResults = request.getEffectiveMaxResults();
-        List<T> matches = request.getQuery().isEmpty()
-                ? (order != null ? items.stream().sorted(order).collect(toList()) : new ArrayList<>(items))
-                : engine.apply(items).search(request.getQuery(), Integer.MAX_VALUE).stream()
-                        .map(Search.Result::getItem)
-                        .collect(toList());
+        if (request.getQuery().isEmpty()) {
+            List<T> matches = order != null ? items.stream().sorted(order).collect(toList()) : new ArrayList<>(items);
+            return SearchResult.<R>builder()
+                    .items(matches.stream()
+                            .skip(offset)
+                            .limit(maxResults)
+                            .map(mapper)
+                            .collect(toList()))
+                    .total(matches.size())
+                    .build();
+        }
+        List<Search.Result<T>> matches = engine.apply(items).search(request.getQuery(), Integer.MAX_VALUE);
+        List<Search.Result<T>> page =
+                matches.stream().skip(offset).limit(maxResults).collect(toList());
         return SearchResult.<R>builder()
-                .items(matches.stream()
-                        .skip(offset)
-                        .limit(maxResults)
-                        .map(mapper)
-                        .collect(toList()))
+                .items(page.stream().map(Search.Result::getItem).map(mapper).collect(toList()))
+                .scores(page.stream().map(Search.Result::getScore).collect(toList()))
                 .total(matches.size())
                 .build();
     }

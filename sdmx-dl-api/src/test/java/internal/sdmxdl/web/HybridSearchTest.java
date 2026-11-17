@@ -104,6 +104,17 @@ class HybridSearchTest {
     }
 
     @Test
+    void flowSearchShouldReturnNormalizedScores() {
+        Search<Flow> search = Search.ofFlows(ALL_FLOWS);
+        assertThat(search.search("BSI", 5))
+                .isNotEmpty()
+                .allSatisfy(r -> assertThat(r.getScore()).isGreaterThan(0).isLessThanOrEqualTo(1))
+                .first()
+                .describedAs("ranked first by every scorer")
+                .returns(1.0, Search.Result::getScore);
+    }
+
+    @Test
     void flowSearchShouldExcludeZeroScoreResults() {
         Search<Flow> search = Search.ofFlows(ALL_FLOWS);
         List<Search.Result<Flow>> results = search.search("zzzzz_nonexistent", 10);

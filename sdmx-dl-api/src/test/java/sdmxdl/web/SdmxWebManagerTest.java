@@ -540,6 +540,7 @@ public class SdmxWebManagerTest {
                 .containsExactly(
                         tuple("multi", "db1", "GDP"), tuple("multi", "db2", "GDP"), tuple("single", "", "EXR"));
         assertThat(all.getTotal()).isEqualTo(3);
+        assertThat(all.getScores()).describedAs("no score without query").isEmpty();
         assertThat(all.getFailures())
                 .describedAs("failing and slow sources are reported, not thrown")
                 .extracting(SourceFailure::getSource, o -> o.getCause().getClass())
@@ -554,6 +555,7 @@ public class SdmxWebManagerTest {
                 .describedAs("ranked by relevance with transformed descriptions")
                 .returns(1, WebFlowsResult::getTotal)
                 .returns(Collections.emptyList(), WebFlowsResult::getFailures)
+                .returns(Collections.singletonList(1.0), WebFlowsResult::getScores)
                 .extracting(WebFlowsResult::getItems, list(FlowEntry.class))
                 .singleElement()
                 .returns("single", o -> o.getSource().getId())

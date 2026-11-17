@@ -1,5 +1,6 @@
 package sdmxdl.cli;
 
+import internal.sdmxdl.cli.ScoredItem;
 import internal.sdmxdl.cli.WebSourceOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
@@ -9,6 +10,7 @@ import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import sdmxdl.Database;
 import sdmxdl.DatabasesRequest;
+import sdmxdl.SearchResult;
 
 /**
  * @author Philippe Charles
@@ -39,22 +41,22 @@ public final class SearchDatabasesCommand implements Callable<Void> {
         return null;
     }
 
-    private CsvTable<Database> getTable() {
-        return CsvTable.<Database>builder()
-                .columnOf("Ref", result -> result.getRef().toString())
-                .columnOf("Name", Database::getName)
-                .columnOf("Score", result -> "0")
+    private CsvTable<ScoredItem<Database>> getTable() {
+        return CsvTable.<ScoredItem<Database>>builder()
+                .columnOf("Ref", result -> result.getItem().getRef().toString())
+                .columnOf("Name", result -> result.getItem().getName())
+                .columnOf("Score", ScoredItem::getScoreText)
                 .build();
     }
 
-    private List<Database> getRows() throws IOException {
-        return web.loadManager()
+    private List<ScoredItem<Database>> getRows() throws IOException {
+        SearchResult<Database> result = web.loadManager()
                 .usingName(web.getSource())
                 .listDatabases(DatabasesRequest.builder()
                         .languages(web.getLangs())
                         .query(query)
                         .maxResults(maxResults)
-                        .build())
-                .getItems();
+                        .build());
+        return ScoredItem.of(result.getItems(), result.getScores());
     }
 }

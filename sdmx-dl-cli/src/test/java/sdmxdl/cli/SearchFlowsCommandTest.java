@@ -39,7 +39,8 @@ public class SearchFlowsCommandTest {
         assertThat(watcher.getErr()).isEmpty();
 
         assertThat(FileSample.readAll(out))
-                .containsExactly("Source,Database,Ref,Name,Description", "sample,,all:data&struct(latest),data,");
+                .containsExactly(
+                        "Source,Database,Ref,Name,Description,Score", "sample,,all:data&struct(latest),data,,1.000000");
     }
 
     @SetSystemProperty(key = "enableFileDriver", value = "true")
@@ -56,7 +57,7 @@ public class SearchFlowsCommandTest {
         assertThat(watcher.getOut()).isEmpty();
         assertThat(watcher.getErr()).isEmpty();
 
-        assertThat(FileSample.readAll(out)).containsExactly("Source,Database,Ref,Name,Description");
+        assertThat(FileSample.readAll(out)).containsExactly("Source,Database,Ref,Name,Description,Score");
     }
 
     @SetSystemProperty(key = "enableFileDriver", value = "true")

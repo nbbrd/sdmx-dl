@@ -45,6 +45,11 @@ public interface Search<T> {
 
         @lombok.NonNull T item;
 
+        /**
+         * Relevance score in {@code ]0, 1]}: {@code 1} means that the item is ranked first by every
+         * scorer, lower values that it is ranked lower or matched by fewer scorers. Scores are only
+         * comparable within the results of the same search.
+         */
         double score;
     }
 

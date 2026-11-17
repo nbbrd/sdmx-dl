@@ -27,6 +27,13 @@ public class WebFlowsResult {
     @NonNegative int total;
 
     /**
+     * Relevance scores of the {@link #getItems() items}, in the same order, as defined by
+     * {@link Search.Result#getScore()}; empty when the request has no query.
+     */
+    @lombok.Singular
+    @NonNull List<Double> scores;
+
+    /**
      * Sources (or databases) whose flows could not be loaded, sorted by source id.
      */
     @lombok.Singular

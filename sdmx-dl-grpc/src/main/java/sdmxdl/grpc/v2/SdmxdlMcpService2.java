@@ -48,7 +48,7 @@ public class SdmxdlMcpService2 {
     private static final String DETAIL_ARG =
             "Amount of information to retrieve: FULL (observations + attributes), DATA_ONLY (observations without attributes, default), NO_DATA (series keys + attributes, no observations), SERIES_KEYS_ONLY (series keys only; cheapest way to discover which series exist).";
     private static final String QUERY_ARG =
-            "Free-text search terms (words from ids or labels, e.g. 'unemployment rate'). Leave empty (default) to list everything instead of searching.";
+            "Free-text search terms (words from ids or labels, e.g. 'unemployment rate'). Leave empty (default) to list everything instead of searching. With a query, 'scores' gives the relevance of each item, in the same order, from 1 (best) down to 0 (excluded).";
     private static final String MAX_RESULTS_ARG =
             "Maximum number of entries to return (default 10). Use 0 for no limit; raise it, or page with 'offset', when 'total' is greater than the number of returned 'items'.";
     private static final String OFFSET_ARG =
@@ -155,6 +155,7 @@ public class SdmxdlMcpService2 {
                         .map(SdmxdlMcpService2::compactSource)
                         .toList())
                 .setTotal(result.getTotal())
+                .addAllScores(result.getScores())
                 .build();
     }
 
@@ -180,6 +181,7 @@ public class SdmxdlMcpService2 {
                 .addAllItems(
                         result.getItems().stream().map(ProtoApi::fromDatabase).toList())
                 .setTotal(result.getTotal())
+                .addAllScores(result.getScores())
                 .build();
     }
 
@@ -212,6 +214,7 @@ public class SdmxdlMcpService2 {
                 .addAllItems(
                         result.getItems().stream().map(ProtoApi::fromDataflow).toList())
                 .setTotal(result.getTotal())
+                .addAllScores(result.getScores())
                 .build();
     }
 
@@ -281,6 +284,7 @@ public class SdmxdlMcpService2 {
                 .addAllItems(
                         result.getItems().stream().map(ProtoApi::fromDimension).toList())
                 .setTotal(result.getTotal())
+                .addAllScores(result.getScores())
                 .build();
     }
 
@@ -310,6 +314,7 @@ public class SdmxdlMcpService2 {
                 .addAllItems(
                         result.getItems().stream().map(ProtoApi::fromAttribute).toList())
                 .setTotal(result.getTotal())
+                .addAllScores(result.getScores())
                 .build();
     }
 

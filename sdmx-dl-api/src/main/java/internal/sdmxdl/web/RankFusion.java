@@ -16,9 +16,8 @@
  */
 package internal.sdmxdl.web;
 
-import lombok.NonNull;
-
 import java.util.Arrays;
+import lombok.NonNull;
 
 /**
  * Reciprocal Rank Fusion (RRF) — merges multiple ranked score arrays
@@ -30,6 +29,16 @@ import java.util.Arrays;
 class RankFusion {
 
     private static final double K = 60.0;
+
+    /**
+     * Highest fused score, reached by a document ranked first in every score array.
+     *
+     * @param arrayCount the number of fused score arrays
+     * @return the maximum fused score
+     */
+    static double maxScore(int arrayCount) {
+        return arrayCount / (K + 1);
+    }
 
     /**
      * Fuse multiple score arrays using Reciprocal Rank Fusion.
@@ -78,4 +87,3 @@ class RankFusion {
         return ranks;
     }
 }
-

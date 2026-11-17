@@ -9,7 +9,7 @@ aliases:
 
 Find the source, database, and flow you want to query.
 
-Discovery and search are the same call at every level: pass a `query` to search, or omit it to list everything. By default, a search returns the 10 best matches; set `maxResults` to change it (`0` = no limit). Results also give the `total` number of matches, and `offset` skips the first ones to page through them.
+Discovery and search are the same call at every level: pass a `query` to search, or omit it to list everything. By default, a search returns the 10 best matches; set `maxResults` to change it (`0` = no limit). Results also give the `total` number of matches, and `offset` skips the first ones to page through them. A search also gives the relevance `score` of each match, from 1 (best) down to 0 (excluded); scores rank the matches of one search and can't be compared across searches.
 Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so partial or approximate queries still surface the right result.
 When `query` is empty, results fall back to being sorted by id instead of ranked by relevance.
 
@@ -301,11 +301,11 @@ grpcurl -d '{"sources":["ECB","ESTAT","BIS","OECD"],"query":"gdp","timeout":8000
 
 {{< expand "CLI output sample" >}}
 ```plain
-Source,Database,Ref,Name,Description
-ESTAT,,ESTAT:PRC_REM_GDP(1.0),GDP weights used in the calculation of the global specific indicator,
-ESTAT,,ESTAT:NAIDA_10_GDP(1.0),GDP and main aggregates - international data cooperation - annual data,
-ESTAT,,ESTAT:NAIDQ_10_GDP(1.0),GDP and main aggregates - international data cooperation - quarterly data,
-OECD,,OECD.CFE.TOU:DSD_TOURISM_KEY@DF_KEY_IND_PC(1.0),Key tourism economic indicators,Tourism GDP corresponds to the part of GDP genera…
+Source,Database,Ref,Name,Description,Score
+ESTAT,,ESTAT:PRC_REM_GDP(1.0),GDP weights used in the calculation of the global specific indicator,,0.976062
+ESTAT,,ESTAT:NAIDA_10_GDP(1.0),GDP and main aggregates - international data cooperation - annual data,,0.969231
+ESTAT,,ESTAT:NAIDQ_10_GDP(1.0),GDP and main aggregates - international data cooperation - quarterly data,,0.968498
+OECD,,OECD.CFE.TOU:DSD_TOURISM_KEY@DF_KEY_IND_PC(1.0),Key tourism economic indicators,Tourism GDP corresponds to the part of GDP genera…,0.861891
 ```
 {{< /expand >}}
 

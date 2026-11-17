@@ -262,6 +262,11 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/AttributeDto"
+        scores:
+          type: array
+          items:
+            type: number
+            format: double
     ListAvailabilityResponseDto:
       type: object
       properties:
@@ -288,6 +293,11 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/CodeDto"
+        scores:
+          type: array
+          items:
+            type: number
+            format: double
     ListDatabasesResponseDto:
       type: object
       properties:
@@ -300,6 +310,11 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/DatabaseDto"
+        scores:
+          type: array
+          items:
+            type: number
+            format: double
     ListDimensionsResponseDto:
       type: object
       properties:
@@ -312,6 +327,11 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/DimensionDto"
+        scores:
+          type: array
+          items:
+            type: number
+            format: double
     ListFlowsResponseDto:
       type: object
       properties:
@@ -324,6 +344,11 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/FlowDto"
+        scores:
+          type: array
+          items:
+            type: number
+            format: double
     ListScriptTargetsResponseDto:
       type: object
       properties:
@@ -348,6 +373,11 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/WebSourceDto"
+        scores:
+          type: array
+          items:
+            type: number
+            format: double
     MetaSetDto:
       type: object
       properties:
@@ -485,6 +515,11 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/SourceFailureDto"
+        scores:
+          type: array
+          items:
+            type: number
+            format: double
     SearchSourcesRequestDto:
       type: object
       properties:
