@@ -49,7 +49,7 @@ Keys A key selects one or more series of a flow. It has one code per dimension, 
 <meta property="article:section" content="Usage" />
     <meta
       property="article:modified_time"
-      content="2026-11-17T14:05:17+01:00"
+      content="2026-11-17T15:34:52+01:00"
     />
 
 
@@ -69,7 +69,7 @@ Keys A key selects one or more series of a flow. It has one code per dimension, 
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/browse/",
       "headline": "Browse",
       "description": "Explore a flow’s structure and narrow down valid keys before retrieving data.\nA flow is described by ordered dimensions (which make up the key) and attributes (extra descriptive metadata, not part of the key). Coded dimensions and attributes draw their values from a codelist.\nKeys A key selects one or more series of a flow. It has one code per dimension, in dimension order, separated by dots:",
-      "wordCount": "831",
+      "wordCount": "964",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -80,7 +80,7 @@ Keys A key selects one or more series of a flow. It has one code per dimension, 
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-11-17T14:05:17.00Z",
+      "dateModified": "2026-11-17T15:34:52.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -2106,9 +2106,8 @@ A key can&rsquo;t have more positions than the flow has dimensions.</div>
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">keyOf</span><span class="p">(</span><span class="s">&#34;M..EUR.SP00.A&#34;</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">dimension</span><span class="p">(</span><span class="s">&#34;CURRENCY&#34;</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">build</span><span class="p">())</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">getCodes</span><span class="p">()</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">getItems</span><span class="p">()</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">code</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">code</span><span class="p">.</span><span class="na">getId</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34; = &#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">code</span><span class="p">.</span><span class="na">getName</span><span class="p">()));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">availability</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">availability</span><span class="p">.</span><span class="na">getCodes</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">forEach</span><span class="p">((</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">id</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34; = &#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">name</span><span class="p">)));</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></div></div>
     <input
@@ -2191,10 +2190,86 @@ A key can&rsquo;t have more positions than the flow has dimensions.</div>
   href="#dimensions-and-attributes"
 >Dimensions and attributes</a>) is matched first;</li>
 <li>otherwise, an integer is read as the zero-based <strong>index</strong> of the dimension in the key (e.g. <code>1</code> for the second component of <code>M..EUR.SP00.A</code>, which is <code>CURRENCY</code>);</li>
-<li>an <strong>empty</strong> value (the default) selects the first wildcard dimension of the key (e.g. <code>CURRENCY</code> for <code>M..EUR.SP00.A</code>), which makes it easy to narrow a key step by step.</li>
+<li>an <strong>empty</strong> value (the default) selects the first wildcard dimension of the key (e.g. <code>CURRENCY</code> for <code>M..EUR.SP00.A</code>), which makes it easy to narrow a key step by step;</li>
+<li><code>*</code> selects <strong>every dimension</strong> (see <a
+  class="gdoc-markdown__link"
+  href="#all-dimensions"
+>All dimensions</a> below).</li>
 </ul>
 </li>
-<li>The selected dimension must be a wildcard in the key. The response reports its id along with the codes (<code>Dimension</code> column in the CLI, <code>dimension</code> field in the WS).</li>
+<li>Except with <code>*</code>, the selected dimension must be a wildcard in the key. The response is a list of items, one per selected dimension, each one reporting the dimension id along with its codes (<code>Dimension</code> column in the CLI, <code>dimension</code> and <code>codes</code> fields in the WS).</li>
+</ul>
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h3 id="all-dimensions"
+    >
+        All dimensions
+    </h3>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/browse/#all-dimensions" class="gdoc-page__anchor clip flex align-center" title="Anchor to: All dimensions" aria-label="Anchor to: All dimensions" href="#all-dimensions">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>The <code>*</code> dimension returns the availability of every dimension in one call, which is handy to display facets.
+Each dimension is computed with <strong>its own code removed</strong> from the key, so that the codes already selected stay in the list along with their alternatives.</p>
+
+
+
+<div class="gdoc-tabs">
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-browse-availability-all"
+      id="tabs-browse-availability-all-0"
+      checked="checked"/>
+    <label for="tabs-browse-availability-all-0" class="gdoc-tabs__label">
+      CLI
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl list availability ECB EXR M.CHF.EUR.SP00.A <span class="s2">&#34;*&#34;</span>
+</span></span></code></pre></div></div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-browse-availability-all"
+      id="tabs-browse-availability-all-1"
+      />
+    <label for="tabs-browse-availability-all-1" class="gdoc-tabs__label">
+      WS
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/availability <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;key=M.CHF.EUR.SP00.A&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;dimension=*&#34;</span>
+</span></span></code></pre></div></div>
+</div>
+
+
+<div class="gdoc-expand">
+  <label class="gdoc-expand__head flex justify-between" for="0521c396-10">
+    <span>CLI output sample</span>
+    <span>↕</span>
+  </label>
+  <input id="0521c396-10" type="checkbox" class="gdoc-expand__control hidden" />
+  <div class="gdoc-markdown--nested gdoc-expand__content">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Code,Label,Dimension
+</span></span><span class="line"><span class="cl">A,Annual,FREQ
+</span></span><span class="line"><span class="cl">D,Daily,FREQ
+</span></span><span class="line"><span class="cl">H,Half-yearly,FREQ
+</span></span><span class="line"><span class="cl">M,Monthly,FREQ
+</span></span><span class="line"><span class="cl">Q,Quarterly,FREQ
+</span></span><span class="line"><span class="cl">ARS,Argentine peso,CURRENCY
+</span></span><span class="line"><span class="cl">AUD,Australian dollar,CURRENCY
+</span></span><span class="line"><span class="cl">...
+</span></span><span class="line"><span class="cl">EUR,Euro,CURRENCY_DENOM
+</span></span><span class="line"><span class="cl">SP00,Spot,EXR_TYPE
+</span></span><span class="line"><span class="cl">A,Average,EXR_SUFFIX
+</span></span><span class="line"><span class="cl">E,End-of-period,EXR_SUFFIX
+</span></span></code></pre></div>
+  </div>
+</div>
+
+<ul>
+<li>Quote the <code>*</code> in the shell to prevent its expansion into file names.</li>
+<li>This may cost one request per dimension to the source.</li>
 </ul>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="next-step"

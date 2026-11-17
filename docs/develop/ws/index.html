@@ -50,7 +50,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
 <meta property="article:section" content="Ws" />
     <meta
       property="article:modified_time"
-      content="2026-11-17T14:05:17+01:00"
+      content="2026-11-17T15:34:52+01:00"
     />
 
 
@@ -71,7 +71,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/ws/",
       "headline": "Web service",
       "description": "\nsdmx-dl WS is a web service that serves as a bridge to any application or language.\nThis service has three endpoints:\na gRPC endpoint which has the best performances but a limited set of clients a REST endpoint which has a wider range of clients but is less efficient an MCP endpoint which lets AI assistants and agents browse and fetch data It also serves a web UI to browse sources and fetch data from a browser, on top of the REST endpoint.",
-      "wordCount": "1460",
+      "wordCount": "1471",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -82,7 +82,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-11-17T14:05:17.00Z",
+      "dateModified": "2026-11-17T15:34:52.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -2013,7 +2013,7 @@ Each series has a <code>key</code>, optional series-level <code>meta</code>, and
 <li><code>GetDataStream</code> (<code>GET /{source}/{flow}/data:stream</code>) returns the same series objects as a plain JSON array, without the <code>ref</code>/<code>query</code> wrapper.</li>
 <li>Listing operations (<code>/sources</code>, <code>/{source}/flows</code>, <code>/{source}/{flow}/dimensions</code>, <code>/{source}/{flow}/codes/{concept}</code>, …) return an object with the matching entries in <code>items</code> and their number before paging in <code>total</code>, e.g. <code>{&quot;items&quot;: [{&quot;id&quot;: &quot;A&quot;, &quot;name&quot;: &quot;Annual&quot;}, {&quot;id&quot;: &quot;Q&quot;, &quot;name&quot;: &quot;Quarterly&quot;}], &quot;total&quot;: 2}</code>. Use <code>offset</code> with <code>maxResults</code> to page through them. With a <code>query</code>, <code>scores</code> gives the relevance of each item, in the same order, from 1 (best) down to 0 (excluded).</li>
 <li>Empty fields are omitted from JSON responses: an empty list has no <code>items</code> and a <code>total</code> of <code>0</code> is omitted, so default them (e.g. <code>payload.get(&quot;items&quot;, [])</code>).</li>
-<li><code>ListAvailability</code> also returns the id of the selected dimension, e.g. <code>{&quot;dimension&quot;: &quot;FREQ&quot;, &quot;items&quot;: [{&quot;id&quot;: &quot;A&quot;, &quot;name&quot;: &quot;Annual&quot;}], &quot;total&quot;: 1}</code>. Its <code>dimension</code> parameter takes a dimension id, a zero-based index, or nothing for the first wildcard dimension of the <code>key</code> (see <a
+<li><code>ListAvailability</code> returns one item per selected dimension, with its id and codes, e.g. <code>{&quot;items&quot;: [{&quot;dimension&quot;: &quot;FREQ&quot;, &quot;codes&quot;: [{&quot;id&quot;: &quot;A&quot;, &quot;name&quot;: &quot;Annual&quot;}]}], &quot;total&quot;: 1}</code>. Its <code>dimension</code> parameter takes a dimension id, a zero-based index, nothing for the first wildcard dimension of the <code>key</code>, or <code>*</code> for every dimension (see <a
   class="gdoc-markdown__link"
   href="/sdmx-dl/docs/develop/usage/browse/#availability"
 >Availability</a>).</li>
@@ -2097,7 +2097,7 @@ Each series has a <code>key</code>, optional series-level <code>meta</code>, and
 			</tr>
 			<tr>
 					<td><code>listAvailability</code></td>
-					<td>Get the codes that actually occur for a dimension under a key.</td>
+					<td>Get the codes that actually occur for a dimension (or every one) under a key.</td>
 			</tr>
 			<tr>
 					<td><code>getData</code></td>
