@@ -9,7 +9,7 @@
 <meta name="referrer" content="no-referrer" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="color-scheme" content="light dark" />
-<meta name="generator" content="Hugo 0.169.0">
+<meta name="generator" content="Hugo 0.170.0">
 
 
   <meta name="description" content="sdmx-dl WS is a web service that serves as a bridge to any application or language.
@@ -50,7 +50,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
 <meta property="article:section" content="Ws" />
     <meta
       property="article:modified_time"
-      content="2026-11-13T15:40:08+01:00"
+      content="2026-11-17T08:23:24+01:00"
     />
 
 
@@ -71,7 +71,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/ws/",
       "headline": "Web service",
       "description": "\nsdmx-dl WS is a web service that serves as a bridge to any application or language.\nThis service has three endpoints:\na gRPC endpoint which has the best performances but a limited set of clients a REST endpoint which has a wider range of clients but is less efficient an MCP endpoint which lets AI assistants and agents browse and fetch data It also serves a web UI to browse sources and fetch data from a browser, on top of the REST endpoint.",
-      "wordCount": "1276",
+      "wordCount": "1315",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -82,7 +82,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-11-13T15:40:08.00Z",
+      "dateModified": "2026-11-17T08:23:24.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1900,6 +1900,11 @@ Its default port is <code>4559</code>, under the <code>/sdmx-dl/v2</code> path p
 					<td>List or search a source&rsquo;s flows.</td>
 			</tr>
 			<tr>
+					<td><code>SearchFlows</code></td>
+					<td><code>GET /flows</code></td>
+					<td>Search the flows of several sources (all by default) at once, with per-source <code>failures</code> and an optional <code>timeout</code>.</td>
+			</tr>
+			<tr>
 					<td><code>GetMeta</code></td>
 					<td><code>GET /{source}/{flow}/meta</code></td>
 					<td>Flow-level structure (dimensions, attributes).</td>
@@ -2057,6 +2062,10 @@ Each series has a <code>key</code>, optional series-level <code>meta</code>, and
 					<td>List or search the flows (datasets) of a source.</td>
 			</tr>
 			<tr>
+					<td><code>searchFlows</code></td>
+					<td>Search the flows (datasets) of several public sources at once.</td>
+			</tr>
+			<tr>
 					<td><code>listDimensions</code></td>
 					<td>List or search the dimensions of a flow&rsquo;s structure.</td>
 			</tr>
@@ -2098,7 +2107,7 @@ Each series has a <code>key</code>, optional series-level <code>meta</code>, and
 			</tr>
 	</tbody>
 </table> </div>
-<p>The typical workflow is: find a source (<code>listSources</code>) → find a flow (<code>listFlows</code>) → inspect its dimensions/attributes (<code>getMeta</code> or <code>listDimensions</code>/<code>listAttributes</code>) → resolve dimension codes (<code>listCodes</code>) → fetch data (<code>getData</code>, preferring the structured <code>dimensions</code> map over a positional <code>key</code>).</p>
+<p>The typical workflow is: find a source (<code>listSources</code>) → find a flow (<code>listFlows</code>, or <code>searchFlows</code> when the source is unknown) → inspect its dimensions/attributes (<code>getMeta</code> or <code>listDimensions</code>/<code>listAttributes</code>) → resolve dimension codes (<code>listCodes</code>) → fetch data (<code>getData</code>, preferring the structured <code>dimensions</code> map over a positional <code>key</code>).</p>
 <p>Call example using <a
   class="gdoc-markdown__link"
   href="https://curl.se/"

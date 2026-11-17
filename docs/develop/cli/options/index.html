@@ -9,7 +9,7 @@
 <meta name="referrer" content="no-referrer" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="color-scheme" content="light dark" />
-<meta name="generator" content="Hugo 0.169.0">
+<meta name="generator" content="Hugo 0.170.0">
 
 
   <meta name="description" content="An option has the following caracteristics:
@@ -51,7 +51,7 @@ Common General-purpose options used by various commands." />
 <meta property="article:section" content="CLI" />
     <meta
       property="article:modified_time"
-      content="2026-11-13T15:40:08+01:00"
+      content="2026-11-17T08:23:24+01:00"
     />
 
 
@@ -72,7 +72,7 @@ Common General-purpose options used by various commands." />
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/cli/options/",
       "headline": "Options",
       "description": "An option has the following caracteristics:\nit has a name prefixed by two hyphens (e.g. --version). it may have a shortcut prefixed by one hyphen (e.g. -h is a shortcut of --help). it is case-sensitive Shortcuts can be grouped behind one hyphen (e.g. -vh is equivalent to -v -h).\nThe options default values are system-independent.\nCommon General-purpose options used by various commands.",
-      "wordCount": "645",
+      "wordCount": "716",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -83,7 +83,7 @@ Common General-purpose options used by various commands." />
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-11-13T15:40:08.00Z",
+      "dateModified": "2026-11-17T08:23:24.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1901,6 +1901,49 @@ When <code>--query</code> is empty (the default), results are returned sorted/un
 					<td></td>
 					<td><code>&lt;n&gt;</code></td>
 					<td>Number of matching results to skip before returning results (default: <code>0</code>).</td>
+			</tr>
+	</tbody>
+</table> </div>
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="search-across-sources"
+    >
+        Search across sources
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/options/#search-across-sources" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Search across sources" aria-label="Anchor to: Search across sources" href="#search-across-sources">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>Options used by the <code>search flows</code> command, which searches several sources at once.</p>
+<div class="table-wrap"> <table>
+	<thead>
+			<tr>
+					<th>Name</th>
+					<th>Shortcut</th>
+					<th>Parameter</th>
+					<th>Description</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td><a id="within" href="#within"><code>--within</code></a></td>
+					<td><code>-w</code></td>
+					<td><a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#source"
+><code>&lt;source&gt;,...</code></a></td>
+					<td>Comma-separated sources to search (default: every source allowed by <code>--max-confidentiality</code>).</td>
+			</tr>
+			<tr>
+					<td><a id="max-confidentiality" href="#max-confidentiality"><code>--max-confidentiality</code></a></td>
+					<td><code>-c</code></td>
+					<td><code>&lt;level&gt;</code></td>
+					<td>Maximum confidentiality level of the searched sources: <code>PUBLIC</code>, <code>UNRESTRICTED</code>, <code>RESTRICTED</code>, <code>CONFIDENTIAL</code> or <code>SECRET</code> (default).</td>
+			</tr>
+			<tr>
+					<td><a id="timeout" href="#timeout"><code>--timeout</code></a></td>
+					<td>-</td>
+					<td><code>&lt;millis&gt;</code></td>
+					<td>Maximum time to wait for the sources (default: <code>0</code>, meaning no limit); late sources are reported as failures.</td>
 			</tr>
 	</tbody>
 </table> </div>

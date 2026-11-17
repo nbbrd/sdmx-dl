@@ -9,7 +9,7 @@
 <meta name="referrer" content="no-referrer" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="color-scheme" content="light dark" />
-<meta name="generator" content="Hugo 0.169.0">
+<meta name="generator" content="Hugo 0.170.0">
 
 
   <meta name="description" content="By default, all commands print the result on the standard output.
@@ -53,7 +53,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
 <meta property="article:section" content="CLI" />
     <meta
       property="article:modified_time"
-      content="2026-11-13T15:40:08+01:00"
+      content="2026-11-17T08:23:24+01:00"
     />
 
 
@@ -75,7 +75,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/cli/usage/",
       "headline": "Usage",
       "description": "By default, all commands print the result on the standard output.\nMost commands produce RFC4180 compliant CSV content.\nCommand arguments are composed of options and positional parameters. Options have a name, positional parameters are usually the values that follow the options, but they may be mixed. The general pattern is:\nsdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters options All commands share the following options:\n-h, --help - Show an help message and exit. -v, --verbose - Enable verbose mode. Commands summary The commands follow a verb\u002bnoun hierarchy.",
-      "wordCount": "1952",
+      "wordCount": "2204",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -86,7 +86,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-11-13T15:40:08.00Z",
+      "dateModified": "2026-11-17T08:23:24.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1801,6 +1801,7 @@ flowchart TB
     r{{sdmx-dl}}
     r --- f([fetch]) --- data &amp; meta &amp; keys
     r --- l([list]) --- sources &amp; databases &amp; flows &amp; dimensions &amp; attributes &amp; codes &amp; availability &amp; features &amp; plugins
+    r --- q([search]) --- qflows[flows]
     r --- c([check]) --- health &amp; config &amp; xsources[sources]
     r --- s([setup]) --- completion &amp; launcher
     r --- x([script]) --- xdata[data] &amp; xflows[flows] &amp; targets
@@ -1827,6 +1828,11 @@ flowchart TB
     click availability &#34;#list-availability&#34; &#34;list availability command&#34;
     click features &#34;#list-features&#34; &#34;list features command&#34;
     click plugins &#34;#list-plugins&#34; &#34;list plugins command&#34;
+
+    classDef qx fill:#2aa198
+    class q,qflows qx;
+    click q &#34;#search&#34; &#34;search command&#34;
+    click qflows &#34;#search-flows&#34; &#34;search flows command&#34;
 
     classDef cx fill:#268bd2
     class c,health,config,xsources cx;
@@ -1931,6 +1937,23 @@ flowchart TB
   class="gdoc-markdown__link"
   href="/sdmx-dl/docs/develop/cli/examples/#list-examples"
 >Examples</a></p>
+
+
+
+
+
+<a id="search" href="#search"><img src="https://img.shields.io/badge/search--2aa198?style=flat-square"/></a>
+
+
+<p>Search resources across several sources at once (see <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/usage/discover/#flows-across-sources"
+>Discover</a>).</p>
+<p>Subcommands:
+<a
+  class="gdoc-markdown__link"
+  href="#search-flows"
+>flows</a></p>
 
 
 
@@ -2112,11 +2135,11 @@ flowchart TB
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="0ad23fd0-10">
+  <label class="gdoc-expand__head flex justify-between" for="0ad23fd0-12">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="0ad23fd0-10" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="0ad23fd0-12" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -2268,11 +2291,11 @@ flowchart TB
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="4603ff90-13">
+  <label class="gdoc-expand__head flex justify-between" for="4603ff90-15">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="4603ff90-13" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="4603ff90-15" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -2421,11 +2444,11 @@ flowchart TB
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="bc89e147-16">
+  <label class="gdoc-expand__head flex justify-between" for="bc89e147-18">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="bc89e147-16" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="bc89e147-18" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -2580,11 +2603,11 @@ Example: <code>sdmx-dl <font color="#859900">list sources</font> <abbr title="qu
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="06a7b243-19">
+  <label class="gdoc-expand__head flex justify-between" for="06a7b243-21">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="06a7b243-19" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="06a7b243-21" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -2782,11 +2805,11 @@ Example: <code>sdmx-dl <font color="#859900">list databases</font> <abbr title="
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="edfab55e-22">
+  <label class="gdoc-expand__head flex justify-between" for="edfab55e-24">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="edfab55e-22" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="edfab55e-24" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -2921,11 +2944,11 @@ Example: <code>sdmx-dl <font color="#859900">list flows</font> <abbr title="sour
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="3800ff6f-25">
+  <label class="gdoc-expand__head flex justify-between" for="3800ff6f-27">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="3800ff6f-25" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="3800ff6f-27" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -3079,11 +3102,11 @@ is empty; ranked by relevance (typo-tolerant) otherwise.</p>
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="d143aa95-28">
+  <label class="gdoc-expand__head flex justify-between" for="d143aa95-30">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="d143aa95-28" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="d143aa95-30" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -3253,11 +3276,11 @@ empty; ranked by relevance (typo-tolerant) otherwise.</p>
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="380b1816-31">
+  <label class="gdoc-expand__head flex justify-between" for="380b1816-33">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="380b1816-31" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="380b1816-33" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -3411,11 +3434,11 @@ empty; ranked by relevance (typo-tolerant) otherwise.</p>
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="16de0590-34">
+  <label class="gdoc-expand__head flex justify-between" for="16de0590-36">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="16de0590-34" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="16de0590-36" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -3557,11 +3580,11 @@ empty; ranked by relevance (typo-tolerant) otherwise.</p>
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="954b664c-37">
+  <label class="gdoc-expand__head flex justify-between" for="954b664c-39">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="954b664c-37" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="954b664c-39" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -3672,11 +3695,11 @@ empty; ranked by relevance (typo-tolerant) otherwise.</p>
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="fa6b1a4b-40">
+  <label class="gdoc-expand__head flex justify-between" for="fa6b1a4b-42">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="fa6b1a4b-40" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="fa6b1a4b-42" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -3777,11 +3800,11 @@ empty; ranked by relevance (typo-tolerant) otherwise.</p>
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="ed77c394-43">
+  <label class="gdoc-expand__head flex justify-between" for="ed77c394-45">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="ed77c394-43" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="ed77c394-45" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -3797,6 +3820,190 @@ empty; ranked by relevance (typo-tolerant) otherwise.</p>
 					<td>REGISTRY</td>
 					<td>RI_REGISTRY</td>
 					<td>sdmxdl.registry.sourcesFile</td>
+			</tr>
+	</tbody>
+</table> </div>
+</div>
+</small>
+
+  </div>
+</div>
+
+
+
+
+
+
+<a id="search-flows" href="#search-flows"><img src="https://img.shields.io/badge/search-flows-2aa198?style=flat-square"/></a>
+
+
+<p>Search data flows of several sources (all by default) at once, ranked by relevance (typo-tolerant).
+Sources are queried in parallel; those that fail or don&rsquo;t answer within <a
+  class="gdoc-markdown__link--code"
+  href="../options#timeout"
+><code>--timeout</code></a>
+are reported on stderr while the results of the others are still returned.</p>
+<p>Example: <code>sdmx-dl <font color="#2aa198">search flows</font> <abbr title="query">&ldquo;exchange rates&rdquo;</abbr></code><br>
+Example: <code>sdmx-dl <font color="#2aa198">search flows</font> <abbr title="query">gdp</abbr> <abbr title="sources">&ndash;within ECB,ESTAT,BIS,OECD</abbr> <abbr title="timeout">&ndash;timeout 8000</abbr></code></p>
+
+
+
+<div class="gdoc-tabs">
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-search-flows"
+      id="tabs-search-flows-0"
+      checked="checked"/>
+    <label for="tabs-search-flows-0" class="gdoc-tabs__label">
+      Parameters
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <ol>
+<li><code>query</code> - Free-text search query.</li>
+</ol>
+<p>The legacy form <code>search flows <abbr title="source">ECB</abbr> <abbr title="query">&ldquo;exchange rates&rdquo;</abbr></code> still searches a single source.</p></div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-search-flows"
+      id="tabs-search-flows-1"
+      />
+    <label for="tabs-search-flows-1" class="gdoc-tabs__label">
+      Options
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>Main options:</p>
+<ul>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../options#sources"
+><code>-s, --sources&lt;file&gt;</code></a> - File that provides data source definitions.</li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../options#languages"
+><code>-l, --languages&lt;langs&gt;</code></a> - Language priority list.</li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../options#within"
+><code>-w, --within&lt;source&gt;,...</code></a> - Sources to search (default: all).</li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../options#max-confidentiality"
+><code>-c, --max-confidentiality&lt;level&gt;</code></a> - Maximum confidentiality level of the searched sources.</li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../options#timeout"
+><code>--timeout&lt;millis&gt;</code></a> - Maximum time to wait for the sources.</li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../options#max-results"
+><code>-m, --max-results&lt;n&gt;</code></a> - Maximum number of results.</li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../options#offset"
+><code>--offset&lt;n&gt;</code></a> - Number of results to skip.</li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../options#plain-text"
+><code>--plain-text</code></a> - Strip markup from descriptions.</li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../options#truncate"
+><code>--truncate&lt;length&gt;</code></a> - Maximum description length.</li>
+</ul>
+<p>Other options:
+<a
+  class="gdoc-markdown__link--code"
+  href="../options#csv"
+><code>CSV</code></a>,
+<a
+  class="gdoc-markdown__link--code"
+  href="../options#network"
+><code>Network</code></a></p>
+</div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-search-flows"
+      id="tabs-search-flows-2"
+      />
+    <label for="tabs-search-flows-2" class="gdoc-tabs__label">
+      Output
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>CSV columns:</p>
+<ol>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#source"
+><code>Source:source</code></a></li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#string"
+><code>Database:string</code></a></li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#flow"
+><code>Ref:flow</code></a></li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#string"
+><code>Name:string</code></a></li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#string"
+><code>Description:string</code></a></li>
+</ol></div>
+</div>
+
+
+<div class="gdoc-expand">
+  <label class="gdoc-expand__head flex justify-between" for="bc606186-48">
+    <span>Output sample</span>
+    <span>↕</span>
+  </label>
+  <input id="bc606186-48" type="checkbox" class="gdoc-expand__control hidden" />
+  <div class="gdoc-markdown--nested gdoc-expand__content">
+    <small>
+<div class="gdoc-include"><div class="table-wrap"> <table>
+	<thead>
+			<tr>
+					<th>Source</th>
+					<th>Database</th>
+					<th>Ref</th>
+					<th>Name</th>
+					<th>Description</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>ESTAT</td>
+					<td></td>
+					<td>ESTAT:PRC_REM_GDP(1.0)</td>
+					<td>GDP weights used in the calculation of the global specific indicator</td>
+					<td></td>
+			</tr>
+			<tr>
+					<td>ESTAT</td>
+					<td></td>
+					<td>ESTAT:NAIDA_10_GDP(1.0)</td>
+					<td>GDP and main aggregates - international data cooperation - annual data</td>
+					<td></td>
+			</tr>
+			<tr>
+					<td>ESTAT</td>
+					<td></td>
+					<td>ESTAT:NAIDQ_10_GDP(1.0)</td>
+					<td>GDP and main aggregates - international data cooperation - quarterly data</td>
+					<td></td>
+			</tr>
+			<tr>
+					<td>OECD</td>
+					<td></td>
+					<td>OECD.CFE.TOU:DSD_TOURISM_KEY@DF_KEY_IND_PC(1.0)</td>
+					<td>Key tourism economic indicators</td>
+					<td>Tourism GDP corresponds to the part of GDP genera…</td>
 			</tr>
 	</tbody>
 </table> </div>
@@ -3952,11 +4159,11 @@ empty; ranked by relevance (typo-tolerant) otherwise.</p>
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="5b1199b2-46">
+  <label class="gdoc-expand__head flex justify-between" for="5b1199b2-51">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="5b1199b2-46" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="5b1199b2-51" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -4083,11 +4290,11 @@ empty; ranked by relevance (typo-tolerant) otherwise.</p>
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="6769b986-49">
+  <label class="gdoc-expand__head flex justify-between" for="6769b986-54">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="6769b986-49" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="6769b986-54" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -4227,11 +4434,11 @@ empty; ranked by relevance (typo-tolerant) otherwise.</p>
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="b88534a1-52">
+  <label class="gdoc-expand__head flex justify-between" for="b88534a1-57">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="b88534a1-52" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="b88534a1-57" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>

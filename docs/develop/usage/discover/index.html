@@ -9,7 +9,7 @@
 <meta name="referrer" content="no-referrer" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="color-scheme" content="light dark" />
-<meta name="generator" content="Hugo 0.169.0">
+<meta name="generator" content="Hugo 0.170.0">
 
 
   <meta name="description" content="Find the source, database, and flow you want to query.
@@ -47,7 +47,7 @@ Discovery and search are the same call at every level: pass a query to search, o
 <meta property="article:section" content="Usage" />
     <meta
       property="article:modified_time"
-      content="2026-11-13T15:40:08+01:00"
+      content="2026-11-17T08:23:24+01:00"
     />
 
 
@@ -66,7 +66,7 @@ Discovery and search are the same call at every level: pass a query to search, o
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/discover/",
       "headline": "Discover",
       "description": "Find the source, database, and flow you want to query.\nDiscovery and search are the same call at every level: pass a query to search, or omit it to list everything. By default, a search returns the 10 best matches; set maxResults to change it (0 = no limit). Results also give the total number of matches, and offset skips the first ones to page through them. Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so partial or approximate queries still surface the right result. When query is empty, results fall back to being sorted by id instead of ranked by relevance.",
-      "wordCount": "710",
+      "wordCount": "996",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -77,7 +77,7 @@ Discovery and search are the same call at every level: pass a query to search, o
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-11-13T15:40:08.00Z",
+      "dateModified": "2026-11-17T08:23:24.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -2104,12 +2104,130 @@ When <code>query</code> is empty, results fall back to being sorted by id instea
 <li>Search is scoped to a single source; <a
   class="gdoc-markdown__link"
   href="#sources"
->discover sources</a> first if you don&rsquo;t know which source to search within.</li>
+>discover sources</a> first if you don&rsquo;t know which source to search within, or <a
+  class="gdoc-markdown__link"
+  href="#flows-across-sources"
+>search across sources</a>.</li>
 <li>Some sources expose several databases; pass a <code>database</code> to scope the listing (defaults to the source&rsquo;s single/default database otherwise) — see <a
   class="gdoc-markdown__link"
   href="#databases"
 >Databases</a>.</li>
 <li>Descriptions may contain markup (e.g. HTML tags) and be quite long; pass <code>plainText</code> to strip markup and <code>truncate</code> to limit their length (CLI: <code>--plain-text</code> and <code>--truncate</code>; gRPC: <code>plain_text</code> and <code>truncate</code>). The MCP tools return plain descriptions truncated to 200 characters by default.</li>
+</ul>
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="flows-across-sources"
+    >
+        Flows across sources
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/discover/#flows-across-sources" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Flows across sources" aria-label="Anchor to: Flows across sources" href="#flows-across-sources">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>Find a dataset by topic when you don&rsquo;t know which source publishes it: the flows of several sources (all by default) are searched at once and ranked together.</p>
+
+
+
+<div class="gdoc-tabs">
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-discover-flows-across-sources"
+      id="tabs-discover-flows-across-sources-0"
+      checked="checked"/>
+    <label for="tabs-discover-flows-across-sources-0" class="gdoc-tabs__label">
+      API
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">java.time.Duration</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.*</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">WebFlowsResult</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SdmxWebManager</span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">searchFlows</span><span class="p">(</span><span class="n">WebFlowsRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">source</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">).</span><span class="na">source</span><span class="p">(</span><span class="s">&#34;ESTAT&#34;</span><span class="p">).</span><span class="na">source</span><span class="p">(</span><span class="s">&#34;BIS&#34;</span><span class="p">).</span><span class="na">source</span><span class="p">(</span><span class="s">&#34;OECD&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">query</span><span class="p">(</span><span class="s">&#34;gdp&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">maxResults</span><span class="p">(</span><span class="n">4</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">timeout</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="n">8</span><span class="p">))</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">build</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">result</span><span class="p">.</span><span class="na">getItems</span><span class="p">().</span><span class="na">forEach</span><span class="p">(</span><span class="n">entry</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">entry</span><span class="p">.</span><span class="na">getSource</span><span class="p">().</span><span class="na">getId</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34; &#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="na">getFlow</span><span class="p">().</span><span class="na">getRef</span><span class="p">()));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">result</span><span class="p">.</span><span class="na">getFailures</span><span class="p">().</span><span class="na">forEach</span><span class="p">(</span><span class="n">failure</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">failure</span><span class="p">.</span><span class="na">getSource</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34; failed: &#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">failure</span><span class="p">.</span><span class="na">getCause</span><span class="p">()));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div></div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-discover-flows-across-sources"
+      id="tabs-discover-flows-across-sources-1"
+      />
+    <label for="tabs-discover-flows-across-sources-1" class="gdoc-tabs__label">
+      CLI
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl search flows <span class="s2">&#34;exchange rates&#34;</span>
+</span></span><span class="line"><span class="cl">sdmx-dl search flows gdp --within ECB,ESTAT,BIS,OECD --timeout <span class="m">8000</span> -m <span class="m">4</span>
+</span></span></code></pre></div></div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-discover-flows-across-sources"
+      id="tabs-discover-flows-across-sources-2"
+      />
+    <label for="tabs-discover-flows-across-sources-2" class="gdoc-tabs__label">
+      WS
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <div class="flex align-center gdoc-page__anchorwrap">
+    <h3 id="rest"
+    >
+        REST
+    </h3>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/discover/#rest" class="gdoc-page__anchor clip flex align-center" title="Anchor to: REST" aria-label="Anchor to: REST" href="#rest">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -G localhost:4559/sdmx-dl/v2/flows <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;query=gdp&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;sources=ECB,ESTAT,BIS,OECD&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;timeout=8000&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;maxResults=4&#34;</span>
+</span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
+    <h3 id="grpc"
+    >
+        gRPC
+    </h3>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/discover/#grpc" class="gdoc-page__anchor clip flex align-center" title="Anchor to: gRPC" aria-label="Anchor to: gRPC" href="#grpc">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;sources&#34;:[&#34;ECB&#34;,&#34;ESTAT&#34;,&#34;BIS&#34;,&#34;OECD&#34;],&#34;query&#34;:&#34;gdp&#34;,&#34;timeout&#34;:8000,&#34;maxResults&#34;:4}&#39;</span> -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.SearchFlows
+</span></span></code></pre></div></div>
+</div>
+
+
+<div class="gdoc-expand">
+  <label class="gdoc-expand__head flex justify-between" for="151fe0d0-7">
+    <span>CLI output sample</span>
+    <span>↕</span>
+  </label>
+  <input id="151fe0d0-7" type="checkbox" class="gdoc-expand__control hidden" />
+  <div class="gdoc-markdown--nested gdoc-expand__content">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Source,Database,Ref,Name,Description
+</span></span><span class="line"><span class="cl">ESTAT,,ESTAT:PRC_REM_GDP(1.0),GDP weights used in the calculation of the global specific indicator,
+</span></span><span class="line"><span class="cl">ESTAT,,ESTAT:NAIDA_10_GDP(1.0),GDP and main aggregates - international data cooperation - annual data,
+</span></span><span class="line"><span class="cl">ESTAT,,ESTAT:NAIDQ_10_GDP(1.0),GDP and main aggregates - international data cooperation - quarterly data,
+</span></span><span class="line"><span class="cl">OECD,,OECD.CFE.TOU:DSD_TOURISM_KEY@DF_KEY_IND_PC(1.0),Key tourism economic indicators,Tourism GDP corresponds to the part of GDP genera…
+</span></span></code></pre></div>
+  </div>
+</div>
+
+<ul>
+<li>Sources are queried in parallel and every database of each source is searched; each result tells its <code>source</code> and <code>database</code>.</li>
+<li>A source that fails or doesn&rsquo;t answer within <code>timeout</code> (milliseconds, <code>0</code> for no limit) doesn&rsquo;t fail the search: it is reported in <code>failures</code> (on stderr for the CLI), e.g. <code>Failed to search 'INSEE': No answer within PT1.5S</code>.</li>
+<li>Without a query, results are sorted by source, database and flow; <code>total</code>, <code>maxResults</code> and <code>offset</code> work as for the other listings.</li>
+<li>Searching all sources can be slow on a cold cache since every source&rsquo;s flows must be downloaded; restrict the sources and set a timeout for interactive use. The MCP <code>searchFlows</code> tool only searches public sources and waits 30 seconds by default.</li>
 </ul>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="next-step"
