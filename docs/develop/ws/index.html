@@ -50,7 +50,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
 <meta property="article:section" content="Ws" />
     <meta
       property="article:modified_time"
-      content="2026-11-17T09:01:09+01:00"
+      content="2026-11-17T11:23:52+01:00"
     />
 
 
@@ -71,7 +71,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/ws/",
       "headline": "Web service",
       "description": "\nsdmx-dl WS is a web service that serves as a bridge to any application or language.\nThis service has three endpoints:\na gRPC endpoint which has the best performances but a limited set of clients a REST endpoint which has a wider range of clients but is less efficient an MCP endpoint which lets AI assistants and agents browse and fetch data It also serves a web UI to browse sources and fetch data from a browser, on top of the REST endpoint.",
-      "wordCount": "1406",
+      "wordCount": "1440",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -82,7 +82,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-11-17T09:01:09.00Z",
+      "dateModified": "2026-11-17T11:23:52.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -2006,7 +2006,7 @@ Each series has a <code>key</code>, optional series-level <code>meta</code>, and
 <li><code>period</code> is an ISO-8601 interval (<code>start/duration</code>); keep the part before <code>/</code> if you only need the start date.</li>
 <li>The <code>detail</code> parameter controls which parts are filled: <code>FULL</code> (default), <code>DATA_ONLY</code> (no <code>meta</code>), <code>NO_DATA</code> (no <code>obs</code>), or <code>SERIES_KEYS_ONLY</code> (keys only).</li>
 <li><code>GetDataStream</code> (<code>GET /{source}/{flow}/data:stream</code>) returns the same series objects as a plain JSON array, without the <code>ref</code>/<code>query</code> wrapper.</li>
-<li>Listing operations (<code>/sources</code>, <code>/{source}/flows</code>, <code>/{source}/{flow}/dimensions</code>, <code>/{source}/{flow}/codes/{concept}</code>, …) return an object with the matching entries in <code>items</code> and their number before paging in <code>total</code>, e.g. <code>{&quot;items&quot;: [{&quot;id&quot;: &quot;A&quot;, &quot;name&quot;: &quot;Annual&quot;}, {&quot;id&quot;: &quot;Q&quot;, &quot;name&quot;: &quot;Quarterly&quot;}], &quot;total&quot;: 2}</code>. Use <code>offset</code> with <code>maxResults</code> to page through them.</li>
+<li>Listing operations (<code>/sources</code>, <code>/{source}/flows</code>, <code>/{source}/{flow}/dimensions</code>, <code>/{source}/{flow}/codes/{concept}</code>, …) return an object with the matching entries in <code>items</code> and their number before paging in <code>total</code>, e.g. <code>{&quot;items&quot;: [{&quot;id&quot;: &quot;A&quot;, &quot;name&quot;: &quot;Annual&quot;}, {&quot;id&quot;: &quot;Q&quot;, &quot;name&quot;: &quot;Quarterly&quot;}], &quot;total&quot;: 2}</code>. Use <code>offset</code> with <code>maxResults</code> to page through them. With a <code>query</code>, <code>scores</code> gives the relevance of each item, in the same order, from 1 (best) down to 0 (excluded).</li>
 <li>Empty fields are omitted from JSON responses: an empty list has no <code>items</code> and a <code>total</code> of <code>0</code> is omitted, so default them (e.g. <code>payload.get(&quot;items&quot;, [])</code>).</li>
 <li><code>ListAvailability</code> also returns the id of the selected dimension, e.g. <code>{&quot;dimension&quot;: &quot;FREQ&quot;, &quot;items&quot;: [{&quot;id&quot;: &quot;A&quot;, &quot;name&quot;: &quot;Annual&quot;}], &quot;total&quot;: 1}</code>. Its <code>dimension</code> parameter takes a dimension id, a zero-based index, or nothing for the first wildcard dimension of the <code>key</code> (see <a
   class="gdoc-markdown__link"
@@ -2043,7 +2043,7 @@ Each series has a <code>key</code>, optional series-level <code>meta</code>, and
 <li>Only sources marked as <strong>public</strong> are exposed; restricted/private sources are hidden.</li>
 <li>It is <strong>read-only</strong>: there is no way to modify configuration or state through it.</li>
 <li>Some fields are truncated or simplified to save tokens (for example, flow descriptions are capped in length, and metadata is returned as a skeleton without the codes of coded dimensions).</li>
-<li>List and search are unified: every listing tool accepts an optional <code>query</code>. When <code>query</code> is empty, entries are returned in their natural order (sorted or as defined) and truncated to <code>maxResults</code>. When <code>query</code> is non-empty, entries are ranked by relevance (hybrid BM25 + trigram search) and limited to <code>maxResults</code>. By default, <code>maxResults</code> returns everything without query and the 10 best matches with a query; <code>0</code> means no limit. The MCP tools always default to 10. The result gives the number of matches in <code>total</code> and an <code>offset</code> skips the first entries, to page through them.</li>
+<li>List and search are unified: every listing tool accepts an optional <code>query</code>. When <code>query</code> is empty, entries are returned in their natural order (sorted or as defined) and truncated to <code>maxResults</code>. When <code>query</code> is non-empty, entries are ranked by relevance (hybrid BM25 + trigram search) and limited to <code>maxResults</code>. By default, <code>maxResults</code> returns everything without query and the 10 best matches with a query; <code>0</code> means no limit. The MCP tools always default to 10. The result gives the number of matches in <code>total</code> and an <code>offset</code> skips the first entries, to page through them. With a query, <code>scores</code> gives the relevance of each entry (1 = best).</li>
 </ul>
 <p>Available tools:</p>
 <div class="table-wrap"> <table>

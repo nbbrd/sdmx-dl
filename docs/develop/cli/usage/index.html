@@ -53,7 +53,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
 <meta property="article:section" content="CLI" />
     <meta
       property="article:modified_time"
-      content="2026-11-17T09:01:09+01:00"
+      content="2026-11-17T11:23:52+01:00"
     />
 
 
@@ -75,7 +75,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/cli/usage/",
       "headline": "Usage",
       "description": "By default, all commands print the result on the standard output.\nMost commands produce RFC4180 compliant CSV content.\nCommand arguments are composed of options and positional parameters. Options have a name, positional parameters are usually the values that follow the options, but they may be mixed. The general pattern is:\nsdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters options All commands share the following options:\n-h, --help - Show an help message and exit. -v, --verbose - Enable verbose mode. Commands summary The commands follow a verb\u002bnoun hierarchy.",
-      "wordCount": "2204",
+      "wordCount": "2219",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -86,7 +86,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-11-17T09:01:09.00Z",
+      "dateModified": "2026-11-17T11:23:52.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -3954,16 +3954,20 @@ Example: <code>sdmx-dl <font color="#2aa198">search flows</font> <abbr title="qu
   class="gdoc-markdown__link--code"
   href="../datatypes#string"
 ><code>Description:string</code></a></li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#number"
+><code>Score:number</code></a> - Relevance, from 1 (best) down to 0 (excluded)</li>
 </ol></div>
 </div>
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="bc606186-48">
+  <label class="gdoc-expand__head flex justify-between" for="1c94c665-48">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="bc606186-48" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="1c94c665-48" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -3974,6 +3978,7 @@ Example: <code>sdmx-dl <font color="#2aa198">search flows</font> <abbr title="qu
 					<th>Ref</th>
 					<th>Name</th>
 					<th>Description</th>
+					<th>Score</th>
 			</tr>
 	</thead>
 	<tbody>
@@ -3983,6 +3988,7 @@ Example: <code>sdmx-dl <font color="#2aa198">search flows</font> <abbr title="qu
 					<td>ESTAT:PRC_REM_GDP(1.0)</td>
 					<td>GDP weights used in the calculation of the global specific indicator</td>
 					<td></td>
+					<td>0.976062</td>
 			</tr>
 			<tr>
 					<td>ESTAT</td>
@@ -3990,6 +3996,7 @@ Example: <code>sdmx-dl <font color="#2aa198">search flows</font> <abbr title="qu
 					<td>ESTAT:NAIDA_10_GDP(1.0)</td>
 					<td>GDP and main aggregates - international data cooperation - annual data</td>
 					<td></td>
+					<td>0.969231</td>
 			</tr>
 			<tr>
 					<td>ESTAT</td>
@@ -3997,6 +4004,7 @@ Example: <code>sdmx-dl <font color="#2aa198">search flows</font> <abbr title="qu
 					<td>ESTAT:NAIDQ_10_GDP(1.0)</td>
 					<td>GDP and main aggregates - international data cooperation - quarterly data</td>
 					<td></td>
+					<td>0.968498</td>
 			</tr>
 			<tr>
 					<td>OECD</td>
@@ -4004,6 +4012,7 @@ Example: <code>sdmx-dl <font color="#2aa198">search flows</font> <abbr title="qu
 					<td>OECD.CFE.TOU:DSD_TOURISM_KEY@DF_KEY_IND_PC(1.0)</td>
 					<td>Key tourism economic indicators</td>
 					<td>Tourism GDP corresponds to the part of GDP genera…</td>
+					<td>0.861891</td>
 			</tr>
 	</tbody>
 </table> </div>
