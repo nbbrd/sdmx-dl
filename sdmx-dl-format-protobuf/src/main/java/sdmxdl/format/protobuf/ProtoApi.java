@@ -171,6 +171,7 @@ public class ProtoApi {
                 .setRef(value.getRef().toString())
                 .setQuery(fromDataQuery(value.getQuery()))
                 .addAllData(fromCollection(value.getData(), ProtoApi::fromSeries))
+                .setTotal(value.getTotal())
                 .build();
     }
 
@@ -179,6 +180,7 @@ public class ProtoApi {
                 .ref(FlowRef.parse(value.getRef()))
                 .query(toDataQuery(value.getQuery()))
                 .data(toCollection(value.getDataList(), ProtoApi::toSeries))
+                .total(value.hasTotal() ? value.getTotal() : value.getDataCount())
                 .build();
     }
 

@@ -126,6 +126,10 @@
           "query" : {
             "$ref" : "#/components/schemas/QueryDto"
           },
+          "total" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
           "data" : {
             "type" : "array",
             "items" : {
@@ -2169,6 +2173,20 @@
             "format" : "int32"
           }
         }, {
+          "name" : "seriesLimit",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "seriesOffset",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
           "name" : "start",
           "in" : "query",
           "schema" : {
@@ -2295,6 +2313,20 @@
             "type" : "string"
           }
         }, {
+          "name" : "seriesLimit",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "seriesOffset",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
           "name" : "start",
           "in" : "query",
           "schema" : {
@@ -2396,6 +2428,20 @@
           }
         }, {
           "name" : "lastN",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "seriesLimit",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "seriesOffset",
           "in" : "query",
           "schema" : {
             "type" : "integer",

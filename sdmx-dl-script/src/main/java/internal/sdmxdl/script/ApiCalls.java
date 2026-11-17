@@ -48,6 +48,12 @@ public final class ApiCalls implements RequestVisitor<ApiCall> {
         if (request.getLastNObservations() != null) {
             result.argument(ApiCall.Argument.of("lastNObservations", request.getLastNObservations()));
         }
+        if (request.getSeriesOffset() != 0) {
+            result.argument(ApiCall.Argument.of("seriesOffset", request.getSeriesOffset()));
+        }
+        if (request.getSeriesLimit() != null) {
+            result.argument(ApiCall.Argument.of("seriesLimit", request.getSeriesLimit()));
+        }
         if (request.getDetail() != Detail.FULL) {
             result.argument(ApiCall.Argument.of("detailOf", request.getDetail().name()));
         }

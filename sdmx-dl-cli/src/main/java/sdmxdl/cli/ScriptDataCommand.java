@@ -1,6 +1,7 @@
 package sdmxdl.cli;
 
 import internal.sdmxdl.cli.ScriptTargetOptions;
+import internal.sdmxdl.cli.SeriesPagingOptions;
 import internal.sdmxdl.cli.WebFilterOptions;
 import internal.sdmxdl.cli.WebKeyOptions;
 import java.util.concurrent.Callable;
@@ -18,6 +19,9 @@ public final class ScriptDataCommand implements Callable<Void> {
     private final WebFilterOptions filter = new WebFilterOptions();
 
     @CommandLine.Mixin
+    private final SeriesPagingOptions paging = new SeriesPagingOptions();
+
+    @CommandLine.Mixin
     private final ScriptTargetOptions script = new ScriptTargetOptions();
 
     @CommandLine.Spec
@@ -30,7 +34,7 @@ public final class ScriptDataCommand implements Callable<Void> {
     }
 
     private DataRequest getRequest() {
-        return DataRequest.builder()
+        return paging.configure(DataRequest.builder())
                 .database(web.getDatabase())
                 .flow(web.getFlow())
                 .key(web.getKey())

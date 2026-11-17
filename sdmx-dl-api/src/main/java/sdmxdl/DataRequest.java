@@ -30,6 +30,26 @@ public class DataRequest implements Request {
 
     @Nullable Integer lastNObservations;
 
+    /**
+     * Number of series to skip, sorted by key, to page through them.
+     */
+    @lombok.Builder.Default
+    int seriesOffset = 0;
+
+    /**
+     * Maximum number of series to return after {@link #seriesOffset}; {@code null} means no limit.
+     */
+    @Nullable Integer seriesLimit;
+
+    /**
+     * Tells whether this request pages the series ({@link #seriesOffset} or {@link #seriesLimit} is set).
+     *
+     * @return true if the series are paged
+     */
+    public boolean isSeriesPaged() {
+        return seriesOffset != 0 || seriesLimit != null;
+    }
+
     public @NonNull Query toQuery() {
         return Query.builder()
                 .key(getKey())

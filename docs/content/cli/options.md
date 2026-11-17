@@ -81,6 +81,17 @@ so the result is always consistent (but the download is not necessarily smaller)
 When `--first-n` and `--last-n` are combined, the result is the union of the first N and the last N
 observations of each series (computed independently after any period filtering).
 
+## Series paging
+
+Optional paging of the series returned by the `fetch data`, `fetch keys`, `fetch meta` and `script data` commands.
+Series are sorted by key before paging, so that pages are stable.
+When paging is used, the number of series before paging is printed on the standard error, e.g. `Showing series 3-4 of 4`.
+
+| Name                                                              | Shortcut | Parameter  | Description                                             |
+|-------------------------------------------------------------------|----------|------------|---------------------------------------------------------|
+| <a id="series-offset" href="#series-offset">`--series-offset`</a> | -        | `<offset>` | Number of series to skip, sorted by key (default: `0`). |
+| <a id="series-limit" href="#series-limit">`--series-limit`</a>    | -        | `<limit>`  | Maximum number of series to return (default: no limit). |
+
 ## Health
 
 Options used by the `check health` command.

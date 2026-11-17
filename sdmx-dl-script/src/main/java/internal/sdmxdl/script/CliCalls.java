@@ -47,6 +47,12 @@ public final class CliCalls implements RequestVisitor<CliCall> {
         if (request.getLastNObservations() != null) {
             result.argument("--last-n").argument(request.getLastNObservations().toString());
         }
+        if (request.getSeriesOffset() != 0) {
+            result.argument("--series-offset").argument(String.valueOf(request.getSeriesOffset()));
+        }
+        if (request.getSeriesLimit() != null) {
+            result.argument("--series-limit").argument(request.getSeriesLimit().toString());
+        }
         if (request.getDetail() != Detail.FULL) {
             result.warning("Detail '" + request.getDetail() + "' is not supported by the CLI; FULL is used instead");
         }

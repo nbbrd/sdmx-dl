@@ -375,6 +375,8 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
                 .endPeriodOf(request.hasEnd() ? request.getEnd() : null)
                 .firstNObservations(request.hasFirstN() ? request.getFirstN() : null)
                 .lastNObservations(request.hasLastN() ? request.getLastN() : null)
+                .seriesOffset(request.hasSeriesOffset() ? request.getSeriesOffset() : 0)
+                .seriesLimit(request.hasSeriesLimit() ? request.getSeriesLimit() : null)
                 .detail(ProtoApi.toDataDetail(request.getDetail()))
                 .build();
     }

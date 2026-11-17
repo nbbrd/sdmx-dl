@@ -16,6 +16,7 @@
  */
 package sdmxdl.cli;
 
+import internal.sdmxdl.cli.SeriesPagingOptions;
 import internal.sdmxdl.cli.SortOptions;
 import internal.sdmxdl.cli.WebKeyOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
@@ -27,6 +28,7 @@ import java.util.stream.Stream;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 import sdmxdl.DataRequest;
+import sdmxdl.DataSet;
 import sdmxdl.Detail;
 import sdmxdl.Key;
 
@@ -46,9 +48,17 @@ public final class FetchMetaCommand implements Callable<Void> {
     @CommandLine.Mixin
     private SortOptions sort;
 
+    @CommandLine.Mixin
+    private final SeriesPagingOptions paging = new SeriesPagingOptions();
+
+    @CommandLine.Spec
+    private CommandLine.Model.CommandSpec spec;
+
     @Override
     public Void call() throws Exception {
-        getTable().write(csv, getRows());
+        DataSet dataSet = getDataSet();
+        getTable().write(csv, getRows(dataSet));
+        paging.reportTotal(spec, dataSet);
         return null;
     }
 
@@ -60,22 +70,20 @@ public final class FetchMetaCommand implements Callable<Void> {
                 .build();
     }
 
-    private Stream<MetaResult> getRows() throws IOException {
-        return sort.applySort(
-                web
-                        .loadManager()
-                        .usingName(web.getSource())
-                        .getData(DataRequest.builder()
+    private DataSet getDataSet() throws IOException {
+        return web.loadManager()
+                .usingName(web.getSource())
+                .getData(paging.configure(DataRequest.builder()
                                 .languages(web.getLangs())
                                 .database(web.getDatabase())
                                 .flow(web.getFlow())
                                 .key(web.getKey())
-                                .detail(Detail.NO_DATA)
-                                .build())
-                        .getData()
-                        .stream()
-                        .flatMap(this::getMetaResultStream),
-                BY_FLOW_KEY_CONCEPT);
+                                .detail(Detail.NO_DATA))
+                        .build());
+    }
+
+    private Stream<MetaResult> getRows(DataSet dataSet) {
+        return sort.applySort(dataSet.getData().stream().flatMap(this::getMetaResultStream), BY_FLOW_KEY_CONCEPT);
     }
 
     private Stream<MetaResult> getMetaResultStream(sdmxdl.Series series) {

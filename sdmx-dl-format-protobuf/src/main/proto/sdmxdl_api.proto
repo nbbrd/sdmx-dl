@@ -66,6 +66,7 @@ message DataSetDto {
   string ref = 1; /* Representation of FlowRef */
   QueryDto query = 2;
   repeated SeriesDto data = 3;
+  optional int32 total = 4; /* Number of series before paging; absent = size of 'data' */
 }
 
 enum DetailDto {

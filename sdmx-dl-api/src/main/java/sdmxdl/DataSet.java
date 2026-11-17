@@ -16,7 +16,9 @@
  */
 package sdmxdl;
 
-import lombok.NonNull;
+import static java.util.Collections.unmodifiableList;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toList;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -24,10 +26,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
-
-import static java.util.Collections.unmodifiableList;
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toList;
+import lombok.NonNull;
 
 /**
  * @author Philippe Charles
@@ -37,16 +36,33 @@ import static java.util.stream.Collectors.toList;
 @lombok.EqualsAndHashCode(callSuper = false)
 public class DataSet extends Resource<FlowRef> implements Iterable<Series> {
 
-    @lombok.NonNull
-    FlowRef ref;
+    @lombok.NonNull FlowRef ref;
 
-    @lombok.NonNull
-    @lombok.Builder.Default
+    @lombok.NonNull @lombok.Builder.Default
     Query query = Query.ALL;
 
-    @lombok.NonNull
-    @lombok.Singular("series")
+    @lombok.NonNull @lombok.Singular("series")
     Collection<Series> data;
+
+    /**
+     * Number of series before paging (see {@link DataRequest#getSeriesOffset()} and {@link
+     * DataRequest#getSeriesLimit()}); defaults to the number of series in {@link #data}.
+     */
+    @lombok.Builder.Default
+    int total = SIZE_OF_DATA;
+
+    DataSet(@NonNull FlowRef ref, @NonNull Query query, @NonNull Collection<Series> data, int total) {
+        if (total != SIZE_OF_DATA && total < data.size()) {
+            throw new IllegalArgumentException(
+                    "Expecting total to be at least " + data.size() + " instead of " + total);
+        }
+        this.ref = ref;
+        this.query = query;
+        this.data = data;
+        this.total = total == SIZE_OF_DATA ? data.size() : total;
+    }
+
+    private static final int SIZE_OF_DATA = -1;
 
     @Override
     public @NonNull Iterator<Series> iterator() {
@@ -70,6 +86,6 @@ public class DataSet extends Resource<FlowRef> implements Iterable<Series> {
     }
 
     private static Function<List<Series>, DataSet> newDataSet(FlowRef flowRef, Query query) {
-        return list -> new DataSet(flowRef, query, unmodifiableList(list));
+        return list -> new DataSet(flowRef, query, unmodifiableList(list), SIZE_OF_DATA);
     }
 }

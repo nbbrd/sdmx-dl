@@ -296,6 +296,8 @@ public class SdmxdlRestService2 {
             @QueryParam("end") String end,
             @QueryParam("firstN") Integer firstN,
             @QueryParam("lastN") Integer lastN,
+            @QueryParam("seriesOffset") Integer seriesOffset,
+            @QueryParam("seriesLimit") Integer seriesLimit,
             @QueryParam("detail") @DefaultValue("FULL") Detail detail) {
         return uniOfIO(() -> manager.usingName(source)
                         .getData(DataRequest.builder()
@@ -307,6 +309,8 @@ public class SdmxdlRestService2 {
                                 .endPeriodOf(end)
                                 .firstNObservations(firstN)
                                 .lastNObservations(lastN)
+                                .seriesOffset(seriesOffset != null ? seriesOffset : 0)
+                                .seriesLimit(seriesLimit)
                                 .detail(detail)
                                 .build()))
                 .map(ProtoApi::fromDataSet);
@@ -324,6 +328,8 @@ public class SdmxdlRestService2 {
             @QueryParam("end") String end,
             @QueryParam("firstN") Integer firstN,
             @QueryParam("lastN") Integer lastN,
+            @QueryParam("seriesOffset") Integer seriesOffset,
+            @QueryParam("seriesLimit") Integer seriesLimit,
             @QueryParam("detail") @DefaultValue("FULL") Detail detail) {
         return multiOfIO(() -> manager.usingName(source)
                         .getData(DataRequest.builder()
@@ -335,6 +341,8 @@ public class SdmxdlRestService2 {
                                 .endPeriodOf(end)
                                 .firstNObservations(firstN)
                                 .lastNObservations(lastN)
+                                .seriesOffset(seriesOffset != null ? seriesOffset : 0)
+                                .seriesLimit(seriesLimit)
                                 .detail(detail)
                                 .build()))
                 .map(ProtoApi::fromSeries);
@@ -448,6 +456,8 @@ public class SdmxdlRestService2 {
             @QueryParam("end") String end,
             @QueryParam("firstN") Integer firstN,
             @QueryParam("lastN") Integer lastN,
+            @QueryParam("seriesOffset") Integer seriesOffset,
+            @QueryParam("seriesLimit") Integer seriesLimit,
             @QueryParam("detail") @DefaultValue("FULL") Detail detail,
             @QueryParam("target") @DefaultValue(ProtoScript.DEFAULT_TARGET) String target,
             @QueryParam("cliLauncher") List<String> cliLauncher,
@@ -468,6 +478,8 @@ public class SdmxdlRestService2 {
                         .endPeriodOf(end)
                         .firstNObservations(firstN)
                         .lastNObservations(lastN)
+                        .seriesOffset(seriesOffset != null ? seriesOffset : 0)
+                        .seriesLimit(seriesLimit)
                         .detail(detail)
                         .build(),
                 target,

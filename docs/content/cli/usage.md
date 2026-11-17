@@ -168,6 +168,7 @@ Main options:
 
 Other options:
 [`CSV`](../options#csv),
+[`Series paging`](../options#series-paging),
 [`Network`](../options#network)
 
 {{< /tab >}}
@@ -210,6 +211,7 @@ Main options:
 
 Other options: 
 [`CSV`](../options#csv),
+[`Series paging`](../options#series-paging),
 [`Network`](../options#network)
 
 {{< /tab >}}
@@ -251,6 +253,7 @@ Main options:
 
 Other options: 
 [`CSV`](../options#csv),
+[`Series paging`](../options#series-paging),
 [`Network`](../options#network)
 
 {{< /tab >}}
@@ -854,6 +857,7 @@ Main options:
 
 Other options:
 [`Data filtering`](../options#data-filtering),
+[`Series paging`](../options#series-paging),
 [`Script`](../options#script),
 [`Network`](../options#network)
 

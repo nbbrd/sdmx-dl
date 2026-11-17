@@ -46,8 +46,8 @@ message EmptyDto {
 
 // Field order convention: what is addressed (source, flow, key, ...), then filters, then context (database, languages).
 // Naming convention: 'max_results' and 'offset' page the items of a list ('max_results' keeps its top-N meaning
-// when searching), 'first_n' and 'last_n' select observations of each series; 'series_offset' and 'series_limit'
-// are kept for a future paging of the series of a data request.
+// when searching), 'first_n' and 'last_n' select observations of each series, 'series_offset' and 'series_limit'
+// page the series of a data request (whose 'total' gives the number of series before paging).
 // List responses carry the requested 'items' and the 'total' number of matching items before paging.
 // NB: like any proto3 JSON output, empty lists and zero values are omitted.
 
@@ -125,6 +125,8 @@ message WebDataRequestDto {
   optional string end = 5; /* inclusive upper bound on the period, ISO-8601 reduced-precision date-time; absent = unbounded */
   optional int32 first_n = 6; /* keep only the N first observations of each series; absent = no limit */
   optional int32 last_n = 7; /* keep only the N last observations of each series; absent = no limit */
+  optional int32 series_offset = 11; /* number of series to skip, sorted by key; absent = 0 */
+  optional int32 series_limit = 12; /* maximum number of series to return; absent = no limit */
   optional sdmxdl.format.protobuf.DetailDto detail = 8;
   optional string database = 9;
   optional string languages = 10;

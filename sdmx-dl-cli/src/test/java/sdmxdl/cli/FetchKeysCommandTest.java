@@ -1,5 +1,6 @@
 package sdmxdl.cli;
 
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.data.Index.atIndex;
 
@@ -57,6 +58,38 @@ public class FetchKeysCommandTest {
                 .contains("Series", atIndex(0))
                 .hasSizeGreaterThan(1)
                 .allMatch(line -> line.equals("Series") || line.startsWith("A.DEU."));
+    }
+
+    @SetSystemProperty(key = "enableFileDriver", value = "true")
+    @Test
+    public void testSeriesPaging(@TempDir Path temp) throws IOException {
+        File src = FileSample.create(temp);
+        List<String> all = fetch(temp, src, "all");
+
+        CommandLine cmd = new CommandLine(new FetchKeysCommand());
+        CommandWatcher watcher = CommandWatcher.on(cmd);
+
+        File out = temp.resolve("page.csv").toFile();
+
+        assertThat(cmd.execute(
+                        "sample",
+                        "data&struct",
+                        "all",
+                        "--no-log",
+                        "-s",
+                        src.getPath(),
+                        "-o",
+                        out.getPath(),
+                        "--series-offset",
+                        "1",
+                        "--series-limit",
+                        "2"))
+                .isEqualTo(CommandLine.ExitCode.OK);
+        assertThat(watcher.getOut()).isEmpty();
+        assertThat(watcher.getErr()).contains("Showing series 2-3 of 120");
+
+        List<String> sortedKeys = all.stream().skip(1).sorted().collect(toList());
+        assertThat(FileSample.readAll(out)).containsExactly("Series", sortedKeys.get(1), sortedKeys.get(2));
     }
 
     private static List<String> fetch(Path temp, File src, String key) throws IOException {

@@ -18,6 +18,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![GRPC] Add health check, availability filtering, data query options and script generation to the web UI
 - ![API] Add flow search across sources with per-source failures and timeout [#1395](https://github.com/nbbrd/sdmx-dl/issues/1395)
 - ![API] Add normalized relevance scores to search results
+- ![API] Add series paging and total to data requests [#1397](https://github.com/nbbrd/sdmx-dl/issues/1397)
 - ![GRPC] Add System Tray Menu to Quarkus [#1396](https://github.com/nbbrd/sdmx-dl/issues/1396)
 
 ### Changed

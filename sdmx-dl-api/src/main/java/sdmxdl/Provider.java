@@ -1,6 +1,7 @@
 package sdmxdl;
 
 import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
 
 import internal.sdmxdl.SearchSupport;
 import java.io.IOException;
@@ -314,11 +315,17 @@ public final class Provider<SOURCE extends Source> {
      * <p>A partial key (fewer dimensions than the structure) is expanded with trailing
      * wildcards before being sent to the connection; see {@link Key#normalize(Structure)}.
      *
+     * <p>The series can be paged with {@link DataRequest#getSeriesOffset()} and {@link
+     * DataRequest#getSeriesLimit()}, sorted by key so that pages are stable; the number of series
+     * before paging is then given by {@link DataSet#getTotal()}.
+     *
      * @param request key/data query parameters (non-null)
      * @return non-null dataset containing matching observations/series
+     * @throws IllegalArgumentException if the series paging parameters are invalid
      * @throws IOException if data retrieval fails due to I/O issues
      */
     public @NonNull DataSet getData(@NonNull DataRequest request) throws IOException {
+        checkSeriesPaging(request);
         try (Connection connection = manager.getConnection(source, request.getLanguages())) {
             Query query = request.toQuery();
             if (!Key.ALL.equals(query.getKey())) {
@@ -329,8 +336,34 @@ public final class Provider<SOURCE extends Source> {
                         .key(query.getKey().normalize(structure))
                         .build();
             }
-            return connection.getData(request.getDatabase(), request.getFlow(), query);
+            DataSet result = connection.getData(request.getDatabase(), request.getFlow(), query);
+            return request.isSeriesPaged() ? pageSeries(result, request) : result;
         }
+    }
+
+    private static final Comparator<Series> SERIES_BY_KEY =
+            comparing(series -> series.getKey().toString());
+
+    private static void checkSeriesPaging(DataRequest request) throws IllegalArgumentException {
+        if (request.getSeriesOffset() < 0) {
+            throw new IllegalArgumentException("Invalid series offset: " + request.getSeriesOffset());
+        }
+        if (request.getSeriesLimit() != null && request.getSeriesLimit() <= 0) {
+            throw new IllegalArgumentException("Invalid series limit: " + request.getSeriesLimit());
+        }
+    }
+
+    private static DataSet pageSeries(DataSet dataSet, DataRequest request) {
+        Integer limit = request.getSeriesLimit();
+        return dataSet.toBuilder()
+                .clearData()
+                .data(dataSet.stream()
+                        .sorted(SERIES_BY_KEY)
+                        .skip(request.getSeriesOffset())
+                        .limit(limit != null ? limit : Long.MAX_VALUE)
+                        .collect(toList()))
+                .total(dataSet.getData().size())
+                .build();
     }
 
     /**

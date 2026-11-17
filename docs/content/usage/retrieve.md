@@ -229,6 +229,92 @@ M.CHF.EUR.SP00.A,"OBS_STATUS=A,OBS_CONF=F",2022-12-01T00:00:00,.9864904761905
 ```
 {{< /expand >}}
 
+### By series
+
+A key with wildcards can match many series. Page through them with a series offset and limit; the result gives their number before paging in `total`.
+
+{{< tabs "narrow-by-series" >}}
+
+{{< tab "API" >}}
+
+```java
+//JAVA 25+
+//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:{{< sdmx-dl-version >}}
+import sdmxdl.DataRequest;
+import sdmxdl.DataSet;
+import sdmxdl.web.SdmxWebManager;
+
+void main() throws Exception {
+    DataSet page = SdmxWebManager
+            .ofServiceLoader()
+            .usingName("ECB")
+            .getData(DataRequest.builder()
+                    .flowOf("EXR")
+                    .keyOf("M.CHF+GBP+JPY+USD.EUR.SP00.A")
+                    .seriesOffset(2)
+                    .seriesLimit(2)
+                    .build());
+    IO.println(page.getData().size() + " of " + page.getTotal() + " series");
+}
+```
+{{< /tab >}}
+
+{{< tab "CLI" >}}
+
+```shell
+sdmx-dl fetch keys ECB EXR M.CHF+GBP+JPY+USD.EUR.SP00.A --series-offset 2 --series-limit 2
+```
+{{< /tab >}}
+
+{{< tab "WS" >}}
+
+#### REST
+
+```shell
+curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data \
+  --data-urlencode "key=M.CHF+GBP+JPY+USD.EUR.SP00.A" \
+  --data-urlencode "detail=SERIES_KEYS_ONLY" \
+  --data-urlencode "seriesOffset=2" \
+  --data-urlencode "seriesLimit=2"
+```
+
+#### gRPC
+```shell
+grpcurl -d '{"source":"ECB","flow":"EXR","key":"M.CHF+GBP+JPY+USD.EUR.SP00.A","detail":"SERIES_KEYS_ONLY","seriesOffset":2,"seriesLimit":2}' -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.GetData
+```
+{{< /tab >}}
+
+{{< /tabs >}}
+
+{{< expand "REST output sample" >}}
+```json
+{
+  "ref": "all,EXR,latest",
+  "query": {
+    "key": "M.CHF+GBP+JPY+USD.EUR.SP00.A",
+    "detail": "SERIES_KEYS_ONLY"
+  },
+  "data": [{
+    "key": "M.JPY.EUR.SP00.A"
+  }, {
+    "key": "M.USD.EUR.SP00.A"
+  }],
+  "total": 4
+}
+```
+{{< /expand >}}
+
+{{< expand "CLI output sample" >}}
+```
+Series
+M.JPY.EUR.SP00.A
+M.USD.EUR.SP00.A
+```
+{{< /expand >}}
+
+- Series are sorted by key before paging, so that pages are stable; sdmx-dl downloads them once (and caches them), then returns the requested page.
+- The CLI prints the number of series before paging on the standard error, e.g. `Showing series 3-4 of 4`.
+
 ## Metadata
 
 Look up descriptive metadata (title, units, notes, source-specific attributes) attached to a series, without downloading the observations themselves.

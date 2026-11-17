@@ -17,9 +17,10 @@
 package sdmxdl.cli;
 
 import static internal.sdmxdl.cli.ext.CsvUtil.DEFAULT_MAP_FORMATTER;
-import static sdmxdl.DataSet.toDataSet;
+import static java.util.stream.Collectors.toList;
 import static sdmxdl.format.csv.SdmxCsvFields.*;
 
+import internal.sdmxdl.cli.SeriesPagingOptions;
 import internal.sdmxdl.cli.WebFilterOptions;
 import internal.sdmxdl.cli.WebFlowOptions;
 import internal.sdmxdl.cli.WebKeyOptions;
@@ -27,11 +28,9 @@ import internal.sdmxdl.cli.ext.CsvUtil;
 import internal.sdmxdl.cli.ext.IsoObsFormatOptions;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
-import java.util.stream.Stream;
 import nbbrd.console.picocli.text.ObsFormat;
 import nbbrd.io.text.Formatter;
 import nbbrd.picocsv.Csv;
@@ -59,9 +58,24 @@ public final class FetchDataCommand implements Callable<Void> {
     @CommandLine.Mixin
     private final IsoObsFormatOptions format = new IsoObsFormatOptions();
 
+    @CommandLine.Mixin
+    private final SeriesPagingOptions paging = new SeriesPagingOptions();
+
+    @CommandLine.Spec
+    private CommandLine.Model.CommandSpec spec;
+
     @Override
     public Void call() throws Exception {
-        CsvUtil.write(csv, this::writeHead, this::writeBody);
+        Provider<?> provider = web.loadManager().usingName(web.getSource());
+        Structure dsd = provider.getMeta(MetaRequest.builder()
+                        .database(web.getDatabase())
+                        .flow(web.getFlow())
+                        .languages(web.getLangs())
+                        .build())
+                .getStructure();
+        DataSet dataSet = provider.getData(getRequest());
+        CsvUtil.write(csv, this::writeHead, w -> writeBody(w, dsd, getSorted(dataSet)));
+        paging.reportTotal(spec, dataSet);
         return null;
     }
 
@@ -73,11 +87,8 @@ public final class FetchDataCommand implements Callable<Void> {
         w.writeEndOfLine();
     }
 
-    private void writeBody(Csv.Writer w) throws IOException {
-        try (Connection conn = web.loadManager().getConnection(web.getSource(), web.getLangs())) {
-            Structure dsd = conn.getMeta(web.getDatabase(), web.getFlow()).getStructure();
-            getBodyFormatter(dsd, format).getFormatter(dsd).formatCsv(getSortedSeries(conn, dsd, web, filter), w);
-        }
+    private void writeBody(Csv.Writer w, Structure dsd, DataSet dataSet) throws IOException {
+        getBodyFormatter(dsd, format).getFormatter(dsd).formatCsv(dataSet, w);
     }
 
     private static SdmxPicocsvFormatter getBodyFormatter(Structure dsd, ObsFormat format) {
@@ -101,19 +112,24 @@ public final class FetchDataCommand implements Callable<Void> {
         return Formatter.onDateTimeFormatter(format.newDateTimeFormatter(true));
     }
 
-    private static DataSet getSortedSeries(Connection conn, Structure dsd, WebKeyOptions web, WebFilterOptions filter)
-            throws IOException {
-        Query query = filter.configure(
-                        Query.builder().key(web.getKey().normalize(dsd)).detail(getDetail()))
+    private DataRequest getRequest() {
+        return paging.configure(DataRequest.builder())
+                .database(web.getDatabase())
+                .flow(web.getFlow())
+                .key(web.getKey())
+                .languages(web.getLangs())
+                .detail(Detail.FULL)
+                .startPeriodOf(filter.getStartPeriod())
+                .endPeriodOf(filter.getEndPeriod())
+                .firstNObservations(filter.getFirstNObservations())
+                .lastNObservations(filter.getLastNObservations())
                 .build();
-        try (Stream<Series> stream = conn.getDataStream(web.getDatabase(), web.getFlow(), query)) {
-            return stream.sorted(WebFlowOptions.SERIES_BY_KEY).collect(toDataSet(web.getFlow(), query));
-        } catch (UncheckedIOException ex) {
-            throw ex.getCause();
-        }
     }
 
-    private static Detail getDetail() {
-        return Detail.FULL;
+    private static DataSet getSorted(DataSet dataSet) {
+        return dataSet.toBuilder()
+                .clearData()
+                .data(dataSet.stream().sorted(WebFlowOptions.SERIES_BY_KEY).collect(toList()))
+                .build();
     }
 }

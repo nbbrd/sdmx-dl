@@ -49,6 +49,12 @@ public final class RestCalls implements RequestVisitor<RestCall> {
         if (request.getLastNObservations() != null) {
             result.parameter("lastN", request.getLastNObservations());
         }
+        if (request.getSeriesOffset() != 0) {
+            result.parameter("seriesOffset", request.getSeriesOffset());
+        }
+        if (request.getSeriesLimit() != null) {
+            result.parameter("seriesLimit", request.getSeriesLimit());
+        }
         if (request.getDetail() != Detail.FULL) {
             result.parameter("detail", request.getDetail().name());
         }

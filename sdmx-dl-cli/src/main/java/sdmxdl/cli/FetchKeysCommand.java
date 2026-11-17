@@ -16,6 +16,7 @@
  */
 package sdmxdl.cli;
 
+import internal.sdmxdl.cli.SeriesPagingOptions;
 import internal.sdmxdl.cli.SortOptions;
 import internal.sdmxdl.cli.WebFlowOptions;
 import internal.sdmxdl.cli.WebKeyOptions;
@@ -23,10 +24,10 @@ import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import java.io.IOException;
 import java.util.concurrent.Callable;
-import java.util.stream.Stream;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 import sdmxdl.DataRequest;
+import sdmxdl.DataSet;
 import sdmxdl.Detail;
 import sdmxdl.Series;
 
@@ -45,9 +46,17 @@ public final class FetchKeysCommand implements Callable<Void> {
     @CommandLine.Mixin
     private SortOptions sort;
 
+    @CommandLine.Mixin
+    private final SeriesPagingOptions paging = new SeriesPagingOptions();
+
+    @CommandLine.Spec
+    private CommandLine.Model.CommandSpec spec;
+
     @Override
     public Void call() throws Exception {
-        getTable().write(csv, getRows());
+        DataSet dataSet = getDataSet();
+        getTable().write(csv, sort.applySort(dataSet.getData(), WebFlowOptions.SERIES_BY_KEY));
+        paging.reportTotal(spec, dataSet);
         return null;
     }
 
@@ -57,18 +66,15 @@ public final class FetchKeysCommand implements Callable<Void> {
                 .build();
     }
 
-    private Stream<Series> getRows() throws IOException {
-        return sort.applySort(
-                web.loadManager()
-                        .usingName(web.getSource())
-                        .getData(DataRequest.builder()
+    private DataSet getDataSet() throws IOException {
+        return web.loadManager()
+                .usingName(web.getSource())
+                .getData(paging.configure(DataRequest.builder()
                                 .languages(web.getLangs())
                                 .database(web.getDatabase())
                                 .flow(web.getFlow())
                                 .key(web.getKey())
-                                .detail(Detail.SERIES_KEYS_ONLY)
-                                .build())
-                        .getData(),
-                WebFlowOptions.SERIES_BY_KEY);
+                                .detail(Detail.SERIES_KEYS_ONLY))
+                        .build());
     }
 }

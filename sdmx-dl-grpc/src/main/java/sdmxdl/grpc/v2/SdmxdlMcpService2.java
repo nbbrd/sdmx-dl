@@ -63,6 +63,10 @@ public class SdmxdlMcpService2 {
             "Keep only the N most recent observations of each series (default 20; use 0 for no limit). Applied after the period filters. Increase it or set it to 0 to get a full history.";
     private static final String FIRST_N_ARG =
             "Keep only the N oldest observations of each series (default 0 = no limit). Applied after the period filters. Combining 'firstN' and 'lastN' returns the union of both ends of each series.";
+    private static final String SERIES_OFFSET_ARG =
+            "Number of series to skip, sorted by key (default 0). Use it with 'seriesLimit' to page through the series; the result gives their number before paging in 'total'.";
+    private static final String SERIES_LIMIT_ARG =
+            "Maximum number of series to return (default 0 = no limit). The result gives the number of series before paging in 'total'.";
     private static final String START_ARG =
             "Inclusive lower bound on the observation period, as reduced-precision ISO-8601 (e.g. '2000', '2000-01', '2000-01-01'). Omit for no lower bound.";
     private static final String END_ARG =
@@ -99,6 +103,8 @@ public class SdmxdlMcpService2 {
     private static final String DEFAULT_LAST_N = "20";
     private static final String DEFAULT_SCRIPT_LAST_N = "0";
     private static final String DEFAULT_FIRST_N = "0";
+    private static final String DEFAULT_SERIES_OFFSET = "0";
+    private static final String DEFAULT_SERIES_LIMIT = "0";
     private static final String DEFAULT_MAX_RESULTS = "10";
     private static final String DEFAULT_OFFSET = "0";
     private static final String DEFAULT_SEARCH_TIMEOUT = "30000";
@@ -391,7 +397,7 @@ public class SdmxdlMcpService2 {
 
     @Tool(
             description =
-                    "Fetch the actual observations of a flow, as series with their key, metadata and time/value pairs, together with the query that was applied. Filter series with the 'dimensions' map (recommended, e.g. {\"FREQ\":\"M\",\"CURRENCY\":\"CHF\"}) or with the positional 'key'; 'dimensions' wins when both are given and unspecified dimensions match everything. Filter observations by period ('start'/'end') and/or by count ('firstN'/'lastN'); by default only the last 20 observations of each series are returned, so set 'lastN' to 0 for a full history. Count filters apply after period filters, and combining 'firstN' with 'lastN' returns both ends of each series. Filters are pushed to the source when it supports them and are always re-applied locally, and the returned query echoes what was applied. Tip: an unfiltered call can be huge, so first call with detail=SERIES_KEYS_ONLY to see which series exist, then call again with a narrower key and detail=DATA_ONLY.")
+                    "Fetch the actual observations of a flow, as series with their key, metadata and time/value pairs, together with the query that was applied. Filter series with the 'dimensions' map (recommended, e.g. {\"FREQ\":\"M\",\"CURRENCY\":\"CHF\"}) or with the positional 'key'; 'dimensions' wins when both are given and unspecified dimensions match everything. Filter observations by period ('start'/'end') and/or by count ('firstN'/'lastN'); by default only the last 20 observations of each series are returned, so set 'lastN' to 0 for a full history. Count filters apply after period filters, and combining 'firstN' with 'lastN' returns both ends of each series. Filters are pushed to the source when it supports them and are always re-applied locally, and the returned query echoes what was applied. Tip: an unfiltered call can be huge, so first call with detail=SERIES_KEYS_ONLY to see which series exist, then call again with a narrower key and detail=DATA_ONLY. Page through many series with 'seriesOffset'/'seriesLimit'; 'total' gives their number before paging.")
     public DataSetDto getData(
             @ToolArg(description = SOURCE_ARG) String source,
             @ToolArg(description = FLOW_ARG) String flow,
@@ -403,7 +409,11 @@ public class SdmxdlMcpService2 {
             @ToolArg(description = START_ARG, required = false) String start,
             @ToolArg(description = END_ARG, required = false) String end,
             @ToolArg(description = FIRST_N_ARG, required = false, defaultValue = DEFAULT_FIRST_N) int firstN,
-            @ToolArg(description = LAST_N_ARG, required = false, defaultValue = DEFAULT_LAST_N) int lastN)
+            @ToolArg(description = LAST_N_ARG, required = false, defaultValue = DEFAULT_LAST_N) int lastN,
+            @ToolArg(description = SERIES_OFFSET_ARG, required = false, defaultValue = DEFAULT_SERIES_OFFSET)
+                    int seriesOffset,
+            @ToolArg(description = SERIES_LIMIT_ARG, required = false, defaultValue = DEFAULT_SERIES_LIMIT)
+                    int seriesLimit)
             throws IOException {
         Provider<WebSource> provider = manager.using(getPublicSourceForMcp(source));
         DataRequest.Builder request = DataRequest.builder()
@@ -413,6 +423,10 @@ public class SdmxdlMcpService2 {
                 .databaseOf(database)
                 .languagesOf(languages);
         applyObsFilters(request, start, end, firstN, lastN);
+        request.seriesOffset(seriesOffset);
+        if (seriesLimit != 0) {
+            request.seriesLimit(seriesLimit);
+        }
         return ProtoApi.fromDataSet(provider.getData(request.build()));
     }
 

@@ -94,6 +94,20 @@ public class PythonCliScriptGeneratorTest {
     }
 
     @Test
+    public void testDataWithSeriesPaging() {
+        DataRequest request = DataRequest.builder()
+                .flowOf("EXR")
+                .seriesOffset(20)
+                .seriesLimit(10)
+                .build();
+
+        Script script = x.generateScript("ECB", request, ScriptOptions.DEFAULT);
+
+        assertThat(script.getWarnings()).isEmpty();
+        assertThat(script.getContent()).contains("\"--series-offset\", \"20\", \"--series-limit\", \"10\"");
+    }
+
+    @Test
     public void testFlows() {
         FlowsRequest request = FlowsRequest.builder()
                 .query("exchange \"rates\"")

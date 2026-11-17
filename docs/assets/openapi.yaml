@@ -98,6 +98,9 @@ components:
           type: string
         query:
           $ref: "#/components/schemas/QueryDto"
+        total:
+          type: integer
+          format: int32
         data:
           type: array
           items:
@@ -1523,6 +1526,16 @@ paths:
         schema:
           type: integer
           format: int32
+      - name: seriesLimit
+        in: query
+        schema:
+          type: integer
+          format: int32
+      - name: seriesOffset
+        in: query
+        schema:
+          type: integer
+          format: int32
       - name: start
         in: query
         schema:
@@ -1609,6 +1622,16 @@ paths:
         in: query
         schema:
           type: string
+      - name: seriesLimit
+        in: query
+        schema:
+          type: integer
+          format: int32
+      - name: seriesOffset
+        in: query
+        schema:
+          type: integer
+          format: int32
       - name: start
         in: query
         schema:
@@ -1680,6 +1703,16 @@ paths:
           type: string
           default: '*'
       - name: lastN
+        in: query
+        schema:
+          type: integer
+          format: int32
+      - name: seriesLimit
+        in: query
+        schema:
+          type: integer
+          format: int32
+      - name: seriesOffset
         in: query
         schema:
           type: integer

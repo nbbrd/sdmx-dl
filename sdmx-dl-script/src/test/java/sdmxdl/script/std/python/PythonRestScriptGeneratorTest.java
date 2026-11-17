@@ -23,6 +23,21 @@ public class PythonRestScriptGeneratorTest {
     }
 
     @Test
+    public void testDataWithSeriesPaging() {
+        DataRequest request = DataRequest.builder()
+                .flowOf("EXR")
+                .seriesOffset(20)
+                .seriesLimit(10)
+                .build();
+
+        Script script = x.generateScript("ECB", request, ScriptOptions.DEFAULT);
+
+        assertThat(script.getWarnings()).isEmpty();
+        assertThat(script.getContent())
+                .contains("params = urllib.parse.urlencode({\"seriesOffset\": 20, \"seriesLimit\": 10})\n");
+    }
+
+    @Test
     public void testData() {
         DataRequest request = DataRequest.builder()
                 .flowOf("EXR")

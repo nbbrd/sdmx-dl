@@ -646,6 +646,44 @@ public class ProviderTest {
                 .containsExactly(K3);
     }
 
+    @Test
+    public void testGetDataWithSeriesPaging() throws IOException {
+        Provider<WebSource> provider = providerOf(new ForwardingConnection() {
+            @Override
+            public @NonNull DataSet getData(
+                    @NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) {
+                return DATA_SET.getData(query);
+            }
+        });
+        DataSet all = provider.getData(DataRequest.builder().flow(FLOW_REF).build());
+        List<Key> keys = all.stream()
+                .map(Series::getKey)
+                .sorted(Comparator.comparing(Key::toString))
+                .collect(toList());
+        assertThat(keys).hasSizeGreaterThanOrEqualTo(3);
+        assertThat(all.getTotal()).isEqualTo(keys.size());
+
+        DataSet page = provider.getData(DataRequest.builder()
+                .flow(FLOW_REF)
+                .seriesOffset(1)
+                .seriesLimit(1)
+                .build());
+        assertThat(page.getTotal()).isEqualTo(keys.size());
+        assertThat(page).extracting(Series::getKey).containsExactly(keys.get(1));
+
+        DataSet beyond = provider.getData(
+                DataRequest.builder().flow(FLOW_REF).seriesOffset(keys.size()).build());
+        assertThat(beyond.getTotal()).isEqualTo(keys.size());
+        assertThat(beyond).isEmpty();
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> provider.getData(
+                        DataRequest.builder().flow(FLOW_REF).seriesOffset(-1).build()));
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> provider.getData(
+                        DataRequest.builder().flow(FLOW_REF).seriesLimit(0).build()));
+    }
+
     private static Provider<WebSource> validProvider() {
         return new Provider<>(SdmxManagerTest.validManager(), BASIC_SOURCE);
     }

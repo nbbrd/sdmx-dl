@@ -100,13 +100,15 @@ Each series has a `key`, optional series-level `meta`, and an `obs` array; each 
       { "period": "2026-07-01T00:00:00/P1M", "value": 0.9255739130434782, "meta": { "OBS_STATUS": "A" } },
       { "period": "2026-08-01T00:00:00/P1M", "value": 0.9361857142857143, "meta": { "OBS_STATUS": "A" } }
     ]
-  }]
+  }],
+  "total": 1
 }
 ```
 
 - `query` echoes the request with the [Java library]({{< relref "/api" >}}) names (`startPeriod`, `endPeriod`, `firstNObservations`, `lastNObservations`), which correspond to the `start`, `end`, `firstN`, and `lastN` request parameters.
 - `period` is an ISO-8601 interval (`start/duration`); keep the part before `/` if you only need the start date.
 - The `detail` parameter controls which parts are filled: `FULL` (default), `DATA_ONLY` (no `meta`), `NO_DATA` (no `obs`), or `SERIES_KEYS_ONLY` (keys only).
+- `total` is the number of series before paging: `seriesOffset` and `seriesLimit` page through the series (see [By series]({{< relref "/usage/retrieve#by-series" >}})).
 - `GetDataStream` (`GET /{source}/{flow}/data:stream`) returns the same series objects as a plain JSON array, without the `ref`/`query` wrapper.
 - Listing operations (`/sources`, `/{source}/flows`, `/{source}/{flow}/dimensions`, `/{source}/{flow}/codes/{concept}`, …) return an object with the matching entries in `items` and their number before paging in `total`, e.g. `{"items": [{"id": "A", "name": "Annual"}, {"id": "Q", "name": "Quarterly"}], "total": 2}`. Use `offset` with `maxResults` to page through them. With a `query`, `scores` gives the relevance of each item, in the same order, from 1 (best) down to 0 (excluded).
 - Empty fields are omitted from JSON responses: an empty list has no `items` and a `total` of `0` is omitted, so default them (e.g. `payload.get("items", [])`).

@@ -16,12 +16,12 @@
  */
 package sdmxdl;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 import java.time.LocalDateTime;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNullPointerException;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Philippe Charles
@@ -31,17 +31,23 @@ public class DataSetTest {
 
     @Test
     public void testToDataSet() {
-        assertThatNullPointerException()
-                .isThrownBy(() -> DataSet.toDataSet(null, Query.ALL));
+        assertThatNullPointerException().isThrownBy(() -> DataSet.toDataSet(null, Query.ALL));
 
-        assertThatNullPointerException()
-                .isThrownBy(() -> DataSet.toDataSet(FlowRef.parse(""), null));
+        assertThatNullPointerException().isThrownBy(() -> DataSet.toDataSet(FlowRef.parse(""), null));
+    }
+
+    @Test
+    public void testTotal() {
+        assertThat(dataSet.getTotal()).isEqualTo(dataSet.getData().size());
+        assertThat(dataSet.toBuilder().total(10).build().getTotal()).isEqualTo(10);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() ->
+                        dataSet.toBuilder().total(dataSet.getData().size() - 1).build());
     }
 
     @Test
     public void testGetData() {
-        assertThatNullPointerException()
-                .isThrownBy(() -> dataSet.getData(null));
+        assertThatNullPointerException().isThrownBy(() -> dataSet.getData(null));
 
         // Query.ALL is a no-op shortcut — returns same instance
         assertThat(dataSet.getData(Query.ALL)).isSameAs(dataSet);
@@ -57,20 +63,31 @@ public class DataSetTest {
 
     @Test
     public void testGetDataStream() {
-        assertThatNullPointerException()
-                .isThrownBy(() -> dataSet.getDataStream(null));
+        assertThatNullPointerException().isThrownBy(() -> dataSet.getDataStream(null));
 
-        assertThat(dataSet.getDataStream(dataSet.getQuery()))
-                .containsExactly(series);
+        assertThat(dataSet.getDataStream(dataSet.getQuery())).containsExactly(series);
     }
 
     private final StructureRef goodStructRef = StructureRef.of("NBB", "goodStruct", "v1.0");
     private final StructureRef badStructRef = StructureRef.parse("badStruct");
     private final FlowRef goodFlowRef = FlowRef.of("NBB", "XYZ", "v2.0");
     private final FlowRef badFlowRef = FlowRef.parse("other");
-    private final Flow flow = Flow.builder().ref(goodFlowRef).structureRef(goodStructRef).name("flow1").build();
-    private final Structure struct = Structure.builder().ref(goodStructRef).primaryMeasureId("").name("struct1").build();
-    private final Obs obs1 = Obs.builder().period(TimeInterval.of(LocalDateTime.of(2010, 1, 2, 3, 4), Duration.parse("P1M"))).value(Math.PI).build();
-    private final Series series = Series.builder().key(Key.of("BE")).obs(obs1).meta("hello", "world").build();
-    private final DataSet dataSet = DataSet.builder().ref(goodFlowRef).series(series).build();
+    private final Flow flow = Flow.builder()
+            .ref(goodFlowRef)
+            .structureRef(goodStructRef)
+            .name("flow1")
+            .build();
+    private final Structure struct = Structure.builder()
+            .ref(goodStructRef)
+            .primaryMeasureId("")
+            .name("struct1")
+            .build();
+    private final Obs obs1 = Obs.builder()
+            .period(TimeInterval.of(LocalDateTime.of(2010, 1, 2, 3, 4), Duration.parse("P1M")))
+            .value(Math.PI)
+            .build();
+    private final Series series =
+            Series.builder().key(Key.of("BE")).obs(obs1).meta("hello", "world").build();
+    private final DataSet dataSet =
+            DataSet.builder().ref(goodFlowRef).series(series).build();
 }
