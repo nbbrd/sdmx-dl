@@ -50,7 +50,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
 <meta property="article:section" content="Ws" />
     <meta
       property="article:modified_time"
-      content="2026-11-17T11:23:52+01:00"
+      content="2026-11-17T14:05:17+01:00"
     />
 
 
@@ -71,7 +71,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/ws/",
       "headline": "Web service",
       "description": "\nsdmx-dl WS is a web service that serves as a bridge to any application or language.\nThis service has three endpoints:\na gRPC endpoint which has the best performances but a limited set of clients a REST endpoint which has a wider range of clients but is less efficient an MCP endpoint which lets AI assistants and agents browse and fetch data It also serves a web UI to browse sources and fetch data from a browser, on top of the REST endpoint.",
-      "wordCount": "1440",
+      "wordCount": "1460",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -82,7 +82,7 @@ a gRPC endpoint which has the best performances but a limited set of clients a R
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-11-17T11:23:52.00Z",
+      "dateModified": "2026-11-17T14:05:17.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1996,7 +1996,8 @@ Each series has a <code>key</code>, optional series-level <code>meta</code>, and
 </span></span><span class="line"><span class="cl">      <span class="p">{</span> <span class="nt">&#34;period&#34;</span><span class="p">:</span> <span class="s2">&#34;2026-07-01T00:00:00/P1M&#34;</span><span class="p">,</span> <span class="nt">&#34;value&#34;</span><span class="p">:</span> <span class="mf">0.9255739130434782</span><span class="p">,</span> <span class="nt">&#34;meta&#34;</span><span class="p">:</span> <span class="p">{</span> <span class="nt">&#34;OBS_STATUS&#34;</span><span class="p">:</span> <span class="s2">&#34;A&#34;</span> <span class="p">}</span> <span class="p">},</span>
 </span></span><span class="line"><span class="cl">      <span class="p">{</span> <span class="nt">&#34;period&#34;</span><span class="p">:</span> <span class="s2">&#34;2026-08-01T00:00:00/P1M&#34;</span><span class="p">,</span> <span class="nt">&#34;value&#34;</span><span class="p">:</span> <span class="mf">0.9361857142857143</span><span class="p">,</span> <span class="nt">&#34;meta&#34;</span><span class="p">:</span> <span class="p">{</span> <span class="nt">&#34;OBS_STATUS&#34;</span><span class="p">:</span> <span class="s2">&#34;A&#34;</span> <span class="p">}</span> <span class="p">}</span>
 </span></span><span class="line"><span class="cl">    <span class="p">]</span>
-</span></span><span class="line"><span class="cl">  <span class="p">}]</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}],</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;total&#34;</span><span class="p">:</span> <span class="mi">1</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><ul>
 <li><code>query</code> echoes the request with the <a
@@ -2005,6 +2006,10 @@ Each series has a <code>key</code>, optional series-level <code>meta</code>, and
 >Java library</a> names (<code>startPeriod</code>, <code>endPeriod</code>, <code>firstNObservations</code>, <code>lastNObservations</code>), which correspond to the <code>start</code>, <code>end</code>, <code>firstN</code>, and <code>lastN</code> request parameters.</li>
 <li><code>period</code> is an ISO-8601 interval (<code>start/duration</code>); keep the part before <code>/</code> if you only need the start date.</li>
 <li>The <code>detail</code> parameter controls which parts are filled: <code>FULL</code> (default), <code>DATA_ONLY</code> (no <code>meta</code>), <code>NO_DATA</code> (no <code>obs</code>), or <code>SERIES_KEYS_ONLY</code> (keys only).</li>
+<li><code>total</code> is the number of series before paging: <code>seriesOffset</code> and <code>seriesLimit</code> page through the series (see <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/usage/retrieve/#by-series"
+>By series</a>).</li>
 <li><code>GetDataStream</code> (<code>GET /{source}/{flow}/data:stream</code>) returns the same series objects as a plain JSON array, without the <code>ref</code>/<code>query</code> wrapper.</li>
 <li>Listing operations (<code>/sources</code>, <code>/{source}/flows</code>, <code>/{source}/{flow}/dimensions</code>, <code>/{source}/{flow}/codes/{concept}</code>, …) return an object with the matching entries in <code>items</code> and their number before paging in <code>total</code>, e.g. <code>{&quot;items&quot;: [{&quot;id&quot;: &quot;A&quot;, &quot;name&quot;: &quot;Annual&quot;}, {&quot;id&quot;: &quot;Q&quot;, &quot;name&quot;: &quot;Quarterly&quot;}], &quot;total&quot;: 2}</code>. Use <code>offset</code> with <code>maxResults</code> to page through them. With a <code>query</code>, <code>scores</code> gives the relevance of each item, in the same order, from 1 (best) down to 0 (excluded).</li>
 <li>Empty fields are omitted from JSON responses: an empty list has no <code>items</code> and a <code>total</code> of <code>0</code> is omitted, so default them (e.g. <code>payload.get(&quot;items&quot;, [])</code>).</li>

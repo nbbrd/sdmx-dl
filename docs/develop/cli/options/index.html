@@ -51,7 +51,7 @@ Common General-purpose options used by various commands." />
 <meta property="article:section" content="CLI" />
     <meta
       property="article:modified_time"
-      content="2026-11-17T11:23:52+01:00"
+      content="2026-11-17T14:05:17+01:00"
     />
 
 
@@ -72,7 +72,7 @@ Common General-purpose options used by various commands." />
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/cli/options/",
       "headline": "Options",
       "description": "An option has the following caracteristics:\nit has a name prefixed by two hyphens (e.g. --version). it may have a shortcut prefixed by one hyphen (e.g. -h is a shortcut of --help). it is case-sensitive Shortcuts can be grouped behind one hyphen (e.g. -vh is equivalent to -v -h).\nThe options default values are system-independent.\nCommon General-purpose options used by various commands.",
-      "wordCount": "716",
+      "wordCount": "799",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -83,7 +83,7 @@ Common General-purpose options used by various commands." />
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-11-17T11:23:52.00Z",
+      "dateModified": "2026-11-17T14:05:17.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -2037,6 +2037,42 @@ so the result is always consistent (but the download is not necessarily smaller)
 </table> </div>
 <p>When <code>--first-n</code> and <code>--last-n</code> are combined, the result is the union of the first N and the last N
 observations of each series (computed independently after any period filtering).</p>
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="series-paging"
+    >
+        Series paging
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/options/#series-paging" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Series paging" aria-label="Anchor to: Series paging" href="#series-paging">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>Optional paging of the series returned by the <code>fetch data</code>, <code>fetch keys</code>, <code>fetch meta</code> and <code>script data</code> commands.
+Series are sorted by key before paging, so that pages are stable.
+When paging is used, the number of series before paging is printed on the standard error, e.g. <code>Showing series 3-4 of 4</code>.</p>
+<div class="table-wrap"> <table>
+	<thead>
+			<tr>
+					<th>Name</th>
+					<th>Shortcut</th>
+					<th>Parameter</th>
+					<th>Description</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td><a id="series-offset" href="#series-offset"><code>--series-offset</code></a></td>
+					<td>-</td>
+					<td><code>&lt;offset&gt;</code></td>
+					<td>Number of series to skip, sorted by key (default: <code>0</code>).</td>
+			</tr>
+			<tr>
+					<td><a id="series-limit" href="#series-limit"><code>--series-limit</code></a></td>
+					<td>-</td>
+					<td><code>&lt;limit&gt;</code></td>
+					<td>Maximum number of series to return (default: no limit).</td>
+			</tr>
+	</tbody>
+</table> </div>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="health"
     >

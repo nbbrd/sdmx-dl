@@ -51,7 +51,7 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
 <meta property="article:section" content="Usage" />
     <meta
       property="article:modified_time"
-      content="2026-11-17T11:23:52+01:00"
+      content="2026-11-17T14:05:17+01:00"
     />
 
 
@@ -72,7 +72,7 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve/",
       "headline": "Retrieve",
       "description": "Fetch observations and metadata for the key you’ve settled on.\nAll flavors share the same request shape: source, flow, key, plus optional database, languages, detail, and the period and observation-count filters described below.\nData Download observations from a dataset using a source, flow, and key.\nAPI \/\/JAVA 25\u002b \/\/DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 import sdmxdl.DataRequest; import sdmxdl.web.SdmxWebManager; void main() throws Exception { SdmxWebManager .ofServiceLoader() .usingName(\u0022ECB\u0022) .getData(DataRequest.builder() .flowOf(\u0022EXR\u0022) .keyOf(\u0022M.CHF.EUR.SP00.A\u0022) .build()) .forEach(series -\u003e IO.println(series.getKey())); } CLI sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A WS REST curl -G localhost:4559\/sdmx-dl\/v2\/ECB\/EXR\/data \\ --data-urlencode \u0022key=M.CHF.EUR.SP00.A\u0022 gRPC grpcurl -d \u0027{\u0022source\u0022:\u0022ECB\u0022,\u0022flow\u0022:\u0022EXR\u0022,\u0022key\u0022:\u0022M.CHF.EUR.SP00.A\u0022}\u0027 -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.GetData CLI output sample ↕ Series,ObsAttributes,ObsPeriod,ObsValue M.CHF.EUR.SP00.A,\u0022OBS_STATUS=A,OBS_CONF=F\u0022,1999-01-01T00:00:00,1.605495 M.CHF.EUR.SP00.A,\u0022OBS_STATUS=A,OBS_CONF=F\u0022,1999-02-01T00:00:00,1.59785 M.CHF.EUR.SP00.A,\u0022OBS_STATUS=A,OBS_CONF=F\u0022,1999-03-01T00:00:00,1.5954304347826 ... WS additionally offers GetDataStream\/GET \/sdmx-dl\/v2\/{source}\/{flow}\/data:stream to stream large responses instead of buffering the full dataset. Narrow your request Restrict a data request to a date range and\/or a limited number of observations, so you download only what you need instead of a series’ full history.",
-      "wordCount": "589",
+      "wordCount": "767",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -83,7 +83,7 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-11-17T11:23:52.00Z",
+      "dateModified": "2026-11-17T14:05:17.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -2117,6 +2117,142 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
 </div>
 
 <div class="flex align-center gdoc-page__anchorwrap">
+    <h3 id="by-series"
+    >
+        By series
+    </h3>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve/#by-series" class="gdoc-page__anchor clip flex align-center" title="Anchor to: By series" aria-label="Anchor to: By series" href="#by-series">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>A key with wildcards can match many series. Page through them with a series offset and limit; the result gives their number before paging in <code>total</code>.</p>
+
+
+
+<div class="gdoc-tabs">
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-narrow-by-series"
+      id="tabs-narrow-by-series-0"
+      checked="checked"/>
+    <label for="tabs-narrow-by-series-0" class="gdoc-tabs__label">
+      API
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.DataRequest</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.DataSet</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.SdmxWebManager</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">DataSet</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SdmxWebManager</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">usingName</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">.</span><span class="na">getData</span><span class="p">(</span><span class="n">DataRequest</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">flowOf</span><span class="p">(</span><span class="s">&#34;EXR&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">keyOf</span><span class="p">(</span><span class="s">&#34;M.CHF+GBP+JPY+USD.EUR.SP00.A&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">seriesOffset</span><span class="p">(</span><span class="n">2</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">seriesLimit</span><span class="p">(</span><span class="n">2</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">build</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">page</span><span class="p">.</span><span class="na">getData</span><span class="p">().</span><span class="na">size</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34; of &#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">page</span><span class="p">.</span><span class="na">getTotal</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34; series&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div></div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-narrow-by-series"
+      id="tabs-narrow-by-series-1"
+      />
+    <label for="tabs-narrow-by-series-1" class="gdoc-tabs__label">
+      CLI
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdmx-dl fetch keys ECB EXR M.CHF+GBP+JPY+USD.EUR.SP00.A --series-offset <span class="m">2</span> --series-limit <span class="m">2</span>
+</span></span></code></pre></div></div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-narrow-by-series"
+      id="tabs-narrow-by-series-2"
+      />
+    <label for="tabs-narrow-by-series-2" class="gdoc-tabs__label">
+      WS
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <div class="flex align-center gdoc-page__anchorwrap">
+    <h4 id="rest"
+    >
+        REST
+    </h4>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve/#rest" class="gdoc-page__anchor clip flex align-center" title="Anchor to: REST" aria-label="Anchor to: REST" href="#rest">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -G localhost:4559/sdmx-dl/v2/ECB/EXR/data <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;key=M.CHF+GBP+JPY+USD.EUR.SP00.A&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;detail=SERIES_KEYS_ONLY&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;seriesOffset=2&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;seriesLimit=2&#34;</span>
+</span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
+    <h4 id="grpc"
+    >
+        gRPC
+    </h4>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/retrieve/#grpc" class="gdoc-page__anchor clip flex align-center" title="Anchor to: gRPC" aria-label="Anchor to: gRPC" href="#grpc">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;flow&#34;:&#34;EXR&#34;,&#34;key&#34;:&#34;M.CHF+GBP+JPY+USD.EUR.SP00.A&#34;,&#34;detail&#34;:&#34;SERIES_KEYS_ONLY&#34;,&#34;seriesOffset&#34;:2,&#34;seriesLimit&#34;:2}&#39;</span> -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.GetData
+</span></span></code></pre></div></div>
+</div>
+
+
+<div class="gdoc-expand">
+  <label class="gdoc-expand__head flex justify-between" for="f45f5353-9">
+    <span>REST output sample</span>
+    <span>↕</span>
+  </label>
+  <input id="f45f5353-9" type="checkbox" class="gdoc-expand__control hidden" />
+  <div class="gdoc-markdown--nested gdoc-expand__content">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;ref&#34;</span><span class="p">:</span> <span class="s2">&#34;all,EXR,latest&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;query&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;key&#34;</span><span class="p">:</span> <span class="s2">&#34;M.CHF+GBP+JPY+USD.EUR.SP00.A&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;detail&#34;</span><span class="p">:</span> <span class="s2">&#34;SERIES_KEYS_ONLY&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;data&#34;</span><span class="p">:</span> <span class="p">[{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;key&#34;</span><span class="p">:</span> <span class="s2">&#34;M.JPY.EUR.SP00.A&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;key&#34;</span><span class="p">:</span> <span class="s2">&#34;M.USD.EUR.SP00.A&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}],</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;total&#34;</span><span class="p">:</span> <span class="mi">4</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div>
+  </div>
+</div>
+
+
+<div class="gdoc-expand">
+  <label class="gdoc-expand__head flex justify-between" for="6ddcc41e-10">
+    <span>CLI output sample</span>
+    <span>↕</span>
+  </label>
+  <input id="6ddcc41e-10" type="checkbox" class="gdoc-expand__control hidden" />
+  <div class="gdoc-markdown--nested gdoc-expand__content">
+    <pre tabindex="0"><code>Series
+M.JPY.EUR.SP00.A
+M.USD.EUR.SP00.A
+</code></pre>
+  </div>
+</div>
+
+<ul>
+<li>Series are sorted by key before paging, so that pages are stable; sdmx-dl downloads them once (and caches them), then returns the requested page.</li>
+<li>The CLI prints the number of series before paging on the standard error, e.g. <code>Showing series 3-4 of 4</code>.</li>
+</ul>
+<div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="metadata"
     >
         Metadata
@@ -2211,11 +2347,11 @@ API //JAVA 25&#43; //DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0 impo
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="291c05c3-9">
+  <label class="gdoc-expand__head flex justify-between" for="291c05c3-12">
     <span>CLI output sample</span>
     <span>↕</span>
   </label>
-  <input id="291c05c3-9" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="291c05c3-12" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Series,Concept,Value
 </span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A,COLLECTION,A
