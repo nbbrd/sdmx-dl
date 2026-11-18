@@ -9,13 +9,14 @@
 <meta name="referrer" content="no-referrer" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="color-scheme" content="light dark" />
-<meta name="generator" content="Hugo 0.170.0">
+<meta name="generator" content="Hugo 0.170.1">
 
 
   <meta name="description" content="The web service ships with SDMX-DL API Explorer, a web page to browse sources and fetch data from a browser, without writing any code.
 Once the service is running, open http://localhost:4559/ (adjust the port if you changed quarkus.http.port).
 The page uses the REST endpoint of the same server, so everything you do in it can be reproduced with an HTTP client.
-It also links to the OpenAPI UI and to the OpenAPI specification." />
+It also links to the OpenAPI UI and to the OpenAPI specification.
+To simply find and download statistics, see the Search UI." />
 
     <title>Web UI | sdmx-dl</title>
 
@@ -44,14 +45,15 @@ It also links to the OpenAPI UI and to the OpenAPI specification." />
   <meta property="og:description" content="The web service ships with SDMX-DL API Explorer, a web page to browse sources and fetch data from a browser, without writing any code.
 Once the service is running, open http://localhost:4559/ (adjust the port if you changed quarkus.http.port).
 The page uses the REST endpoint of the same server, so everything you do in it can be reproduced with an HTTP client.
-It also links to the OpenAPI UI and to the OpenAPI specification." />
+It also links to the OpenAPI UI and to the OpenAPI specification.
+To simply find and download statistics, see the Search UI." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/ws/web-ui/" />
 
 <meta property="article:section" content="Ws" />
     <meta
       property="article:modified_time"
-      content="2026-11-17T15:34:52+01:00"
+      content="2026-11-18T11:02:05+01:00"
     />
 
 
@@ -60,7 +62,8 @@ It also links to the OpenAPI UI and to the OpenAPI specification." />
   <meta name="twitter:description" content="The web service ships with SDMX-DL API Explorer, a web page to browse sources and fetch data from a browser, without writing any code.
 Once the service is running, open http://localhost:4559/ (adjust the port if you changed quarkus.http.port).
 The page uses the REST endpoint of the same server, so everything you do in it can be reproduced with an HTTP client.
-It also links to the OpenAPI UI and to the OpenAPI specification." />
+It also links to the OpenAPI UI and to the OpenAPI specification.
+To simply find and download statistics, see the Search UI." />
 
 
   <script type="application/ld+json">
@@ -71,8 +74,8 @@ It also links to the OpenAPI UI and to the OpenAPI specification." />
       "name": "Web UI",
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/ws/web-ui/",
       "headline": "Web UI",
-      "description": "The web service ships with SDMX-DL API Explorer, a web page to browse sources and fetch data from a browser, without writing any code.\nOnce the service is running, open http:\/\/localhost:4559\/ (adjust the port if you changed quarkus.http.port).\nThe page uses the REST endpoint of the same server, so everything you do in it can be reproduced with an HTTP client.\nIt also links to the OpenAPI UI and to the OpenAPI specification.",
-      "wordCount": "1212",
+      "description": "The web service ships with SDMX-DL API Explorer, a web page to browse sources and fetch data from a browser, without writing any code.\nOnce the service is running, open http:\/\/localhost:4559\/ (adjust the port if you changed quarkus.http.port).\nThe page uses the REST endpoint of the same server, so everything you do in it can be reproduced with an HTTP client.\nIt also links to the OpenAPI UI and to the OpenAPI specification.\nTo simply find and download statistics, see the Search UI.",
+      "wordCount": "1222",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -83,7 +86,7 @@ It also links to the OpenAPI UI and to the OpenAPI specification." />
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-11-17T15:34:52.00Z",
+      "dateModified": "2026-11-18T11:02:05.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1523,6 +1526,50 @@ It also links to the OpenAPI UI and to the OpenAPI specification." />
         
       
     
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/sdmx-dl/docs/develop/ws/search-ui/"
+                    class="gdoc-nav__entry"
+                  >
+                    Search UI
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
   </ul>
 
             
@@ -1766,7 +1813,11 @@ It also links to the <a
 >OpenAPI UI</a> and to the <a
   class="gdoc-markdown__link"
   href="http://localhost:4559/q/openapi"
->OpenAPI specification</a>.</p>
+>OpenAPI specification</a>.<br>
+To simply find and download statistics, see the <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/ws/search-ui/"
+>Search UI</a>.</p>
 <p><img
   src="sources.png"
   alt="Sources tab"
@@ -2999,6 +3050,44 @@ The same parameters can be used to open the page in a given state:</p>
     
 
   
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+          
+            
+            
+          
+        
+
+        
+
+        
+          
+        
+
+        
+        
+      
+    
+
+  
 
         
       
@@ -3024,11 +3113,6 @@ The same parameters can be used to open the page in a given state:</p>
         
         
 
-        
-          
-            
-            
-          
         
 
         
@@ -3129,10 +3213,10 @@ The same parameters can be used to open the page in a given state:</p>
   
     <a
       class="gdoc-page__nav--next flex align-center"
-      href="/sdmx-dl/docs/develop/auth/"
-      title="Authentication"
+      href="/sdmx-dl/docs/develop/ws/search-ui/"
+      title="Search UI"
     >
-      Authentication
+      Search UI
       <i class="gdoc-icon">gdoc_arrow_right_alt</i>
     </a>
   
