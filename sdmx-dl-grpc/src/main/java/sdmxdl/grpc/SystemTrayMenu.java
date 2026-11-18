@@ -55,7 +55,7 @@ import org.jspecify.annotations.Nullable;
 import sdmxdl.About;
 
 /**
- * Adds a system tray icon to open the web UI and to quit the application, if a desktop is available.
+ * Adds a system tray icon to open the web UI and the search UI, and to quit the application, if a desktop is available.
  */
 @ApplicationScoped
 public class SystemTrayMenu {
@@ -66,6 +66,7 @@ public class SystemTrayMenu {
     private static final String LOGO = "sdmxdl/grpc/sdmx-logo.svg";
 
     private static final String WEB_UI_PATH = "index.html";
+    private static final String SEARCH_UI_PATH = "search.html";
     private static final String API_DOCS_PATH = "q/swagger-ui";
     private static final String MCP_PATH = "mcp";
 
@@ -172,6 +173,7 @@ public class SystemTrayMenu {
 
     private static JPopupMenu createMenu(URI baseUri) {
         URI webUi = baseUri.resolve(WEB_UI_PATH);
+        URI searchUi = baseUri.resolve(SEARCH_UI_PATH);
         URI apiDocs = baseUri.resolve(API_DOCS_PATH);
         URI mcp = baseUri.resolve(MCP_PATH);
 
@@ -183,6 +185,9 @@ public class SystemTrayMenu {
         JMenuItem openItem = new JMenuItem("Open web UI", getBootstrapIconOrNull("globe"));
         openItem.setFont(openItem.getFont().deriveFont(Font.BOLD));
         openItem.addActionListener(e -> browse(webUi));
+
+        JMenuItem searchItem = new JMenuItem("Open search UI", getBootstrapIconOrNull("search"));
+        searchItem.addActionListener(e -> browse(searchUi));
 
         JMenuItem apiDocsItem = new JMenuItem("Open API docs", getBootstrapIconOrNull("book"));
         apiDocsItem.addActionListener(e -> browse(apiDocs));
@@ -200,6 +205,7 @@ public class SystemTrayMenu {
         result.add(statusItem);
         result.addSeparator();
         result.add(openItem);
+        result.add(searchItem);
         result.add(apiDocsItem);
         result.addSeparator();
         result.add(copyUrlItem);

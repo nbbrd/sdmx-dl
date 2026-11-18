@@ -7,7 +7,8 @@ The [web service]({{< relref "/ws" >}}) ships with **SDMX-DL API Explorer**, a w
 Once the service is running, open [http://localhost:4559/](http://localhost:4559/) (adjust the port if you changed `quarkus.http.port`).
 
 The page uses the [REST endpoint]({{< relref "/ws#rest-endpoint" >}}) of the same server, so everything you do in it can be reproduced with an HTTP client.  
-It also links to the [OpenAPI UI](http://localhost:4559/q/swagger-ui) and to the [OpenAPI specification](http://localhost:4559/q/openapi).
+It also links to the [OpenAPI UI](http://localhost:4559/q/swagger-ui) and to the [OpenAPI specification](http://localhost:4559/q/openapi).  
+To simply find and download statistics, see the [Search UI]({{< relref "/ws/search-ui" >}}).
 
 ![Sources tab](sources.png)
 

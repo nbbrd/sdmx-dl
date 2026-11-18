@@ -1,0 +1,336 @@
+/*
+ * SDMX-DL Search: styles on top of Bootstrap 5.3 and the NBB theme (theme.css).
+ */
+
+body {
+    background: var(--bs-tertiary-bg);
+}
+
+.search-navbar {
+    background: var(--nbb-navy);
+}
+
+.min-w-0 {
+    min-width: 0;
+}
+
+.flex-none {
+    flex: none;
+}
+
+/* ---------- search hero ---------- */
+
+.hero {
+    display: flex;
+    align-items: center;
+    min-height: 175px;
+    background: linear-gradient(135deg, var(--nbb-navy), var(--nbb-blue));
+    color: #fff;
+    transition: min-height .55s cubic-bezier(.4, 0, .2, 1);
+}
+
+.hero > .container-xl {
+    width: 100%;
+}
+
+body.landing .hero {
+    min-height: calc(100vh - 56px);
+}
+
+.omni-wrapper {
+    max-width: 860px;
+}
+
+.omni {
+    border-radius: 2rem;
+    padding: .35rem .5rem .35rem 1.25rem;
+    box-shadow: 0 .5rem 1.5rem rgba(0, 0, 0, .25);
+}
+
+.omni input {
+    border: 0;
+    box-shadow: none !important;
+    background: transparent;
+    font-size: 1.15rem;
+}
+
+.suggest {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + .5rem);
+    z-index: 30;
+    max-height: 60vh;
+    overflow: auto;
+}
+
+.suggest .list-group-item-action {
+    cursor: pointer;
+}
+
+.suggest .list-group-item-action.active {
+    color: var(--bs-body-color);
+    background: var(--bs-primary-bg-subtle);
+    border-color: var(--bs-border-color);
+}
+
+mark {
+    background: rgba(236, 189, 41, .45);
+    padding: 0 .1em;
+    border-radius: .2em;
+    color: inherit;
+}
+
+.landing-only {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    margin-bottom: 0 !important;
+    transition: max-height .55s cubic-bezier(.4, 0, .2, 1), opacity .3s, margin .55s;
+}
+
+body.landing .landing-only {
+    max-height: 700px;
+    opacity: 1;
+    margin-bottom: 1.5rem !important;
+}
+
+body.landing #crumbbar,
+body.landing main {
+    display: none;
+}
+
+main,
+#crumbbar {
+    animation: fade-in .4s ease .3s both;
+}
+
+.home-card {
+    background: rgba(255, 255, 255, .1);
+    border: 1px solid rgba(255, 255, 255, .2);
+    border-radius: .75rem;
+}
+
+.home-card .item {
+    border-radius: .4rem;
+    cursor: pointer;
+}
+
+.home-card .item:hover {
+    background: rgba(255, 255, 255, .12);
+}
+
+.home-card a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.kbd-hint kbd {
+    font-size: .7rem;
+}
+
+/* ---------- stepper ---------- */
+
+.crumbs .step {
+    cursor: pointer;
+}
+
+.crumbs .step.active {
+    font-weight: 600;
+    cursor: default;
+}
+
+.crumbs .step.disabled {
+    opacity: .45;
+    cursor: default;
+    pointer-events: none;
+}
+
+/* ---------- views ---------- */
+
+.view {
+    display: none;
+}
+
+.view.active {
+    display: block;
+}
+
+.sticky-side {
+    position: sticky;
+    top: 1rem;
+}
+
+.result {
+    cursor: pointer;
+    transition: box-shadow .15s, transform .15s;
+}
+
+.result:hover {
+    box-shadow: 0 .4rem 1rem rgba(0, 0, 0, .12);
+    transform: translateY(-1px);
+}
+
+.source-tile {
+    width: 3rem;
+    height: 3rem;
+    font-size: .7rem;
+    overflow: hidden;
+    word-break: break-all;
+    text-align: center;
+    line-height: 1.1;
+}
+
+.score {
+    height: 4px;
+    background: var(--bs-border-color);
+    border-radius: 2px;
+    width: 4.5rem;
+}
+
+.score > span {
+    display: block;
+    height: 100%;
+    background: var(--nbb-green);
+    border-radius: 2px;
+}
+
+/* ---------- dataset ---------- */
+
+.dim-toggle {
+    cursor: pointer;
+}
+
+.code-list {
+    max-height: 14rem;
+    overflow: auto;
+}
+
+.code-list .form-check {
+    padding-block: .1rem;
+}
+
+.key-part {
+    font-family: var(--bs-font-monospace);
+    padding: .1rem .45rem;
+    border-radius: .35rem;
+    background: var(--bs-primary-bg-subtle);
+    border: 1px solid var(--bs-primary-border-subtle);
+    cursor: pointer;
+}
+
+.key-part.wild {
+    background: transparent;
+    border-style: dashed;
+    color: var(--bs-secondary-color);
+}
+
+.key-part.hot {
+    outline: 2px solid var(--nbb-magenta);
+}
+
+.series-row {
+    cursor: pointer;
+}
+
+.series-row.selected > td {
+    background: var(--bs-primary-bg-subtle) !important;
+}
+
+/* ---------- series drawer ---------- */
+
+.drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(640px, 100vw);
+    background: var(--bs-body-bg);
+    z-index: 1040;
+    box-shadow: -1rem 0 2rem rgba(0, 0, 0, .2);
+    transform: translateX(105%);
+    visibility: hidden;
+    transition: transform .25s, visibility 0s linear .25s;
+    overflow: auto;
+}
+
+.drawer.open {
+    transform: none;
+    visibility: visible;
+    transition: transform .25s;
+}
+
+.drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .35);
+    z-index: 1035;
+    display: none;
+}
+
+.drawer-backdrop.open {
+    display: block;
+}
+
+.chart {
+    width: 100%;
+    height: 240px;
+}
+
+.chart-lg {
+    height: 340px;
+}
+
+.obs-table {
+    max-height: 14rem;
+    overflow-y: auto;
+}
+
+pre.code {
+    background: #0d1b2e;
+    color: #d6e4f5;
+    border-radius: .5rem;
+    padding: .75rem 1rem;
+    padding-right: 5.5rem;
+    font-size: .8rem;
+    margin: 0;
+    max-height: 22rem;
+    overflow: auto;
+}
+
+.compare-swatch {
+    width: .9rem;
+    height: .9rem;
+    border-radius: 50%;
+    flex: none;
+}
+
+.fade-in {
+    animation: fade-in .25s ease;
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero,
+    .landing-only,
+    .drawer,
+    .result {
+        transition: none;
+    }
+
+    main,
+    #crumbbar,
+    .fade-in {
+        animation: none;
+    }
+}

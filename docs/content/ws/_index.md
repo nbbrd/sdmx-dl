@@ -12,7 +12,7 @@ This service has three endpoints:
 - a [REST endpoint](#rest-endpoint) which has a **wider range of clients** but is less efficient
 - an [MCP endpoint](#mcp-endpoint) which lets **AI assistants and agents** browse and fetch data
 
-It also serves a [web UI]({{< relref "/ws/web-ui" >}}) to browse sources and fetch data from a browser, on top of the REST endpoint.
+It also serves a [web UI]({{< relref "/ws/web-ui" >}}) to browse sources and fetch data from a browser, on top of the REST endpoint, and a [search UI]({{< relref "/ws/search-ui" >}}) to find statistics across all sources.
 
 These endpoints also provides specifications ([.proto files](https://grpc.io/docs/what-is-grpc/introduction/#working-with-protocol-buffers) and [OpenAPI](https://en.wikipedia.org/wiki/OpenAPI_Specification) respectively) that can be used to generate client code.
 They are designed to operate locally as well as on remote machines.
@@ -29,7 +29,7 @@ Custom config:
 | Option                | Description                                                                                                  |
 |-----------------------|--------------------------------------------------------------------------------------------------------------|
 | `quarkus.http.port`   | [The HTTP port](https://quarkus.io/guides/all-config#quarkus-vertx-http_quarkus-http-port), shared by all endpoints |
-| `sdmxdl.tray.enabled` | Show a system tray icon to open the [web UI]({{< relref "/ws/web-ui" >}}) and quit the service (default: `true`) |
+| `sdmxdl.tray.enabled` | Show a system tray icon to open the [web UI]({{< relref "/ws/web-ui" >}}) or the [search UI]({{< relref "/ws/search-ui" >}}) and quit the service (default: `true`) |
 
 All endpoints are served by a single HTTP server on port `4559` by default.  
 More info at Quarkus [all configuration options page](https://quarkus.io/guides/all-config) and [HTTP reference page](https://quarkus.io/guides/http-reference).

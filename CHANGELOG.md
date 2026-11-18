@@ -20,6 +20,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![API] Add normalized relevance scores to search results
 - ![API] Add series paging and total to data requests [#1397](https://github.com/nbbrd/sdmx-dl/issues/1397)
 - ![API] Add faceted availability of all dimensions in one call [#1398](https://github.com/nbbrd/sdmx-dl/issues/1398)
+- ![GRPC] Add SDMX-DL Search web UI [#1399](https://github.com/nbbrd/sdmx-dl/issues/1399)
 - ![GRPC] Add System Tray Menu to Quarkus [#1396](https://github.com/nbbrd/sdmx-dl/issues/1396)
 
 ### Changed

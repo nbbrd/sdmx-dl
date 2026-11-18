@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SDMX-DL Search</title>
+    <script src="js/theme.js"></script>
+    <link rel="stylesheet" href="/_static/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/_static/bootstrap-icons/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/search.css">
+</head>
+<body class="landing">
+
+<!-- Top bar -->
+<nav class="navbar navbar-dark search-navbar">
+    <div class="container-xl">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="search.html" onclick="event.preventDefault(); goHome()">
+            <i class="bi bi-bar-chart-line-fill"></i> SDMX-DL <span class="fw-light">Search</span>
+        </a>
+        <div class="d-flex align-items-center gap-2 gap-md-3 small">
+            <span class="d-none d-md-inline text-white-50" id="source-count"></span>
+            <button class="btn btn-sm btn-outline-light" id="compare-nav-btn" type="button" onclick="showCompare()" title="Compare series">
+                <i class="bi bi-graph-up"></i> <span class="d-none d-sm-inline">Compare</span>
+                <span id="compare-badge" class="badge text-bg-warning ms-1">0</span>
+            </button>
+            <a class="btn btn-sm btn-outline-light" href="index.html" title="Open the API Explorer"><i class="bi bi-tools"></i> <span class="d-none d-sm-inline">Explorer</span></a>
+            <button class="btn btn-sm btn-outline-light" id="theme-toggle-btn" type="button" onclick="toggleTheme()" title="Toggle dark mode" aria-label="Toggle dark mode"><i class="bi bi-moon-stars"></i></button>
+        </div>
+    </div>
+</nav>
+
+<!-- Search hero: centered on the landing screen, then docked at the top -->
+<header class="hero pb-4 pt-4">
+    <div class="container-xl">
+        <div class="landing-only text-center mb-4">
+            <i class="bi bi-bar-chart-line-fill display-4"></i>
+            <h1 class="display-5 fw-light mt-2">Find any <strong>official statistic</strong></h1>
+            <p class="text-white-50 mb-0" id="hero-subtitle">One search across all the configured sources</p>
+        </div>
+        <div class="position-relative mx-auto omni-wrapper">
+            <form class="omni bg-body d-flex align-items-center gap-2" role="search" onsubmit="event.preventDefault(); runSearch()">
+                <i class="bi bi-search text-secondary" aria-hidden="true"></i>
+                <input id="q" class="form-control" type="search" autocomplete="off" aria-label="Search"
+                       placeholder="Search datasets, or paste SOURCE/FLOW/KEY">
+                <select id="scope" class="form-select form-select-sm w-auto border-0 bg-body-tertiary rounded-pill" aria-label="Source" onchange="onScopeChange()">
+                    <option value="">All sources</option>
+                </select>
+                <button class="btn btn-primary rounded-pill px-3" type="submit" id="search-btn">Search</button>
+            </form>
+            <div id="suggest" class="suggest list-group shadow d-none" role="listbox"></div>
+        </div>
+        <div class="text-center mt-3 small">
+            <span class="text-white-50">Try:</span>
+            <a href="#" class="badge text-bg-light text-decoration-none mx-1" onclick="event.preventDefault(); quickSearch('inflation')">inflation</a>
+            <a href="#" class="badge text-bg-light text-decoration-none mx-1" onclick="event.preventDefault(); quickSearch('unemployment')">unemployment</a>
+            <a href="#" class="badge text-bg-light text-decoration-none mx-1" onclick="event.preventDefault(); quickSearch('exchange rates')">exchange rates</a>
+            <a href="#" class="badge text-bg-light text-decoration-none mx-1" onclick="event.preventDefault(); quickSearch('ECB/EXR/M.USD.EUR.SP00.A')">ECB/EXR/M.USD.EUR.SP00.A <i class="bi bi-key"></i></a>
+            <span class="text-white-50 ms-3 kbd-hint d-none d-md-inline"><kbd>/</kbd> focus · <kbd>↑</kbd><kbd>↓</kbd> navigate · <kbd>Enter</kbd> open</span>
+        </div>
+        <div class="landing-only mt-4 mx-auto omni-wrapper">
+            <div class="row g-3 text-start">
+                <div class="col-md-6">
+                    <div class="home-card p-3 h-100">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="small text-uppercase text-white-50"><i class="bi bi-clock-history"></i> Recent searches</span>
+                            <a href="#" class="ms-auto small text-white-50" onclick="event.preventDefault(); clearRecents()">Clear</a>
+                        </div>
+                        <div id="recents"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="home-card p-3 h-100">
+                        <div class="small text-uppercase text-white-50 mb-2"><i class="bi bi-star-fill"></i> Favorite datasets</div>
+                        <div id="favorites"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Breadcrumb / stepper -->
+<div class="bg-body border-bottom" id="crumbbar">
+    <div class="container-xl py-2 crumbs d-flex align-items-center gap-2 small flex-wrap">
+        <span class="step active" id="crumb-search" onclick="goSearch()"><i class="bi bi-1-circle-fill text-primary"></i> Find a dataset</span>
+        <i class="bi bi-chevron-right text-secondary"></i>
+        <span class="step disabled" id="crumb-dataset" onclick="goDataset()"><i class="bi bi-2-circle text-primary"></i> <span id="crumb-dataset-text">Narrow down</span></span>
+        <i class="bi bi-chevron-right text-secondary"></i>
+        <span class="step disabled" id="crumb-series" onclick="reopenSeries()"><i class="bi bi-3-circle text-primary"></i> <span id="crumb-series-text">Inspect a series</span></span>
+        <span class="ms-auto d-none d-md-inline text-secondary" id="keyline"></span>
+    </div>
+</div>
+
+<main class="container-xl py-4">
+
+    <!-- STEP 1: results -->
+    <section id="view-search" class="view active">
+        <div class="row g-4">
+            <aside class="col-lg-3">
+                <div class="sticky-side">
+                    <h6 class="text-uppercase text-secondary small">Refine</h6>
+                    <div class="card mb-3"><div class="card-body py-2">
+                        <div class="fw-semibold small mb-1">Source</div>
+                        <div id="facet-source"></div>
+                    </div></div>
+                    <div class="card mb-3"><div class="card-body py-2">
+                        <div class="fw-semibold small mb-1">Matched in</div>
+                        <div id="facet-where"></div>
+                    </div></div>
+                    <div class="small text-secondary px-1"><i class="bi bi-info-circle"></i> Sources only publish names and descriptions of their datasets, so facets are limited to what the search knows. Structures load on demand from each card.</div>
+                </div>
+            </aside>
+            <div class="col-lg-9">
+                <div class="d-flex align-items-center mb-2">
+                    <div><span id="result-count" class="fw-semibold"></span> <span class="text-secondary small" id="result-time"></span></div>
+                    <div class="ms-auto d-flex align-items-center gap-2 small">
+                        <label class="text-secondary" for="sort">Sort</label>
+                        <select id="sort" class="form-select form-select-sm w-auto" onchange="onSortChange()">
+                            <option value="relevance">Relevance</option>
+                            <option value="name">Name</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="failures"></div>
+                <div id="results" class="d-grid gap-2"></div>
+                <nav class="d-flex justify-content-between align-items-center mt-3 small text-secondary" aria-label="Result pages">
+                    <span id="page-info"></span>
+                    <div class="btn-group btn-group-sm">
+                        <button id="prev-page" class="btn btn-outline-secondary" type="button" onclick="changePage(-1)" aria-label="Previous page"><i class="bi bi-chevron-left"></i></button>
+                        <button id="next-page" class="btn btn-outline-secondary" type="button" onclick="changePage(1)" aria-label="Next page"><i class="bi bi-chevron-right"></i></button>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </section>
+
+    <!-- STEP 2: dataset drill-down -->
+    <section id="view-dataset" class="view">
+        <div class="row g-4">
+            <aside class="col-lg-4 col-xl-3">
+                <div class="sticky-side">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex align-items-start gap-2">
+                                <div class="flex-grow-1 min-w-0">
+                                    <div class="small text-secondary" id="dataset-source"></div>
+                                    <h5 class="mb-1" id="dataset-name"></h5>
+                                    <code id="dataset-ref" class="small"></code>
+                                </div>
+                                <button class="btn btn-sm btn-outline-warning" id="favorite-btn" type="button" title="Add to favorites" onclick="toggleFavorite()"><i id="favorite-icon" class="bi bi-star"></i></button>
+                            </div>
+                            <p class="small text-secondary mt-2 mb-0" id="dataset-description"></p>
+                        </div>
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="card-body py-2">
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text"><i class="bi bi-tag"></i></span>
+                                <input id="code-find" class="form-control" placeholder="Find a code in any dimension… e.g. Germany" aria-label="Find a code">
+                            </div>
+                            <div id="code-hits" class="list-group list-group-flush mt-1"></div>
+                            <div class="small text-secondary mt-1">Searches the codelists of this dataset only.</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header d-flex align-items-center">
+                            <span class="fw-semibold">Dimensions</span>
+                            <button class="btn btn-sm btn-link ms-auto p-0" type="button" onclick="resetDimensions()">Reset</button>
+                        </div>
+                        <div class="list-group list-group-flush" id="dimensions"></div>
+                    </div>
+                </div>
+            </aside>
+
+            <div class="col-lg-8 col-xl-9">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex flex-wrap align-items-center gap-2">
+                            <span class="small text-secondary"><i class="bi bi-key"></i> Key</span>
+                            <div id="keybar" class="d-flex flex-wrap align-items-center gap-1"></div>
+                            <button class="btn btn-sm btn-outline-secondary ms-auto" type="button" onclick="copyDatasetKey()"><i class="bi bi-clipboard"></i> Copy</button>
+                        </div>
+                        <div class="d-flex align-items-center gap-3 mt-3">
+                            <div class="progress flex-grow-1" style="height:.5rem"><div id="match-bar" class="progress-bar" style="width:100%"></div></div>
+                            <div class="small"><strong id="match-count">0</strong> <span class="text-secondary">of <span id="total-count">…</span> series match</span></div>
+                        </div>
+                        <div class="small text-secondary mt-1" id="availability-note">Each selection narrows the list — pick codes on the left, or click a part of the key.</div>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <div class="input-group input-group-sm" style="max-width: 320px">
+                        <span class="input-group-text"><i class="bi bi-funnel"></i></span>
+                        <input id="series-filter" class="form-control" placeholder="Filter loaded series by text…" aria-label="Filter series">
+                    </div>
+                    <div class="ms-auto btn-group btn-group-sm">
+                        <button id="list-mode-btn" class="btn btn-outline-secondary active" type="button" title="List" onclick="setGridMode(false)"><i class="bi bi-list-ul"></i></button>
+                        <button id="grid-mode-btn" class="btn btn-outline-secondary" type="button" title="Cards" onclick="setGridMode(true)"><i class="bi bi-grid-3x3-gap"></i></button>
+                    </div>
+                </div>
+
+                <div id="series-grid" class="row g-2 d-none"></div>
+                <div class="card" id="series-table">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead><tr><th>Series</th><th class="d-none d-md-table-cell">Key</th></tr></thead>
+                            <tbody id="series"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center small text-secondary mt-2">
+                    <span id="series-footer"></span>
+                    <button id="more-series-btn" class="btn btn-sm btn-outline-primary d-none" type="button" onclick="loadMoreSeries()">Load more</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Compare -->
+    <section id="view-compare" class="view">
+        <div class="d-flex align-items-center mb-3">
+            <h5 class="mb-0"><i class="bi bi-graph-up"></i> Compare series</h5>
+            <button class="btn btn-sm btn-outline-secondary ms-auto me-2" type="button" onclick="clearCompare()">Clear all</button>
+            <button class="btn btn-sm btn-primary" type="button" onclick="leaveCompare()"><i class="bi bi-arrow-left"></i> Back</button>
+        </div>
+        <div class="card mb-3"><div class="card-body"><div id="compare-chart" class="chart chart-lg"></div></div></div>
+        <div id="compare-list" class="list-group"></div>
+    </section>
+</main>
+
+<!-- STEP 3: series drawer -->
+<div class="drawer-backdrop" id="backdrop" onclick="closeSeries()"></div>
+<aside class="drawer" id="drawer" aria-label="Series details">
+    <div class="p-3 border-bottom d-flex align-items-start gap-2 sticky-top bg-body">
+        <div class="flex-grow-1 min-w-0">
+            <div class="small text-secondary" id="series-dataset"></div>
+            <h5 class="mb-1" id="series-title"></h5>
+            <code id="series-key" class="small"></code>
+        </div>
+        <div class="btn-group">
+            <button class="btn btn-sm btn-outline-secondary" type="button" onclick="stepSeries(-1)" title="Previous series"><i class="bi bi-arrow-up"></i></button>
+            <button class="btn btn-sm btn-outline-secondary" type="button" onclick="stepSeries(1)" title="Next series"><i class="bi bi-arrow-down"></i></button>
+        </div>
+        <button class="btn btn-sm btn-outline-secondary" type="button" onclick="closeSeries()" title="Close" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="p-3" id="series-body">
+        <div class="row g-2 mb-3" id="series-kpis"></div>
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-2">
+                    <div class="btn-group btn-group-sm" id="range">
+                        <button class="btn btn-outline-primary" type="button" data-years="1">1Y</button>
+                        <button class="btn btn-outline-primary" type="button" data-years="3">3Y</button>
+                        <button class="btn btn-outline-primary" type="button" data-years="10">10Y</button>
+                        <button class="btn btn-outline-primary active" type="button" data-years="0">Max</button>
+                    </div>
+                </div>
+                <div id="series-chart" class="chart"></div>
+            </div>
+        </div>
+
+        <ul class="nav nav-tabs mb-2" id="series-tabs">
+            <li class="nav-item"><a class="nav-link active" href="#" data-tab="obs">Observations</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" data-tab="dims">Dimensions</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" data-tab="use">Use it</a></li>
+        </ul>
+        <div id="tab-obs">
+            <div class="table-responsive obs-table">
+                <table class="table table-sm table-striped mb-0">
+                    <thead><tr><th>Period</th><th class="text-end">Value</th><th>Status</th></tr></thead>
+                    <tbody id="obs-body"></tbody>
+                </table>
+            </div>
+        </div>
+        <div id="tab-dims" class="d-none"><dl class="row small mb-0" id="dimension-list"></dl></div>
+        <div id="tab-use" class="d-none">
+            <div class="d-flex flex-wrap gap-2 mb-2 align-items-center">
+                <div class="btn-group btn-group-sm" id="script-languages"></div>
+                <div class="btn-group btn-group-sm" id="script-transports"></div>
+            </div>
+            <div class="position-relative">
+                <pre class="code" id="snippet"></pre>
+                <div class="position-absolute top-0 end-0 m-2 d-flex gap-1">
+                    <button class="btn btn-sm btn-light" type="button" onclick="copySnippet()" title="Copy"><i class="bi bi-clipboard"></i></button>
+                    <button class="btn btn-sm btn-light" type="button" onclick="downloadSnippet()" title="Download"><i class="bi bi-download"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2 mt-3">
+            <button class="btn btn-primary" type="button" onclick="downloadSeriesCsv()"><i class="bi bi-download"></i> Download CSV</button>
+            <button id="compare-btn" class="btn btn-outline-primary" type="button" onclick="toggleCompare()"><i class="bi bi-plus-circle"></i> Add to compare</button>
+            <button class="btn btn-outline-secondary ms-auto" type="button" onclick="closeSeries()">Back to list</button>
+        </div>
+    </div>
+</aside>
+
+<div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3" id="toast-container"></div>
+
+<script src="/_static/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/common.js"></script>
+<script src="js/search/state.js"></script>
+<script src="js/search/landing.js"></script>
+<script src="js/search/results.js"></script>
+<script src="js/search/dataset.js"></script>
+<script src="js/search/series.js"></script>
+<script src="js/search/compare.js"></script>
+<script src="js/search/init.js"></script>
+</body>
+</html>
