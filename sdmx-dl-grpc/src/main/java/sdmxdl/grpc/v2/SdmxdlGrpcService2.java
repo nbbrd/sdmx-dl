@@ -10,6 +10,7 @@ import static sdmxdl.Languages.ANY_KEYWORD;
 import io.quarkus.arc.Arc;
 import io.quarkus.grpc.GrpcService;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import io.smallrye.common.annotation.Blocking;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import java.io.IOException;
@@ -32,6 +33,7 @@ import sdmxdl.web.WebSourcesRequest;
 
 @GrpcService
 @RegisterForReflection
+@Blocking
 public class SdmxdlGrpcService2 implements SdmxWebManager {
 
     // This class is both a @GrpcService bean and a JAX-RS resource. RESTEasy Reactive instantiates

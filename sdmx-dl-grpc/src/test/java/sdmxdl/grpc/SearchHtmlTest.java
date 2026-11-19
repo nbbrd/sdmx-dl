@@ -225,7 +225,7 @@ class SearchHtmlTest {
                         total: kept.length,
                         failures: [{ source: 'BBK', reason: 'UPSTREAM_TIMEOUT', message: 'No answer within PT3S' }]
                     };
-                };""".formatted(secondPass));
+                };""".replace("%s", secondPass));
     }
 
     @Test

@@ -6,6 +6,7 @@ import io.quarkiverse.mcp.server.WrapBusinessError;
 import io.quarkus.arc.Arc;
 import io.quarkus.grpc.GrpcService;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import io.smallrye.common.annotation.Blocking;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.Consumes;
@@ -34,6 +35,7 @@ import sdmxdl.web.WebSourcesRequest;
 @Produces(APPLICATION_JSON)
 @GrpcService
 @RegisterForReflection
+@Blocking
 @WrapBusinessError({IOException.class, IllegalArgumentException.class})
 public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
 

@@ -1,16 +1,15 @@
 package internal.util.credentials;
 
+import static internal.util.credentials.WindowsVaultService.MAX_PASSWORD_SIZE;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIOException;
+
+import java.io.IOException;
+import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import sdmxdl.provider.ri.spi.VaultService;
-
-import java.io.IOException;
-import java.util.Arrays;
-
-import static internal.util.credentials.WindowsVaultService.MAX_PASSWORD_SIZE;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIOException;
 
 public class WindowsVaultServiceTest {
 
@@ -19,17 +18,15 @@ public class WindowsVaultServiceTest {
     public void testAddGet() throws IOException {
         String resource = "WinPasswordVaultTest1";
         String userName = "testuser";
-        String password = "testpassword";
+        String password = "testpassword-é€";
 
         VaultService x = new WindowsVaultService();
 
         x.storePassword(resource, userName, null);
-        assertThat(x.loadPassword(resource, userName))
-                .isNull();
+        assertThat(x.loadPassword(resource, userName)).isNull();
 
         x.storePassword(resource, userName, password);
-        assertThat(x.loadPassword(resource, userName))
-                .isEqualTo(password);
+        assertThat(x.loadPassword(resource, userName)).isEqualTo(password);
 
         x.storePassword(resource, userName, null);
     }
@@ -48,7 +45,8 @@ public class WindowsVaultServiceTest {
         x.storePassword(resource, userName, password);
         assertThat(x.loadPassword(resource, userName)).isEqualTo(password);
 
-        assertThatIOException().isThrownBy(() -> x.storePassword(resource, userName, overflow))
+        assertThatIOException()
+                .isThrownBy(() -> x.storePassword(resource, userName, overflow))
                 .withMessageContaining("Field overflow");
 
         x.storePassword(resource, userName, null);

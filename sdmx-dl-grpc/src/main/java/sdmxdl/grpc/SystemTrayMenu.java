@@ -305,13 +305,17 @@ public class SystemTrayMenu {
 
     private static String execute(String... command) {
         try {
-            Process process = new ProcessBuilder(command).start();
+            Process process = new ProcessBuilder(command)
+                    .redirectError(ProcessBuilder.Redirect.DISCARD)
+                    .start();
+            // NB: waits before reading, which is fine for such small outputs, so that the timeout applies
+            if (!process.waitFor(2, TimeUnit.SECONDS)) {
+                process.destroyForcibly();
+                LOGGER.debugf("No answer from %s", command[0]);
+                return "";
+            }
             try (InputStream stream = process.getInputStream()) {
-                String result = new String(stream.readAllBytes(), Charset.defaultCharset());
-                if (!process.waitFor(2, TimeUnit.SECONDS)) {
-                    process.destroy();
-                }
-                return result;
+                return new String(stream.readAllBytes(), Charset.defaultCharset());
             }
         } catch (IOException ex) {
             LOGGER.debugf(ex, "Failed to execute %s", command[0]);

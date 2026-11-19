@@ -14,9 +14,12 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CompletionException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -75,6 +78,10 @@ public final class MsalAuthenticator implements Authenticator {
     private static final KeyedLock LOCKS = KeyedLock.newInstance();
 
     private static final Duration LOCK_TIMEOUT = Duration.ofMinutes(2);
+
+    private static final Duration SILENT_TIMEOUT = Duration.ofSeconds(30);
+
+    private static final Duration INTERACTIVE_TIMEOUT = Duration.ofMinutes(2);
 
     private final ExecutorService executor = Executors.newCachedThreadPool(SdmxWebManager::newLowPriorityDaemonThread);
 
@@ -179,27 +186,46 @@ public final class MsalAuthenticator implements Authenticator {
             // NB: the interactive fallback must run while holding the lock
             try {
                 if (onEvent != null) onEvent.accept(ID, "Acquiring token silently for UID '" + uid + "'");
-                return app.acquireTokenSilently(SilentParameters.builder(scopes)
-                                .account(app.getAccounts().join().stream()
+                return await(
+                        app.acquireTokenSilently(SilentParameters.builder(scopes)
+                                .account(await(app.getAccounts(), SILENT_TIMEOUT).stream()
                                         .findFirst()
                                         .orElse(null))
-                                .build())
-                        .join();
-            } catch (CompletionException ex) {
+                                .build()),
+                        SILENT_TIMEOUT);
+            } catch (ExecutionException ex) {
                 if (ex.getCause() instanceof MsalException) {
                     if (onEvent != null) onEvent.accept(ID, "Acquiring token interactively for UID '" + uid + "'");
-                    return app.acquireToken(InteractiveRequestParameters.builder(redirectUri)
+                    return await(
+                            app.acquireToken(InteractiveRequestParameters.builder(redirectUri)
                                     .scopes(scopes)
                                     .prompt(Prompt.SELECT_ACCOUNT)
-                                    .build())
-                            .join();
+                                    .httpPollingTimeoutInSeconds((int) INTERACTIVE_TIMEOUT.getSeconds())
+                                    .build()),
+                            INTERACTIVE_TIMEOUT.plus(SILENT_TIMEOUT));
                 } else {
                     throw new IOException(ex.getCause());
                 }
             }
+        } catch (ExecutionException ex) {
+            throw new IOException(ex.getCause());
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             throw new IOException("Interrupted while waiting for UID '" + uid + "'", ex);
+        }
+    }
+
+    // NB: unlike join(), the wait is interruptible and bounded
+    private static <T> T await(CompletableFuture<T> future, Duration timeout)
+            throws IOException, ExecutionException, InterruptedException {
+        try {
+            return future.get(timeout.toMillis(), TimeUnit.MILLISECONDS);
+        } catch (TimeoutException ex) {
+            future.cancel(true);
+            throw new IOException("No token within " + timeout, ex);
+        } catch (InterruptedException ex) {
+            future.cancel(true);
+            throw ex;
         }
     }
 

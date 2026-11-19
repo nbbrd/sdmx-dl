@@ -14,8 +14,8 @@ import static sdmxdl.Languages.ANY_KEYWORD;
 
 import io.quarkus.arc.Arc;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import io.smallrye.common.annotation.Blocking;
 import io.smallrye.mutiny.Multi;
-import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -103,13 +103,13 @@ public class SdmxdlRestService2 {
 
     @GET
     @Path("/about")
-    public Uni<AboutDto> getAbout() {
-        return Uni.createFrom().item(ProtoApi.fromAbout());
+    public AboutDto getAbout() {
+        return ProtoApi.fromAbout();
     }
 
     @GET
     @Path("/sources")
-    public Uni<ListSourcesResponseDto> listSources(
+    public ListSourcesResponseDto listSources(
             @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages,
             @QueryParam("query") @DefaultValue(NO_QUERY) String query,
             @QueryParam("maxResults") @DefaultValue("" + AUTO_LIMIT) int maxResults,
@@ -122,43 +122,41 @@ public class SdmxdlRestService2 {
                 .offset(offset)
                 .confidentialityThreshold(Confidentiality.valueOf(maxConfidentiality))
                 .build());
-        return Uni.createFrom()
-                .item(ListSourcesResponseDto.newBuilder()
-                        .addAllItems(result.getItems().stream()
-                                .map(ProtoWeb::fromWebSource)
-                                .toList())
-                        .setTotal(result.getTotal())
-                        .addAllScores(result.getScores())
-                        .build());
+        return ListSourcesResponseDto.newBuilder()
+                .addAllItems(
+                        result.getItems().stream().map(ProtoWeb::fromWebSource).toList())
+                .setTotal(result.getTotal())
+                .addAllScores(result.getScores())
+                .build();
     }
 
     @GET
     @Path("/{source}/databases")
-    public Uni<ListDatabasesResponseDto> listDatabases(
+    public ListDatabasesResponseDto listDatabases(
             @PathParam("source") String source,
             @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages,
             @QueryParam("query") @DefaultValue(NO_QUERY) String query,
             @QueryParam("maxResults") @DefaultValue("" + AUTO_LIMIT) int maxResults,
-            @QueryParam("offset") @DefaultValue("0") @Parameter(description = OFFSET_DESCRIPTION) int offset) {
-        return uniOfIO(() -> manager.usingName(source)
-                        .listDatabases(DatabasesRequest.builder()
-                                .languagesOf(languages)
-                                .query(query)
-                                .maxResults(maxResults)
-                                .offset(offset)
-                                .build()))
-                .map(result -> ListDatabasesResponseDto.newBuilder()
-                        .addAllItems(result.getItems().stream()
-                                .map(ProtoApi::fromDatabase)
-                                .toList())
-                        .setTotal(result.getTotal())
-                        .addAllScores(result.getScores())
+            @QueryParam("offset") @DefaultValue("0") @Parameter(description = OFFSET_DESCRIPTION) int offset)
+            throws IOException {
+        var result = manager.usingName(source)
+                .listDatabases(DatabasesRequest.builder()
+                        .languagesOf(languages)
+                        .query(query)
+                        .maxResults(maxResults)
+                        .offset(offset)
                         .build());
+        return ListDatabasesResponseDto.newBuilder()
+                .addAllItems(
+                        result.getItems().stream().map(ProtoApi::fromDatabase).toList())
+                .setTotal(result.getTotal())
+                .addAllScores(result.getScores())
+                .build();
     }
 
     @GET
     @Path("/{source}/flows")
-    public Uni<ListFlowsResponseDto> listFlows(
+    public ListFlowsResponseDto listFlows(
             @PathParam("source") String source,
             @QueryParam("database") @DefaultValue(NO_DATABASE_KEYWORD) String database,
             @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages,
@@ -166,29 +164,29 @@ public class SdmxdlRestService2 {
             @QueryParam("maxResults") @DefaultValue("" + AUTO_LIMIT) int maxResults,
             @QueryParam("offset") @DefaultValue("0") @Parameter(description = OFFSET_DESCRIPTION) int offset,
             @QueryParam("plainText") @DefaultValue("false") boolean plainText,
-            @QueryParam("truncate") @DefaultValue("" + NO_DESCRIPTION_LIMIT) int truncate) {
-        return uniOfIO(() -> manager.usingName(source)
-                        .listFlows(FlowsRequest.builder()
-                                .databaseOf(database)
-                                .languagesOf(languages)
-                                .query(query)
-                                .maxResults(maxResults)
-                                .offset(offset)
-                                .plainText(plainText)
-                                .truncate(truncate)
-                                .build()))
-                .map(result -> ListFlowsResponseDto.newBuilder()
-                        .addAllItems(result.getItems().stream()
-                                .map(ProtoApi::fromDataflow)
-                                .toList())
-                        .setTotal(result.getTotal())
-                        .addAllScores(result.getScores())
+            @QueryParam("truncate") @DefaultValue("" + NO_DESCRIPTION_LIMIT) int truncate)
+            throws IOException {
+        var result = manager.usingName(source)
+                .listFlows(FlowsRequest.builder()
+                        .databaseOf(database)
+                        .languagesOf(languages)
+                        .query(query)
+                        .maxResults(maxResults)
+                        .offset(offset)
+                        .plainText(plainText)
+                        .truncate(truncate)
                         .build());
+        return ListFlowsResponseDto.newBuilder()
+                .addAllItems(
+                        result.getItems().stream().map(ProtoApi::fromDataflow).toList())
+                .setTotal(result.getTotal())
+                .addAllScores(result.getScores())
+                .build();
     }
 
     @GET
     @Path("/flows")
-    public Uni<SearchFlowsResponseDto> searchFlows(
+    public SearchFlowsResponseDto searchFlows(
             @QueryParam("sources") @DefaultValue("all") @Parameter(description = SOURCES_DESCRIPTION) String sources,
             @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages,
             @QueryParam("query") @DefaultValue(NO_QUERY) String query,
@@ -198,99 +196,99 @@ public class SdmxdlRestService2 {
             @QueryParam("truncate") @DefaultValue("" + NO_DESCRIPTION_LIMIT) int truncate,
             @QueryParam("maxConfidentiality") @Parameter(description = SEARCH_CONFIDENTIALITY_DESCRIPTION)
                     String maxConfidentiality,
-            @QueryParam("timeout") @DefaultValue("0") @Parameter(description = TIMEOUT_DESCRIPTION) int timeout) {
-        return uniOfIO(() -> manager.searchFlows(WebFlowsRequest.builder()
-                        .sources(SdmxdlGrpcService2.toSourceIds(splitList(sources)))
-                        .languagesOf(languages)
-                        .query(query)
-                        .maxResults(maxResults)
-                        .offset(offset)
-                        .plainText(plainText)
-                        .truncate(truncate)
-                        .confidentialityThreshold(
-                                maxConfidentiality == null || maxConfidentiality.isEmpty()
-                                        ? null
-                                        : Confidentiality.valueOf(maxConfidentiality))
-                        .timeout(SdmxdlGrpcService2.toTimeout(timeout))
-                        .build()))
-                .map(SdmxdlGrpcService2::toSearchFlowsResponse);
+            @QueryParam("timeout") @DefaultValue("0") @Parameter(description = TIMEOUT_DESCRIPTION) int timeout)
+            throws IOException {
+        return SdmxdlGrpcService2.toSearchFlowsResponse(manager.searchFlows(WebFlowsRequest.builder()
+                .sources(SdmxdlGrpcService2.toSourceIds(splitList(sources)))
+                .languagesOf(languages)
+                .query(query)
+                .maxResults(maxResults)
+                .offset(offset)
+                .plainText(plainText)
+                .truncate(truncate)
+                .confidentialityThreshold(
+                        maxConfidentiality == null || maxConfidentiality.isEmpty()
+                                ? null
+                                : Confidentiality.valueOf(maxConfidentiality))
+                .timeout(SdmxdlGrpcService2.toTimeout(timeout))
+                .build()));
     }
 
     @GET
     @Path("/{source}/{flow}/meta")
-    public Uni<MetaSetDto> getMeta(
+    public MetaSetDto getMeta(
             @PathParam("source") String source,
             @PathParam("flow") String flow,
             @QueryParam("database") @DefaultValue(NO_DATABASE_KEYWORD) String database,
-            @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages) {
-        return uniOfIO(() -> manager.usingName(source)
-                        .getMeta(MetaRequest.builder()
-                                .flowOf(flow)
-                                .databaseOf(database)
-                                .languagesOf(languages)
-                                .build()))
-                .map(ProtoApi::fromMetaSet);
+            @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages)
+            throws IOException {
+        return ProtoApi.fromMetaSet(manager.usingName(source)
+                .getMeta(MetaRequest.builder()
+                        .flowOf(flow)
+                        .databaseOf(database)
+                        .languagesOf(languages)
+                        .build()));
     }
 
     @GET
     @Path("/{source}/{flow}/dimensions")
-    public Uni<ListDimensionsResponseDto> listDimensions(
+    public ListDimensionsResponseDto listDimensions(
             @PathParam("source") String source,
             @PathParam("flow") String flow,
             @QueryParam("query") @DefaultValue(NO_QUERY) String query,
             @QueryParam("maxResults") @DefaultValue("" + AUTO_LIMIT) int maxResults,
             @QueryParam("offset") @DefaultValue("0") @Parameter(description = OFFSET_DESCRIPTION) int offset,
             @QueryParam("database") @DefaultValue(NO_DATABASE_KEYWORD) String database,
-            @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages) {
-        return uniOfIO(() -> manager.usingName(source)
-                        .listDimensions(DimensionsRequest.builder()
-                                .flowOf(flow)
-                                .databaseOf(database)
-                                .languagesOf(languages)
-                                .query(query)
-                                .maxResults(maxResults)
-                                .offset(offset)
-                                .build()))
-                .map(result -> ListDimensionsResponseDto.newBuilder()
-                        .addAllItems(result.getItems().stream()
-                                .map(ProtoApi::fromDimension)
-                                .toList())
-                        .setTotal(result.getTotal())
-                        .addAllScores(result.getScores())
+            @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages)
+            throws IOException {
+        var result = manager.usingName(source)
+                .listDimensions(DimensionsRequest.builder()
+                        .flowOf(flow)
+                        .databaseOf(database)
+                        .languagesOf(languages)
+                        .query(query)
+                        .maxResults(maxResults)
+                        .offset(offset)
                         .build());
+        return ListDimensionsResponseDto.newBuilder()
+                .addAllItems(
+                        result.getItems().stream().map(ProtoApi::fromDimension).toList())
+                .setTotal(result.getTotal())
+                .addAllScores(result.getScores())
+                .build();
     }
 
     @GET
     @Path("/{source}/{flow}/attributes")
-    public Uni<ListAttributesResponseDto> listAttributes(
+    public ListAttributesResponseDto listAttributes(
             @PathParam("source") String source,
             @PathParam("flow") String flow,
             @QueryParam("query") @DefaultValue(NO_QUERY) String query,
             @QueryParam("maxResults") @DefaultValue("" + AUTO_LIMIT) int maxResults,
             @QueryParam("offset") @DefaultValue("0") @Parameter(description = OFFSET_DESCRIPTION) int offset,
             @QueryParam("database") @DefaultValue(NO_DATABASE_KEYWORD) String database,
-            @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages) {
-        return uniOfIO(() -> manager.usingName(source)
-                        .listAttributes(AttributesRequest.builder()
-                                .flowOf(flow)
-                                .databaseOf(database)
-                                .languagesOf(languages)
-                                .query(query)
-                                .maxResults(maxResults)
-                                .offset(offset)
-                                .build()))
-                .map(result -> ListAttributesResponseDto.newBuilder()
-                        .addAllItems(result.getItems().stream()
-                                .map(ProtoApi::fromAttribute)
-                                .toList())
-                        .setTotal(result.getTotal())
-                        .addAllScores(result.getScores())
+            @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages)
+            throws IOException {
+        var result = manager.usingName(source)
+                .listAttributes(AttributesRequest.builder()
+                        .flowOf(flow)
+                        .databaseOf(database)
+                        .languagesOf(languages)
+                        .query(query)
+                        .maxResults(maxResults)
+                        .offset(offset)
                         .build());
+        return ListAttributesResponseDto.newBuilder()
+                .addAllItems(
+                        result.getItems().stream().map(ProtoApi::fromAttribute).toList())
+                .setTotal(result.getTotal())
+                .addAllScores(result.getScores())
+                .build();
     }
 
     @GET
     @Path("/{source}/{flow}/data")
-    public Uni<DataSetDto> getData(
+    public DataSetDto getData(
             @PathParam("source") String source,
             @PathParam("flow") String flow,
             @QueryParam("key") @DefaultValue("all") String key,
@@ -302,26 +300,27 @@ public class SdmxdlRestService2 {
             @QueryParam("lastN") Integer lastN,
             @QueryParam("seriesOffset") Integer seriesOffset,
             @QueryParam("seriesLimit") Integer seriesLimit,
-            @QueryParam("detail") @DefaultValue("FULL") Detail detail) {
-        return uniOfIO(() -> manager.usingName(source)
-                        .getData(DataRequest.builder()
-                                .flowOf(flow)
-                                .keyOf(key)
-                                .databaseOf(database)
-                                .languagesOf(languages)
-                                .startPeriodOf(start)
-                                .endPeriodOf(end)
-                                .firstNObservations(firstN)
-                                .lastNObservations(lastN)
-                                .seriesOffset(seriesOffset != null ? seriesOffset : 0)
-                                .seriesLimit(seriesLimit)
-                                .detail(detail)
-                                .build()))
-                .map(ProtoApi::fromDataSet);
+            @QueryParam("detail") @DefaultValue("FULL") Detail detail)
+            throws IOException {
+        return ProtoApi.fromDataSet(manager.usingName(source)
+                .getData(DataRequest.builder()
+                        .flowOf(flow)
+                        .keyOf(key)
+                        .databaseOf(database)
+                        .languagesOf(languages)
+                        .startPeriodOf(start)
+                        .endPeriodOf(end)
+                        .firstNObservations(firstN)
+                        .lastNObservations(lastN)
+                        .seriesOffset(seriesOffset != null ? seriesOffset : 0)
+                        .seriesLimit(seriesLimit)
+                        .detail(detail)
+                        .build()));
     }
 
     @GET
     @Path("/{source}/{flow}/data:stream")
+    @Blocking
     public Multi<SeriesDto> getDataStream(
             @PathParam("source") String source,
             @PathParam("flow") String flow,
@@ -354,7 +353,7 @@ public class SdmxdlRestService2 {
 
     @GET
     @Path("/{source}/{flow}/codes/{concept}")
-    public Uni<ListCodesResponseDto> getCodes(
+    public ListCodesResponseDto getCodes(
             @PathParam("source") String source,
             @PathParam("flow") String flow,
             @PathParam("concept") String concept,
@@ -362,38 +361,38 @@ public class SdmxdlRestService2 {
             @QueryParam("maxResults") @DefaultValue("" + AUTO_LIMIT) int maxResults,
             @QueryParam("offset") @DefaultValue("0") @Parameter(description = OFFSET_DESCRIPTION) int offset,
             @QueryParam("database") @DefaultValue(NO_DATABASE_KEYWORD) String database,
-            @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages) {
-        return uniOfIO(() -> manager.usingName(source)
-                        .listCodes(CodesRequest.builder()
-                                .flowOf(flow)
-                                .concept(concept)
-                                .databaseOf(database)
-                                .languagesOf(languages)
-                                .query(query)
-                                .maxResults(maxResults)
-                                .offset(offset)
-                                .build()))
-                .map(codes -> SdmxdlGrpcService2.toCodesResponse(codes));
+            @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages)
+            throws IOException {
+        return SdmxdlGrpcService2.toCodesResponse(manager.usingName(source)
+                .listCodes(CodesRequest.builder()
+                        .flowOf(flow)
+                        .concept(concept)
+                        .databaseOf(database)
+                        .languagesOf(languages)
+                        .query(query)
+                        .maxResults(maxResults)
+                        .offset(offset)
+                        .build()));
     }
 
     @GET
     @Path("/{source}/{flow}/availability")
-    public Uni<ListAvailabilityResponseDto> getAvailability(
+    public ListAvailabilityResponseDto getAvailability(
             @PathParam("source") String source,
             @PathParam("flow") String flow,
             @QueryParam("key") @DefaultValue("all") String key,
             @QueryParam("dimension") @DefaultValue(AvailabilityRequest.FIRST_WILDCARD_DIMENSION) String dimension,
             @QueryParam("database") @DefaultValue(NO_DATABASE_KEYWORD) String database,
-            @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages) {
-        return uniOfIO(() -> manager.usingName(source)
-                        .listAvailability(AvailabilityRequest.builder()
-                                .languagesOf(languages)
-                                .databaseOf(database)
-                                .flowOf(flow)
-                                .keyOf(key)
-                                .dimension(dimension)
-                                .build()))
-                .map(SdmxdlGrpcService2::toAvailabilityResponse);
+            @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages)
+            throws IOException {
+        return SdmxdlGrpcService2.toAvailabilityResponse(manager.usingName(source)
+                .listAvailability(AvailabilityRequest.builder()
+                        .languagesOf(languages)
+                        .databaseOf(database)
+                        .flowOf(flow)
+                        .keyOf(key)
+                        .dimension(dimension)
+                        .build()));
     }
 
     private static final String OFFSET_DESCRIPTION =
@@ -413,33 +412,33 @@ public class SdmxdlRestService2 {
 
     @GET
     @Path("/health")
-    public Uni<CheckHealthResponseDto> checkHealth(
+    public CheckHealthResponseDto checkHealth(
             @QueryParam("sources") @DefaultValue("all") String sources,
-            @QueryParam("checks") @DefaultValue("monitor") @Parameter(description = CHECKS_DESCRIPTION) String checks) {
+            @QueryParam("checks") @DefaultValue("monitor") @Parameter(description = CHECKS_DESCRIPTION) String checks)
+            throws IOException {
         List<HealthCheck> list = parseChecks(checks);
-        return uniOfIO(() -> manager.checkHealth(SdmxdlGrpcService2.toHealthRequest(splitList(sources), list)))
-                .map(result -> CheckHealthResponseDto.newBuilder()
-                        .addAllItems(
-                                result.stream().map(ProtoWeb::fromHealthReport).toList())
-                        .setTotal(result.size())
-                        .build());
+        var result = manager.checkHealth(SdmxdlGrpcService2.toHealthRequest(splitList(sources), list));
+        return CheckHealthResponseDto.newBuilder()
+                .addAllItems(result.stream().map(ProtoWeb::fromHealthReport).toList())
+                .setTotal(result.size())
+                .build();
     }
 
     @GET
     @Path("/{source}/health")
-    public Uni<HealthReportDto> checkSourceHealth(
+    public HealthReportDto checkSourceHealth(
             @PathParam("source") String source,
-            @QueryParam("checks") @DefaultValue("monitor") @Parameter(description = CHECKS_DESCRIPTION) String checks) {
+            @QueryParam("checks") @DefaultValue("monitor") @Parameter(description = CHECKS_DESCRIPTION) String checks)
+            throws IOException {
         List<HealthCheck> list = parseChecks(checks);
-        return uniOfIO(() -> manager.checkHealth(
-                        source, list.isEmpty() ? WebHealthRequest.DEFAULT_CHECKS : EnumSet.copyOf(list)))
-                .map(ProtoWeb::fromHealthReport);
+        return ProtoWeb.fromHealthReport(
+                manager.checkHealth(source, list.isEmpty() ? WebHealthRequest.DEFAULT_CHECKS : EnumSet.copyOf(list)));
     }
 
     @GET
     @Path("/script/targets")
-    public Uni<ListScriptTargetsResponseDto> listScriptTargets() {
-        return Uni.createFrom().item(() -> SdmxdlGrpcService2.toScriptTargetsResponse(scripts));
+    public ListScriptTargetsResponseDto listScriptTargets() {
+        return SdmxdlGrpcService2.toScriptTargetsResponse(scripts);
     }
 
     @GET
@@ -453,7 +452,7 @@ public class SdmxdlRestService2 {
                 @Content(mediaType = TEXT_PLAIN, schema = @Schema(type = SchemaType.STRING)),
                 @Content(mediaType = APPLICATION_OCTET_STREAM, schema = @Schema(type = SchemaType.STRING))
             })
-    public Uni<Response> generateDataScript(
+    public Response generateDataScript(
             @PathParam("source") String source,
             @PathParam("flow") String flow,
             @QueryParam("key") @DefaultValue("all") String key,
@@ -511,7 +510,7 @@ public class SdmxdlRestService2 {
                 @Content(mediaType = TEXT_PLAIN, schema = @Schema(type = SchemaType.STRING)),
                 @Content(mediaType = APPLICATION_OCTET_STREAM, schema = @Schema(type = SchemaType.STRING))
             })
-    public Uni<Response> generateFlowsScript(
+    public Response generateFlowsScript(
             @PathParam("source") String source,
             @QueryParam("database") @DefaultValue(NO_DATABASE_KEYWORD) String database,
             @QueryParam("languages") @DefaultValue(ANY_KEYWORD) String languages,
@@ -573,7 +572,7 @@ public class SdmxdlRestService2 {
 
     private static final String SCRIPT_WARNING_HEADER = "Sdmxdl-Script-Warning";
 
-    private Uni<Response> generateScript(
+    private Response generateScript(
             String source,
             Request request,
             String target,
@@ -589,16 +588,14 @@ public class SdmxdlRestService2 {
         String endpoint = restEndpoint != null
                 ? restEndpoint
                 : uriInfo.getBaseUri().resolve("sdmx-dl/v2").toString();
-        return Uni.createFrom().item(() -> {
-            ScriptOptions options = ProtoScript.toScriptOptions(
-                    cliLauncher, endpoint, outputFile, ProtoScript.parseProperties(properties));
-            Script script = scripts.generate(ScriptTarget.parse(target), source, request, options);
-            List<MediaType> acceptable = headers.getAcceptableMediaTypes();
-            return isRaw(format, acceptable)
-                    ? toRawResponse(script, acceptable, baseName)
-                    : Response.ok(ProtoScript.fromScript(script), APPLICATION_JSON_TYPE)
-                            .build();
-        });
+        ScriptOptions options =
+                ProtoScript.toScriptOptions(cliLauncher, endpoint, outputFile, ProtoScript.parseProperties(properties));
+        Script script = scripts.generate(ScriptTarget.parse(target), source, request, options);
+        List<MediaType> acceptable = headers.getAcceptableMediaTypes();
+        return isRaw(format, acceptable)
+                ? toRawResponse(script, acceptable, baseName)
+                : Response.ok(ProtoScript.fromScript(script), APPLICATION_JSON_TYPE)
+                        .build();
     }
 
     private static boolean isRaw(ScriptFormat format, List<MediaType> acceptable) {
@@ -648,14 +645,6 @@ public class SdmxdlRestService2 {
         return splitList(checks).stream()
                 .map(check -> HealthCheck.valueOf(check.toUpperCase(Locale.ROOT)))
                 .toList();
-    }
-
-    private static <T> Uni<T> uniOfIO(IOSupplier<T> supplier) {
-        try {
-            return Uni.createFrom().item(supplier.getWithIO());
-        } catch (IOException ex) {
-            return Uni.createFrom().failure(ex);
-        }
     }
 
     private static <T> Multi<T> multiOfIO(IOSupplier<? extends Iterable<T>> supplier) {
