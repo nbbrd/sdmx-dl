@@ -5,6 +5,7 @@
 const SEARCH_MAX_RESULTS = 200;
 const SEARCH_PAGE_SIZE = 10;
 const SEARCH_TIMEOUT_MS = 20000;
+const QUICK_SEARCH_TIMEOUT_MS = 3000;
 const SUGGEST_MAX_RESULTS = 4;
 const SUGGEST_TIMEOUT_MS = 5000;
 const SERIES_PAGE_SIZE = 12;
@@ -33,7 +34,13 @@ const state = {
         sort: 'relevance',
         sourceFilter: new Set(),
         elapsed: 0,
-        token: 0
+        token: 0,
+        busy: false,
+        started: 0,
+        pending: [],
+        update: null,
+        controller: null,
+        ticker: 0
     },
     dataset: null,
     series: null

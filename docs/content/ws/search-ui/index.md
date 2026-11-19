@@ -25,6 +25,9 @@ Press **/** anywhere to focus the search box.
 You can also type or paste a reference such as `ECB/EXR` or `ECB/EXR/M.USD.EUR.SP00.A` to open a dataset, with a key, directly.
 
 Results are sorted by relevance (or by name), highlight the words of the search and can be filtered by source.
+Results show up as soon as most sources have answered, after 3 seconds at most.
+The slow sources are still searched in the background, up to 20 seconds in total, with a progress bar and a countdown; **Stop** gives up on them.
+When they answer, a **Show** button adds their datasets, so that the list does not change while you read it.
 Sources that could not be searched are listed above the results.
 **Peek structure** loads the dimensions of a dataset without leaving the list.
 

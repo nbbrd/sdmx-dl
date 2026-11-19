@@ -158,6 +158,77 @@ class SearchHtmlTest {
     }
 
     @Test
+    @DisplayName("Slow sources are searched again in the background and their results are offered without reordering")
+    void testSlowSources() {
+        open("");
+        stubSlowSource("new Promise(resolve => window.releaseSlow = resolve).then(() => real(url, options))");
+        search("exchange");
+
+        assertThat(eval("state.search.items.some(e => e.source === 'BBK')")).isEqualTo(false);
+        assertThat(eval("flowTimeouts[0]")).isEqualTo("3000");
+        waitFor("flowTimeouts.length === 2");
+        assertThat(text("document.getElementById('search-status').textContent"))
+                .contains("1 slow source")
+                .contains("BBK");
+        assertThat(eval("document.getElementById('search-progress-bar').style.width"))
+                .isNotEqualTo("");
+        assertThat(eval("document.getElementById('failures').textContent")).isEqualTo("");
+
+        js.executeScript("releaseSlow()");
+        waitFor("document.querySelector('#search-status .alert')");
+        assertThat(text("document.getElementById('search-status').textContent")).contains("1 more dataset from BBK");
+        assertThat(eval("state.search.items.some(e => e.source === 'BBK')")).isEqualTo(false);
+
+        js.executeScript("applySearchUpdate()");
+        assertThat(eval("state.search.items.some(e => e.source === 'BBK')")).isEqualTo(true);
+        assertThat(eval("document.querySelectorAll('#results .result').length"))
+                .isEqualTo(eval("state.search.items.length"));
+        assertThat(eval("document.getElementById('search-status').textContent.trim()"))
+                .isEqualTo("");
+    }
+
+    @Test
+    @DisplayName("Stopping a search keeps the results of the fast sources and reports the slow ones")
+    void testStopSearch() {
+        open("");
+        stubSlowSource(
+                "new Promise((resolve, reject) => options.signal.addEventListener('abort', () => reject(new DOMException('Stopped', 'AbortError'))))");
+        search("exchange");
+        waitFor("flowTimeouts.length === 2");
+
+        js.executeScript("stopSearch()");
+        waitFor("!document.querySelector('#search-status .search-progress')");
+        assertThat(eval("document.querySelectorAll('#results .result').length"))
+                .isEqualTo(eval("state.search.items.length"));
+        assertThat(eval("state.search.items.length")).isNotEqualTo(0L);
+        assertThat(text("document.getElementById('failures').textContent"))
+                .contains("1 source could not be searched")
+                .contains("BBK");
+    }
+
+    /**
+     * Makes BBK time out on the first search pass, then answers the second pass with the given promise.
+     */
+    private void stubSlowSource(String secondPass) {
+        js.executeScript("""
+                window.flowTimeouts = [];
+                const real = getJSON;
+                window.getJSON = async (url, options) => {
+                    if (!url.includes('/flows?')) return real(url, options);
+                    flowTimeouts.push(new URL(url).searchParams.get('timeout'));
+                    if (flowTimeouts.length > 1) return %s;
+                    const result = await real(url, options);
+                    const kept = result.items.map((entry, index) => index).filter(index => result.items[index].source !== 'BBK');
+                    return {
+                        items: kept.map(index => result.items[index]),
+                        scores: kept.map(index => result.scores[index]),
+                        total: kept.length,
+                        failures: [{ source: 'BBK', reason: 'UPSTREAM_TIMEOUT', message: 'No answer within PT3S' }]
+                    };
+                };""".formatted(secondPass));
+    }
+
+    @Test
     @DisplayName("Peek structure loads the dimensions of a result on demand")
     void testPeekStructure() {
         open("?q=exchange&scope=ECB");

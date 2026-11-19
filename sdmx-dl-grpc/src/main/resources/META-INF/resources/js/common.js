@@ -317,10 +317,11 @@ function apiUrl(segments, params = {}, suffix = '') {
 /**
  * GET a REST v2 URL and parse its JSON response, turning errors into exceptions
  * @param {string} url - Absolute URL built with apiUrl
+ * @param {Object} options - { signal: optional AbortSignal to cancel the request }
  * @returns {Promise<Object>} - Response JSON
  */
-async function getJSON(url) {
-    const response = await fetch(url, { headers: { 'Accept': 'application/json' } });
+async function getJSON(url, options = {}) {
+    const response = await fetch(url, { headers: { 'Accept': 'application/json' }, signal: options.signal });
 
     if (!response.ok) {
         // errors are problem details (RFC 9457)

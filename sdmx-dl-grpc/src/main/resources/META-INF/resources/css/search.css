@@ -309,6 +309,19 @@ pre.code {
     animation: fade-in .25s ease;
 }
 
+/* shown with a delay, so that fast searches do not flash it */
+.search-progress {
+    animation: fade-in .25s ease .4s both;
+}
+
+.search-progress .progress {
+    height: 4px;
+}
+
+.search-progress .progress-bar {
+    transition: width .25s linear;
+}
+
 @keyframes fade-in {
     from {
         opacity: 0;
@@ -330,7 +343,12 @@ pre.code {
 
     main,
     #crumbbar,
-    .fade-in {
+    .fade-in,
+    .search-progress {
         animation: none;
+    }
+
+    .search-progress .progress-bar {
+        transition: none;
     }
 }

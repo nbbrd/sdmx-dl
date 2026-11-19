@@ -25,7 +25,12 @@ async function runSearch(options = {}) {
     if (query) addRecent(query);
 
     const search = state.search;
-    Object.assign(search, { query, scope, items: [], scores: [], failures: [], total: 0, page: 0, sourceFilter: new Set() });
+    if (search.controller) search.controller.abort();
+    const controller = new AbortController();
+    Object.assign(search, {
+        query, scope, items: [], scores: [], failures: [], total: 0, page: 0, sourceFilter: new Set(),
+        busy: true, started: performance.now(), pending: [], update: null, controller
+    });
     const token = ++search.token;
     showView('search');
     updateUrl(push);
@@ -35,29 +40,168 @@ async function runSearch(options = {}) {
     byId('facet-source').innerHTML = '';
     byId('facet-where').innerHTML = '';
     byId('page-info').textContent = '';
-    byId('results').innerHTML = loadingMessage(scope ? `Searching ${scope}…` : 'Searching all sources…');
+    byId('results').innerHTML = '';
+    startProgress();
 
-    const started = performance.now();
+    // first pass: show quickly what most sources answer, then wait for the slow ones in the background
+    const params = { sources: scope || 'all', query, maxResults: SEARCH_MAX_RESULTS, plainText: true, truncate: 400 };
     try {
-        const result = await getJSON(apiUrl(['flows'], {
-            sources: scope || 'all',
-            query,
-            maxResults: SEARCH_MAX_RESULTS,
-            timeout: SEARCH_TIMEOUT_MS,
-            plainText: true,
-            truncate: 400
-        }));
+        const result = await getJSON(apiUrl(['flows'], { ...params, timeout: QUICK_SEARCH_TIMEOUT_MS }), { signal: controller.signal });
         if (token !== search.token) return;
-        search.items = itemsOf(result);
-        search.scores = result.scores || [];
-        search.failures = result.failures || [];
-        search.total = result.total || 0;
-        search.elapsed = Math.round(performance.now() - started);
+        applySearchResult(result);
+        search.pending = slowSourcesOf(result);
+        if (search.pending.length) {
+            searchSlowSources(token, params);
+        } else {
+            stopProgress();
+        }
         renderResults();
     } catch (error) {
         if (token !== search.token) return;
-        byId('results').innerHTML = errorMessage(error.message);
+        stopProgress();
+        byId('results').innerHTML = error.name === 'AbortError'
+            ? placeholderMessage('Search stopped')
+            : errorMessage(error.message);
     }
+}
+
+/**
+ * Search again the same sources with the remaining time, so that the slow ones can answer; the fast ones answer
+ * from the cache and the ranking stays consistent across all sources
+ * @param {number} token - Token of the search
+ * @param {Object} params - Parameters of the first pass, without timeout
+ */
+async function searchSlowSources(token, params) {
+    const search = state.search;
+    const remaining = Math.max(1000, Math.round((SEARCH_TIMEOUT_MS - (performance.now() - search.started)) / 1000) * 1000);
+    try {
+        const result = await getJSON(apiUrl(['flows'], { ...params, timeout: remaining }), { signal: search.controller.signal });
+        if (token !== search.token) return;
+        const answered = search.pending.filter(source => !slowSourcesOf(result).includes(source));
+        const added = (result.total || 0) - search.total;
+        search.pending = [];
+        stopProgress();
+        if (added > 0 && search.items.length) {
+            // do not reorder what the user is looking at: offer to show the new results instead
+            search.update = { result, added, answered, elapsed: Math.round(performance.now() - search.started) };
+        } else if (added > 0) {
+            applySearchResult(result);
+        } else {
+            search.failures = result.failures || [];
+        }
+        renderResults();
+    } catch (error) {
+        if (token !== search.token) return;
+        search.pending = [];
+        stopProgress();
+        if (error.name !== 'AbortError') notify(error.message, 'danger');
+        renderSearchStatus();
+        renderFailures();
+    }
+}
+
+/**
+ * Stop waiting for the current search, keeping the results already shown
+ */
+function stopSearch() {
+    const search = state.search;
+    if (search.controller) search.controller.abort();
+}
+
+/**
+ * Show the results of the second pass, including the datasets of the slow sources
+ */
+function applySearchUpdate() {
+    const update = state.search.update;
+    if (!update) return;
+    applySearchResult(update.result, update.elapsed);
+    state.search.update = null;
+    state.search.page = 0;
+    renderResults();
+}
+
+function applySearchResult(result, elapsed) {
+    const search = state.search;
+    search.items = itemsOf(result);
+    search.scores = result.scores || [];
+    search.failures = result.failures || [];
+    search.total = result.total || 0;
+    search.elapsed = elapsed !== undefined ? elapsed : Math.round(performance.now() - search.started);
+}
+
+/**
+ * Get the sources that did not answer in time
+ * @param {Object} result - Response of /flows
+ * @returns {Array<string>} - Source ids
+ */
+function slowSourcesOf(result) {
+    return [...new Set((result.failures || [])
+        .filter(failure => failure.reason === 'UPSTREAM_TIMEOUT' && !failure.database)
+        .map(failure => failure.source))];
+}
+
+function startProgress() {
+    const search = state.search;
+    clearInterval(search.ticker);
+    search.ticker = setInterval(tickProgress, 250);
+    renderSearchStatus();
+}
+
+function stopProgress() {
+    const search = state.search;
+    clearInterval(search.ticker);
+    search.busy = false;
+    search.controller = null;
+}
+
+/**
+ * Move the progress bar and the countdown towards the search timeout, which bounds the waiting time
+ */
+function tickProgress() {
+    const search = state.search;
+    const bar = byId('search-progress-bar');
+    const time = byId('search-progress-time');
+    if (!bar || !time) return;
+    const elapsed = performance.now() - search.started;
+    bar.style.width = Math.min(100, elapsed / SEARCH_TIMEOUT_MS * 100).toFixed(1) + '%';
+    time.textContent = `${Math.max(0, Math.ceil((SEARCH_TIMEOUT_MS - elapsed) / 1000))} s left`;
+}
+
+/**
+ * Render the progress of the search, or the offer to show the results of the slow sources
+ */
+function renderSearchStatus() {
+    const search = state.search;
+    const plural = count => count === 1 ? '' : 's';
+    let html = '';
+    if (search.busy) {
+        const pending = search.pending;
+        const label = pending.length
+            ? `${pending.length} slow source${plural(pending.length)} still searching, results will be added when ${pending.length === 1 ? 'it answers' : 'they answer'}`
+            : (search.scope ? `Searching ${escapeHtml(search.scope)}…` : 'Searching all sources…');
+        html = `
+            <div class="search-progress card card-body py-2 mb-2 small">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="spinner-border spinner-border-sm text-primary flex-none" aria-hidden="true"></span>
+                    <span class="flex-grow-1">${label}</span>
+                    <span id="search-progress-time" class="text-secondary text-nowrap"></span>
+                    <button type="button" class="btn btn-sm btn-outline-secondary py-0" onclick="stopSearch()">${icon('stop-circle')} Stop</button>
+                </div>
+                <div class="progress mt-2" role="progressbar" aria-label="Search time"><div id="search-progress-bar" class="progress-bar"></div></div>
+                ${pending.length ? `<div class="d-flex flex-wrap gap-1 mt-2">${pending.map(source =>
+                    `<span class="badge rounded-pill text-bg-light border">${icon('hourglass-split')} ${escapeHtml(source)}</span>`).join('')}</div>` : ''}
+            </div>`;
+    } else if (search.update) {
+        const update = search.update;
+        html = `
+            <div class="alert alert-info py-2 small d-flex align-items-center gap-2 fade-in">
+                ${icon('plus-circle')}
+                <span class="flex-grow-1">${formatCount(update.added)} more dataset${plural(update.added)} from ${update.answered.map(escapeHtml).join(', ') || 'slow sources'}</span>
+                <button type="button" class="btn btn-sm btn-primary py-0" onclick="applySearchUpdate()">Show</button>
+            </div>`;
+    }
+    byId('search-status').innerHTML = html;
+    tickProgress();
 }
 
 function onScopeChange() {
@@ -126,7 +270,8 @@ function renderResults() {
         : '';
 
     byId('results').innerHTML = page.map(({ entry, index, score }) => renderResultCard(entry, index, score)).join('')
-        || `<div class="text-center text-secondary py-5">${icon('emoji-neutral', 'fs-1')}<p class="mt-2">No dataset matches. Try fewer words or another source.</p></div>`;
+        || (search.busy ? '' : `<div class="text-center text-secondary py-5">${icon('emoji-neutral', 'fs-1')}<p class="mt-2">No dataset matches. Try fewer words or another source.</p></div>`);
+    renderSearchStatus();
     renderFailures();
     renderFacets();
 }
@@ -163,7 +308,8 @@ function renderResultCard(entry, index, score) {
 }
 
 function renderFailures() {
-    const failures = state.search.failures;
+    const pending = state.search.pending;
+    const failures = state.search.failures.filter(failure => failure.database || !pending.includes(failure.source));
     byId('failures').innerHTML = failures.length ? `
         <details class="alert alert-warning py-2 small">
             <summary>${icon('exclamation-triangle')} ${failures.length} source${failures.length === 1 ? '' : 's'} could not be searched</summary>
