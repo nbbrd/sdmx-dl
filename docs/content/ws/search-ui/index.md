@@ -71,7 +71,7 @@ The address of the page reflects the current step, so you can bookmark or share 
 | Parameter                    | Description                                  | Example                                        |
 |------------------------------|----------------------------------------------|------------------------------------------------|
 | `q`                          | Search text                                  | `?q=exchange+rates`                            |
-| `scope`                      | Source to search in (all sources by default) | `?q=inflation&scope=ESTAT`                     |
+| `scope`                      | Source to search in (all public sources by default; restricted sources, flagged with a lock, are searched only if selected) | `?q=inflation&scope=ESTAT`                     |
 | `source`, `flow`, `database` | Dataset to open                              | `?source=ECB&flow=EXR`                         |
 | `key`                        | Selection in the dataset, as a key           | `?source=ECB&flow=EXR&key=M..EUR.SP00.A`       |
 | `series`                     | Series to inspect in the dataset             | `?source=ECB&flow=EXR&series=M.USD.EUR.SP00.A` |

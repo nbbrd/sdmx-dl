@@ -14,6 +14,7 @@ function goHome(push = true) {
     state.search.token++;
     byId('q').value = '';
     byId('scope').value = state.search.scope = '';
+    updateScopeStyle();
     byId('crumb-dataset-text').textContent = 'Narrow down';
     byId('crumb-series-text').textContent = 'Inspect a series';
     byId('keyline').textContent = '';

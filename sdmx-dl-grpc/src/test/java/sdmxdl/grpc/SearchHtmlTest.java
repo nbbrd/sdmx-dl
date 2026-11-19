@@ -375,4 +375,31 @@ class SearchHtmlTest {
         js.executeScript("openFavorite(0)");
         waitFor("state.view === 'dataset' && document.getElementById('match-count').textContent === '2'");
     }
+
+    @Test
+    @DisplayName("Restricted sources are grouped apart and flagged in the selector and the results")
+    void testRestrictedSources() {
+        open("?q=exchange");
+        waitFor("document.querySelector('#results .result')");
+        assertThat(text("document.querySelector('#scope option[value=\"\"]').textContent"))
+                .isEqualTo("All sources");
+        assertThat(eval("document.querySelectorAll('#scope optgroup').length")).isEqualTo(0L);
+
+        js.executeScript("state.sources.find(s => s.id === 'ECB').confidentiality = 'CONFIDENTIAL';"
+                + "renderSources(); renderResults();");
+
+        assertThat(text("document.querySelector('#scope option[value=\"\"]').textContent"))
+                .isEqualTo("All public sources");
+        assertThat(text("document.querySelector('#scope optgroup:last-child option.restricted').value"))
+                .isEqualTo("ECB");
+        assertThat(eval("!!document.querySelector('#results .source-tile.restricted .bi-lock-fill')"))
+                .isEqualTo(true);
+        assertThat(eval("!!document.querySelector('#facet-source .bi-lock-fill')"))
+                .isEqualTo(true);
+
+        js.executeScript("document.getElementById('scope').value = 'ECB'; updateScopeStyle();");
+        assertThat(eval("document.getElementById('scope').classList.contains('scope-restricted')"))
+                .isEqualTo(true);
+        assertThat(text("document.getElementById('scope').title")).contains("CONFIDENTIAL");
+    }
 }

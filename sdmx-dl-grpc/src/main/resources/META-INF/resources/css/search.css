@@ -181,6 +181,25 @@ main,
     line-height: 1.1;
 }
 
+.source-tile.restricted .bi {
+    font-size: .8rem;
+}
+
+#scope.scope-restricted {
+    color: var(--bs-warning-text-emphasis);
+    background-color: var(--bs-warning-bg-subtle);
+    border-color: var(--bs-warning-border-subtle);
+}
+
+#scope option {
+    color: var(--bs-body-color);
+    background-color: var(--bs-body-bg);
+}
+
+#scope option.restricted {
+    color: var(--bs-warning-text-emphasis);
+}
+
 .score {
     height: 4px;
     background: var(--bs-border-color);

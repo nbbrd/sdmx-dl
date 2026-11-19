@@ -172,6 +172,26 @@ function downloadText(content, fileName, mediaType) {
 }
 
 /**
+ * Tell whether a source is public, so that it is searched by default and never asks for credentials
+ * @param {string} id - Source id
+ * @returns {boolean} - True if public or unknown
+ */
+function isPublicSource(id) {
+    const source = state.sources.find(item => item.id === id);
+    return !source || !source.confidentiality || source.confidentiality === 'PUBLIC';
+}
+
+/**
+ * Describe the access of a non-public source
+ * @param {string} id - Source id
+ * @returns {string} - Tooltip text
+ */
+function restrictedTitleOf(id) {
+    const source = state.sources.find(item => item.id === id);
+    return `${source ? source.confidentiality : 'Restricted'} source: may ask for credentials`;
+}
+
+/**
  * Parse a dataset reference typed in the search box, such as 'ECB/EXR' or 'ECB/EXR/M.USD.EUR.SP00.A'
  * @param {string} text - Typed text
  * @returns {{source: string, flow: string, key: string}|null} - Reference, or null if the source is unknown
