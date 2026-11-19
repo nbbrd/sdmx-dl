@@ -49,7 +49,7 @@ Like the API Explorer, it only uses the REST endpoint of the same server and ser
 <meta property="article:section" content="Ws" />
     <meta
       property="article:modified_time"
-      content="2026-11-18T11:02:05+01:00"
+      content="2026-11-19T15:00:25+01:00"
     />
 
 
@@ -69,7 +69,7 @@ Like the API Explorer, it only uses the REST endpoint of the same server and ser
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/ws/search-ui/",
       "headline": "Search UI",
       "description": "The web service also ships with SDMX-DL Search, a web page to find official statistics without knowing which source publishes them, nor how their keys are built.\nOnce the service is running, open http:\/\/localhost:4559\/search.html (adjust the port if you changed quarkus.http.port).\nLike the API Explorer, it only uses the REST endpoint of the same server and serves all its resources itself. The Explorer button of the top bar opens the API Explorer.",
-      "wordCount": "562",
+      "wordCount": "636",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -80,7 +80,7 @@ Like the API Explorer, it only uses the REST endpoint of the same server and ser
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-11-18T11:02:05.00Z",
+      "dateModified": "2026-11-19T15:00:25.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1838,6 +1838,9 @@ While you type, it suggests the best matching datasets; use the arrow keys and <
 Press <strong>/</strong> anywhere to focus the search box.</p>
 <p>You can also type or paste a reference such as <code>ECB/EXR</code> or <code>ECB/EXR/M.USD.EUR.SP00.A</code> to open a dataset, with a key, directly.</p>
 <p>Results are sorted by relevance (or by name), highlight the words of the search and can be filtered by source.
+Results show up as soon as most sources have answered, after 3 seconds at most.
+The slow sources are still searched in the background, up to 20 seconds in total, with a progress bar and a countdown; <strong>Stop</strong> gives up on them.
+When they answer, a <strong>Show</strong> button adds their datasets, so that the list does not change while you read it.
 Sources that could not be searched are listed above the results.
 <strong>Peek structure</strong> loads the dimensions of a dataset without leaving the list.</p>
 <p><img
@@ -1940,7 +1943,7 @@ The star button adds the dataset to your favorites.</p>
 			</tr>
 			<tr>
 					<td><code>scope</code></td>
-					<td>Source to search in (all sources by default)</td>
+					<td>Source to search in (all public sources by default; restricted sources, flagged with a lock, are searched only if selected)</td>
 					<td><code>?q=inflation&amp;scope=ESTAT</code></td>
 			</tr>
 			<tr>

@@ -47,7 +47,7 @@ Discovery and search are the same call at every level: pass a query to search, o
 <meta property="article:section" content="Usage" />
     <meta
       property="article:modified_time"
-      content="2026-11-18T11:02:05+01:00"
+      content="2026-11-19T15:00:25+01:00"
     />
 
 
@@ -66,7 +66,7 @@ Discovery and search are the same call at every level: pass a query to search, o
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/discover/",
       "headline": "Discover",
       "description": "Find the source, database, and flow you want to query.\nDiscovery and search are the same call at every level: pass a query to search, or omit it to list everything. By default, a search returns the 10 best matches; set maxResults to change it (0 = no limit). Results also give the total number of matches, and offset skips the first ones to page through them. A search also gives the relevance score of each match, from 1 (best) down to 0 (excluded); scores rank the matches of one search and can’t be compared across searches. Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so partial or approximate queries still surface the right result. When query is empty, results fall back to being sorted by id instead of ranked by relevance.",
-      "wordCount": "1026",
+      "wordCount": "1048",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -77,7 +77,7 @@ Discovery and search are the same call at every level: pass a query to search, o
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-11-18T11:02:05.00Z",
+      "dateModified": "2026-11-19T15:00:25.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1908,7 +1908,7 @@ When <code>query</code> is empty, results fall back to being sorted by id instea
 <ul>
 <li>Both <code>&quot;ecb&quot;</code> and <code>&quot;eurpean central&quot;</code> find the European Central Bank.</li>
 <li>Some sources are aliases of others (e.g. renamed or mirrored endpoints); the API exposes <code>WebSource.isAlias()</code> to filter them out (and they&rsquo;re excluded from search results), while the CLI table lists them alongside their target.</li>
-<li>Sources can be restricted to a maximum confidentiality level (<code>PUBLIC</code>, <code>RESTRICTED</code>, …): <code>confidentialityThreshold</code> in the API, <code>--max-confidentiality</code> in the CLI, <code>maxConfidentiality</code> in the WS. It defaults to allowing every source.</li>
+<li>Sources can be restricted to a maximum confidentiality level (<code>PUBLIC</code>, <code>RESTRICTED</code>, …): <code>confidentialityThreshold</code> in the API, <code>--max-confidentiality</code> in the CLI, <code>maxConfidentiality</code> in the WS. It defaults to allowing every source, except when searching flows across all sources: only public sources are searched then, so that confidential ones do not ask for credentials.</li>
 </ul>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="databases"
