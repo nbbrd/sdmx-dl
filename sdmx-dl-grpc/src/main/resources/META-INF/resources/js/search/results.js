@@ -44,7 +44,11 @@ async function runSearch(options = {}) {
     startProgress();
 
     // first pass: show quickly what most sources answer, then wait for the slow ones in the background
-    const params = { sources: scope || 'all', query, maxResults: SEARCH_MAX_RESULTS, plainText: true, truncate: 400 };
+    // confidential sources are only searched when picked, as they may ask for credentials
+    const params = {
+        sources: scope || 'all', maxConfidentiality: scope ? '' : 'PUBLIC',
+        query, maxResults: SEARCH_MAX_RESULTS, plainText: true, truncate: 400
+    };
     try {
         const result = await getJSON(apiUrl(['flows'], { ...params, timeout: QUICK_SEARCH_TIMEOUT_MS }), { signal: controller.signal });
         if (token !== search.token) return;

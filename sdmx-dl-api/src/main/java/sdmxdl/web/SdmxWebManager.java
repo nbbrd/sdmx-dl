@@ -283,7 +283,7 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
      * paging options carried by the given request.
      * <p>
      * The {@linkplain WebFlowsRequest#getSources() requested sources} (or every non-alias source
-     * allowed by {@link WebFlowsRequest#getConfidentialityThreshold()} if none is requested) are
+     * allowed by {@link WebFlowsRequest#getEffectiveConfidentialityThreshold()} if none is requested) are
      * loaded in parallel, including all their databases. Sources, or databases, that fail or do
      * not answer before {@link WebFlowsRequest#getTimeout()} are reported as
      * {@linkplain WebFlowsResult#getFailures() failures} instead of being thrown, and the flows
@@ -306,17 +306,17 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
         request.getEffectiveOffset();
         request.getEffectiveMaxResults();
 
+        Confidentiality threshold = request.getEffectiveConfidentialityThreshold();
         List<WebSource> sources = new ArrayList<>();
         if (request.getSources().isEmpty()) {
             getSources().values().stream()
                     .filter(source -> !source.isAlias())
-                    .filter(request.getConfidentialityThreshold()::isAllowedIn)
+                    .filter(threshold::isAllowedIn)
                     .forEach(sources::add);
         } else {
             for (String name : request.getSources()) {
-                sources.add(lookupSource(name)
-                        .filter(request.getConfidentialityThreshold()::isAllowedIn)
-                        .orElseThrow(() -> newMissingSource(name)));
+                sources.add(
+                        lookupSource(name).filter(threshold::isAllowedIn).orElseThrow(() -> newMissingSource(name)));
             }
         }
 

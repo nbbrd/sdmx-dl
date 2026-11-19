@@ -27,8 +27,12 @@ public class WebFlowsRequest implements HasSearch {
     @lombok.Singular
     @NonNull List<String> sources;
 
-    @lombok.Builder.Default
-    @NonNull Confidentiality confidentialityThreshold = Confidentiality.SECRET;
+    /**
+     * Maximum confidentiality of the searched sources, or {@code null} for the default.
+     *
+     * @see #getEffectiveConfidentialityThreshold()
+     */
+    @Nullable Confidentiality confidentialityThreshold;
 
     @lombok.Builder.Default
     @NonNull Languages languages = Languages.ANY;
@@ -61,6 +65,21 @@ public class WebFlowsRequest implements HasSearch {
      * Sources that do not answer in time are reported as failures.
      */
     @Nullable Duration timeout;
+
+    /**
+     * Gets the maximum confidentiality of the searched sources. When not set, it defaults to
+     * {@link Confidentiality#PUBLIC} if no source is requested, so that a search across all sources does not
+     * query confidential sources (nor ask for their credentials), and to {@link Confidentiality#SECRET} otherwise,
+     * so that requested sources are always allowed.
+     *
+     * @return a non-null confidentiality
+     */
+    public @NonNull Confidentiality getEffectiveConfidentialityThreshold() {
+        if (confidentialityThreshold != null) {
+            return confidentialityThreshold;
+        }
+        return sources.isEmpty() ? Confidentiality.PUBLIC : Confidentiality.SECRET;
+    }
 
     public static final class Builder {
 

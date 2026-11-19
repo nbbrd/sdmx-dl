@@ -157,6 +157,7 @@ function showSuggestions() {
         try {
             const result = await getJSON(apiUrl(['flows'], {
                 sources: byId('scope').value || 'all',
+                maxConfidentiality: byId('scope').value ? '' : 'PUBLIC',
                 query,
                 maxResults: SUGGEST_MAX_RESULTS,
                 timeout: SUGGEST_TIMEOUT_MS,

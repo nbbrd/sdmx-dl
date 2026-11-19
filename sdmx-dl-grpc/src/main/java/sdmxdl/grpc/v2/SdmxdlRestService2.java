@@ -196,7 +196,8 @@ public class SdmxdlRestService2 {
             @QueryParam("offset") @DefaultValue("0") @Parameter(description = OFFSET_DESCRIPTION) int offset,
             @QueryParam("plainText") @DefaultValue("false") boolean plainText,
             @QueryParam("truncate") @DefaultValue("" + NO_DESCRIPTION_LIMIT) int truncate,
-            @QueryParam("maxConfidentiality") @DefaultValue("SECRET") String maxConfidentiality,
+            @QueryParam("maxConfidentiality") @Parameter(description = SEARCH_CONFIDENTIALITY_DESCRIPTION)
+                    String maxConfidentiality,
             @QueryParam("timeout") @DefaultValue("0") @Parameter(description = TIMEOUT_DESCRIPTION) int timeout) {
         return uniOfIO(() -> manager.searchFlows(WebFlowsRequest.builder()
                         .sources(SdmxdlGrpcService2.toSourceIds(splitList(sources)))
@@ -206,7 +207,10 @@ public class SdmxdlRestService2 {
                         .offset(offset)
                         .plainText(plainText)
                         .truncate(truncate)
-                        .confidentialityThreshold(Confidentiality.valueOf(maxConfidentiality))
+                        .confidentialityThreshold(
+                                maxConfidentiality == null || maxConfidentiality.isEmpty()
+                                        ? null
+                                        : Confidentiality.valueOf(maxConfidentiality))
                         .timeout(SdmxdlGrpcService2.toTimeout(timeout))
                         .build()))
                 .map(SdmxdlGrpcService2::toSearchFlowsResponse);
@@ -397,6 +401,9 @@ public class SdmxdlRestService2 {
 
     private static final String SOURCES_DESCRIPTION =
             "Comma-separated source ids, or 'all' (default) for every source allowed by 'maxConfidentiality'";
+
+    private static final String SEARCH_CONFIDENTIALITY_DESCRIPTION =
+            "Maximum confidentiality of the searched sources; defaults to PUBLIC for 'all' sources and to SECRET (any) for named sources";
 
     private static final String TIMEOUT_DESCRIPTION =
             "Maximum time to wait for the sources, in milliseconds (default 0 = no limit); late sources are reported as failures";

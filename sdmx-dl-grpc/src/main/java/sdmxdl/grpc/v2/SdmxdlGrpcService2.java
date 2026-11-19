@@ -120,7 +120,7 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
                         .confidentialityThreshold(
                                 request.hasMaxConfidentiality()
                                         ? ProtoApi.toConfidentiality(request.getMaxConfidentiality())
-                                        : Confidentiality.SECRET)
+                                        : null)
                         .timeout(toTimeout(request.hasTimeout() ? request.getTimeout() : 0))
                         .build())));
     }

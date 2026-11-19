@@ -52,8 +52,8 @@ public final class SearchFlowsCommand implements Callable<Void> {
 
     @CommandLine.Option(
             names = {"-c", "--max-confidentiality"},
-            defaultValue = "SECRET",
-            description = "Maximum confidentiality level of the searched sources")
+            description =
+                    "Maximum confidentiality level of the searched sources (default: PUBLIC without --within, SECRET otherwise)")
     private Confidentiality confidentialityThreshold;
 
     @CommandLine.Option(

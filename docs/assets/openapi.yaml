@@ -976,11 +976,12 @@ paths:
         schema:
           type: string
           default: '*'
-      - name: maxConfidentiality
+      - description: Maximum confidentiality of the searched sources; defaults to
+          PUBLIC for 'all' sources and to SECRET (any) for named sources
+        name: maxConfidentiality
         in: query
         schema:
           type: string
-          default: SECRET
       - name: maxResults
         in: query
         schema:

@@ -53,7 +53,7 @@ Options used by the `search flows` command, which searches several sources at on
 | Name                                                                                 | Shortcut | Parameter                                 | Description                                                                                                  |
 |--------------------------------------------------------------------------------------|----------|-------------------------------------------|--------------------------------------------------------------------------------------------------------------|
 | <a id="within" href="#within">`--within`</a>                                         | `-w`     | [`<source>,...`](../datatypes#source)     | Comma-separated sources to search (default: every source allowed by `--max-confidentiality`).                |
-| <a id="max-confidentiality" href="#max-confidentiality">`--max-confidentiality`</a>  | `-c`     | `<level>`                                 | Maximum confidentiality level of the searched sources: `PUBLIC`, `UNRESTRICTED`, `RESTRICTED`, `CONFIDENTIAL` or `SECRET` (default). |
+| <a id="max-confidentiality" href="#max-confidentiality">`--max-confidentiality`</a>  | `-c`     | `<level>`                                 | Maximum confidentiality level of the searched sources: `PUBLIC`, `UNRESTRICTED`, `RESTRICTED`, `CONFIDENTIAL` or `SECRET` (default: `PUBLIC` without `--within`, `SECRET` otherwise). |
 | <a id="timeout" href="#timeout">`--timeout`</a>                                      | -        | `<millis>`                                | Maximum time to wait for the sources (default: `0`, meaning no limit); late sources are reported as failures. |
 
 ## Description

@@ -523,6 +523,16 @@ public class SdmxWebManagerTest {
                         .confidentialityThreshold(Confidentiality.PUBLIC)
                         .build()));
 
+        assertThat(WebFlowsRequest.DEFAULT.getEffectiveConfidentialityThreshold())
+                .describedAs("public sources only by default when searching all sources")
+                .isEqualTo(Confidentiality.PUBLIC);
+        assertThat(manager.searchFlows(
+                                WebFlowsRequest.builder().source("secret").build())
+                        .getItems())
+                .describedAs("requested sources are allowed by default")
+                .extracting(o -> o.getSource().getId())
+                .containsExactly("secret");
+
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> manager.searchFlows(
                         WebFlowsRequest.builder().source("single").offset(-1).build()));

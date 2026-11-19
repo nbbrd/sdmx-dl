@@ -82,7 +82,7 @@ message WebSearchFlowsRequestDto {
   repeated string sources = 1; /* empty, or a single "all" entry (case-insensitive), means every source allowed by 'max_confidentiality' */
   optional string query = 2;
   optional int32 max_results = 3; /* absent = all without query, 10 with query; 0 = no limit */
-  optional sdmxdl.format.protobuf.ConfidentialityDto max_confidentiality = 4; /* absent = every source */
+  optional sdmxdl.format.protobuf.ConfidentialityDto max_confidentiality = 4; /* absent = public sources if 'sources' is empty, every source otherwise */
   optional string languages = 5;
   optional bool plain_text = 6; /* strip markup (e.g. HTML tags) from descriptions; absent = false */
   optional int32 truncate = 7; /* maximum length of descriptions, truncated with an ellipsis; absent or 0 = no limit */
