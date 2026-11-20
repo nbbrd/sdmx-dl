@@ -353,6 +353,11 @@
                     <artifactId>templating-maven-plugin</artifactId>
                     <version>3.1.1</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.echocat.maven.plugins</groupId>
+                    <artifactId>hugo-maven-plugin</artifactId>
+                    <version>0.2.20</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>

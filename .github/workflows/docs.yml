@@ -2,6 +2,9 @@ name: Documentation deployment
 
 on: [ push ]
 
+env:
+  MAVEN_ARGS: "-B -ntp"
+
 jobs:
   check:
     name: Check resources
@@ -30,17 +33,12 @@ jobs:
         uses: s4u/setup-maven-action@v1.22.0
 
       - name: Setup docs with Maven
-        run: mvn -B -ntp install -DskipTests -P setup-docs
+        run: mvn install -DskipTests -P setup-docs
+        env:
+          HUGO_BASEURL: ${{ env.DOC_URL }}
 
-      - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v3
-        with:
-          hugo-version: 'latest'
-
-      - name: Build pages
-        run: |
-          hugo --source docs -b ${{ env.DOC_URL }}
-          touch ./docs/public/.nojekyll
+      - name: Disable Jekyll
+        run: touch ./docs/public/.nojekyll
 
       - name: Deploy pages
         uses: peaceiris/actions-gh-pages@v4

@@ -17,6 +17,7 @@
 
     <properties>
         <hugo-geekdoc.version>v4.1.4</hugo-geekdoc.version>
+        <hugo.version>0.170.1</hugo.version>
     </properties>
 
     <dependencyManagement>
@@ -196,6 +197,29 @@
                             <unpack>true</unpack>
                             <outputDirectory>${project.parent.basedir}/docs/themes/hugo-geekdoc</outputDirectory>
                         </configuration>
+                    </plugin>
+                    <!-- Build documentation with a managed Hugo binary -->
+                    <plugin>
+                        <groupId>org.echocat.maven.plugins</groupId>
+                        <artifactId>hugo-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>build-docs</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                                <configuration>
+                                    <version>${hugo.version}</version>
+                                    <workingDirectory>${project.parent.basedir}/docs</workingDirectory>
+                                    <config>${project.parent.basedir}/docs/config.toml</config>
+                                    <output>${project.parent.basedir}/docs/public</output>
+                                    <additionalArguments>
+                                        <additionalArgument>--cleanDestinationDir</additionalArgument>
+                                    </additionalArguments>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
