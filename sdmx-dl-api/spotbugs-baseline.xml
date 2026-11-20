@@ -24,27 +24,6 @@
       <Message>Redundant null check at HybridSearch.java:[line 180]</Message>
     </SourceLine>
   </BugInstance>
-  <BugInstance instanceOccurrenceNum="0" instanceHash="ee0d95839f04272ff76a7cba2309061b" cweid="440" rank="17" abbrev="RV" category="STYLE" priority="2" type="RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT" instanceOccurrenceMax="0">
-    <ShortMessage>Return value of method without side effect is ignored</ShortMessage>
-    <LongMessage>Return value of sdmxdl.web.spi.SSLFactory.getHostnameVerifier() ignored, but method has no side effect</LongMessage>
-    <Class classname="internal.sdmxdl.web.spi.DefaultNetworking" primary="true">
-      <SourceLine classname="internal.sdmxdl.web.spi.DefaultNetworking" start="14" end="52" sourcepath="internal/sdmxdl/web/spi/DefaultNetworking.java" sourcefile="DefaultNetworking.java">
-        <Message>At DefaultNetworking.java:[lines 14-52]</Message>
-      </SourceLine>
-      <Message>In class internal.sdmxdl.web.spi.DefaultNetworking</Message>
-    </Class>
-    <Method isStatic="false" classname="internal.sdmxdl.web.spi.DefaultNetworking" signature="()V" name="warmupNetwork" primary="true">
-      <SourceLine endBytecode="114" classname="internal.sdmxdl.web.spi.DefaultNetworking" start="40" end="45" sourcepath="internal/sdmxdl/web/spi/DefaultNetworking.java" sourcefile="DefaultNetworking.java" startBytecode="0" />
-      <Message>In method internal.sdmxdl.web.spi.DefaultNetworking.warmupNetwork()</Message>
-    </Method>
-    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.web.spi.SSLFactory" signature="()Ljavax/net/ssl/HostnameVerifier;" name="getHostnameVerifier" classAnnotationNames="lombok.NonNull">
-      <SourceLine classname="sdmxdl.web.spi.SSLFactory" sourcepath="sdmxdl/web/spi/SSLFactory.java" sourcefile="SSLFactory.java" />
-      <Message>Called method sdmxdl.web.spi.SSLFactory.getHostnameVerifier()</Message>
-    </Method>
-    <SourceLine endBytecode="22" classname="internal.sdmxdl.web.spi.DefaultNetworking" start="42" end="42" sourcepath="internal/sdmxdl/web/spi/DefaultNetworking.java" sourcefile="DefaultNetworking.java" startBytecode="22" primary="true">
-      <Message>At DefaultNetworking.java:[line 42]</Message>
-    </SourceLine>
-  </BugInstance>
   <BugInstance instanceOccurrenceNum="0" instanceHash="dd103699e00212493e197bc151cd0e57" cweid="476" rank="18" abbrev="RCN" category="STYLE" priority="2" type="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE" instanceOccurrenceMax="0">
     <ShortMessage>Redundant nullcheck of value known to be non-null</ShortMessage>
     <LongMessage>Redundant nullcheck of result, which is known to be non-null in internal.sdmxdl.web.spi.FailsafeDriver.getDefaultSources()</LongMessage>

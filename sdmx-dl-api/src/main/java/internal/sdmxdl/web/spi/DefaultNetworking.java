@@ -1,5 +1,8 @@
 package internal.sdmxdl.web.spi;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
 import lombok.NonNull;
 import org.jspecify.annotations.Nullable;
 import sdmxdl.ErrorListener;
@@ -8,11 +11,7 @@ import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Network;
 import sdmxdl.web.spi.Networking;
 
-import java.util.Collection;
-import java.util.Collections;
-
 public enum DefaultNetworking implements Networking {
-
     INSTANCE;
 
     @Override
@@ -38,17 +37,15 @@ public enum DefaultNetworking implements Networking {
     @Override
     public void warmupNetwork() {
         Network network = Network.getDefault();
-        network.getSSLFactory().getSSLSocketFactory();
-        network.getSSLFactory().getHostnameVerifier();
-        network.getProxySelector();
-        network.getURLConnectionFactory();
+        Objects.requireNonNull(network.getSSLFactory().getSSLSocketFactory());
+        Objects.requireNonNull(network.getSSLFactory().getHostnameVerifier());
+        Objects.requireNonNull(network.getProxySelector());
+        Objects.requireNonNull(network.getURLConnectionFactory());
     }
 
     @Override
     public @NonNull Network getNetwork(
-            @NonNull WebSource source,
-            @Nullable EventListener onEvent,
-            @Nullable ErrorListener onError) {
+            @NonNull WebSource source, @Nullable EventListener onEvent, @Nullable ErrorListener onError) {
         return Network.getDefault();
     }
 }
