@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BugCollection>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="cd213bc47bed144d7666bede8d462704" cweid="493" rank="18" abbrev="MS" category="MALICIOUS_CODE" priority="2" type="MS_EXPOSE_REP" instanceOccurrenceMax="0">
+    <ShortMessage>Public static method may expose internal representation by returning a mutable object or array</ShortMessage>
+    <LongMessage>Public static internal.sdmxdl.format.xml.ImmutableXMLInputFactory.getDefaultInputFactory() may expose internal representation by returning ImmutableXMLInputFactory.DEFAULT</LongMessage>
+    <Class classname="internal.sdmxdl.format.xml.ImmutableXMLInputFactory" primary="true">
+      <SourceLine classname="internal.sdmxdl.format.xml.ImmutableXMLInputFactory" start="15" end="152" sourcepath="internal/sdmxdl/format/xml/ImmutableXMLInputFactory.java" sourcefile="ImmutableXMLInputFactory.java">
+        <Message>At ImmutableXMLInputFactory.java:[lines 15-152]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.format.xml.ImmutableXMLInputFactory</Message>
+    </Class>
+    <Method isStatic="true" classname="internal.sdmxdl.format.xml.ImmutableXMLInputFactory" signature="()Ljavax/xml/stream/XMLInputFactory;" name="getDefaultInputFactory" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine endBytecode="27" classname="internal.sdmxdl.format.xml.ImmutableXMLInputFactory" start="15" end="15" sourcepath="internal/sdmxdl/format/xml/ImmutableXMLInputFactory.java" sourcefile="ImmutableXMLInputFactory.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.format.xml.ImmutableXMLInputFactory.getDefaultInputFactory()</Message>
+    </Method>
+    <Field isStatic="true" classname="internal.sdmxdl.format.xml.ImmutableXMLInputFactory" signature="Linternal/sdmxdl/format/xml/ImmutableXMLInputFactory;" name="DEFAULT" primary="true">
+      <SourceLine classname="internal.sdmxdl.format.xml.ImmutableXMLInputFactory" sourcepath="internal/sdmxdl/format/xml/ImmutableXMLInputFactory.java" sourcefile="ImmutableXMLInputFactory.java">
+        <Message>In ImmutableXMLInputFactory.java</Message>
+      </SourceLine>
+      <Message>Field internal.sdmxdl.format.xml.ImmutableXMLInputFactory.DEFAULT</Message>
+    </Field>
+    <SourceLine endBytecode="3" classname="internal.sdmxdl.format.xml.ImmutableXMLInputFactory" start="15" end="15" sourcepath="internal/sdmxdl/format/xml/ImmutableXMLInputFactory.java" sourcefile="ImmutableXMLInputFactory.java" startBytecode="3" primary="true">
+      <Message>At ImmutableXMLInputFactory.java:[line 15]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="6244ae860ea076dc8728be5a97e93ca7" cweid="493" rank="18" abbrev="MS" category="MALICIOUS_CODE" priority="2" type="MS_EXPOSE_REP" instanceOccurrenceMax="0">
+    <ShortMessage>Public static method may expose internal representation by returning a mutable object or array</ShortMessage>
+    <LongMessage>Public static internal.sdmxdl.format.xml.ImmutableXMLInputFactory.getInputFactoryWithoutNamespace() may expose internal representation by returning ImmutableXMLInputFactory.WITHOUT_NAMESPACE</LongMessage>
+    <Class classname="internal.sdmxdl.format.xml.ImmutableXMLInputFactory" primary="true">
+      <SourceLine classname="internal.sdmxdl.format.xml.ImmutableXMLInputFactory" start="15" end="152" sourcepath="internal/sdmxdl/format/xml/ImmutableXMLInputFactory.java" sourcefile="ImmutableXMLInputFactory.java">
+        <Message>At ImmutableXMLInputFactory.java:[lines 15-152]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.format.xml.ImmutableXMLInputFactory</Message>
+    </Class>
+    <Method isStatic="true" classname="internal.sdmxdl.format.xml.ImmutableXMLInputFactory" signature="()Ljavax/xml/stream/XMLInputFactory;" name="getInputFactoryWithoutNamespace" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine endBytecode="27" classname="internal.sdmxdl.format.xml.ImmutableXMLInputFactory" start="19" end="19" sourcepath="internal/sdmxdl/format/xml/ImmutableXMLInputFactory.java" sourcefile="ImmutableXMLInputFactory.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.format.xml.ImmutableXMLInputFactory.getInputFactoryWithoutNamespace()</Message>
+    </Method>
+    <Field isStatic="true" classname="internal.sdmxdl.format.xml.ImmutableXMLInputFactory" signature="Linternal/sdmxdl/format/xml/ImmutableXMLInputFactory;" name="WITHOUT_NAMESPACE" primary="true">
+      <SourceLine classname="internal.sdmxdl.format.xml.ImmutableXMLInputFactory" sourcepath="internal/sdmxdl/format/xml/ImmutableXMLInputFactory.java" sourcefile="ImmutableXMLInputFactory.java">
+        <Message>In ImmutableXMLInputFactory.java</Message>
+      </SourceLine>
+      <Message>Field internal.sdmxdl.format.xml.ImmutableXMLInputFactory.WITHOUT_NAMESPACE</Message>
+    </Field>
+    <SourceLine endBytecode="3" classname="internal.sdmxdl.format.xml.ImmutableXMLInputFactory" start="19" end="19" sourcepath="internal/sdmxdl/format/xml/ImmutableXMLInputFactory.java" sourcefile="ImmutableXMLInputFactory.java" startBytecode="3" primary="true">
+      <Message>At ImmutableXMLInputFactory.java:[line 19]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="c92d513a2d12e9809761f0bca995b263" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in internal.sdmxdl.format.xml.XMLStreamCodelist21.parse(XMLStreamReader) where default case is missing</LongMessage>
+    <Class classname="internal.sdmxdl.format.xml.XMLStreamCodelist21" primary="true">
+      <SourceLine classname="internal.sdmxdl.format.xml.XMLStreamCodelist21" start="50" end="127" sourcepath="internal/sdmxdl/format/xml/XMLStreamCodelist21.java" sourcefile="XMLStreamCodelist21.java">
+        <Message>At XMLStreamCodelist21.java:[lines 50-127]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.format.xml.XMLStreamCodelist21</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.format.xml.XMLStreamCodelist21" signature="(Ljavax/xml/stream/XMLStreamReader;)Ljava/util/List;" name="parse" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine endBytecode="313" classname="internal.sdmxdl.format.xml.XMLStreamCodelist21" start="55" end="71" sourcepath="internal/sdmxdl/format/xml/XMLStreamCodelist21.java" sourcefile="XMLStreamCodelist21.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.format.xml.XMLStreamCodelist21.parse(XMLStreamReader)</Message>
+    </Method>
+    <SourceLine endBytecode="157" classname="internal.sdmxdl.format.xml.XMLStreamCodelist21" start="62" end="67" sourcepath="internal/sdmxdl/format/xml/XMLStreamCodelist21.java" sourcefile="XMLStreamCodelist21.java" startBytecode="117" primary="true">
+      <Message>At XMLStreamCodelist21.java:[lines 62-67]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="e887dc9c21103cdc9a9fe9a24253931b" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in internal.sdmxdl.format.xml.XMLStreamCodelist21.parseStructures(XMLStreamReader, List) where default case is missing</LongMessage>
+    <Class classname="internal.sdmxdl.format.xml.XMLStreamCodelist21" primary="true">
+      <SourceLine classname="internal.sdmxdl.format.xml.XMLStreamCodelist21" start="50" end="127" sourcepath="internal/sdmxdl/format/xml/XMLStreamCodelist21.java" sourcefile="XMLStreamCodelist21.java">
+        <Message>At XMLStreamCodelist21.java:[lines 50-127]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.format.xml.XMLStreamCodelist21</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.format.xml.XMLStreamCodelist21" signature="(Ljavax/xml/stream/XMLStreamReader;Ljava/util/List;)V" name="parseStructures" primary="true">
+      <SourceLine endBytecode="199" classname="internal.sdmxdl.format.xml.XMLStreamCodelist21" start="80" end="87" sourcepath="internal/sdmxdl/format/xml/XMLStreamCodelist21.java" sourcefile="XMLStreamCodelist21.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.format.xml.XMLStreamCodelist21.parseStructures(XMLStreamReader, List)</Message>
+    </Method>
+    <SourceLine endBytecode="77" classname="internal.sdmxdl.format.xml.XMLStreamCodelist21" start="81" end="83" sourcepath="internal/sdmxdl/format/xml/XMLStreamCodelist21.java" sourcefile="XMLStreamCodelist21.java" startBytecode="54" primary="true">
+      <Message>At XMLStreamCodelist21.java:[lines 81-83]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="10e19af5f0e35cbb9a3db3e971b8c1cd" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in internal.sdmxdl.format.xml.XMLStreamFlow20.parse(XMLStreamReader) where default case is missing</LongMessage>
+    <Class classname="internal.sdmxdl.format.xml.XMLStreamFlow20" primary="true">
+      <SourceLine classname="internal.sdmxdl.format.xml.XMLStreamFlow20" start="56" end="153" sourcepath="internal/sdmxdl/format/xml/XMLStreamFlow20.java" sourcefile="XMLStreamFlow20.java">
+        <Message>At XMLStreamFlow20.java:[lines 56-153]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.format.xml.XMLStreamFlow20</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.format.xml.XMLStreamFlow20" signature="(Ljavax/xml/stream/XMLStreamReader;)Ljava/util/List;" name="parse" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine endBytecode="313" classname="internal.sdmxdl.format.xml.XMLStreamFlow20" start="62" end="78" sourcepath="internal/sdmxdl/format/xml/XMLStreamFlow20.java" sourcefile="XMLStreamFlow20.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.format.xml.XMLStreamFlow20.parse(XMLStreamReader)</Message>
+    </Method>
+    <SourceLine endBytecode="157" classname="internal.sdmxdl.format.xml.XMLStreamFlow20" start="69" end="74" sourcepath="internal/sdmxdl/format/xml/XMLStreamFlow20.java" sourcefile="XMLStreamFlow20.java" startBytecode="117" primary="true">
+      <Message>At XMLStreamFlow20.java:[lines 69-74]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="ec8b381a5f77bda064f57462252fbb39" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in internal.sdmxdl.format.xml.XMLStreamFlow20.parseDataflow(XMLStreamReader) where default case is missing</LongMessage>
+    <Class classname="internal.sdmxdl.format.xml.XMLStreamFlow20" primary="true">
+      <SourceLine classname="internal.sdmxdl.format.xml.XMLStreamFlow20" start="56" end="153" sourcepath="internal/sdmxdl/format/xml/XMLStreamFlow20.java" sourcefile="XMLStreamFlow20.java">
+        <Message>At XMLStreamFlow20.java:[lines 56-153]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.format.xml.XMLStreamFlow20</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.format.xml.XMLStreamFlow20" signature="(Ljavax/xml/stream/XMLStreamReader;)Lsdmxdl/Flow;" name="parseDataflow" primary="true">
+      <SourceLine endBytecode="505" classname="internal.sdmxdl.format.xml.XMLStreamFlow20" start="98" end="121" sourcepath="internal/sdmxdl/format/xml/XMLStreamFlow20.java" sourcefile="XMLStreamFlow20.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.format.xml.XMLStreamFlow20.parseDataflow(XMLStreamReader)</Message>
+    </Method>
+    <SourceLine endBytecode="234" classname="internal.sdmxdl.format.xml.XMLStreamFlow20" start="106" end="114" sourcepath="internal/sdmxdl/format/xml/XMLStreamFlow20.java" sourcefile="XMLStreamFlow20.java" startBytecode="179" primary="true">
+      <Message>At XMLStreamFlow20.java:[lines 106-114]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="1ed8248d4a91edf1a795c12f081e7157" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in internal.sdmxdl.format.xml.XMLStreamFlow20.parseDataflows(XMLStreamReader, List) where default case is missing</LongMessage>
+    <Class classname="internal.sdmxdl.format.xml.XMLStreamFlow20" primary="true">
+      <SourceLine classname="internal.sdmxdl.format.xml.XMLStreamFlow20" start="56" end="153" sourcepath="internal/sdmxdl/format/xml/XMLStreamFlow20.java" sourcefile="XMLStreamFlow20.java">
+        <Message>At XMLStreamFlow20.java:[lines 56-153]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.format.xml.XMLStreamFlow20</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.format.xml.XMLStreamFlow20" signature="(Ljavax/xml/stream/XMLStreamReader;Ljava/util/List;)V" name="parseDataflows" primary="true">
+      <SourceLine endBytecode="205" classname="internal.sdmxdl.format.xml.XMLStreamFlow20" start="87" end="94" sourcepath="internal/sdmxdl/format/xml/XMLStreamFlow20.java" sourcefile="XMLStreamFlow20.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.format.xml.XMLStreamFlow20.parseDataflows(XMLStreamReader, List)</Message>
+    </Method>
+    <SourceLine endBytecode="83" classname="internal.sdmxdl.format.xml.XMLStreamFlow20" start="88" end="90" sourcepath="internal/sdmxdl/format/xml/XMLStreamFlow20.java" sourcefile="XMLStreamFlow20.java" startBytecode="54" primary="true">
+      <Message>At XMLStreamFlow20.java:[lines 88-90]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="ab6a2f8db3ca11a56366e9a73cb67004" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in internal.sdmxdl.format.xml.XMLStreamFlow20.parseKeyFamilyRef(XMLStreamReader) where default case is missing</LongMessage>
+    <Class classname="internal.sdmxdl.format.xml.XMLStreamFlow20" primary="true">
+      <SourceLine classname="internal.sdmxdl.format.xml.XMLStreamFlow20" start="56" end="153" sourcepath="internal/sdmxdl/format/xml/XMLStreamFlow20.java" sourcefile="XMLStreamFlow20.java">
+        <Message>At XMLStreamFlow20.java:[lines 56-153]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.format.xml.XMLStreamFlow20</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.format.xml.XMLStreamFlow20" signature="(Ljavax/xml/stream/XMLStreamReader;)Lsdmxdl/StructureRef;" name="parseKeyFamilyRef" primary="true">
+      <SourceLine endBytecode="322" classname="internal.sdmxdl.format.xml.XMLStreamFlow20" start="131" end="145" sourcepath="internal/sdmxdl/format/xml/XMLStreamFlow20.java" sourcefile="XMLStreamFlow20.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.format.xml.XMLStreamFlow20.parseKeyFamilyRef(XMLStreamReader)</Message>
+    </Method>
+    <SourceLine endBytecode="132" classname="internal.sdmxdl.format.xml.XMLStreamFlow20" start="135" end="140" sourcepath="internal/sdmxdl/format/xml/XMLStreamFlow20.java" sourcefile="XMLStreamFlow20.java" startBytecode="91" primary="true">
+      <Message>At XMLStreamFlow20.java:[lines 135-140]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="e7647acb1c5a5071bb057a8edb76be3b" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in internal.sdmxdl.format.xml.XMLStreamFlow21.parse(XMLStreamReader) where default case is missing</LongMessage>
+    <Class classname="internal.sdmxdl.format.xml.XMLStreamFlow21" primary="true">
+      <SourceLine classname="internal.sdmxdl.format.xml.XMLStreamFlow21" start="57" end="163" sourcepath="internal/sdmxdl/format/xml/XMLStreamFlow21.java" sourcefile="XMLStreamFlow21.java">
+        <Message>At XMLStreamFlow21.java:[lines 57-163]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.format.xml.XMLStreamFlow21</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.format.xml.XMLStreamFlow21" signature="(Ljavax/xml/stream/XMLStreamReader;)Ljava/util/List;" name="parse" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine endBytecode="313" classname="internal.sdmxdl.format.xml.XMLStreamFlow21" start="63" end="79" sourcepath="internal/sdmxdl/format/xml/XMLStreamFlow21.java" sourcefile="XMLStreamFlow21.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.format.xml.XMLStreamFlow21.parse(XMLStreamReader)</Message>
+    </Method>
+    <SourceLine endBytecode="157" classname="internal.sdmxdl.format.xml.XMLStreamFlow21" start="70" end="75" sourcepath="internal/sdmxdl/format/xml/XMLStreamFlow21.java" sourcefile="XMLStreamFlow21.java" startBytecode="117" primary="true">
+      <Message>At XMLStreamFlow21.java:[lines 70-75]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="286a042bf8a27c696a3438e0a7902f07" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in internal.sdmxdl.format.xml.XMLStreamFlow21.parseDataflow(XMLStreamReader) where default case is missing</LongMessage>
+    <Class classname="internal.sdmxdl.format.xml.XMLStreamFlow21" primary="true">
+      <SourceLine classname="internal.sdmxdl.format.xml.XMLStreamFlow21" start="57" end="163" sourcepath="internal/sdmxdl/format/xml/XMLStreamFlow21.java" sourcefile="XMLStreamFlow21.java">
+        <Message>At XMLStreamFlow21.java:[lines 57-163]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.format.xml.XMLStreamFlow21</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.format.xml.XMLStreamFlow21" signature="(Ljavax/xml/stream/XMLStreamReader;)Lsdmxdl/Flow;" name="parseDataflow" primary="true">
+      <SourceLine endBytecode="505" classname="internal.sdmxdl.format.xml.XMLStreamFlow21" start="112" end="135" sourcepath="internal/sdmxdl/format/xml/XMLStreamFlow21.java" sourcefile="XMLStreamFlow21.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.format.xml.XMLStreamFlow21.parseDataflow(XMLStreamReader)</Message>
+    </Method>
+    <SourceLine endBytecode="234" classname="internal.sdmxdl.format.xml.XMLStreamFlow21" start="120" end="128" sourcepath="internal/sdmxdl/format/xml/XMLStreamFlow21.java" sourcefile="XMLStreamFlow21.java" startBytecode="179" primary="true">
+      <Message>At XMLStreamFlow21.java:[lines 120-128]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="582800b3d5e82279d122eae5b983712a" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in internal.sdmxdl.format.xml.XMLStreamFlow21.parseDataflows(XMLStreamReader, List) where default case is missing</LongMessage>
+    <Class classname="internal.sdmxdl.format.xml.XMLStreamFlow21" primary="true">
+      <SourceLine classname="internal.sdmxdl.format.xml.XMLStreamFlow21" start="57" end="163" sourcepath="internal/sdmxdl/format/xml/XMLStreamFlow21.java" sourcefile="XMLStreamFlow21.java">
+        <Message>At XMLStreamFlow21.java:[lines 57-163]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.format.xml.XMLStreamFlow21</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.format.xml.XMLStreamFlow21" signature="(Ljavax/xml/stream/XMLStreamReader;Ljava/util/List;)V" name="parseDataflows" primary="true">
+      <SourceLine endBytecode="217" classname="internal.sdmxdl.format.xml.XMLStreamFlow21" start="94" end="103" sourcepath="internal/sdmxdl/format/xml/XMLStreamFlow21.java" sourcefile="XMLStreamFlow21.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.format.xml.XMLStreamFlow21.parseDataflows(XMLStreamReader, List)</Message>
+    </Method>
+    <SourceLine endBytecode="91" classname="internal.sdmxdl.format.xml.XMLStreamFlow21" start="95" end="98" sourcepath="internal/sdmxdl/format/xml/XMLStreamFlow21.java" sourcefile="XMLStreamFlow21.java" startBytecode="54" primary="true">
+      <Message>At XMLStreamFlow21.java:[lines 95-98]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="33f93ae12632c4e73fcde6b025be9c27" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in internal.sdmxdl.format.xml.XMLStreamStructure20.parse(XMLStreamReader) where default case is missing</LongMessage>
+    <Class classname="internal.sdmxdl.format.xml.XMLStreamStructure20" primary="true">
+      <SourceLine classname="internal.sdmxdl.format.xml.XMLStreamStructure20" start="60" end="269" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure20.java" sourcefile="XMLStreamStructure20.java">
+        <Message>At XMLStreamStructure20.java:[lines 60-269]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.format.xml.XMLStreamStructure20</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.format.xml.XMLStreamStructure20" signature="(Ljavax/xml/stream/XMLStreamReader;)Ljava/util/List;" name="parse" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine endBytecode="439" classname="internal.sdmxdl.format.xml.XMLStreamStructure20" start="65" end="88" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure20.java" sourcefile="XMLStreamStructure20.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.format.xml.XMLStreamStructure20.parse(XMLStreamReader)</Message>
+    </Method>
+    <SourceLine endBytecode="246" classname="internal.sdmxdl.format.xml.XMLStreamStructure20" start="73" end="84" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure20.java" sourcefile="XMLStreamStructure20.java" startBytecode="179" primary="true">
+      <Message>At XMLStreamStructure20.java:[lines 73-84]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="923e4db4551d452d25f6a6fd8159d02e" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in internal.sdmxdl.format.xml.XMLStreamStructure20.parseDataStructure(XMLStreamReader, List, DsdContext) where default case is missing</LongMessage>
+    <Class classname="internal.sdmxdl.format.xml.XMLStreamStructure20" primary="true">
+      <SourceLine classname="internal.sdmxdl.format.xml.XMLStreamStructure20" start="60" end="269" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure20.java" sourcefile="XMLStreamStructure20.java">
+        <Message>At XMLStreamStructure20.java:[lines 60-269]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.format.xml.XMLStreamStructure20</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.format.xml.XMLStreamStructure20" signature="(Ljavax/xml/stream/XMLStreamReader;Ljava/util/List;Linternal/sdmxdl/format/xml/DsdContext;)V" name="parseDataStructure" primary="true">
+      <SourceLine endBytecode="479" classname="internal.sdmxdl.format.xml.XMLStreamStructure20" start="155" end="177" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure20.java" sourcefile="XMLStreamStructure20.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.format.xml.XMLStreamStructure20.parseDataStructure(XMLStreamReader, List, DsdContext)</Message>
+    </Method>
+    <SourceLine endBytecode="211" classname="internal.sdmxdl.format.xml.XMLStreamStructure20" start="166" end="171" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure20.java" sourcefile="XMLStreamStructure20.java" startBytecode="167" primary="true">
+      <Message>At XMLStreamStructure20.java:[lines 166-171]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="ebb24e172411ee5a0ce09ddcdac359fb" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in internal.sdmxdl.format.xml.XMLStreamStructure20.parseDataStructureComponents(XMLStreamReader, Structure$Builder, DsdContext) where default case is missing</LongMessage>
+    <Class classname="internal.sdmxdl.format.xml.XMLStreamStructure20" primary="true">
+      <SourceLine classname="internal.sdmxdl.format.xml.XMLStreamStructure20" start="60" end="269" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure20.java" sourcefile="XMLStreamStructure20.java">
+        <Message>At XMLStreamStructure20.java:[lines 60-269]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.format.xml.XMLStreamStructure20</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.format.xml.XMLStreamStructure20" signature="(Ljavax/xml/stream/XMLStreamReader;Lsdmxdl/Structure$Builder;Linternal/sdmxdl/format/xml/DsdContext;)V" name="parseDataStructureComponents" primary="true">
+      <SourceLine endBytecode="338" classname="internal.sdmxdl.format.xml.XMLStreamStructure20" start="181" end="197" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure20.java" sourcefile="XMLStreamStructure20.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.format.xml.XMLStreamStructure20.parseDataStructureComponents(XMLStreamReader, Structure$Builder, DsdContext)</Message>
+    </Method>
+    <SourceLine endBytecode="194" classname="internal.sdmxdl.format.xml.XMLStreamStructure20" start="182" end="193" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure20.java" sourcefile="XMLStreamStructure20.java" startBytecode="131" primary="true">
+      <Message>At XMLStreamStructure20.java:[lines 182-193]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="9f35dfadb6918bc19b2fb84826999800" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in internal.sdmxdl.format.xml.XMLStreamStructure21.parse(XMLStreamReader) where default case is missing</LongMessage>
+    <Class classname="internal.sdmxdl.format.xml.XMLStreamStructure21" primary="true">
+      <SourceLine classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="72" end="451" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java">
+        <Message>At XMLStreamStructure21.java:[lines 72-451]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.format.xml.XMLStreamStructure21</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" signature="(Ljavax/xml/stream/XMLStreamReader;)Ljava/util/List;" name="parse" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine endBytecode="313" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="77" end="93" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.format.xml.XMLStreamStructure21.parse(XMLStreamReader)</Message>
+    </Method>
+    <SourceLine endBytecode="157" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="84" end="89" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java" startBytecode="117" primary="true">
+      <Message>At XMLStreamStructure21.java:[lines 84-89]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="10b42e156be050e7abece857cf8fd699" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in internal.sdmxdl.format.xml.XMLStreamStructure21.parseAttribute(XMLStreamReader, Structure$Builder, DsdContext) where default case is missing</LongMessage>
+    <Class classname="internal.sdmxdl.format.xml.XMLStreamStructure21" primary="true">
+      <SourceLine classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="72" end="451" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java">
+        <Message>At XMLStreamStructure21.java:[lines 72-451]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.format.xml.XMLStreamStructure21</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" signature="(Ljavax/xml/stream/XMLStreamReader;Lsdmxdl/Structure$Builder;Linternal/sdmxdl/format/xml/DsdContext;)V" name="parseAttribute" primary="true">
+      <SourceLine endBytecode="690" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="385" end="418" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.format.xml.XMLStreamStructure21.parseAttribute(XMLStreamReader, Structure$Builder, DsdContext)</Message>
+    </Method>
+    <SourceLine endBytecode="207" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="392" end="400" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java" startBytecode="154" primary="true">
+      <Message>At XMLStreamStructure21.java:[lines 392-400]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="e3a121baee408f74120ebf5756abc622" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in internal.sdmxdl.format.xml.XMLStreamStructure21.parseAttributeList(XMLStreamReader, Structure$Builder, DsdContext) where default case is missing</LongMessage>
+    <Class classname="internal.sdmxdl.format.xml.XMLStreamStructure21" primary="true">
+      <SourceLine classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="72" end="451" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java">
+        <Message>At XMLStreamStructure21.java:[lines 72-451]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.format.xml.XMLStreamStructure21</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" signature="(Ljavax/xml/stream/XMLStreamReader;Lsdmxdl/Structure$Builder;Linternal/sdmxdl/format/xml/DsdContext;)V" name="parseAttributeList" primary="true">
+      <SourceLine endBytecode="200" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="374" end="381" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.format.xml.XMLStreamStructure21.parseAttributeList(XMLStreamReader, Structure$Builder, DsdContext)</Message>
+    </Method>
+    <SourceLine endBytecode="86" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="375" end="377" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java" startBytecode="60" primary="true">
+      <Message>At XMLStreamStructure21.java:[lines 375-377]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="3e24bd786e11f583cc3c97cf4d011c64" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in internal.sdmxdl.format.xml.XMLStreamStructure21.parseAttributeRelationship(XMLStreamReader, DsdContext) where default case is missing</LongMessage>
+    <Class classname="internal.sdmxdl.format.xml.XMLStreamStructure21" primary="true">
+      <SourceLine classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="72" end="451" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java">
+        <Message>At XMLStreamStructure21.java:[lines 72-451]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.format.xml.XMLStreamStructure21</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" signature="(Ljavax/xml/stream/XMLStreamReader;Linternal/sdmxdl/format/xml/DsdContext;)Lsdmxdl/AttributeRelationship;" name="parseAttributeRelationship" primary="true">
+      <SourceLine endBytecode="324" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="422" end="439" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.format.xml.XMLStreamStructure21.parseAttributeRelationship(XMLStreamReader, DsdContext)</Message>
+    </Method>
+    <SourceLine endBytecode="129" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="425" end="430" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java" startBytecode="93" primary="true">
+      <Message>At XMLStreamStructure21.java:[lines 425-430]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="68b7e403b8d55dd8fa805991c39c3cfc" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in internal.sdmxdl.format.xml.XMLStreamStructure21.parseConcept(XMLStreamReader, List, String, String) where default case is missing</LongMessage>
+    <Class classname="internal.sdmxdl.format.xml.XMLStreamStructure21" primary="true">
+      <SourceLine classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="72" end="451" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java">
+        <Message>At XMLStreamStructure21.java:[lines 72-451]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.format.xml.XMLStreamStructure21</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" signature="(Ljavax/xml/stream/XMLStreamReader;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;)V" name="parseConcept" primary="true">
+      <SourceLine endBytecode="480" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="168" end="186" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.format.xml.XMLStreamStructure21.parseConcept(XMLStreamReader, List, String, String)</Message>
+    </Method>
+    <SourceLine endBytecode="166" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="174" end="179" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java" startBytecode="123" primary="true">
+      <Message>At XMLStreamStructure21.java:[lines 174-179]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="cab5413fb7ac339d6f26a70f5174f605" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in internal.sdmxdl.format.xml.XMLStreamStructure21.parseDataStructure(XMLStreamReader, List, DsdContext) where default case is missing</LongMessage>
+    <Class classname="internal.sdmxdl.format.xml.XMLStreamStructure21" primary="true">
+      <SourceLine classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="72" end="451" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java">
+        <Message>At XMLStreamStructure21.java:[lines 72-451]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.format.xml.XMLStreamStructure21</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" signature="(Ljavax/xml/stream/XMLStreamReader;Ljava/util/List;Linternal/sdmxdl/format/xml/DsdContext;)V" name="parseDataStructure" primary="true">
+      <SourceLine endBytecode="437" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="197" end="216" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.format.xml.XMLStreamStructure21.parseDataStructure(XMLStreamReader, List, DsdContext)</Message>
+    </Method>
+    <SourceLine endBytecode="199" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="205" end="210" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java" startBytecode="155" primary="true">
+      <Message>At XMLStreamStructure21.java:[lines 205-210]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="3789d5c659583a85a61a9814829d2ee2" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in internal.sdmxdl.format.xml.XMLStreamStructure21.parseDataStructureComponents(XMLStreamReader, Structure$Builder, DsdContext) where default case is missing</LongMessage>
+    <Class classname="internal.sdmxdl.format.xml.XMLStreamStructure21" primary="true">
+      <SourceLine classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="72" end="451" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java">
+        <Message>At XMLStreamStructure21.java:[lines 72-451]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.format.xml.XMLStreamStructure21</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" signature="(Ljavax/xml/stream/XMLStreamReader;Lsdmxdl/Structure$Builder;Linternal/sdmxdl/format/xml/DsdContext;)V" name="parseDataStructureComponents" primary="true">
+      <SourceLine endBytecode="295" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="220" end="233" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.format.xml.XMLStreamStructure21.parseDataStructureComponents(XMLStreamReader, Structure$Builder, DsdContext)</Message>
+    </Method>
+    <SourceLine endBytecode="161" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="221" end="229" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java" startBytecode="110" primary="true">
+      <Message>At XMLStreamStructure21.java:[lines 221-229]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="c11b8b55cdf46adddac136bb258693df" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in internal.sdmxdl.format.xml.XMLStreamStructure21.parseDimension(XMLStreamReader, Structure$Builder, DsdContext) where default case is missing</LongMessage>
+    <Class classname="internal.sdmxdl.format.xml.XMLStreamStructure21" primary="true">
+      <SourceLine classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="72" end="451" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java">
+        <Message>At XMLStreamStructure21.java:[lines 72-451]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.format.xml.XMLStreamStructure21</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" signature="(Ljavax/xml/stream/XMLStreamReader;Lsdmxdl/Structure$Builder;Linternal/sdmxdl/format/xml/DsdContext;)V" name="parseDimension" primary="true">
+      <SourceLine endBytecode="830" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="251" end="294" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.format.xml.XMLStreamStructure21.parseDimension(XMLStreamReader, Structure$Builder, DsdContext)</Message>
+    </Method>
+    <SourceLine endBytecode="168" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="257" end="262" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java" startBytecode="125" primary="true">
+      <Message>At XMLStreamStructure21.java:[lines 257-262]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="47b09625c4fe6661e56c050bd9d932d" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in internal.sdmxdl.format.xml.XMLStreamStructure21.parseDimensionList(XMLStreamReader, Structure$Builder, DsdContext) where default case is missing</LongMessage>
+    <Class classname="internal.sdmxdl.format.xml.XMLStreamStructure21" primary="true">
+      <SourceLine classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="72" end="451" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java">
+        <Message>At XMLStreamStructure21.java:[lines 72-451]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.format.xml.XMLStreamStructure21</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" signature="(Ljavax/xml/stream/XMLStreamReader;Lsdmxdl/Structure$Builder;Linternal/sdmxdl/format/xml/DsdContext;)V" name="parseDimensionList" primary="true">
+      <SourceLine endBytecode="251" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="237" end="247" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.format.xml.XMLStreamStructure21.parseDimensionList(XMLStreamReader, Structure$Builder, DsdContext)</Message>
+    </Method>
+    <SourceLine endBytecode="127" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="238" end="243" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java" startBytecode="85" primary="true">
+      <Message>At XMLStreamStructure21.java:[lines 238-243]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="65763b01d3ca6979065dc13e9606a923" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in internal.sdmxdl.format.xml.XMLStreamStructure21.parseRepresentation(XMLStreamReader, String) where default case is missing</LongMessage>
+    <Class classname="internal.sdmxdl.format.xml.XMLStreamStructure21" primary="true">
+      <SourceLine classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="72" end="451" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java">
+        <Message>At XMLStreamStructure21.java:[lines 72-451]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.format.xml.XMLStreamStructure21</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" signature="(Ljavax/xml/stream/XMLStreamReader;Ljava/lang/String;)Linternal/sdmxdl/format/xml/XMLStreamStructure21$Representation;" name="parseRepresentation" primary="true">
+      <SourceLine endBytecode="285" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="321" end="333" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.format.xml.XMLStreamStructure21.parseRepresentation(XMLStreamReader, String)</Message>
+    </Method>
+    <SourceLine endBytecode="127" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="324" end="329" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java" startBytecode="89" primary="true">
+      <Message>At XMLStreamStructure21.java:[lines 324-329]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="b76a5412684e1737f9c6dc83d4c7799b" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in internal.sdmxdl.format.xml.XMLStreamStructure21.parseStructures(XMLStreamReader, List) where default case is missing</LongMessage>
+    <Class classname="internal.sdmxdl.format.xml.XMLStreamStructure21" primary="true">
+      <SourceLine classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="72" end="451" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java">
+        <Message>At XMLStreamStructure21.java:[lines 72-451]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.format.xml.XMLStreamStructure21</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" signature="(Ljavax/xml/stream/XMLStreamReader;Ljava/util/List;)V" name="parseStructures" primary="true">
+      <SourceLine endBytecode="331" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="102" end="116" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.format.xml.XMLStreamStructure21.parseStructures(XMLStreamReader, List)</Message>
+    </Method>
+    <SourceLine endBytecode="170" classname="internal.sdmxdl.format.xml.XMLStreamStructure21" start="104" end="112" sourcepath="internal/sdmxdl/format/xml/XMLStreamStructure21.java" sourcefile="XMLStreamStructure21.java" startBytecode="115" primary="true">
+      <Message>At XMLStreamStructure21.java:[lines 104-112]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="535daeb546134f3b94b7317fb2a87bd1" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in sdmxdl.format.xml.DataStructureDecoder.compact20(XMLStreamReader) where default case is missing</LongMessage>
+    <Class classname="sdmxdl.format.xml.DataStructureDecoder" primary="true">
+      <SourceLine classname="sdmxdl.format.xml.DataStructureDecoder" start="36" end="349" sourcepath="sdmxdl/format/xml/DataStructureDecoder.java" sourcefile="DataStructureDecoder.java">
+        <Message>At DataStructureDecoder.java:[lines 36-349]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.format.xml.DataStructureDecoder</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.format.xml.DataStructureDecoder" signature="(Ljavax/xml/stream/XMLStreamReader;)Lsdmxdl/Structure;" name="compact20" primary="true">
+      <SourceLine endBytecode="174" classname="sdmxdl.format.xml.DataStructureDecoder" start="160" end="171" sourcepath="sdmxdl/format/xml/DataStructureDecoder.java" sourcefile="DataStructureDecoder.java" startBytecode="0" />
+      <Message>In method sdmxdl.format.xml.DataStructureDecoder.compact20(XMLStreamReader)</Message>
+    </Method>
+    <SourceLine endBytecode="69" classname="sdmxdl.format.xml.DataStructureDecoder" start="163" end="166" sourcepath="sdmxdl/format/xml/DataStructureDecoder.java" sourcefile="DataStructureDecoder.java" startBytecode="36" primary="true">
+      <Message>At DataStructureDecoder.java:[lines 163-166]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="9e83d7b17e2261a03d5b926ef323b52" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in sdmxdl.format.xml.DataStructureDecoder.compact21(XMLStreamReader) where default case is missing</LongMessage>
+    <Class classname="sdmxdl.format.xml.DataStructureDecoder" primary="true">
+      <SourceLine classname="sdmxdl.format.xml.DataStructureDecoder" start="36" end="349" sourcepath="sdmxdl/format/xml/DataStructureDecoder.java" sourcefile="DataStructureDecoder.java">
+        <Message>At DataStructureDecoder.java:[lines 36-349]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.format.xml.DataStructureDecoder</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.format.xml.DataStructureDecoder" signature="(Ljavax/xml/stream/XMLStreamReader;)Lsdmxdl/Structure;" name="compact21" primary="true">
+      <SourceLine endBytecode="188" classname="sdmxdl.format.xml.DataStructureDecoder" start="288" end="300" sourcepath="sdmxdl/format/xml/DataStructureDecoder.java" sourcefile="DataStructureDecoder.java" startBytecode="0" />
+      <Message>In method sdmxdl.format.xml.DataStructureDecoder.compact21(XMLStreamReader)</Message>
+    </Method>
+    <SourceLine endBytecode="78" classname="sdmxdl.format.xml.DataStructureDecoder" start="290" end="295" sourcepath="sdmxdl/format/xml/DataStructureDecoder.java" sourcefile="DataStructureDecoder.java" startBytecode="29" primary="true">
+      <Message>At DataStructureDecoder.java:[lines 290-295]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="34ac0114427ad125f35df224c8d3c736" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in sdmxdl.format.xml.DataStructureDecoder.generic20(XMLStreamReader) where default case is missing</LongMessage>
+    <Class classname="sdmxdl.format.xml.DataStructureDecoder" primary="true">
+      <SourceLine classname="sdmxdl.format.xml.DataStructureDecoder" start="36" end="349" sourcepath="sdmxdl/format/xml/DataStructureDecoder.java" sourcefile="DataStructureDecoder.java">
+        <Message>At DataStructureDecoder.java:[lines 36-349]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.format.xml.DataStructureDecoder</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.format.xml.DataStructureDecoder" signature="(Ljavax/xml/stream/XMLStreamReader;)Lsdmxdl/Structure;" name="generic20" primary="true">
+      <SourceLine endBytecode="162" classname="sdmxdl.format.xml.DataStructureDecoder" start="72" end="82" sourcepath="sdmxdl/format/xml/DataStructureDecoder.java" sourcefile="DataStructureDecoder.java" startBytecode="0" />
+      <Message>In method sdmxdl.format.xml.DataStructureDecoder.generic20(XMLStreamReader)</Message>
+    </Method>
+    <SourceLine endBytecode="61" classname="sdmxdl.format.xml.DataStructureDecoder" start="74" end="77" sourcepath="sdmxdl/format/xml/DataStructureDecoder.java" sourcefile="DataStructureDecoder.java" startBytecode="29" primary="true">
+      <Message>At DataStructureDecoder.java:[lines 74-77]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="990414623e4cc62331ba727e306dc96e" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in sdmxdl.format.xml.DataStructureDecoder.generic21(XMLStreamReader) where default case is missing</LongMessage>
+    <Class classname="sdmxdl.format.xml.DataStructureDecoder" primary="true">
+      <SourceLine classname="sdmxdl.format.xml.DataStructureDecoder" start="36" end="349" sourcepath="sdmxdl/format/xml/DataStructureDecoder.java" sourcefile="DataStructureDecoder.java">
+        <Message>At DataStructureDecoder.java:[lines 36-349]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.format.xml.DataStructureDecoder</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.format.xml.DataStructureDecoder" signature="(Ljavax/xml/stream/XMLStreamReader;)Lsdmxdl/Structure;" name="generic21" primary="true">
+      <SourceLine endBytecode="162" classname="sdmxdl.format.xml.DataStructureDecoder" start="201" end="211" sourcepath="sdmxdl/format/xml/DataStructureDecoder.java" sourcefile="DataStructureDecoder.java" startBytecode="0" />
+      <Message>In method sdmxdl.format.xml.DataStructureDecoder.generic21(XMLStreamReader)</Message>
+    </Method>
+    <SourceLine endBytecode="61" classname="sdmxdl.format.xml.DataStructureDecoder" start="203" end="206" sourcepath="sdmxdl/format/xml/DataStructureDecoder.java" sourcefile="DataStructureDecoder.java" startBytecode="29" primary="true">
+      <Message>At DataStructureDecoder.java:[lines 203-206]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="1e9dedbd5c2c2399fc4133c2b0180b77" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.format.xml.XmlFileSource.formatXml(FileSource, XMLStreamWriter, Charset) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.format.xml.XmlFileSource" primary="true">
+      <SourceLine classname="sdmxdl.format.xml.XmlFileSource" start="17" end="81" sourcepath="sdmxdl/format/xml/XmlFileSource.java" sourcefile="XmlFileSource.java">
+        <Message>At XmlFileSource.java:[lines 17-81]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.format.xml.XmlFileSource</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.format.xml.XmlFileSource" signature="(Lsdmxdl/file/FileSource;Ljavax/xml/stream/XMLStreamWriter;Ljava/nio/charset/Charset;)V" name="formatXml" primary="true">
+      <SourceLine endBytecode="182" classname="sdmxdl.format.xml.XmlFileSource" start="36" end="47" sourcepath="sdmxdl/format/xml/XmlFileSource.java" sourcefile="XmlFileSource.java" startBytecode="0" />
+      <Message>In method sdmxdl.format.xml.XmlFileSource.formatXml(FileSource, XMLStreamWriter, Charset)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.file.FileSource" signature="()Ljava/io/File;" name="getStructure" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.file.FileSource" start="36" end="36" sourcepath="sdmxdl/file/FileSource.java" sourcefile="FileSource.java" startBytecode="0" />
+      <Message>Called method sdmxdl.file.FileSource.getStructure()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="54" classname="sdmxdl.format.xml.XmlFileSource" start="43" end="43" sourcepath="sdmxdl/format/xml/XmlFileSource.java" sourcefile="XmlFileSource.java" startBytecode="54" primary="true">
+      <Message>Dereferenced at XmlFileSource.java:[line 43]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="51" classname="sdmxdl.format.xml.XmlFileSource" start="43" end="43" sourcepath="sdmxdl/format/xml/XmlFileSource.java" sourcefile="XmlFileSource.java" startBytecode="51">
+      <Message>Known null at XmlFileSource.java:[line 43]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="21025651c830c802e7c15c331e512c15" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in sdmxdl.format.xml.XmlWebSourcesFormat.parseXml(XMLStreamReader) where default case is missing</LongMessage>
+    <Class classname="sdmxdl.format.xml.XmlWebSourcesFormat" primary="true">
+      <SourceLine classname="sdmxdl.format.xml.XmlWebSourcesFormat" start="36" end="173" sourcepath="sdmxdl/format/xml/XmlWebSourcesFormat.java" sourcefile="XmlWebSourcesFormat.java">
+        <Message>At XmlWebSourcesFormat.java:[lines 36-173]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.format.xml.XmlWebSourcesFormat</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.format.xml.XmlWebSourcesFormat" signature="(Ljavax/xml/stream/XMLStreamReader;)Lsdmxdl/web/WebSources;" name="parseXml" primary="true">
+      <SourceLine endBytecode="973" classname="sdmxdl.format.xml.XmlWebSourcesFormat" start="67" end="118" sourcepath="sdmxdl/format/xml/XmlWebSourcesFormat.java" sourcefile="XmlWebSourcesFormat.java" startBytecode="0" />
+      <Message>In method sdmxdl.format.xml.XmlWebSourcesFormat.parseXml(XMLStreamReader)</Message>
+    </Method>
+    <SourceLine endBytecode="570" classname="sdmxdl.format.xml.XmlWebSourcesFormat" start="72" end="105" sourcepath="sdmxdl/format/xml/XmlWebSourcesFormat.java" sourcefile="XmlWebSourcesFormat.java" startBytecode="329" primary="true">
+      <Message>At XmlWebSourcesFormat.java:[lines 72-105]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_ANOTHER_INSTANCE" endBytecode="648" classname="sdmxdl.format.xml.XmlWebSourcesFormat" start="110" end="112" sourcepath="sdmxdl/format/xml/XmlWebSourcesFormat.java" sourcefile="XmlWebSourcesFormat.java" startBytecode="622">
+      <Message>Another occurrence at XmlWebSourcesFormat.java:[lines 110-112]</Message>
+    </SourceLine>
+  </BugInstance>
+</BugCollection>

@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BugCollection>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="2256956abf3de8482a7affa8e5b36e6b" cweid="754" rank="16" abbrev="DE" category="BAD_PRACTICE" priority="2" type="DE_MIGHT_IGNORE" instanceOccurrenceMax="0">
+    <ShortMessage>Method might ignore exception</ShortMessage>
+    <LongMessage>internal.sdmxdl.desktop.experiments.BrowsePanel.showDataView(List) might ignore java.lang.Exception</LongMessage>
+    <Class classname="internal.sdmxdl.desktop.experiments.BrowsePanel" primary="true">
+      <SourceLine classname="internal.sdmxdl.desktop.experiments.BrowsePanel" start="78" end="1138" sourcepath="internal/sdmxdl/desktop/experiments/BrowsePanel.java" sourcefile="BrowsePanel.java">
+        <Message>At BrowsePanel.java:[lines 78-1138]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.desktop.experiments.BrowsePanel</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.desktop.experiments.BrowsePanel" signature="(Ljava/util/List;)V" name="showDataView" primary="true">
+      <SourceLine endBytecode="1008" classname="internal.sdmxdl.desktop.experiments.BrowsePanel" start="794" end="842" sourcepath="internal/sdmxdl/desktop/experiments/BrowsePanel.java" sourcefile="BrowsePanel.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.desktop.experiments.BrowsePanel.showDataView(List)</Message>
+    </Method>
+    <Class role="CLASS_EXCEPTION" classname="java.lang.Exception">
+      <SourceLine classname="java.lang.Exception" start="55" end="124" sourcepath="java/lang/Exception.java" sourcefile="Exception.java">
+        <Message>At Exception.java:[lines 55-124]</Message>
+      </SourceLine>
+      <Message>Exception class java.lang.Exception</Message>
+    </Class>
+    <SourceLine endBytecode="122" classname="internal.sdmxdl.desktop.experiments.BrowsePanel" start="802" end="802" sourcepath="internal/sdmxdl/desktop/experiments/BrowsePanel.java" sourcefile="BrowsePanel.java" startBytecode="122" primary="true">
+      <Message>At BrowsePanel.java:[line 802]</Message>
+    </SourceLine>
+    <SourceLine endBytecode="122" classname="internal.sdmxdl.desktop.experiments.BrowsePanel" start="802" end="802" sourcepath="internal/sdmxdl/desktop/experiments/BrowsePanel.java" sourcefile="BrowsePanel.java" startBytecode="122" primary="true">
+      <Message>At BrowsePanel.java:[line 802]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="d91deacda636863b3b826c6807b95bfe" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in internal.sdmxdl.desktop.experiments.BrowsePanel.buildSourceTooltip(WebSource) due to return value of called method</LongMessage>
+    <Class classname="internal.sdmxdl.desktop.experiments.BrowsePanel" primary="true">
+      <SourceLine classname="internal.sdmxdl.desktop.experiments.BrowsePanel" start="78" end="1138" sourcepath="internal/sdmxdl/desktop/experiments/BrowsePanel.java" sourcefile="BrowsePanel.java">
+        <Message>At BrowsePanel.java:[lines 78-1138]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.desktop.experiments.BrowsePanel</Message>
+    </Class>
+    <Method isStatic="true" classname="internal.sdmxdl.desktop.experiments.BrowsePanel" signature="(Lsdmxdl/web/WebSource;)Ljava/lang/String;" name="buildSourceTooltip" primary="true">
+      <SourceLine endBytecode="312" classname="internal.sdmxdl.desktop.experiments.BrowsePanel" start="1058" end="1074" sourcepath="internal/sdmxdl/desktop/experiments/BrowsePanel.java" sourcefile="BrowsePanel.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.desktop.experiments.BrowsePanel.buildSourceTooltip(WebSource)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.web.WebSource" signature="()Ljava/net/URL;" name="getWebsite" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.web.WebSource" start="57" end="57" sourcepath="sdmxdl/web/WebSource.java" sourcefile="WebSource.java" startBytecode="0" />
+      <Message>Called method sdmxdl.web.WebSource.getWebsite()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="146" classname="internal.sdmxdl.desktop.experiments.BrowsePanel" start="1070" end="1070" sourcepath="internal/sdmxdl/desktop/experiments/BrowsePanel.java" sourcefile="BrowsePanel.java" startBytecode="146" primary="true">
+      <Message>Dereferenced at BrowsePanel.java:[line 1070]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="143" classname="internal.sdmxdl.desktop.experiments.BrowsePanel" start="1070" end="1070" sourcepath="internal/sdmxdl/desktop/experiments/BrowsePanel.java" sourcefile="BrowsePanel.java" startBytecode="143">
+      <Message>Known null at BrowsePanel.java:[line 1070]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="2e92ded8eaad1ff4053256274c52d810" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in internal.sdmxdl.desktop.experiments.BrowsePanel.showCard(String) where default case is missing</LongMessage>
+    <Class classname="internal.sdmxdl.desktop.experiments.BrowsePanel" primary="true">
+      <SourceLine classname="internal.sdmxdl.desktop.experiments.BrowsePanel" start="78" end="1138" sourcepath="internal/sdmxdl/desktop/experiments/BrowsePanel.java" sourcefile="BrowsePanel.java">
+        <Message>At BrowsePanel.java:[lines 78-1138]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.desktop.experiments.BrowsePanel</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.desktop.experiments.BrowsePanel" signature="(Ljava/lang/String;)V" name="showCard" primary="true">
+      <SourceLine endBytecode="285" classname="internal.sdmxdl.desktop.experiments.BrowsePanel" start="929" end="941" sourcepath="internal/sdmxdl/desktop/experiments/BrowsePanel.java" sourcefile="BrowsePanel.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.desktop.experiments.BrowsePanel.showCard(String)</Message>
+    </Method>
+    <SourceLine endBytecode="180" classname="internal.sdmxdl.desktop.experiments.BrowsePanel" start="930" end="938" sourcepath="internal/sdmxdl/desktop/experiments/BrowsePanel.java" sourcefile="BrowsePanel.java" startBytecode="99" primary="true">
+      <Message>At BrowsePanel.java:[lines 930-938]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="e583202f445fc20fed9bd8beb51cacac" cweid="374" rank="18" abbrev="EI2" category="MALICIOUS_CODE" priority="2" type="EI_EXPOSE_REP2" instanceOccurrenceMax="0">
+    <ShortMessage>May expose internal representation by incorporating reference to mutable object</ShortMessage>
+    <LongMessage>internal.sdmxdl.desktop.util.AbstractListTableModel.setList(ListModel) may expose internal representation by storing an externally mutable object into AbstractListTableModel.list</LongMessage>
+    <Class classname="internal.sdmxdl.desktop.util.AbstractListTableModel" primary="true">
+      <SourceLine classname="internal.sdmxdl.desktop.util.AbstractListTableModel" start="11" end="37" sourcepath="internal/sdmxdl/desktop/util/AbstractListTableModel.java" sourcefile="AbstractListTableModel.java">
+        <Message>At AbstractListTableModel.java:[lines 11-37]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.desktop.util.AbstractListTableModel</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.desktop.util.AbstractListTableModel" signature="(Ljavax/swing/ListModel;)V" name="setList" primary="true">
+      <SourceLine endBytecode="128" classname="internal.sdmxdl.desktop.util.AbstractListTableModel" start="17" end="21" sourcepath="internal/sdmxdl/desktop/util/AbstractListTableModel.java" sourcefile="AbstractListTableModel.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.desktop.util.AbstractListTableModel.setList(ListModel)</Message>
+    </Method>
+    <Field isStatic="false" classname="internal.sdmxdl.desktop.util.AbstractListTableModel" signature="Ljavax/swing/ListModel;" name="list" primary="true">
+      <SourceLine classname="internal.sdmxdl.desktop.util.AbstractListTableModel" sourcepath="internal/sdmxdl/desktop/util/AbstractListTableModel.java" sourcefile="AbstractListTableModel.java">
+        <Message>In AbstractListTableModel.java</Message>
+      </SourceLine>
+      <Message>Field internal.sdmxdl.desktop.util.AbstractListTableModel.list</Message>
+    </Field>
+    <LocalVariable role="LOCAL_VARIABLE_NAMED" pc="15" name="list" register="1">
+      <Message>Local variable named list</Message>
+    </LocalVariable>
+    <SourceLine endBytecode="15" classname="internal.sdmxdl.desktop.util.AbstractListTableModel" start="18" end="18" sourcepath="internal/sdmxdl/desktop/util/AbstractListTableModel.java" sourcefile="AbstractListTableModel.java" startBytecode="15" primary="true">
+      <Message>At AbstractListTableModel.java:[line 18]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="e25736e78668f29ce05219e301302037" cweid="374" rank="18" abbrev="EI2" category="MALICIOUS_CODE" priority="2" type="EI_EXPOSE_REP2" instanceOccurrenceMax="0">
+    <ShortMessage>May expose internal representation by incorporating reference to mutable object</ShortMessage>
+    <LongMessage>internal.sdmxdl.desktop.util.ButtonBuilder.action(Action) may expose internal representation by storing an externally mutable object into ButtonBuilder.action</LongMessage>
+    <Class classname="internal.sdmxdl.desktop.util.ButtonBuilder" primary="true">
+      <SourceLine classname="internal.sdmxdl.desktop.util.ButtonBuilder" start="9" end="42" sourcepath="internal/sdmxdl/desktop/util/ButtonBuilder.java" sourcefile="ButtonBuilder.java">
+        <Message>At ButtonBuilder.java:[lines 9-42]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.desktop.util.ButtonBuilder</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.desktop.util.ButtonBuilder" signature="(Ljavax/swing/Action;)Linternal/sdmxdl/desktop/util/ButtonBuilder;" name="action" primary="true">
+      <SourceLine endBytecode="62" classname="internal.sdmxdl.desktop.util.ButtonBuilder" start="18" end="19" sourcepath="internal/sdmxdl/desktop/util/ButtonBuilder.java" sourcefile="ButtonBuilder.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.desktop.util.ButtonBuilder.action(Action)</Message>
+    </Method>
+    <Field isStatic="false" classname="internal.sdmxdl.desktop.util.ButtonBuilder" signature="Ljavax/swing/Action;" name="action" primary="true">
+      <SourceLine classname="internal.sdmxdl.desktop.util.ButtonBuilder" sourcepath="internal/sdmxdl/desktop/util/ButtonBuilder.java" sourcefile="ButtonBuilder.java">
+        <Message>In ButtonBuilder.java</Message>
+      </SourceLine>
+      <Message>Field internal.sdmxdl.desktop.util.ButtonBuilder.action</Message>
+    </Field>
+    <LocalVariable role="LOCAL_VARIABLE_NAMED" pc="2" name="action" register="1">
+      <Message>Local variable named action</Message>
+    </LocalVariable>
+    <SourceLine endBytecode="2" classname="internal.sdmxdl.desktop.util.ButtonBuilder" start="18" end="18" sourcepath="internal/sdmxdl/desktop/util/ButtonBuilder.java" sourcefile="ButtonBuilder.java" startBytecode="2" primary="true">
+      <Message>At ButtonBuilder.java:[line 18]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="1500b67043e2730d6a1a9efd511e1e5a" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in internal.sdmxdl.desktop.util.GridChart$1.propertyChange(PropertyChangeEvent) where default case is missing</LongMessage>
+    <Class classname="internal.sdmxdl.desktop.util.GridChart$1" primary="true">
+      <SourceLine classname="internal.sdmxdl.desktop.util.GridChart$1" start="18" end="49" sourcepath="internal/sdmxdl/desktop/util/GridChart.java" sourcefile="GridChart.java">
+        <Message>At GridChart.java:[lines 18-49]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.desktop.util.GridChart$1</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.desktop.util.GridChart$1" signature="(Ljava/beans/PropertyChangeEvent;)V" name="propertyChange" primary="true">
+      <SourceLine endBytecode="365" classname="internal.sdmxdl.desktop.util.GridChart$1" start="23" end="42" sourcepath="internal/sdmxdl/desktop/util/GridChart.java" sourcefile="GridChart.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.desktop.util.GridChart$1.propertyChange(PropertyChangeEvent)</Message>
+    </Method>
+    <SourceLine endBytecode="232" classname="internal.sdmxdl.desktop.util.GridChart$1" start="27" end="38" sourcepath="internal/sdmxdl/desktop/util/GridChart.java" sourcefile="GridChart.java" startBytecode="122" primary="true">
+      <Message>At GridChart.java:[lines 27-38]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="a196a056d1998416b0de786ff4f56b0c" cweid="413" rank="14" abbrev="AT" category="MT_CORRECTNESS" priority="2" type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" instanceOccurrenceMax="0">
+    <ShortMessage>This write of this shared primitive variable may not be visible to other threads</ShortMessage>
+    <LongMessage>Shared primitive variable "iconSize" in one thread may not yield the value of the most recent write from another thread</LongMessage>
+    <Class classname="internal.sdmxdl.desktop.util.Ikons$FixedFontIcon" primary="true">
+      <SourceLine classname="internal.sdmxdl.desktop.util.Ikons$FixedFontIcon" start="30" end="158" sourcepath="internal/sdmxdl/desktop/util/Ikons.java" sourcefile="Ikons.java">
+        <Message>At Ikons.java:[lines 30-158]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.desktop.util.Ikons$FixedFontIcon</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.desktop.util.Ikons$FixedFontIcon" signature="(I)V" name="setIconSize" primary="true">
+      <SourceLine endBytecode="116" classname="internal.sdmxdl.desktop.util.Ikons$FixedFontIcon" start="104" end="111" sourcepath="internal/sdmxdl/desktop/util/Ikons.java" sourcefile="Ikons.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.desktop.util.Ikons$FixedFontIcon.setIconSize(int)</Message>
+    </Method>
+    <Field isStatic="false" classname="internal.sdmxdl.desktop.util.Ikons$FixedFontIcon" signature="I" name="iconSize" primary="true">
+      <SourceLine classname="internal.sdmxdl.desktop.util.Ikons$FixedFontIcon" sourcepath="internal/sdmxdl/desktop/util/Ikons.java" sourcefile="Ikons.java">
+        <Message>In Ikons.java</Message>
+      </SourceLine>
+      <Message>Field internal.sdmxdl.desktop.util.Ikons$FixedFontIcon.iconSize</Message>
+    </Field>
+    <SourceLine endBytecode="6" classname="internal.sdmxdl.desktop.util.Ikons$FixedFontIcon" start="105" end="105" sourcepath="internal/sdmxdl/desktop/util/Ikons.java" sourcefile="Ikons.java" startBytecode="6" primary="true">
+      <Message>At Ikons.java:[line 105]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="513d47d1e06fe1874a1f518b19bd9fad" cweid="413" rank="14" abbrev="AT" category="MT_CORRECTNESS" priority="2" type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" instanceOccurrenceMax="0">
+    <ShortMessage>This write of this shared primitive variable may not be visible to other threads</ShortMessage>
+    <LongMessage>Shared primitive variable "height" in one thread may not yield the value of the most recent write from another thread</LongMessage>
+    <Class classname="internal.sdmxdl.desktop.util.Ikons$FixedFontIcon" primary="true">
+      <SourceLine classname="internal.sdmxdl.desktop.util.Ikons$FixedFontIcon" start="30" end="158" sourcepath="internal/sdmxdl/desktop/util/Ikons.java" sourcefile="Ikons.java">
+        <Message>At Ikons.java:[lines 30-158]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.desktop.util.Ikons$FixedFontIcon</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.desktop.util.Ikons$FixedFontIcon" signature="()V" name="setProperties" primary="true">
+      <SourceLine endBytecode="154" classname="internal.sdmxdl.desktop.util.Ikons$FixedFontIcon" start="114" end="122" sourcepath="internal/sdmxdl/desktop/util/Ikons.java" sourcefile="Ikons.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.desktop.util.Ikons$FixedFontIcon.setProperties()</Message>
+    </Method>
+    <Field isStatic="false" classname="internal.sdmxdl.desktop.util.Ikons$FixedFontIcon" signature="I" name="height" primary="true">
+      <SourceLine classname="internal.sdmxdl.desktop.util.Ikons$FixedFontIcon" sourcepath="internal/sdmxdl/desktop/util/Ikons.java" sourcefile="Ikons.java">
+        <Message>In Ikons.java</Message>
+      </SourceLine>
+      <Message>Field internal.sdmxdl.desktop.util.Ikons$FixedFontIcon.height</Message>
+    </Field>
+    <SourceLine endBytecode="61" classname="internal.sdmxdl.desktop.util.Ikons$FixedFontIcon" start="119" end="119" sourcepath="internal/sdmxdl/desktop/util/Ikons.java" sourcefile="Ikons.java" startBytecode="61" primary="true">
+      <Message>At Ikons.java:[line 119]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="575b16a92a05dd83195e0e44ec7a33fa" cweid="413" rank="14" abbrev="AT" category="MT_CORRECTNESS" priority="2" type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" instanceOccurrenceMax="0">
+    <ShortMessage>This write of this shared primitive variable may not be visible to other threads</ShortMessage>
+    <LongMessage>Shared primitive variable "width" in one thread may not yield the value of the most recent write from another thread</LongMessage>
+    <Class classname="internal.sdmxdl.desktop.util.Ikons$FixedFontIcon" primary="true">
+      <SourceLine classname="internal.sdmxdl.desktop.util.Ikons$FixedFontIcon" start="30" end="158" sourcepath="internal/sdmxdl/desktop/util/Ikons.java" sourcefile="Ikons.java">
+        <Message>At Ikons.java:[lines 30-158]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.desktop.util.Ikons$FixedFontIcon</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.desktop.util.Ikons$FixedFontIcon" signature="()V" name="setProperties" primary="true">
+      <SourceLine endBytecode="154" classname="internal.sdmxdl.desktop.util.Ikons$FixedFontIcon" start="114" end="122" sourcepath="internal/sdmxdl/desktop/util/Ikons.java" sourcefile="Ikons.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.desktop.util.Ikons$FixedFontIcon.setProperties()</Message>
+    </Method>
+    <Field isStatic="false" classname="internal.sdmxdl.desktop.util.Ikons$FixedFontIcon" signature="I" name="width" primary="true">
+      <SourceLine classname="internal.sdmxdl.desktop.util.Ikons$FixedFontIcon" sourcepath="internal/sdmxdl/desktop/util/Ikons.java" sourcefile="Ikons.java">
+        <Message>In Ikons.java</Message>
+      </SourceLine>
+      <Message>Field internal.sdmxdl.desktop.util.Ikons$FixedFontIcon.width</Message>
+    </Field>
+    <SourceLine endBytecode="50" classname="internal.sdmxdl.desktop.util.Ikons$FixedFontIcon" start="118" end="118" sourcepath="internal/sdmxdl/desktop/util/Ikons.java" sourcefile="Ikons.java" startBytecode="50" primary="true">
+      <Message>At Ikons.java:[line 118]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="c1685f06668773d9917b68b594ef4fbf" cweid="374" rank="18" abbrev="EI2" category="MALICIOUS_CODE" priority="2" type="EI_EXPOSE_REP2" instanceOccurrenceMax="0">
+    <ShortMessage>May expose internal representation by incorporating reference to mutable object</ShortMessage>
+    <LongMessage>new internal.sdmxdl.desktop.util.JToolWindowBar(JSplitPane) may expose internal representation by storing an externally mutable object into JToolWindowBar.splitPane</LongMessage>
+    <Class classname="internal.sdmxdl.desktop.util.JToolWindowBar" primary="true">
+      <SourceLine classname="internal.sdmxdl.desktop.util.JToolWindowBar" start="17" end="86" sourcepath="internal/sdmxdl/desktop/util/JToolWindowBar.java" sourcefile="JToolWindowBar.java">
+        <Message>At JToolWindowBar.java:[lines 17-86]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.desktop.util.JToolWindowBar</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.desktop.util.JToolWindowBar" signature="(Ljavax/swing/JSplitPane;)V" name="&lt;init&gt;" primary="true">
+      <SourceLine endBytecode="140" classname="internal.sdmxdl.desktop.util.JToolWindowBar" start="34" end="39" sourcepath="internal/sdmxdl/desktop/util/JToolWindowBar.java" sourcefile="JToolWindowBar.java" startBytecode="0" />
+      <Message>In method new internal.sdmxdl.desktop.util.JToolWindowBar(JSplitPane)</Message>
+    </Method>
+    <Field isStatic="false" classname="internal.sdmxdl.desktop.util.JToolWindowBar" signature="Ljavax/swing/JSplitPane;" name="splitPane" primary="true">
+      <SourceLine classname="internal.sdmxdl.desktop.util.JToolWindowBar" sourcepath="internal/sdmxdl/desktop/util/JToolWindowBar.java" sourcefile="JToolWindowBar.java">
+        <Message>In JToolWindowBar.java</Message>
+      </SourceLine>
+      <Message>Field internal.sdmxdl.desktop.util.JToolWindowBar.splitPane</Message>
+    </Field>
+    <LocalVariable role="LOCAL_VARIABLE_NAMED" pc="37" name="splitPane" register="1">
+      <Message>Local variable named splitPane</Message>
+    </LocalVariable>
+    <SourceLine endBytecode="37" classname="internal.sdmxdl.desktop.util.JToolWindowBar" start="36" end="36" sourcepath="internal/sdmxdl/desktop/util/JToolWindowBar.java" sourcefile="JToolWindowBar.java" startBytecode="37" primary="true">
+      <Message>At JToolWindowBar.java:[line 36]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="f5dd82c777680a3c01993cf87b763fd1" cweid="374" rank="18" abbrev="EI" category="MALICIOUS_CODE" priority="2" type="EI_EXPOSE_REP" instanceOccurrenceMax="0">
+    <ShortMessage>May expose internal representation by returning reference to mutable object</ShortMessage>
+    <LongMessage>internal.sdmxdl.desktop.util.OnDemandMenuBuilder.build() may expose internal representation by returning OnDemandMenuBuilder.result</LongMessage>
+    <Class classname="internal.sdmxdl.desktop.util.OnDemandMenuBuilder" primary="true">
+      <SourceLine classname="internal.sdmxdl.desktop.util.OnDemandMenuBuilder" start="19" end="104" sourcepath="internal/sdmxdl/desktop/util/OnDemandMenuBuilder.java" sourcefile="OnDemandMenuBuilder.java">
+        <Message>At OnDemandMenuBuilder.java:[lines 19-104]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.desktop.util.OnDemandMenuBuilder</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.desktop.util.OnDemandMenuBuilder" signature="()Ljavax/swing/JMenu;" name="build" primary="true">
+      <SourceLine endBytecode="46" classname="internal.sdmxdl.desktop.util.OnDemandMenuBuilder" start="61" end="61" sourcepath="internal/sdmxdl/desktop/util/OnDemandMenuBuilder.java" sourcefile="OnDemandMenuBuilder.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.desktop.util.OnDemandMenuBuilder.build()</Message>
+    </Method>
+    <Field isStatic="false" classname="internal.sdmxdl.desktop.util.OnDemandMenuBuilder" signature="Ljavax/swing/JMenu;" name="result" primary="true">
+      <SourceLine classname="internal.sdmxdl.desktop.util.OnDemandMenuBuilder" sourcepath="internal/sdmxdl/desktop/util/OnDemandMenuBuilder.java" sourcefile="OnDemandMenuBuilder.java">
+        <Message>In OnDemandMenuBuilder.java</Message>
+      </SourceLine>
+      <Message>Field internal.sdmxdl.desktop.util.OnDemandMenuBuilder.result</Message>
+    </Field>
+    <SourceLine endBytecode="4" classname="internal.sdmxdl.desktop.util.OnDemandMenuBuilder" start="61" end="61" sourcepath="internal/sdmxdl/desktop/util/OnDemandMenuBuilder.java" sourcefile="OnDemandMenuBuilder.java" startBytecode="4" primary="true">
+      <Message>At OnDemandMenuBuilder.java:[line 61]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="2f4c07740d47efb29cb1c91673a51018" cweid="374" rank="18" abbrev="EI2" category="MALICIOUS_CODE" priority="2" type="EI_EXPOSE_REP2" instanceOccurrenceMax="0">
+    <ShortMessage>May expose internal representation by incorporating reference to mutable object</ShortMessage>
+    <LongMessage>sdmxdl.desktop.MainComponent.setDataSources(DefaultListModel) may expose internal representation by storing an externally mutable object into MainComponent.dataSources</LongMessage>
+    <Class classname="sdmxdl.desktop.MainComponent" primary="true">
+      <SourceLine classname="sdmxdl.desktop.MainComponent" start="68" end="895" sourcepath="sdmxdl/desktop/MainComponent.java" sourcefile="MainComponent.java">
+        <Message>At MainComponent.java:[lines 68-895]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.desktop.MainComponent</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.desktop.MainComponent" signature="(Ljavax/swing/DefaultListModel;)V" name="setDataSources" primary="true">
+      <SourceLine endBytecode="117" classname="sdmxdl.desktop.MainComponent" start="75" end="77" sourcepath="sdmxdl/desktop/MainComponent.java" sourcefile="MainComponent.java" startBytecode="0" />
+      <Message>In method sdmxdl.desktop.MainComponent.setDataSources(DefaultListModel)</Message>
+    </Method>
+    <Field isStatic="false" classname="sdmxdl.desktop.MainComponent" signature="Ljavax/swing/DefaultListModel;" name="dataSources" primary="true">
+      <SourceLine classname="sdmxdl.desktop.MainComponent" sourcepath="sdmxdl/desktop/MainComponent.java" sourcefile="MainComponent.java">
+        <Message>In MainComponent.java</Message>
+      </SourceLine>
+      <Message>Field sdmxdl.desktop.MainComponent.dataSources</Message>
+    </Field>
+    <LocalVariable role="LOCAL_VARIABLE_NAMED" pc="24" name="dataSources" register="1">
+      <Message>Local variable named dataSources</Message>
+    </LocalVariable>
+    <SourceLine endBytecode="24" classname="sdmxdl.desktop.MainComponent" start="76" end="76" sourcepath="sdmxdl/desktop/MainComponent.java" sourcefile="MainComponent.java" startBytecode="24" primary="true">
+      <Message>At MainComponent.java:[line 76]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="447ceaca993a71a996070a7d4d74119f" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="1">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.desktop.MainComponent.debug(DataSourceRef) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.desktop.MainComponent" primary="true">
+      <SourceLine classname="sdmxdl.desktop.MainComponent" start="68" end="895" sourcepath="sdmxdl/desktop/MainComponent.java" sourcefile="MainComponent.java">
+        <Message>At MainComponent.java:[lines 68-895]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.desktop.MainComponent</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.desktop.MainComponent" signature="(Lsdmxdl/desktop/DataSourceRef;)V" name="debug" primary="true">
+      <SourceLine endBytecode="142" classname="sdmxdl.desktop.MainComponent" start="723" end="728" sourcepath="sdmxdl/desktop/MainComponent.java" sourcefile="MainComponent.java" startBytecode="0" />
+      <Message>In method sdmxdl.desktop.MainComponent.debug(DataSourceRef)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="nbbrd.io.text.Property" signature="(Ljava/util/Map;)Ljava/lang/Object;" name="get">
+      <SourceLine endBytecode="122" classname="nbbrd.io.text.Property" start="59" end="60" sourcepath="nbbrd/io/text/Property.java" sourcefile="Property.java" startBytecode="0" />
+      <Message>Called method nbbrd.io.text.Property.get(Map)</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_INVOKED" endBytecode="34" classname="sdmxdl.desktop.MainComponent" start="725" end="725" sourcepath="sdmxdl/desktop/MainComponent.java" sourcefile="MainComponent.java" startBytecode="34" primary="true">
+      <Message>Method invoked at MainComponent.java:[line 725]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="28" classname="sdmxdl.desktop.MainComponent" start="725" end="725" sourcepath="sdmxdl/desktop/MainComponent.java" sourcefile="MainComponent.java" startBytecode="28">
+      <Message>Known null at MainComponent.java:[line 725]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="1" instanceHash="447ceaca993a71a996070a7d4d74119f" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="1">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.desktop.MainComponent.debug(DataSourceRef) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.desktop.MainComponent" primary="true">
+      <SourceLine classname="sdmxdl.desktop.MainComponent" start="68" end="895" sourcepath="sdmxdl/desktop/MainComponent.java" sourcefile="MainComponent.java">
+        <Message>At MainComponent.java:[lines 68-895]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.desktop.MainComponent</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.desktop.MainComponent" signature="(Lsdmxdl/desktop/DataSourceRef;)V" name="debug" primary="true">
+      <SourceLine endBytecode="142" classname="sdmxdl.desktop.MainComponent" start="723" end="728" sourcepath="sdmxdl/desktop/MainComponent.java" sourcefile="MainComponent.java" startBytecode="0" />
+      <Message>In method sdmxdl.desktop.MainComponent.debug(DataSourceRef)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="nbbrd.io.text.Property" signature="(Ljava/util/Map;)Ljava/lang/Object;" name="get">
+      <SourceLine endBytecode="122" classname="nbbrd.io.text.Property" start="59" end="60" sourcepath="nbbrd/io/text/Property.java" sourcefile="Property.java" startBytecode="0" />
+      <Message>Called method nbbrd.io.text.Property.get(Map)</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_INVOKED" endBytecode="53" classname="sdmxdl.desktop.MainComponent" start="726" end="726" sourcepath="sdmxdl/desktop/MainComponent.java" sourcefile="MainComponent.java" startBytecode="53" primary="true">
+      <Message>Method invoked at MainComponent.java:[line 726]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="47" classname="sdmxdl.desktop.MainComponent" start="726" end="726" sourcepath="sdmxdl/desktop/MainComponent.java" sourcefile="MainComponent.java" startBytecode="47">
+      <Message>Known null at MainComponent.java:[line 726]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="fa00878273bf94810b3947507697f147" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.desktop.MainComponent.openMonitor(DataSourceRef) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.desktop.MainComponent" primary="true">
+      <SourceLine classname="sdmxdl.desktop.MainComponent" start="68" end="895" sourcepath="sdmxdl/desktop/MainComponent.java" sourcefile="MainComponent.java">
+        <Message>At MainComponent.java:[lines 68-895]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.desktop.MainComponent</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.desktop.MainComponent" signature="(Lsdmxdl/desktop/DataSourceRef;)V" name="openMonitor" primary="true">
+      <SourceLine endBytecode="180" classname="sdmxdl.desktop.MainComponent" start="708" end="716" sourcepath="sdmxdl/desktop/MainComponent.java" sourcefile="MainComponent.java" startBytecode="0" />
+      <Message>In method sdmxdl.desktop.MainComponent.openMonitor(DataSourceRef)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.web.WebSource" signature="()Ljava/net/URL;" name="getMonitorWebsite" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.web.WebSource" start="61" end="61" sourcepath="sdmxdl/web/WebSource.java" sourcefile="WebSource.java" startBytecode="0" />
+      <Message>Called method sdmxdl.web.WebSource.getMonitorWebsite()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="29" classname="sdmxdl.desktop.MainComponent" start="711" end="711" sourcepath="sdmxdl/desktop/MainComponent.java" sourcefile="MainComponent.java" startBytecode="29" primary="true">
+      <Message>Dereferenced at MainComponent.java:[line 711]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="26" classname="sdmxdl.desktop.MainComponent" start="711" end="711" sourcepath="sdmxdl/desktop/MainComponent.java" sourcefile="MainComponent.java" startBytecode="26">
+      <Message>Known null at MainComponent.java:[line 711]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="add5808ed483d235f531c8ad903b84cb" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.desktop.MainComponent.openWebsite(DataSourceRef) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.desktop.MainComponent" primary="true">
+      <SourceLine classname="sdmxdl.desktop.MainComponent" start="68" end="895" sourcepath="sdmxdl/desktop/MainComponent.java" sourcefile="MainComponent.java">
+        <Message>At MainComponent.java:[lines 68-895]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.desktop.MainComponent</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.desktop.MainComponent" signature="(Lsdmxdl/desktop/DataSourceRef;)V" name="openWebsite" primary="true">
+      <SourceLine endBytecode="180" classname="sdmxdl.desktop.MainComponent" start="692" end="700" sourcepath="sdmxdl/desktop/MainComponent.java" sourcefile="MainComponent.java" startBytecode="0" />
+      <Message>In method sdmxdl.desktop.MainComponent.openWebsite(DataSourceRef)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.web.WebSource" signature="()Ljava/net/URL;" name="getWebsite" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.web.WebSource" start="57" end="57" sourcepath="sdmxdl/web/WebSource.java" sourcefile="WebSource.java" startBytecode="0" />
+      <Message>Called method sdmxdl.web.WebSource.getWebsite()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="29" classname="sdmxdl.desktop.MainComponent" start="695" end="695" sourcepath="sdmxdl/desktop/MainComponent.java" sourcefile="MainComponent.java" startBytecode="29" primary="true">
+      <Message>Dereferenced at MainComponent.java:[line 695]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="26" classname="sdmxdl.desktop.MainComponent" start="695" end="695" sourcepath="sdmxdl/desktop/MainComponent.java" sourcefile="MainComponent.java" startBytecode="26">
+      <Message>Known null at MainComponent.java:[line 695]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="5818230692190a2db6f5ffb68f1f7b6c" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.desktop.panels.DataPanel.metaToHtml(Map$Entry, Map) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.desktop.panels.DataPanel" primary="true">
+      <SourceLine classname="sdmxdl.desktop.panels.DataPanel" start="44" end="288" sourcepath="sdmxdl/desktop/panels/DataPanel.java" sourcefile="DataPanel.java">
+        <Message>At DataPanel.java:[lines 44-288]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.desktop.panels.DataPanel</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.desktop.panels.DataPanel" signature="(Ljava/util/Map$Entry;Ljava/util/Map;)Lj2html/tags/DomContent;" name="metaToHtml" primary="true">
+      <SourceLine endBytecode="315" classname="sdmxdl.desktop.panels.DataPanel" start="282" end="283" sourcepath="sdmxdl/desktop/panels/DataPanel.java" sourcefile="DataPanel.java" startBytecode="0" />
+      <Message>In method sdmxdl.desktop.panels.DataPanel.metaToHtml(Map$Entry, Map)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.Attribute" signature="()Lsdmxdl/Codelist;" name="getCodelist" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.Attribute" start="38" end="38" sourcepath="sdmxdl/Attribute.java" sourcefile="Attribute.java" startBytecode="0" />
+      <Message>Called method sdmxdl.Attribute.getCodelist()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="53" classname="sdmxdl.desktop.panels.DataPanel" start="286" end="286" sourcepath="sdmxdl/desktop/panels/DataPanel.java" sourcefile="DataPanel.java" startBytecode="53" primary="true">
+      <Message>Dereferenced at DataPanel.java:[line 286]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="50" classname="sdmxdl.desktop.panels.DataPanel" start="286" end="286" sourcepath="sdmxdl/desktop/panels/DataPanel.java" sourcefile="DataPanel.java" startBytecode="50">
+      <Message>Known null at DataPanel.java:[line 286]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="242b66fe5147333e89f00415127b33b6" cweid="374" rank="18" abbrev="EI" category="MALICIOUS_CODE" priority="2" type="EI_EXPOSE_REP" instanceOccurrenceMax="0">
+    <ShortMessage>May expose internal representation by returning reference to mutable object</ShortMessage>
+    <LongMessage>sdmxdl.desktop.panels.ExceptionPanel.getException() may expose internal representation by returning ExceptionPanel.exception</LongMessage>
+    <Class classname="sdmxdl.desktop.panels.ExceptionPanel" primary="true">
+      <SourceLine classname="sdmxdl.desktop.panels.ExceptionPanel" start="41" end="102" sourcepath="sdmxdl/desktop/panels/ExceptionPanel.java" sourcefile="ExceptionPanel.java">
+        <Message>At ExceptionPanel.java:[lines 41-102]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.desktop.panels.ExceptionPanel</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.desktop.panels.ExceptionPanel" signature="()Ljava/lang/Throwable;" name="getException" primary="true">
+      <SourceLine endBytecode="46" classname="sdmxdl.desktop.panels.ExceptionPanel" start="79" end="79" sourcepath="sdmxdl/desktop/panels/ExceptionPanel.java" sourcefile="ExceptionPanel.java" startBytecode="0" />
+      <Message>In method sdmxdl.desktop.panels.ExceptionPanel.getException()</Message>
+    </Method>
+    <Field isStatic="false" classname="sdmxdl.desktop.panels.ExceptionPanel" signature="Ljava/lang/Throwable;" name="exception" primary="true">
+      <SourceLine classname="sdmxdl.desktop.panels.ExceptionPanel" sourcepath="sdmxdl/desktop/panels/ExceptionPanel.java" sourcefile="ExceptionPanel.java">
+        <Message>In ExceptionPanel.java</Message>
+      </SourceLine>
+      <Message>Field sdmxdl.desktop.panels.ExceptionPanel.exception</Message>
+    </Field>
+    <SourceLine endBytecode="4" classname="sdmxdl.desktop.panels.ExceptionPanel" start="79" end="79" sourcepath="sdmxdl/desktop/panels/ExceptionPanel.java" sourcefile="ExceptionPanel.java" startBytecode="4" primary="true">
+      <Message>At ExceptionPanel.java:[line 79]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="78b65e435b9c7b7d73d4d9b5060c72ec" cweid="374" rank="18" abbrev="EI2" category="MALICIOUS_CODE" priority="2" type="EI_EXPOSE_REP2" instanceOccurrenceMax="0">
+    <ShortMessage>May expose internal representation by incorporating reference to mutable object</ShortMessage>
+    <LongMessage>sdmxdl.desktop.panels.ExceptionPanel.setException(Throwable) may expose internal representation by storing an externally mutable object into ExceptionPanel.exception</LongMessage>
+    <Class classname="sdmxdl.desktop.panels.ExceptionPanel" primary="true">
+      <SourceLine classname="sdmxdl.desktop.panels.ExceptionPanel" start="41" end="102" sourcepath="sdmxdl/desktop/panels/ExceptionPanel.java" sourcefile="ExceptionPanel.java">
+        <Message>At ExceptionPanel.java:[lines 41-102]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.desktop.panels.ExceptionPanel</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.desktop.panels.ExceptionPanel" signature="(Ljava/lang/Throwable;)V" name="setException" primary="true">
+      <SourceLine endBytecode="95" classname="sdmxdl.desktop.panels.ExceptionPanel" start="73" end="76" sourcepath="sdmxdl/desktop/panels/ExceptionPanel.java" sourcefile="ExceptionPanel.java" startBytecode="0" />
+      <Message>In method sdmxdl.desktop.panels.ExceptionPanel.setException(Throwable)</Message>
+    </Method>
+    <Field isStatic="false" classname="sdmxdl.desktop.panels.ExceptionPanel" signature="Ljava/lang/Throwable;" name="exception" primary="true">
+      <SourceLine classname="sdmxdl.desktop.panels.ExceptionPanel" sourcepath="sdmxdl/desktop/panels/ExceptionPanel.java" sourcefile="ExceptionPanel.java">
+        <Message>In ExceptionPanel.java</Message>
+      </SourceLine>
+      <Message>Field sdmxdl.desktop.panels.ExceptionPanel.exception</Message>
+    </Field>
+    <LocalVariable role="LOCAL_VARIABLE_NAMED" pc="7" name="exception" register="1">
+      <Message>Local variable named exception</Message>
+    </LocalVariable>
+    <SourceLine endBytecode="7" classname="sdmxdl.desktop.panels.ExceptionPanel" start="74" end="74" sourcepath="sdmxdl/desktop/panels/ExceptionPanel.java" sourcefile="ExceptionPanel.java" startBytecode="7" primary="true">
+      <Message>At ExceptionPanel.java:[line 74]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="da0082015f693b1c419c6fb64c3f2f35" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.desktop.panels.MetaPanel.lambda$asMetaTableModel$0(Map, DefaultTableModel, String, String) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.desktop.panels.MetaPanel" primary="true">
+      <SourceLine classname="sdmxdl.desktop.panels.MetaPanel" start="26" end="85" sourcepath="sdmxdl/desktop/panels/MetaPanel.java" sourcefile="MetaPanel.java">
+        <Message>At MetaPanel.java:[lines 26-85]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.desktop.panels.MetaPanel</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.desktop.panels.MetaPanel" signature="(Ljava/util/Map;Ljavax/swing/table/DefaultTableModel;Ljava/lang/String;Ljava/lang/String;)V" name="lambda$asMetaTableModel$0" primary="true">
+      <SourceLine endBytecode="402" classname="sdmxdl.desktop.panels.MetaPanel" start="74" end="84" sourcepath="sdmxdl/desktop/panels/MetaPanel.java" sourcefile="MetaPanel.java" startBytecode="0" />
+      <Message>In method sdmxdl.desktop.panels.MetaPanel.lambda$asMetaTableModel$0(Map, DefaultTableModel, String, String)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.Attribute" signature="()Lsdmxdl/Codelist;" name="getCodelist" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.Attribute" start="38" end="38" sourcepath="sdmxdl/Attribute.java" sourcefile="Attribute.java" startBytecode="0" />
+      <Message>Called method sdmxdl.Attribute.getCodelist()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="69" classname="sdmxdl.desktop.panels.MetaPanel" start="81" end="81" sourcepath="sdmxdl/desktop/panels/MetaPanel.java" sourcefile="MetaPanel.java" startBytecode="69" primary="true">
+      <Message>Dereferenced at MetaPanel.java:[line 81]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="66" classname="sdmxdl.desktop.panels.MetaPanel" start="81" end="81" sourcepath="sdmxdl/desktop/panels/MetaPanel.java" sourcefile="MetaPanel.java" startBytecode="66">
+      <Message>Known null at MetaPanel.java:[line 81]</Message>
+    </SourceLine>
+  </BugInstance>
+</BugCollection>

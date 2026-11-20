@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BugCollection>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="47a8d19f4daf4f3d2b3780c18c9ce051" cweid="374" rank="18" abbrev="EI" category="MALICIOUS_CODE" priority="2" type="EI_EXPOSE_REP" instanceOccurrenceMax="0">
+    <ShortMessage>May expose internal representation by returning reference to mutable object</ShortMessage>
+    <LongMessage>sdmxdl.provider.ri.caching.RiCaching.getFileCachingPropertyNames() may expose internal representation by returning RiCaching.PROPERTIES</LongMessage>
+    <Class classname="sdmxdl.provider.ri.caching.RiCaching" classAnnotationNames="nbbrd.service.ServiceProvider$List" primary="true">
+      <SourceLine classname="sdmxdl.provider.ri.caching.RiCaching" start="36" end="184" sourcepath="sdmxdl/provider/ri/caching/RiCaching.java" sourcefile="RiCaching.java">
+        <Message>At RiCaching.java:[lines 36-184]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.provider.ri.caching.RiCaching</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.provider.ri.caching.RiCaching" signature="()Ljava/util/Collection;" name="getFileCachingPropertyNames" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine endBytecode="45" classname="sdmxdl.provider.ri.caching.RiCaching" start="99" end="99" sourcepath="sdmxdl/provider/ri/caching/RiCaching.java" sourcefile="RiCaching.java" startBytecode="0" />
+      <Message>In method sdmxdl.provider.ri.caching.RiCaching.getFileCachingPropertyNames()</Message>
+    </Method>
+    <Field isStatic="true" classname="sdmxdl.provider.ri.caching.RiCaching" signature="Ljava/util/Collection;" name="PROPERTIES" primary="true">
+      <SourceLine classname="sdmxdl.provider.ri.caching.RiCaching" sourcepath="sdmxdl/provider/ri/caching/RiCaching.java" sourcefile="RiCaching.java">
+        <Message>In RiCaching.java</Message>
+      </SourceLine>
+      <Message>Field sdmxdl.provider.ri.caching.RiCaching.PROPERTIES</Message>
+    </Field>
+    <SourceLine endBytecode="3" classname="sdmxdl.provider.ri.caching.RiCaching" start="99" end="99" sourcepath="sdmxdl/provider/ri/caching/RiCaching.java" sourcefile="RiCaching.java" startBytecode="3" primary="true">
+      <Message>At RiCaching.java:[line 99]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="a6a68cce5373c3c39f32f60f32f668ae" cweid="374" rank="18" abbrev="EI" category="MALICIOUS_CODE" priority="2" type="EI_EXPOSE_REP" instanceOccurrenceMax="0">
+    <ShortMessage>May expose internal representation by returning reference to mutable object</ShortMessage>
+    <LongMessage>sdmxdl.provider.ri.caching.RiCaching.getWebCachingPropertyNames() may expose internal representation by returning RiCaching.PROPERTIES</LongMessage>
+    <Class classname="sdmxdl.provider.ri.caching.RiCaching" classAnnotationNames="nbbrd.service.ServiceProvider$List" primary="true">
+      <SourceLine classname="sdmxdl.provider.ri.caching.RiCaching" start="36" end="184" sourcepath="sdmxdl/provider/ri/caching/RiCaching.java" sourcefile="RiCaching.java">
+        <Message>At RiCaching.java:[lines 36-184]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.provider.ri.caching.RiCaching</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.provider.ri.caching.RiCaching" signature="()Ljava/util/Collection;" name="getWebCachingPropertyNames" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine endBytecode="45" classname="sdmxdl.provider.ri.caching.RiCaching" start="94" end="94" sourcepath="sdmxdl/provider/ri/caching/RiCaching.java" sourcefile="RiCaching.java" startBytecode="0" />
+      <Message>In method sdmxdl.provider.ri.caching.RiCaching.getWebCachingPropertyNames()</Message>
+    </Method>
+    <Field isStatic="true" classname="sdmxdl.provider.ri.caching.RiCaching" signature="Ljava/util/Collection;" name="PROPERTIES" primary="true">
+      <SourceLine classname="sdmxdl.provider.ri.caching.RiCaching" sourcepath="sdmxdl/provider/ri/caching/RiCaching.java" sourcefile="RiCaching.java">
+        <Message>In RiCaching.java</Message>
+      </SourceLine>
+      <Message>Field sdmxdl.provider.ri.caching.RiCaching.PROPERTIES</Message>
+    </Field>
+    <SourceLine endBytecode="3" classname="sdmxdl.provider.ri.caching.RiCaching" start="94" end="94" sourcepath="sdmxdl/provider/ri/caching/RiCaching.java" sourcefile="RiCaching.java" startBytecode="3" primary="true">
+      <Message>At RiCaching.java:[line 94]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="e04cb865fd85ec0a5d4a5c7120c89d06" cweid="374" rank="18" abbrev="EI" category="MALICIOUS_CODE" priority="2" type="EI_EXPOSE_REP" instanceOccurrenceMax="0">
+    <ShortMessage>May expose internal representation by returning reference to mutable object</ShortMessage>
+    <LongMessage>sdmxdl.provider.ri.drivers.RiRestClient.getSupportedFeatures() may expose internal representation by returning RiRestClient.supportedFeatures</LongMessage>
+    <Class classname="sdmxdl.provider.ri.drivers.RiRestClient" primary="true">
+      <SourceLine classname="sdmxdl.provider.ri.drivers.RiRestClient" start="47" end="183" sourcepath="sdmxdl/provider/ri/drivers/RiRestClient.java" sourcefile="RiRestClient.java">
+        <Message>At RiRestClient.java:[lines 47-183]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.provider.ri.drivers.RiRestClient</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.provider.ri.drivers.RiRestClient" signature="()Ljava/util/Set;" name="getSupportedFeatures" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine endBytecode="46" classname="sdmxdl.provider.ri.drivers.RiRestClient" start="84" end="84" sourcepath="sdmxdl/provider/ri/drivers/RiRestClient.java" sourcefile="RiRestClient.java" startBytecode="0" />
+      <Message>In method sdmxdl.provider.ri.drivers.RiRestClient.getSupportedFeatures()</Message>
+    </Method>
+    <Field isStatic="false" classname="sdmxdl.provider.ri.drivers.RiRestClient" signature="Ljava/util/Set;" name="supportedFeatures" primary="true">
+      <SourceLine classname="sdmxdl.provider.ri.drivers.RiRestClient" sourcepath="sdmxdl/provider/ri/drivers/RiRestClient.java" sourcefile="RiRestClient.java">
+        <Message>In RiRestClient.java</Message>
+      </SourceLine>
+      <Message>Field sdmxdl.provider.ri.drivers.RiRestClient.supportedFeatures</Message>
+    </Field>
+    <SourceLine endBytecode="4" classname="sdmxdl.provider.ri.drivers.RiRestClient" start="84" end="84" sourcepath="sdmxdl/provider/ri/drivers/RiRestClient.java" sourcefile="RiRestClient.java" startBytecode="4" primary="true">
+      <Message>At RiRestClient.java:[line 84]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="50dfdd0db06490ce3446f69de23c8510" cweid="374" rank="18" abbrev="EI" category="MALICIOUS_CODE" priority="2" type="EI_EXPOSE_REP" instanceOccurrenceMax="0">
+    <ShortMessage>May expose internal representation by returning reference to mutable object</ShortMessage>
+    <LongMessage>sdmxdl.provider.ri.drivers.Sdmx21RestParsers.getDataTypes() may expose internal representation by returning Sdmx21RestParsers.DEFAULT_DATA_TYPES</LongMessage>
+    <Class classname="sdmxdl.provider.ri.drivers.Sdmx21RestParsers" primary="true">
+      <SourceLine classname="sdmxdl.provider.ri.drivers.Sdmx21RestParsers" start="28" end="130" sourcepath="sdmxdl/provider/ri/drivers/Sdmx21RestParsers.java" sourcefile="Sdmx21RestParsers.java">
+        <Message>At Sdmx21RestParsers.java:[lines 28-130]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.provider.ri.drivers.Sdmx21RestParsers</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.provider.ri.drivers.Sdmx21RestParsers" signature="()Ljava/util/List;" name="getDataTypes" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine endBytecode="45" classname="sdmxdl.provider.ri.drivers.Sdmx21RestParsers" start="65" end="65" sourcepath="sdmxdl/provider/ri/drivers/Sdmx21RestParsers.java" sourcefile="Sdmx21RestParsers.java" startBytecode="0" />
+      <Message>In method sdmxdl.provider.ri.drivers.Sdmx21RestParsers.getDataTypes()</Message>
+    </Method>
+    <Field isStatic="true" classname="sdmxdl.provider.ri.drivers.Sdmx21RestParsers" signature="Ljava/util/List;" name="DEFAULT_DATA_TYPES" primary="true">
+      <SourceLine classname="sdmxdl.provider.ri.drivers.Sdmx21RestParsers" sourcepath="sdmxdl/provider/ri/drivers/Sdmx21RestParsers.java" sourcefile="Sdmx21RestParsers.java">
+        <Message>In Sdmx21RestParsers.java</Message>
+      </SourceLine>
+      <Message>Field sdmxdl.provider.ri.drivers.Sdmx21RestParsers.DEFAULT_DATA_TYPES</Message>
+    </Field>
+    <SourceLine endBytecode="3" classname="sdmxdl.provider.ri.drivers.Sdmx21RestParsers" start="65" end="65" sourcepath="sdmxdl/provider/ri/drivers/Sdmx21RestParsers.java" sourcefile="Sdmx21RestParsers.java" startBytecode="3" primary="true">
+      <Message>At Sdmx21RestParsers.java:[line 65]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="befc95f84734c31d93e60e9777ab406e" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.provider.ri.drivers.Sdmx21RestQueries.applyPeriodAndCount(Query, UriQueryBuilder) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.provider.ri.drivers.Sdmx21RestQueries" primary="true">
+      <SourceLine classname="sdmxdl.provider.ri.drivers.Sdmx21RestQueries" start="12" end="137" sourcepath="sdmxdl/provider/ri/drivers/Sdmx21RestQueries.java" sourcefile="Sdmx21RestQueries.java">
+        <Message>At Sdmx21RestQueries.java:[lines 12-137]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.provider.ri.drivers.Sdmx21RestQueries</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.provider.ri.drivers.Sdmx21RestQueries" signature="(Lsdmxdl/Query;Lnbbrd/io/http/UriQueryBuilder;)V" name="applyPeriodAndCount" primary="true">
+      <SourceLine endBytecode="190" classname="sdmxdl.provider.ri.drivers.Sdmx21RestQueries" start="70" end="82" sourcepath="sdmxdl/provider/ri/drivers/Sdmx21RestQueries.java" sourcefile="Sdmx21RestQueries.java" startBytecode="0" />
+      <Message>In method sdmxdl.provider.ri.drivers.Sdmx21RestQueries.applyPeriodAndCount(Query, UriQueryBuilder)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.Query" signature="()Ljava/time/LocalDateTime;" name="getEndPeriod" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.Query" start="35" end="35" sourcepath="sdmxdl/Query.java" sourcefile="Query.java" startBytecode="0" />
+      <Message>Called method sdmxdl.Query.getEndPeriod()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_INVOKED" endBytecode="35" classname="sdmxdl.provider.ri.drivers.Sdmx21RestQueries" start="74" end="74" sourcepath="sdmxdl/provider/ri/drivers/Sdmx21RestQueries.java" sourcefile="Sdmx21RestQueries.java" startBytecode="35" primary="true">
+      <Message>Method invoked at Sdmx21RestQueries.java:[line 74]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="32" classname="sdmxdl.provider.ri.drivers.Sdmx21RestQueries" start="74" end="74" sourcepath="sdmxdl/provider/ri/drivers/Sdmx21RestQueries.java" sourcefile="Sdmx21RestQueries.java" startBytecode="32">
+      <Message>Known null at Sdmx21RestQueries.java:[line 74]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="6ce46889f743f25e6cb115ddabfe4f42" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.provider.ri.drivers.Sdmx21RestQueries.applyPeriodAndCount(Query, UriQueryBuilder) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.provider.ri.drivers.Sdmx21RestQueries" primary="true">
+      <SourceLine classname="sdmxdl.provider.ri.drivers.Sdmx21RestQueries" start="12" end="137" sourcepath="sdmxdl/provider/ri/drivers/Sdmx21RestQueries.java" sourcefile="Sdmx21RestQueries.java">
+        <Message>At Sdmx21RestQueries.java:[lines 12-137]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.provider.ri.drivers.Sdmx21RestQueries</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.provider.ri.drivers.Sdmx21RestQueries" signature="(Lsdmxdl/Query;Lnbbrd/io/http/UriQueryBuilder;)V" name="applyPeriodAndCount" primary="true">
+      <SourceLine endBytecode="190" classname="sdmxdl.provider.ri.drivers.Sdmx21RestQueries" start="70" end="82" sourcepath="sdmxdl/provider/ri/drivers/Sdmx21RestQueries.java" sourcefile="Sdmx21RestQueries.java" startBytecode="0" />
+      <Message>In method sdmxdl.provider.ri.drivers.Sdmx21RestQueries.applyPeriodAndCount(Query, UriQueryBuilder)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.Query" signature="()Ljava/time/LocalDateTime;" name="getStartPeriod" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.Query" start="27" end="27" sourcepath="sdmxdl/Query.java" sourcefile="Query.java" startBytecode="0" />
+      <Message>Called method sdmxdl.Query.getStartPeriod()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_INVOKED" endBytecode="14" classname="sdmxdl.provider.ri.drivers.Sdmx21RestQueries" start="71" end="71" sourcepath="sdmxdl/provider/ri/drivers/Sdmx21RestQueries.java" sourcefile="Sdmx21RestQueries.java" startBytecode="14" primary="true">
+      <Message>Method invoked at Sdmx21RestQueries.java:[line 71]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="11" classname="sdmxdl.provider.ri.drivers.Sdmx21RestQueries" start="71" end="71" sourcepath="sdmxdl/provider/ri/drivers/Sdmx21RestQueries.java" sourcefile="Sdmx21RestQueries.java" startBytecode="11">
+      <Message>Known null at Sdmx21RestQueries.java:[line 71]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="cf27748349bf8e8f4394d3b90c7bb2dd" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in sdmxdl.provider.ri.drivers.Sdmx21RestQueries.applyFilter(Detail, UriQueryBuilder) where default case is missing</LongMessage>
+    <Class classname="sdmxdl.provider.ri.drivers.Sdmx21RestQueries" primary="true">
+      <SourceLine classname="sdmxdl.provider.ri.drivers.Sdmx21RestQueries" start="12" end="137" sourcepath="sdmxdl/provider/ri/drivers/Sdmx21RestQueries.java" sourcefile="Sdmx21RestQueries.java">
+        <Message>At Sdmx21RestQueries.java:[lines 12-137]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.provider.ri.drivers.Sdmx21RestQueries</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.provider.ri.drivers.Sdmx21RestQueries" signature="(Lsdmxdl/Detail;Lnbbrd/io/http/UriQueryBuilder;)V" name="applyFilter" primary="true">
+      <SourceLine endBytecode="167" classname="sdmxdl.provider.ri.drivers.Sdmx21RestQueries" start="56" end="67" sourcepath="sdmxdl/provider/ri/drivers/Sdmx21RestQueries.java" sourcefile="Sdmx21RestQueries.java" startBytecode="0" />
+      <Message>In method sdmxdl.provider.ri.drivers.Sdmx21RestQueries.applyFilter(Detail, UriQueryBuilder)</Message>
+    </Method>
+    <SourceLine endBytecode="68" classname="sdmxdl.provider.ri.drivers.Sdmx21RestQueries" start="56" end="64" sourcepath="sdmxdl/provider/ri/drivers/Sdmx21RestQueries.java" sourcefile="Sdmx21RestQueries.java" startBytecode="8" primary="true">
+      <Message>At Sdmx21RestQueries.java:[lines 56-64]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="3ac4158bbe297693b805954c0fbcc572" cweid="374" rank="18" abbrev="EI" category="MALICIOUS_CODE" priority="2" type="EI_EXPOSE_REP" instanceOccurrenceMax="0">
+    <ShortMessage>May expose internal representation by returning reference to mutable object</ShortMessage>
+    <LongMessage>sdmxdl.provider.ri.http.HttpDecorationSupport.getDecoratorProperties() may expose internal representation by returning HttpDecorationSupport.properties</LongMessage>
+    <Class classname="sdmxdl.provider.ri.http.HttpDecorationSupport" primary="true">
+      <SourceLine classname="sdmxdl.provider.ri.http.HttpDecorationSupport" start="20" end="71" sourcepath="sdmxdl/provider/ri/http/HttpDecorationSupport.java" sourcefile="HttpDecorationSupport.java">
+        <Message>At HttpDecorationSupport.java:[lines 20-71]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.provider.ri.http.HttpDecorationSupport</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.provider.ri.http.HttpDecorationSupport" signature="()Ljava/util/List;" name="getDecoratorProperties" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine endBytecode="46" classname="sdmxdl.provider.ri.http.HttpDecorationSupport" start="56" end="56" sourcepath="sdmxdl/provider/ri/http/HttpDecorationSupport.java" sourcefile="HttpDecorationSupport.java" startBytecode="0" />
+      <Message>In method sdmxdl.provider.ri.http.HttpDecorationSupport.getDecoratorProperties()</Message>
+    </Method>
+    <Field isStatic="false" classname="sdmxdl.provider.ri.http.HttpDecorationSupport" signature="Ljava/util/List;" name="properties" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine classname="sdmxdl.provider.ri.http.HttpDecorationSupport" sourcepath="sdmxdl/provider/ri/http/HttpDecorationSupport.java" sourcefile="HttpDecorationSupport.java">
+        <Message>In HttpDecorationSupport.java</Message>
+      </SourceLine>
+      <Message>Field sdmxdl.provider.ri.http.HttpDecorationSupport.properties</Message>
+    </Field>
+    <SourceLine endBytecode="4" classname="sdmxdl.provider.ri.http.HttpDecorationSupport" start="56" end="56" sourcepath="sdmxdl/provider/ri/http/HttpDecorationSupport.java" sourcefile="HttpDecorationSupport.java" startBytecode="4" primary="true">
+      <Message>At HttpDecorationSupport.java:[line 56]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="a16791f7e9be36746e2ff02f00d55787" cweid="374" rank="18" abbrev="EI" category="MALICIOUS_CODE" priority="2" type="EI_EXPOSE_REP" instanceOccurrenceMax="0">
+    <ShortMessage>May expose internal representation by returning reference to mutable object</ShortMessage>
+    <LongMessage>sdmxdl.provider.ri.http.HttpFactorySupport.getHttpClientProperties() may expose internal representation by returning HttpFactorySupport.properties</LongMessage>
+    <Class classname="sdmxdl.provider.ri.http.HttpFactorySupport" primary="true">
+      <SourceLine classname="sdmxdl.provider.ri.http.HttpFactorySupport" start="22" end="73" sourcepath="sdmxdl/provider/ri/http/HttpFactorySupport.java" sourcefile="HttpFactorySupport.java">
+        <Message>At HttpFactorySupport.java:[lines 22-73]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.provider.ri.http.HttpFactorySupport</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.provider.ri.http.HttpFactorySupport" signature="()Ljava/util/List;" name="getHttpClientProperties" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine endBytecode="46" classname="sdmxdl.provider.ri.http.HttpFactorySupport" start="58" end="58" sourcepath="sdmxdl/provider/ri/http/HttpFactorySupport.java" sourcefile="HttpFactorySupport.java" startBytecode="0" />
+      <Message>In method sdmxdl.provider.ri.http.HttpFactorySupport.getHttpClientProperties()</Message>
+    </Method>
+    <Field isStatic="false" classname="sdmxdl.provider.ri.http.HttpFactorySupport" signature="Ljava/util/List;" name="properties" primary="true">
+      <SourceLine classname="sdmxdl.provider.ri.http.HttpFactorySupport" sourcepath="sdmxdl/provider/ri/http/HttpFactorySupport.java" sourcefile="HttpFactorySupport.java">
+        <Message>In HttpFactorySupport.java</Message>
+      </SourceLine>
+      <Message>Field sdmxdl.provider.ri.http.HttpFactorySupport.properties</Message>
+    </Field>
+    <SourceLine endBytecode="4" classname="sdmxdl.provider.ri.http.HttpFactorySupport" start="58" end="58" sourcepath="sdmxdl/provider/ri/http/HttpFactorySupport.java" sourcefile="HttpFactorySupport.java" startBytecode="4" primary="true">
+      <Message>At HttpFactorySupport.java:[line 58]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="ff9d212fe9c061cd5c685893058dc520" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.provider.ri.monitors.UpptimeMonitor.getReport(WebSource, WebContext) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.provider.ri.monitors.UpptimeMonitor" classAnnotationNames="nbbrd.service.ServiceProvider" primary="true">
+      <SourceLine classname="sdmxdl.provider.ri.monitors.UpptimeMonitor" start="29" end="105" sourcepath="sdmxdl/provider/ri/monitors/UpptimeMonitor.java" sourcefile="UpptimeMonitor.java">
+        <Message>At UpptimeMonitor.java:[lines 29-105]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.provider.ri.monitors.UpptimeMonitor</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.provider.ri.monitors.UpptimeMonitor" signature="(Lsdmxdl/web/WebSource;Lsdmxdl/web/spi/WebContext;)Lsdmxdl/web/MonitorReport;" name="getReport" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine endBytecode="368" classname="sdmxdl.provider.ri.monitors.UpptimeMonitor" start="42" end="57" sourcepath="sdmxdl/provider/ri/monitors/UpptimeMonitor.java" sourcefile="UpptimeMonitor.java" startBytecode="0" />
+      <Message>In method sdmxdl.provider.ri.monitors.UpptimeMonitor.getReport(WebSource, WebContext)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.web.WebSource" signature="()Ljava/net/URI;" name="getMonitor" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.web.WebSource" start="59" end="59" sourcepath="sdmxdl/web/WebSource.java" sourcefile="WebSource.java" startBytecode="0" />
+      <Message>Called method sdmxdl.web.WebSource.getMonitor()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_INVOKED" endBytecode="43" classname="sdmxdl.provider.ri.monitors.UpptimeMonitor" start="45" end="45" sourcepath="sdmxdl/provider/ri/monitors/UpptimeMonitor.java" sourcefile="UpptimeMonitor.java" startBytecode="43" primary="true">
+      <Message>Method invoked at UpptimeMonitor.java:[line 45]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="40" classname="sdmxdl.provider.ri.monitors.UpptimeMonitor" start="45" end="45" sourcepath="sdmxdl/provider/ri/monitors/UpptimeMonitor.java" sourcefile="UpptimeMonitor.java" startBytecode="40">
+      <Message>Known null at UpptimeMonitor.java:[line 45]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="2707736172f492bb5023fcfcb247d279" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.provider.ri.monitors.UptimeRobotMonitor.getReport(WebSource, WebContext) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.provider.ri.monitors.UptimeRobotMonitor" classAnnotationNames="nbbrd.service.ServiceProvider" primary="true">
+      <SourceLine classname="sdmxdl.provider.ri.monitors.UptimeRobotMonitor" start="29" end="108" sourcepath="sdmxdl/provider/ri/monitors/UptimeRobotMonitor.java" sourcefile="UptimeRobotMonitor.java">
+        <Message>At UptimeRobotMonitor.java:[lines 29-108]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.provider.ri.monitors.UptimeRobotMonitor</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.provider.ri.monitors.UptimeRobotMonitor" signature="(Lsdmxdl/web/WebSource;Lsdmxdl/web/spi/WebContext;)Lsdmxdl/web/MonitorReport;" name="getReport" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine endBytecode="546" classname="sdmxdl.provider.ri.monitors.UptimeRobotMonitor" start="44" end="65" sourcepath="sdmxdl/provider/ri/monitors/UptimeRobotMonitor.java" sourcefile="UptimeRobotMonitor.java" startBytecode="0" />
+      <Message>In method sdmxdl.provider.ri.monitors.UptimeRobotMonitor.getReport(WebSource, WebContext)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.web.WebSource" signature="()Ljava/net/URI;" name="getMonitor" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.web.WebSource" start="59" end="59" sourcepath="sdmxdl/web/WebSource.java" sourcefile="WebSource.java" startBytecode="0" />
+      <Message>Called method sdmxdl.web.WebSource.getMonitor()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_INVOKED" endBytecode="43" classname="sdmxdl.provider.ri.monitors.UptimeRobotMonitor" start="47" end="47" sourcepath="sdmxdl/provider/ri/monitors/UptimeRobotMonitor.java" sourcefile="UptimeRobotMonitor.java" startBytecode="43" primary="true">
+      <Message>Method invoked at UptimeRobotMonitor.java:[line 47]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="40" classname="sdmxdl.provider.ri.monitors.UptimeRobotMonitor" start="47" end="47" sourcepath="sdmxdl/provider/ri/monitors/UptimeRobotMonitor.java" sourcefile="UptimeRobotMonitor.java" startBytecode="40">
+      <Message>Known null at UptimeRobotMonitor.java:[line 47]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="12fa3d82b15d0615dcf370a28ca49e81" cweid="440" rank="17" abbrev="RV" category="STYLE" priority="2" type="RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT" instanceOccurrenceMax="0">
+    <ShortMessage>Return value of method without side effect is ignored</ShortMessage>
+    <LongMessage>Return value of RiNetwork.getUrlBackend() ignored, but method has no side effect</LongMessage>
+    <Class classname="sdmxdl.provider.ri.networking.RiNetworking" classAnnotationNames="nbbrd.service.ServiceProvider" primary="true">
+      <SourceLine classname="sdmxdl.provider.ri.networking.RiNetworking" start="27" end="106" sourcepath="sdmxdl/provider/ri/networking/RiNetworking.java" sourcefile="RiNetworking.java">
+        <Message>At RiNetworking.java:[lines 27-106]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.provider.ri.networking.RiNetworking</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.provider.ri.networking.RiNetworking" signature="()V" name="warmupNetwork" primary="true">
+      <SourceLine endBytecode="104" classname="sdmxdl.provider.ri.networking.RiNetworking" start="77" end="82" sourcepath="sdmxdl/provider/ri/networking/RiNetworking.java" sourcefile="RiNetworking.java" startBytecode="0" />
+      <Message>In method sdmxdl.provider.ri.networking.RiNetworking.warmupNetwork()</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.provider.ri.networking.RiNetwork" signature="()Ljava/lang/String;" name="getUrlBackend" classAnnotationNames="lombok.NonNull">
+      <SourceLine endBytecode="46" classname="sdmxdl.provider.ri.networking.RiNetwork" start="53" end="53" sourcepath="sdmxdl/provider/ri/networking/RiNetwork.java" sourcefile="RiNetwork.java" startBytecode="0" />
+      <Message>Called method sdmxdl.provider.ri.networking.RiNetwork.getUrlBackend()</Message>
+    </Method>
+    <SourceLine endBytecode="28" classname="sdmxdl.provider.ri.networking.RiNetworking" start="81" end="81" sourcepath="sdmxdl/provider/ri/networking/RiNetworking.java" sourcefile="RiNetworking.java" startBytecode="28" primary="true">
+      <Message>At RiNetworking.java:[line 81]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="3d48fd16e0a39dce2d044ab3e9ee5135" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.provider.ri.readers.XmlDecoder.loadStructure(FileSource, Languages, MediaType) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.provider.ri.readers.XmlDecoder" primary="true">
+      <SourceLine classname="sdmxdl.provider.ri.readers.XmlDecoder" start="37" end="101" sourcepath="sdmxdl/provider/ri/readers/XmlDecoder.java" sourcefile="XmlDecoder.java">
+        <Message>At XmlDecoder.java:[lines 37-101]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.provider.ri.readers.XmlDecoder</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.provider.ri.readers.XmlDecoder" signature="(Lsdmxdl/file/FileSource;Lsdmxdl/Languages;Lnbbrd/io/net/MediaType;)Lsdmxdl/Structure;" name="loadStructure" primary="true">
+      <SourceLine endBytecode="126" classname="sdmxdl.provider.ri.readers.XmlDecoder" start="58" end="58" sourcepath="sdmxdl/provider/ri/readers/XmlDecoder.java" sourcefile="XmlDecoder.java" startBytecode="0" />
+      <Message>In method sdmxdl.provider.ri.readers.XmlDecoder.loadStructure(FileSource, Languages, MediaType)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.file.FileSource" signature="()Ljava/io/File;" name="getStructure" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.file.FileSource" start="36" end="36" sourcepath="sdmxdl/file/FileSource.java" sourcefile="FileSource.java" startBytecode="0" />
+      <Message>Called method sdmxdl.file.FileSource.getStructure()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_INVOKED" endBytecode="17" classname="sdmxdl.provider.ri.readers.XmlDecoder" start="59" end="59" sourcepath="sdmxdl/provider/ri/readers/XmlDecoder.java" sourcefile="XmlDecoder.java" startBytecode="17" primary="true">
+      <Message>Method invoked at XmlDecoder.java:[line 59]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="14" classname="sdmxdl.provider.ri.readers.XmlDecoder" start="59" end="59" sourcepath="sdmxdl/provider/ri/readers/XmlDecoder.java" sourcefile="XmlDecoder.java" startBytecode="14">
+      <Message>Known null at XmlDecoder.java:[line 59]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="b74c37f2601404c70a182e3a865db0e6" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="1">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.provider.ri.readers.XmlFileClient.testClient() due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.provider.ri.readers.XmlFileClient" primary="true">
+      <SourceLine classname="sdmxdl.provider.ri.readers.XmlFileClient" start="48" end="109" sourcepath="sdmxdl/provider/ri/readers/XmlFileClient.java" sourcefile="XmlFileClient.java">
+        <Message>At XmlFileClient.java:[lines 48-109]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.provider.ri.readers.XmlFileClient</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.provider.ri.readers.XmlFileClient" signature="()Ljava/util/Optional;" name="testClient" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine endBytecode="158" classname="sdmxdl.provider.ri.readers.XmlFileClient" start="73" end="79" sourcepath="sdmxdl/provider/ri/readers/XmlFileClient.java" sourcefile="XmlFileClient.java" startBytecode="0" />
+      <Message>In method sdmxdl.provider.ri.readers.XmlFileClient.testClient()</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.file.FileSource" signature="()Ljava/io/File;" name="getStructure" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.file.FileSource" start="36" end="36" sourcepath="sdmxdl/file/FileSource.java" sourcefile="FileSource.java" startBytecode="0" />
+      <Message>Called method sdmxdl.file.FileSource.getStructure()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="48" classname="sdmxdl.provider.ri.readers.XmlFileClient" start="76" end="76" sourcepath="sdmxdl/provider/ri/readers/XmlFileClient.java" sourcefile="XmlFileClient.java" startBytecode="48" primary="true">
+      <Message>Dereferenced at XmlFileClient.java:[line 76]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="45" classname="sdmxdl.provider.ri.readers.XmlFileClient" start="76" end="76" sourcepath="sdmxdl/provider/ri/readers/XmlFileClient.java" sourcefile="XmlFileClient.java" startBytecode="45">
+      <Message>Known null at XmlFileClient.java:[line 76]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="1" instanceHash="b74c37f2601404c70a182e3a865db0e6" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="1">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.provider.ri.readers.XmlFileClient.testClient() due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.provider.ri.readers.XmlFileClient" primary="true">
+      <SourceLine classname="sdmxdl.provider.ri.readers.XmlFileClient" start="48" end="109" sourcepath="sdmxdl/provider/ri/readers/XmlFileClient.java" sourcefile="XmlFileClient.java">
+        <Message>At XmlFileClient.java:[lines 48-109]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.provider.ri.readers.XmlFileClient</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.provider.ri.readers.XmlFileClient" signature="()Ljava/util/Optional;" name="testClient" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine endBytecode="158" classname="sdmxdl.provider.ri.readers.XmlFileClient" start="73" end="79" sourcepath="sdmxdl/provider/ri/readers/XmlFileClient.java" sourcefile="XmlFileClient.java" startBytecode="0" />
+      <Message>In method sdmxdl.provider.ri.readers.XmlFileClient.testClient()</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.file.FileSource" signature="()Ljava/io/File;" name="getStructure" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.file.FileSource" start="36" end="36" sourcepath="sdmxdl/file/FileSource.java" sourcefile="FileSource.java" startBytecode="0" />
+      <Message>Called method sdmxdl.file.FileSource.getStructure()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="65" classname="sdmxdl.provider.ri.readers.XmlFileClient" start="77" end="77" sourcepath="sdmxdl/provider/ri/readers/XmlFileClient.java" sourcefile="XmlFileClient.java" startBytecode="65" primary="true">
+      <Message>Dereferenced at XmlFileClient.java:[line 77]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="62" classname="sdmxdl.provider.ri.readers.XmlFileClient" start="77" end="77" sourcepath="sdmxdl/provider/ri/readers/XmlFileClient.java" sourcefile="XmlFileClient.java" startBytecode="62">
+      <Message>Known null at XmlFileClient.java:[line 77]</Message>
+    </SourceLine>
+    <Property name="edu.umd.cs.findbugs.detect.DoomedCodeWarningProperty.DOOMED_CODE" value="true" />
+  </BugInstance>
+</BugCollection>

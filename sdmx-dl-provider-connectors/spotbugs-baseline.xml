@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BugCollection>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="788f26db69d7cd4f14a91cbb5be08e00" rank="10" abbrev="LG" category="EXPERIMENTAL" priority="1" type="LG_LOST_LOGGER_DUE_TO_WEAK_REFERENCE" instanceOccurrenceMax="0">
+    <ShortMessage>Potential lost logger changes due to weak reference in OpenJDK</ShortMessage>
+    <LongMessage>Changes to logger could be lost in sdmxdl.provider.connectors.drivers.ConnectorsConfigFix.addVoidHandlerBeforeInit()</LongMessage>
+    <Class classname="sdmxdl.provider.connectors.drivers.ConnectorsConfigFix" primary="true">
+      <SourceLine classname="sdmxdl.provider.connectors.drivers.ConnectorsConfigFix" start="33" end="75" sourcepath="sdmxdl/provider/connectors/drivers/ConnectorsConfigFix.java" sourcefile="ConnectorsConfigFix.java">
+        <Message>At ConnectorsConfigFix.java:[lines 33-75]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.provider.connectors.drivers.ConnectorsConfigFix</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.provider.connectors.drivers.ConnectorsConfigFix" signature="()Ljava/util/logging/Handler;" name="addVoidHandlerBeforeInit" primary="true">
+      <SourceLine endBytecode="94" classname="sdmxdl.provider.connectors.drivers.ConnectorsConfigFix" start="50" end="54" sourcepath="sdmxdl/provider/connectors/drivers/ConnectorsConfigFix.java" sourcefile="ConnectorsConfigFix.java" startBytecode="0" />
+      <Message>In method sdmxdl.provider.connectors.drivers.ConnectorsConfigFix.addVoidHandlerBeforeInit()</Message>
+    </Method>
+    <LocalVariable role="LOCAL_VARIABLE_NAMED" pc="17" name="logger" register="1">
+      <Message>Local variable named logger</Message>
+    </LocalVariable>
+    <SourceLine endBytecode="17" classname="sdmxdl.provider.connectors.drivers.ConnectorsConfigFix" start="52" end="52" sourcepath="sdmxdl/provider/connectors/drivers/ConnectorsConfigFix.java" sourcefile="ConnectorsConfigFix.java" startBytecode="17" primary="true">
+      <Message>At ConnectorsConfigFix.java:[line 52]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_ANOTHER_INSTANCE" endBytecode="22" classname="sdmxdl.provider.connectors.drivers.ConnectorsConfigFix" start="53" end="53" sourcepath="sdmxdl/provider/connectors/drivers/ConnectorsConfigFix.java" sourcefile="ConnectorsConfigFix.java" startBytecode="22">
+      <Message>Another occurrence at ConnectorsConfigFix.java:[line 53]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="87b710ed6b30f0ac130bfe554db896b8" rank="10" abbrev="LG" category="EXPERIMENTAL" priority="1" type="LG_LOST_LOGGER_DUE_TO_WEAK_REFERENCE" instanceOccurrenceMax="0">
+    <ShortMessage>Potential lost logger changes due to weak reference in OpenJDK</ShortMessage>
+    <LongMessage>Changes to logger could be lost in sdmxdl.provider.connectors.drivers.ConnectorsConfigFix.removeVoidHandlerAfterInit(Handler)</LongMessage>
+    <Class classname="sdmxdl.provider.connectors.drivers.ConnectorsConfigFix" primary="true">
+      <SourceLine classname="sdmxdl.provider.connectors.drivers.ConnectorsConfigFix" start="33" end="75" sourcepath="sdmxdl/provider/connectors/drivers/ConnectorsConfigFix.java" sourcefile="ConnectorsConfigFix.java">
+        <Message>At ConnectorsConfigFix.java:[lines 33-75]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.provider.connectors.drivers.ConnectorsConfigFix</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.provider.connectors.drivers.ConnectorsConfigFix" signature="(Ljava/util/logging/Handler;)V" name="removeVoidHandlerAfterInit" primary="true">
+      <SourceLine endBytecode="80" classname="sdmxdl.provider.connectors.drivers.ConnectorsConfigFix" start="58" end="61" sourcepath="sdmxdl/provider/connectors/drivers/ConnectorsConfigFix.java" sourcefile="ConnectorsConfigFix.java" startBytecode="0" />
+      <Message>In method sdmxdl.provider.connectors.drivers.ConnectorsConfigFix.removeVoidHandlerAfterInit(Handler)</Message>
+    </Method>
+    <LocalVariable role="LOCAL_VARIABLE_NAMED" pc="13" name="logger" register="1">
+      <Message>Local variable named logger</Message>
+    </LocalVariable>
+    <SourceLine endBytecode="13" classname="sdmxdl.provider.connectors.drivers.ConnectorsConfigFix" start="60" end="60" sourcepath="sdmxdl/provider/connectors/drivers/ConnectorsConfigFix.java" sourcefile="ConnectorsConfigFix.java" startBytecode="13" primary="true">
+      <Message>At ConnectorsConfigFix.java:[line 60]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="961e5223a1ccec09ad29f1a72b743736" rank="15" abbrev="UC" category="STYLE" priority="1" type="UC_USELESS_VOID_METHOD" instanceOccurrenceMax="0">
+    <ShortMessage>Useless non-empty void method</ShortMessage>
+    <LongMessage>Method sdmxdl.provider.connectors.drivers.InseeDriver$InseeClient.fixIds(DataFlowStructure) seems to be useless</LongMessage>
+    <Class classname="sdmxdl.provider.connectors.drivers.InseeDriver$InseeClient" primary="true">
+      <SourceLine classname="sdmxdl.provider.connectors.drivers.InseeDriver$InseeClient" start="76" end="131" sourcepath="sdmxdl/provider/connectors/drivers/InseeDriver.java" sourcefile="InseeDriver.java">
+        <Message>At InseeDriver.java:[lines 76-131]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.provider.connectors.drivers.InseeDriver$InseeClient</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.provider.connectors.drivers.InseeDriver$InseeClient" signature="(Lit/bancaditalia/oss/sdmx/api/DataFlowStructure;)V" name="fixIds" primary="true">
+      <SourceLine endBytecode="136" classname="sdmxdl.provider.connectors.drivers.InseeDriver$InseeClient" start="97" end="102" sourcepath="sdmxdl/provider/connectors/drivers/InseeDriver.java" sourcefile="InseeDriver.java" startBytecode="0" />
+      <Message>In method sdmxdl.provider.connectors.drivers.InseeDriver$InseeClient.fixIds(DataFlowStructure)</Message>
+    </Method>
+    <SourceLine endBytecode="44" classname="sdmxdl.provider.connectors.drivers.InseeDriver$InseeClient" start="102" end="102" sourcepath="sdmxdl/provider/connectors/drivers/InseeDriver.java" sourcefile="InseeDriver.java" startBytecode="44" primary="true">
+      <Message>At InseeDriver.java:[line 102]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="7ed8be3b3ffa90e69d5fc64f4d438991" rank="17" abbrev="UC" category="STYLE" priority="2" type="UC_USELESS_VOID_METHOD" instanceOccurrenceMax="0">
+    <ShortMessage>Useless non-empty void method</ShortMessage>
+    <LongMessage>Method sdmxdl.provider.connectors.drivers.InseeDriver$InseeClient.fixMissingCodes(DataFlowStructure) seems to be useless</LongMessage>
+    <Class classname="sdmxdl.provider.connectors.drivers.InseeDriver$InseeClient" primary="true">
+      <SourceLine classname="sdmxdl.provider.connectors.drivers.InseeDriver$InseeClient" start="76" end="131" sourcepath="sdmxdl/provider/connectors/drivers/InseeDriver.java" sourcefile="InseeDriver.java">
+        <Message>At InseeDriver.java:[lines 76-131]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.provider.connectors.drivers.InseeDriver$InseeClient</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.provider.connectors.drivers.InseeDriver$InseeClient" signature="(Lit/bancaditalia/oss/sdmx/api/DataFlowStructure;)V" name="fixMissingCodes" primary="true">
+      <SourceLine endBytecode="129" classname="sdmxdl.provider.connectors.drivers.InseeDriver$InseeClient" start="113" end="119" sourcepath="sdmxdl/provider/connectors/drivers/InseeDriver.java" sourcefile="InseeDriver.java" startBytecode="0" />
+      <Message>In method sdmxdl.provider.connectors.drivers.InseeDriver$InseeClient.fixMissingCodes(DataFlowStructure)</Message>
+    </Method>
+    <SourceLine endBytecode="38" classname="sdmxdl.provider.connectors.drivers.InseeDriver$InseeClient" start="119" end="119" sourcepath="sdmxdl/provider/connectors/drivers/InseeDriver.java" sourcefile="InseeDriver.java" startBytecode="38" primary="true">
+      <Message>At InseeDriver.java:[line 119]</Message>
+    </SourceLine>
+  </BugInstance>
+</BugCollection>

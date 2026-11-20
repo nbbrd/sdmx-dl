@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BugCollection>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="d93ec5b63732262b9cf602cca7e30558" cweid="374" rank="18" abbrev="EI" category="MALICIOUS_CODE" priority="2" type="EI_EXPOSE_REP" instanceOccurrenceMax="0">
+    <ShortMessage>May expose internal representation by returning reference to mutable object</ShortMessage>
+    <LongMessage>sdmxdl.format.PersistenceSupport.getFormatSupportedTypes() may expose internal representation by returning PersistenceSupport.types</LongMessage>
+    <Class classname="sdmxdl.format.PersistenceSupport" primary="true">
+      <SourceLine classname="sdmxdl.format.PersistenceSupport" start="14" end="55" sourcepath="sdmxdl/format/PersistenceSupport.java" sourcefile="PersistenceSupport.java">
+        <Message>At PersistenceSupport.java:[lines 14-55]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.format.PersistenceSupport</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.format.PersistenceSupport" signature="()Ljava/util/Set;" name="getFormatSupportedTypes" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine endBytecode="46" classname="sdmxdl.format.PersistenceSupport" start="45" end="45" sourcepath="sdmxdl/format/PersistenceSupport.java" sourcefile="PersistenceSupport.java" startBytecode="0" />
+      <Message>In method sdmxdl.format.PersistenceSupport.getFormatSupportedTypes()</Message>
+    </Method>
+    <Field isStatic="false" classname="sdmxdl.format.PersistenceSupport" signature="Ljava/util/Set;" name="types" primary="true">
+      <SourceLine classname="sdmxdl.format.PersistenceSupport" sourcepath="sdmxdl/format/PersistenceSupport.java" sourcefile="PersistenceSupport.java">
+        <Message>In PersistenceSupport.java</Message>
+      </SourceLine>
+      <Message>Field sdmxdl.format.PersistenceSupport.types</Message>
+    </Field>
+    <SourceLine endBytecode="4" classname="sdmxdl.format.PersistenceSupport" start="45" end="45" sourcepath="sdmxdl/format/PersistenceSupport.java" sourcefile="PersistenceSupport.java" startBytecode="4" primary="true">
+      <Message>At PersistenceSupport.java:[line 45]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="8a6c96db2e08b323abe394c451c6c8f1" cweid="374" rank="18" abbrev="EI" category="MALICIOUS_CODE" priority="2" type="EI_EXPOSE_REP" instanceOccurrenceMax="0">
+    <ShortMessage>May expose internal representation by returning reference to mutable object</ShortMessage>
+    <LongMessage>sdmxdl.format.PersistenceSupport.getPersistencePropertyNames() may expose internal representation by returning PersistenceSupport.properties</LongMessage>
+    <Class classname="sdmxdl.format.PersistenceSupport" primary="true">
+      <SourceLine classname="sdmxdl.format.PersistenceSupport" start="14" end="55" sourcepath="sdmxdl/format/PersistenceSupport.java" sourcefile="PersistenceSupport.java">
+        <Message>At PersistenceSupport.java:[lines 14-55]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.format.PersistenceSupport</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.format.PersistenceSupport" signature="()Ljava/util/Collection;" name="getPersistencePropertyNames" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine endBytecode="46" classname="sdmxdl.format.PersistenceSupport" start="55" end="55" sourcepath="sdmxdl/format/PersistenceSupport.java" sourcefile="PersistenceSupport.java" startBytecode="0" />
+      <Message>In method sdmxdl.format.PersistenceSupport.getPersistencePropertyNames()</Message>
+    </Method>
+    <Field isStatic="false" classname="sdmxdl.format.PersistenceSupport" signature="Ljava/util/Collection;" name="properties" primary="true">
+      <SourceLine classname="sdmxdl.format.PersistenceSupport" sourcepath="sdmxdl/format/PersistenceSupport.java" sourcefile="PersistenceSupport.java">
+        <Message>In PersistenceSupport.java</Message>
+      </SourceLine>
+      <Message>Field sdmxdl.format.PersistenceSupport.properties</Message>
+    </Field>
+    <SourceLine endBytecode="4" classname="sdmxdl.format.PersistenceSupport" start="55" end="55" sourcepath="sdmxdl/format/PersistenceSupport.java" sourcefile="PersistenceSupport.java" startBytecode="4" primary="true">
+      <Message>At PersistenceSupport.java:[line 55]</Message>
+    </SourceLine>
+  </BugInstance>
+</BugCollection>

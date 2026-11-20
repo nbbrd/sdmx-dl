@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BugCollection>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="5700bb5a55b1d03d56d9f0076c20ca0b" cweid="476" rank="18" abbrev="RCN" category="STYLE" priority="2" type="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Redundant nullcheck of value known to be non-null</ShortMessage>
+    <LongMessage>Redundant nullcheck of name, which is known to be non-null in internal.sdmxdl.web.HybridSearch.extractComponentFields(Component)</LongMessage>
+    <Class classname="internal.sdmxdl.web.HybridSearch" primary="true">
+      <SourceLine classname="internal.sdmxdl.web.HybridSearch" start="32" end="192" sourcepath="internal/sdmxdl/web/HybridSearch.java" sourcefile="HybridSearch.java">
+        <Message>At HybridSearch.java:[lines 32-192]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.web.HybridSearch</Message>
+    </Class>
+    <Method isStatic="true" classname="internal.sdmxdl.web.HybridSearch" signature="(Lsdmxdl/Component;)[Ljava/lang/String;" name="extractComponentFields" primary="true">
+      <SourceLine endBytecode="197" classname="internal.sdmxdl.web.HybridSearch" start="175" end="180" sourcepath="internal/sdmxdl/web/HybridSearch.java" sourcefile="HybridSearch.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.web.HybridSearch.extractComponentFields(Component)</Message>
+    </Method>
+    <LocalVariable role="LOCAL_VARIABLE_VALUE_OF" pc="35" name="name" register="2">
+      <Message>Value loaded from name</Message>
+    </LocalVariable>
+    <Method isStatic="false" role="METHOD_RETURN_VALUE_OF" classname="sdmxdl.Component" signature="()Ljava/lang/String;" name="getName">
+      <SourceLine classname="sdmxdl.Component" sourcepath="sdmxdl/Component.java" sourcefile="Component.java" />
+      <Message>Return value of sdmxdl.Component.getName() of type String</Message>
+    </Method>
+    <SourceLine role="SOURCE_REDUNDANT_NULL_CHECK" endBytecode="36" classname="internal.sdmxdl.web.HybridSearch" start="180" end="180" sourcepath="internal/sdmxdl/web/HybridSearch.java" sourcefile="HybridSearch.java" startBytecode="36" primary="true">
+      <Message>Redundant null check at HybridSearch.java:[line 180]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="ee0d95839f04272ff76a7cba2309061b" cweid="440" rank="17" abbrev="RV" category="STYLE" priority="2" type="RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT" instanceOccurrenceMax="0">
+    <ShortMessage>Return value of method without side effect is ignored</ShortMessage>
+    <LongMessage>Return value of sdmxdl.web.spi.SSLFactory.getHostnameVerifier() ignored, but method has no side effect</LongMessage>
+    <Class classname="internal.sdmxdl.web.spi.DefaultNetworking" primary="true">
+      <SourceLine classname="internal.sdmxdl.web.spi.DefaultNetworking" start="14" end="52" sourcepath="internal/sdmxdl/web/spi/DefaultNetworking.java" sourcefile="DefaultNetworking.java">
+        <Message>At DefaultNetworking.java:[lines 14-52]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.web.spi.DefaultNetworking</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.web.spi.DefaultNetworking" signature="()V" name="warmupNetwork" primary="true">
+      <SourceLine endBytecode="114" classname="internal.sdmxdl.web.spi.DefaultNetworking" start="40" end="45" sourcepath="internal/sdmxdl/web/spi/DefaultNetworking.java" sourcefile="DefaultNetworking.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.web.spi.DefaultNetworking.warmupNetwork()</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.web.spi.SSLFactory" signature="()Ljavax/net/ssl/HostnameVerifier;" name="getHostnameVerifier" classAnnotationNames="lombok.NonNull">
+      <SourceLine classname="sdmxdl.web.spi.SSLFactory" sourcepath="sdmxdl/web/spi/SSLFactory.java" sourcefile="SSLFactory.java" />
+      <Message>Called method sdmxdl.web.spi.SSLFactory.getHostnameVerifier()</Message>
+    </Method>
+    <SourceLine endBytecode="22" classname="internal.sdmxdl.web.spi.DefaultNetworking" start="42" end="42" sourcepath="internal/sdmxdl/web/spi/DefaultNetworking.java" sourcefile="DefaultNetworking.java" startBytecode="22" primary="true">
+      <Message>At DefaultNetworking.java:[line 42]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="dd103699e00212493e197bc151cd0e57" cweid="476" rank="18" abbrev="RCN" category="STYLE" priority="2" type="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Redundant nullcheck of value known to be non-null</ShortMessage>
+    <LongMessage>Redundant nullcheck of result, which is known to be non-null in internal.sdmxdl.web.spi.FailsafeDriver.getDefaultSources()</LongMessage>
+    <Class classname="internal.sdmxdl.web.spi.FailsafeDriver" primary="true">
+      <SourceLine classname="internal.sdmxdl.web.spi.FailsafeDriver" start="36" end="170" sourcepath="internal/sdmxdl/web/spi/FailsafeDriver.java" sourcefile="FailsafeDriver.java">
+        <Message>At FailsafeDriver.java:[lines 36-170]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.web.spi.FailsafeDriver</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.web.spi.FailsafeDriver" signature="()Ljava/util/Collection;" name="getDefaultSources" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine endBytecode="199" classname="internal.sdmxdl.web.spi.FailsafeDriver" start="117" end="128" sourcepath="internal/sdmxdl/web/spi/FailsafeDriver.java" sourcefile="FailsafeDriver.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.web.spi.FailsafeDriver.getDefaultSources()</Message>
+    </Method>
+    <LocalVariable role="LOCAL_VARIABLE_VALUE_OF" pc="25" name="result" register="1">
+      <Message>Value loaded from result</Message>
+    </LocalVariable>
+    <Method isStatic="false" role="METHOD_RETURN_VALUE_OF" classname="sdmxdl.web.spi.Driver" signature="()Ljava/util/Collection;" name="getDefaultSources" classAnnotationNames="lombok.NonNull">
+      <SourceLine classname="sdmxdl.web.spi.Driver" sourcepath="sdmxdl/web/spi/Driver.java" sourcefile="Driver.java" />
+      <Message>Return value of sdmxdl.web.spi.Driver.getDefaultSources() of type java.util.Collection</Message>
+    </Method>
+    <SourceLine role="SOURCE_REDUNDANT_NULL_CHECK" endBytecode="26" classname="internal.sdmxdl.web.spi.FailsafeDriver" start="123" end="123" sourcepath="internal/sdmxdl/web/spi/FailsafeDriver.java" sourcefile="FailsafeDriver.java" startBytecode="26" primary="true">
+      <Message>Redundant null check at FailsafeDriver.java:[line 123]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="6c53160048ced7a1f2da4cb5d824f291" cweid="476" rank="18" abbrev="RCN" category="STYLE" priority="2" type="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Redundant nullcheck of value known to be non-null</ShortMessage>
+    <LongMessage>Redundant nullcheck of result, which is known to be non-null in internal.sdmxdl.web.spi.FailsafeDriver.getDriverId()</LongMessage>
+    <Class classname="internal.sdmxdl.web.spi.FailsafeDriver" primary="true">
+      <SourceLine classname="internal.sdmxdl.web.spi.FailsafeDriver" start="36" end="170" sourcepath="internal/sdmxdl/web/spi/FailsafeDriver.java" sourcefile="FailsafeDriver.java">
+        <Message>At FailsafeDriver.java:[lines 36-170]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.web.spi.FailsafeDriver</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.web.spi.FailsafeDriver" signature="()Ljava/lang/String;" name="getDriverId" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine endBytecode="189" classname="internal.sdmxdl.web.spi.FailsafeDriver" start="59" end="70" sourcepath="internal/sdmxdl/web/spi/FailsafeDriver.java" sourcefile="FailsafeDriver.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.web.spi.FailsafeDriver.getDriverId()</Message>
+    </Method>
+    <LocalVariable role="LOCAL_VARIABLE_VALUE_OF" pc="34" name="result" register="1">
+      <Message>Value loaded from result</Message>
+    </LocalVariable>
+    <Method isStatic="false" role="METHOD_RETURN_VALUE_OF" classname="sdmxdl.web.spi.Driver" signature="()Ljava/lang/String;" name="getDriverId" classAnnotationNames="nbbrd.service.ServiceId,lombok.NonNull">
+      <SourceLine classname="sdmxdl.web.spi.Driver" sourcepath="sdmxdl/web/spi/Driver.java" sourcefile="Driver.java" />
+      <Message>Return value of sdmxdl.web.spi.Driver.getDriverId() of type String</Message>
+    </Method>
+    <SourceLine role="SOURCE_REDUNDANT_NULL_CHECK" endBytecode="35" classname="internal.sdmxdl.web.spi.FailsafeDriver" start="65" end="65" sourcepath="internal/sdmxdl/web/spi/FailsafeDriver.java" sourcefile="FailsafeDriver.java" startBytecode="35" primary="true">
+      <Message>Redundant null check at FailsafeDriver.java:[line 65]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="abb1db3b64a33a2fa225044010f28fff" cweid="476" rank="18" abbrev="RCN" category="STYLE" priority="2" type="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Redundant nullcheck of value known to be non-null</ShortMessage>
+    <LongMessage>Redundant nullcheck of result, which is known to be non-null in internal.sdmxdl.web.spi.FailsafeDriver.getDriverPropertyNames()</LongMessage>
+    <Class classname="internal.sdmxdl.web.spi.FailsafeDriver" primary="true">
+      <SourceLine classname="internal.sdmxdl.web.spi.FailsafeDriver" start="36" end="170" sourcepath="internal/sdmxdl/web/spi/FailsafeDriver.java" sourcefile="FailsafeDriver.java">
+        <Message>At FailsafeDriver.java:[lines 36-170]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.web.spi.FailsafeDriver</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.web.spi.FailsafeDriver" signature="()Ljava/util/Collection;" name="getDriverPropertyNames" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine endBytecode="199" classname="internal.sdmxdl.web.spi.FailsafeDriver" start="136" end="147" sourcepath="internal/sdmxdl/web/spi/FailsafeDriver.java" sourcefile="FailsafeDriver.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.web.spi.FailsafeDriver.getDriverPropertyNames()</Message>
+    </Method>
+    <LocalVariable role="LOCAL_VARIABLE_VALUE_OF" pc="25" name="result" register="1">
+      <Message>Value loaded from result</Message>
+    </LocalVariable>
+    <Method isStatic="false" role="METHOD_RETURN_VALUE_OF" classname="sdmxdl.web.spi.Driver" signature="()Ljava/util/Collection;" name="getDriverPropertyNames" classAnnotationNames="lombok.NonNull">
+      <SourceLine classname="sdmxdl.web.spi.Driver" sourcepath="sdmxdl/web/spi/Driver.java" sourcefile="Driver.java" />
+      <Message>Return value of sdmxdl.web.spi.Driver.getDriverPropertyNames() of type java.util.Collection</Message>
+    </Method>
+    <SourceLine role="SOURCE_REDUNDANT_NULL_CHECK" endBytecode="26" classname="internal.sdmxdl.web.spi.FailsafeDriver" start="142" end="142" sourcepath="internal/sdmxdl/web/spi/FailsafeDriver.java" sourcefile="FailsafeDriver.java" startBytecode="26" primary="true">
+      <Message>Redundant null check at FailsafeDriver.java:[line 142]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="fa1bf9562e7d561ad481e510269be87b" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.Provider.checkSeriesPaging(DataRequest) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.Provider" primary="true">
+      <SourceLine classname="sdmxdl.Provider" start="37" end="493" sourcepath="sdmxdl/Provider.java" sourcefile="Provider.java">
+        <Message>At Provider.java:[lines 37-493]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.Provider</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.Provider" signature="(Lsdmxdl/DataRequest;)V" name="checkSeriesPaging" primary="true">
+      <SourceLine endBytecode="154" classname="sdmxdl.Provider" start="370" end="376" sourcepath="sdmxdl/Provider.java" sourcefile="Provider.java" startBytecode="0" />
+      <Message>In method sdmxdl.Provider.checkSeriesPaging(DataRequest)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.DataRequest" signature="()Ljava/lang/Integer;" name="getSeriesLimit" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.DataRequest" start="42" end="42" sourcepath="sdmxdl/DataRequest.java" sourcefile="DataRequest.java" startBytecode="0" />
+      <Message>Called method sdmxdl.DataRequest.getSeriesLimit()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="49" classname="sdmxdl.Provider" start="373" end="373" sourcepath="sdmxdl/Provider.java" sourcefile="Provider.java" startBytecode="49" primary="true">
+      <Message>Dereferenced at Provider.java:[line 373]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="46" classname="sdmxdl.Provider" start="373" end="373" sourcepath="sdmxdl/Provider.java" sourcefile="Provider.java" startBytecode="46">
+      <Message>Known null at Provider.java:[line 373]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="7676468f6cf9059d611d8d26115a4fbd" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.web.SdmxWebManager.loadFlowEntries(List, WebFlowsRequest, List, List) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.web.SdmxWebManager" primary="true">
+      <SourceLine classname="sdmxdl.web.SdmxWebManager" start="55" end="514" sourcepath="sdmxdl/web/SdmxWebManager.java" sourcefile="SdmxWebManager.java">
+        <Message>At SdmxWebManager.java:[lines 55-514]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.web.SdmxWebManager</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.web.SdmxWebManager" signature="(Ljava/util/List;Lsdmxdl/web/WebFlowsRequest;Ljava/util/List;Ljava/util/List;)V" name="loadFlowEntries" primary="true">
+      <SourceLine endBytecode="1086" classname="sdmxdl.web.SdmxWebManager" start="350" end="386" sourcepath="sdmxdl/web/SdmxWebManager.java" sourcefile="SdmxWebManager.java" startBytecode="0" />
+      <Message>In method sdmxdl.web.SdmxWebManager.loadFlowEntries(List, WebFlowsRequest, List, List)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.web.WebFlowsRequest" signature="()Ljava/time/Duration;" name="getTimeout" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.web.WebFlowsRequest" start="67" end="67" sourcepath="sdmxdl/web/WebFlowsRequest.java" sourcefile="WebFlowsRequest.java" startBytecode="0" />
+      <Message>Called method sdmxdl.web.WebFlowsRequest.getTimeout()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="14" classname="sdmxdl.web.SdmxWebManager" start="351" end="351" sourcepath="sdmxdl/web/SdmxWebManager.java" sourcefile="SdmxWebManager.java" startBytecode="14" primary="true">
+      <Message>Dereferenced at SdmxWebManager.java:[line 351]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="11" classname="sdmxdl.web.SdmxWebManager" start="351" end="351" sourcepath="sdmxdl/web/SdmxWebManager.java" sourcefile="SdmxWebManager.java" startBytecode="11">
+      <Message>Known null at SdmxWebManager.java:[line 351]</Message>
+    </SourceLine>
+  </BugInstance>
+</BugCollection>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BugCollection>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="d5335c9af3c8085f70cc5c6f9a93bd3c" cweid="413" rank="14" abbrev="AT" category="MT_CORRECTNESS" priority="2" type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" instanceOccurrenceMax="0">
+    <ShortMessage>This write of this shared primitive variable may not be visible to other threads</ShortMessage>
+    <LongMessage>Shared primitive variable "queueSize" in one thread may not yield the value of the most recent write from another thread</LongMessage>
+    <Class classname="sdmxdl.provider.KeyedLock$LockWrapper" primary="true">
+      <SourceLine classname="sdmxdl.provider.KeyedLock$LockWrapper" start="177" end="182" sourcepath="sdmxdl/provider/KeyedLock.java" sourcefile="KeyedLock.java">
+        <Message>At KeyedLock.java:[lines 177-182]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.provider.KeyedLock$LockWrapper</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.provider.KeyedLock$LockWrapper" signature="(Lsdmxdl/provider/KeyedLock$LockWrapper;)I" name="access$306" primary="true">
+      <SourceLine endBytecode="53" classname="sdmxdl.provider.KeyedLock$LockWrapper" start="177" end="177" sourcepath="sdmxdl/provider/KeyedLock.java" sourcefile="KeyedLock.java" startBytecode="0" />
+      <Message>In method sdmxdl.provider.KeyedLock$LockWrapper.access$306(KeyedLock$LockWrapper)</Message>
+    </Method>
+    <Field isStatic="false" classname="sdmxdl.provider.KeyedLock$LockWrapper" signature="I" name="queueSize" primary="true">
+      <SourceLine classname="sdmxdl.provider.KeyedLock$LockWrapper" sourcepath="sdmxdl/provider/KeyedLock.java" sourcefile="KeyedLock.java">
+        <Message>In KeyedLock.java</Message>
+      </SourceLine>
+      <Message>Field sdmxdl.provider.KeyedLock$LockWrapper.queueSize</Message>
+    </Field>
+    <SourceLine endBytecode="8" classname="sdmxdl.provider.KeyedLock$LockWrapper" start="177" end="177" sourcepath="sdmxdl/provider/KeyedLock.java" sourcefile="KeyedLock.java" startBytecode="8" primary="true">
+      <Message>At KeyedLock.java:[line 177]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="96149d7ff9df17943252d61d930da210" cweid="413" rank="14" abbrev="AT" category="MT_CORRECTNESS" priority="2" type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" instanceOccurrenceMax="0">
+    <ShortMessage>This write of this shared primitive variable may not be visible to other threads</ShortMessage>
+    <LongMessage>Shared primitive variable "queueSize" in one thread may not yield the value of the most recent write from another thread</LongMessage>
+    <Class classname="sdmxdl.provider.KeyedLock$LockWrapper" primary="true">
+      <SourceLine classname="sdmxdl.provider.KeyedLock$LockWrapper" start="177" end="182" sourcepath="sdmxdl/provider/KeyedLock.java" sourcefile="KeyedLock.java">
+        <Message>At KeyedLock.java:[lines 177-182]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.provider.KeyedLock$LockWrapper</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.provider.KeyedLock$LockWrapper" signature="(Lsdmxdl/provider/KeyedLock$LockWrapper;)I" name="access$308" primary="true">
+      <SourceLine endBytecode="53" classname="sdmxdl.provider.KeyedLock$LockWrapper" start="177" end="177" sourcepath="sdmxdl/provider/KeyedLock.java" sourcefile="KeyedLock.java" startBytecode="0" />
+      <Message>In method sdmxdl.provider.KeyedLock$LockWrapper.access$308(KeyedLock$LockWrapper)</Message>
+    </Method>
+    <Field isStatic="false" classname="sdmxdl.provider.KeyedLock$LockWrapper" signature="I" name="queueSize" primary="true">
+      <SourceLine classname="sdmxdl.provider.KeyedLock$LockWrapper" sourcepath="sdmxdl/provider/KeyedLock.java" sourcefile="KeyedLock.java">
+        <Message>In KeyedLock.java</Message>
+      </SourceLine>
+      <Message>Field sdmxdl.provider.KeyedLock$LockWrapper.queueSize</Message>
+    </Field>
+    <SourceLine endBytecode="8" classname="sdmxdl.provider.KeyedLock$LockWrapper" start="177" end="177" sourcepath="sdmxdl/provider/KeyedLock.java" sourcefile="KeyedLock.java" startBytecode="8" primary="true">
+      <Message>At KeyedLock.java:[line 177]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="a510ebc5233f474bb514a06e1517cf68" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.provider.caching.DiskCache.ensureParentExists(Path) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.provider.caching.DiskCache" primary="true">
+      <SourceLine classname="sdmxdl.provider.caching.DiskCache" start="39" end="150" sourcepath="sdmxdl/provider/caching/DiskCache.java" sourcefile="DiskCache.java">
+        <Message>At DiskCache.java:[lines 39-150]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.provider.caching.DiskCache</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.provider.caching.DiskCache" signature="(Ljava/nio/file/Path;)V" name="ensureParentExists" primary="true">
+      <SourceLine endBytecode="180" classname="sdmxdl.provider.caching.DiskCache" start="125" end="129" sourcepath="sdmxdl/provider/caching/DiskCache.java" sourcefile="DiskCache.java" startBytecode="0" />
+      <Message>In method sdmxdl.provider.caching.DiskCache.ensureParentExists(Path)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="java.nio.file.Path" signature="()Ljava/nio/file/Path;" name="getParent">
+      <SourceLine classname="java.nio.file.Path" sourcepath="java/nio/file/Path.java" sourcefile="Path.java" />
+      <Message>Called method java.nio.file.Path.getParent()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_INVOKED" endBytecode="10" classname="sdmxdl.provider.caching.DiskCache" start="125" end="125" sourcepath="sdmxdl/provider/caching/DiskCache.java" sourcefile="DiskCache.java" startBytecode="10" primary="true">
+      <Message>Method invoked at DiskCache.java:[line 125]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="1" classname="sdmxdl.provider.caching.DiskCache" start="125" end="125" sourcepath="sdmxdl/provider/caching/DiskCache.java" sourcefile="DiskCache.java" startBytecode="1">
+      <Message>Known null at DiskCache.java:[line 125]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="5c1b22cf92b41b4d7f93e05657fa52f3" cweid="374" rank="18" abbrev="EI" category="MALICIOUS_CODE" priority="2" type="EI_EXPOSE_REP" instanceOccurrenceMax="0">
+    <ShortMessage>May expose internal representation by returning reference to mutable object</ShortMessage>
+    <LongMessage>sdmxdl.provider.web.DriverSupport.getDefaultSources() may expose internal representation by returning DriverSupport.sources</LongMessage>
+    <Class classname="sdmxdl.provider.web.DriverSupport" primary="true">
+      <SourceLine classname="sdmxdl.provider.web.DriverSupport" start="41" end="95" sourcepath="sdmxdl/provider/web/DriverSupport.java" sourcefile="DriverSupport.java">
+        <Message>At DriverSupport.java:[lines 41-95]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.provider.web.DriverSupport</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.provider.web.DriverSupport" signature="()Ljava/util/Collection;" name="getDefaultSources" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine endBytecode="46" classname="sdmxdl.provider.web.DriverSupport" start="87" end="87" sourcepath="sdmxdl/provider/web/DriverSupport.java" sourcefile="DriverSupport.java" startBytecode="0" />
+      <Message>In method sdmxdl.provider.web.DriverSupport.getDefaultSources()</Message>
+    </Method>
+    <Field isStatic="false" classname="sdmxdl.provider.web.DriverSupport" signature="Ljava/util/Collection;" name="sources" primary="true">
+      <SourceLine classname="sdmxdl.provider.web.DriverSupport" sourcepath="sdmxdl/provider/web/DriverSupport.java" sourcefile="DriverSupport.java">
+        <Message>In DriverSupport.java</Message>
+      </SourceLine>
+      <Message>Field sdmxdl.provider.web.DriverSupport.sources</Message>
+    </Field>
+    <SourceLine endBytecode="4" classname="sdmxdl.provider.web.DriverSupport" start="87" end="87" sourcepath="sdmxdl/provider/web/DriverSupport.java" sourcefile="DriverSupport.java" startBytecode="4" primary="true">
+      <Message>At DriverSupport.java:[line 87]</Message>
+    </SourceLine>
+  </BugInstance>
+</BugCollection>

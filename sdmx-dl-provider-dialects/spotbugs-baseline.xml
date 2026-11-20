@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BugCollection>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="943a5073a6088bcb0a45a533aa22b241" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter.toFlowDescription(IneDialectDriver$Table) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter" primary="true">
+      <SourceLine classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter" start="598" end="946" sourcepath="sdmxdl/provider/dialects/drivers/IneDialectDriver.java" sourcefile="IneDialectDriver.java">
+        <Message>At IneDialectDriver.java:[lines 598-946]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter" signature="(Lsdmxdl/provider/dialects/drivers/IneDialectDriver$Table;)Ljava/lang/String;" name="toFlowDescription" primary="true">
+      <SourceLine endBytecode="278" classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter" start="638" end="653" sourcepath="sdmxdl/provider/dialects/drivers/IneDialectDriver.java" sourcefile="IneDialectDriver.java" startBytecode="0" />
+      <Message>In method sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter.toFlowDescription(IneDialectDriver$Table)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$Table" signature="()Ljava/lang/String;" name="getPublicacion" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$Table" start="459" end="459" sourcepath="sdmxdl/provider/dialects/drivers/IneDialectDriver.java" sourcefile="IneDialectDriver.java" startBytecode="0" />
+      <Message>Called method sdmxdl.provider.dialects.drivers.IneDialectDriver$Table.getPublicacion()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="90" classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter" start="650" end="650" sourcepath="sdmxdl/provider/dialects/drivers/IneDialectDriver.java" sourcefile="IneDialectDriver.java" startBytecode="90" primary="true">
+      <Message>Dereferenced at IneDialectDriver.java:[line 650]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="83" classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter" start="650" end="650" sourcepath="sdmxdl/provider/dialects/drivers/IneDialectDriver.java" sourcefile="IneDialectDriver.java" startBytecode="83">
+      <Message>Known null at IneDialectDriver.java:[line 650]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="6ec84516a347829892cbc724baa7b0bc" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="1">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter.toObs(IneDialectDriver$ObsData) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter" primary="true">
+      <SourceLine classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter" start="598" end="946" sourcepath="sdmxdl/provider/dialects/drivers/IneDialectDriver.java" sourcefile="IneDialectDriver.java">
+        <Message>At IneDialectDriver.java:[lines 598-946]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter" signature="(Lsdmxdl/provider/dialects/drivers/IneDialectDriver$ObsData;)Lsdmxdl/Obs;" name="toObs" primary="true">
+      <SourceLine endBytecode="262" classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter" start="899" end="912" sourcepath="sdmxdl/provider/dialects/drivers/IneDialectDriver.java" sourcefile="IneDialectDriver.java" startBytecode="0" />
+      <Message>In method sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter.toObs(IneDialectDriver$ObsData)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$ObsData" signature="()Ljava/lang/String;" name="getTipoDato" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$ObsData" start="522" end="522" sourcepath="sdmxdl/provider/dialects/drivers/IneDialectDriver.java" sourcefile="IneDialectDriver.java" startBytecode="0" />
+      <Message>Called method sdmxdl.provider.dialects.drivers.IneDialectDriver$ObsData.getTipoDato()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="80" classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter" start="909" end="909" sourcepath="sdmxdl/provider/dialects/drivers/IneDialectDriver.java" sourcefile="IneDialectDriver.java" startBytecode="80" primary="true">
+      <Message>Dereferenced at IneDialectDriver.java:[line 909]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="77" classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter" start="909" end="909" sourcepath="sdmxdl/provider/dialects/drivers/IneDialectDriver.java" sourcefile="IneDialectDriver.java" startBytecode="77">
+      <Message>Known null at IneDialectDriver.java:[line 909]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="1" instanceHash="6ec84516a347829892cbc724baa7b0bc" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="1">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter.toObs(IneDialectDriver$ObsData) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter" primary="true">
+      <SourceLine classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter" start="598" end="946" sourcepath="sdmxdl/provider/dialects/drivers/IneDialectDriver.java" sourcefile="IneDialectDriver.java">
+        <Message>At IneDialectDriver.java:[lines 598-946]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter" signature="(Lsdmxdl/provider/dialects/drivers/IneDialectDriver$ObsData;)Lsdmxdl/Obs;" name="toObs" primary="true">
+      <SourceLine endBytecode="262" classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter" start="899" end="912" sourcepath="sdmxdl/provider/dialects/drivers/IneDialectDriver.java" sourcefile="IneDialectDriver.java" startBytecode="0" />
+      <Message>In method sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter.toObs(IneDialectDriver$ObsData)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$ObsData" signature="()Ljava/lang/String;" name="getTipoDato" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$ObsData" start="522" end="522" sourcepath="sdmxdl/provider/dialects/drivers/IneDialectDriver.java" sourcefile="IneDialectDriver.java" startBytecode="0" />
+      <Message>Called method sdmxdl.provider.dialects.drivers.IneDialectDriver$ObsData.getTipoDato()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="98" classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter" start="910" end="910" sourcepath="sdmxdl/provider/dialects/drivers/IneDialectDriver.java" sourcefile="IneDialectDriver.java" startBytecode="98" primary="true">
+      <Message>Dereferenced at IneDialectDriver.java:[line 910]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="95" classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter" start="910" end="910" sourcepath="sdmxdl/provider/dialects/drivers/IneDialectDriver.java" sourcefile="IneDialectDriver.java" startBytecode="95">
+      <Message>Known null at IneDialectDriver.java:[line 910]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="d7e9649ddcd6fc6480ea3cccb93e07e7" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter.toObs(IneDialectDriver$ObsData) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter" primary="true">
+      <SourceLine classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter" start="598" end="946" sourcepath="sdmxdl/provider/dialects/drivers/IneDialectDriver.java" sourcefile="IneDialectDriver.java">
+        <Message>At IneDialectDriver.java:[lines 598-946]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter" signature="(Lsdmxdl/provider/dialects/drivers/IneDialectDriver$ObsData;)Lsdmxdl/Obs;" name="toObs" primary="true">
+      <SourceLine endBytecode="262" classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter" start="899" end="912" sourcepath="sdmxdl/provider/dialects/drivers/IneDialectDriver.java" sourcefile="IneDialectDriver.java" startBytecode="0" />
+      <Message>In method sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter.toObs(IneDialectDriver$ObsData)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$ObsData" signature="()Ljava/lang/Double;" name="getValor" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$ObsData" start="518" end="518" sourcepath="sdmxdl/provider/dialects/drivers/IneDialectDriver.java" sourcefile="IneDialectDriver.java" startBytecode="0" />
+      <Message>Called method sdmxdl.provider.dialects.drivers.IneDialectDriver$ObsData.getValor()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="46" classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter" start="907" end="907" sourcepath="sdmxdl/provider/dialects/drivers/IneDialectDriver.java" sourcefile="IneDialectDriver.java" startBytecode="46" primary="true">
+      <Message>Dereferenced at IneDialectDriver.java:[line 907]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="43" classname="sdmxdl.provider.dialects.drivers.IneDialectDriver$Converter" start="907" end="907" sourcepath="sdmxdl/provider/dialects/drivers/IneDialectDriver.java" sourcefile="IneDialectDriver.java" startBytecode="43">
+      <Message>Known null at IneDialectDriver.java:[line 907]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="3d77dbd6a929b5f54fac51a7373c99a1" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.provider.dialects.drivers.InseeDialectDriver.fixDimensionCodes(Dimension, IOFunction) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.provider.dialects.drivers.InseeDialectDriver" classAnnotationNames="nbbrd.service.ServiceProvider" primary="true">
+      <SourceLine classname="sdmxdl.provider.dialects.drivers.InseeDialectDriver" start="69" end="215" sourcepath="sdmxdl/provider/dialects/drivers/InseeDialectDriver.java" sourcefile="InseeDialectDriver.java">
+        <Message>At InseeDialectDriver.java:[lines 69-215]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.provider.dialects.drivers.InseeDialectDriver</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.provider.dialects.drivers.InseeDialectDriver" signature="(Lsdmxdl/Dimension;Lnbbrd/io/function/IOFunction;)Lsdmxdl/Dimension;" name="fixDimensionCodes" primary="true">
+      <SourceLine endBytecode="158" classname="sdmxdl.provider.dialects.drivers.InseeDialectDriver" start="104" end="105" sourcepath="sdmxdl/provider/dialects/drivers/InseeDialectDriver.java" sourcefile="InseeDialectDriver.java" startBytecode="0" />
+      <Message>In method sdmxdl.provider.dialects.drivers.InseeDialectDriver.fixDimensionCodes(Dimension, IOFunction)</Message>
+    </Method>
+    <LocalVariable role="LOCAL_VARIABLE_VALUE_OF" pc="5" name="codelist" register="2">
+      <Message>Value loaded from codelist</Message>
+    </LocalVariable>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="6" classname="sdmxdl.provider.dialects.drivers.InseeDialectDriver" start="105" end="105" sourcepath="sdmxdl/provider/dialects/drivers/InseeDialectDriver.java" sourcefile="InseeDialectDriver.java" startBytecode="6" primary="true">
+      <Message>Dereferenced at InseeDialectDriver.java:[line 105]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="1" classname="sdmxdl.provider.dialects.drivers.InseeDialectDriver" start="104" end="104" sourcepath="sdmxdl/provider/dialects/drivers/InseeDialectDriver.java" sourcefile="InseeDialectDriver.java" startBytecode="1">
+      <Message>Known null at InseeDialectDriver.java:[line 104]</Message>
+    </SourceLine>
+  </BugInstance>
+</BugCollection>

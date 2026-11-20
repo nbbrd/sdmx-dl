@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BugCollection>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="d3106887414a619535650c9ece379636" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.cli.CheckStatusCommand$Status.of(SdmxWebManager, String) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.cli.CheckStatusCommand$Status" primary="true">
+      <SourceLine classname="sdmxdl.cli.CheckStatusCommand$Status" start="80" end="117" sourcepath="sdmxdl/cli/CheckStatusCommand.java" sourcefile="CheckStatusCommand.java">
+        <Message>At CheckStatusCommand.java:[lines 80-117]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.cli.CheckStatusCommand$Status</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.cli.CheckStatusCommand$Status" signature="(Lsdmxdl/web/SdmxWebManager;Ljava/lang/String;)Lsdmxdl/cli/CheckStatusCommand$Status;" name="of" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine endBytecode="298" classname="sdmxdl.cli.CheckStatusCommand$Status" start="84" end="98" sourcepath="sdmxdl/cli/CheckStatusCommand.java" sourcefile="CheckStatusCommand.java" startBytecode="0" />
+      <Message>In method sdmxdl.cli.CheckStatusCommand$Status.of(SdmxWebManager, String)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.web.HealthReport" signature="()Lsdmxdl/web/MonitorReport;" name="getMonitor" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.web.HealthReport" start="21" end="21" sourcepath="sdmxdl/web/HealthReport.java" sourcefile="HealthReport.java" startBytecode="0" />
+      <Message>Called method sdmxdl.web.HealthReport.getMonitor()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_INVOKED" endBytecode="90" classname="sdmxdl.cli.CheckStatusCommand$Status" start="95" end="95" sourcepath="sdmxdl/cli/CheckStatusCommand.java" sourcefile="CheckStatusCommand.java" startBytecode="90" primary="true">
+      <Message>Method invoked at CheckStatusCommand.java:[line 95]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="87" classname="sdmxdl.cli.CheckStatusCommand$Status" start="95" end="95" sourcepath="sdmxdl/cli/CheckStatusCommand.java" sourcefile="CheckStatusCommand.java" startBytecode="87">
+      <Message>Known null at CheckStatusCommand.java:[line 95]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="e2f38ae5871b42e3a1ad278ec6359b8f" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.cli.experimental.ListUpptimeCommand.isUpptimeMonitor(WebSource) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.cli.experimental.ListUpptimeCommand" classAnnotationNames="picocli.CommandLine$Command" primary="true">
+      <SourceLine classname="sdmxdl.cli.experimental.ListUpptimeCommand" start="44" end="101" sourcepath="sdmxdl/cli/experimental/ListUpptimeCommand.java" sourcefile="ListUpptimeCommand.java">
+        <Message>At ListUpptimeCommand.java:[lines 44-101]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.cli.experimental.ListUpptimeCommand</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.cli.experimental.ListUpptimeCommand" signature="(Lsdmxdl/web/WebSource;)Z" name="isUpptimeMonitor" primary="true">
+      <SourceLine endBytecode="88" classname="sdmxdl.cli.experimental.ListUpptimeCommand" start="78" end="78" sourcepath="sdmxdl/cli/experimental/ListUpptimeCommand.java" sourcefile="ListUpptimeCommand.java" startBytecode="0" />
+      <Message>In method sdmxdl.cli.experimental.ListUpptimeCommand.isUpptimeMonitor(WebSource)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.web.WebSource" signature="()Ljava/net/URI;" name="getMonitor" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.web.WebSource" start="59" end="59" sourcepath="sdmxdl/web/WebSource.java" sourcefile="WebSource.java" startBytecode="0" />
+      <Message>Called method sdmxdl.web.WebSource.getMonitor()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="13" classname="sdmxdl.cli.experimental.ListUpptimeCommand" start="79" end="79" sourcepath="sdmxdl/cli/experimental/ListUpptimeCommand.java" sourcefile="ListUpptimeCommand.java" startBytecode="13" primary="true">
+      <Message>Dereferenced at ListUpptimeCommand.java:[line 79]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="10" classname="sdmxdl.cli.experimental.ListUpptimeCommand" start="79" end="79" sourcepath="sdmxdl/cli/experimental/ListUpptimeCommand.java" sourcefile="ListUpptimeCommand.java" startBytecode="10">
+      <Message>Known null at ListUpptimeCommand.java:[line 79]</Message>
+    </SourceLine>
+  </BugInstance>
+</BugCollection>

@@ -299,6 +299,11 @@
                     <version>3.11</version>
                 </plugin>
                 <plugin>
+                    <groupId>com.github.spotbugs</groupId>
+                    <artifactId>spotbugs-maven-plugin</artifactId>
+                    <version>4.10.5.0</version>
+                </plugin>
+                <plugin>
                     <groupId>com.github.nbbrd.heylogs</groupId>
                     <artifactId>heylogs-maven-plugin</artifactId>
                     <version>${heylogs.version}</version>
@@ -410,6 +415,25 @@
                             <goal>check</goal>
                             <goal>testCheck</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>spotbugs</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <!-- Fail only on new bugs; existing ones are listed in spotbugs-baseline.xml -->
+                            <!-- Parameter of the "spotbugs" goal, inherited by the analysis forked by "check" -->
+                            <!--suppress MavenModelInspection -->
+                            <excludeBugsFiles>${project.basedir}/spotbugs-baseline.xml</excludeBugsFiles>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -958,6 +982,7 @@
                 <heylogs.skip>true</heylogs.skip>
                 <tidy.skip>true</tidy.skip>
                 <spotless.skip>true</spotless.skip>
+                <spotbugs.skip>true</spotbugs.skip>
             </properties>
         </profile>
 

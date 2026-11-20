@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BugCollection>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="3a2b03c8aca5551aa1304531f22aef5c" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in internal.sdmxdl.script.ApiCalls.visitData(DataRequest) due to return value of called method</LongMessage>
+    <Class classname="internal.sdmxdl.script.ApiCalls" primary="true">
+      <SourceLine classname="internal.sdmxdl.script.ApiCalls" start="16" end="132" sourcepath="internal/sdmxdl/script/ApiCalls.java" sourcefile="ApiCalls.java">
+        <Message>At ApiCalls.java:[lines 16-132]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.script.ApiCalls</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.script.ApiCalls" signature="(Lsdmxdl/DataRequest;)Linternal/sdmxdl/script/ApiCall;" name="visitData" primary="true">
+      <SourceLine endBytecode="446" classname="internal.sdmxdl.script.ApiCalls" start="28" end="60" sourcepath="internal/sdmxdl/script/ApiCalls.java" sourcefile="ApiCalls.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.script.ApiCalls.visitData(DataRequest)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.DataRequest" signature="()Ljava/time/LocalDateTime;" name="getEndPeriod" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.DataRequest" start="27" end="27" sourcepath="sdmxdl/DataRequest.java" sourcefile="DataRequest.java" startBytecode="0" />
+      <Message>Called method sdmxdl.DataRequest.getEndPeriod()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_INVOKED" endBytecode="138" classname="internal.sdmxdl.script.ApiCalls" start="43" end="43" sourcepath="internal/sdmxdl/script/ApiCalls.java" sourcefile="ApiCalls.java" startBytecode="138" primary="true">
+      <Message>Method invoked at ApiCalls.java:[line 43]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="135" classname="internal.sdmxdl.script.ApiCalls" start="43" end="43" sourcepath="internal/sdmxdl/script/ApiCalls.java" sourcefile="ApiCalls.java" startBytecode="135">
+      <Message>Known null at ApiCalls.java:[line 43]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="aee5ea956f9246a77a91593c416c947b" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in internal.sdmxdl.script.ApiCalls.visitData(DataRequest) due to return value of called method</LongMessage>
+    <Class classname="internal.sdmxdl.script.ApiCalls" primary="true">
+      <SourceLine classname="internal.sdmxdl.script.ApiCalls" start="16" end="132" sourcepath="internal/sdmxdl/script/ApiCalls.java" sourcefile="ApiCalls.java">
+        <Message>At ApiCalls.java:[lines 16-132]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.script.ApiCalls</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.script.ApiCalls" signature="(Lsdmxdl/DataRequest;)Linternal/sdmxdl/script/ApiCall;" name="visitData" primary="true">
+      <SourceLine endBytecode="446" classname="internal.sdmxdl.script.ApiCalls" start="28" end="60" sourcepath="internal/sdmxdl/script/ApiCalls.java" sourcefile="ApiCalls.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.script.ApiCalls.visitData(DataRequest)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.DataRequest" signature="()Ljava/lang/Integer;" name="getFirstNObservations" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.DataRequest" start="29" end="29" sourcepath="sdmxdl/DataRequest.java" sourcefile="DataRequest.java" startBytecode="0" />
+      <Message>Called method sdmxdl.DataRequest.getFirstNObservations()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_INVOKED" endBytecode="162" classname="internal.sdmxdl.script.ApiCalls" start="46" end="46" sourcepath="internal/sdmxdl/script/ApiCalls.java" sourcefile="ApiCalls.java" startBytecode="162" primary="true">
+      <Message>Method invoked at ApiCalls.java:[line 46]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="159" classname="internal.sdmxdl.script.ApiCalls" start="46" end="46" sourcepath="internal/sdmxdl/script/ApiCalls.java" sourcefile="ApiCalls.java" startBytecode="159">
+      <Message>Known null at ApiCalls.java:[line 46]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="46ba7ac0cecf94c2b122aaaf52a51fca" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in internal.sdmxdl.script.ApiCalls.visitData(DataRequest) due to return value of called method</LongMessage>
+    <Class classname="internal.sdmxdl.script.ApiCalls" primary="true">
+      <SourceLine classname="internal.sdmxdl.script.ApiCalls" start="16" end="132" sourcepath="internal/sdmxdl/script/ApiCalls.java" sourcefile="ApiCalls.java">
+        <Message>At ApiCalls.java:[lines 16-132]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.script.ApiCalls</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.script.ApiCalls" signature="(Lsdmxdl/DataRequest;)Linternal/sdmxdl/script/ApiCall;" name="visitData" primary="true">
+      <SourceLine endBytecode="446" classname="internal.sdmxdl.script.ApiCalls" start="28" end="60" sourcepath="internal/sdmxdl/script/ApiCalls.java" sourcefile="ApiCalls.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.script.ApiCalls.visitData(DataRequest)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.DataRequest" signature="()Ljava/lang/Integer;" name="getLastNObservations" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.DataRequest" start="31" end="31" sourcepath="sdmxdl/DataRequest.java" sourcefile="DataRequest.java" startBytecode="0" />
+      <Message>Called method sdmxdl.DataRequest.getLastNObservations()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_INVOKED" endBytecode="183" classname="internal.sdmxdl.script.ApiCalls" start="49" end="49" sourcepath="internal/sdmxdl/script/ApiCalls.java" sourcefile="ApiCalls.java" startBytecode="183" primary="true">
+      <Message>Method invoked at ApiCalls.java:[line 49]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="180" classname="internal.sdmxdl.script.ApiCalls" start="49" end="49" sourcepath="internal/sdmxdl/script/ApiCalls.java" sourcefile="ApiCalls.java" startBytecode="180">
+      <Message>Known null at ApiCalls.java:[line 49]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="5e1bddd41524962f1f0209a831287fc8" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in internal.sdmxdl.script.ApiCalls.visitData(DataRequest) due to return value of called method</LongMessage>
+    <Class classname="internal.sdmxdl.script.ApiCalls" primary="true">
+      <SourceLine classname="internal.sdmxdl.script.ApiCalls" start="16" end="132" sourcepath="internal/sdmxdl/script/ApiCalls.java" sourcefile="ApiCalls.java">
+        <Message>At ApiCalls.java:[lines 16-132]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.script.ApiCalls</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.script.ApiCalls" signature="(Lsdmxdl/DataRequest;)Linternal/sdmxdl/script/ApiCall;" name="visitData" primary="true">
+      <SourceLine endBytecode="446" classname="internal.sdmxdl.script.ApiCalls" start="28" end="60" sourcepath="internal/sdmxdl/script/ApiCalls.java" sourcefile="ApiCalls.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.script.ApiCalls.visitData(DataRequest)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.DataRequest" signature="()Ljava/lang/Integer;" name="getSeriesLimit" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.DataRequest" start="42" end="42" sourcepath="sdmxdl/DataRequest.java" sourcefile="DataRequest.java" startBytecode="0" />
+      <Message>Called method sdmxdl.DataRequest.getSeriesLimit()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_INVOKED" endBytecode="228" classname="internal.sdmxdl.script.ApiCalls" start="55" end="55" sourcepath="internal/sdmxdl/script/ApiCalls.java" sourcefile="ApiCalls.java" startBytecode="228" primary="true">
+      <Message>Method invoked at ApiCalls.java:[line 55]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="225" classname="internal.sdmxdl.script.ApiCalls" start="55" end="55" sourcepath="internal/sdmxdl/script/ApiCalls.java" sourcefile="ApiCalls.java" startBytecode="225">
+      <Message>Known null at ApiCalls.java:[line 55]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="1a16df239752b168f0f7fe13777f953c" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in internal.sdmxdl.script.ApiCalls.visitData(DataRequest) due to return value of called method</LongMessage>
+    <Class classname="internal.sdmxdl.script.ApiCalls" primary="true">
+      <SourceLine classname="internal.sdmxdl.script.ApiCalls" start="16" end="132" sourcepath="internal/sdmxdl/script/ApiCalls.java" sourcefile="ApiCalls.java">
+        <Message>At ApiCalls.java:[lines 16-132]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.script.ApiCalls</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.script.ApiCalls" signature="(Lsdmxdl/DataRequest;)Linternal/sdmxdl/script/ApiCall;" name="visitData" primary="true">
+      <SourceLine endBytecode="446" classname="internal.sdmxdl.script.ApiCalls" start="28" end="60" sourcepath="internal/sdmxdl/script/ApiCalls.java" sourcefile="ApiCalls.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.script.ApiCalls.visitData(DataRequest)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.DataRequest" signature="()Ljava/time/LocalDateTime;" name="getStartPeriod" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.DataRequest" start="25" end="25" sourcepath="sdmxdl/DataRequest.java" sourcefile="DataRequest.java" startBytecode="0" />
+      <Message>Called method sdmxdl.DataRequest.getStartPeriod()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_INVOKED" endBytecode="114" classname="internal.sdmxdl.script.ApiCalls" start="40" end="40" sourcepath="internal/sdmxdl/script/ApiCalls.java" sourcefile="ApiCalls.java" startBytecode="114" primary="true">
+      <Message>Method invoked at ApiCalls.java:[line 40]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="111" classname="internal.sdmxdl.script.ApiCalls" start="40" end="40" sourcepath="internal/sdmxdl/script/ApiCalls.java" sourcefile="ApiCalls.java" startBytecode="111">
+      <Message>Known null at ApiCalls.java:[line 40]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="f91c7cbafeb411f4bcc8281fa736638a" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in internal.sdmxdl.script.BashScripts.newScope(List, ScriptOptions) due to return value of called method</LongMessage>
+    <Class classname="internal.sdmxdl.script.BashScripts" primary="true">
+      <SourceLine classname="internal.sdmxdl.script.BashScripts" start="20" end="92" sourcepath="internal/sdmxdl/script/BashScripts.java" sourcefile="BashScripts.java">
+        <Message>At BashScripts.java:[lines 20-92]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.script.BashScripts</Message>
+    </Class>
+    <Method isStatic="true" classname="internal.sdmxdl.script.BashScripts" signature="(Ljava/util/List;Lsdmxdl/script/ScriptOptions;)Ljava/util/Map;" name="newScope" primary="true">
+      <SourceLine endBytecode="260" classname="internal.sdmxdl.script.BashScripts" start="78" end="81" sourcepath="internal/sdmxdl/script/BashScripts.java" sourcefile="BashScripts.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.script.BashScripts.newScope(List, ScriptOptions)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.script.ScriptOptions" signature="()Ljava/lang/String;" name="getOutputFile" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.script.ScriptOptions" start="42" end="42" sourcepath="sdmxdl/script/ScriptOptions.java" sourcefile="ScriptOptions.java" startBytecode="0" />
+      <Message>Called method sdmxdl.script.ScriptOptions.getOutputFile()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_INVOKED" endBytecode="43" classname="internal.sdmxdl.script.BashScripts" start="80" end="80" sourcepath="internal/sdmxdl/script/BashScripts.java" sourcefile="BashScripts.java" startBytecode="43" primary="true">
+      <Message>Method invoked at BashScripts.java:[line 80]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="40" classname="internal.sdmxdl.script.BashScripts" start="80" end="80" sourcepath="internal/sdmxdl/script/BashScripts.java" sourcefile="BashScripts.java" startBytecode="40">
+      <Message>Known null at BashScripts.java:[line 80]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="cd0dd071b0fa1dc2a4dc2f8de07252dd" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in internal.sdmxdl.script.CliCalls.visitData(DataRequest) due to return value of called method</LongMessage>
+    <Class classname="internal.sdmxdl.script.CliCalls" primary="true">
+      <SourceLine classname="internal.sdmxdl.script.CliCalls" start="15" end="134" sourcepath="internal/sdmxdl/script/CliCalls.java" sourcefile="CliCalls.java">
+        <Message>At CliCalls.java:[lines 15-134]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.script.CliCalls</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.script.CliCalls" signature="(Lsdmxdl/DataRequest;)Linternal/sdmxdl/script/CliCall;" name="visitData" primary="true">
+      <SourceLine endBytecode="455" classname="internal.sdmxdl.script.CliCalls" start="28" end="59" sourcepath="internal/sdmxdl/script/CliCalls.java" sourcefile="CliCalls.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.script.CliCalls.visitData(DataRequest)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.DataRequest" signature="()Ljava/time/LocalDateTime;" name="getEndPeriod" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.DataRequest" start="27" end="27" sourcepath="sdmxdl/DataRequest.java" sourcefile="DataRequest.java" startBytecode="0" />
+      <Message>Called method sdmxdl.DataRequest.getEndPeriod()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_INVOKED" endBytecode="112" classname="internal.sdmxdl.script.CliCalls" start="41" end="41" sourcepath="internal/sdmxdl/script/CliCalls.java" sourcefile="CliCalls.java" startBytecode="112" primary="true">
+      <Message>Method invoked at CliCalls.java:[line 41]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="109" classname="internal.sdmxdl.script.CliCalls" start="41" end="41" sourcepath="internal/sdmxdl/script/CliCalls.java" sourcefile="CliCalls.java" startBytecode="109">
+      <Message>Known null at CliCalls.java:[line 41]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="5ee50b77a8552ccae91e5eea8243c514" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in internal.sdmxdl.script.CliCalls.visitData(DataRequest) due to return value of called method</LongMessage>
+    <Class classname="internal.sdmxdl.script.CliCalls" primary="true">
+      <SourceLine classname="internal.sdmxdl.script.CliCalls" start="15" end="134" sourcepath="internal/sdmxdl/script/CliCalls.java" sourcefile="CliCalls.java">
+        <Message>At CliCalls.java:[lines 15-134]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.script.CliCalls</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.script.CliCalls" signature="(Lsdmxdl/DataRequest;)Linternal/sdmxdl/script/CliCall;" name="visitData" primary="true">
+      <SourceLine endBytecode="455" classname="internal.sdmxdl.script.CliCalls" start="28" end="59" sourcepath="internal/sdmxdl/script/CliCalls.java" sourcefile="CliCalls.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.script.CliCalls.visitData(DataRequest)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.DataRequest" signature="()Ljava/lang/Integer;" name="getFirstNObservations" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.DataRequest" start="29" end="29" sourcepath="sdmxdl/DataRequest.java" sourcefile="DataRequest.java" startBytecode="0" />
+      <Message>Called method sdmxdl.DataRequest.getFirstNObservations()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="136" classname="internal.sdmxdl.script.CliCalls" start="45" end="45" sourcepath="internal/sdmxdl/script/CliCalls.java" sourcefile="CliCalls.java" startBytecode="136" primary="true">
+      <Message>Dereferenced at CliCalls.java:[line 45]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="133" classname="internal.sdmxdl.script.CliCalls" start="45" end="45" sourcepath="internal/sdmxdl/script/CliCalls.java" sourcefile="CliCalls.java" startBytecode="133">
+      <Message>Known null at CliCalls.java:[line 45]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="845424ee419eeeae9281ede27e3e446c" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in internal.sdmxdl.script.CliCalls.visitData(DataRequest) due to return value of called method</LongMessage>
+    <Class classname="internal.sdmxdl.script.CliCalls" primary="true">
+      <SourceLine classname="internal.sdmxdl.script.CliCalls" start="15" end="134" sourcepath="internal/sdmxdl/script/CliCalls.java" sourcefile="CliCalls.java">
+        <Message>At CliCalls.java:[lines 15-134]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.script.CliCalls</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.script.CliCalls" signature="(Lsdmxdl/DataRequest;)Linternal/sdmxdl/script/CliCall;" name="visitData" primary="true">
+      <SourceLine endBytecode="455" classname="internal.sdmxdl.script.CliCalls" start="28" end="59" sourcepath="internal/sdmxdl/script/CliCalls.java" sourcefile="CliCalls.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.script.CliCalls.visitData(DataRequest)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.DataRequest" signature="()Ljava/lang/Integer;" name="getLastNObservations" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.DataRequest" start="31" end="31" sourcepath="sdmxdl/DataRequest.java" sourcefile="DataRequest.java" startBytecode="0" />
+      <Message>Called method sdmxdl.DataRequest.getLastNObservations()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="160" classname="internal.sdmxdl.script.CliCalls" start="48" end="48" sourcepath="internal/sdmxdl/script/CliCalls.java" sourcefile="CliCalls.java" startBytecode="160" primary="true">
+      <Message>Dereferenced at CliCalls.java:[line 48]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="157" classname="internal.sdmxdl.script.CliCalls" start="48" end="48" sourcepath="internal/sdmxdl/script/CliCalls.java" sourcefile="CliCalls.java" startBytecode="157">
+      <Message>Known null at CliCalls.java:[line 48]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="92f4709150bc244c9c737d6c77782cd" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in internal.sdmxdl.script.CliCalls.visitData(DataRequest) due to return value of called method</LongMessage>
+    <Class classname="internal.sdmxdl.script.CliCalls" primary="true">
+      <SourceLine classname="internal.sdmxdl.script.CliCalls" start="15" end="134" sourcepath="internal/sdmxdl/script/CliCalls.java" sourcefile="CliCalls.java">
+        <Message>At CliCalls.java:[lines 15-134]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.script.CliCalls</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.script.CliCalls" signature="(Lsdmxdl/DataRequest;)Linternal/sdmxdl/script/CliCall;" name="visitData" primary="true">
+      <SourceLine endBytecode="455" classname="internal.sdmxdl.script.CliCalls" start="28" end="59" sourcepath="internal/sdmxdl/script/CliCalls.java" sourcefile="CliCalls.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.script.CliCalls.visitData(DataRequest)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.DataRequest" signature="()Ljava/lang/Integer;" name="getSeriesLimit" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.DataRequest" start="42" end="42" sourcepath="sdmxdl/DataRequest.java" sourcefile="DataRequest.java" startBytecode="0" />
+      <Message>Called method sdmxdl.DataRequest.getSeriesLimit()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="208" classname="internal.sdmxdl.script.CliCalls" start="54" end="54" sourcepath="internal/sdmxdl/script/CliCalls.java" sourcefile="CliCalls.java" startBytecode="208" primary="true">
+      <Message>Dereferenced at CliCalls.java:[line 54]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="205" classname="internal.sdmxdl.script.CliCalls" start="54" end="54" sourcepath="internal/sdmxdl/script/CliCalls.java" sourcefile="CliCalls.java" startBytecode="205">
+      <Message>Known null at CliCalls.java:[line 54]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="a94185db96fd8ffd967e8e4fcf49357" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in internal.sdmxdl.script.CliCalls.visitData(DataRequest) due to return value of called method</LongMessage>
+    <Class classname="internal.sdmxdl.script.CliCalls" primary="true">
+      <SourceLine classname="internal.sdmxdl.script.CliCalls" start="15" end="134" sourcepath="internal/sdmxdl/script/CliCalls.java" sourcefile="CliCalls.java">
+        <Message>At CliCalls.java:[lines 15-134]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.script.CliCalls</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.script.CliCalls" signature="(Lsdmxdl/DataRequest;)Linternal/sdmxdl/script/CliCall;" name="visitData" primary="true">
+      <SourceLine endBytecode="455" classname="internal.sdmxdl.script.CliCalls" start="28" end="59" sourcepath="internal/sdmxdl/script/CliCalls.java" sourcefile="CliCalls.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.script.CliCalls.visitData(DataRequest)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.DataRequest" signature="()Ljava/time/LocalDateTime;" name="getStartPeriod" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.DataRequest" start="25" end="25" sourcepath="sdmxdl/DataRequest.java" sourcefile="DataRequest.java" startBytecode="0" />
+      <Message>Called method sdmxdl.DataRequest.getStartPeriod()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_INVOKED" endBytecode="88" classname="internal.sdmxdl.script.CliCalls" start="38" end="38" sourcepath="internal/sdmxdl/script/CliCalls.java" sourcefile="CliCalls.java" startBytecode="88" primary="true">
+      <Message>Method invoked at CliCalls.java:[line 38]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="85" classname="internal.sdmxdl.script.CliCalls" start="38" end="38" sourcepath="internal/sdmxdl/script/CliCalls.java" sourcefile="CliCalls.java" startBytecode="85">
+      <Message>Known null at CliCalls.java:[line 38]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="c0f3fc5c00888b3c1c591cde649fdd22" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in internal.sdmxdl.script.PowerShellScripts.newScope(List, ScriptOptions) due to return value of called method</LongMessage>
+    <Class classname="internal.sdmxdl.script.PowerShellScripts" primary="true">
+      <SourceLine classname="internal.sdmxdl.script.PowerShellScripts" start="20" end="103" sourcepath="internal/sdmxdl/script/PowerShellScripts.java" sourcefile="PowerShellScripts.java">
+        <Message>At PowerShellScripts.java:[lines 20-103]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.script.PowerShellScripts</Message>
+    </Class>
+    <Method isStatic="true" classname="internal.sdmxdl.script.PowerShellScripts" signature="(Ljava/util/List;Lsdmxdl/script/ScriptOptions;)Ljava/util/Map;" name="newScope" primary="true">
+      <SourceLine endBytecode="221" classname="internal.sdmxdl.script.PowerShellScripts" start="78" end="84" sourcepath="internal/sdmxdl/script/PowerShellScripts.java" sourcefile="PowerShellScripts.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.script.PowerShellScripts.newScope(List, ScriptOptions)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.script.ScriptOptions" signature="()Ljava/lang/String;" name="getOutputFile" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.script.ScriptOptions" start="42" end="42" sourcepath="sdmxdl/script/ScriptOptions.java" sourcefile="ScriptOptions.java" startBytecode="0" />
+      <Message>Called method sdmxdl.script.ScriptOptions.getOutputFile()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_INVOKED" endBytecode="31" classname="internal.sdmxdl.script.PowerShellScripts" start="82" end="82" sourcepath="internal/sdmxdl/script/PowerShellScripts.java" sourcefile="PowerShellScripts.java" startBytecode="31" primary="true">
+      <Message>Method invoked at PowerShellScripts.java:[line 82]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="28" classname="internal.sdmxdl.script.PowerShellScripts" start="82" end="82" sourcepath="internal/sdmxdl/script/PowerShellScripts.java" sourcefile="PowerShellScripts.java" startBytecode="28">
+      <Message>Known null at PowerShellScripts.java:[line 82]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="376a94db723806e6a844e573def94481" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in internal.sdmxdl.script.RScripts.newScope(List, ScriptOptions) due to return value of called method</LongMessage>
+    <Class classname="internal.sdmxdl.script.RScripts" primary="true">
+      <SourceLine classname="internal.sdmxdl.script.RScripts" start="21" end="113" sourcepath="internal/sdmxdl/script/RScripts.java" sourcefile="RScripts.java">
+        <Message>At RScripts.java:[lines 21-113]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.script.RScripts</Message>
+    </Class>
+    <Method isStatic="true" classname="internal.sdmxdl.script.RScripts" signature="(Ljava/util/List;Lsdmxdl/script/ScriptOptions;)Ljava/util/Map;" name="newScope" primary="true">
+      <SourceLine endBytecode="187" classname="internal.sdmxdl.script.RScripts" start="71" end="73" sourcepath="internal/sdmxdl/script/RScripts.java" sourcefile="RScripts.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.script.RScripts.newScope(List, ScriptOptions)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.script.ScriptOptions" signature="()Ljava/lang/String;" name="getOutputFile" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.script.ScriptOptions" start="42" end="42" sourcepath="sdmxdl/script/ScriptOptions.java" sourcefile="ScriptOptions.java" startBytecode="0" />
+      <Message>Called method sdmxdl.script.ScriptOptions.getOutputFile()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_INVOKED" endBytecode="19" classname="internal.sdmxdl.script.RScripts" start="72" end="72" sourcepath="internal/sdmxdl/script/RScripts.java" sourcefile="RScripts.java" startBytecode="19" primary="true">
+      <Message>Method invoked at RScripts.java:[line 72]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="16" classname="internal.sdmxdl.script.RScripts" start="72" end="72" sourcepath="internal/sdmxdl/script/RScripts.java" sourcefile="RScripts.java" startBytecode="16">
+      <Message>Known null at RScripts.java:[line 72]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="21ce7121f6ec97fe9dddb02c597d8588" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in internal.sdmxdl.script.RestCalls.visitData(DataRequest) due to return value of called method</LongMessage>
+    <Class classname="internal.sdmxdl.script.RestCalls" primary="true">
+      <SourceLine classname="internal.sdmxdl.script.RestCalls" start="17" end="136" sourcepath="internal/sdmxdl/script/RestCalls.java" sourcefile="RestCalls.java">
+        <Message>At RestCalls.java:[lines 17-136]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.script.RestCalls</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.script.RestCalls" signature="(Lsdmxdl/DataRequest;)Linternal/sdmxdl/script/RestCall;" name="visitData" primary="true">
+      <SourceLine endBytecode="443" classname="internal.sdmxdl.script.RestCalls" start="30" end="61" sourcepath="internal/sdmxdl/script/RestCalls.java" sourcefile="RestCalls.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.script.RestCalls.visitData(DataRequest)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.DataRequest" signature="()Ljava/time/LocalDateTime;" name="getEndPeriod" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.DataRequest" start="27" end="27" sourcepath="sdmxdl/DataRequest.java" sourcefile="DataRequest.java" startBytecode="0" />
+      <Message>Called method sdmxdl.DataRequest.getEndPeriod()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_INVOKED" endBytecode="153" classname="internal.sdmxdl.script.RestCalls" start="44" end="44" sourcepath="internal/sdmxdl/script/RestCalls.java" sourcefile="RestCalls.java" startBytecode="153" primary="true">
+      <Message>Method invoked at RestCalls.java:[line 44]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="150" classname="internal.sdmxdl.script.RestCalls" start="44" end="44" sourcepath="internal/sdmxdl/script/RestCalls.java" sourcefile="RestCalls.java" startBytecode="150">
+      <Message>Known null at RestCalls.java:[line 44]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="3cad9c2304d837205a3a7d2acd84c712" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in internal.sdmxdl.script.RestCalls.visitData(DataRequest) due to return value of called method</LongMessage>
+    <Class classname="internal.sdmxdl.script.RestCalls" primary="true">
+      <SourceLine classname="internal.sdmxdl.script.RestCalls" start="17" end="136" sourcepath="internal/sdmxdl/script/RestCalls.java" sourcefile="RestCalls.java">
+        <Message>At RestCalls.java:[lines 17-136]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.script.RestCalls</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.script.RestCalls" signature="(Lsdmxdl/DataRequest;)Linternal/sdmxdl/script/RestCall;" name="visitData" primary="true">
+      <SourceLine endBytecode="443" classname="internal.sdmxdl.script.RestCalls" start="30" end="61" sourcepath="internal/sdmxdl/script/RestCalls.java" sourcefile="RestCalls.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.script.RestCalls.visitData(DataRequest)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.DataRequest" signature="()Ljava/time/LocalDateTime;" name="getStartPeriod" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.DataRequest" start="25" end="25" sourcepath="sdmxdl/DataRequest.java" sourcefile="DataRequest.java" startBytecode="0" />
+      <Message>Called method sdmxdl.DataRequest.getStartPeriod()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_INVOKED" endBytecode="132" classname="internal.sdmxdl.script.RestCalls" start="41" end="41" sourcepath="internal/sdmxdl/script/RestCalls.java" sourcefile="RestCalls.java" startBytecode="132" primary="true">
+      <Message>Method invoked at RestCalls.java:[line 41]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="129" classname="internal.sdmxdl.script.RestCalls" start="41" end="41" sourcepath="internal/sdmxdl/script/RestCalls.java" sourcefile="RestCalls.java" startBytecode="129">
+      <Message>Known null at RestCalls.java:[line 41]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="215964acb5b0db51cbcfef77f54b7e1b" cweid="374" rank="18" abbrev="EI" category="MALICIOUS_CODE" priority="2" type="EI_EXPOSE_REP" instanceOccurrenceMax="0">
+    <ShortMessage>May expose internal representation by returning reference to mutable object</ShortMessage>
+    <LongMessage>internal.sdmxdl.script.ScriptGeneratorSupport.getScriptPropertyNames() may expose internal representation by returning ScriptGeneratorSupport.scriptPropertyNames</LongMessage>
+    <Class classname="internal.sdmxdl.script.ScriptGeneratorSupport" primary="true">
+      <SourceLine classname="internal.sdmxdl.script.ScriptGeneratorSupport" start="15" end="92" sourcepath="internal/sdmxdl/script/ScriptGeneratorSupport.java" sourcefile="ScriptGeneratorSupport.java">
+        <Message>At ScriptGeneratorSupport.java:[lines 15-92]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.script.ScriptGeneratorSupport</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.script.ScriptGeneratorSupport" signature="()Ljava/util/Collection;" name="getScriptPropertyNames" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine endBytecode="46" classname="internal.sdmxdl.script.ScriptGeneratorSupport" start="76" end="76" sourcepath="internal/sdmxdl/script/ScriptGeneratorSupport.java" sourcefile="ScriptGeneratorSupport.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.script.ScriptGeneratorSupport.getScriptPropertyNames()</Message>
+    </Method>
+    <Field isStatic="false" classname="internal.sdmxdl.script.ScriptGeneratorSupport" signature="Ljava/util/Set;" name="scriptPropertyNames" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine classname="internal.sdmxdl.script.ScriptGeneratorSupport" sourcepath="internal/sdmxdl/script/ScriptGeneratorSupport.java" sourcefile="ScriptGeneratorSupport.java">
+        <Message>In ScriptGeneratorSupport.java</Message>
+      </SourceLine>
+      <Message>Field internal.sdmxdl.script.ScriptGeneratorSupport.scriptPropertyNames</Message>
+    </Field>
+    <SourceLine endBytecode="4" classname="internal.sdmxdl.script.ScriptGeneratorSupport" start="76" end="76" sourcepath="internal/sdmxdl/script/ScriptGeneratorSupport.java" sourcefile="ScriptGeneratorSupport.java" startBytecode="4" primary="true">
+      <Message>At ScriptGeneratorSupport.java:[line 76]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="e4ab14e73c2b71fb844a35600d268d0c" cweid="374" rank="18" abbrev="EI" category="MALICIOUS_CODE" priority="2" type="EI_EXPOSE_REP" instanceOccurrenceMax="0">
+    <ShortMessage>May expose internal representation by returning reference to mutable object</ShortMessage>
+    <LongMessage>internal.sdmxdl.script.ScriptGeneratorSupport.getScriptRequestTypes() may expose internal representation by returning ScriptGeneratorSupport.scriptRequestTypes</LongMessage>
+    <Class classname="internal.sdmxdl.script.ScriptGeneratorSupport" primary="true">
+      <SourceLine classname="internal.sdmxdl.script.ScriptGeneratorSupport" start="15" end="92" sourcepath="internal/sdmxdl/script/ScriptGeneratorSupport.java" sourcefile="ScriptGeneratorSupport.java">
+        <Message>At ScriptGeneratorSupport.java:[lines 15-92]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.script.ScriptGeneratorSupport</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.script.ScriptGeneratorSupport" signature="()Ljava/util/Set;" name="getScriptRequestTypes" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine endBytecode="46" classname="internal.sdmxdl.script.ScriptGeneratorSupport" start="66" end="66" sourcepath="internal/sdmxdl/script/ScriptGeneratorSupport.java" sourcefile="ScriptGeneratorSupport.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.script.ScriptGeneratorSupport.getScriptRequestTypes()</Message>
+    </Method>
+    <Field isStatic="false" classname="internal.sdmxdl.script.ScriptGeneratorSupport" signature="Ljava/util/Set;" name="scriptRequestTypes" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine classname="internal.sdmxdl.script.ScriptGeneratorSupport" sourcepath="internal/sdmxdl/script/ScriptGeneratorSupport.java" sourcefile="ScriptGeneratorSupport.java">
+        <Message>In ScriptGeneratorSupport.java</Message>
+      </SourceLine>
+      <Message>Field internal.sdmxdl.script.ScriptGeneratorSupport.scriptRequestTypes</Message>
+    </Field>
+    <SourceLine endBytecode="4" classname="internal.sdmxdl.script.ScriptGeneratorSupport" start="66" end="66" sourcepath="internal/sdmxdl/script/ScriptGeneratorSupport.java" sourcefile="ScriptGeneratorSupport.java" startBytecode="4" primary="true">
+      <Message>At ScriptGeneratorSupport.java:[line 66]</Message>
+    </SourceLine>
+  </BugInstance>
+</BugCollection>

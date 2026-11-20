@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BugCollection>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="9ade7b8bc96213d9a23cce318ba1b553" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.format.protobuf.ProtoApi.fromAttribute(Attribute) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.format.protobuf.ProtoApi" primary="true">
+      <SourceLine classname="sdmxdl.format.protobuf.ProtoApi" start="13" end="311" sourcepath="sdmxdl/format/protobuf/ProtoApi.java" sourcefile="ProtoApi.java">
+        <Message>At ProtoApi.java:[lines 13-311]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.format.protobuf.ProtoApi</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.format.protobuf.ProtoApi" signature="(Lsdmxdl/Attribute;)Lsdmxdl/format/protobuf/AttributeDto;" name="fromAttribute" primary="true">
+      <SourceLine endBytecode="133" classname="sdmxdl.format.protobuf.ProtoApi" start="126" end="128" sourcepath="sdmxdl/format/protobuf/ProtoApi.java" sourcefile="ProtoApi.java" startBytecode="0" />
+      <Message>In method sdmxdl.format.protobuf.ProtoApi.fromAttribute(Attribute)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.Attribute" signature="()Lsdmxdl/Codelist;" name="getCodelist" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.Attribute" start="38" end="38" sourcepath="sdmxdl/Attribute.java" sourcefile="Attribute.java" startBytecode="0" />
+      <Message>Called method sdmxdl.Attribute.getCodelist()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_INVOKED" endBytecode="30" classname="sdmxdl.format.protobuf.ProtoApi" start="127" end="127" sourcepath="sdmxdl/format/protobuf/ProtoApi.java" sourcefile="ProtoApi.java" startBytecode="30" primary="true">
+      <Message>Method invoked at ProtoApi.java:[line 127]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="27" classname="sdmxdl.format.protobuf.ProtoApi" start="127" end="127" sourcepath="sdmxdl/format/protobuf/ProtoApi.java" sourcefile="ProtoApi.java" startBytecode="27">
+      <Message>Known null at ProtoApi.java:[line 127]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="bc726d0a1065633cd2fd3b8e3cb8e7d9" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.format.protobuf.ProtoApi.fromDataQuery(Query) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.format.protobuf.ProtoApi" primary="true">
+      <SourceLine classname="sdmxdl.format.protobuf.ProtoApi" start="13" end="311" sourcepath="sdmxdl/format/protobuf/ProtoApi.java" sourcefile="ProtoApi.java">
+        <Message>At ProtoApi.java:[lines 13-311]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.format.protobuf.ProtoApi</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.format.protobuf.ProtoApi" signature="(Lsdmxdl/Query;)Lsdmxdl/format/protobuf/QueryDto;" name="fromDataQuery" primary="true">
+      <SourceLine endBytecode="209" classname="sdmxdl.format.protobuf.ProtoApi" start="203" end="216" sourcepath="sdmxdl/format/protobuf/ProtoApi.java" sourcefile="ProtoApi.java" startBytecode="0" />
+      <Message>In method sdmxdl.format.protobuf.ProtoApi.fromDataQuery(Query)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.Query" signature="()Ljava/time/LocalDateTime;" name="getEndPeriod" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.Query" start="35" end="35" sourcepath="sdmxdl/Query.java" sourcefile="Query.java" startBytecode="0" />
+      <Message>Called method sdmxdl.Query.getEndPeriod()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="55" classname="sdmxdl.format.protobuf.ProtoApi" start="208" end="208" sourcepath="sdmxdl/format/protobuf/ProtoApi.java" sourcefile="ProtoApi.java" startBytecode="55" primary="true">
+      <Message>Dereferenced at ProtoApi.java:[line 208]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="52" classname="sdmxdl.format.protobuf.ProtoApi" start="208" end="208" sourcepath="sdmxdl/format/protobuf/ProtoApi.java" sourcefile="ProtoApi.java" startBytecode="52">
+      <Message>Known null at ProtoApi.java:[line 208]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="74ca655b284b2e1a041f836debbec370" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.format.protobuf.ProtoApi.fromDataQuery(Query) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.format.protobuf.ProtoApi" primary="true">
+      <SourceLine classname="sdmxdl.format.protobuf.ProtoApi" start="13" end="311" sourcepath="sdmxdl/format/protobuf/ProtoApi.java" sourcefile="ProtoApi.java">
+        <Message>At ProtoApi.java:[lines 13-311]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.format.protobuf.ProtoApi</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.format.protobuf.ProtoApi" signature="(Lsdmxdl/Query;)Lsdmxdl/format/protobuf/QueryDto;" name="fromDataQuery" primary="true">
+      <SourceLine endBytecode="209" classname="sdmxdl.format.protobuf.ProtoApi" start="203" end="216" sourcepath="sdmxdl/format/protobuf/ProtoApi.java" sourcefile="ProtoApi.java" startBytecode="0" />
+      <Message>In method sdmxdl.format.protobuf.ProtoApi.fromDataQuery(Query)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.Query" signature="()Ljava/lang/Integer;" name="getFirstNObservations" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.Query" start="42" end="42" sourcepath="sdmxdl/Query.java" sourcefile="Query.java" startBytecode="0" />
+      <Message>Called method sdmxdl.Query.getFirstNObservations()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="74" classname="sdmxdl.format.protobuf.ProtoApi" start="211" end="211" sourcepath="sdmxdl/format/protobuf/ProtoApi.java" sourcefile="ProtoApi.java" startBytecode="74" primary="true">
+      <Message>Dereferenced at ProtoApi.java:[line 211]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="71" classname="sdmxdl.format.protobuf.ProtoApi" start="211" end="211" sourcepath="sdmxdl/format/protobuf/ProtoApi.java" sourcefile="ProtoApi.java" startBytecode="71">
+      <Message>Known null at ProtoApi.java:[line 211]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="a7b10defa6ee171a8f2e30bbc6b01ebd" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.format.protobuf.ProtoApi.fromDataQuery(Query) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.format.protobuf.ProtoApi" primary="true">
+      <SourceLine classname="sdmxdl.format.protobuf.ProtoApi" start="13" end="311" sourcepath="sdmxdl/format/protobuf/ProtoApi.java" sourcefile="ProtoApi.java">
+        <Message>At ProtoApi.java:[lines 13-311]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.format.protobuf.ProtoApi</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.format.protobuf.ProtoApi" signature="(Lsdmxdl/Query;)Lsdmxdl/format/protobuf/QueryDto;" name="fromDataQuery" primary="true">
+      <SourceLine endBytecode="209" classname="sdmxdl.format.protobuf.ProtoApi" start="203" end="216" sourcepath="sdmxdl/format/protobuf/ProtoApi.java" sourcefile="ProtoApi.java" startBytecode="0" />
+      <Message>In method sdmxdl.format.protobuf.ProtoApi.fromDataQuery(Query)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.Query" signature="()Ljava/lang/Integer;" name="getLastNObservations" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.Query" start="52" end="52" sourcepath="sdmxdl/Query.java" sourcefile="Query.java" startBytecode="0" />
+      <Message>Called method sdmxdl.Query.getLastNObservations()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="93" classname="sdmxdl.format.protobuf.ProtoApi" start="214" end="214" sourcepath="sdmxdl/format/protobuf/ProtoApi.java" sourcefile="ProtoApi.java" startBytecode="93" primary="true">
+      <Message>Dereferenced at ProtoApi.java:[line 214]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="90" classname="sdmxdl.format.protobuf.ProtoApi" start="214" end="214" sourcepath="sdmxdl/format/protobuf/ProtoApi.java" sourcefile="ProtoApi.java" startBytecode="90">
+      <Message>Known null at ProtoApi.java:[line 214]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="34140bf9febbb64af03e44cb79e490e6" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.format.protobuf.ProtoApi.fromDataQuery(Query) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.format.protobuf.ProtoApi" primary="true">
+      <SourceLine classname="sdmxdl.format.protobuf.ProtoApi" start="13" end="311" sourcepath="sdmxdl/format/protobuf/ProtoApi.java" sourcefile="ProtoApi.java">
+        <Message>At ProtoApi.java:[lines 13-311]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.format.protobuf.ProtoApi</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.format.protobuf.ProtoApi" signature="(Lsdmxdl/Query;)Lsdmxdl/format/protobuf/QueryDto;" name="fromDataQuery" primary="true">
+      <SourceLine endBytecode="209" classname="sdmxdl.format.protobuf.ProtoApi" start="203" end="216" sourcepath="sdmxdl/format/protobuf/ProtoApi.java" sourcefile="ProtoApi.java" startBytecode="0" />
+      <Message>In method sdmxdl.format.protobuf.ProtoApi.fromDataQuery(Query)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.Query" signature="()Ljava/time/LocalDateTime;" name="getStartPeriod" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.Query" start="27" end="27" sourcepath="sdmxdl/Query.java" sourcefile="Query.java" startBytecode="0" />
+      <Message>Called method sdmxdl.Query.getStartPeriod()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="36" classname="sdmxdl.format.protobuf.ProtoApi" start="205" end="205" sourcepath="sdmxdl/format/protobuf/ProtoApi.java" sourcefile="ProtoApi.java" startBytecode="36" primary="true">
+      <Message>Dereferenced at ProtoApi.java:[line 205]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="33" classname="sdmxdl.format.protobuf.ProtoApi" start="205" end="205" sourcepath="sdmxdl/format/protobuf/ProtoApi.java" sourcefile="ProtoApi.java" startBytecode="33">
+      <Message>Known null at ProtoApi.java:[line 205]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="a26663cf774dc8d25db024a49b3f3d77" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.format.protobuf.ProtoApi.fromDataflow(Flow) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.format.protobuf.ProtoApi" primary="true">
+      <SourceLine classname="sdmxdl.format.protobuf.ProtoApi" start="13" end="311" sourcepath="sdmxdl/format/protobuf/ProtoApi.java" sourcefile="ProtoApi.java">
+        <Message>At ProtoApi.java:[lines 13-311]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.format.protobuf.ProtoApi</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.format.protobuf.ProtoApi" signature="(Lsdmxdl/Flow;)Lsdmxdl/format/protobuf/FlowDto;" name="fromDataflow" primary="true">
+      <SourceLine endBytecode="141" classname="sdmxdl.format.protobuf.ProtoApi" start="150" end="157" sourcepath="sdmxdl/format/protobuf/ProtoApi.java" sourcefile="ProtoApi.java" startBytecode="0" />
+      <Message>In method sdmxdl.format.protobuf.ProtoApi.fromDataflow(Flow)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.Flow" signature="()Ljava/lang/String;" name="getDescription" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.Flow" start="39" end="39" sourcepath="sdmxdl/Flow.java" sourcefile="Flow.java" startBytecode="0" />
+      <Message>Called method sdmxdl.Flow.getDescription()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_INVOKED" endBytecode="43" classname="sdmxdl.format.protobuf.ProtoApi" start="155" end="155" sourcepath="sdmxdl/format/protobuf/ProtoApi.java" sourcefile="ProtoApi.java" startBytecode="43" primary="true">
+      <Message>Method invoked at ProtoApi.java:[line 155]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="40" classname="sdmxdl.format.protobuf.ProtoApi" start="155" end="155" sourcepath="sdmxdl/format/protobuf/ProtoApi.java" sourcefile="ProtoApi.java" startBytecode="40">
+      <Message>Known null at ProtoApi.java:[line 155]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="9aa79a2f44851bb05120e4dfa2635d7c" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.format.protobuf.ProtoApi.fromDimension(Dimension) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.format.protobuf.ProtoApi" primary="true">
+      <SourceLine classname="sdmxdl.format.protobuf.ProtoApi" start="13" end="311" sourcepath="sdmxdl/format/protobuf/ProtoApi.java" sourcefile="ProtoApi.java">
+        <Message>At ProtoApi.java:[lines 13-311]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.format.protobuf.ProtoApi</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.format.protobuf.ProtoApi" signature="(Lsdmxdl/Dimension;)Lsdmxdl/format/protobuf/DimensionDto;" name="fromDimension" primary="true">
+      <SourceLine endBytecode="128" classname="sdmxdl.format.protobuf.ProtoApi" start="83" end="86" sourcepath="sdmxdl/format/protobuf/ProtoApi.java" sourcefile="ProtoApi.java" startBytecode="0" />
+      <Message>In method sdmxdl.format.protobuf.ProtoApi.fromDimension(Dimension)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.Dimension" signature="()Lsdmxdl/Codelist;" name="getCodelist" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.Dimension" start="56" end="56" sourcepath="sdmxdl/Dimension.java" sourcefile="Dimension.java" startBytecode="0" />
+      <Message>Called method sdmxdl.Dimension.getCodelist()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_INVOKED" endBytecode="30" classname="sdmxdl.format.protobuf.ProtoApi" start="84" end="84" sourcepath="sdmxdl/format/protobuf/ProtoApi.java" sourcefile="ProtoApi.java" startBytecode="30" primary="true">
+      <Message>Method invoked at ProtoApi.java:[line 84]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="27" classname="sdmxdl.format.protobuf.ProtoApi" start="84" end="84" sourcepath="sdmxdl/format/protobuf/ProtoApi.java" sourcefile="ProtoApi.java" startBytecode="27">
+      <Message>Known null at ProtoApi.java:[line 84]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="329bfd8f052c75ebfda68e67f9b4974" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.format.protobuf.ProtoWeb.fromAccessReport(AccessReport) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.format.protobuf.ProtoWeb" primary="true">
+      <SourceLine classname="sdmxdl.format.protobuf.ProtoWeb" start="12" end="135" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java">
+        <Message>At ProtoWeb.java:[lines 12-135]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.format.protobuf.ProtoWeb</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.format.protobuf.ProtoWeb" signature="(Lsdmxdl/AccessReport;)Lsdmxdl/format/protobuf/web/AccessReportDto;" name="fromAccessReport" primary="true">
+      <SourceLine endBytecode="182" classname="sdmxdl.format.protobuf.ProtoWeb" start="118" end="125" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="0" />
+      <Message>In method sdmxdl.format.protobuf.ProtoWeb.fromAccessReport(AccessReport)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.AccessReport" signature="()Ljava/lang/String;" name="getErrorMessage" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.AccessReport" start="48" end="48" sourcepath="sdmxdl/AccessReport.java" sourcefile="AccessReport.java" startBytecode="0" />
+      <Message>Called method sdmxdl.AccessReport.getErrorMessage()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_INVOKED" endBytecode="78" classname="sdmxdl.format.protobuf.ProtoWeb" start="124" end="124" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="78" primary="true">
+      <Message>Method invoked at ProtoWeb.java:[line 124]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="75" classname="sdmxdl.format.protobuf.ProtoWeb" start="124" end="124" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="75">
+      <Message>Known null at ProtoWeb.java:[line 124]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="62489d4e803e483a2c2019b1ca1decc0" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.format.protobuf.ProtoWeb.fromAccessReport(AccessReport) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.format.protobuf.ProtoWeb" primary="true">
+      <SourceLine classname="sdmxdl.format.protobuf.ProtoWeb" start="12" end="135" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java">
+        <Message>At ProtoWeb.java:[lines 12-135]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.format.protobuf.ProtoWeb</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.format.protobuf.ProtoWeb" signature="(Lsdmxdl/AccessReport;)Lsdmxdl/format/protobuf/web/AccessReportDto;" name="fromAccessReport" primary="true">
+      <SourceLine endBytecode="182" classname="sdmxdl.format.protobuf.ProtoWeb" start="118" end="125" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="0" />
+      <Message>In method sdmxdl.format.protobuf.ProtoWeb.fromAccessReport(AccessReport)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.AccessReport" signature="()Ljava/lang/Integer;" name="getStatusCode" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.AccessReport" start="43" end="43" sourcepath="sdmxdl/AccessReport.java" sourcefile="AccessReport.java" startBytecode="0" />
+      <Message>Called method sdmxdl.AccessReport.getStatusCode()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="59" classname="sdmxdl.format.protobuf.ProtoWeb" start="123" end="123" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="59" primary="true">
+      <Message>Dereferenced at ProtoWeb.java:[line 123]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="56" classname="sdmxdl.format.protobuf.ProtoWeb" start="123" end="123" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="56">
+      <Message>Known null at ProtoWeb.java:[line 123]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="daa542585ab0ce466d8925ccca24ee33" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.format.protobuf.ProtoWeb.fromAccessReport(AccessReport) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.format.protobuf.ProtoWeb" primary="true">
+      <SourceLine classname="sdmxdl.format.protobuf.ProtoWeb" start="12" end="135" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java">
+        <Message>At ProtoWeb.java:[lines 12-135]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.format.protobuf.ProtoWeb</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.format.protobuf.ProtoWeb" signature="(Lsdmxdl/AccessReport;)Lsdmxdl/format/protobuf/web/AccessReportDto;" name="fromAccessReport" primary="true">
+      <SourceLine endBytecode="182" classname="sdmxdl.format.protobuf.ProtoWeb" start="118" end="125" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="0" />
+      <Message>In method sdmxdl.format.protobuf.ProtoWeb.fromAccessReport(AccessReport)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.AccessReport" signature="()Ljava/net/URI;" name="getUri" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.AccessReport" start="32" end="32" sourcepath="sdmxdl/AccessReport.java" sourcefile="AccessReport.java" startBytecode="0" />
+      <Message>Called method sdmxdl.AccessReport.getUri()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="40" classname="sdmxdl.format.protobuf.ProtoWeb" start="122" end="122" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="40" primary="true">
+      <Message>Dereferenced at ProtoWeb.java:[line 122]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="37" classname="sdmxdl.format.protobuf.ProtoWeb" start="122" end="122" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="37">
+      <Message>Known null at ProtoWeb.java:[line 122]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="247962d3fd8ccec2d959b0b6517f04bc" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.format.protobuf.ProtoWeb.fromHealthReport(HealthReport) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.format.protobuf.ProtoWeb" primary="true">
+      <SourceLine classname="sdmxdl.format.protobuf.ProtoWeb" start="12" end="135" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java">
+        <Message>At ProtoWeb.java:[lines 12-135]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.format.protobuf.ProtoWeb</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.format.protobuf.ProtoWeb" signature="(Lsdmxdl/web/HealthReport;)Lsdmxdl/format/protobuf/web/HealthReportDto;" name="fromHealthReport" primary="true">
+      <SourceLine endBytecode="171" classname="sdmxdl.format.protobuf.ProtoWeb" start="129" end="135" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="0" />
+      <Message>In method sdmxdl.format.protobuf.ProtoWeb.fromHealthReport(HealthReport)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.web.HealthReport" signature="()Lsdmxdl/AccessReport;" name="getAccess" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.web.HealthReport" start="31" end="31" sourcepath="sdmxdl/web/HealthReport.java" sourcefile="HealthReport.java" startBytecode="0" />
+      <Message>Called method sdmxdl.web.HealthReport.getAccess()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_INVOKED" endBytecode="68" classname="sdmxdl.format.protobuf.ProtoWeb" start="134" end="134" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="68" primary="true">
+      <Message>Method invoked at ProtoWeb.java:[line 134]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="65" classname="sdmxdl.format.protobuf.ProtoWeb" start="134" end="134" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="65">
+      <Message>Known null at ProtoWeb.java:[line 134]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="85f6e9e5a324c4768e0a4a6e6379f700" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.format.protobuf.ProtoWeb.fromHealthReport(HealthReport) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.format.protobuf.ProtoWeb" primary="true">
+      <SourceLine classname="sdmxdl.format.protobuf.ProtoWeb" start="12" end="135" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java">
+        <Message>At ProtoWeb.java:[lines 12-135]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.format.protobuf.ProtoWeb</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.format.protobuf.ProtoWeb" signature="(Lsdmxdl/web/HealthReport;)Lsdmxdl/format/protobuf/web/HealthReportDto;" name="fromHealthReport" primary="true">
+      <SourceLine endBytecode="171" classname="sdmxdl.format.protobuf.ProtoWeb" start="129" end="135" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="0" />
+      <Message>In method sdmxdl.format.protobuf.ProtoWeb.fromHealthReport(HealthReport)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.web.HealthReport" signature="()Lsdmxdl/web/MonitorReport;" name="getMonitor" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.web.HealthReport" start="21" end="21" sourcepath="sdmxdl/web/HealthReport.java" sourcefile="HealthReport.java" startBytecode="0" />
+      <Message>Called method sdmxdl.web.HealthReport.getMonitor()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_INVOKED" endBytecode="33" classname="sdmxdl.format.protobuf.ProtoWeb" start="132" end="132" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="33" primary="true">
+      <Message>Method invoked at ProtoWeb.java:[line 132]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="30" classname="sdmxdl.format.protobuf.ProtoWeb" start="132" end="132" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="30">
+      <Message>Known null at ProtoWeb.java:[line 132]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="8028c2d3f1cbb1aa105d3664d3edc62a" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.format.protobuf.ProtoWeb.fromHealthReport(HealthReport) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.format.protobuf.ProtoWeb" primary="true">
+      <SourceLine classname="sdmxdl.format.protobuf.ProtoWeb" start="12" end="135" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java">
+        <Message>At ProtoWeb.java:[lines 12-135]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.format.protobuf.ProtoWeb</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.format.protobuf.ProtoWeb" signature="(Lsdmxdl/web/HealthReport;)Lsdmxdl/format/protobuf/web/HealthReportDto;" name="fromHealthReport" primary="true">
+      <SourceLine endBytecode="171" classname="sdmxdl.format.protobuf.ProtoWeb" start="129" end="135" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="0" />
+      <Message>In method sdmxdl.format.protobuf.ProtoWeb.fromHealthReport(HealthReport)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.web.HealthReport" signature="()Ljava/lang/String;" name="getMonitorError" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.web.HealthReport" start="26" end="26" sourcepath="sdmxdl/web/HealthReport.java" sourcefile="HealthReport.java" startBytecode="0" />
+      <Message>Called method sdmxdl.web.HealthReport.getMonitorError()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_INVOKED" endBytecode="52" classname="sdmxdl.format.protobuf.ProtoWeb" start="133" end="133" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="52" primary="true">
+      <Message>Method invoked at ProtoWeb.java:[line 133]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="49" classname="sdmxdl.format.protobuf.ProtoWeb" start="133" end="133" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="49">
+      <Message>Known null at ProtoWeb.java:[line 133]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="eac5baaeeb3ec187803bc9bfdc95a1b4" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.format.protobuf.ProtoWeb.fromMonitorReport(MonitorReport) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.format.protobuf.ProtoWeb" primary="true">
+      <SourceLine classname="sdmxdl.format.protobuf.ProtoWeb" start="12" end="135" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java">
+        <Message>At ProtoWeb.java:[lines 12-135]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.format.protobuf.ProtoWeb</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.format.protobuf.ProtoWeb" signature="(Lsdmxdl/web/MonitorReport;)Lsdmxdl/format/protobuf/web/MonitorReportDto;" name="fromMonitorReport" primary="true">
+      <SourceLine endBytecode="150" classname="sdmxdl.format.protobuf.ProtoWeb" start="81" end="86" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="0" />
+      <Message>In method sdmxdl.format.protobuf.ProtoWeb.fromMonitorReport(MonitorReport)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.web.MonitorReport" signature="()Ljava/lang/Long;" name="getAverageResponseTime" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.web.MonitorReport" start="17" end="17" sourcepath="sdmxdl/web/MonitorReport.java" sourcefile="MonitorReport.java" startBytecode="0" />
+      <Message>Called method sdmxdl.web.MonitorReport.getAverageResponseTime()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="52" classname="sdmxdl.format.protobuf.ProtoWeb" start="85" end="85" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="52" primary="true">
+      <Message>Dereferenced at ProtoWeb.java:[line 85]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="49" classname="sdmxdl.format.protobuf.ProtoWeb" start="85" end="85" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="49">
+      <Message>Known null at ProtoWeb.java:[line 85]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="ca86ed879708ec3bfef60a32004462f8" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.format.protobuf.ProtoWeb.fromMonitorReport(MonitorReport) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.format.protobuf.ProtoWeb" primary="true">
+      <SourceLine classname="sdmxdl.format.protobuf.ProtoWeb" start="12" end="135" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java">
+        <Message>At ProtoWeb.java:[lines 12-135]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.format.protobuf.ProtoWeb</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.format.protobuf.ProtoWeb" signature="(Lsdmxdl/web/MonitorReport;)Lsdmxdl/format/protobuf/web/MonitorReportDto;" name="fromMonitorReport" primary="true">
+      <SourceLine endBytecode="150" classname="sdmxdl.format.protobuf.ProtoWeb" start="81" end="86" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="0" />
+      <Message>In method sdmxdl.format.protobuf.ProtoWeb.fromMonitorReport(MonitorReport)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.web.MonitorReport" signature="()Ljava/lang/Double;" name="getUptimeRatio" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.web.MonitorReport" start="15" end="15" sourcepath="sdmxdl/web/MonitorReport.java" sourcefile="MonitorReport.java" startBytecode="0" />
+      <Message>Called method sdmxdl.web.MonitorReport.getUptimeRatio()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="33" classname="sdmxdl.format.protobuf.ProtoWeb" start="84" end="84" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="33" primary="true">
+      <Message>Dereferenced at ProtoWeb.java:[line 84]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="30" classname="sdmxdl.format.protobuf.ProtoWeb" start="84" end="84" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="30">
+      <Message>Known null at ProtoWeb.java:[line 84]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="134fb6bc7577d8d1dbe164e61670862" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.format.protobuf.ProtoWeb.fromWebSource(WebSource) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.format.protobuf.ProtoWeb" primary="true">
+      <SourceLine classname="sdmxdl.format.protobuf.ProtoWeb" start="12" end="135" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java">
+        <Message>At ProtoWeb.java:[lines 12-135]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.format.protobuf.ProtoWeb</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.format.protobuf.ProtoWeb" signature="(Lsdmxdl/web/WebSource;)Lsdmxdl/format/protobuf/web/WebSourceDto;" name="fromWebSource" primary="true">
+      <SourceLine endBytecode="250" classname="sdmxdl.format.protobuf.ProtoWeb" start="15" end="27" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="0" />
+      <Message>In method sdmxdl.format.protobuf.ProtoWeb.fromWebSource(WebSource)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.web.WebSource" signature="()Ljava/net/URI;" name="getMonitor" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.web.WebSource" start="59" end="59" sourcepath="sdmxdl/web/WebSource.java" sourcefile="WebSource.java" startBytecode="0" />
+      <Message>Called method sdmxdl.web.WebSource.getMonitor()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="104" classname="sdmxdl.format.protobuf.ProtoWeb" start="24" end="24" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="104" primary="true">
+      <Message>Dereferenced at ProtoWeb.java:[line 24]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="101" classname="sdmxdl.format.protobuf.ProtoWeb" start="24" end="24" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="101">
+      <Message>Known null at ProtoWeb.java:[line 24]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="62f2bdfeb255206512de309e3e56029e" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.format.protobuf.ProtoWeb.fromWebSource(WebSource) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.format.protobuf.ProtoWeb" primary="true">
+      <SourceLine classname="sdmxdl.format.protobuf.ProtoWeb" start="12" end="135" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java">
+        <Message>At ProtoWeb.java:[lines 12-135]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.format.protobuf.ProtoWeb</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.format.protobuf.ProtoWeb" signature="(Lsdmxdl/web/WebSource;)Lsdmxdl/format/protobuf/web/WebSourceDto;" name="fromWebSource" primary="true">
+      <SourceLine endBytecode="250" classname="sdmxdl.format.protobuf.ProtoWeb" start="15" end="27" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="0" />
+      <Message>In method sdmxdl.format.protobuf.ProtoWeb.fromWebSource(WebSource)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.web.WebSource" signature="()Ljava/net/URL;" name="getMonitorWebsite" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.web.WebSource" start="61" end="61" sourcepath="sdmxdl/web/WebSource.java" sourcefile="WebSource.java" startBytecode="0" />
+      <Message>Called method sdmxdl.web.WebSource.getMonitorWebsite()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="123" classname="sdmxdl.format.protobuf.ProtoWeb" start="26" end="26" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="123" primary="true">
+      <Message>Dereferenced at ProtoWeb.java:[line 26]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="120" classname="sdmxdl.format.protobuf.ProtoWeb" start="26" end="26" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="120">
+      <Message>Known null at ProtoWeb.java:[line 26]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="3675a185e25c9224eefe7b6b870386bc" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.format.protobuf.ProtoWeb.fromWebSource(WebSource) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.format.protobuf.ProtoWeb" primary="true">
+      <SourceLine classname="sdmxdl.format.protobuf.ProtoWeb" start="12" end="135" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java">
+        <Message>At ProtoWeb.java:[lines 12-135]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.format.protobuf.ProtoWeb</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.format.protobuf.ProtoWeb" signature="(Lsdmxdl/web/WebSource;)Lsdmxdl/format/protobuf/web/WebSourceDto;" name="fromWebSource" primary="true">
+      <SourceLine endBytecode="250" classname="sdmxdl.format.protobuf.ProtoWeb" start="15" end="27" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="0" />
+      <Message>In method sdmxdl.format.protobuf.ProtoWeb.fromWebSource(WebSource)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.web.WebSource" signature="()Ljava/net/URL;" name="getWebsite" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.web.WebSource" start="57" end="57" sourcepath="sdmxdl/web/WebSource.java" sourcefile="WebSource.java" startBytecode="0" />
+      <Message>Called method sdmxdl.web.WebSource.getWebsite()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="85" classname="sdmxdl.format.protobuf.ProtoWeb" start="23" end="23" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="85" primary="true">
+      <Message>Dereferenced at ProtoWeb.java:[line 23]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="82" classname="sdmxdl.format.protobuf.ProtoWeb" start="23" end="23" sourcepath="sdmxdl/format/protobuf/ProtoWeb.java" sourcefile="ProtoWeb.java" startBytecode="82">
+      <Message>Known null at ProtoWeb.java:[line 23]</Message>
+    </SourceLine>
+  </BugInstance>
+</BugCollection>

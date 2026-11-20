@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BugCollection>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="1faf6ddd5d301473ab830c2d6c9e315f" cweid="374" rank="18" abbrev="EI" category="MALICIOUS_CODE" priority="2" type="EI_EXPOSE_REP" instanceOccurrenceMax="0">
+    <ShortMessage>May expose internal representation by returning reference to mutable object</ShortMessage>
+    <LongMessage>internal.sdmxdl.swing.RSyntaxScriptViewer.getComponent() may expose internal representation by returning RSyntaxScriptViewer.scrollPane</LongMessage>
+    <Class classname="internal.sdmxdl.swing.RSyntaxScriptViewer" primary="true">
+      <SourceLine classname="internal.sdmxdl.swing.RSyntaxScriptViewer" start="26" end="86" sourcepath="internal/sdmxdl/swing/RSyntaxScriptViewer.java" sourcefile="RSyntaxScriptViewer.java">
+        <Message>At RSyntaxScriptViewer.java:[lines 26-86]</Message>
+      </SourceLine>
+      <Message>In class internal.sdmxdl.swing.RSyntaxScriptViewer</Message>
+    </Class>
+    <Method isStatic="false" classname="internal.sdmxdl.swing.RSyntaxScriptViewer" signature="()Ljavax/swing/JComponent;" name="getComponent" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine endBytecode="46" classname="internal.sdmxdl.swing.RSyntaxScriptViewer" start="38" end="38" sourcepath="internal/sdmxdl/swing/RSyntaxScriptViewer.java" sourcefile="RSyntaxScriptViewer.java" startBytecode="0" />
+      <Message>In method internal.sdmxdl.swing.RSyntaxScriptViewer.getComponent()</Message>
+    </Method>
+    <Field isStatic="false" classname="internal.sdmxdl.swing.RSyntaxScriptViewer" signature="Lorg/fife/ui/rtextarea/RTextScrollPane;" name="scrollPane" primary="true">
+      <SourceLine classname="internal.sdmxdl.swing.RSyntaxScriptViewer" sourcepath="internal/sdmxdl/swing/RSyntaxScriptViewer.java" sourcefile="RSyntaxScriptViewer.java">
+        <Message>In RSyntaxScriptViewer.java</Message>
+      </SourceLine>
+      <Message>Field internal.sdmxdl.swing.RSyntaxScriptViewer.scrollPane</Message>
+    </Field>
+    <SourceLine endBytecode="4" classname="internal.sdmxdl.swing.RSyntaxScriptViewer" start="38" end="38" sourcepath="internal/sdmxdl/swing/RSyntaxScriptViewer.java" sourcefile="RSyntaxScriptViewer.java" startBytecode="4" primary="true">
+      <Message>At RSyntaxScriptViewer.java:[line 38]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="8b21eb221b64c479c38ff9487731432b" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.swing.FlowBrowserPanel.buildSourceTooltip(WebSource) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.swing.FlowBrowserPanel" primary="true">
+      <SourceLine classname="sdmxdl.swing.FlowBrowserPanel" start="32" end="624" sourcepath="sdmxdl/swing/FlowBrowserPanel.java" sourcefile="FlowBrowserPanel.java">
+        <Message>At FlowBrowserPanel.java:[lines 32-624]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.swing.FlowBrowserPanel</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.swing.FlowBrowserPanel" signature="(Lsdmxdl/web/WebSource;)Ljava/lang/String;" name="buildSourceTooltip" primary="true">
+      <SourceLine endBytecode="312" classname="sdmxdl.swing.FlowBrowserPanel" start="582" end="598" sourcepath="sdmxdl/swing/FlowBrowserPanel.java" sourcefile="FlowBrowserPanel.java" startBytecode="0" />
+      <Message>In method sdmxdl.swing.FlowBrowserPanel.buildSourceTooltip(WebSource)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.web.WebSource" signature="()Ljava/net/URL;" name="getWebsite" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.web.WebSource" start="57" end="57" sourcepath="sdmxdl/web/WebSource.java" sourcefile="WebSource.java" startBytecode="0" />
+      <Message>Called method sdmxdl.web.WebSource.getWebsite()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="146" classname="sdmxdl.swing.FlowBrowserPanel" start="594" end="594" sourcepath="sdmxdl/swing/FlowBrowserPanel.java" sourcefile="FlowBrowserPanel.java" startBytecode="146" primary="true">
+      <Message>Dereferenced at FlowBrowserPanel.java:[line 594]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="143" classname="sdmxdl.swing.FlowBrowserPanel" start="594" end="594" sourcepath="sdmxdl/swing/FlowBrowserPanel.java" sourcefile="FlowBrowserPanel.java" startBytecode="143">
+      <Message>Known null at FlowBrowserPanel.java:[line 594]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="9bb2b5139c29cdba6d325a37e74a7c92" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in sdmxdl.swing.FlowBrowserPanel.lambda$initComponents$11(PropertyChangeEvent) where default case is missing</LongMessage>
+    <Class classname="sdmxdl.swing.FlowBrowserPanel" primary="true">
+      <SourceLine classname="sdmxdl.swing.FlowBrowserPanel" start="32" end="624" sourcepath="sdmxdl/swing/FlowBrowserPanel.java" sourcefile="FlowBrowserPanel.java">
+        <Message>At FlowBrowserPanel.java:[lines 32-624]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.swing.FlowBrowserPanel</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.swing.FlowBrowserPanel" signature="(Ljava/beans/PropertyChangeEvent;)V" name="lambda$initComponents$11" primary="true">
+      <SourceLine endBytecode="214" classname="sdmxdl.swing.FlowBrowserPanel" start="265" end="274" sourcepath="sdmxdl/swing/FlowBrowserPanel.java" sourcefile="FlowBrowserPanel.java" startBytecode="0" />
+      <Message>In method sdmxdl.swing.FlowBrowserPanel.lambda$initComponents$11(PropertyChangeEvent)</Message>
+    </Method>
+    <SourceLine endBytecode="122" classname="sdmxdl.swing.FlowBrowserPanel" start="265" end="271" sourcepath="sdmxdl/swing/FlowBrowserPanel.java" sourcefile="FlowBrowserPanel.java" startBytecode="84" primary="true">
+      <Message>At FlowBrowserPanel.java:[lines 265-271]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="a70a59c632d33bd33ed1d0bcee206ba2" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
+    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
+    <LongMessage>Switch statement found in sdmxdl.swing.FlowBrowserPanel.showCard(String) where default case is missing</LongMessage>
+    <Class classname="sdmxdl.swing.FlowBrowserPanel" primary="true">
+      <SourceLine classname="sdmxdl.swing.FlowBrowserPanel" start="32" end="624" sourcepath="sdmxdl/swing/FlowBrowserPanel.java" sourcefile="FlowBrowserPanel.java">
+        <Message>At FlowBrowserPanel.java:[lines 32-624]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.swing.FlowBrowserPanel</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.swing.FlowBrowserPanel" signature="(Ljava/lang/String;)V" name="showCard" primary="true">
+      <SourceLine endBytecode="285" classname="sdmxdl.swing.FlowBrowserPanel" start="490" end="502" sourcepath="sdmxdl/swing/FlowBrowserPanel.java" sourcefile="FlowBrowserPanel.java" startBytecode="0" />
+      <Message>In method sdmxdl.swing.FlowBrowserPanel.showCard(String)</Message>
+    </Method>
+    <SourceLine endBytecode="180" classname="sdmxdl.swing.FlowBrowserPanel" start="491" end="499" sourcepath="sdmxdl/swing/FlowBrowserPanel.java" sourcefile="FlowBrowserPanel.java" startBytecode="99" primary="true">
+      <Message>At FlowBrowserPanel.java:[lines 491-499]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="b36a586e0faa43c41678617b5c1d67ae" cweid="413" rank="14" abbrev="AT" category="MT_CORRECTNESS" priority="2" type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" instanceOccurrenceMax="0">
+    <ShortMessage>This write of this shared primitive variable may not be visible to other threads</ShortMessage>
+    <LongMessage>Shared primitive variable "loading" in one thread may not yield the value of the most recent write from another thread</LongMessage>
+    <Class classname="sdmxdl.swing.FlowSearchPanel" primary="true">
+      <SourceLine classname="sdmxdl.swing.FlowSearchPanel" start="36" end="594" sourcepath="sdmxdl/swing/FlowSearchPanel.java" sourcefile="FlowSearchPanel.java">
+        <Message>At FlowSearchPanel.java:[lines 36-594]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.swing.FlowSearchPanel</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.swing.FlowSearchPanel" signature="(Lsdmxdl/swing/FlowSearchPanel;Z)Z" name="access$1202" primary="true">
+      <SourceLine endBytecode="58" classname="sdmxdl.swing.FlowSearchPanel" start="36" end="36" sourcepath="sdmxdl/swing/FlowSearchPanel.java" sourcefile="FlowSearchPanel.java" startBytecode="0" />
+      <Message>In method sdmxdl.swing.FlowSearchPanel.access$1202(FlowSearchPanel, boolean)</Message>
+    </Method>
+    <Field isStatic="false" classname="sdmxdl.swing.FlowSearchPanel" signature="Z" name="loading" primary="true">
+      <SourceLine classname="sdmxdl.swing.FlowSearchPanel" sourcepath="sdmxdl/swing/FlowSearchPanel.java" sourcefile="FlowSearchPanel.java">
+        <Message>In FlowSearchPanel.java</Message>
+      </SourceLine>
+      <Message>Field sdmxdl.swing.FlowSearchPanel.loading</Message>
+    </Field>
+    <SourceLine endBytecode="3" classname="sdmxdl.swing.FlowSearchPanel" start="36" end="36" sourcepath="sdmxdl/swing/FlowSearchPanel.java" sourcefile="FlowSearchPanel.java" startBytecode="3" primary="true">
+      <Message>At FlowSearchPanel.java:[line 36]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="dc2dcd12059617ef12da930d5ddb9cf6" cweid="413" rank="14" abbrev="AT" category="MT_CORRECTNESS" priority="2" type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" instanceOccurrenceMax="0">
+    <ShortMessage>This write of this shared primitive variable may not be visible to other threads</ShortMessage>
+    <LongMessage>Shared primitive variable "loadedSources" in one thread may not yield the value of the most recent write from another thread</LongMessage>
+    <Class classname="sdmxdl.swing.FlowSearchPanel" primary="true">
+      <SourceLine classname="sdmxdl.swing.FlowSearchPanel" start="36" end="594" sourcepath="sdmxdl/swing/FlowSearchPanel.java" sourcefile="FlowSearchPanel.java">
+        <Message>At FlowSearchPanel.java:[lines 36-594]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.swing.FlowSearchPanel</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.swing.FlowSearchPanel" signature="(Lsdmxdl/swing/FlowSearchPanel;)I" name="access$808" primary="true">
+      <SourceLine endBytecode="53" classname="sdmxdl.swing.FlowSearchPanel" start="36" end="36" sourcepath="sdmxdl/swing/FlowSearchPanel.java" sourcefile="FlowSearchPanel.java" startBytecode="0" />
+      <Message>In method sdmxdl.swing.FlowSearchPanel.access$808(FlowSearchPanel)</Message>
+    </Method>
+    <Field isStatic="false" classname="sdmxdl.swing.FlowSearchPanel" signature="I" name="loadedSources" primary="true">
+      <SourceLine classname="sdmxdl.swing.FlowSearchPanel" sourcepath="sdmxdl/swing/FlowSearchPanel.java" sourcefile="FlowSearchPanel.java">
+        <Message>In FlowSearchPanel.java</Message>
+      </SourceLine>
+      <Message>Field sdmxdl.swing.FlowSearchPanel.loadedSources</Message>
+    </Field>
+    <SourceLine endBytecode="8" classname="sdmxdl.swing.FlowSearchPanel" start="36" end="36" sourcepath="sdmxdl/swing/FlowSearchPanel.java" sourcefile="FlowSearchPanel.java" startBytecode="8" primary="true">
+      <Message>At FlowSearchPanel.java:[line 36]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="7bda29614269eb7765c58106926a065e" cweid="413" rank="14" abbrev="AT" category="MT_CORRECTNESS" priority="2" type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" instanceOccurrenceMax="0">
+    <ShortMessage>This write of this shared primitive variable may not be visible to other threads</ShortMessage>
+    <LongMessage>Shared primitive variable "loadedSources" in one thread may not yield the value of the most recent write from another thread</LongMessage>
+    <Class classname="sdmxdl.swing.FlowSearchPanel" primary="true">
+      <SourceLine classname="sdmxdl.swing.FlowSearchPanel" start="36" end="594" sourcepath="sdmxdl/swing/FlowSearchPanel.java" sourcefile="FlowSearchPanel.java">
+        <Message>At FlowSearchPanel.java:[lines 36-594]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.swing.FlowSearchPanel</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.swing.FlowSearchPanel" signature="()V" name="startLoading" primary="true">
+      <SourceLine endBytecode="413" classname="sdmxdl.swing.FlowSearchPanel" start="344" end="403" sourcepath="sdmxdl/swing/FlowSearchPanel.java" sourcefile="FlowSearchPanel.java" startBytecode="0" />
+      <Message>In method sdmxdl.swing.FlowSearchPanel.startLoading()</Message>
+    </Method>
+    <Field isStatic="false" classname="sdmxdl.swing.FlowSearchPanel" signature="I" name="loadedSources" primary="true">
+      <SourceLine classname="sdmxdl.swing.FlowSearchPanel" sourcepath="sdmxdl/swing/FlowSearchPanel.java" sourcefile="FlowSearchPanel.java">
+        <Message>In FlowSearchPanel.java</Message>
+      </SourceLine>
+      <Message>Field sdmxdl.swing.FlowSearchPanel.loadedSources</Message>
+    </Field>
+    <SourceLine endBytecode="34" classname="sdmxdl.swing.FlowSearchPanel" start="348" end="348" sourcepath="sdmxdl/swing/FlowSearchPanel.java" sourcefile="FlowSearchPanel.java" startBytecode="34" primary="true">
+      <Message>At FlowSearchPanel.java:[line 348]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="cb95151edf40fa8e34e8ac66c323103e" cweid="413" rank="14" abbrev="AT" category="MT_CORRECTNESS" priority="2" type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" instanceOccurrenceMax="0">
+    <ShortMessage>This write of this shared primitive variable may not be visible to other threads</ShortMessage>
+    <LongMessage>Shared primitive variable "loading" in one thread may not yield the value of the most recent write from another thread</LongMessage>
+    <Class classname="sdmxdl.swing.FlowSearchPanel" primary="true">
+      <SourceLine classname="sdmxdl.swing.FlowSearchPanel" start="36" end="594" sourcepath="sdmxdl/swing/FlowSearchPanel.java" sourcefile="FlowSearchPanel.java">
+        <Message>At FlowSearchPanel.java:[lines 36-594]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.swing.FlowSearchPanel</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.swing.FlowSearchPanel" signature="()V" name="startLoading" primary="true">
+      <SourceLine endBytecode="413" classname="sdmxdl.swing.FlowSearchPanel" start="344" end="403" sourcepath="sdmxdl/swing/FlowSearchPanel.java" sourcefile="FlowSearchPanel.java" startBytecode="0" />
+      <Message>In method sdmxdl.swing.FlowSearchPanel.startLoading()</Message>
+    </Method>
+    <Field isStatic="false" classname="sdmxdl.swing.FlowSearchPanel" signature="Z" name="loading" primary="true">
+      <SourceLine classname="sdmxdl.swing.FlowSearchPanel" sourcepath="sdmxdl/swing/FlowSearchPanel.java" sourcefile="FlowSearchPanel.java">
+        <Message>In FlowSearchPanel.java</Message>
+      </SourceLine>
+      <Message>Field sdmxdl.swing.FlowSearchPanel.loading</Message>
+    </Field>
+    <SourceLine endBytecode="10" classname="sdmxdl.swing.FlowSearchPanel" start="345" end="345" sourcepath="sdmxdl/swing/FlowSearchPanel.java" sourcefile="FlowSearchPanel.java" startBytecode="10" primary="true">
+      <Message>At FlowSearchPanel.java:[line 345]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_ANOTHER_INSTANCE" endBytecode="121" classname="sdmxdl.swing.FlowSearchPanel" start="359" end="359" sourcepath="sdmxdl/swing/FlowSearchPanel.java" sourcefile="FlowSearchPanel.java" startBytecode="121">
+      <Message>Another occurrence at FlowSearchPanel.java:[line 359]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="a18ac3374d6c8f1bda4d040a195304f2" cweid="413" rank="14" abbrev="AT" category="MT_CORRECTNESS" priority="2" type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" instanceOccurrenceMax="0">
+    <ShortMessage>This write of this shared primitive variable may not be visible to other threads</ShortMessage>
+    <LongMessage>Shared primitive variable "totalSources" in one thread may not yield the value of the most recent write from another thread</LongMessage>
+    <Class classname="sdmxdl.swing.FlowSearchPanel" primary="true">
+      <SourceLine classname="sdmxdl.swing.FlowSearchPanel" start="36" end="594" sourcepath="sdmxdl/swing/FlowSearchPanel.java" sourcefile="FlowSearchPanel.java">
+        <Message>At FlowSearchPanel.java:[lines 36-594]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.swing.FlowSearchPanel</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.swing.FlowSearchPanel" signature="()V" name="startLoading" primary="true">
+      <SourceLine endBytecode="413" classname="sdmxdl.swing.FlowSearchPanel" start="344" end="403" sourcepath="sdmxdl/swing/FlowSearchPanel.java" sourcefile="FlowSearchPanel.java" startBytecode="0" />
+      <Message>In method sdmxdl.swing.FlowSearchPanel.startLoading()</Message>
+    </Method>
+    <Field isStatic="false" classname="sdmxdl.swing.FlowSearchPanel" signature="I" name="totalSources" primary="true">
+      <SourceLine classname="sdmxdl.swing.FlowSearchPanel" sourcepath="sdmxdl/swing/FlowSearchPanel.java" sourcefile="FlowSearchPanel.java">
+        <Message>In FlowSearchPanel.java</Message>
+      </SourceLine>
+      <Message>Field sdmxdl.swing.FlowSearchPanel.totalSources</Message>
+    </Field>
+    <SourceLine endBytecode="109" classname="sdmxdl.swing.FlowSearchPanel" start="357" end="357" sourcepath="sdmxdl/swing/FlowSearchPanel.java" sourcefile="FlowSearchPanel.java" startBytecode="109" primary="true">
+      <Message>At FlowSearchPanel.java:[line 357]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="24fc9992ac958e193c58aa432c0a8296" cweid="374" rank="18" abbrev="EI" category="MALICIOUS_CODE" priority="2" type="EI_EXPOSE_REP" instanceOccurrenceMax="0">
+    <ShortMessage>May expose internal representation by returning reference to mutable object</ShortMessage>
+    <LongMessage>sdmxdl.swing.ScriptViewer$1.getComponent() may expose internal representation by returning ScriptViewer$1.val$scrollPane</LongMessage>
+    <Class classname="sdmxdl.swing.ScriptViewer$1" primary="true">
+      <SourceLine classname="sdmxdl.swing.ScriptViewer$1" start="93" end="103" sourcepath="sdmxdl/swing/ScriptViewer.java" sourcefile="ScriptViewer.java">
+        <Message>At ScriptViewer.java:[lines 93-103]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.swing.ScriptViewer$1</Message>
+    </Class>
+    <Method isStatic="false" classname="sdmxdl.swing.ScriptViewer$1" signature="()Ljavax/swing/JComponent;" name="getComponent" classAnnotationNames="lombok.NonNull" primary="true">
+      <SourceLine endBytecode="46" classname="sdmxdl.swing.ScriptViewer$1" start="96" end="96" sourcepath="sdmxdl/swing/ScriptViewer.java" sourcefile="ScriptViewer.java" startBytecode="0" />
+      <Message>In method sdmxdl.swing.ScriptViewer$1.getComponent()</Message>
+    </Method>
+    <Field isStatic="false" classname="sdmxdl.swing.ScriptViewer$1" signature="Ljavax/swing/JScrollPane;" name="val$scrollPane" primary="true">
+      <SourceLine classname="sdmxdl.swing.ScriptViewer$1" sourcepath="sdmxdl/swing/ScriptViewer.java" sourcefile="ScriptViewer.java">
+        <Message>In ScriptViewer.java</Message>
+      </SourceLine>
+      <Message>Field sdmxdl.swing.ScriptViewer$1.val$scrollPane</Message>
+    </Field>
+    <SourceLine endBytecode="4" classname="sdmxdl.swing.ScriptViewer$1" start="96" end="96" sourcepath="sdmxdl/swing/ScriptViewer.java" sourcefile="ScriptViewer.java" startBytecode="4" primary="true">
+      <Message>At ScriptViewer.java:[line 96]</Message>
+    </SourceLine>
+  </BugInstance>
+</BugCollection>

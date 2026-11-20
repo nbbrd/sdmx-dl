@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BugCollection>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="9ef6cb0921e3a2eefb71d46ff7395484" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.grpc.ProtoGrpc.fromKeyRequest(String, DataRequest) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.grpc.ProtoGrpc" primary="true">
+      <SourceLine classname="sdmxdl.grpc.ProtoGrpc" start="10" end="97" sourcepath="sdmxdl/grpc/ProtoGrpc.java" sourcefile="ProtoGrpc.java">
+        <Message>At ProtoGrpc.java:[lines 10-97]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.grpc.ProtoGrpc</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.grpc.ProtoGrpc" signature="(Ljava/lang/String;Lsdmxdl/DataRequest;)Lsdmxdl/grpc/KeyRequestDto;" name="fromKeyRequest" primary="true">
+      <SourceLine endBytecode="273" classname="sdmxdl.grpc.ProtoGrpc" start="58" end="76" sourcepath="sdmxdl/grpc/ProtoGrpc.java" sourcefile="ProtoGrpc.java" startBytecode="0" />
+      <Message>In method sdmxdl.grpc.ProtoGrpc.fromKeyRequest(String, DataRequest)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.DataRequest" signature="()Ljava/time/LocalDateTime;" name="getEndPeriod" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.DataRequest" start="27" end="27" sourcepath="sdmxdl/DataRequest.java" sourcefile="DataRequest.java" startBytecode="0" />
+      <Message>Called method sdmxdl.DataRequest.getEndPeriod()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="89" classname="sdmxdl.grpc.ProtoGrpc" start="68" end="68" sourcepath="sdmxdl/grpc/ProtoGrpc.java" sourcefile="ProtoGrpc.java" startBytecode="89" primary="true">
+      <Message>Dereferenced at ProtoGrpc.java:[line 68]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="86" classname="sdmxdl.grpc.ProtoGrpc" start="68" end="68" sourcepath="sdmxdl/grpc/ProtoGrpc.java" sourcefile="ProtoGrpc.java" startBytecode="86">
+      <Message>Known null at ProtoGrpc.java:[line 68]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="3fb514273f3b024481a982de21aa39ef" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.grpc.ProtoGrpc.fromKeyRequest(String, DataRequest) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.grpc.ProtoGrpc" primary="true">
+      <SourceLine classname="sdmxdl.grpc.ProtoGrpc" start="10" end="97" sourcepath="sdmxdl/grpc/ProtoGrpc.java" sourcefile="ProtoGrpc.java">
+        <Message>At ProtoGrpc.java:[lines 10-97]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.grpc.ProtoGrpc</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.grpc.ProtoGrpc" signature="(Ljava/lang/String;Lsdmxdl/DataRequest;)Lsdmxdl/grpc/KeyRequestDto;" name="fromKeyRequest" primary="true">
+      <SourceLine endBytecode="273" classname="sdmxdl.grpc.ProtoGrpc" start="58" end="76" sourcepath="sdmxdl/grpc/ProtoGrpc.java" sourcefile="ProtoGrpc.java" startBytecode="0" />
+      <Message>In method sdmxdl.grpc.ProtoGrpc.fromKeyRequest(String, DataRequest)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.DataRequest" signature="()Ljava/lang/Integer;" name="getFirstNObservations" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.DataRequest" start="29" end="29" sourcepath="sdmxdl/DataRequest.java" sourcefile="DataRequest.java" startBytecode="0" />
+      <Message>Called method sdmxdl.DataRequest.getFirstNObservations()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="108" classname="sdmxdl.grpc.ProtoGrpc" start="71" end="71" sourcepath="sdmxdl/grpc/ProtoGrpc.java" sourcefile="ProtoGrpc.java" startBytecode="108" primary="true">
+      <Message>Dereferenced at ProtoGrpc.java:[line 71]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="105" classname="sdmxdl.grpc.ProtoGrpc" start="71" end="71" sourcepath="sdmxdl/grpc/ProtoGrpc.java" sourcefile="ProtoGrpc.java" startBytecode="105">
+      <Message>Known null at ProtoGrpc.java:[line 71]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="e127aa5b37062e5ed453732d50ae64f6" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.grpc.ProtoGrpc.fromKeyRequest(String, DataRequest) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.grpc.ProtoGrpc" primary="true">
+      <SourceLine classname="sdmxdl.grpc.ProtoGrpc" start="10" end="97" sourcepath="sdmxdl/grpc/ProtoGrpc.java" sourcefile="ProtoGrpc.java">
+        <Message>At ProtoGrpc.java:[lines 10-97]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.grpc.ProtoGrpc</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.grpc.ProtoGrpc" signature="(Ljava/lang/String;Lsdmxdl/DataRequest;)Lsdmxdl/grpc/KeyRequestDto;" name="fromKeyRequest" primary="true">
+      <SourceLine endBytecode="273" classname="sdmxdl.grpc.ProtoGrpc" start="58" end="76" sourcepath="sdmxdl/grpc/ProtoGrpc.java" sourcefile="ProtoGrpc.java" startBytecode="0" />
+      <Message>In method sdmxdl.grpc.ProtoGrpc.fromKeyRequest(String, DataRequest)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.DataRequest" signature="()Ljava/lang/Integer;" name="getLastNObservations" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.DataRequest" start="31" end="31" sourcepath="sdmxdl/DataRequest.java" sourcefile="DataRequest.java" startBytecode="0" />
+      <Message>Called method sdmxdl.DataRequest.getLastNObservations()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="127" classname="sdmxdl.grpc.ProtoGrpc" start="74" end="74" sourcepath="sdmxdl/grpc/ProtoGrpc.java" sourcefile="ProtoGrpc.java" startBytecode="127" primary="true">
+      <Message>Dereferenced at ProtoGrpc.java:[line 74]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="124" classname="sdmxdl.grpc.ProtoGrpc" start="74" end="74" sourcepath="sdmxdl/grpc/ProtoGrpc.java" sourcefile="ProtoGrpc.java" startBytecode="124">
+      <Message>Known null at ProtoGrpc.java:[line 74]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="9a60819e06a05e825fb96babe36e2a63" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.grpc.ProtoGrpc.fromKeyRequest(String, DataRequest) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.grpc.ProtoGrpc" primary="true">
+      <SourceLine classname="sdmxdl.grpc.ProtoGrpc" start="10" end="97" sourcepath="sdmxdl/grpc/ProtoGrpc.java" sourcefile="ProtoGrpc.java">
+        <Message>At ProtoGrpc.java:[lines 10-97]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.grpc.ProtoGrpc</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.grpc.ProtoGrpc" signature="(Ljava/lang/String;Lsdmxdl/DataRequest;)Lsdmxdl/grpc/KeyRequestDto;" name="fromKeyRequest" primary="true">
+      <SourceLine endBytecode="273" classname="sdmxdl.grpc.ProtoGrpc" start="58" end="76" sourcepath="sdmxdl/grpc/ProtoGrpc.java" sourcefile="ProtoGrpc.java" startBytecode="0" />
+      <Message>In method sdmxdl.grpc.ProtoGrpc.fromKeyRequest(String, DataRequest)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.DataRequest" signature="()Ljava/time/LocalDateTime;" name="getStartPeriod" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.DataRequest" start="25" end="25" sourcepath="sdmxdl/DataRequest.java" sourcefile="DataRequest.java" startBytecode="0" />
+      <Message>Called method sdmxdl.DataRequest.getStartPeriod()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="70" classname="sdmxdl.grpc.ProtoGrpc" start="65" end="65" sourcepath="sdmxdl/grpc/ProtoGrpc.java" sourcefile="ProtoGrpc.java" startBytecode="70" primary="true">
+      <Message>Dereferenced at ProtoGrpc.java:[line 65]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="67" classname="sdmxdl.grpc.ProtoGrpc" start="65" end="65" sourcepath="sdmxdl/grpc/ProtoGrpc.java" sourcefile="ProtoGrpc.java" startBytecode="67">
+      <Message>Known null at ProtoGrpc.java:[line 65]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance instanceOccurrenceNum="0" instanceHash="82283e0ee7d294488e6378d88685faab" cweid="476" rank="13" abbrev="NP" category="STYLE" priority="2" type="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" instanceOccurrenceMax="0">
+    <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
+    <LongMessage>Possible null pointer dereference in sdmxdl.grpc.v2.SdmxdlMcpService2.compactSource(WebSource) due to return value of called method</LongMessage>
+    <Class classname="sdmxdl.grpc.v2.SdmxdlMcpService2" classAnnotationNames="jakarta.enterprise.context.ApplicationScoped,io.quarkus.runtime.annotations.RegisterForReflection,io.quarkiverse.mcp.server.WrapBusinessError" primary="true">
+      <SourceLine classname="sdmxdl.grpc.v2.SdmxdlMcpService2" start="36" end="635" sourcepath="sdmxdl/grpc/v2/SdmxdlMcpService2.java" sourcefile="SdmxdlMcpService2.java">
+        <Message>At SdmxdlMcpService2.java:[lines 36-635]</Message>
+      </SourceLine>
+      <Message>In class sdmxdl.grpc.v2.SdmxdlMcpService2</Message>
+    </Class>
+    <Method isStatic="true" classname="sdmxdl.grpc.v2.SdmxdlMcpService2" signature="(Lsdmxdl/web/WebSource;)Lsdmxdl/format/protobuf/web/WebSourceDto;" name="compactSource" primary="true">
+      <SourceLine endBytecode="119" classname="sdmxdl.grpc.v2.SdmxdlMcpService2" start="631" end="635" sourcepath="sdmxdl/grpc/v2/SdmxdlMcpService2.java" sourcefile="SdmxdlMcpService2.java" startBytecode="0" />
+      <Message>In method sdmxdl.grpc.v2.SdmxdlMcpService2.compactSource(WebSource)</Message>
+    </Method>
+    <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.web.WebSource" signature="()Ljava/net/URL;" name="getWebsite" classAnnotationNames="lombok.Generated">
+      <SourceLine endBytecode="46" classname="sdmxdl.web.WebSource" start="57" end="57" sourcepath="sdmxdl/web/WebSource.java" sourcefile="WebSource.java" startBytecode="0" />
+      <Message>Called method sdmxdl.web.WebSource.getWebsite()</Message>
+    </Method>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="30" classname="sdmxdl.grpc.v2.SdmxdlMcpService2" start="633" end="633" sourcepath="sdmxdl/grpc/v2/SdmxdlMcpService2.java" sourcefile="SdmxdlMcpService2.java" startBytecode="30" primary="true">
+      <Message>Dereferenced at SdmxdlMcpService2.java:[line 633]</Message>
+    </SourceLine>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="27" classname="sdmxdl.grpc.v2.SdmxdlMcpService2" start="633" end="633" sourcepath="sdmxdl/grpc/v2/SdmxdlMcpService2.java" sourcefile="SdmxdlMcpService2.java" startBytecode="27">
+      <Message>Known null at SdmxdlMcpService2.java:[line 633]</Message>
+    </SourceLine>
+  </BugInstance>
+</BugCollection>
