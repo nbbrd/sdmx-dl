@@ -39,7 +39,10 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import javax.swing.Icon;
@@ -63,6 +66,7 @@ public class SystemTrayMenu {
     private static final Logger LOGGER = Logger.getLogger(SystemTrayMenu.class);
 
     private static final int ICON_SIZE = 16;
+    private static final long CLEANUP_TIMEOUT_MILLIS = 1000;
     private static final String LOGO = "sdmxdl/grpc/sdmx-logo.svg";
 
     private static final String WEB_UI_PATH = "index.html";
@@ -114,14 +118,33 @@ public class SystemTrayMenu {
 
     void onStop(@Observes ShutdownEvent event) {
         TrayIcon icon = trayIcon;
+        JDialog owner = popupOwner;
+        trayIcon = null;
+        popupOwner = null;
+        if (icon == null && owner == null) {
+            return;
+        }
+        // On a JVM shutdown (Ctrl+C), the AWT toolkit thread is stopped by its own shutdown hook and AWT calls never
+        // return, so the wait is bounded; the JDK removes the tray icon by itself in that case
+        FutureTask<Void> cleanup = new FutureTask<>(() -> uninstall(icon, owner), null);
+        EventQueue.invokeLater(cleanup);
+        try {
+            cleanup.get(CLEANUP_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+        } catch (TimeoutException ex) {
+            LOGGER.debug("System tray cleanup timed out");
+        } catch (ExecutionException ex) {
+            LOGGER.debug("Failed to remove system tray icon", ex.getCause());
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private static void uninstall(@Nullable TrayIcon icon, @Nullable JDialog owner) {
         if (icon != null) {
-            trayIcon = null;
             SystemTray.getSystemTray().remove(icon);
         }
-        JDialog owner = popupOwner;
         if (owner != null) {
-            popupOwner = null;
-            EventQueue.invokeLater(owner::dispose);
+            owner.dispose();
         }
     }
 
