@@ -27,58 +27,41 @@
     <ShortMessage>Possible null pointer dereference due to return value of called method</ShortMessage>
     <LongMessage>Possible null pointer dereference in sdmxdl.swing.FlowBrowserPanel.buildSourceTooltip(WebSource) due to return value of called method</LongMessage>
     <Class classname="sdmxdl.swing.FlowBrowserPanel" primary="true">
-      <SourceLine classname="sdmxdl.swing.FlowBrowserPanel" start="32" end="624" sourcepath="sdmxdl/swing/FlowBrowserPanel.java" sourcefile="FlowBrowserPanel.java">
-        <Message>At FlowBrowserPanel.java:[lines 32-624]</Message>
+      <SourceLine classname="sdmxdl.swing.FlowBrowserPanel" start="32" end="626" sourcepath="sdmxdl/swing/FlowBrowserPanel.java" sourcefile="FlowBrowserPanel.java">
+        <Message>At FlowBrowserPanel.java:[lines 32-626]</Message>
       </SourceLine>
       <Message>In class sdmxdl.swing.FlowBrowserPanel</Message>
     </Class>
     <Method isStatic="true" classname="sdmxdl.swing.FlowBrowserPanel" signature="(Lsdmxdl/web/WebSource;)Ljava/lang/String;" name="buildSourceTooltip" primary="true">
-      <SourceLine endBytecode="312" classname="sdmxdl.swing.FlowBrowserPanel" start="582" end="598" sourcepath="sdmxdl/swing/FlowBrowserPanel.java" sourcefile="FlowBrowserPanel.java" startBytecode="0" />
+      <SourceLine endBytecode="312" classname="sdmxdl.swing.FlowBrowserPanel" start="584" end="600" sourcepath="sdmxdl/swing/FlowBrowserPanel.java" sourcefile="FlowBrowserPanel.java" startBytecode="0" />
       <Message>In method sdmxdl.swing.FlowBrowserPanel.buildSourceTooltip(WebSource)</Message>
     </Method>
     <Method isStatic="false" role="METHOD_CALLED" classname="sdmxdl.web.WebSource" signature="()Ljava/net/URL;" name="getWebsite" classAnnotationNames="lombok.Generated">
       <SourceLine endBytecode="46" classname="sdmxdl.web.WebSource" start="57" end="57" sourcepath="sdmxdl/web/WebSource.java" sourcefile="WebSource.java" startBytecode="0" />
       <Message>Called method sdmxdl.web.WebSource.getWebsite()</Message>
     </Method>
-    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="146" classname="sdmxdl.swing.FlowBrowserPanel" start="594" end="594" sourcepath="sdmxdl/swing/FlowBrowserPanel.java" sourcefile="FlowBrowserPanel.java" startBytecode="146" primary="true">
-      <Message>Dereferenced at FlowBrowserPanel.java:[line 594]</Message>
+    <SourceLine role="SOURCE_LINE_DEREF" endBytecode="146" classname="sdmxdl.swing.FlowBrowserPanel" start="596" end="596" sourcepath="sdmxdl/swing/FlowBrowserPanel.java" sourcefile="FlowBrowserPanel.java" startBytecode="146" primary="true">
+      <Message>Dereferenced at FlowBrowserPanel.java:[line 596]</Message>
     </SourceLine>
-    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="143" classname="sdmxdl.swing.FlowBrowserPanel" start="594" end="594" sourcepath="sdmxdl/swing/FlowBrowserPanel.java" sourcefile="FlowBrowserPanel.java" startBytecode="143">
-      <Message>Known null at FlowBrowserPanel.java:[line 594]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance instanceOccurrenceNum="0" instanceHash="9bb2b5139c29cdba6d325a37e74a7c92" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
-    <ShortMessage>Switch statement found where default case is missing</ShortMessage>
-    <LongMessage>Switch statement found in sdmxdl.swing.FlowBrowserPanel.lambda$initComponents$11(PropertyChangeEvent) where default case is missing</LongMessage>
-    <Class classname="sdmxdl.swing.FlowBrowserPanel" primary="true">
-      <SourceLine classname="sdmxdl.swing.FlowBrowserPanel" start="32" end="624" sourcepath="sdmxdl/swing/FlowBrowserPanel.java" sourcefile="FlowBrowserPanel.java">
-        <Message>At FlowBrowserPanel.java:[lines 32-624]</Message>
-      </SourceLine>
-      <Message>In class sdmxdl.swing.FlowBrowserPanel</Message>
-    </Class>
-    <Method isStatic="false" classname="sdmxdl.swing.FlowBrowserPanel" signature="(Ljava/beans/PropertyChangeEvent;)V" name="lambda$initComponents$11" primary="true">
-      <SourceLine endBytecode="214" classname="sdmxdl.swing.FlowBrowserPanel" start="265" end="274" sourcepath="sdmxdl/swing/FlowBrowserPanel.java" sourcefile="FlowBrowserPanel.java" startBytecode="0" />
-      <Message>In method sdmxdl.swing.FlowBrowserPanel.lambda$initComponents$11(PropertyChangeEvent)</Message>
-    </Method>
-    <SourceLine endBytecode="122" classname="sdmxdl.swing.FlowBrowserPanel" start="265" end="271" sourcepath="sdmxdl/swing/FlowBrowserPanel.java" sourcefile="FlowBrowserPanel.java" startBytecode="84" primary="true">
-      <Message>At FlowBrowserPanel.java:[lines 265-271]</Message>
+    <SourceLine role="SOURCE_LINE_KNOWN_NULL" endBytecode="143" classname="sdmxdl.swing.FlowBrowserPanel" start="596" end="596" sourcepath="sdmxdl/swing/FlowBrowserPanel.java" sourcefile="FlowBrowserPanel.java" startBytecode="143">
+      <Message>Known null at FlowBrowserPanel.java:[line 596]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance instanceOccurrenceNum="0" instanceHash="a70a59c632d33bd33ed1d0bcee206ba2" cweid="478" rank="19" abbrev="SF" category="STYLE" priority="2" type="SF_SWITCH_NO_DEFAULT" instanceOccurrenceMax="0">
     <ShortMessage>Switch statement found where default case is missing</ShortMessage>
     <LongMessage>Switch statement found in sdmxdl.swing.FlowBrowserPanel.showCard(String) where default case is missing</LongMessage>
     <Class classname="sdmxdl.swing.FlowBrowserPanel" primary="true">
-      <SourceLine classname="sdmxdl.swing.FlowBrowserPanel" start="32" end="624" sourcepath="sdmxdl/swing/FlowBrowserPanel.java" sourcefile="FlowBrowserPanel.java">
-        <Message>At FlowBrowserPanel.java:[lines 32-624]</Message>
+      <SourceLine classname="sdmxdl.swing.FlowBrowserPanel" start="32" end="626" sourcepath="sdmxdl/swing/FlowBrowserPanel.java" sourcefile="FlowBrowserPanel.java">
+        <Message>At FlowBrowserPanel.java:[lines 32-626]</Message>
       </SourceLine>
       <Message>In class sdmxdl.swing.FlowBrowserPanel</Message>
     </Class>
     <Method isStatic="false" classname="sdmxdl.swing.FlowBrowserPanel" signature="(Ljava/lang/String;)V" name="showCard" primary="true">
-      <SourceLine endBytecode="285" classname="sdmxdl.swing.FlowBrowserPanel" start="490" end="502" sourcepath="sdmxdl/swing/FlowBrowserPanel.java" sourcefile="FlowBrowserPanel.java" startBytecode="0" />
+      <SourceLine endBytecode="285" classname="sdmxdl.swing.FlowBrowserPanel" start="492" end="504" sourcepath="sdmxdl/swing/FlowBrowserPanel.java" sourcefile="FlowBrowserPanel.java" startBytecode="0" />
       <Message>In method sdmxdl.swing.FlowBrowserPanel.showCard(String)</Message>
     </Method>
-    <SourceLine endBytecode="180" classname="sdmxdl.swing.FlowBrowserPanel" start="491" end="499" sourcepath="sdmxdl/swing/FlowBrowserPanel.java" sourcefile="FlowBrowserPanel.java" startBytecode="99" primary="true">
-      <Message>At FlowBrowserPanel.java:[lines 491-499]</Message>
+    <SourceLine endBytecode="180" classname="sdmxdl.swing.FlowBrowserPanel" start="493" end="501" sourcepath="sdmxdl/swing/FlowBrowserPanel.java" sourcefile="FlowBrowserPanel.java" startBytecode="99" primary="true">
+      <Message>At FlowBrowserPanel.java:[lines 493-501]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance instanceOccurrenceNum="0" instanceHash="b36a586e0faa43c41678617b5c1d67ae" cweid="413" rank="14" abbrev="AT" category="MT_CORRECTNESS" priority="2" type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" instanceOccurrenceMax="0">

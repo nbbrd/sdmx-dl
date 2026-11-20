@@ -270,6 +270,8 @@ public final class FlowBrowserPanel extends JComponent {
                 case LANGUAGES_PROPERTY:
                     loadSources();
                     break;
+                default:
+                    break;
             }
         });
 
