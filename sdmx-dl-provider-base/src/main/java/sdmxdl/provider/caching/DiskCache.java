@@ -16,6 +16,16 @@
  */
 package sdmxdl.provider.caching;
 
+import static java.util.Objects.requireNonNull;
+
+import java.io.IOException;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.time.Clock;
+import java.util.Locale;
+import java.util.function.UnaryOperator;
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.sys.SystemProperties;
@@ -23,15 +33,6 @@ import org.jspecify.annotations.Nullable;
 import sdmxdl.*;
 import sdmxdl.ext.Cache;
 import sdmxdl.ext.FileFormat;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.time.Clock;
-import java.util.Locale;
-import java.util.function.UnaryOperator;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * @author Philippe Charles
@@ -97,7 +98,8 @@ public final class DiskCache<V extends HasExpiration & HasPersistence> implement
     }
 
     private void reportRead(String key, DiskCacheEvent event, long elapsedMs) {
-        if (onEvent != null) onEvent.accept(id, String.format(Locale.ROOT, "%s %s (%dms)", event.name(), key, elapsedMs), 0);
+        if (onEvent != null)
+            onEvent.accept(id, String.format(Locale.ROOT, "%s %s (%dms)", event.name(), key, elapsedMs), 0);
     }
 
     private V readFile(Path file) {
@@ -106,6 +108,7 @@ public final class DiskCache<V extends HasExpiration & HasPersistence> implement
                 return format.parsePath(file);
             } catch (IOException ex) {
                 if (onError != null) onError.accept(id, "Failed reading '" + file + "'", ex);
+                deleteFile(file);
             }
         }
         return null;
@@ -113,10 +116,24 @@ public final class DiskCache<V extends HasExpiration & HasPersistence> implement
 
     private void writeFile(Path file, V value) {
         ensureParentExists(file);
+        Path tmp = null;
         try {
-            format.formatPath(value, file);
+            // NB: same folder as target to allow atomic move
+            tmp = Files.createTempFile(root, namePrefix, TMP_FILE_SUFFIX);
+            format.formatPath(value, tmp);
+            moveReplacing(tmp, file);
         } catch (IOException ex) {
             if (onError != null) onError.accept(id, "Failed writing '" + file + "'", ex);
+        } finally {
+            if (tmp != null) deleteFile(tmp);
+        }
+    }
+
+    private static void moveReplacing(Path source, Path target) throws IOException {
+        try {
+            Files.move(source, target, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+        } catch (AtomicMoveNotSupportedException ex) {
+            Files.move(source, target, StandardCopyOption.REPLACE_EXISTING);
         }
     }
 
@@ -141,7 +158,11 @@ public final class DiskCache<V extends HasExpiration & HasPersistence> implement
         return root.resolve(namePrefix + nameGenerator.apply(key) + nameSuffix + format.getFileExtension());
     }
 
-    public static final Path SDMXDL_TMP_DIR = requireNonNull(SystemProperties.DEFAULT.getJavaIoTmpdir()).resolve(About.NAME).resolve(About.VERSION);
+    public static final Path SDMXDL_TMP_DIR = requireNonNull(SystemProperties.DEFAULT.getJavaIoTmpdir())
+            .resolve(About.NAME)
+            .resolve(About.VERSION);
+
+    private static final String TMP_FILE_SUFFIX = ".tmp";
 
     private static final UnaryOperator<String> NORMALIZE_HASH_CODE = DiskCache::normalizeHashCode;
 
@@ -151,6 +172,8 @@ public final class DiskCache<V extends HasExpiration & HasPersistence> implement
     }
 
     private enum DiskCacheEvent {
-        HIT, MISSED, EXPIRED
+        HIT,
+        MISSED,
+        EXPIRED
     }
 }
