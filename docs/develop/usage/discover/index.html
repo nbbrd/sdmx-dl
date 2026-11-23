@@ -47,7 +47,7 @@ Discovery and search are the same call at every level: pass a query to search, o
 <meta property="article:section" content="Usage" />
     <meta
       property="article:modified_time"
-      content="2026-11-20T15:57:28+01:00"
+      content="2026-11-23T10:58:11+01:00"
     />
 
 
@@ -66,7 +66,7 @@ Discovery and search are the same call at every level: pass a query to search, o
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/usage/discover/",
       "headline": "Discover",
       "description": "Find the source, database, and flow you want to query.\nDiscovery and search are the same call at every level: pass a query to search, or omit it to list everything. By default, a search returns the 10 best matches; set maxResults to change it (0 = no limit). Results also give the total number of matches, and offset skips the first ones to page through them. A search also gives the relevance score of each match, from 1 (best) down to 0 (excluded); scores rank the matches of one search and can’t be compared across searches. Ranking is hybrid: exact lexical matches (BM25) are fused with typo-tolerant trigram similarity, so partial or approximate queries still surface the right result. When query is empty, results fall back to being sorted by id instead of ranked by relevance.",
-      "wordCount": "1048",
+      "wordCount": "1242",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -77,7 +77,7 @@ Discovery and search are the same call at every level: pass a query to search, o
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-11-20T15:57:28.00Z",
+      "dateModified": "2026-11-23T10:58:11.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1911,6 +1911,101 @@ When <code>query</code> is empty, results fall back to being sorted by id instea
 <li>Sources can be restricted to a maximum confidentiality level (<code>PUBLIC</code>, <code>RESTRICTED</code>, …): <code>confidentialityThreshold</code> in the API, <code>--max-confidentiality</code> in the CLI, <code>maxConfidentiality</code> in the WS. It defaults to allowing every source, except when searching flows across all sources: only public sources are searched then, so that confidential ones do not ask for credentials.</li>
 </ul>
 <div class="flex align-center gdoc-page__anchorwrap">
+    <h3 id="icons"
+    >
+        Icons
+    </h3>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/discover/#icons" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Icons" aria-label="Anchor to: Icons" href="#icons">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>Get the icon of a source, for example to show it next to its name in a user interface.
+Icons are <a
+  class="gdoc-markdown__link"
+  href="/sdmx-dl/docs/develop/sources/#source-icons"
+>bundled or declared with the source</a>, so getting them never involves a network request.</p>
+
+
+
+<div class="gdoc-tabs">
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-discover-icons"
+      id="tabs-discover-icons-0"
+      checked="checked"/>
+    <label for="tabs-discover-icons-0" class="gdoc-tabs__label">
+      API
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//JAVA 25+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="c1">//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:3.2.0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sdmxdl.web.*</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">java.nio.file.*</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SdmxWebManager</span><span class="w"> </span><span class="n">manager</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SdmxWebManager</span><span class="p">.</span><span class="na">ofServiceLoader</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// Best match for a size in pixels: PNG of that size, SVG, larger PNG, then largest PNG</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">SourceIcon</span><span class="w"> </span><span class="n">icon</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">manager</span><span class="p">.</span><span class="na">getIcon</span><span class="p">(</span><span class="s">&#34;ECB&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">32</span><span class="p">).</span><span class="na">orElseThrow</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">IO</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">icon</span><span class="p">.</span><span class="na">getMediaType</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34; &#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">icon</span><span class="p">.</span><span class="na">getSize</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Files</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="n">Path</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&#34;ECB.png&#34;</span><span class="p">),</span><span class="w"> </span><span class="n">icon</span><span class="p">.</span><span class="na">getContent</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div></div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-discover-icons"
+      id="tabs-discover-icons-1"
+      />
+    <label for="tabs-discover-icons-1" class="gdoc-tabs__label">
+      WS
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <div class="flex align-center gdoc-page__anchorwrap">
+    <h3 id="rest"
+    >
+        REST
+    </h3>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/discover/#rest" class="gdoc-page__anchor clip flex align-center" title="Anchor to: REST" aria-label="Anchor to: REST" href="#rest">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -o ECB.png <span class="s2">&#34;localhost:4559/sdmx-dl/v2/ECB/icon?size=32&#34;</span>
+</span></span><span class="line"><span class="cl">curl -o ECB.svg <span class="s2">&#34;localhost:4559/sdmx-dl/v2/ECB/icon?format=svg&#34;</span>
+</span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
+    <h3 id="grpc"
+    >
+        gRPC
+    </h3>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/usage/discover/#grpc" class="gdoc-page__anchor clip flex align-center" title="Anchor to: gRPC" aria-label="Anchor to: gRPC" href="#grpc">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s1">&#39;{&#34;source&#34;:&#34;ECB&#34;,&#34;size&#34;:32}&#39;</span> -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.GetSourceIcon
+</span></span></code></pre></div></div>
+</div>
+
+
+<div class="gdoc-expand">
+  <label class="gdoc-expand__head flex justify-between" for="8b981557-4">
+    <span>API output sample</span>
+    <span>↕</span>
+  </label>
+  <input id="8b981557-4" type="checkbox" class="gdoc-expand__control hidden" />
+  <div class="gdoc-markdown--nested gdoc-expand__content">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">image/png 32
+</span></span></code></pre></div>
+  </div>
+</div>
+
+<ul>
+<li>The API returns an empty result when a source has no icon, while the WS falls back to the SDMX logo.</li>
+<li><code>size</code> defaults to <code>32</code> in the WS, and <code>format</code> (<code>png</code> or <code>svg</code>) restricts the media type; the SDMX logo is only available as SVG, so <code>format=png</code> on a source without a PNG icon returns <code>404 Not Found</code>.</li>
+<li>The REST endpoint sets an <code>ETag</code> and allows caching for a day; icons of non-public sources are excluded from shared caches.</li>
+<li>The CLI has no icon command.</li>
+</ul>
+<div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="databases"
     >
         Databases
@@ -2010,11 +2105,11 @@ When <code>query</code> is empty, results fall back to being sorted by id instea
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="1a7be297-3">
+  <label class="gdoc-expand__head flex justify-between" for="1a7be297-6">
     <span>CLI output sample</span>
     <span>↕</span>
   </label>
-  <input id="1a7be297-3" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="1a7be297-6" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Ref,Name
 </span></span></code></pre></div><p><code>ECB</code> exposes a single default database, so the list is empty.</p>
@@ -2128,11 +2223,11 @@ When <code>query</code> is empty, results fall back to being sorted by id instea
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="c19b5467-5">
+  <label class="gdoc-expand__head flex justify-between" for="c19b5467-8">
     <span>CLI output sample (search)</span>
     <span>↕</span>
   </label>
-  <input id="c19b5467-5" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="c19b5467-8" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Ref,Name,Description
 </span></span><span class="line"><span class="cl">ECB:EXR(1.0),Exchange Rates,
@@ -2252,11 +2347,11 @@ When <code>query</code> is empty, results fall back to being sorted by id instea
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="8e92daa8-7">
+  <label class="gdoc-expand__head flex justify-between" for="8e92daa8-10">
     <span>CLI output sample</span>
     <span>↕</span>
   </label>
-  <input id="8e92daa8-7" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="8e92daa8-10" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Source,Database,Ref,Name,Description,Score
 </span></span><span class="line"><span class="cl">ESTAT,,ESTAT:PRC_REM_GDP(1.0),GDP weights used in the calculation of the global specific indicator,,0.976062

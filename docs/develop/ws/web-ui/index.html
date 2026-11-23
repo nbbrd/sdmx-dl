@@ -53,7 +53,7 @@ To simply find and download statistics, see the Search UI." />
 <meta property="article:section" content="Ws" />
     <meta
       property="article:modified_time"
-      content="2026-11-20T15:57:28+01:00"
+      content="2026-11-23T10:58:11+01:00"
     />
 
 
@@ -75,7 +75,7 @@ To simply find and download statistics, see the Search UI." />
       "url": "https://nbbrd.github.io/sdmx-dl/docs/develop/ws/web-ui/",
       "headline": "Web UI",
       "description": "The web service ships with SDMX-DL API Explorer, a web page to browse sources and fetch data from a browser, without writing any code.\nOnce the service is running, open http:\/\/localhost:4559\/ (adjust the port if you changed quarkus.http.port).\nThe page uses the REST endpoint of the same server, so everything you do in it can be reproduced with an HTTP client.\nIt also links to the OpenAPI UI and to the OpenAPI specification.\nTo simply find and download statistics, see the Search UI.",
-      "wordCount": "1222",
+      "wordCount": "1228",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -86,7 +86,7 @@ To simply find and download statistics, see the Search UI." />
       "copyrightYear": "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2026-11-20T15:57:28.00Z",
+      "dateModified": "2026-11-23T10:58:11.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1849,8 +1849,8 @@ Cards and results have shortcuts to send the current source, flow or key to the 
 	<tbody>
 			<tr>
 					<td>Sources</td>
-					<td>Source cards with driver, endpoint, website, monitor, languages and properties. <strong>Check Health</strong> gives a verdict for all sources; the <strong>Health</strong> action of a card also performs a live request.</td>
-					<td><code>GET /sources</code>, <code>GET /health</code>, <code>GET /{source}/health</code></td>
+					<td>Source cards with icon, driver, endpoint, website, monitor, languages and properties. <strong>Check Health</strong> gives a verdict for all sources; the <strong>Health</strong> action of a card also performs a live request.</td>
+					<td><code>GET /sources</code>, <code>GET /{source}/icon</code>, <code>GET /health</code>, <code>GET /{source}/health</code></td>
 			</tr>
 			<tr>
 					<td>Databases</td>
@@ -2033,7 +2033,7 @@ When there are more than 10 series, only the first 10 are drawn: click the legen
     </a>
 </div>
 <p>The buttons in the bottom-right corner switch between light and dark themes (the browser preference is used by default and the choice is remembered), open the help on URL parameters, and hide the header or the other tabs.</p>
-<p>All the resources of the page (styles, icons, charting library) are served by the web service itself, so the page also works without internet access to third-party sites.</p>
+<p>All the resources of the page (styles, icons of the sources, charting library) are served by the web service itself, so the page also works without internet access to third-party sites.</p>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="url-parameters"
     >
