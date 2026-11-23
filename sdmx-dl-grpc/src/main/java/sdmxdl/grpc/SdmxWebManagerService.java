@@ -152,7 +152,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
         return Multi.createFrom()
                 .items(manager.getSources().values().stream()
                         .filter(source -> !source.isAlias())
-                        .map(ProtoWeb::fromWebSource));
+                        .map(ProtoGrpc::fromListedWebSource));
     }
 
     @RequestBody(content = @Content(examples = @ExampleObject(name = "ECB example", value = """
@@ -246,7 +246,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
                 .build();
         return Multi.createFrom()
                 .iterable(manager.listSources(sourcesRequest).getItems())
-                .map(ProtoWeb::fromWebSource);
+                .map(ProtoGrpc::fromListedWebSource);
     }
 
     @POST

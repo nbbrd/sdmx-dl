@@ -23,6 +23,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![GRPC] Add SDMX-DL Search web UI [#1399](https://github.com/nbbrd/sdmx-dl/issues/1399)
 - ![GRPC] Add System Tray Menu to Quarkus [#1396](https://github.com/nbbrd/sdmx-dl/issues/1396)
 - ![BUILD] Add SpotBugs quality gate that only fails on new bugs
+- ![API] Add bundled and custom source icons [#1407](https://github.com/nbbrd/sdmx-dl/issues/1407)
 
 ### Changed
 

@@ -1,0 +1,20 @@
+# Bundled source icons, maintained by hand (see the evaluate-source skill).
+# PNG files are resized to 16/32/64 px from the origin when needed; SVG files are kept as is.
+file,origin,retrieved
+BBK-16.png,https://www.bundesbank.de/resource/crblob/765432/060dedc5b7902d8564d0390a328cccad/472B63F073F071307366337C94F8C870/bbk-icon-016-data.png,2026-11-23
+BBK-32.png,https://www.bundesbank.de/resource/crblob/765434/2925901c39384d0da58c8ed39033a314/472B63F073F071307366337C94F8C870/bbk-icon-032-data.png,2026-11-23
+BBK-64.png,https://www.bundesbank.de/resource/crblob/765436/37fb10faaec24a8126b365d623248b07/472B63F073F071307366337C94F8C870/bbk-icon-096-data.png,2026-11-23
+EC-16.png,https://commission.europa.eu/themes/contrib/oe_theme/images/favicons/ec/favicon.ico,2026-11-23
+EC-32.png,https://commission.europa.eu/themes/contrib/oe_theme/images/favicons/ec/favicon.ico,2026-11-23
+EC.svg,https://commission.europa.eu/themes/contrib/oe_theme/images/favicons/ec/favicon.svg,2026-11-23
+ESTAT-16.png,https://ec.europa.eu/eurostat/o/estat-theme-ecl/images/favicon.ico,2026-11-23
+ESTAT-32.png,https://ec.europa.eu/eurostat/o/estat-theme-ecl/images/favicon.ico,2026-11-23
+INE-16.png,https://www.ine.es/menus/img/favicon-16x16.png,2026-11-23
+INE-32.png,https://www.ine.es/menus/img/favicon-32x32.png,2026-11-23
+INE-64.png,https://www.ine.es/menus/img/favicon-128x128.png,2026-11-23
+INSEE-16.png,https://www.insee.fr/favicon.ico,2026-11-23
+INSEE-32.png,https://www.insee.fr/favicon.ico,2026-11-23
+INSEE.svg,https://www.insee.fr/static/img/favicon.svg,2026-11-23
+UIS-16.png,https://www.uis.unesco.org/favicon.ico,2026-11-23
+UIS-32.png,https://www.uis.unesco.org/favicon.ico,2026-11-23
+UIS-64.png,https://www.uis.unesco.org/favicon.ico,2026-11-23

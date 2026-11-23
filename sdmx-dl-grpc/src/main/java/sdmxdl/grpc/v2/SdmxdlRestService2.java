@@ -22,7 +22,9 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.CacheControl;
 import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.EntityTag;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -46,14 +48,17 @@ import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import sdmxdl.*;
 import sdmxdl.format.protobuf.*;
 import sdmxdl.format.protobuf.web.HealthReportDto;
+import sdmxdl.grpc.ProtoGrpc;
 import sdmxdl.script.Script;
 import sdmxdl.script.ScriptManager;
 import sdmxdl.script.ScriptOptions;
 import sdmxdl.script.ScriptTarget;
 import sdmxdl.web.HealthCheck;
 import sdmxdl.web.SdmxWebManager;
+import sdmxdl.web.SourceIcon;
 import sdmxdl.web.WebFlowsRequest;
 import sdmxdl.web.WebHealthRequest;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.WebSourcesRequest;
 
 /**
@@ -123,12 +128,59 @@ public class SdmxdlRestService2 {
                 .confidentialityThreshold(Confidentiality.valueOf(maxConfidentiality))
                 .build());
         return ListSourcesResponseDto.newBuilder()
-                .addAllItems(
-                        result.getItems().stream().map(ProtoWeb::fromWebSource).toList())
+                .addAllItems(result.getItems().stream()
+                        .map(ProtoGrpc::fromListedWebSource)
+                        .toList())
                 .setTotal(result.getTotal())
                 .addAllScores(result.getScores())
                 .build();
     }
+
+    @GET
+    @Path("/{source}/icon")
+    @Produces({ICON_PNG, ICON_SVG})
+    @APIResponse(
+            responseCode = "200",
+            description = ICON_RESPONSE_DESCRIPTION,
+            content = {
+                @Content(mediaType = ICON_PNG, schema = @Schema(type = SchemaType.STRING, format = "binary")),
+                @Content(mediaType = ICON_SVG, schema = @Schema(type = SchemaType.STRING))
+            })
+    @APIResponse(responseCode = "304", description = "The icon has not changed (If-None-Match)")
+    public Response getSourceIcon(
+            @PathParam("source") String source,
+            @QueryParam("size")
+                    @DefaultValue("" + ProtoIcon.DEFAULT_SIZE)
+                    @Parameter(description = ProtoIcon.SIZE_DESCRIPTION)
+                    int size,
+            @QueryParam("format") @Parameter(description = ProtoIcon.FORMAT_DESCRIPTION) String format,
+            @Context jakarta.ws.rs.core.Request request)
+            throws IOException {
+        WebSource webSource = ProtoIcon.getSource(manager, source);
+        SourceIcon icon = ProtoIcon.getIcon(manager, webSource, size, format);
+        boolean isPublic = webSource.getConfidentiality() == Confidentiality.PUBLIC;
+        CacheControl cacheControl = new CacheControl();
+        cacheControl.setMaxAge(ICON_MAX_AGE);
+        cacheControl.setPrivate(!isPublic);
+        EntityTag tag = new EntityTag(ProtoIcon.getEntityTag(icon));
+        Response.ResponseBuilder notModified = request.evaluatePreconditions(tag);
+        Response.ResponseBuilder result =
+                notModified != null ? notModified : Response.ok(icon.getContent(), icon.getMediaType());
+        return result.tag(tag)
+                .cacheControl(cacheControl)
+                .header("X-Content-Type-Options", "nosniff")
+                .header("Content-Security-Policy", "default-src 'none'; style-src 'unsafe-inline'; sandbox")
+                .build();
+    }
+
+    private static final String ICON_PNG = "image/png";
+
+    private static final String ICON_SVG = "image/svg+xml";
+
+    private static final int ICON_MAX_AGE = 24 * 60 * 60;
+
+    private static final String ICON_RESPONSE_DESCRIPTION =
+            "The icon of the source that best matches the size: a PNG of the exact size, then an SVG, then the smallest larger PNG, then the largest PNG; the SDMX logo if the source has no icon";
 
     @GET
     @Path("/{source}/databases")

@@ -16,21 +16,20 @@
  */
 package sdmxdl.format.xml;
 
-import org.assertj.core.util.xml.XmlStringPrettyFormatter;
-import org.junit.jupiter.api.Test;
-import sdmxdl.web.WebSource;
-import sdmxdl.web.WebSources;
-import tests.sdmxdl.api.RepoSamples;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.list;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.list;
+import org.assertj.core.util.xml.XmlStringPrettyFormatter;
+import org.junit.jupiter.api.Test;
+import sdmxdl.web.WebSource;
+import sdmxdl.web.WebSources;
+import tests.sdmxdl.api.RepoSamples;
 
 /**
  * @author Philippe Charles
@@ -39,8 +38,7 @@ public class XmlWebSourcesFormatTest {
 
     private final List<WebSource> sample = Arrays.asList(RepoSamples.BASIC_SOURCE, RepoSamples.FULL_SOURCE);
 
-    private final String stringSample
-            = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+    private final String stringSample = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
             + "<sources>\n"
             + "    <source>\n"
             + "        <name>ECB</name>\n"
@@ -58,6 +56,7 @@ public class XmlWebSourcesFormatTest {
             + "        <website>https://sdw.ecb.europa.eu</website>\n"
             + "        <monitor>ABC:xyz</monitor>\n"
             + "        <monitorWebsite>https://someaddress</monitorWebsite>\n"
+            + "        <icon>sdmx-dl:icon/ECB</icon>\n"
             + "    </source>\n"
             + "</sources>\n";
 
@@ -73,7 +72,8 @@ public class XmlWebSourcesFormatTest {
     @Test
     public void testFormatter() throws IOException {
         try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
-            XmlWebSourcesFormat.INSTANCE.formatStream(WebSources.builder().sources(sample).build(), stream);
+            XmlWebSourcesFormat.INSTANCE.formatStream(
+                    WebSources.builder().sources(sample).build(), stream);
             assertThat(XmlStringPrettyFormatter.xmlPrettyFormat(new String(stream.toByteArray(), UTF_8)))
                     .isEqualToIgnoringNewLines(stringSample);
         }

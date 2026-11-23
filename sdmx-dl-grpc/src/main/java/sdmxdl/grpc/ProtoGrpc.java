@@ -5,9 +5,19 @@ import static sdmxdl.Languages.ANY_KEYWORD;
 
 import java.time.LocalDateTime;
 import sdmxdl.*;
+import sdmxdl.format.protobuf.ProtoWeb;
+import sdmxdl.format.protobuf.web.WebSourceDto;
+import sdmxdl.web.WebSource;
 
 @lombok.experimental.UtilityClass
 public class ProtoGrpc {
+
+    /**
+     * Converts a web source for listings, without its icon that is available through its own operation.
+     */
+    public static WebSourceDto fromListedWebSource(WebSource value) {
+        return ProtoWeb.fromWebSource(value).toBuilder().clearIcon().build();
+    }
 
     public static SourceRequestDto fromSourceRequest(String source, DatabasesRequest value) {
         SourceRequestDto.Builder result = SourceRequestDto.newBuilder();

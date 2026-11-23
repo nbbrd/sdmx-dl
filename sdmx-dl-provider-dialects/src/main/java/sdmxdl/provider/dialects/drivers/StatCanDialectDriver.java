@@ -67,6 +67,7 @@ public final class StatCanDialectDriver implements Driver {
                     .name("fr", "Statistique Canada")
                     .driver(DIALECTS_STATCAN)
                     .confidentiality(PUBLIC)
+                    .iconOf("sdmx-dl:icon/STATCAN")
                     .endpointOf("https://www150.statcan.gc.ca/t1/wds/rest")
                     .websiteOf("https://www150.statcan.gc.ca/n1/en/type/data?MM=1")
                     .propertyOf(

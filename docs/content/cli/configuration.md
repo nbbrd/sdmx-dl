@@ -52,7 +52,7 @@ There are several types of system properties: some are defined by the platform, 
 | `sdmxdl.networking.noSystemSSL`     | Disable system truststore        |
 | `sdmxdl.networking.noDefaultSSL`    | Disable default truststore       |
 | `sdmxdl.networking.urlBackend`      | Set networking URL backend       |
-| `sdmxdl.registry.sourceFile`        | Set data source definitions file |
+| `sdmxdl.registry.sourcesFile`       | Set data source definitions file |
 
 {{< /expand >}}
 

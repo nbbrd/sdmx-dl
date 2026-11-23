@@ -25,6 +25,9 @@ import static sdmxdl.web.spi.Driver.WRAPPED_DRIVER_RANK;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -48,7 +51,9 @@ import sdmxdl.web.spi.Networking;
 import sdmxdl.web.spi.WebCaching;
 import sdmxdl.web.spi.WebContext;
 import tests.sdmxdl.api.SdmxManagerAssert;
+import tests.sdmxdl.web.IconSamples;
 import tests.sdmxdl.web.spi.MockedDriver;
+import tests.sdmxdl.web.spi.MockedIconProvider;
 import tests.sdmxdl.web.spi.MockedRegistry;
 
 /**
@@ -80,6 +85,7 @@ public class SdmxWebManagerTest {
             assertThat(o.getCustomSources()).isEmpty();
             assertThat(o.getDefaultSources()).isEmpty();
             assertThat(o.getSources()).isEmpty();
+            assertThat(o.getIconProviders()).isEmpty();
         });
 
         assertThat(SdmxWebManager.noOp()).satisfies(o -> {
@@ -625,6 +631,102 @@ public class SdmxWebManagerTest {
         public @NonNull Collection<String> getDriverPropertyNames() {
             return Collections.emptyList();
         }
+    }
+
+    @Test
+    public void testGetIcons() throws IOException {
+        SourceIcon svg = SourceIcon.ofSvg(IconSamples.svg("<svg xmlns='http://www.w3.org/2000/svg'/>"));
+        SourceIcon png16 = SourceIcon.ofPng(IconSamples.png(16, 16));
+        SourceIcon png64 = SourceIcon.ofPng(IconSamples.png(64, 64));
+        String png16Data = "data:image/png;base64," + Base64.getEncoder().encodeToString(IconSamples.png(16, 16));
+
+        List<String> errors = new ArrayList<>();
+        SdmxWebManager manager = SdmxWebManager.builder()
+                .driver(sampleDriver)
+                .iconProvider(MockedIconProvider.builder()
+                        .id("FAILING")
+                        .failure("ECB")
+                        .build())
+                .iconProvider(MockedIconProvider.builder()
+                        .id("EMPTY")
+                        .icon("ECB", Collections.emptyList())
+                        .build())
+                .iconProvider(MockedIconProvider.builder()
+                        .id("FIRST")
+                        .icon("ECB", Arrays.asList(png16, png64))
+                        .build())
+                .iconProvider(MockedIconProvider.builder()
+                        .id("SECOND")
+                        .icon("ECB", Collections.singletonList(svg))
+                        .build())
+                .onError(
+                        source -> (marker, message, error) -> errors.add(marker + ":" + source.getId() + ":" + message))
+                .build();
+
+        assertThat(manager.getIcons(sampleSource)).isEmpty();
+        assertThat(manager.getIcons(sampleSource.getId())).isEmpty();
+        assertThatIOException().isThrownBy(() -> manager.getIcons("other"));
+
+        assertThat(manager.getIcons(
+                        sampleSource.toBuilder().iconOf("sdmx-dl:icon/ECB").build()))
+                .containsExactly(png16, png64);
+        assertThat(errors).containsExactly("ICON:repoSource:Failed to load icon 'ECB' from 'FAILING'");
+        errors.clear();
+
+        assertThat(manager.getIcons(
+                        sampleSource.toBuilder().iconOf("sdmx-dl:icon/XYZ").build()))
+                .isEmpty();
+        assertThat(manager.getIcons(sampleSource.toBuilder()
+                        .iconOf("https://example.com/favicon.ico")
+                        .build()))
+                .isEmpty();
+        assertThat(errors).isEmpty();
+
+        assertThat(manager.getIcons(sampleSource.toBuilder().iconOf(png16Data).build()))
+                .containsExactly(png16);
+        assertThat(manager.getIcons(sampleSource.toBuilder()
+                        .iconOf(png16Data)
+                        .confidentiality(Confidentiality.SECRET)
+                        .build()))
+                .containsExactly(png16);
+
+        assertThat(manager.getIcons(
+                        sampleSource.toBuilder().iconOf("sdmx-dl:icon/../x").build()))
+                .isEmpty();
+        assertThat(manager.getIcons(sampleSource.toBuilder()
+                        .iconOf("data:image/gif;base64,R0lGODlh")
+                        .build()))
+                .isEmpty();
+        assertThat(errors)
+                .containsExactly(
+                        "ICON:repoSource:Invalid icon 'sdmx-dl:icon/../x'",
+                        "ICON:repoSource:Invalid icon 'data:image/gif;base64,R0lGODlh'");
+    }
+
+    @Test
+    public void testGetIcon() throws IOException {
+        SourceIcon png16 = SourceIcon.ofPng(IconSamples.png(16, 16));
+        SourceIcon png64 = SourceIcon.ofPng(IconSamples.png(64, 64));
+        WebSource source = sampleSource.toBuilder().iconOf("sdmx-dl:icon/ECB").build();
+
+        SdmxWebManager manager = SdmxWebManager.builder()
+                .driver(MockedDriver.builder()
+                        .id("repoDriver")
+                        .rank(0)
+                        .available(true)
+                        .customSource(source)
+                        .build())
+                .iconProvider(MockedIconProvider.builder()
+                        .icon("ECB", Arrays.asList(png16, png64))
+                        .build())
+                .build();
+
+        assertThat(manager.getIcon(source, 16)).contains(png16);
+        assertThat(manager.getIcon(source, 32)).contains(png64);
+        assertThat(manager.getIcon(source.getId(), 128)).contains(png64);
+        assertThat(manager.getIcon(sampleSource, 16)).isEmpty();
+        assertThatIllegalArgumentException().isThrownBy(() -> manager.getIcon(source, 0));
+        assertThatIOException().isThrownBy(() -> manager.getIcon("other", 16));
     }
 
     private final DataRepository sample = DataRepository.builder().name("repo").build();

@@ -150,7 +150,7 @@ class SearchHtmlTest {
 
         js.executeScript("toggleSourceFacet('BBK', true)");
         assertThat(eval("document.querySelectorAll('#results .result').length")).isEqualTo(1L);
-        assertThat(eval("document.querySelector('#results .source-tile').textContent"))
+        assertThat(eval("document.querySelector('#results .source-ref').textContent"))
                 .isEqualTo("BBK");
 
         assertThat(eval("JSON.parse(localStorage.getItem('sdmxdl-search-recents'))[0]"))

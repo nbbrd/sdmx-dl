@@ -75,6 +75,7 @@ public final class UisDialectDriver implements Driver {
                     .name("fr", "Unesco Institut de statistique")
                     .driver(DIALECTS_UIS)
                     .confidentiality(PUBLIC)
+                    .iconOf("sdmx-dl:icon/UIS")
                     .endpointOf("https://api.uis.unesco.org")
                     .websiteOf("https://databrowser.uis.unesco.org")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/UIS")

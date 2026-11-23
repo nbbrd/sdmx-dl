@@ -77,11 +77,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.nbbrd.java-desktop-util</groupId>
-            <artifactId>java-desktop-util-favicon</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-provider-ri</artifactId>
             <version>${project.version}</version>

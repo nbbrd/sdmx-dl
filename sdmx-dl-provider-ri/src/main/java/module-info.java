@@ -10,6 +10,7 @@ import sdmxdl.provider.ri.drivers.FileRiDriver;
 import sdmxdl.provider.ri.drivers.MockRiDriver;
 import sdmxdl.provider.ri.drivers.RngRiDriver;
 import sdmxdl.provider.ri.drivers.Sdmx21RiDriver;
+import sdmxdl.provider.ri.icons.RiIconProvider;
 import sdmxdl.provider.ri.monitors.UpptimeMonitor;
 import sdmxdl.provider.ri.monitors.UptimeRobotMonitor;
 import sdmxdl.provider.ri.networking.RiNetworking;
@@ -67,6 +68,8 @@ module sdmxdl.provider.ri {
             RiCaching;
     provides Registry with
             RiRegistry;
+    provides IconProvider with
+            RiIconProvider;
     provides PasswordPrompt with
             SwingPasswordPrompt,
             WindowsPasswordPrompt;

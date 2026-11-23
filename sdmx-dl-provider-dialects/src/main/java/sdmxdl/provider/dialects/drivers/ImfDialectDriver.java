@@ -16,6 +16,12 @@
  */
 package sdmxdl.provider.dialects.drivers;
 
+import static sdmxdl.Confidentiality.PUBLIC;
+import static sdmxdl.provider.SdmxFix.Category.QUERY;
+
+import java.net.URI;
+import java.util.EnumSet;
+import java.util.List;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.io.http.UriQueryBuilder;
@@ -40,13 +46,6 @@ import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
-import java.net.URI;
-import java.util.EnumSet;
-import java.util.List;
-
-import static sdmxdl.Confidentiality.PUBLIC;
-import static sdmxdl.provider.SdmxFix.Category.QUERY;
-
 /**
  * @author Philippe Charles
  */
@@ -57,17 +56,16 @@ public final class ImfDialectDriver implements Driver {
     private static final String DIALECTS_IMF = "DIALECTS_IMF";
 
     @lombok.experimental.Delegate
-    private final DriverSupport support = DriverSupport
-            .builder()
+    private final DriverSupport support = DriverSupport.builder()
             .id(DIALECTS_IMF)
             .rank(NATIVE_DRIVER_RANK)
             .connectorOf(new ImfRestClientFactory())
-            .source(WebSource
-                    .builder()
+            .source(WebSource.builder()
                     .id("IMF")
                     .name("en", "International Monetary Fund")
                     .driver(DIALECTS_IMF)
                     .confidentiality(PUBLIC)
+                    .iconOf("sdmx-dl:icon/IMF")
                     .endpointOf("https://api.imf.org/external/sdmx/2.1")
                     .websiteOf("https://data.imf.org")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/IMF")
@@ -85,7 +83,8 @@ public final class ImfDialectDriver implements Driver {
         }
 
         @Override
-        public @NonNull RestClient createRestClient(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) {
+        public @NonNull RestClient createRestClient(
+                @NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) {
             return new RiRestClient(
                     HasMarker.of(source),
                     source.getEndpoint(),
@@ -95,8 +94,7 @@ public final class ImfDialectDriver implements Driver {
                     ImfQueries.INSTANCE,
                     Sdmx21RestParsers.DEFAULT,
                     Sdmx21RestErrors.DEFAULT,
-                    EnumSet.allOf(Feature.class)
-            );
+                    EnumSet.allOf(Feature.class));
         }
     }
 
@@ -111,8 +109,7 @@ public final class ImfDialectDriver implements Driver {
         @SdmxFix(id = 1, category = QUERY, cause = "Children reference does not return codelists")
         @Override
         public @NonNull UriQueryBuilder getStructureQuery(@NonNull URI endpoint, @NonNull StructureRef ref) {
-            return onMeta(endpoint, DEFAULT_DATASTRUCTURE_PATH, ref)
-                    .param(REFERENCES_PARAM, "descendants");
+            return onMeta(endpoint, DEFAULT_DATASTRUCTURE_PATH, ref).param(REFERENCES_PARAM, "descendants");
         }
     }
 }

@@ -16,6 +16,7 @@ message WebSourceDto {
   optional string monitor = 8;
   optional string monitor_website = 9;
   ConfidentialityDto confidentiality = 10;
+  optional string icon = 11;
 }
 
 message WebSourcesDto {

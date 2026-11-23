@@ -315,6 +315,19 @@ function apiUrl(segments, params = {}, suffix = '') {
 }
 
 /**
+ * Build the icon of a source, served by the local server (bundled or declared by the source, SDMX logo otherwise)
+ * @param {string} id - Source id
+ * @param {number} size - Size in CSS pixels; the 2x variant is requested for high-density screens
+ * @param {string} className - Optional CSS classes
+ * @returns {string} - HTML of the image, hidden if it cannot be loaded
+ */
+function sourceIcon(id, size, className = '') {
+    const url1x = apiUrl([id, 'icon'], { size });
+    const url2x = apiUrl([id, 'icon'], { size: size * 2 });
+    return `<img src="${escapeHtml(url1x)}" srcset="${escapeHtml(url1x)} 1x, ${escapeHtml(url2x)} 2x" alt="" width="${size}" height="${size}" loading="lazy" class="${escapeHtml(className)}" onerror="this.style.display='none'">`;
+}
+
+/**
  * GET a REST v2 URL and parse its JSON response, turning errors into exceptions
  * @param {string} url - Absolute URL built with apiUrl
  * @param {Object} options - { signal: optional AbortSignal to cancel the request }

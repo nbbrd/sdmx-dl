@@ -35,6 +35,7 @@ Rule of thumb: only mark something n/a or waived when it is a deliberate design 
 |---------------------|--------------------------|-------------------|------|-------------------|--------|
 | about               | n/a: constants of About  | n/a: `--version`  | GetAbout | getAbout       |        |
 | listSources         |                          | list sources      |      |                   |        |
+| getSourceIcon       | getIcon                  | n/a: no icon command for now | | | n/a: binary images are not useful to LLMs |
 | listDatabases       |                          | list databases    |      |                   |        |
 | listFlows           |                          | list flows        |      |                   |        |
 | getMeta             |                          | fetch meta        |      |                   |        |
@@ -58,6 +59,7 @@ Rule of thumb: only mark something n/a or waived when it is a deliberate design 
 |--------------------|--------------|--------------------------|------------------------|-------------|-------------|---------|
 | source             |              | source, sourceId         |                        |             |             |         |
 | sources            | checkHealth  | name, source             | source                 |             |             | source  |
+| source             | getSourceIcon | name, source            |                        |             |             |         |
 | flow               |              |                          |                        |             |             |         |
 | key                |              |                          |                        |             |             |         |
 | database           |              |                          |                        |             |             |         |
@@ -94,6 +96,7 @@ Rule of thumb: only mark something n/a or waived when it is a deliberate design 
 | fetchKeys | detail     | cli    | n/a     | `fetch keys` is the SERIES_KEYS_ONLY detail itself |
 | listFlows | plainText  | mcp    | default | plain text keeps LLM responses small               |
 | listFlows | truncate   | mcp    | default | truncated descriptions keep LLM responses small    |
+| getSourceIcon | format | api    | n/a     | `getIcons` returns every format                    |
 
 ## Ignore
 
@@ -105,6 +108,7 @@ Rule of thumb: only mark something n/a or waived when it is a deliberate design 
 | api    | operation | using                      | session accessor                                 |
 | api    | operation | usingName                  | obtains the Provider bound to a source           |
 | api    | operation | getMonitorReport           | deprecated, replaced by checkHealth              |
+| api    | operation | getIcons                   | every variant of the icon, used by getIcon       |
 | api    | operation | checkAccess                | building block of checkHealth (ACCESS check)     |
 | rest   | operation | checkSourceHealth          | single-source shortcut of checkHealth            |
 | api    | operation | getOnEvent                 | listener accessor                                |

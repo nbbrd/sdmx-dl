@@ -1,5 +1,9 @@
 package sdmxdl.swing;
 
+import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import nbbrd.design.Demo;
 import sdmxdl.DatabaseRef;
 import sdmxdl.Flow;
@@ -7,11 +11,6 @@ import sdmxdl.Languages;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebFlowRequest;
 import sdmxdl.web.WebSource;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.beans.PropertyChangeEvent;
 
 public class FlowBrowserPanelDemo {
 
@@ -27,11 +26,12 @@ public class FlowBrowserPanelDemo {
             modelLabel.setFont(modelLabel.getFont().deriveFont(Font.PLAIN, 11f));
             selector.addPropertyChangeListener(FlowSelectionPanel.MODEL_PROPERTY, evt -> {
                 WebFlowRequest ref = (WebFlowRequest) evt.getNewValue();
-                modelLabel.setText(ref == null
-                        ? "model: <none>"
-                        : "model: source=" + ref.getSource()
-                          + "  database=" + ref.getRequest().getDatabase()
-                          + "  flow=" + ref.getRequest().getFlow());
+                modelLabel.setText(
+                        ref == null
+                                ? "model: <none>"
+                                : "model: source=" + ref.getSource()
+                                        + "  database=" + ref.getRequest().getDatabase()
+                                        + "  flow=" + ref.getRequest().getFlow());
             });
 
             JPanel content = new JPanel(new BorderLayout(0, 4));
@@ -111,7 +111,7 @@ public class FlowBrowserPanelDemo {
                 sb.append(" / ").append(ref.getRequest().getFlow());
                 summaryLabel.setText(sb.toString());
                 WebSource source = manager.getSources().get(ref.getSource());
-                summaryLabel.setIcon(source != null ? DemoUtil.getFavicon(source, summaryLabel::repaint, 16) : null);
+                summaryLabel.setIcon(source != null ? DemoUtil.getIcon(manager, source, 16) : null);
             }
         }
 
@@ -122,7 +122,7 @@ public class FlowBrowserPanelDemo {
                     : new JDialog((Dialog) owner, "Select Flow", true);
 
             FlowBrowserPanel browser = new FlowBrowserPanel();
-            browser.setSourceIconProvider((src, repaint) -> DemoUtil.getFavicon(src, repaint, 32));
+            browser.setSourceIconProvider((src, repaint) -> DemoUtil.getIcon(manager, src, 32));
             browser.setLanguages(languages);
             browser.setManager(manager);
 
@@ -130,7 +130,9 @@ public class FlowBrowserPanelDemo {
             selectButton.setEnabled(false);
             JButton cancelButton = new JButton("Cancel");
 
-            browser.addPropertyChangeListener(FlowBrowserPanel.SELECTION_PROPERTY, evt -> selectButton.setEnabled(browser.getSelection() != null));
+            browser.addPropertyChangeListener(
+                    FlowBrowserPanel.SELECTION_PROPERTY,
+                    evt -> selectButton.setEnabled(browser.getSelection() != null));
 
             selectButton.addActionListener(e -> {
                 WebFlowRequest selection = browser.getSelection();

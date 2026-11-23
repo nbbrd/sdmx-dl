@@ -7,7 +7,7 @@ import com.formdev.flatlaf.FlatLightLaf;
 import ec.util.chart.TimeSeriesChart;
 import ec.util.chart.swing.JTimeSeriesChart;
 import ec.util.chart.swing.SwingColorSchemeSupport;
-import internal.sdmxdl.desktop.SdmxAutoCompletion;
+import internal.sdmxdl.desktop.SdmxIconSupport;
 import internal.sdmxdl.desktop.util.SystemLafColorScheme;
 import internal.sdmxdl.swing.ListItemRenderer;
 import internal.sdmxdl.swing.WrapLayout;
@@ -1127,7 +1127,8 @@ public final class BrowsePanel extends JComponent {
         SwingUtilities.invokeLater(() -> {
             FlatLightLaf.setup();
             BrowsePanel panel = new BrowsePanel(manager);
-            panel.setSourceIconProvider((src, repaint) -> SdmxAutoCompletion.getFavicon(src.getWebsite(), repaint, 32));
+            SdmxIconSupport icons = SdmxIconSupport.of(manager);
+            panel.setSourceIconProvider((src, repaint) -> icons.getIcon(src, 32));
             JFrame frame = new JFrame("SDMX Data Browser");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setContentPane(panel);

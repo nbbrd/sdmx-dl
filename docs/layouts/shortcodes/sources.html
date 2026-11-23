@@ -178,7 +178,11 @@ sdmx-dl is bundled with the following pre-configured {{ $sourceCount }} web serv
             {{ $description := index $r 1 }}
             {{ $driver := index $r 3 }}
             {{ $website := index $r 7 }}
-            {{ $domain := (urls.Parse $website).Host }}
+            {{ $icon := "SDMX_logo.svg" }}
+            {{ range slice "svg" "png" }}
+            {{ $candidate := printf "icons/%s.%s" $id . }}
+            {{ if and (eq $icon "SDMX_logo.svg") (fileExists (printf "static/%s" $candidate)) }}{{ $icon = $candidate }}{{ end }}
+            {{ end }}
             {{ $monitor_website := index $r 9 }}
             {{ $monitor_name := replace (lower $id) "_" "-" }}
             {{ $searchText := lower (printf "%s %s %s" $id $description $driver) }}
@@ -190,7 +194,7 @@ sdmx-dl is bundled with the following pre-configured {{ $sourceCount }} web serv
             >
                 <td>
                     <div class="flex align-center gap-8 no-wrap">
-                        <img src="https://icons.duckduckgo.com/ip3/{{ $domain }}.ico" alt="" width="32" height="32" />
+                        <img src="{{ $icon | relURL }}" alt="" width="32" height="32" />
                         <div class="sources-filter__source">
                             <code>{{ $id }}</code><br>
                             <small><a href="{{ $website }}">{{ $description }}</a></small>

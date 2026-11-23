@@ -3,6 +3,7 @@ package sdmxdl.format.protobuf;
 import static java.util.stream.Collectors.toList;
 import static sdmxdl.format.protobuf.WellKnownTypes.fromInstant;
 
+import java.net.URI;
 import java.util.stream.Collectors;
 import sdmxdl.AccessReport;
 import sdmxdl.format.protobuf.web.*;
@@ -24,6 +25,8 @@ public class ProtoWeb {
         if (value.getMonitor() != null) result.setMonitor(value.getMonitor().toString());
         if (value.getMonitorWebsite() != null)
             result.setMonitorWebsite(value.getMonitorWebsite().toString());
+        URI icon = value.getIcon();
+        if (icon != null) result.setIcon(icon.toString());
         return result.build();
     }
 
@@ -39,6 +42,7 @@ public class ProtoWeb {
                 .websiteOf(value.hasWebsite() ? value.getWebsite() : null)
                 .monitorOf(value.hasMonitor() ? value.getMonitor() : null)
                 .monitorWebsiteOf(value.hasMonitorWebsite() ? value.getMonitorWebsite() : null)
+                .iconOf(value.hasIcon() ? value.getIcon() : null)
                 .build();
     }
 

@@ -175,6 +175,7 @@ public class RepoSamples {
             .websiteOf("https://sdw.ecb.europa.eu")
             .monitorOf("ABC:xyz")
             .monitorWebsiteOf("https://someaddress")
+            .iconOf("sdmx-dl:icon/ECB")
             .build();
 
     private static TimeInterval periodOf(int year, int month) {

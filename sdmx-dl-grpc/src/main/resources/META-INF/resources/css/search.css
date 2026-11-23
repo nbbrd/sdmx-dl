@@ -172,17 +172,49 @@ main,
 }
 
 .source-tile {
+    position: relative;
     width: 3rem;
     height: 3rem;
-    font-size: .7rem;
-    overflow: hidden;
-    word-break: break-all;
-    text-align: center;
-    line-height: 1.1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius-lg);
 }
 
-.source-tile.restricted .bi {
-    font-size: .8rem;
+.source-tile .source-logo {
+    padding: 0;
+}
+
+.source-tile.restricted {
+    border-color: var(--bs-warning-border-subtle);
+}
+
+.source-tile-lock {
+    position: absolute;
+    right: -.4rem;
+    bottom: -.4rem;
+    padding: 0 .25rem;
+    font-size: .65rem;
+    color: var(--bs-warning-text-emphasis);
+    background: var(--bs-warning-bg-subtle);
+    border: 1px solid var(--bs-warning-border-subtle);
+    border-radius: 50rem;
+}
+
+.source-ref {
+    font-weight: 600;
+    color: var(--bs-body-color);
+}
+
+/* Icons may be dark or transparent, so they get a light backdrop in both themes */
+.source-logo {
+    object-fit: contain;
+    background: #ffffff;
+    border-radius: 3px;
+    padding: 1px;
+    flex: none;
 }
 
 #scope.scope-restricted {

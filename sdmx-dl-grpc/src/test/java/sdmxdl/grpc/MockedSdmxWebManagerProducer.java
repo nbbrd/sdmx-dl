@@ -5,11 +5,13 @@ import jakarta.enterprise.inject.Alternative;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Singleton;
 import java.time.LocalDate;
+import java.util.Base64;
 import java.util.EnumSet;
 import java.util.stream.IntStream;
 import sdmxdl.*;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
+import tests.sdmxdl.web.IconSamples;
 import tests.sdmxdl.web.spi.MockedDriver;
 import tests.sdmxdl.web.spi.MockedRegistry;
 
@@ -23,6 +25,11 @@ import tests.sdmxdl.web.spi.MockedRegistry;
 public class MockedSdmxWebManagerProducer {
 
     private static final String DRIVER_ID = "MOCKED_DRIVER";
+
+    public static final byte[] ECB_ICON_PNG = IconSamples.png(32, 32);
+
+    private static final String ECB_ICON =
+            "data:image/png;base64," + Base64.getEncoder().encodeToString(ECB_ICON_PNG);
 
     @Produces
     @Singleton
@@ -46,7 +53,9 @@ public class MockedSdmxWebManagerProducer {
                         .repo(bbk, EnumSet.allOf(Feature.class))
                         .build())
                 .registry(MockedRegistry.builder()
-                        .source(source("ECB", "European Central Bank", "https://data.ecb.europa.eu"))
+                        .source(source("ECB", "European Central Bank", "https://data.ecb.europa.eu").toBuilder()
+                                .iconOf(ECB_ICON)
+                                .build())
                         .source(source("ESTAT", "Eurostat", "https://ec.europa.eu/eurostat"))
                         .source(source("BBK", "Deutsche Bundesbank", "https://www.bundesbank.de"))
                         .build())

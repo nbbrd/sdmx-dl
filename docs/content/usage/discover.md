@@ -91,6 +91,60 @@ Other columns: `Endpoint`, `Properties`, `Website`, `Monitor`, `MonitorWebsite`,
 - Some sources are aliases of others (e.g. renamed or mirrored endpoints); the API exposes `WebSource.isAlias()` to filter them out (and they're excluded from search results), while the CLI table lists them alongside their target.
 - Sources can be restricted to a maximum confidentiality level (`PUBLIC`, `RESTRICTED`, …): `confidentialityThreshold` in the API, `--max-confidentiality` in the CLI, `maxConfidentiality` in the WS. It defaults to allowing every source, except when searching flows across all sources: only public sources are searched then, so that confidential ones do not ask for credentials.
 
+### Icons
+
+Get the icon of a source, for example to show it next to its name in a user interface.
+Icons are [bundled or declared with the source]({{< relref "/sources#source-icons" >}}), so getting them never involves a network request.
+
+{{< tabs "discover-icons" >}}
+
+{{< tab "API" >}}
+
+```java
+//JAVA 25+
+//DEPS com.github.nbbrd.sdmx-dl:sdmx-dl-standalone:{{< sdmx-dl-version >}}
+import sdmxdl.web.*;
+import java.nio.file.*;
+
+void main() throws Exception {
+    SdmxWebManager manager = SdmxWebManager.ofServiceLoader();
+
+    // Best match for a size in pixels: PNG of that size, SVG, larger PNG, then largest PNG
+    SourceIcon icon = manager.getIcon("ECB", 32).orElseThrow();
+    IO.println(icon.getMediaType() + " " + icon.getSize());
+    Files.write(Path.of("ECB.png"), icon.getContent());
+}
+```
+{{< /tab >}}
+
+{{< tab "WS" >}}
+
+### REST
+
+```shell
+curl -o ECB.png "localhost:4559/sdmx-dl/v2/ECB/icon?size=32"
+curl -o ECB.svg "localhost:4559/sdmx-dl/v2/ECB/icon?format=svg"
+```
+
+### gRPC
+```shell
+grpcurl -d '{"source":"ECB","size":32}' -plaintext localhost:4559 sdmxdl.grpc.v2.SdmxWebManager.GetSourceIcon
+```
+{{< /tab >}}
+
+{{< /tabs >}}
+
+{{< expand "API output sample" >}}
+```plain
+image/png 32
+```
+{{< /expand >}}
+
+- The API returns an empty result when a source has no icon, while the WS falls back to the SDMX logo.
+- `size` defaults to `32` in the WS, and `format` (`png` or `svg`) restricts the media type; the SDMX logo is only available as SVG, so `format=png` on a source without a PNG icon returns `404 Not Found`.
+- The REST endpoint sets an `ETag` and allows caching for a day; icons of non-public sources are excluded from shared caches.
+- The CLI has no icon command.
+
 ## Databases
 
 Find a database namespace within a multi-database source, when you don't know its exact name.

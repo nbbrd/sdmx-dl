@@ -1,12 +1,11 @@
 package sdmxdl.grpc;
 
 import io.quarkus.smallrye.openapi.OpenApiFilter;
+import java.util.*;
 import org.eclipse.microprofile.openapi.OASFilter;
 import org.eclipse.microprofile.openapi.models.Components;
 import org.eclipse.microprofile.openapi.models.OpenAPI;
 import org.eclipse.microprofile.openapi.models.media.Schema;
-
-import java.util.*;
 
 @OpenApiFilter(OpenApiFilter.RunStage.BOTH)
 public final class ProtobufJsonOASFilter implements OASFilter {
@@ -21,6 +20,7 @@ public final class ProtobufJsonOASFilter implements OASFilter {
         removeBuildersFromComponents(builders, components);
 
         removePrivateFields(components);
+        removeHiddenFields(components);
         removeKeywords(components);
         removeValueSuffix(components);
         removeBytesSuffix(components);
@@ -29,19 +29,16 @@ public final class ProtobufJsonOASFilter implements OASFilter {
     }
 
     private void refactorLists(Components components) {
-        components.getSchemas()
-                .values()
-                .stream()
+        components.getSchemas().values().stream()
                 .filter(ProtobufJsonOASFilter::hasProperties)
                 .forEach(schema -> {
                     Map<String, Schema> properties = schema.getProperties();
-                    properties
-                            .keySet()
-                            .stream()
+                    properties.keySet().stream()
                             .map(property -> removeSuffix(property, "List"))
                             .filter(Optional::isPresent)
                             .map(Optional::get)
-                            .toList().forEach(property -> {
+                            .toList()
+                            .forEach(property -> {
                                 schema.addProperty(property, properties.get(property + "List"));
                                 schema.removeProperty(property + "MemoizedSerializedSize");
                                 schema.removeProperty(property + "Count");
@@ -51,19 +48,16 @@ public final class ProtobufJsonOASFilter implements OASFilter {
     }
 
     private void refactorMaps(Components components) {
-        components.getSchemas()
-                .values()
-                .stream()
+        components.getSchemas().values().stream()
                 .filter(ProtobufJsonOASFilter::hasProperties)
                 .forEach(schema -> {
                     Map<String, Schema> properties = schema.getProperties();
-                    properties
-                            .keySet()
-                            .stream()
+                    properties.keySet().stream()
                             .map(property -> removeSuffix(property, "Map"))
                             .filter(Optional::isPresent)
                             .map(Optional::get)
-                            .toList().forEach(property -> {
+                            .toList()
+                            .forEach(property -> {
                                 schema.addProperty(property, properties.get(property + "Map"));
                                 schema.removeProperty(property + "Count");
                                 schema.removeProperty(property + "Map");
@@ -72,15 +66,11 @@ public final class ProtobufJsonOASFilter implements OASFilter {
     }
 
     private void removeValueSuffix(Components components) {
-        components.getSchemas()
-                .values()
-                .stream()
+        components.getSchemas().values().stream()
                 .filter(ProtobufJsonOASFilter::hasProperties)
                 .forEach(schema -> {
                     Map<String, Schema> properties = schema.getProperties();
-                    properties
-                            .keySet()
-                            .stream()
+                    properties.keySet().stream()
                             .filter(property -> contains(property, "Value", properties))
                             .toList()
                             .forEach(schema::removeProperty);
@@ -88,15 +78,11 @@ public final class ProtobufJsonOASFilter implements OASFilter {
     }
 
     private void removeBytesSuffix(Components components) {
-        components.getSchemas()
-                .values()
-                .stream()
+        components.getSchemas().values().stream()
                 .filter(ProtobufJsonOASFilter::hasProperties)
                 .forEach(schema -> {
                     Map<String, Schema> properties = schema.getProperties();
-                    properties
-                            .keySet()
-                            .stream()
+                    properties.keySet().stream()
                             .filter(property -> contains(property, "Bytes", properties))
                             .toList()
                             .forEach(schema::removeProperty);
@@ -114,23 +100,30 @@ public final class ProtobufJsonOASFilter implements OASFilter {
     }
 
     private void removeKeywords(Components components) {
-        Set<String> keywords = Set.of("defaultInstanceForType", "parserForType", "serializedSize", "initialized", "memoizedIsInitialized");
-        components.getSchemas()
-                .values()
-                .stream()
+        Set<String> keywords = Set.of(
+                "defaultInstanceForType", "parserForType", "serializedSize", "initialized", "memoizedIsInitialized");
+        components.getSchemas().values().stream()
                 .filter(ProtobufJsonOASFilter::hasProperties)
                 .forEach(schema -> keywords.forEach(schema::removeProperty));
     }
 
+    // fields of shared DTOs that are never set in REST responses
+    private static final Map<String, Set<String>> HIDDEN_FIELDS = Map.of("WebSourceDto", Set.of("icon"));
+
+    private void removeHiddenFields(Components components) {
+        HIDDEN_FIELDS.forEach((name, properties) -> {
+            Schema schema = components.getSchemas().get(name);
+            if (schema != null && hasProperties(schema)) {
+                properties.forEach(schema::removeProperty);
+            }
+        });
+    }
+
     private void removePrivateFields(Components components) {
-        components.getSchemas()
-                .values()
-                .stream()
+        components.getSchemas().values().stream()
                 .filter(ProtobufJsonOASFilter::hasProperties)
                 .forEach(schema -> {
-                    schema.getProperties()
-                            .keySet()
-                            .stream()
+                    schema.getProperties().keySet().stream()
                             .filter(property -> property.endsWith("_"))
                             .toList()
                             .forEach(schema::removeProperty);
@@ -138,18 +131,16 @@ public final class ProtobufJsonOASFilter implements OASFilter {
     }
 
     private List<String> getBuilders(Components components) {
-        return components.getSchemas().keySet().stream().filter(key -> key.endsWith("OrBuilder")).toList();
+        return components.getSchemas().keySet().stream()
+                .filter(key -> key.endsWith("OrBuilder"))
+                .toList();
     }
 
     private static void removeBuildersFromProperties(List<String> builders, Components components) {
         Builders buildersAsSchemaRefs = Builders.fromBuilderNames(builders);
-        components.getSchemas()
-                .values()
-                .stream()
+        components.getSchemas().values().stream()
                 .filter(ProtobufJsonOASFilter::hasProperties)
-                .forEach(schema -> schema.getProperties()
-                        .entrySet()
-                        .stream()
+                .forEach(schema -> schema.getProperties().entrySet().stream()
                         .filter(buildersAsSchemaRefs::isReferencedByProperty)
                         .map(Map.Entry::getKey)
                         .toList()
@@ -167,7 +158,9 @@ public final class ProtobufJsonOASFilter implements OASFilter {
     private record Builders(List<SchemaRef> refs) {
 
         public static Builders fromBuilderNames(List<String> names) {
-            return new Builders(names.stream().map(name -> new SchemaRef("#/components/schemas/" + name)).toList());
+            return new Builders(names.stream()
+                    .map(name -> new SchemaRef("#/components/schemas/" + name))
+                    .toList());
         }
 
         public boolean isReferencedByProperty(Map.Entry<String, Schema> property) {
@@ -181,9 +174,12 @@ public final class ProtobufJsonOASFilter implements OASFilter {
             if (schema.getType() == null) {
                 return Collections.singletonList(new SchemaRef(schema.getRef()));
             }
-            return schema.getType()
-                    .stream()
-                    .map(type -> type.equals(Schema.SchemaType.ARRAY) ? (schema.getItems() != null ? new SchemaRef(schema.getItems().getRef()) : null) : new SchemaRef(schema.getRef()))
+            return schema.getType().stream()
+                    .map(type -> type.equals(Schema.SchemaType.ARRAY)
+                            ? (schema.getItems() != null
+                                    ? new SchemaRef(schema.getItems().getRef())
+                                    : null)
+                            : new SchemaRef(schema.getRef()))
                     .filter(Objects::nonNull)
                     .toList();
         }

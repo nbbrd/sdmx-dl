@@ -117,7 +117,7 @@ class IndexHtmlFeaturesTest {
         List<String> errors = driver.manage().logs().get(LogType.BROWSER).getAll().stream()
                 .filter(entry -> entry.getLevel().intValue() >= Level.SEVERE.intValue())
                 .map(LogEntry::getMessage)
-                .filter(message -> !message.contains("favicon") && !message.contains("icons.duckduckgo.com"))
+                .filter(message -> !message.contains("favicon"))
                 .collect(Collectors.toList());
         assertThat(errors).isEmpty();
     }
@@ -455,7 +455,7 @@ class IndexHtmlFeaturesTest {
         List<String> errors = driver.manage().logs().get(LogType.BROWSER).getAll().stream()
                 .filter(entry -> entry.getLevel().intValue() >= Level.SEVERE.intValue())
                 .map(LogEntry::getMessage)
-                .filter(message -> !message.contains("favicon") && !message.contains("icons.duckduckgo.com"))
+                .filter(message -> !message.contains("favicon"))
                 .collect(Collectors.toList());
         assertThat(errors).isEmpty();
     }

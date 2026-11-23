@@ -16,17 +16,16 @@
  */
 package sdmxdl.web;
 
-import lombok.NonNull;
-import org.jspecify.annotations.Nullable;
-import sdmxdl.Confidentiality;
-import sdmxdl.Languages;
-import sdmxdl.Source;
-
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 import java.util.Set;
+import lombok.NonNull;
+import org.jspecify.annotations.Nullable;
+import sdmxdl.Confidentiality;
+import sdmxdl.Languages;
+import sdmxdl.Source;
 
 /**
  * @author Philippe Charles
@@ -59,6 +58,16 @@ public class WebSource extends Source {
     @Nullable URI monitor;
 
     @Nullable URL monitorWebsite;
+
+    /**
+     * The icon of this source: either a bundled icon ({@code sdmx-dl:icon/<name>})
+     * or an inline icon ({@code data:image/png;base64,...} or {@code data:image/svg+xml,...}).
+     *
+     * @see SdmxWebManager#getIcons(WebSource)
+     */
+    // excluded from toString to keep unique ids (cache keys, credentials) stable and to avoid logging large data URIs
+    @lombok.ToString.Exclude
+    @Nullable URI icon;
 
     public @NonNull WebSource alias(@NonNull String id) throws IllegalArgumentException {
         if (!aliases.contains(id)) {
@@ -97,12 +106,20 @@ public class WebSource extends Source {
             return monitor(monitor != null ? URI.create(monitor.toString()) : null);
         }
 
-        public @NonNull Builder monitorWebsiteOf(@Nullable CharSequence monitorWebsite) throws IllegalArgumentException {
+        public @NonNull Builder monitorWebsiteOf(@Nullable CharSequence monitorWebsite)
+                throws IllegalArgumentException {
             try {
-                return monitorWebsite(monitorWebsite != null ? URI.create(monitorWebsite.toString()).toURL() : null);
+                return monitorWebsite(
+                        monitorWebsite != null
+                                ? URI.create(monitorWebsite.toString()).toURL()
+                                : null);
             } catch (MalformedURLException ex) {
                 throw new IllegalArgumentException(ex);
             }
+        }
+
+        public @NonNull Builder iconOf(@Nullable CharSequence icon) throws IllegalArgumentException {
+            return icon(icon != null ? URI.create(icon.toString()) : null);
         }
     }
 }

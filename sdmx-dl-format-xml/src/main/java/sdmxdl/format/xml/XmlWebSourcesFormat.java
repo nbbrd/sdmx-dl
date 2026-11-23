@@ -16,19 +16,18 @@
  */
 package sdmxdl.format.xml;
 
-import nbbrd.io.xml.Stax;
-import sdmxdl.Confidentiality;
-import sdmxdl.web.WebSources;
-import sdmxdl.ext.FileFormat;
-import sdmxdl.format.FileFormatSupport;
-import sdmxdl.web.WebSource;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
 import java.nio.charset.Charset;
 import java.util.Locale;
 import java.util.Map;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+import nbbrd.io.xml.Stax;
+import sdmxdl.Confidentiality;
+import sdmxdl.ext.FileFormat;
+import sdmxdl.format.FileFormatSupport;
+import sdmxdl.web.WebSource;
+import sdmxdl.web.WebSources;
 
 /**
  * @author Philippe Charles
@@ -39,8 +38,7 @@ final class XmlWebSourcesFormat implements FileFormat<WebSources> {
     public static final XmlWebSourcesFormat INSTANCE = new XmlWebSourcesFormat();
 
     @lombok.experimental.Delegate
-    private final FileFormat<WebSources> support = FileFormatSupport
-            .builder(WebSources.class)
+    private final FileFormat<WebSources> support = FileFormatSupport.builder(WebSources.class)
             .parser(Stax.StreamParser.valueOf(XmlWebSourcesFormat::parseXml))
             .formatter(Stax.StreamFormatter.of(XmlWebSourcesFormat::formatXml))
             .extension(".xml")
@@ -61,6 +59,7 @@ final class XmlWebSourcesFormat implements FileFormat<WebSources> {
     private static final String VALUE_ATTR = "value";
     private static final String MONITOR_TAG = "monitor";
     private static final String MONITOR_WEBSITE_TAG = "monitorWebsite";
+    private static final String ICON_TAG = "icon";
     private static final String ROOT_LANGUAGE = Locale.ROOT.getLanguage();
 
     private static WebSources parseXml(XMLStreamReader reader) throws XMLStreamException {
@@ -90,7 +89,9 @@ final class XmlWebSourcesFormat implements FileFormat<WebSources> {
                             item.endpointOf(reader.getElementText());
                             break;
                         case PROPERTY_TAG:
-                            item.property(reader.getAttributeValue(null, KEY_ATTR), reader.getAttributeValue(null, VALUE_ATTR));
+                            item.property(
+                                    reader.getAttributeValue(null, KEY_ATTR),
+                                    reader.getAttributeValue(null, VALUE_ATTR));
                             break;
                         case ALIAS_TAG:
                             item.alias(reader.getElementText());
@@ -103,6 +104,9 @@ final class XmlWebSourcesFormat implements FileFormat<WebSources> {
                             break;
                         case MONITOR_WEBSITE_TAG:
                             item.monitorWebsiteOf(reader.getElementText());
+                            break;
+                        case ICON_TAG:
+                            item.iconOf(reader.getElementText().trim());
                             break;
                     }
                     break;
@@ -141,13 +145,15 @@ final class XmlWebSourcesFormat implements FileFormat<WebSources> {
             writeTextElement(writer, WEBSITE_TAG, source.getWebsite());
             writeTextElement(writer, MONITOR_TAG, source.getMonitor());
             writeTextElement(writer, MONITOR_WEBSITE_TAG, source.getMonitorWebsite());
+            writeTextElement(writer, ICON_TAG, source.getIcon());
             writer.writeEndElement();
         }
         writer.writeEndElement();
         writer.writeEndDocument();
     }
 
-    private static void writeDescription(XMLStreamWriter writer, Map.Entry<String, String> description) throws XMLStreamException {
+    private static void writeDescription(XMLStreamWriter writer, Map.Entry<String, String> description)
+            throws XMLStreamException {
         writer.writeStartElement(DESCRIPTION_TAG);
         String lang = description.getKey();
         if (!lang.isEmpty()) {
@@ -157,7 +163,8 @@ final class XmlWebSourcesFormat implements FileFormat<WebSources> {
         writer.writeEndElement();
     }
 
-    private static void writeProperty(XMLStreamWriter writer, Map.Entry<String, String> property) throws XMLStreamException {
+    private static void writeProperty(XMLStreamWriter writer, Map.Entry<String, String> property)
+            throws XMLStreamException {
         writer.writeStartElement(PROPERTY_TAG);
         writer.writeAttribute(KEY_ATTR, property.getKey());
         writer.writeAttribute(VALUE_ATTR, property.getValue());

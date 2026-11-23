@@ -24,30 +24,17 @@ import ec.util.completion.AutoCompletionSource;
 import ec.util.completion.ExtAutoCompletionSource;
 import ec.util.completion.swing.CustomListCellRenderer;
 import java.io.IOException;
-import java.net.Proxy;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import javax.net.ssl.HttpsURLConnection;
 import javax.swing.*;
 import lombok.NonNull;
-import nbbrd.desktop.favicon.DomainName;
-import nbbrd.desktop.favicon.FaviconRef;
-import nbbrd.desktop.favicon.FaviconSupport;
-import nbbrd.desktop.favicon.URLConnectionFactory;
 import sdmxdl.*;
-import sdmxdl.swing.SdmxLogo;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.WebSourcesRequest;
-import sdmxdl.web.spi.Network;
-import sdmxdl.web.spi.SSLFactory;
 
 /**
  * @author Philippe Charles
@@ -96,12 +83,19 @@ public abstract class SdmxAutoCompletion {
         return new AttributeCompletion<>(manager, languages, source, database, flowRef, cache);
     }
 
-    @lombok.AllArgsConstructor
     private static final class WebSourceCompletion extends SdmxAutoCompletion {
 
-        @lombok.NonNull private final SdmxWebManager manager;
+        private final SdmxWebManager manager;
 
-        @lombok.NonNull private final Languages languages;
+        private final Languages languages;
+
+        private final SdmxIconSupport icons;
+
+        private WebSourceCompletion(@NonNull SdmxWebManager manager, @NonNull Languages languages) {
+            this.manager = manager;
+            this.languages = languages;
+            this.icons = SdmxIconSupport.of(manager);
+        }
 
         @Override
         public AutoCompletionSource getSource() {
@@ -122,7 +116,7 @@ public abstract class SdmxAutoCompletion {
                 @Override
                 protected Icon toIcon(
                         String term, JList list, WebSource value, int index, boolean isSelected, boolean cellHasFocus) {
-                    return getFavicon(value.getWebsite(), list::repaint);
+                    return icons.getIcon(value, 16);
                 }
             };
         }
@@ -348,80 +342,5 @@ public abstract class SdmxAutoCompletion {
         private String getCacheKey(String term) {
             return "Attribute" + source.get() + database.get() + flowRef.get() + languages;
         }
-    }
-
-    public static Icon getDefaultIcon() {
-        return DEFAULT_ICON;
-    }
-
-    public static Icon getDefaultIcon(int size) {
-        return new SdmxLogo(size);
-    }
-
-    private static final Icon DEFAULT_ICON = new SdmxLogo(16);
-
-    public static Icon getFavicon(URL website) {
-        return website != null
-                ? FAVICONS.getOrDefault(FaviconRef.of(DomainName.of(website), 16), getDefaultIcon())
-                : getDefaultIcon();
-    }
-
-    public static Icon getFavicon(URL website, Runnable callback) {
-        return website != null
-                ? FAVICONS.getOrDefault(FaviconRef.of(DomainName.of(website), 16), callback, getDefaultIcon())
-                : getDefaultIcon();
-    }
-
-    public static Icon getFavicon(URL website, Runnable callback, int size) {
-        return website != null
-                ? FAVICONS.getOrDefault(FaviconRef.of(DomainName.of(website), size), callback, getDefaultIcon())
-                : getDefaultIcon(size);
-    }
-
-    public static final FaviconSupport FAVICONS = FaviconSupport.ofServiceLoader().toBuilder()
-            .client(new ClientOverCustomNetwork())
-            .cache(new HashMap<>())
-            //            .cache(IOCacheFactoryLoader.get().ofTtl(Duration.ofHours(1)))
-            .build();
-
-    private static final class ClientOverCustomNetwork implements URLConnectionFactory {
-
-        @Override
-        public @NonNull URLConnection openConnection(@NonNull URL url) throws IOException {
-            Network network = getNetwork();
-            Proxy proxy = selectProxy(network, url);
-            URLConnection result = network.getURLConnectionFactory().openConnection(url, proxy);
-            applyHttps(result, network);
-            return result;
-        }
-
-        private void applyHttps(URLConnection result, Network network) {
-            if (result instanceof HttpsURLConnection) {
-                SSLFactory sslFactory = network.getSSLFactory();
-                HttpsURLConnection https = (HttpsURLConnection) result;
-                https.setHostnameVerifier(sslFactory.getHostnameVerifier());
-                https.setSSLSocketFactory(sslFactory.getSSLSocketFactory());
-            }
-        }
-
-        private Proxy selectProxy(Network network, URL url) throws IOException {
-            try {
-                return network.getProxySelector().select(url.toURI()).stream()
-                        .findFirst()
-                        .orElse(Proxy.NO_PROXY);
-            } catch (URISyntaxException ex) {
-                throw new IOException(ex);
-            }
-        }
-    }
-
-    private static Network getNetwork() {
-        return Network.getDefault();
-        //        return TsManager
-        //                .get()
-        //                .getProvider(SdmxWebProvider.class)
-        //                .map(SdmxWebProvider::getSdmxManager)
-        //                .map(SdmxWebManager::getNetwork)
-        //                .orElse(Network.getDefault());
     }
 }

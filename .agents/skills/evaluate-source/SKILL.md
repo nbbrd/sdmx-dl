@@ -488,6 +488,30 @@ Record the whole matrix in the evaluation document; it is the specification of t
 - **Display names**: official name in every language confirmed from responses/website;
   always include English (`en`).
 - **Confidentiality**: `PUBLIC` unless authentication is required.
+- **Icon** (public sources only): icons are bundled next to the driver that uses them, in
+  `sdmx-dl-provider-ri/src/main/resources/sdmxdl/provider/ri/icons/` or
+  `sdmx-dl-provider-dialects/src/main/resources/sdmxdl/provider/dialects/icons/` (an icon
+  shared by both modules lives in ri only; connectors sources have no icon), maintained by hand
+  (never fetched at runtime nor through third-party favicon services), and referenced by the
+  source as `.iconOf("sdmx-dl:icon/<NAME>")`. `<NAME>` is the organisation acronym, shared by
+  all the sources of the same organisation (e.g. `EC` for the `EC_DG_*` sources).
+  1. Reuse an existing `<NAME>` if the organisation already has one.
+  2. Otherwise look for candidates on the official website only: `<link rel="icon">`,
+     `apple-touch-icon`, the web manifest, `/favicon.ico`, the brand/press page for an SVG
+     logo. Prefer a clean square SVG (a mark, not a wordmark); fall back to PNG.
+  3. Produce `<NAME>.svg` (kept as is, no scripts nor external references) and/or
+     `<NAME>-16.png`, `<NAME>-32.png`, `<NAME>-64.png` (use the native frame when available,
+     downscale otherwise, never upscale; omit sizes that would require an upscale).
+  4. Add one line per file to `icons.csv` (`file,origin,retrieved`), with the exact origin URL
+     and the ISO retrieval date.
+  5. Check the result visually at 16 px on light and dark backgrounds; `RiIconProviderTest`
+     and `BundledIconsTest` validate the manifest, the files and the source references.
+  6. Copy the icon by hand to the docs as `docs/static/icons/<ID>.svg` (or the 64 px PNG as
+     `<ID>.png`), once per source id; the `sources` shortcode shows it and falls back to
+     `docs/static/SDMX_logo.svg`.
+
+  Sources without a bundled icon fall back to the SDMX logo; custom (including confidential)
+  sources may instead use an inline `data:image/png;base64,...` or `data:image/svg+xml,...` icon.
 
 ## 8. Produce the output
 
@@ -523,6 +547,7 @@ the trade-off of each — do not silently pick one.
 | **Website** | `<website URL>` |
 | **Languages** | `<comma-separated BCP 47 language tags>` |
 | **Confidentiality** | `PUBLIC` |
+| **Icon** | `<NAME>` (existing / new: `<origin URL>`) |
 | **API documentation** | `<URL or "N/A">` |
 
 ### Probe results
@@ -599,6 +624,7 @@ To be added in the appropriate driver class
         // add further .name() calls for each additional language
         .driver(<DRIVER_CONSTANT>)
         .confidentiality(PUBLIC)
+        .iconOf("sdmx-dl:icon/<NAME>")
         .endpointOf("<endpoint URL>")
         // add .propertyOf(...) calls for each property
         .websiteOf("<website URL>")

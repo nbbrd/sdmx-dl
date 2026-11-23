@@ -133,7 +133,8 @@ function renderDatasetHeader() {
     const dataset = state.dataset;
     const source = state.sources.find(item => item.id === dataset.source);
     const sourceName = source && source.names ? (source.names.en || Object.values(source.names)[0]) : '';
-    byId('dataset-source').textContent = sourceName ? `${dataset.source} · ${sourceName}` : dataset.source;
+    byId('dataset-source').innerHTML = sourceIcon(dataset.source, 16, 'source-logo me-1 align-text-bottom')
+        + escapeHtml(sourceName ? `${dataset.source} · ${sourceName}` : dataset.source);
     byId('dataset-name').textContent = dataset.name || flowIdOf(dataset.flow);
     byId('dataset-ref').textContent = dataset.flow + (dataset.database ? ` (${dataset.database})` : '');
     byId('dataset-description').textContent = dataset.description && dataset.description !== dataset.name ? dataset.description : '';

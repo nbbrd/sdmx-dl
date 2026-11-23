@@ -25,7 +25,7 @@ import sdmxdl.web.WebSource;
 /**
  * Step-by-step SDMX flow browser: Sources → Databases → Flows.
  * Visually matches BrowsePanel: dark-blue header with a back button,
- * a breadcrumb bar, {@link ListItemRenderer} cells with favicons / identicons,
+ * a breadcrumb bar, {@link ListItemRenderer} cells with source icons / identicons,
  * and styled search fields.
  * Exposes the confirmed selection via the bound {@link #SELECTION_PROPERTY}.
  */

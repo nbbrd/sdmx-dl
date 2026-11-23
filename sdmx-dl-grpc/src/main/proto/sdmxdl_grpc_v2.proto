@@ -12,6 +12,8 @@ service SdmxWebManager {
 
   rpc ListSources(WebSourcesRequestDto) returns (ListSourcesResponseDto);
 
+  rpc GetSourceIcon(WebSourceIconRequestDto) returns (SourceIconDto);
+
   rpc ListDatabases(WebDatabasesRequestDto) returns (ListDatabasesResponseDto);
 
   rpc ListFlows(WebFlowsRequestDto) returns (ListFlowsResponseDto);
@@ -57,6 +59,12 @@ message WebSourcesRequestDto {
   optional sdmxdl.format.protobuf.ConfidentialityDto max_confidentiality = 3; /* absent = every source */
   optional string languages = 4;
   optional int32 offset = 5; /* number of matching items to skip before returning 'max_results' items; absent = 0 */
+}
+
+message WebSourceIconRequestDto {
+  string source = 1;
+  optional int32 size = 2; /* preferred size in pixels; absent = 32 */
+  optional string format = 3; /* 'png' or 'svg'; absent = the best match whatever the format */
 }
 
 message WebDatabasesRequestDto {
@@ -189,6 +197,12 @@ message ScriptDto {
   string content = 3;
   repeated string warnings = 4; /* request parameters that the target cannot honor */
   string media_type = 5; /* e.g. "text/x-python" */
+}
+
+message SourceIconDto {
+  string media_type = 1; /* 'image/png' or 'image/svg+xml' */
+  optional int32 size = 2; /* size in pixels of a PNG icon; absent = scalable (SVG) */
+  bytes content = 3;
 }
 
 message ListSourcesResponseDto {

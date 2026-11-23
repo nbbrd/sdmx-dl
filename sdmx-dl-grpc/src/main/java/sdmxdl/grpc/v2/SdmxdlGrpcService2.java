@@ -22,6 +22,7 @@ import nbbrd.io.function.IOSupplier;
 import org.jspecify.annotations.Nullable;
 import sdmxdl.*;
 import sdmxdl.format.protobuf.*;
+import sdmxdl.grpc.ProtoGrpc;
 import sdmxdl.script.ScriptManager;
 import sdmxdl.web.FlowEntry;
 import sdmxdl.web.HealthCheck;
@@ -65,12 +66,23 @@ public class SdmxdlGrpcService2 implements SdmxWebManager {
                     .build());
             return ListSourcesResponseDto.newBuilder()
                     .addAllItems(result.getItems().stream()
-                            .map(ProtoWeb::fromWebSource)
+                            .map(ProtoGrpc::fromListedWebSource)
                             .toList())
                     .setTotal(result.getTotal())
                     .addAllScores(result.getScores())
                     .build();
         });
+    }
+
+    @Override
+    public Uni<SourceIconDto> getSourceIcon(WebSourceIconRequestDto request) {
+        return uniOfIO(
+                request.getSource(),
+                () -> ProtoIcon.fromSourceIcon(ProtoIcon.getIcon(
+                        manager,
+                        request.getSource(),
+                        request.hasSize() ? request.getSize() : ProtoIcon.DEFAULT_SIZE,
+                        request.hasFormat() ? request.getFormat() : null)));
     }
 
     @Override

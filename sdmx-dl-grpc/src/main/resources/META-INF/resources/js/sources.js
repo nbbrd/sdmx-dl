@@ -76,20 +76,10 @@ function renderPrettySources(sources) {
         // Header with icon and title
         html += '<div class="source-header">';
 
-        // Extract domain from website and use DuckDuckGo favicon
-        // Only show favicon if confidentiality is PUBLIC or null/undefined
-        let faviconHtml = icon('globe'); // Default icon fallback
-        const isPublicOrNull = !source.confidentiality || source.confidentiality === 'PUBLIC';
-        if (source.website && isPublicOrNull) {
-            try {
-                const url = new URL(source.website);
-                const domain = url.hostname;
-                const faviconUrl = `https://icons.duckduckgo.com/ip3/${domain}.ico`;
-                faviconHtml = `<img src="${faviconUrl}" alt="${escapeHtml(source.id)}" onerror="this.parentElement.innerHTML='<i class=\\'bi bi-globe\\'></i>';" width="32" height="32">`;
-            } catch (e) {
-                // Keep default icon if URL parsing fails
-            }
-        }
+        // Icon served by the local server (bundled or declared by the source, SDMX logo otherwise)
+        const iconUrl = apiUrl([source.id, 'icon'], { size: 32 });
+        const iconUrl2x = apiUrl([source.id, 'icon'], { size: 64 });
+        const faviconHtml = `<img src="${escapeHtml(iconUrl)}" srcset="${escapeHtml(iconUrl)} 1x, ${escapeHtml(iconUrl2x)} 2x" alt="${escapeHtml(source.id)}" onerror="this.parentElement.innerHTML='<i class=\\'bi bi-globe\\'></i>';" width="32" height="32">`;
 
         html += `<div class="source-icon">${faviconHtml}</div>`;
         html += '<div class="source-title">';

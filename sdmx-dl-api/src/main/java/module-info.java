@@ -10,6 +10,7 @@ module sdmxdl.api {
     requires static nbbrd.service;
     requires static org.jspecify;
     requires java.logging;
+    requires java.xml;
 
     exports sdmxdl;
     exports sdmxdl.ext;
@@ -31,6 +32,7 @@ module sdmxdl.api {
     uses Registry;
     uses SearchScoringProvider;
     uses ScriptGenerator;
+    uses IconProvider;
 
     provides SearchScoringProvider with
             internal.sdmxdl.web.Bm25ScoringProvider,

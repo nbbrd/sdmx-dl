@@ -209,6 +209,7 @@ public final class KryoFileFormat<T extends HasPersistence> implements FileForma
             kryo.writeObjectOrNull(output, t.getWebsite(), URL.class);
             kryo.writeObjectOrNull(output, t.getMonitor(), URI.class);
             kryo.writeObjectOrNull(output, t.getMonitorWebsite(), URL.class);
+            kryo.writeObjectOrNull(output, t.getIcon(), URI.class);
         }
 
         @Override
@@ -224,6 +225,7 @@ public final class KryoFileFormat<T extends HasPersistence> implements FileForma
                     .website(kryo.readObjectOrNull(input, URL.class))
                     .monitor(kryo.readObjectOrNull(input, URI.class))
                     .monitorWebsite(kryo.readObjectOrNull(input, URL.class))
+                    .icon(kryo.readObjectOrNull(input, URI.class))
                     .build();
         }
     }

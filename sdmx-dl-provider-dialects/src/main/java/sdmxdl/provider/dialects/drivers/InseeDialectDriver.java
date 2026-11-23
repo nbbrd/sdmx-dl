@@ -16,6 +16,15 @@
  */
 package sdmxdl.provider.dialects.drivers;
 
+import static sdmxdl.Confidentiality.PUBLIC;
+import static sdmxdl.format.time.TimeFormats.IGNORE_ERROR;
+import static sdmxdl.provider.SdmxFix.Category.*;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.function.Supplier;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.design.VisibleForTesting;
@@ -51,16 +60,6 @@ import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.function.Supplier;
-
-import static sdmxdl.Confidentiality.PUBLIC;
-import static sdmxdl.format.time.TimeFormats.IGNORE_ERROR;
-import static sdmxdl.provider.SdmxFix.Category.*;
-
 /**
  * @author Philippe Charles
  */
@@ -71,18 +70,17 @@ public final class InseeDialectDriver implements Driver {
     private static final String DIALECTS_INSEE = "DIALECTS_INSEE";
 
     @lombok.experimental.Delegate
-    private final DriverSupport support = DriverSupport
-            .builder()
+    private final DriverSupport support = DriverSupport.builder()
             .id(DIALECTS_INSEE)
             .rank(NATIVE_DRIVER_RANK)
             .connectorOf(new InseeRestClientFactory())
-            .source(WebSource
-                    .builder()
+            .source(WebSource.builder()
                     .id("INSEE")
                     .name("en", "National Institute of Statistics and Economic Studies")
                     .name("fr", "Institut national de la statistique et des études économiques")
                     .driver(DIALECTS_INSEE)
                     .confidentiality(PUBLIC)
+                    .iconOf("sdmx-dl:icon/INSEE")
                     .endpointOf("https://bdm.insee.fr/series/sdmx")
                     .websiteOf("https://www.insee.fr/fr/statistiques")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/INSEE")
@@ -99,11 +97,17 @@ public final class InseeDialectDriver implements Driver {
                 : dimension;
     }
 
-    @SdmxFix(id = 4, category = CONTENT, cause = "Some codes are missing in dsd even when requested with 'references=children'")
-    private static Dimension fixDimensionCodes(Dimension dimension, IOFunction<CodelistRef, Codelist> codelistProvider) throws IOException {
+    @SdmxFix(
+            id = 4,
+            category = CONTENT,
+            cause = "Some codes are missing in dsd even when requested with 'references=children'")
+    private static Dimension fixDimensionCodes(Dimension dimension, IOFunction<CodelistRef, Codelist> codelistProvider)
+            throws IOException {
         Codelist codelist = dimension.getCodelist();
         return codelist.getCodes().isEmpty()
-                ? dimension.toBuilder().codelist(codelistProvider.applyWithIO(codelist.getRef())).build()
+                ? dimension.toBuilder()
+                        .codelist(codelistProvider.applyWithIO(codelist.getRef()))
+                        .build()
                 : dimension;
     }
 
@@ -121,19 +125,17 @@ public final class InseeDialectDriver implements Driver {
 
         @Override
         public @NonNull List<BaseProperty> getRestClientProperties() {
-            return PropertiesSupport.merge(
-                    httpFactory.getHttpClientProperties(),
-                    NO_COMMA_ENCODING_PROPERTY
-            );
+            return PropertiesSupport.merge(httpFactory.getHttpClientProperties(), NO_COMMA_ENCODING_PROPERTY);
         }
 
         @Override
-        public @NonNull RestClient createRestClient(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) {
+        public @NonNull RestClient createRestClient(
+                @NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) {
             return new InseeRestClient(source, languages, context, httpFactory);
         }
     }
 
-    private final static class InseeRestClient extends RiRestClient {
+    private static final class InseeRestClient extends RiRestClient {
 
         InseeRestClient(WebSource s, Languages languages, WebContext c, HttpFactory httpFactory) {
             super(
@@ -147,8 +149,7 @@ public final class InseeDialectDriver implements Driver {
                             : InseeRestQueries.DEFAULT,
                     InseeRestParsers.INSTANCE,
                     Sdmx21RestErrors.DEFAULT,
-                    EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD, Feature.DATA_QUERY_DETAIL)
-            );
+                    EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD, Feature.DATA_QUERY_DETAIL));
         }
 
         @Override
@@ -175,7 +176,8 @@ public final class InseeDialectDriver implements Driver {
         }
 
         @Override
-        protected UriQueryBuilder onData(URI endpoint, String resourcePath, FlowRef flowRef, Key key, String providerRef) {
+        protected UriQueryBuilder onData(
+                URI endpoint, String resourcePath, FlowRef flowRef, Key key, String providerRef) {
             UriQueryBuilder result = super.onData(endpoint, resourcePath, flowRef, key, providerRef);
             if (noCommaEncoding) {
                 String fixedURL = result.toString().replace("%2C", ",");
@@ -194,23 +196,23 @@ public final class InseeDialectDriver implements Driver {
         public static final InseeRestParsers INSTANCE = new InseeRestParsers();
 
         @Override
-        public @NonNull FileParser<DataCursor> getDataParser(@NonNull MediaType mediaType, @NonNull Structure dsd, @NonNull Supplier<ObsParser> dataFactory) {
+        public @NonNull FileParser<DataCursor> getDataParser(
+                @NonNull MediaType mediaType, @NonNull Structure dsd, @NonNull Supplier<ObsParser> dataFactory) {
             return super.getDataParser(DATA_TYPE, dsd, dataFactory);
         }
     }
 
     @VisibleForTesting
-    static final StandardReportingFormat REPORTING_TWO_MONTH = StandardReportingFormat
-            .builder()
+    static final StandardReportingFormat REPORTING_TWO_MONTH = StandardReportingFormat.builder()
             .indicator('B')
             .duration(Duration.parse("P2M"))
             .limitPerYear(6)
             .build();
 
     @VisibleForTesting
-    static final Parser<ObservationalTimePeriod> EXTENDED_TIME_PARSER =
-            TimeFormats.getObservationalTimePeriod(IGNORE_ERROR)
-                    .orElse(TimeFormats.onReportingFormat(REPORTING_TWO_MONTH, IGNORE_ERROR));
+    static final Parser<ObservationalTimePeriod> EXTENDED_TIME_PARSER = TimeFormats.getObservationalTimePeriod(
+                    IGNORE_ERROR)
+            .orElse(TimeFormats.onReportingFormat(REPORTING_TWO_MONTH, IGNORE_ERROR));
 
     private static final Supplier<ObsParser> OBS_FACTORY = () -> new ObsParser(EXTENDED_TIME_PARSER, Parser.onDouble());
 }

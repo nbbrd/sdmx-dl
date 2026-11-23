@@ -286,9 +286,8 @@ function renderResultCard(entry, index, score) {
     const query = state.search.query;
     const flow = entry.flow;
     const matched = matchedFieldsOf(entry, query);
-    const tile = isPublicSource(entry.source)
-        ? `<div class="source-tile rounded bg-primary-subtle text-primary d-flex align-items-center justify-content-center fw-bold flex-none">${escapeHtml(entry.source)}</div>`
-        : `<div class="source-tile restricted rounded bg-warning-subtle text-warning-emphasis d-flex flex-column align-items-center justify-content-center fw-bold flex-none" title="${escapeHtml(restrictedTitleOf(entry.source))}">${icon('lock-fill')}${escapeHtml(entry.source)}</div>`;
+    const restricted = !isPublicSource(entry.source);
+    const tile = `<div class="source-tile${restricted ? ' restricted' : ''} flex-none" title="${escapeHtml(restricted ? restrictedTitleOf(entry.source) : entry.source)}">${sourceIcon(entry.source, 40, 'source-logo')}${restricted ? `<span class="source-tile-lock">${icon('lock-fill')}</span>` : ''}</div>`;
     return `
         <div class="card result fade-in" data-index="${index}" onclick="openResult(${index})">
             <div class="card-body py-3">
@@ -297,7 +296,7 @@ function renderResultCard(entry, index, score) {
                     <div class="flex-grow-1 min-w-0">
                         <div class="d-flex flex-wrap align-items-baseline gap-2">
                             <h6 class="mb-0">${highlight(flow.name || flowIdOf(flow.ref), query)}</h6>
-                            <code class="small text-secondary">${highlight(flowIdOf(flow.ref), query)}</code>
+                            <code class="small text-secondary"><span class="source-ref">${escapeHtml(entry.source)}</span>/${highlight(flowIdOf(flow.ref), query)}</code>
                             ${entry.database ? `<span class="badge text-bg-light border">${escapeHtml(entry.database)}</span>` : ''}
                         </div>
                         ${flow.description && flow.description !== flow.name ? `<div class="small text-secondary mt-1">${highlight(flow.description, query)}</div>` : ''}
@@ -333,7 +332,7 @@ function renderFacets() {
     byId('facet-source').innerHTML = [...sources.entries()].map(([source, count], index) => `
         <div class="form-check">
             <input class="form-check-input" type="checkbox" id="facet-source-${index}" ${search.sourceFilter.has(source) ? 'checked' : ''} onchange="toggleSourceFacet(${jsArg(source)}, this.checked)">
-            <label class="form-check-label d-flex" for="facet-source-${index}">${escapeHtml(source)}${isPublicSource(source) ? '' : `<span class="ms-1 text-warning-emphasis" title="${escapeHtml(restrictedTitleOf(source))}">${icon('lock-fill')}</span>`}<span class="ms-auto text-secondary small">${count}</span></label>
+            <label class="form-check-label d-flex align-items-center" for="facet-source-${index}">${sourceIcon(source, 16, 'source-logo me-1')}${escapeHtml(source)}${isPublicSource(source) ? '' : `<span class="ms-1 text-warning-emphasis" title="${escapeHtml(restrictedTitleOf(source))}">${icon('lock-fill')}</span>`}<span class="ms-auto text-secondary small">${count}</span></label>
         </div>`).join('') || '<div class="small text-secondary">No source</div>';
 
     const fields = new Map();

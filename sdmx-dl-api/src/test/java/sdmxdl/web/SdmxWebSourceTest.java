@@ -16,11 +16,10 @@
  */
 package sdmxdl.web;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.*;
 
 import java.net.URI;
-
-import static org.assertj.core.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Philippe Charles
@@ -30,23 +29,29 @@ public class SdmxWebSourceTest {
 
     @Test
     public void testBuilderEndpointOf() {
-        assertThatNullPointerException()
-                .isThrownBy(() -> WebSource.builder().endpointOf(null));
+        assertThatNullPointerException().isThrownBy(() -> WebSource.builder().endpointOf(null));
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> WebSource.builder().endpointOf("h ttp://localhost"));
 
-        assertThat(WebSource.builder().endpointOf("http://localhost").id("").driver("").build().getEndpoint())
+        assertThat(WebSource.builder()
+                        .endpointOf("http://localhost")
+                        .id("")
+                        .driver("")
+                        .build()
+                        .getEndpoint())
                 .isEqualTo(URI.create("http://localhost"));
     }
 
     @Test
     public void testBuilderDescription() {
-        WebSource base = WebSource.builder().endpointOf("http://localhost").id("").driver("").build();
+        WebSource base = WebSource.builder()
+                .endpointOf("http://localhost")
+                .id("")
+                .driver("")
+                .build();
 
-        assertThat(
-                base
-                        .toBuilder()
+        assertThat(base.toBuilder()
                         .name("en", "European Central Bank")
                         .name("fr", "Banque Centrale Européenne")
                         .build()
@@ -54,9 +59,7 @@ public class SdmxWebSourceTest {
                         .keySet())
                 .containsExactly("en", "fr");
 
-        assertThat(
-                base
-                        .toBuilder()
+        assertThat(base.toBuilder()
                         .name("fr", "Banque Centrale Européenne")
                         .name("en", "European Central Bank")
                         .build()
@@ -67,83 +70,137 @@ public class SdmxWebSourceTest {
 
     @Test
     public void testBuilderPropertyOf() {
-        assertThatNullPointerException()
-                .isThrownBy(() -> WebSource.builder().propertyOf(null, ""));
+        assertThatNullPointerException().isThrownBy(() -> WebSource.builder().propertyOf(null, ""));
 
-        assertThatNullPointerException()
-                .isThrownBy(() -> WebSource.builder().propertyOf("", null));
+        assertThatNullPointerException().isThrownBy(() -> WebSource.builder().propertyOf("", null));
 
-        assertThat(WebSource.builder().propertyOf("hello", "world").endpointOf("http://localhost").id("").driver("").build().getProperties())
+        assertThat(WebSource.builder()
+                        .propertyOf("hello", "world")
+                        .endpointOf("http://localhost")
+                        .id("")
+                        .driver("")
+                        .build()
+                        .getProperties())
                 .containsEntry("hello", "world");
     }
 
     @Test
     public void testBuilderWebsiteOf() {
-        WebSource base = WebSource.builder().id("ESTAT").driver("").endpointOf("http://localhost").build();
+        WebSource base = WebSource.builder()
+                .id("ESTAT")
+                .driver("")
+                .endpointOf("http://localhost")
+                .build();
 
-        assertThat(base.toBuilder().websiteOf(null).build().getWebsite())
-                .isNull();
+        assertThat(base.toBuilder().websiteOf(null).build().getWebsite()).isNull();
 
-        assertThatIllegalArgumentException()
-                .isThrownBy(() -> base.toBuilder().websiteOf("h ttp://localhost"));
+        assertThatIllegalArgumentException().isThrownBy(() -> base.toBuilder().websiteOf("h ttp://localhost"));
 
-        assertThat(base.toBuilder().websiteOf("http://localhost").id("").driver("").build().getWebsite())
+        assertThat(base.toBuilder()
+                        .websiteOf("http://localhost")
+                        .id("")
+                        .driver("")
+                        .build()
+                        .getWebsite())
                 .hasToString("http://localhost");
     }
 
     @Test
     public void testBuilderMonitorOf() {
-        WebSource base = WebSource.builder().id("ESTAT").driver("").endpointOf("http://localhost").build();
+        WebSource base = WebSource.builder()
+                .id("ESTAT")
+                .driver("")
+                .endpointOf("http://localhost")
+                .build();
 
-        assertThat(base.toBuilder().monitorOf(null).build().getMonitor())
-                .isNull();
+        assertThat(base.toBuilder().monitorOf(null).build().getMonitor()).isNull();
 
-        assertThatIllegalArgumentException()
-                .isThrownBy(() -> base.toBuilder().monitorOf("h ttp://localhost"));
+        assertThatIllegalArgumentException().isThrownBy(() -> base.toBuilder().monitorOf("h ttp://localhost"));
 
-        assertThat(base.toBuilder().monitorOf("http://localhost").id("").driver("").build().getMonitor())
+        assertThat(base.toBuilder()
+                        .monitorOf("http://localhost")
+                        .id("")
+                        .driver("")
+                        .build()
+                        .getMonitor())
                 .hasToString("http://localhost");
     }
 
     @Test
     public void testBuilderMonitorWebsiteOf() {
-        WebSource base = WebSource.builder().id("ESTAT").driver("").endpointOf("http://localhost").build();
+        WebSource base = WebSource.builder()
+                .id("ESTAT")
+                .driver("")
+                .endpointOf("http://localhost")
+                .build();
 
         assertThat(base.toBuilder().monitorWebsiteOf(null).build().getMonitorWebsite())
                 .isNull();
 
-        assertThatIllegalArgumentException()
-                .isThrownBy(() -> base.toBuilder().monitorWebsiteOf("h ttp://localhost"));
+        assertThatIllegalArgumentException().isThrownBy(() -> base.toBuilder().monitorWebsiteOf("h ttp://localhost"));
 
-        assertThat(base.toBuilder().monitorWebsiteOf("http://localhost").id("").driver("").build().getMonitorWebsite())
+        assertThat(base.toBuilder()
+                        .monitorWebsiteOf("http://localhost")
+                        .id("")
+                        .driver("")
+                        .build()
+                        .getMonitorWebsite())
                 .hasToString("http://localhost");
     }
 
     @Test
+    public void testBuilderIconOf() {
+        WebSource base = WebSource.builder()
+                .id("ESTAT")
+                .driver("")
+                .endpointOf("http://localhost")
+                .build();
+
+        assertThat(base.toBuilder().iconOf(null).build().getIcon()).isNull();
+
+        assertThatIllegalArgumentException().isThrownBy(() -> base.toBuilder().iconOf("sdmx-dl:icon/ E S"));
+
+        assertThat(base.toBuilder().iconOf("sdmx-dl:icon/ESTAT").build().getIcon())
+                .hasToString("sdmx-dl:icon/ESTAT");
+    }
+
+    @Test
     public void testAlias() {
-        WebSource estat = WebSource.builder().id("ESTAT").alias("EUROSTAT").driver("").endpointOf("http://localhost").build();
+        WebSource estat = WebSource.builder()
+                .id("ESTAT")
+                .alias("EUROSTAT")
+                .driver("")
+                .endpointOf("http://localhost")
+                .build();
 
         assertThat(estat.alias("EUROSTAT"))
                 .isEqualTo(estat.toBuilder().id("EUROSTAT").build());
 
-        assertThatNullPointerException()
-                .isThrownBy(() -> estat.alias(null));
+        assertThatNullPointerException().isThrownBy(() -> estat.alias(null));
 
-        assertThatIllegalArgumentException()
-                .isThrownBy(() -> estat.alias("other"));
+        assertThatIllegalArgumentException().isThrownBy(() -> estat.alias("other"));
     }
 
     @Test
     public void testIsAlias() {
-        WebSource base = WebSource.builder().id("ESTAT").driver("").endpointOf("http://localhost").build();
+        WebSource base = WebSource.builder()
+                .id("ESTAT")
+                .driver("")
+                .endpointOf("http://localhost")
+                .build();
         assertThat(base.isAlias()).isFalse();
         assertThat(base.toBuilder().alias("EUROSTAT").build().isAlias()).isFalse();
-        assertThat(base.toBuilder().id("EUROSTAT").alias("EUROSTAT").build().isAlias()).isTrue();
+        assertThat(base.toBuilder().id("EUROSTAT").alias("EUROSTAT").build().isAlias())
+                .isTrue();
     }
 
     @Test
     public void testWebsite() {
-        WebSource base = WebSource.builder().id("ESTAT").driver("").endpointOf("http://localhost").build();
+        WebSource base = WebSource.builder()
+                .id("ESTAT")
+                .driver("")
+                .endpointOf("http://localhost")
+                .build();
         assertThat(base.getWebsite()).isNull();
         assertThat(base.toBuilder().websiteOf("http://somewhere").build().getWebsite())
                 .asString()

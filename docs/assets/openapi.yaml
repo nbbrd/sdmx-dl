@@ -636,6 +636,8 @@ components:
           type: string
         confidentiality:
           $ref: "#/components/schemas/ConfidentialityDto"
+        iconBytes:
+          type: array
         aliases:
           type: array
 paths:
@@ -1334,6 +1336,45 @@ paths:
               schema:
                 $ref: "#/components/schemas/HealthReportDto"
       summary: Check Source Health
+  /sdmx-dl/v2/{source}/icon:
+    get:
+      tags:
+      - sdmx-dl v2
+      parameters:
+      - name: source
+        in: path
+        required: true
+        schema:
+          type: string
+      - description: "Format of the icon: 'png' or 'svg'; absent = the best match\
+          \ whatever the format"
+        name: format
+        in: query
+        schema:
+          type: string
+      - description: Preferred size of the icon in pixels (default 32)
+        name: size
+        in: query
+        schema:
+          type: integer
+          format: int32
+          default: 32
+      responses:
+        "200":
+          description: "The icon of the source that best matches the size: a PNG of\
+            \ the exact size, then an SVG, then the smallest larger PNG, then the\
+            \ largest PNG; the SDMX logo if the source has no icon"
+          content:
+            image/png:
+              schema:
+                format: binary
+                type: string
+            image/svg+xml:
+              schema:
+                type: string
+        "304":
+          description: The icon has not changed (If-None-Match)
+      summary: Get Source Icon
   /sdmx-dl/v2/{source}/{flow}/attributes:
     get:
       tags:

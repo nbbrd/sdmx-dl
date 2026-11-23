@@ -20,7 +20,7 @@ Cards and results have shortcuts to send the current source, flow or key to the 
 
 | Tab         | Description                                                                                                                                       | REST operation                                  |
 |-------------|---------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------|
-| Sources     | Source cards with driver, endpoint, website, monitor, languages and properties. **Check Health** gives a verdict for all sources; the **Health** action of a card also performs a live request. | `GET /sources`, `GET /health`, `GET /{source}/health` |
+| Sources     | Source cards with icon, driver, endpoint, website, monitor, languages and properties. **Check Health** gives a verdict for all sources; the **Health** action of a card also performs a live request. | `GET /sources`, `GET /{source}/icon`, `GET /health`, `GET /{source}/health` |
 | Databases   | Databases of a source.                                                                                                                            | `GET /{source}/databases`                       |
 | Flows       | Flows of a source, optionally in a database.                                                                                                      | `GET /{source}/flows`                           |
 | Flow Search | Searches the flows of all sources at once. Flows are indexed once and kept in the browser; results can be exported to CSV.                       | `GET /sources`, `GET /{source}/flows`           |
@@ -90,7 +90,7 @@ Once a tab has loaded, its **Copy** menu offers:
 
 The buttons in the bottom-right corner switch between light and dark themes (the browser preference is used by default and the choice is remembered), open the help on URL parameters, and hide the header or the other tabs.
 
-All the resources of the page (styles, icons, charting library) are served by the web service itself, so the page also works without internet access to third-party sites.
+All the resources of the page (styles, icons of the sources, charting library) are served by the web service itself, so the page also works without internet access to third-party sites.
 
 ## URL parameters
 

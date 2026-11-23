@@ -55,10 +55,6 @@
         </dependency>
         <dependency>
             <groupId>com.github.nbbrd.java-desktop-util</groupId>
-            <artifactId>java-desktop-util-favicon</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.nbbrd.java-desktop-util</groupId>
             <artifactId>java-desktop-util-chart</artifactId>
         </dependency>
         <dependency>

@@ -16,6 +16,13 @@
  */
 package sdmxdl.provider.dialects.drivers;
 
+import static sdmxdl.Confidentiality.PUBLIC;
+import static sdmxdl.provider.SdmxFix.Category.QUERY;
+
+import java.net.URI;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.design.VisibleForTesting;
@@ -39,14 +46,6 @@ import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
-import java.net.URI;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
-
-import static sdmxdl.Confidentiality.PUBLIC;
-import static sdmxdl.provider.SdmxFix.Category.QUERY;
-
 /**
  * @author Philippe Charles
  */
@@ -57,18 +56,17 @@ public final class BbkDialectDriver implements Driver {
     private static final String DIALECTS_BBK = "DIALECTS_BBK";
 
     @lombok.experimental.Delegate
-    private final DriverSupport support = DriverSupport
-            .builder()
+    private final DriverSupport support = DriverSupport.builder()
             .id(DIALECTS_BBK)
             .rank(NATIVE_DRIVER_RANK)
             .connectorOf(new BbkRestClientFactory())
-            .source(WebSource
-                    .builder()
+            .source(WebSource.builder()
                     .id("BBK")
                     .name("en", "Deutsche Bundesbank")
                     .name("de", "Deutsche Bundesbank")
                     .driver(DIALECTS_BBK)
                     .confidentiality(PUBLIC)
+                    .iconOf("sdmx-dl:icon/BBK")
                     .endpointOf("https://api.statistiken.bundesbank.de/rest")
                     .websiteOf("https://www.bundesbank.de/en/statistics/time-series-databases")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/BBK")
@@ -86,7 +84,8 @@ public final class BbkDialectDriver implements Driver {
         }
 
         @Override
-        public @NonNull RestClient createRestClient(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) {
+        public @NonNull RestClient createRestClient(
+                @NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) {
             return new RiRestClient(
                     HasMarker.of(source),
                     source.getEndpoint(),
@@ -96,8 +95,7 @@ public final class BbkDialectDriver implements Driver {
                     BbkQueries.INSTANCE,
                     Sdmx21RestParsers.DEFAULT,
                     Sdmx21RestErrors.DEFAULT,
-                    BBK_FEATURES
-            );
+                    BBK_FEATURES);
         }
     }
 
@@ -124,8 +122,7 @@ public final class BbkDialectDriver implements Driver {
         @SdmxFix(id = 1, category = QUERY, cause = "Meta uses custom resources path")
         @Override
         protected UriQueryBuilder onMeta(URI endpoint, String resourcePath, ResourceRef<?> ref) {
-            UriQueryBuilder result = UriQueryBuilder
-                    .of(endpoint)
+            UriQueryBuilder result = UriQueryBuilder.of(endpoint)
                     .path("metadata")
                     .path(resourcePath)
                     .path(AGENCY_ID);
@@ -137,9 +134,9 @@ public final class BbkDialectDriver implements Driver {
 
         @SdmxFix(id = 4, category = QUERY, cause = "Data does not support providerRef")
         @Override
-        protected UriQueryBuilder onData(URI endpoint, String resourcePath, FlowRef flowRef, Key key, String providerRef) {
-            return UriQueryBuilder
-                    .of(endpoint)
+        protected UriQueryBuilder onData(
+                URI endpoint, String resourcePath, FlowRef flowRef, Key key, String providerRef) {
+            return UriQueryBuilder.of(endpoint)
                     .path(resourcePath)
                     .path(flowRef.getId())
                     .path(key.toString());

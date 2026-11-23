@@ -16,6 +16,19 @@
  */
 package sdmxdl.provider.dialects.drivers;
 
+import static java.util.Collections.singletonList;
+import static sdmxdl.Confidentiality.PUBLIC;
+import static sdmxdl.Languages.ANY;
+import static sdmxdl.provider.SdmxFix.Category.PROTOCOL;
+import static sdmxdl.provider.SdmxFix.Category.QUERY;
+import static sdmxdl.provider.ri.drivers.Sdmx21RestParsers.withCharset;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.util.*;
+import java.util.zip.ZipInputStream;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.io.Resource;
@@ -57,20 +70,6 @@ import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.util.*;
-import java.util.zip.ZipInputStream;
-
-import static java.util.Collections.singletonList;
-import static sdmxdl.Confidentiality.PUBLIC;
-import static sdmxdl.Languages.ANY;
-import static sdmxdl.provider.SdmxFix.Category.PROTOCOL;
-import static sdmxdl.provider.SdmxFix.Category.QUERY;
-import static sdmxdl.provider.ri.drivers.Sdmx21RestParsers.withCharset;
-
 /**
  * @author Philippe Charles
  */
@@ -81,13 +80,11 @@ public final class EstatDialectDriver implements Driver {
     private static final String DIALECTS_ESTAT = "DIALECTS_ESTAT";
 
     @lombok.experimental.Delegate
-    private final DriverSupport support = DriverSupport
-            .builder()
+    private final DriverSupport support = DriverSupport.builder()
             .id(DIALECTS_ESTAT)
             .rank(NATIVE_DRIVER_RANK)
             .connectorOf(new EstatRestClientFactory())
-            .source(WebSource
-                    .builder()
+            .source(WebSource.builder()
                     .id("ESTAT")
                     .alias("EUROSTAT")
                     .name("en", "Eurostat")
@@ -95,72 +92,77 @@ public final class EstatDialectDriver implements Driver {
                     .name("fr", "Eurostat")
                     .driver(DIALECTS_ESTAT)
                     .confidentiality(PUBLIC)
+                    .iconOf("sdmx-dl:icon/ESTAT")
                     .endpointOf("https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1")
                     .websiteOf("https://ec.europa.eu/eurostat/data/database")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ESTAT")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/estat")
                     .build())
-            .source(WebSource
-                    .builder()
+            .source(WebSource.builder()
                     .id("ESTAT_COMEXT")
                     .name("en", "Eurostat - International trade in goods statistics (ITGS)")
                     .driver(DIALECTS_ESTAT)
                     .confidentiality(PUBLIC)
+                    .iconOf("sdmx-dl:icon/ESTAT")
                     .endpointOf("https://ec.europa.eu/eurostat/api/comext/dissemination/sdmx/2.1")
                     .websiteOf("https://ec.europa.eu/eurostat/web/international-trade-in-goods/overview")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ESTAT_COMEXT")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/estat_comext")
                     .build())
-            .source(WebSource
-                    .builder()
+            .source(WebSource.builder()
                     .id("EC_DG_COMP")
                     .name("en", "European Commission - Directorate General for Competition")
                     .driver(DIALECTS_ESTAT)
                     .confidentiality(PUBLIC)
+                    .iconOf("sdmx-dl:icon/EC")
                     .endpointOf("https://webgate.ec.europa.eu/comp/redisstat/api/dissemination/sdmx/2.1")
                     .websiteOf("https://data.europa.eu/data/datasets?catalog=comp")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/EC_DG_COMP")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ec_dg_comp")
                     .build())
-            .source(WebSource
-                    .builder()
+            .source(WebSource.builder()
                     .id("EC_DG_ECFIN")
                     .name("en", "European Commission - Directorate-General for Economic and Financial Affairs")
                     .driver(DIALECTS_ESTAT)
                     .confidentiality(PUBLIC)
+                    .iconOf("sdmx-dl:icon/EC")
                     .endpointOf("https://webgate.ec.europa.eu/ecfin/redisstat/api/dissemination/sdmx/2.1")
                     .websiteOf("https://webgate.ec.europa.eu/ecfin/redisstat/databrowser/explore")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/EC_DG_ECFIN")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ec_dg_ecfin")
                     .build())
-            .source(WebSource
-                    .builder()
+            .source(WebSource.builder()
                     .id("EC_DG_EMPL")
-                    .name("en", "European Commission - Directorate General for Employment, Social Affairs and inclusion")
+                    .name(
+                            "en",
+                            "European Commission - Directorate General for Employment, Social Affairs and inclusion")
                     .driver(DIALECTS_ESTAT)
                     .confidentiality(PUBLIC)
+                    .iconOf("sdmx-dl:icon/EC")
                     .endpointOf("https://webgate.ec.europa.eu/empl/redisstat/api/dissemination/sdmx/2.1")
                     .websiteOf("https://data.europa.eu/data/datasets?catalog=empl")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/EC_DG_EMPL")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ec_dg_empl")
                     .build())
-            .source(WebSource
-                    .builder()
+            .source(WebSource.builder()
                     .id("EC_DG_GROW")
-                    .name("en", "European Commission - Directorate General for Internal Market, Industry, Entrepreneurship and SMEs")
+                    .name(
+                            "en",
+                            "European Commission - Directorate General for Internal Market, Industry, Entrepreneurship and SMEs")
                     .driver(DIALECTS_ESTAT)
                     .confidentiality(PUBLIC)
+                    .iconOf("sdmx-dl:icon/EC")
                     .endpointOf("https://webgate.ec.europa.eu/grow/redisstat/api/dissemination/sdmx/2.1")
                     .websiteOf("https://data.europa.eu/data/datasets?catalog=grow")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/EC_DG_GROW")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ec_dg_grow")
                     .build())
-            .source(WebSource
-                    .builder()
+            .source(WebSource.builder()
                     .id("EC_DG_TAXUD")
                     .name("en", "European Commission - Directorate-General for Taxation and Customs Union")
                     .driver(DIALECTS_ESTAT)
                     .confidentiality(PUBLIC)
+                    .iconOf("sdmx-dl:icon/EC")
                     .endpointOf("https://webgate.ec.europa.eu/taxation_customs/redisstat/api/dissemination/sdmx/2.1")
                     .websiteOf("https://webgate.ec.europa.eu/taxation_customs/redisstat/databrowser/explore")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/EC_DG_TAXUD")
@@ -178,7 +180,8 @@ public final class EstatDialectDriver implements Driver {
         }
 
         @Override
-        public @NonNull RestClient createRestClient(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) {
+        public @NonNull RestClient createRestClient(
+                @NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) {
             return new RiRestClient(
                     HasMarker.of(source),
                     source.getEndpoint(),
@@ -188,8 +191,7 @@ public final class EstatDialectDriver implements Driver {
                     Sdmx21RestQueries.DEFAULT,
                     Sdmx21RestParsers.DEFAULT,
                     Sdmx21RestErrors.DEFAULT,
-                    ESTAT_FEATURES
-            );
+                    ESTAT_FEATURES);
         }
     }
 
@@ -207,8 +209,7 @@ public final class EstatDialectDriver implements Driver {
                 LongProperty.of(DRIVER_PROPERTY_PREFIX + ".asyncSleepTime", 6000);
 
         @lombok.experimental.Delegate
-        private final HttpDecoration support = HttpDecorationSupport
-                .builder()
+        private final HttpDecoration support = HttpDecorationSupport.builder()
                 .name("async")
                 .property(ASYNC_MAX_RETRIES_PROPERTY)
                 .property(ASYNC_SLEEP_TIME_PROPERTY)
@@ -221,18 +222,19 @@ public final class EstatDialectDriver implements Driver {
                     getInterceptor(
                             ASYNC_SLEEP_TIME_PROPERTY.get(s.getProperties()),
                             ASYNC_MAX_RETRIES_PROPERTY.get(s.getProperties()),
-                            c.getEventListener(s)
-                    )
-            );
+                            c.getEventListener(s)));
         }
 
-        private static InterceptingFunction getInterceptor(long asyncSleepTime, int asyncMaxRetries, EventListener onEvent) {
-            return (client, request, response) -> checkCodesInMessageFooter(client, response, asyncSleepTime, asyncMaxRetries, onEvent);
+        private static InterceptingFunction getInterceptor(
+                long asyncSleepTime, int asyncMaxRetries, EventListener onEvent) {
+            return (client, request, response) ->
+                    checkCodesInMessageFooter(client, response, asyncSleepTime, asyncMaxRetries, onEvent);
         }
-
 
         @SdmxFix(id = 3, category = PROTOCOL, cause = "Some response codes are located in the message footer")
-        private static HttpResponse checkCodesInMessageFooter(HttpClient client, HttpResponse result, long asyncSleepTime, int asyncMaxRetries, EventListener onEvent) throws IOException {
+        private static HttpResponse checkCodesInMessageFooter(
+                HttpClient client, HttpResponse result, long asyncSleepTime, int asyncMaxRetries, EventListener onEvent)
+                throws IOException {
             if (result.getContentType().isCompatible(SDMX_GENERIC_XML)) {
                 MessageFooter messageFooter = parseMessageFooter(result);
                 Optional<URI> asyncURI = getAsyncURI(messageFooter);
@@ -247,10 +249,13 @@ public final class EstatDialectDriver implements Driver {
             return result;
         }
 
-        private static final MediaType SDMX_GENERIC_XML = MediaType.parse("application/vnd.sdmx.generic+xml; version=2.1");
+        private static final MediaType SDMX_GENERIC_XML =
+                MediaType.parse("application/vnd.sdmx.generic+xml; version=2.1");
 
         private static MessageFooter parseMessageFooter(HttpResponse result) throws IOException {
-            return withCharset(SdmxXmlStreams.messageFooter21(ANY), result.getContentType().getCharset())
+            return withCharset(
+                            SdmxXmlStreams.messageFooter21(ANY),
+                            result.getContentType().getCharset())
                     .parseStream(result::getBody);
         }
 
@@ -260,11 +265,15 @@ public final class EstatDialectDriver implements Driver {
 
         private static Optional<URI> getAsyncURI(MessageFooter messageFooter) {
             return messageFooter.getCode() == HttpURLConnection.HTTP_ENTITY_TOO_LARGE
-                    ? messageFooter.getTexts().stream().map(Parser.onURI()::parse).filter(Objects::nonNull).findFirst()
+                    ? messageFooter.getTexts().stream()
+                            .map(Parser.onURI()::parse)
+                            .filter(Objects::nonNull)
+                            .findFirst()
                     : Optional.empty();
         }
 
-        private static HttpResponse requestAsync(HttpClient client, URI url, long sleepTimeInMillis, int retries) throws IOException {
+        private static HttpResponse requestAsync(HttpClient client, URI url, long sleepTimeInMillis, int retries)
+                throws IOException {
             HttpRequest request = HttpManager.newHttpRequest(url, singletonList(MediaType.ANY_TYPE), ANY);
             for (int i = 1; i <= retries; i++) {
                 sleep(sleepTimeInMillis);
@@ -290,8 +299,7 @@ public final class EstatDialectDriver implements Driver {
         @lombok.AllArgsConstructor
         private static final class AsyncResponse implements HttpResponse {
 
-            @lombok.NonNull
-            private final HttpResponse zipResponse;
+            @lombok.NonNull private final HttpResponse zipResponse;
 
             @Override
             public @NonNull MediaType getContentType() {

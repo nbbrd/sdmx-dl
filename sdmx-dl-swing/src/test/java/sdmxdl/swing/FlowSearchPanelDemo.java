@@ -1,14 +1,14 @@
 package sdmxdl.swing;
 
-import com.formdev.flatlaf.FlatLightLaf;
-import nbbrd.design.Demo;
-import sdmxdl.web.WebFlowRequest;
+import static sdmxdl.swing.FlowSearchPanel.SELECTION_PROPERTY;
 
+import com.formdev.flatlaf.FlatLightLaf;
+import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import java.awt.*;
-
-import static sdmxdl.swing.FlowSearchPanel.SELECTION_PROPERTY;
+import nbbrd.design.Demo;
+import sdmxdl.web.SdmxWebManager;
+import sdmxdl.web.WebFlowRequest;
 
 public class FlowSearchPanelDemo {
 
@@ -17,20 +17,22 @@ public class FlowSearchPanelDemo {
         SwingUtilities.invokeLater(() -> {
             FlatLightLaf.setup();
 
+            SdmxWebManager manager = DemoUtil.getSdmxWebManager();
             FlowSearchPanel panel = new FlowSearchPanel();
-            panel.setSourceIconProvider((src, repaint) -> DemoUtil.getFavicon(src, repaint, 32));
-            panel.setManager(DemoUtil.getSdmxWebManager());
+            panel.setSourceIconProvider((src, repaint) -> DemoUtil.getIcon(manager, src, 32));
+            panel.setManager(manager);
 
             JLabel selectionLabel = new JLabel("selection: <none>");
             selectionLabel.setBorder(new EmptyBorder(6, 8, 6, 8));
             selectionLabel.setFont(selectionLabel.getFont().deriveFont(Font.PLAIN, 11f));
             panel.addPropertyChangeListener(SELECTION_PROPERTY, evt -> {
                 WebFlowRequest ref = (WebFlowRequest) evt.getNewValue();
-                selectionLabel.setText(ref == null
-                        ? "selection: <none>"
-                        : "selection: source=" + ref.getSource()
-                          + "  database=" + ref.getRequest().getDatabase()
-                          + "  flow=" + ref.getRequest().getFlow());
+                selectionLabel.setText(
+                        ref == null
+                                ? "selection: <none>"
+                                : "selection: source=" + ref.getSource()
+                                        + "  database=" + ref.getRequest().getDatabase()
+                                        + "  flow=" + ref.getRequest().getFlow());
             });
 
             JPanel content = new JPanel(new BorderLayout(0, 4));

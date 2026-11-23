@@ -22,6 +22,7 @@ import static java.util.stream.Collectors.toList;
 
 import internal.sdmxdl.SearchSupport;
 import internal.sdmxdl.ext.PersistenceLoader;
+import internal.sdmxdl.web.SourceIcons;
 import internal.sdmxdl.web.spi.*;
 import java.io.IOException;
 import java.io.InterruptedIOException;
@@ -67,6 +68,7 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
                 .persistences(PersistenceLoader.load())
                 .authenticators(AuthenticatorLoader.load())
                 .registry(RegistryLoader.load())
+                .iconProviders(IconProviderLoader.load())
                 .build();
     }
 
@@ -103,6 +105,9 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
     @Nullable EventListener onRegistryEvent;
 
     @Nullable ErrorListener onRegistryError;
+
+    @lombok.Singular
+    @NonNull List<IconProvider> iconProviders;
 
     @lombok.Getter(lazy = true)
     @NonNull List<WebSource> customSources =
@@ -244,6 +249,114 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
                 .orElseThrow(() -> new IOException("Failed to find a suitable monitoring for '" + source + "'"));
 
         return monitor.getReport(source, getContext());
+    }
+
+    /**
+     * Gets all the variants of the icon of a web source.
+     *
+     * @param name the non-null source id
+     * @return a non-null list of icons, empty if the source has no usable icon
+     * @throws IOException if the source cannot be found
+     * @see #getIcons(WebSource)
+     */
+    public @NonNull List<SourceIcon> getIcons(@NonNull String name) throws IOException {
+        return getIcons(lookupSource(name).orElseThrow(() -> newMissingSource(name)));
+    }
+
+    /**
+     * Gets all the variants of the icon of a web source.
+     * <p>
+     * The {@linkplain WebSource#getIcon() icon URI} of the source is resolved as follows:
+     * <ul>
+     *     <li>{@code data:} URIs are decoded inline, without any network access</li>
+     *     <li>{@code sdmx-dl:icon/<name>} URIs are resolved by the {@linkplain #getIconProviders() icon providers},
+     *     the first non-empty answer wins</li>
+     *     <li>other URIs are not supported</li>
+     * </ul>
+     * Invalid icons are reported to the error listener of the source and ignored.
+     *
+     * @param source the non-null source
+     * @return a non-null list of icons, empty if the source has no usable icon
+     */
+    public @NonNull List<SourceIcon> getIcons(@NonNull WebSource source) {
+        URI icon = source.getIcon();
+        if (icon == null) {
+            return Collections.emptyList();
+        }
+        try {
+            if (SourceIcons.isDataURI(icon)) {
+                return Collections.singletonList(SourceIcons.parseDataURI(icon));
+            }
+            String iconName = SourceIcons.getBundledIconNameOrNull(icon);
+            if (iconName != null) {
+                return loadBundledIcons(source, iconName);
+            }
+        } catch (IllegalArgumentException ex) {
+            reportIconError(source, "Invalid icon '" + abbreviate(icon) + "'", new IOException(ex.getMessage(), ex));
+        }
+        return Collections.emptyList();
+    }
+
+    /**
+     * Gets the variant of the icon of a web source that best matches a size.
+     *
+     * @param name the non-null source id
+     * @param size a positive size in pixels
+     * @return a non-null optional icon
+     * @throws IOException              if the source cannot be found
+     * @throws IllegalArgumentException if the size is not positive
+     * @see SourceIcon#findBest(Collection, int)
+     */
+    public @NonNull Optional<SourceIcon> getIcon(@NonNull String name, int size)
+            throws IOException, IllegalArgumentException {
+        return getIcon(lookupSource(name).orElseThrow(() -> newMissingSource(name)), size);
+    }
+
+    /**
+     * Gets the variant of the icon of a web source that best matches a size.
+     *
+     * @param source the non-null source
+     * @param size   a positive size in pixels
+     * @return a non-null optional icon
+     * @throws IllegalArgumentException if the size is not positive
+     * @see SourceIcon#findBest(Collection, int)
+     */
+    public @NonNull Optional<SourceIcon> getIcon(@NonNull WebSource source, int size) throws IllegalArgumentException {
+        if (size <= 0) {
+            throw new IllegalArgumentException("Size must be positive");
+        }
+        return SourceIcon.findBest(getIcons(source), size);
+    }
+
+    private List<SourceIcon> loadBundledIcons(WebSource source, String iconName) {
+        for (IconProvider provider : iconProviders) {
+            try {
+                List<SourceIcon> result = provider.getIcons(iconName);
+                if (!result.isEmpty()) {
+                    return result;
+                }
+            } catch (IOException | RuntimeException ex) {
+                reportIconError(
+                        source,
+                        "Failed to load icon '" + iconName + "' from '" + provider.getIconProviderId() + "'",
+                        ex instanceof IOException ? (IOException) ex : new IOException(ex));
+            }
+        }
+        return Collections.emptyList();
+    }
+
+    private void reportIconError(WebSource source, String message, IOException error) {
+        if (onError != null) {
+            ErrorListener listener = onError.apply(source);
+            if (listener != null) {
+                listener.accept("ICON", message, error);
+            }
+        }
+    }
+
+    private static String abbreviate(URI uri) {
+        String result = uri.toString();
+        return result.length() > 64 ? result.substring(0, 64) + "..." : result;
     }
 
     /**
