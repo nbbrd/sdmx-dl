@@ -349,6 +349,11 @@
                     <version>1.6.0</version>
                 </plugin>
                 <plugin>
+                    <groupId>com.github.nbbrd.nbbrd-maven-tools</groupId>
+                    <artifactId>buf-maven-plugin</artifactId>
+                    <version>1.6.0</version>
+                </plugin>
+                <plugin>
                     <groupId>com.diffplug.spotless</groupId>
                     <artifactId>spotless-maven-plugin</artifactId>
                     <version>3.11.0</version>
@@ -457,6 +462,18 @@
             <plugin>
                 <groupId>com.github.nbbrd.nbbrd-maven-tools</groupId>
                 <artifactId>actionlint-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>lint</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.github.nbbrd.nbbrd-maven-tools</groupId>
+                <artifactId>buf-maven-plugin</artifactId>
                 <executions>
                     <execution>
                         <phase>validate</phase>
@@ -1000,6 +1017,7 @@
                 <tidy.skip>true</tidy.skip>
                 <spotless.skip>true</spotless.skip>
                 <actionlint.skip>true</actionlint.skip>
+                <buf.skip>true</buf.skip>
                 <spotbugs.skip>true</spotbugs.skip>
             </properties>
         </profile>

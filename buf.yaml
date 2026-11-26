@@ -1,0 +1,22 @@
+version: v2
+modules:
+  - path: sdmx-dl-format-protobuf/src/main/proto
+  - path: sdmx-dl-grpc/src/main/proto
+  - path: sdmx-dl-cli/src/main/proto
+lint:
+  use:
+    - STANDARD
+  except:
+    - DIRECTORY_SAME_PACKAGE
+    - PACKAGE_DIRECTORY_MATCH
+    - PACKAGE_VERSION_SUFFIX
+    - ENUM_VALUE_PREFIX
+    - ENUM_ZERO_VALUE_SUFFIX
+    - SERVICE_SUFFIX
+    - RPC_REQUEST_RESPONSE_UNIQUE
+    - RPC_REQUEST_STANDARD_NAME
+    - RPC_RESPONSE_STANDARD_NAME
+  ignore_only:
+    FIELD_LOWER_SNAKE_CASE:
+      - sdmx-dl-format-protobuf/src/main/proto/sdmxdl_api.proto
+      - sdmx-dl-grpc/src/main/proto/sdmxdl_grpc.proto
