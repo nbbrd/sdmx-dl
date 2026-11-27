@@ -34,6 +34,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![GRPC] Serve gRPC on the HTTP port using the unified Quarkus HTTP server [#1356](https://github.com/nbbrd/sdmx-dl/issues/1356)
 - ![GRPC] Migrate the web UI to the REST v2 endpoint
 - ![GRPC] Migrate the web UI to bootstrap and local-served resources
+- ![PROVIDER] Change caching configuration to disable HTTP caching by default
 
 ### Fixed
 

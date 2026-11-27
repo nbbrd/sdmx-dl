@@ -1,5 +1,8 @@
 package sdmxdl.provider.ri.http;
 
+import static sdmxdl.web.spi.Driver.DRIVER_PROPERTY_PREFIX;
+
+import java.io.IOException;
 import nbbrd.io.http.HttpClient;
 import nbbrd.io.http.ext.CacheEventListener;
 import nbbrd.io.http.ext.CacheStore;
@@ -14,10 +17,6 @@ import sdmxdl.provider.caching.DiskCache;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.WebContext;
 
-import java.io.IOException;
-
-import static sdmxdl.web.spi.Driver.DRIVER_PROPERTY_PREFIX;
-
 public final class CachingDecoration implements HttpDecoration {
 
     /**
@@ -30,7 +29,7 @@ public final class CachingDecoration implements HttpDecoration {
      */
     @PropertyDefinition
     public static final BooleanProperty HTTP_CACHING_PROPERTY =
-            BooleanProperty.of(DRIVER_PROPERTY_PREFIX + ".httpCaching", true);
+            BooleanProperty.of(DRIVER_PROPERTY_PREFIX + ".httpCaching", false);
 
     @lombok.experimental.Delegate
     private final HttpDecoration support = HttpDecorationSupport.builder()
@@ -49,8 +48,7 @@ public final class CachingDecoration implements HttpDecoration {
         }
         CacheStore cacheStore = getSharedStore();
         if (cacheStore != null) {
-            return CachingDecorator
-                    .builder()
+            return CachingDecorator.builder()
                     .decorated(original)
                     .listener(toListener(c.getEventListener(s)))
                     .store(cacheStore)
